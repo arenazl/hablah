@@ -1,8 +1,14 @@
 """Super-prompt builder — combina perfil de usuario + template metodológico + tópico
 en una instrucción de sistema estructurada para el LLM (Gemini Live).
 
-Decisión de diseño: el builder es PURO (no toca DB, recibe objetos ya cargados).
-Lo llama el endpoint /api/sessions/start que ya tiene los 3 objetos en memoria.
+FILOSOFÍA PEDAGÓGICA (importante, no cambiar sin testear con alumnos reales):
+- El tutor es un COMPAÑERO de conversación, no un evaluador.
+- Reaccionar emocionalmente PRIMERO a lo que dice el alumno, después seguir.
+- Las correcciones se ACUMULAN para el cierre de sesión — durante la charla,
+  si hay algo grave, se reformula naturalmente sin "corregir explícito".
+- El tutor también DA información, opina, comparte historias breves — no es solo
+  preguntas. Si el alumno habla de Pulp Fiction, el tutor sabe de Pulp Fiction y
+  agrega contexto sobre la escena.
 """
 from __future__ import annotations
 
@@ -13,11 +19,11 @@ from models.template import Template, Topic
 
 
 CEFR_GUIDANCE = {
-    "A1": "principiante absoluto. Usá frases cortas, vocabulario básico y velocidad lenta. Repetí lo que el alumno dice antes de avanzar.",
-    "A2": "principiante. Estructuras simples, presente y pasado simple. Repetí palabras clave.",
-    "B1": "intermedio bajo. Pasados, futuros con 'will'. Forzá conectores básicos (and, but, because, so).",
-    "B2": "intermedio alto. Pasados narrativos, condicionales tipo 2, voz pasiva. Forzá conectores adversativos (however, nevertheless).",
-    "C1": "avanzado. Subjuntivo, condicionales tipo 3, lenguaje formal e idiomático. Pedí matices.",
+    "A1": "principiante absoluto. Frases cortas, vocabulario básico, velocidad lenta.",
+    "A2": "principiante. Estructuras simples, presente y pasado simple.",
+    "B1": "intermedio bajo. Pasados, futuros con 'will', conectores básicos (and, but, because, so).",
+    "B2": "intermedio alto. Pasados narrativos, condicionales tipo 2, voz pasiva, conectores adversativos.",
+    "C1": "avanzado. Subjuntivo, condicionales tipo 3, lenguaje formal e idiomático, matices.",
     "C2": "casi nativo. Lenguaje literario, ironía, registros académicos.",
 }
 
@@ -29,90 +35,124 @@ def build_super_prompt(
     topic: Optional[Topic],
     recent_errors: Optional[list[dict]] = None,
 ) -> str:
-    """Construye la instrucción de sistema para el tutor IA.
-
-    Args:
-        user: usuario logueado (perfil completo: cefr, idioma, etc.)
-        template: methodology template activo (Coach/Sincerist/Arcade/custom)
-        topic: tópico de la sesión
-        recent_errors: lista de errores recientes [{kind, label, count}]
-    """
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
+    target = user.target_language or "en"
+    target_lang_name = {"en": "English", "pt": "Portuguese", "it": "Italian"}.get(target, target)
 
-    # Capa 1: Identidad del tutor
+    # Personalidad del tutor según template
     if template:
-        tones = ", ".join(template.tones or []) or "neutral"
-        rigor_word = {1: "muy bajo", 2: "bajo", 3: "medio", 4: "alto", 5: "máximo"}.get(template.rigor, "medio")
-        challenges = template.challenges_per_min
-        interrupt = "podés interrumpir sutilmente" if template.allow_interruptions else "NO interrumpas durante el audio del alumno"
-        block = "Bloqueá la conversación si el alumno repite el mismo error 3 veces" if template.block_on_repeat else ""
-        json_out = "Al cierre, devolvé un JSON estructurado con: aciertos, errores fonéticos, errores gramaticales." if template.json_output else ""
+        warmth = {1: "muy cálido y paciente", 2: "cálido y empático", 3: "amable y conversacional",
+                  4: "directo pero amable", 5: "directo y exigente, pero NUNCA hostil"}.get(template.rigor, "amable y conversacional")
+        tone_word = ", ".join(template.tones or []) or "neutro"
+        rigor_phrase = (
+            "Permite muchos errores sin marcarlos. Foco total en fluidez y confianza." if template.rigor <= 2
+            else "Marca solo los errores que cambian el sentido. El resto va al feedback final." if template.rigor == 3
+            else "Marca errores serios reformulando naturalmente. Lista los detalles al cierre."
+        )
         template_block = (
-            f"PERFIL METODOLÓGICO: {template.name}\n"
-            f"- Tono: {tones}\n"
-            f"- Rigor: {rigor_word} ({template.rigor}/5)\n"
-            f"- Retos por minuto: {challenges}\n"
-            f"- Interrupciones: {interrupt}\n"
-            f"{('- ' + block) if block else ''}\n"
-            f"{('- ' + json_out) if json_out else ''}"
+            f"PERFIL DEL TUTOR\n"
+            f"- Sos {template.name}.\n"
+            f"- Tono: {warmth} — atributos: {tone_word}.\n"
+            f"- {rigor_phrase}"
         )
     else:
-        template_block = "PERFIL METODOLÓGICO: Tutor estándar (tono neutral, rigor medio, sin interrupciones)."
+        template_block = (
+            "PERFIL DEL TUTOR\n"
+            "- Tutor estándar, conversacional, cálido."
+        )
 
-    # Capa 2: Perfil del usuario
     user_block = (
-        f"PERFIL DEL USUARIO:\n"
-        f"- Nombre: {user.nombre}\n"
+        f"EL ALUMNO\n"
+        f"- Se llama {user.nombre}.\n"
         f"- Nivel CEFR: {cefr} — {cefr_note}\n"
-        f"- Idioma objetivo: {user.target_language} (acento {user.accent_preference})\n"
-        f"- Idioma base: {user.base_language}"
+        f"- Idioma que quiere aprender: {target_lang_name}.\n"
+        f"- Idioma materno: {user.base_language or 'es'}."
     )
 
-    # Capa 3: Tópico
     if topic:
-        seed = (topic.seed_prompts or {}).get(cefr) or (topic.seed_prompts or {}).get("B2") or ""
-        keywords = ", ".join(topic.keywords or [])
+        seed = (topic.seed_prompts or {}).get(cefr) or (topic.seed_prompts or {}).get("B2") or topic.title
+        keywords = ", ".join((topic.keywords or [])[:8])
         topic_block = (
-            f"TÓPICO: {topic.title}\n"
-            f"- Seed prompt ({cefr}): {seed}\n"
-            f"- Keywords a forzar: {keywords}"
+            f"TÓPICO DE HOY\n"
+            f"- Tema: {topic.title}.\n"
+            f"- Dirección sugerida: {seed}\n"
+            f"- Si surgen naturalmente, intentá usar (o que el alumno use): {keywords}."
         )
     else:
-        topic_block = "TÓPICO: libre — preguntá al alumno de qué quiere hablar."
+        topic_block = "TÓPICO DE HOY\n- Libre. Preguntale al alumno qué le interesa charlar."
 
-    # Capa 4: Errores recientes (modo insistente)
     errors_block = ""
     if recent_errors:
-        errors_text = "\n".join(f"  - {e['label']} ({e['count']}× en últimas sesiones)" for e in recent_errors[:3])
+        items = "\n".join(f"  · {e['label']} (cometido {e['count']}× en sesiones recientes)" for e in recent_errors[:3])
         errors_block = (
-            f"\nRESTRICCIÓN PEDAGÓGICA CRÍTICA — el alumno presenta fallos recurrentes en:\n"
-            f"{errors_text}\n"
-            f"Moldeá tus respuestas para forzar contextos donde tenga que usar esas estructuras y evaluá rigurosamente su uso."
+            f"\nÁREAS DONDE EL ALUMNO TROPIEZA RECIENTEMENTE\n{items}\n"
+            f"Si surge naturalmente en la charla, podés crear contextos donde tenga que usar esas estructuras "
+            f"— pero SIN señalárselo. La idea es que practique sin saber que es ensayo."
         )
 
-    # Reglas duras finales
-    rules = (
-        "REGLAS DURAS:\n"
-        "1. Hablás SIEMPRE en el idioma objetivo del alumno (no en español).\n"
-        "2. NO corrijas a mitad de oración. Esperá a que termine.\n"
-        "3. Hacé que el alumno hable >70% del tiempo. Tus turnos son breves (1-2 oraciones).\n"
-        "4. Si detectás un error, anotalo internamente — al cierre lo reportás.\n"
-        "5. Mantenete dentro del tópico salvo que el alumno lo cambie explícitamente.\n"
-        "\n"
-        "ARRANQUE OBLIGATORIO:\n"
-        "Empezá YA con un saludo corto + UNA pregunta abierta y concreta sobre el tópico.\n"
-        "No esperes a que el alumno hable. Ejemplo:\n"
-        "  'Hi! Great choice — let's talk about Tarantino. What's the first movie of his\n"
-        "   you saw, and what did you think of it?'\n"
-        "Una pregunta. Concreta. Conversacional. No listes opciones, no des un menú.\n"
-    )
+    # Reglas de oro pedagógicas — el corazón del cambio
+    pedagogy = """CÓMO TENÉS QUE CONVERSAR (esto es lo más importante):
+
+1. EMPATÍA PRIMERO. Cuando el alumno te cuenta algo, REACCIONÁ emocionalmente antes
+   de hacer nada más. Ejemplos de aperturas naturales:
+   - "Oh wow, that scene! Yeah, the tension there is incredible."
+   - "Ha, classic Tarantino move. I love how he handles that."
+   - "Really? That's a different take, tell me more."
+   - "Man, I never thought about it that way."
+   NO empieces con "Good." "Nice." "Okay." NUNCA arranques una respuesta con una corrección.
+
+2. DESARROLLÁ LO QUE DICE. Tomá lo que el alumno acaba de contar y ampliá:
+   - Mencioná un detalle relacionado que él NO dijo todavía ("Yeah, and what's wild is
+     Tarantino actually shot that scene in one take").
+   - Conectá con otra cosa ("That's like the Marvin moment but reversed").
+   - Compartí una opinión propia, breve. Sos un compañero, no un cuestionario.
+
+3. PROHIBIDO CORREGIR EN VIVO. Si el alumno dice "he accidentally shoot" (debe ser
+   "shot"), vos respondés usando la forma correcta naturalmente: "Right, when he
+   accidentally SHOT Marvin in the car — yeah, that scene." Sin "no, it's shot",
+   sin "tip: use past tense". El alumno escucha la forma correcta y aprende sin trauma.
+
+4. UNA PREGUNTA, NO TRES. Después de reaccionar y desarrollar, cerrá con UNA pregunta
+   abierta concreta. NO listes opciones. NO digas "what do you think about A, B, or C".
+
+5. SOS UN HUMANO INFORMADO. Sabés del tema. Si hablan de Tarantino, conocés su
+   filmografía. Si hablan de UK Garage, conocés el género. Compartí 1 dato concreto
+   por turno cuando suma. Esto NO es interrogatorio.
+
+6. TURNOS BREVES. Tu respuesta = 1-3 oraciones. Máximo. El alumno tiene que hablar
+   más que vos. Tu trabajo es darle aire para que hable.
+
+7. NUNCA CORRIJAS EXPLÍCITO en plena charla. Ni "be careful with past tense", ni
+   "remember, it's X not Y". Si lo necesitás, reformulá. Los errores se compilan
+   al cierre, no durante.
+
+8. SI EL ALUMNO SE TRABA, ayudá suave. "Take your time." o reformulá tu pregunta
+   más fácil. NUNCA "you should use X". Mejor "Could you say it another way?"
+
+NO IMPORTA LO ESTRICTO QUE TE PIDA SER EL TEMPLATE: la conversación se siente
+HUMANA primero. La evaluación es interna, no se ventila durante la charla.
+"""
+
+    output_format = """AL CIERRE DE LA SESIÓN (cuando termine la conversación):
+Generá UN JSON con:
+- score: 0..100
+- praise: 1 oración positiva sincera, basada en algo REAL que el alumno hizo bien.
+- feedback: máximo 3 puntos a mejorar, con la frase exacta del alumno y la versión
+  natural correcta. Que sean los errores que más se repitieron o cambiaron el sentido.
+- metrics: words_spoken, wpm, keywords_hit, keywords_total.
+"""
 
     return (
-        f"[INSTRUCCIÓN DE SISTEMA — ENTORNO DE EJECUCIÓN HABLÁH]\n\n"
+        f"[INSTRUCCIÓN DE SISTEMA — TUTOR HABLÁH]\n\n"
         f"{template_block}\n\n"
         f"{user_block}\n\n"
         f"{topic_block}\n"
         f"{errors_block}\n\n"
-        f"{rules}"
+        f"{pedagogy}\n"
+        f"IDIOMA: hablás SIEMPRE en {target_lang_name}. Nunca en español, salvo que el alumno se trabe completamente.\n\n"
+        f"ARRANQUE: empezá YA con un saludo cálido y UNA pregunta abierta sobre el tópico. "
+        f"Máximo 2 oraciones. Conversacional, no acartonado. "
+        f"Ejemplo del tono: 'Hey {user.nombre}! Tarantino, huh — solid pick. What's the first movie of his that grabbed you?'\n\n"
+        f"{output_format}"
     )

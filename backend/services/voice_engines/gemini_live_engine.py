@@ -70,15 +70,10 @@ class GeminiLiveEngine(VoiceEngine):
         }
         await google_ws.send(json.dumps(setup))
 
-        # Trigger inicial: forzar al tutor a abrir con saludo + pregunta.
-        # Mandamos un clientContent con un mensaje "del sistema" disfrazado de turno
-        # que pide explícitamente que el modelo abra la charla.
+        # Trigger inicial: solo "start" — el tono y la apertura ya están en el system prompt.
         await google_ws.send(json.dumps({
             "clientContent": {
-                "turns": [{
-                    "role": "user",
-                    "parts": [{"text": "[SYSTEM] The session is starting. Greet the student briefly and ask ONE concrete open question about the topic. Keep it under 2 sentences. Speak naturally in the target language."}],
-                }],
+                "turns": [{"role": "user", "parts": [{"text": "(start)"}]}],
                 "turnComplete": True,
             }
         }))
