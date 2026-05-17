@@ -105,10 +105,7 @@ const LANDING_CSS = `
 .landing-root .nav-inner { display: flex; align-items: center; gap: 24px; height: 64px; }
 .landing-root .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; letter-spacing: -.01em; }
 .landing-root .logo-mark {
-  width: 30px; height: 30px; border-radius: 8px;
-  background: var(--primary); color: white;
-  display: grid; place-items: center;
-  font-weight: 900; font-style: italic; font-size: 18px;
+  width: 30px; height: 30px; border-radius: 8px; display: block; flex-shrink: 0;
 }
 .landing-root .nav-links { display: flex; gap: 4px; margin-left: 24px; }
 .landing-root .nav-links a { padding: 8px 14px; border-radius: var(--r-md); font-size: 14px; font-weight: 500; color: var(--fg-2); }
@@ -457,7 +454,7 @@ export function Landing() {
       <nav className="nav">
         <div className="container nav-inner">
           <a href="#" className="logo">
-            <span className="logo-mark">h</span>
+            <img src="/logos/hablah-mark.svg" alt="habláh" className="logo-mark" width="30" height="30" />
             habláh
           </a>
           <div className="nav-links">
@@ -924,7 +921,7 @@ export function Landing() {
         <div className="container">
           <div className="footer-grid">
             <div className="footer-brand">
-              <a href="#" className="logo"><span className="logo-mark">h</span> habláh</a>
+              <a href="#" className="logo"><img src="/logos/hablah-mark.svg" alt="habláh" className="logo-mark" width="30" height="30" /> habláh</a>
               <p>Plataforma adaptativa de aprendizaje de idiomas con IA. Hablás de lo que te gusta. El sistema se encarga del resto.</p>
               <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                 <a href="#" style={socialBtn}>𝕏</a>
