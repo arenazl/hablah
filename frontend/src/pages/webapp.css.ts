@@ -220,7 +220,7 @@ export const WEBAPP_CSS = `
 
 .webapp-root .convo-view {
   height: calc(100vh - 64px);
-  background: var(--ink-1); color: white;
+  background: #000; color: white;
   display: grid;
   grid-template-columns: 1fr 380px;
   overflow: hidden;
