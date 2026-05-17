@@ -97,6 +97,7 @@ function Sidebar({ profile }: { profile: MeProfile | null }) {
   const user = profile?.user
   const initial = user?.nombre?.[0] || 'U'
   const pct = user?.cefr_level ? cefrPct(user.cefr_level) : 0
+  const isAdmin = user?.role === 'admin'
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -110,6 +111,20 @@ function Sidebar({ profile }: { profile: MeProfile | null }) {
         <SidebarItem to="/app/historial" icon={<ClockIcon />} label="Historial" />
         <SidebarItem to="/app/perfil" icon={<UserIcon />} label="Perfil" />
       </nav>
+
+      {isAdmin && (
+        <>
+          <div className="sidebar-section">Admin</div>
+          <nav className="sidebar-nav">
+            <NavLink to="/admin" className="nav-item" style={{ background: 'rgba(255,184,0,.12)', color: '#FFB800' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 3h7v7H3z" /><path d="M14 3h7v7h-7z" /><path d="M14 14h7v7h-7z" /><path d="M3 14h7v7H3z" />
+              </svg>
+              Backoffice
+            </NavLink>
+          </nav>
+        </>
+      )}
       <div className="sidebar-section">Tu progreso</div>
       <div style={{ padding: '0 18px' }}>
         <div style={{ background: 'rgba(255,255,255,.04)', borderRadius: 12, padding: 14 }}>

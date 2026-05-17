@@ -58,6 +58,24 @@ function BoSidebar({ open }: { open: boolean }) {
           <div className="brand-sub">Backoffice</div>
         </div>
       </NavLink>
+
+      <div style={{ padding: '4px 12px 8px' }}>
+        <NavLink
+          to="/app"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '8px 12px', borderRadius: 8,
+            background: 'rgba(0,179,126,.14)', color: 'var(--primary)',
+            fontSize: 13, fontWeight: 600, textDecoration: 'none',
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+          </svg>
+          Volver a la app
+        </NavLink>
+      </div>
+
       <div className="sidebar-section">Operación</div>
       <nav className="sidebar-nav">
         <SidebarItem to="/admin" exact label="Resumen" />
