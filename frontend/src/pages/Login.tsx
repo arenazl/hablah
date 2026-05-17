@@ -12,8 +12,8 @@ const HABLAH_TINT = '#E6F7F1'
 export function Login() {
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('admin@hablah.app')
-  const [password, setPassword] = useState('admin123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -45,8 +45,11 @@ export function Login() {
     await doLogin(email, password)
   }
 
-  const quickLoginAsAdmin = () => doLogin('admin@hablah.app', 'admin123')
-  const quickLoginAsStudent = () => doLogin('demo@hablah.app', 'demo123')
+  const QUICK_PROFILES = [
+    { email: 'lucas@hablah.app', password: '123', name: 'Lucas', initial: 'L', tag: 'Alumno · B2', color: HABLAH_GREEN },
+    { email: 'nico@hablah.app', password: '123', name: 'Nico', initial: 'N', tag: 'Alumno · B1', color: '#FFB800' },
+    { email: 'coach@hablah.app', password: '123', name: 'Coach', initial: 'C', tag: 'Admin · Backoffice', color: HABLAH_INK },
+  ] as const
 
   return (
     <div
@@ -249,37 +252,25 @@ export function Login() {
               </span>
               <div className="flex-1 h-px" style={{ background: 'rgba(13,20,18,.14)' }} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={quickLoginAsStudent}
-                disabled={loading}
-                className="group flex flex-col items-center gap-1.5 p-4 rounded-xl border transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50"
-                style={{ background: 'white', borderColor: 'rgba(13,20,18,.14)' }}
-              >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold"
-                  style={{ background: HABLAH_GREEN }}
+            <div className="grid grid-cols-3 gap-3">
+              {QUICK_PROFILES.map((p) => (
+                <button
+                  key={p.email}
+                  onClick={() => doLogin(p.email, p.password)}
+                  disabled={loading}
+                  className="group flex flex-col items-center gap-1.5 p-4 rounded-xl border transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50"
+                  style={{ background: 'white', borderColor: 'rgba(13,20,18,.14)' }}
                 >
-                  L
-                </div>
-                <div className="text-sm font-bold" style={{ color: '#0D1412' }}>Usuario</div>
-                <div className="text-[11px]" style={{ color: '#5A625F' }}>Lautaro · B2</div>
-              </button>
-              <button
-                onClick={quickLoginAsAdmin}
-                disabled={loading}
-                className="group flex flex-col items-center gap-1.5 p-4 rounded-xl border transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50"
-                style={{ background: 'white', borderColor: 'rgba(13,20,18,.14)' }}
-              >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold"
-                  style={{ background: HABLAH_INK }}
-                >
-                  A
-                </div>
-                <div className="text-sm font-bold" style={{ color: '#0D1412' }}>Admin</div>
-                <div className="text-[11px]" style={{ color: '#5A625F' }}>App + Backoffice</div>
-              </button>
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold"
+                    style={{ background: p.color }}
+                  >
+                    {p.initial}
+                  </div>
+                  <div className="text-sm font-bold" style={{ color: '#0D1412' }}>{p.name}</div>
+                  <div className="text-[11px]" style={{ color: '#5A625F' }}>{p.tag}</div>
+                </button>
+              ))}
             </div>
           </div>
 
