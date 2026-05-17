@@ -25,6 +25,7 @@ class User(Base):
 
     # Habláh — perfil de aprendizaje
     cefr_level = Column(String(4), nullable=False, default="B1")
+    cefr_manual = Column(Boolean, nullable=False, default=False)  # True = usuario fijo el nivel manualmente, no auto-promover
     target_language = Column(String(20), nullable=False, default="en")  # en, pt, it
     base_language = Column(String(20), nullable=False, default="es")
     accent_preference = Column(String(40), nullable=False, default="uk")  # uk, us, neutral

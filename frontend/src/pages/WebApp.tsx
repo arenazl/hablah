@@ -1095,6 +1095,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
         {interests.length > 0 && (() => {
           const cats = Array.from(new Set(interests.map(i => i.category)))
           const q = interestQuery.trim().toLowerCase()
+          const userLevel = profile.user.cefr_level || 'B1'
           const filtered = interests
             .map((t, idx) => ({ t, originalIdx: idx }))
             .filter(({ t }) => interestCategory === 'all' || t.category === interestCategory)
@@ -1103,6 +1104,13 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               t.title.toLowerCase().includes(q) ||
               (getCategoryMeta(t.category).label || '').toLowerCase().includes(q),
             )
+            .sort((a, b) => {
+              // Topics compatibles con el nivel del user primero
+              const al = isLevelMatch(a.t as any, userLevel) ? 0 : 1
+              const bl = isLevelMatch(b.t as any, userLevel) ? 0 : 1
+              if (al !== bl) return al - bl
+              return a.originalIdx - b.originalIdx
+            })
           return (
             <div style={{ marginBottom: 36 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 14, flexWrap: 'wrap' }}>
@@ -2334,6 +2342,8 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
         <InterestsCard profile={profile} onChange={onChange} />
         <AddInterestCard profile={profile} onChange={onChange} />
 
+        <LevelCard profile={profile} onChange={onChange} />
+
         <div className="profile-card">
           <h3>Configuración</h3>
           <div className="settings-list">
@@ -2362,6 +2372,83 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
             Cerrar sesión
           </button>
         </div>
+      </div>
+    </div>
+  )
+}
+
+const LEVEL_STEPS = [
+  { cefr: 'A1', name: 'Recién empiezo', desc: 'Frases cortas, mucho refuerzo', color: '#5EE0B0' },
+  { cefr: 'A2', name: 'Me defiendo',    desc: 'Charla simple, perdona errores chicos', color: '#1FC18E' },
+  { cefr: 'B1', name: 'Hablo OK',       desc: 'Equilibrio fluidez y precisión', color: '#00B37E' },
+  { cefr: 'B2', name: 'Bastante fluido', desc: 'Vocabulario profesional, ritmo natural', color: '#008F63' },
+  { cefr: 'C1', name: 'Pro',            desc: 'Crítica fuerte, idioms, registros formales', color: '#054A3A' },
+] as const
+
+function LevelCard({ profile, onChange }: { profile: MeProfile; onChange: () => void }) {
+  const u = profile.user
+  const current = u.cefr_level || 'B1'
+  const isManual = u.cefr_manual === true
+  const [saving, setSaving] = useState(false)
+
+  const setLevel = async (cefr: string) => {
+    if (cefr === current && isManual) return
+    setSaving(true)
+    try {
+      await meAPI.updateSettings({ cefr_level: cefr, cefr_manual: true })
+      onChange()
+      toast.success(`Nivel actualizado a ${cefr}`)
+    } catch {
+      toast.error('No pudimos actualizar el nivel')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const resetAuto = async () => {
+    setSaving(true)
+    try {
+      await meAPI.updateSettings({ cefr_manual: false })
+      onChange()
+      toast.success('Nivel volverá a auto-ajustarse según tu progreso')
+    } catch {
+      toast.error('No pudimos cambiar a auto')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="profile-card level-card">
+      <h3>Tu nivel</h3>
+      <div style={{ fontSize: 13, color: 'var(--fg-3)', marginBottom: 14, lineHeight: 1.5 }}>
+        {isManual
+          ? <>Lo elegiste vos manualmente. <button onClick={resetAuto} disabled={saving} style={{ background: 'none', border: 0, color: 'var(--primary-dark)', fontWeight: 600, cursor: 'pointer', padding: 0 }}>Volver a auto →</button></>
+          : <>Se ajusta solo según tu progreso. Si querés forzarlo, elegí un nivel:</>
+        }
+      </div>
+      <div className="level-steps">
+        {LEVEL_STEPS.map((s) => {
+          const active = s.cefr === current
+          return (
+            <button
+              key={s.cefr}
+              className={`level-step${active ? ' active' : ''}`}
+              onClick={() => setLevel(s.cefr)}
+              disabled={saving}
+              style={active ? { borderColor: s.color, background: `${s.color}1A` } : undefined}
+            >
+              <div className="ls-cefr" style={active ? { color: s.color } : undefined}>{s.cefr}</div>
+              <div className="ls-body">
+                <div className="ls-name">{s.name}</div>
+                <div className="ls-desc">{s.desc}</div>
+              </div>
+              {active && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={s.color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+              )}
+            </button>
+          )
+        })}
       </div>
     </div>
   )
@@ -2571,6 +2658,14 @@ const CATEGORY_META: Record<string, { color: string; bg: string; icon: React.Rea
   gastronomia: { color: '#B91C1C', bg: '#FEE2E2', label: 'Gastronomía',icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg> },
   ciencia:     { color: '#0891B2', bg: '#CFFAFE', label: 'Ciencia',    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z"/><path d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z"/></svg> },
   general:     { color: '#5A625F', bg: '#F2F4F1', label: 'General',    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/></svg> },
+}
+
+function isLevelMatch(topic: { levels?: string[] | null }, userLevel: string): boolean {
+  // Compatible si el topic no declara levels, o si el user level esta dentro de los soportados
+  if (!topic.levels || topic.levels.length === 0) return true
+  if (topic.levels.includes(userLevel)) return true
+  // fallback: si el user es A1/A2 y el topic mas bajo es B1, no le mostramos primero (queremos progresion)
+  return false
 }
 
 function getCategoryMeta(cat: string) {

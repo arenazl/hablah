@@ -542,6 +542,28 @@ export const WEBAPP_CSS = `
 }
 .webapp-root .settings-btn:hover { background: var(--bg-2); color: var(--fg-1); }
 .webapp-root .settings-btn:active { transform: rotate(20deg); }
+
+/* Level card (5 escalones) */
+.webapp-root .level-card .level-steps {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.webapp-root .level-step {
+  display: flex; align-items: center; gap: 14px; padding: 12px 14px;
+  background: var(--bg-1); border: 1.5px solid var(--border-1); border-radius: 12px;
+  cursor: pointer; transition: all .18s var(--ease); text-align: left; font-family: inherit;
+}
+.webapp-root .level-step:hover:not(:disabled) { border-color: var(--border-2); background: var(--bg-2); }
+.webapp-root .level-step:disabled { opacity: .5; cursor: wait; }
+.webapp-root .level-step.active { background: var(--primary-tint); border-color: var(--primary); }
+.webapp-root .level-step .ls-cefr {
+  font-family: 'Inter'; font-weight: 800; font-size: 14px;
+  color: var(--fg-3); background: var(--bg-2); padding: 5px 10px; border-radius: 8px;
+  letter-spacing: .04em; min-width: 38px; text-align: center; flex-shrink: 0;
+}
+.webapp-root .level-step.active .ls-cefr { background: white; }
+.webapp-root .level-step .ls-body { flex: 1; min-width: 0; }
+.webapp-root .level-step .ls-name { font-size: 14px; font-weight: 700; color: var(--fg-1); }
+.webapp-root .level-step .ls-desc { font-size: 12px; color: var(--fg-3); margin-top: 2px; }
 @media (max-width: 480px) {
   .webapp-root .qp-grid { grid-template-columns: 1fr; }
   .webapp-root .week-days { gap: 4px; }

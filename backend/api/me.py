@@ -70,6 +70,7 @@ async def get_my_profile(
             "apellido": current.apellido,
             "role": current.role.value if hasattr(current.role, "value") else current.role,
             "cefr_level": current.cefr_level,
+            "cefr_manual": getattr(current, "cefr_manual", False),
             "target_language": current.target_language,
             "base_language": current.base_language,
             "accent_preference": current.accent_preference,
@@ -113,6 +114,8 @@ class SettingsUpdate(BaseModel):
     daily_reminder_enabled: Optional[bool] = None
     audio_retention_days: Optional[int] = None
     active_template_id: Optional[int] = None
+    cefr_level: Optional[str] = None
+    cefr_manual: Optional[bool] = None
 
 
 @router.patch("/settings")
@@ -121,7 +124,11 @@ async def update_settings(
     db: AsyncSession = Depends(get_db),
     current: User = Depends(get_current_user),
 ):
-    for k, v in payload.model_dump(exclude_unset=True).items():
+    data = payload.model_dump(exclude_unset=True)
+    # Si el usuario eligio nivel desde la UI sin pasar cefr_manual explicito, lo marcamos manual
+    if "cefr_level" in data and "cefr_manual" not in data:
+        data["cefr_manual"] = True
+    for k, v in data.items():
         setattr(current, k, v)
     await db.commit()
     await db.refresh(current)

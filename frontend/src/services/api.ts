@@ -41,7 +41,7 @@ export const authAPI = {
 export interface MeProfile {
   user: {
     id: number; email: string; nombre: string; apellido: string; role: string
-    cefr_level: string; target_language: string; base_language: string
+    cefr_level: string; cefr_manual?: boolean; target_language: string; base_language: string
     accent_preference: string; streak_days: number; streak_best: number
     target_minutes_per_session: number; insistent_mode_enabled: boolean
     daily_reminder_enabled: boolean; audio_retention_days: number; plan: string
@@ -72,6 +72,8 @@ export const meAPI = {
     daily_reminder_enabled: boolean
     audio_retention_days: number
     active_template_id: number
+    cefr_level: string
+    cefr_manual: boolean
   }>) => api.patch('/me/settings', data).then((r) => r.data),
   streakHeatmap: (days = 28) => api.get<HeatmapCell[]>(`/me/streak-heatmap?days=${days}`).then((r) => r.data),
   levelProgress: () => api.get<LevelProgress>('/me/level-progress').then((r) => r.data),
