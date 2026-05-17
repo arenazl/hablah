@@ -25,11 +25,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = localStorage.getItem('token')
     if (!token) return
     try {
-      const r = await authAPI.me()
-      setUser(r.data)
+      const me = await authAPI.me()
+      setUser(me)
     } catch {
       // 401 cleanup ya lo maneja el interceptor de axios.
-      // Otros errores: ignorar y reintentar en el próximo tick.
     }
   }, [])
 
@@ -39,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       api.defaults.headers.common.Authorization = `Bearer ${token}`
       authAPI.me()
-        .then((r) => setUser(r.data))
+        .then((me) => setUser(me))
         .catch(() => localStorage.removeItem('token'))
         .finally(() => setIsLoading(false))
     } else {
@@ -62,11 +61,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, refreshUser])
 
   const login = async (email: string, password: string) => {
-    const r = await authAPI.login(email, password)
-    const token = r.data.access_token
+    const data = await authAPI.login(email, password)
+    const token = data.access_token
     localStorage.setItem('token', token)
     api.defaults.headers.common.Authorization = `Bearer ${token}`
-    setUser(r.data.user)
+    setUser(data.user)
   }
 
   const logout = () => {
