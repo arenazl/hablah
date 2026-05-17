@@ -1,4 +1,5 @@
 """Endpoint /api/me — vista enriquecida del perfil del usuario logueado."""
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
@@ -9,6 +10,8 @@ from models.user import User
 from models.template import Template, Topic, UserInterest, TopicProgress, Session as SessionModel, ErrorLog
 
 router = APIRouter()
+
+CEFR_ORDER = ["A1", "A2", "B1", "B2", "C1", "C2"]
 
 
 @router.get("/profile")
@@ -81,6 +84,10 @@ async def get_my_profile(
         "active_template": {
             "id": template.id, "slug": template.slug, "name": template.name,
             "description": template.description, "voice_id": template.voice_id, "voice_label": template.voice_label,
+            "rigor": template.rigor,
+            "warmth_level": getattr(template, "warmth_level", None),
+            "block_on_repeat": getattr(template, "block_on_repeat", None),
+            "interruption_allowed": getattr(template, "interruption_allowed", None),
         } if template else None,
         "interests": interests,
         "progress": progress,
@@ -119,3 +126,129 @@ async def update_settings(
     await db.commit()
     await db.refresh(current)
     return {"ok": True}
+
+
+# ─── Streak heatmap ──────────────────────────────────────────────────────────
+
+@router.get("/streak-heatmap")
+async def streak_heatmap(
+    days: int = 28,
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Devuelve [{date, sessions, minutes, level}] para los ultimos N dias.
+
+    level es 0..4 calculado por cantidad de sesiones del dia.
+    """
+    days = max(1, min(days, 90))
+    today = datetime.now(timezone.utc).date()
+    start = today - timedelta(days=days - 1)
+    start_dt = datetime.combine(start, datetime.min.time(), tzinfo=timezone.utc)
+
+    rows = (await db.execute(
+        select(SessionModel.started_at, SessionModel.duration_seconds)
+        .where(SessionModel.user_id == current.id)
+        .where(SessionModel.started_at >= start_dt)
+    )).all()
+
+    bucket: dict[str, dict[str, int]] = {}
+    for started_at, dur in rows:
+        if not started_at:
+            continue
+        key = started_at.date().isoformat()
+        b = bucket.setdefault(key, {"sessions": 0, "minutes": 0})
+        b["sessions"] += 1
+        b["minutes"] += int((dur or 0) / 60)
+
+    out = []
+    for i in range(days):
+        d = start + timedelta(days=i)
+        key = d.isoformat()
+        b = bucket.get(key, {"sessions": 0, "minutes": 0})
+        count = b["sessions"]
+        if count == 0:
+            level = 0
+        elif count == 1:
+            level = 1
+        elif count == 2:
+            level = 2
+        elif count == 3:
+            level = 3
+        else:
+            level = 4
+        out.append({"date": key, "sessions": count, "minutes": b["minutes"], "level": level})
+    return out
+
+
+# ─── Level progress ──────────────────────────────────────────────────────────
+
+@router.get("/level-progress")
+async def level_progress(
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """% al proximo nivel + stats (charlas totales, horas habladas, fluidez 30d delta)."""
+    current_level = current.cefr_level or "B1"
+    try:
+        idx = CEFR_ORDER.index(current_level)
+    except ValueError:
+        idx = CEFR_ORDER.index("B1")
+    next_level = CEFR_ORDER[idx + 1] if idx < len(CEFR_ORDER) - 1 else CEFR_ORDER[-1]
+
+    sessions_total = (await db.execute(
+        select(func.count(SessionModel.id)).where(SessionModel.user_id == current.id)
+    )).scalar() or 0
+
+    total_seconds = (await db.execute(
+        select(func.coalesce(func.sum(SessionModel.duration_seconds), 0))
+        .where(SessionModel.user_id == current.id)
+    )).scalar() or 0
+    hours_spoken = round(total_seconds / 3600.0, 1)
+
+    # Avg score last 10 sessions analizadas para % al proximo nivel
+    last_scores = (await db.execute(
+        select(SessionModel.score)
+        .where(SessionModel.user_id == current.id)
+        .where(SessionModel.score.is_not(None))
+        .order_by(SessionModel.started_at.desc())
+        .limit(10)
+    )).scalars().all()
+    avg_score = sum(last_scores) / len(last_scores) if last_scores else 0
+
+    # Banda CEFR: A1=0..30, A2=30..45, B1=45..60, B2=60..75, C1=75..90, C2=90..100
+    bands = {"A1": (0, 30), "A2": (30, 45), "B1": (45, 60), "B2": (60, 75), "C1": (75, 90), "C2": (90, 100)}
+    lo, hi = bands.get(current_level, (45, 60))
+    if hi == lo:
+        pct = 0
+    else:
+        pct = int(max(0, min(100, (avg_score - lo) / (hi - lo) * 100)))
+
+    # Fluidez delta 30 dias: avg score ultimos 30 vs 30 previos
+    now = datetime.now(timezone.utc)
+    d30 = now - timedelta(days=30)
+    d60 = now - timedelta(days=60)
+    avg_30 = (await db.execute(
+        select(func.avg(SessionModel.score))
+        .where(SessionModel.user_id == current.id)
+        .where(SessionModel.started_at >= d30)
+        .where(SessionModel.score.is_not(None))
+    )).scalar()
+    avg_prev = (await db.execute(
+        select(func.avg(SessionModel.score))
+        .where(SessionModel.user_id == current.id)
+        .where(SessionModel.started_at >= d60)
+        .where(SessionModel.started_at < d30)
+        .where(SessionModel.score.is_not(None))
+    )).scalar()
+    fluency_delta_30d = None
+    if avg_30 is not None and avg_prev is not None and avg_prev > 0:
+        fluency_delta_30d = int(round((float(avg_30) - float(avg_prev))))
+
+    return {
+        "current": current_level,
+        "next": next_level,
+        "pct": pct,
+        "sessions_total": sessions_total,
+        "hours_spoken": hours_spoken,
+        "fluency_delta_30d": fluency_delta_30d,
+    }

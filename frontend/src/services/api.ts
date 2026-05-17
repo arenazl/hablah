@@ -53,6 +53,16 @@ export interface MeProfile {
   total_sessions: number
 }
 
+export interface HeatmapCell { date: string; sessions: number; minutes: number; level: number }
+export interface LevelProgress {
+  current: string
+  next: string
+  pct: number
+  sessions_total: number
+  hours_spoken: number
+  fluency_delta_30d: number | null
+}
+
 export const meAPI = {
   profile: () => api.get<MeProfile>('/me/profile').then((r) => r.data),
   updateSettings: (data: Partial<{
@@ -63,6 +73,8 @@ export const meAPI = {
     audio_retention_days: number
     active_template_id: number
   }>) => api.patch('/me/settings', data).then((r) => r.data),
+  streakHeatmap: (days = 28) => api.get<HeatmapCell[]>(`/me/streak-heatmap?days=${days}`).then((r) => r.data),
+  levelProgress: () => api.get<LevelProgress>('/me/level-progress').then((r) => r.data),
 }
 
 /* ────────────── TEMPLATES ────────────── */

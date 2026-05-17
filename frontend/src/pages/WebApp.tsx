@@ -259,11 +259,10 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   const langLabel = u.target_language === 'en' ? 'inglés' : u.target_language === 'pt' ? 'portugués' : u.target_language === 'it' ? 'italiano' : u.target_language
   const cefrPctVal = cefrPct(u.cefr_level || 'B1')
   const nextLevel = nextCefr(u.cefr_level || 'B1')
-  const totalSessions = profile.total_sessions ?? 0
-  const hoursSpoken = ((recent.reduce((sum, s) => sum + (s.duration_seconds || 0), 0)) / 3600).toFixed(1)
-
-  // Heatmap: últimos 28 días, calcula nivel por sesiones del día
-  const heatmap = buildHeatmap(recent)
+  const totalSessions = levelProg?.sessions_total ?? profile.total_sessions ?? 0
+  const hoursSpoken = levelProg ? levelProg.hours_spoken.toFixed(1) : ((recent.reduce((sum, s) => sum + (s.duration_seconds || 0), 0)) / 3600).toFixed(1)
+  const fluencyDelta30 = levelProg?.fluency_delta_30d ?? null
+  const heatmapCells = heatmap.length > 0 ? heatmapFromBackend(heatmap) : buildHeatmap(recent)
 
   // Streak / mejor racha
   const streak = u.streak_days || 0
@@ -507,7 +506,7 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
             </div>
 
             <div className="hp-heatmap" aria-label="Últimos 28 días de práctica">
-              {heatmap.map((cell, i) => (
+              {heatmapCells.map((cell, i) => (
                 <i key={i} className={cell.className}></i>
               ))}
             </div>
@@ -526,23 +525,28 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
 
           <div className="hp-card hp-level-card">
             <div className="hp-card-head">
-              <h3>Camino a {nextLevel}</h3>
+              <h3>Camino a {levelProg?.next || nextLevel}</h3>
               <Link to="/app/mapa" className="hp-link">Ver mapa →</Link>
             </div>
 
             <div className="hp-lhead">
               <div className="hp-ladder">
-                <b>{u.cefr_level}</b>
+                <b>{levelProg?.current || u.cefr_level}</b>
                 <span className="hp-arrow">→</span>
-                <span className="hp-next">{nextLevel}</span>
+                <span className="hp-next">{levelProg?.next || nextLevel}</span>
               </div>
-              <div style={{ fontFamily: 'var(--hp-font-display)', fontWeight: 700, fontSize: 14 }}>{cefrPctVal}%</div>
+              <div style={{ fontFamily: 'var(--hp-font-display)', fontWeight: 700, fontSize: 14 }}>{levelProg?.pct ?? cefrPctVal}%</div>
             </div>
-            <div className="hp-gauge"><i style={{ width: `${cefrPctVal}%` }}></i></div>
+            <div className="hp-gauge"><i style={{ width: `${levelProg?.pct ?? cefrPctVal}%` }}></i></div>
 
             <div className="hp-lstats">
               <div className="hp-li"><span className="hp-v">{totalSessions}</span><span className="hp-k">charlas</span></div>
-              <div className="hp-li"><span className="hp-v green">—</span><span className="hp-k">fluidez 30d</span></div>
+              <div className="hp-li">
+                <span className={`hp-v${fluencyDelta30 !== null && fluencyDelta30 >= 0 ? ' green' : ''}`}>
+                  {fluencyDelta30 === null ? '—' : `${fluencyDelta30 > 0 ? '+' : ''}${fluencyDelta30}`}
+                </span>
+                <span className="hp-k">fluidez 30d</span>
+              </div>
               <div className="hp-li"><span className="hp-v">{hoursSpoken}h</span><span className="hp-k">habladas</span></div>
             </div>
           </div>
@@ -669,6 +673,14 @@ function warmthLabel(n: number): string {
   if (n === 3) return 'Media'
   if (n === 2) return 'Baja'
   return 'Muy baja'
+}
+
+function heatmapFromBackend(cells: HeatmapCell[]): Array<{ className: string }> {
+  return cells.map((c, i) => {
+    const lvl = c.level === 0 ? 'miss' : `lvl${c.level}`
+    const isToday = i === cells.length - 1
+    return { className: `${lvl}${isToday ? ' today' : ''}` }
+  })
 }
 
 function buildHeatmap(sessions: SessionData[]): Array<{ className: string }> {
