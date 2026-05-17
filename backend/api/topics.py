@@ -62,6 +62,32 @@ async def my_interests(
     return result.scalars().all()
 
 
+from pydantic import BaseModel
+
+
+class _ReorderRequest(BaseModel):
+    topic_ids: list[int]
+
+
+# IMPORTANTE: /reorder antes que /{topic_id} para que FastAPI matchee primero
+# la ruta literal y no parsee "reorder" como topic_id (causa HTTP 422).
+@router.post("/my-interests/reorder")
+async def reorder_interests(
+    payload: _ReorderRequest,
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Reordena intereses. topic_ids en el orden deseado, position 0..N."""
+    for idx, topic_id in enumerate(payload.topic_ids):
+        await db.execute(
+            UserInterest.__table__.update()
+            .where(UserInterest.user_id == current.id, UserInterest.topic_id == topic_id)
+            .values(position=idx)
+        )
+    await db.commit()
+    return {"ok": True, "count": len(payload.topic_ids)}
+
+
 @router.post("/my-interests/{topic_id}")
 async def add_interest(
     topic_id: int,
@@ -102,31 +128,6 @@ async def remove_interest(
     )
     await db.commit()
     return {"ok": True}
-
-
-from pydantic import BaseModel
-
-
-class ReorderRequest(BaseModel):
-    topic_ids: list[int]  # nuevo orden completo
-
-
-@router.post("/my-interests/reorder")
-async def reorder_interests(
-    payload: ReorderRequest,
-    db: AsyncSession = Depends(get_db),
-    current: User = Depends(get_current_user),
-):
-    """Reordena los intereses del usuario. Recibe lista completa de topic_ids
-    en el orden deseado y asigna position 0..N."""
-    for idx, topic_id in enumerate(payload.topic_ids):
-        await db.execute(
-            UserInterest.__table__.update()
-            .where(UserInterest.user_id == current.id, UserInterest.topic_id == topic_id)
-            .values(position=idx)
-        )
-    await db.commit()
-    return {"ok": True, "count": len(payload.topic_ids)}
 
 
 @router.get("/{topic_id}", response_model=TopicResponse)

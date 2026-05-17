@@ -29,7 +29,8 @@ async def list_alumnos(
         ))
     if level:
         query = query.where(User.cefr_level == level)
-    query = query.order_by(desc(User.last_session_at).nulls_last(), User.nombre).limit(200)
+    # MySQL: NULLS LAST se simula con un CASE / IS NULL (la columna IS NULL devuelve 0/1).
+    query = query.order_by(User.last_session_at.is_(None), desc(User.last_session_at), User.nombre).limit(200)
 
     rows = (await db.execute(query)).scalars().all()
 
