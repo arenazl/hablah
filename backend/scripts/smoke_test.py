@@ -228,11 +228,18 @@ async def test_gemini_live() -> bool:
             fail("Gemini Live", f"no se pudo abrir WS: {type(e).__name__}: {e}")
             return False
 
-        # Setup mínimo: usar el mismo modelo que en producción
+        # Setup completo: replicar el que usa producción para detectar
+        # incompatibilidades de language code, voice name, system_instruction, etc.
         setup = {
             "setup": {
                 "model": LIVE_MODEL,
-                "generationConfig": {"responseModalities": ["AUDIO"]},
+                "generationConfig": {
+                    "responseModalities": ["AUDIO"],
+                    "speechConfig": {
+                        "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Aoede"}},
+                    },
+                },
+                "systemInstruction": {"parts": [{"text": "You are a helpful tutor."}]},
             }
         }
         await ws.send(_json.dumps(setup))

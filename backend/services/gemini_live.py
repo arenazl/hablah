@@ -111,7 +111,6 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str) -> None:
                     "voiceConfig": {
                         "prebuiltVoiceConfig": {"voiceName": "Aoede"},
                     },
-                    "languageCode": "en-GB" if ctx["language"] == "en" else "en-US",
                 },
             },
             "systemInstruction": {
