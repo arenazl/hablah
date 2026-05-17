@@ -39,3 +39,6 @@ build/
 # Personal data (vcf, exports)
 *.vcf
 _design*/
+
+# Local Netlify folder
+.netlify
