@@ -182,4 +182,32 @@ export const MAPA_CSS = `
 .mapa-page .mp-next-rt h4{font-family:var(--mp-font-display);font-weight:700;font-size:14px;margin:2px 0 0;letter-spacing:-0.005em}
 .mapa-page .mp-next-rt .gauge-mini{height:4px;border-radius:99px;background:var(--mp-bg-3);overflow:hidden;margin-top:8px}
 .mapa-page .mp-next-rt .gauge-mini i{display:block;height:100%;background:var(--mp-green);border-radius:99px}
+
+/* ───── MOBILE ───── */
+@media (max-width: 880px){
+  .mapa-page{padding:8px 16px 96px}
+  .mapa-page h1.mp-title{font-size:22px}
+  .mapa-page .mp-sub{font-size:13px}
+  .mapa-page .mp-stats{grid-template-columns:repeat(2,1fr);gap:10px}
+  .mapa-page .mp-mst{padding:12px 14px}
+  .mapa-page .mp-mst .v{font-size:24px}
+  .mapa-page .mp-mst .h{font-size:10.5px}
+  .mapa-page .mp-rescue-strip{padding:12px 14px}
+  .mapa-page .mp-rescue-strip .rt h4{font-size:14px}
+  .mapa-page .mp-rescue-strip .rt p{font-size:11.5px}
+  .mapa-page .mp-grid{grid-template-columns:1fr;gap:14px}
+  .mapa-page .mp-rc{position:static;top:auto}
+  .mapa-page .mp-route{padding:14px 14px}
+  .mapa-page .mp-route-head h3{font-size:15px}
+  .mapa-page .mp-route-head .rprog .p-bar{width:80px}
+  .mapa-page .mp-track{overflow-x:auto;padding-bottom:6px}
+  .mapa-page .mp-track .node{min-width:84px}
+  .mapa-page .mp-track-line{left:50px;right:30px}
+  .mapa-page .mp-route-foot .meta{font-size:11px;gap:8px}
+  .mapa-page .mp-next-grid{grid-template-columns:1fr;gap:8px}
+  .mapa-page .mp-sh h2{font-size:18px}
+  .mapa-page .mp-ach-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .mapa-page .ach{padding:8px}
+  .mapa-page .ach .at{font-size:9.5px}
+}
 `

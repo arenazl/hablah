@@ -57,6 +57,8 @@ const VIEW_TITLES: Record<string, string> = {
 export function WebApp() {
   const [profile, setProfile] = useState<MeProfile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const loc = useLocation()
 
   const refresh = useCallback(async () => {
     try {
@@ -74,15 +76,19 @@ export function WebApp() {
     refresh()
   }, [refresh])
 
+  // Cerrar drawer al cambiar de ruta
+  useEffect(() => { setDrawerOpen(false) }, [loc.pathname])
+
   return (
     <div className="webapp-root">
       <style>{WEBAPP_CSS}</style>
       <style>{HOY_CSS}</style>
       <style>{MAPA_CSS}</style>
       <div className="shell">
-        <Sidebar profile={profile} />
+        <Sidebar profile={profile} mobileOpen={drawerOpen} />
+        {drawerOpen && <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />}
         <main className="main">
-          <TopBar profile={profile} />
+          <TopBar profile={profile} onMenuClick={() => setDrawerOpen(true)} />
           <Routes>
             <Route path="/" element={<HoyView profile={profile} loading={loading} />} />
             <Route path="/practicar" element={<PracticarView profile={profile} onSessionEnd={refresh} />} />
@@ -99,13 +105,13 @@ export function WebApp() {
 }
 
 /* ──────── SIDEBAR ──────── */
-function Sidebar({ profile }: { profile: MeProfile | null }) {
+function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpen?: boolean }) {
   const user = profile?.user
   const initial = user?.nombre?.[0] || 'U'
   const pct = user?.cefr_level ? cefrPct(user.cefr_level) : 0
   const isAdmin = user?.role === 'admin'
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${mobileOpen ? ' mobile-open' : ''}`}>
       <div className="brand">
         <div className="brand-mark">h</div>
         <div className="brand-name">habláh</div>
@@ -182,7 +188,7 @@ function SidebarItem({ to, icon, label, badge, exact }: { to: string; icon: Reac
   )
 }
 
-function TopBar({ profile }: { profile: MeProfile | null }) {
+function TopBar({ profile, onMenuClick }: { profile: MeProfile | null; onMenuClick?: () => void }) {
   const loc = useLocation()
   const nav = useNavigate()
   const title = VIEW_TITLES[loc.pathname] ?? 'Hoy'
@@ -212,6 +218,18 @@ function TopBar({ profile }: { profile: MeProfile | null }) {
       } : undefined}
     >
       <div className="topbar-inner">
+        <button
+          className="hamburger-btn"
+          aria-label="Abrir menú"
+          onClick={onMenuClick}
+          style={isDark ? { color: 'white' } : undefined}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
         <h1 style={isDark ? { color: 'white' } : undefined}>{title}</h1>
         <div className="topbar-right">
           {streak > 0 && (

@@ -195,4 +195,33 @@ export const HOY_CSS = `
 .hoy-page .hp-tutor-tags{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
 .hoy-page .hp-tutor-tag{font-size:11px;background:rgba(255,255,255,.08);color:#B7BFBB;padding:4px 9px;border-radius:99px}
 .hoy-page .hp-tutor-tag.amber{background:rgba(255,184,0,.16);color:#FFE9A6}
+
+/* ───── MOBILE ───── */
+@media (max-width: 880px){
+  .hoy-page{padding:8px 16px 96px}
+  .hoy-page h1.hp-title{font-size:24px}
+  .hoy-page .hp-sub{font-size:13.5px}
+  .hoy-page .hp-grid{grid-template-columns:1fr;gap:14px}
+  .hoy-page .hp-hero{grid-template-columns:1fr;min-height:auto}
+  .hoy-page .hp-hero-l{padding:20px 18px 18px;gap:10px}
+  .hoy-page .hp-hero h2{font-size:30px}
+  .hoy-page .hp-hero h2 small{font-size:14px}
+  .hoy-page .hp-hero-r{border-left:0;border-top:1px solid rgba(255,255,255,.10);padding:18px}
+  .hoy-page .hp-btn{height:44px;padding:0 18px;font-size:14px;flex:1;justify-content:center}
+  .hoy-page .hp-hero-cta{flex-direction:column;width:100%}
+  .hoy-page .hp-hero-cta .hp-btn{width:100%}
+  .hoy-page .hp-hero-meta{font-size:11px;gap:10px}
+  .hoy-page .hp-rescue h3{font-size:18px}
+  .hoy-page .hp-rescue-body{grid-template-columns:1fr;gap:10px}
+  .hoy-page .hp-sess{grid-template-columns:42px 1fr 70px;gap:8px;padding:12px 4px}
+  .hoy-page .hp-sess .hp-dur,
+  .hoy-page .hp-sess .hp-sess-go{display:none}
+  .hoy-page .hp-sess-body .hp-meta{flex-wrap:wrap;gap:6px;font-size:11px}
+  .hoy-page .hp-fluency{align-items:flex-end}
+  .hoy-page .hp-fluency .hp-fl-num{font-size:13px}
+  .hoy-page .hp-card{padding:14px}
+  .hoy-page .hp-streak-card .hp-big .hp-n{font-size:38px}
+  .hoy-page .hp-heatmap{grid-template-columns:repeat(14,1fr);gap:3px}
+  .hoy-page .hp-tutor-meters{grid-template-columns:1fr}
+}
 `

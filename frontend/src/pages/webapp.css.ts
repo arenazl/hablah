@@ -439,9 +439,27 @@ export const WEBAPP_CSS = `
 .webapp-root .switch.off { background: var(--bg-3); }
 .webapp-root .switch.off::after { left: 3px; }
 
+.webapp-root .hamburger-btn { display: none; background: none; border: 0; padding: 8px; color: var(--fg-1); cursor: pointer; border-radius: 8px; }
+.webapp-root .hamburger-btn:hover { background: var(--bg-2); }
+.webapp-root .drawer-backdrop { display: none; }
+
 @media (max-width: 880px) {
   .webapp-root { --sidebar-w: 0; }
-  .webapp-root .sidebar { display: none; }
+  .webapp-root .hamburger-btn { display: inline-flex; align-items: center; justify-content: center; }
+  .webapp-root .sidebar {
+    display: flex; position: fixed; top: 0; left: 0; bottom: 0;
+    width: 280px; max-width: 80vw; z-index: 200;
+    transform: translateX(-100%);
+    transition: transform .22s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 0 40px rgba(0,0,0,.3);
+  }
+  .webapp-root .sidebar.mobile-open { transform: translateX(0); }
+  .webapp-root .drawer-backdrop {
+    display: block; position: fixed; inset: 0; z-index: 150;
+    background: rgba(0,0,0,.5); backdrop-filter: blur(2px);
+    animation: drawerFade .18s ease-out;
+  }
+  @keyframes drawerFade { from { opacity: 0 } to { opacity: 1 } }
   .webapp-root .shell { display: block; min-height: 100vh; }
   .webapp-root .topbar-inner { padding: 0 16px; gap: 10px; }
   .webapp-root .topbar h1 { font-size: 16px; }
