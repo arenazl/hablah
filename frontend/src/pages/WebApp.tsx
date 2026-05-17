@@ -404,46 +404,81 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     const others = extraTopics.filter(t => !interestIds.has(t.id))
 
     return (
-      <div className="view">
-        <div className="view-head">
-          <h2>¿De qué charlamos hoy?</h2>
-          <div className="sub">Elegí un tópico de tus intereses o explorá el catálogo. La sesión arranca al hacer click.</div>
+      <div className="view" style={{ maxWidth: 1320 }}>
+        {/* Hero */}
+        <div style={{ marginBottom: 36, maxWidth: 720 }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            background: 'var(--primary-tint)', color: 'var(--primary-dark)',
+            padding: '6px 12px', borderRadius: 999,
+            fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase',
+            marginBottom: 14,
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--primary)' }} />
+            Misión de hoy
+          </div>
+          <h1 style={{
+            fontSize: 38, fontWeight: 800, letterSpacing: '-.025em',
+            margin: '0 0 10px', lineHeight: 1.1, color: 'var(--fg-1)',
+          }}>
+            ¿De qué <span style={{ color: 'var(--primary)' }}>charlamos hoy</span>?
+          </h1>
+          <p style={{ fontSize: 16, color: 'var(--fg-3)', margin: 0, lineHeight: 1.5 }}>
+            Elegí un tópico de tus intereses, sorprendete con tema libre, o explorá el catálogo. La sesión arranca al hacer click.
+          </p>
         </div>
 
+        {/* Tus intereses — primera card destacada */}
         {interests.length > 0 && (
-          <>
-            <div className="eyebrow" style={{ marginTop: 24, marginBottom: 12 }}>Tus intereses</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
-              {interests.map((t) => (
-                <TopicPick key={t.id} title={t.title} category={t.category} highlighted
-                  onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }} />
+          <div style={{ marginBottom: 36 }}>
+            <SectionTitle eyebrow="Tus intereses" hint="ordenados según tu preferencia · editalos en /perfil" />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
+              {interests.map((t, idx) => (
+                <TopicPick
+                  key={t.id}
+                  title={t.title}
+                  category={t.category}
+                  variant={idx === 0 ? 'featured' : 'interest'}
+                  position={idx + 1}
+                  onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }}
+                />
               ))}
             </div>
-          </>
+          </div>
         )}
 
-        <div className="eyebrow" style={{ marginTop: 32, marginBottom: 12 }}>Tema libre</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
-          <TopicPick title="Sorprendéme · Tema libre" category="El tutor elige el ángulo"
-            onClick={() => { setSelectedTopicId(null); beginSession(null) }} />
+        {/* Tema libre */}
+        <div style={{ marginBottom: 36 }}>
+          <SectionTitle eyebrow="Tema libre" hint="Sin guión predefinido" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
+            <TopicPick
+              title="Sorprendéme · El tutor elige"
+              category="general"
+              variant="free"
+              onClick={() => { setSelectedTopicId(null); beginSession(null) }}
+            />
+          </div>
         </div>
 
+        {/* Catálogo */}
         {others.length > 0 && (
-          <>
-            <div className="eyebrow" style={{ marginTop: 32, marginBottom: 12 }}>Explorá del catálogo</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+          <div>
+            <SectionTitle eyebrow="Explorá del catálogo" hint={`${others.length} tópicos disponibles`} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
               {others.slice(0, 12).map((t) => (
-                <TopicPick key={t.id} title={t.title} category={t.category}
+                <TopicPick
+                  key={t.id} title={t.title} category={t.category}
                   hot={t.is_hot}
-                  onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }} />
+                  onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }}
+                />
               ))}
             </div>
             {others.length > 12 && (
-              <div style={{ marginTop: 12, fontSize: 13, color: 'var(--fg-3)' }}>
-                + {others.length - 12} tópicos más en el catálogo
+              <div style={{ marginTop: 16, fontSize: 13, color: 'var(--fg-3)', textAlign: 'center' }}>
+                + {others.length - 12} tópicos más · agregalos a tus intereses en <Link to="/app/perfil" style={{ color: 'var(--primary-dark)', fontWeight: 600 }}>Perfil</Link>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     )
@@ -1083,29 +1118,167 @@ function AddInterestCard({ profile, onChange }: { profile: MeProfile; onChange: 
   )
 }
 
+/* ──────── section title (eyebrow + hint con divider sutil) ──────── */
+function SectionTitle({ eyebrow, hint }: { eyebrow: string; hint?: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+      <div style={{
+        fontSize: 11, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase',
+        color: 'var(--fg-2)',
+      }}>{eyebrow}</div>
+      {hint && (
+        <>
+          <div style={{ flex: 1, height: 1, background: 'var(--border-1)' }} />
+          <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>{hint}</div>
+        </>
+      )}
+    </div>
+  )
+}
+
 /* ──────── topic picker ──────── */
-function TopicPick({ title, category, highlighted, hot, onClick }: {
-  title: string; category: string; highlighted?: boolean; hot?: boolean; onClick: () => void
-}) {
+
+// Mapping categoría → color + ícono SVG
+const CATEGORY_META: Record<string, { color: string; bg: string; icon: React.ReactNode; label: string }> = {
+  tech:        { color: '#1E4FB0', bg: '#E6EFFF', label: 'Tecnología', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> },
+  arte:        { color: '#5B21B6', bg: '#F1E8FF', label: 'Arte',       icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> },
+  lifestyle:   { color: '#008F63', bg: '#E6F7F1', label: 'Lifestyle',  icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> },
+  diseno:      { color: '#8A5A00', bg: '#FFF4D6', label: 'Diseño',     icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> },
+  negocios:    { color: '#0E1614', bg: '#EAEDE8', label: 'Negocios',   icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> },
+  viajes:      { color: '#3B82F6', bg: '#DBEAFE', label: 'Viajes',     icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg> },
+  deportes:    { color: '#C2410C', bg: '#FFEDD5', label: 'Deportes',   icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.53 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> },
+  gastronomia: { color: '#B91C1C', bg: '#FEE2E2', label: 'Gastronomía',icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg> },
+  ciencia:     { color: '#0891B2', bg: '#CFFAFE', label: 'Ciencia',    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z"/><path d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z"/></svg> },
+  general:     { color: '#5A625F', bg: '#F2F4F1', label: 'General',    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/></svg> },
+}
+
+function getCategoryMeta(cat: string) {
+  return CATEGORY_META[cat] || CATEGORY_META.general
+}
+
+interface TopicPickProps {
+  title: string
+  category: string
+  variant?: 'featured' | 'interest' | 'catalog' | 'free'
+  position?: number  // #1, #2... solo para "interest"
+  hot?: boolean
+  onClick: () => void
+}
+
+function TopicPick({ title, category, variant = 'catalog', position, hot, onClick }: TopicPickProps) {
+  const meta = getCategoryMeta(category)
+  const isFeatured = variant === 'featured'
+  const isFree = variant === 'free'
+
+  // Estilos según variant
+  let cardStyle: React.CSSProperties
+  let iconBoxStyle: React.CSSProperties
+  let categoryTextColor: string
+  let titleColor: string
+
+  if (isFeatured) {
+    cardStyle = {
+      background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
+      border: 'none', color: 'white',
+    }
+    iconBoxStyle = { background: 'rgba(255,255,255,.22)', color: 'white' }
+    categoryTextColor = 'rgba(255,255,255,.85)'
+    titleColor = 'white'
+  } else if (variant === 'interest') {
+    cardStyle = {
+      background: 'white',
+      border: '1.5px solid var(--primary)',
+      boxShadow: '0 2px 8px rgba(0,179,126,.10)',
+    }
+    iconBoxStyle = { background: meta.bg, color: meta.color }
+    categoryTextColor = meta.color
+    titleColor = 'var(--fg-1)'
+  } else if (isFree) {
+    cardStyle = {
+      background: '#0E1614', border: 'none', color: 'white',
+    }
+    iconBoxStyle = { background: 'rgba(255,184,0,.20)', color: '#FFB800' }
+    categoryTextColor = '#FFB800'
+    titleColor = 'white'
+  } else {
+    cardStyle = {
+      background: 'white', border: '1px solid var(--border-1)',
+    }
+    iconBoxStyle = { background: meta.bg, color: meta.color }
+    categoryTextColor = meta.color
+    titleColor = 'var(--fg-1)'
+  }
+
   return (
     <button
       onClick={onClick}
       style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6,
-        padding: 16, borderRadius: 14,
-        border: highlighted ? '2px solid var(--primary)' : '1px solid var(--border-1)',
-        background: highlighted ? 'var(--primary-tint)' : 'white',
+        position: 'relative',
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12,
+        padding: 18, borderRadius: 16,
         cursor: 'pointer', textAlign: 'left',
-        transition: 'all .15s var(--ease)',
+        transition: 'all .18s var(--ease)',
+        minHeight: 130,
+        ...cardStyle,
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-card)' }}
-      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-3px)'
+        e.currentTarget.style.boxShadow = isFeatured
+          ? '0 16px 32px rgba(0,179,126,.30)'
+          : isFree
+            ? '0 16px 32px rgba(13,20,18,.40)'
+            : '0 10px 24px rgba(13,20,18,.10)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.boxShadow = variant === 'interest' ? '0 2px 8px rgba(0,179,126,.10)' : 'none'
+      }}
     >
-      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: highlighted ? 'var(--primary-dark)' : 'var(--fg-3)', display: 'flex', alignItems: 'center', gap: 6 }}>
-        {category}
-        {hot && <span style={{ background: 'var(--accent-tint)', color: '#8A5A00', padding: '1px 6px', borderRadius: 999, fontSize: 9 }}>🔥</span>}
+      {/* Top row: icono + chip hot */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: 10,
+          display: 'grid', placeItems: 'center',
+          ...iconBoxStyle,
+        }}>
+          {isFree ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 11 14 9 22 21 10 13 10 13 2" /></svg>
+          ) : meta.icon}
+        </div>
+        {hot && (
+          <span style={{
+            background: isFeatured ? 'rgba(255,255,255,.22)' : 'var(--accent-tint)',
+            color: isFeatured ? 'white' : '#8A5A00',
+            fontSize: 9, fontWeight: 800, letterSpacing: '.08em',
+            padding: '3px 8px', borderRadius: 999,
+          }}>
+            🔥 HOT
+          </span>
+        )}
+        {position !== undefined && (
+          <span style={{
+            background: 'var(--primary-tint)', color: 'var(--primary-dark)',
+            fontSize: 11, fontWeight: 800,
+            padding: '3px 8px', borderRadius: 999, fontVariantNumeric: 'tabular-nums',
+          }}>
+            #{position}
+          </span>
+        )}
       </div>
-      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--fg-1)', lineHeight: 1.3 }}>{title}</div>
+
+      {/* Bottom: categoría + título */}
+      <div style={{ marginTop: 'auto' }}>
+        <div style={{
+          fontSize: 10, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase',
+          color: categoryTextColor, marginBottom: 4,
+        }}>
+          {isFree ? 'Tutor improvisa' : meta.label}
+        </div>
+        <div style={{
+          fontSize: 15, fontWeight: 700, color: titleColor, lineHeight: 1.25,
+          letterSpacing: '-.01em',
+        }}>{title}</div>
+      </div>
     </button>
   )
 }
