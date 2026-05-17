@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 
 import { WEBAPP_CSS } from './webapp.css'
 import { HOY_CSS } from './hoy.css'
+import { MAPA_CSS } from './mapa.css'
 import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic, HeatmapCell, LevelProgress } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
@@ -77,6 +78,7 @@ export function WebApp() {
     <div className="webapp-root">
       <style>{WEBAPP_CSS}</style>
       <style>{HOY_CSS}</style>
+      <style>{MAPA_CSS}</style>
       <div className="shell">
         <Sidebar profile={profile} />
         <main className="main">
@@ -113,7 +115,6 @@ function Sidebar({ profile }: { profile: MeProfile | null }) {
         <SidebarItem to="/app/practicar" icon={<MicIcon />} label="Practicar" badge="DAILY" />
         <SidebarItem to="/app/mapa" icon={<MapIcon />} label="Mapa de progreso" />
         <SidebarItem to="/app/historial" icon={<ClockIcon />} label="Historial" />
-        <SidebarItem to="/app/perfil" icon={<UserIcon />} label="Perfil" />
       </nav>
 
       {isAdmin && (
@@ -183,10 +184,24 @@ function SidebarItem({ to, icon, label, badge, exact }: { to: string; icon: Reac
 
 function TopBar({ profile }: { profile: MeProfile | null }) {
   const loc = useLocation()
+  const nav = useNavigate()
   const title = VIEW_TITLES[loc.pathname] ?? 'Hoy'
   const streak = profile?.user?.streak_days ?? 0
-  const initial = profile?.user?.nombre?.[0]?.toUpperCase() || 'U'
+  const user = profile?.user
+  const initial = user?.nombre?.[0]?.toUpperCase() || 'U'
   const isDark = loc.pathname.startsWith('/app/practicar')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onDoc = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [menuOpen])
+
   return (
     <header
       className="topbar"
@@ -205,17 +220,83 @@ function TopBar({ profile }: { profile: MeProfile | null }) {
               <span><span className="tnum">{streak}</span><span className="l"> días</span></span>
             </div>
           )}
-          <button
-            className="av-btn"
-            aria-label="Perfil"
-            style={isDark ? { background: 'rgba(255,255,255,.08)', color: 'white' } : undefined}
-          >
-            {initial}
-          </button>
+          <div ref={menuRef} style={{ position: 'relative' }}>
+            <button
+              className="av-btn"
+              aria-label="Perfil"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(v => !v)}
+              style={isDark ? { background: 'rgba(255,255,255,.08)', color: 'white' } : undefined}
+            >
+              {initial}
+            </button>
+            {menuOpen && (
+              <div
+                role="menu"
+                style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                  minWidth: 240, background: 'white',
+                  border: '1px solid var(--border-1)', borderRadius: 12,
+                  boxShadow: '0 14px 32px rgba(13,20,18,.16)',
+                  padding: 6, zIndex: 50,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px' }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: 999,
+                    background: 'var(--primary-tint)', color: 'var(--primary-dark)',
+                    display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 14,
+                  }}>{initial}</div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--fg-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {user?.nombre} {user?.apellido?.[0]}.
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--fg-3)' }}>Plan {user?.plan || 'free'}</div>
+                  </div>
+                </div>
+                <div style={{ height: 1, background: 'var(--border-1)', margin: '4px 0' }} />
+                <button
+                  onClick={() => { setMenuOpen(false); nav('/app/perfil') }}
+                  style={menuItemStyle}
+                  role="menuitem"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                  Mi perfil
+                </button>
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={() => { setMenuOpen(false); nav('/admin') }}
+                    style={menuItemStyle}
+                    role="menuitem"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/></svg>
+                    Backoffice
+                  </button>
+                )}
+                <div style={{ height: 1, background: 'var(--border-1)', margin: '4px 0' }} />
+                <button
+                  onClick={() => { localStorage.clear(); window.location.href = '/login' }}
+                  style={{ ...menuItemStyle, color: 'var(--danger)' }}
+                  role="menuitem"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
   )
+}
+
+const menuItemStyle: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+  padding: '9px 12px', borderRadius: 8, border: 'none', background: 'transparent',
+  cursor: 'pointer', fontSize: 13, fontWeight: 600, color: 'var(--fg-1)',
+  textAlign: 'left',
 }
 
 function MobileBar() {
@@ -997,24 +1078,109 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
           </div>
         </div>
 
-        {/* Tus intereses — primera card destacada */}
-        {interests.length > 0 && (
-          <div style={{ marginBottom: 36 }}>
-            <SectionTitle eyebrow="Tus intereses" hint="ordenados según tu preferencia · editalos en /perfil" />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
-              {interests.map((t, idx) => (
-                <TopicPick
-                  key={t.id}
-                  title={t.title}
-                  category={t.category}
-                  variant={idx === 0 ? 'featured' : 'interest'}
-                  position={idx + 1}
-                  onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }}
-                />
-              ))}
+        {/* Tus intereses — primera card destacada, con buscador + chips */}
+        {interests.length > 0 && (() => {
+          const cats = Array.from(new Set(interests.map(i => i.category)))
+          const q = interestQuery.trim().toLowerCase()
+          const filtered = interests
+            .map((t, idx) => ({ t, originalIdx: idx }))
+            .filter(({ t }) => interestCategory === 'all' || t.category === interestCategory)
+            .filter(({ t }) =>
+              q === '' ||
+              t.title.toLowerCase().includes(q) ||
+              (getCategoryMeta(t.category).label || '').toLowerCase().includes(q),
+            )
+          return (
+            <div style={{ marginBottom: 36 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 14, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-2)' }}>
+                    Tus intereses
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>
+                    {filtered.length} de {interests.length} · editalos en <Link to="/app/perfil" style={{ color: 'var(--primary-dark)', fontWeight: 600 }}>Perfil</Link>
+                  </div>
+                </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  background: 'white', border: '1px solid var(--border-1)', borderRadius: 999,
+                  padding: '6px 12px', minWidth: 260, flex: '0 1 320px',
+                  boxShadow: '0 1px 2px rgba(13,20,18,.04)',
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input
+                    value={interestQuery}
+                    onChange={(e) => setInterestQuery(e.target.value)}
+                    placeholder="Buscar en tus intereses…"
+                    style={{
+                      border: 'none', outline: 'none', background: 'transparent',
+                      fontSize: 13, color: 'var(--fg-1)', flex: 1, minWidth: 0,
+                    }}
+                  />
+                  {interestQuery && (
+                    <button
+                      onClick={() => setInterestQuery('')}
+                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--fg-3)', padding: 2, display: 'grid', placeItems: 'center' }}
+                      aria-label="Limpiar búsqueda"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {cats.length > 1 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
+                  {(['all', ...cats] as string[]).map(cat => {
+                    const active = interestCategory === cat
+                    const meta = cat === 'all' ? null : getCategoryMeta(cat)
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setInterestCategory(cat)}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 6,
+                          padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 600,
+                          border: active ? '1.5px solid var(--primary)' : '1px solid var(--border-1)',
+                          background: active ? 'var(--primary-tint)' : 'white',
+                          color: active ? 'var(--primary-dark)' : 'var(--fg-2)',
+                          cursor: 'pointer', transition: 'all .15s var(--ease)',
+                        }}
+                      >
+                        {meta && <span style={{ color: meta.color, display: 'inline-flex' }}>{meta.icon}</span>}
+                        {cat === 'all' ? 'Todas' : meta!.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+
+              {filtered.length === 0 ? (
+                <div style={{
+                  padding: 28, borderRadius: 14, border: '1px dashed var(--border-1)',
+                  background: 'white', textAlign: 'center', color: 'var(--fg-3)', fontSize: 13,
+                }}>
+                  Ningún interés coincide con “{interestQuery}”.
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
+                  {filtered.map(({ t, originalIdx }) => (
+                    <TopicPick
+                      key={t.id}
+                      title={t.title}
+                      category={t.category}
+                      variant={originalIdx === 0 ? 'featured' : 'interest'}
+                      position={originalIdx + 1}
+                      onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         {/* Tema libre */}
         <div style={{ marginBottom: 36 }}>
@@ -1693,36 +1859,370 @@ function SessionDetailView() {
 
 /* ──────── MAPA ──────── */
 function MapaView({ profile }: { profile: MeProfile | null }) {
-  if (!profile) return <div className="view">Cargando…</div>
+  const nav = useNavigate()
+  const [sessions, setSessions] = useState<SessionData[]>([])
+  const [levelProg, setLevelProg] = useState<LevelProgress | null>(null)
+  const [allTopics, setAllTopics] = useState<Topic[]>([])
+
+  useEffect(() => {
+    sessionsAPI.list().then(setSessions).catch(() => {})
+    meAPI.levelProgress().then(setLevelProg).catch(() => {})
+    topicsAPI.list().then(setAllTopics).catch(() => {})
+  }, [])
+
+  if (!profile) return <div className="mapa-page"><div style={{ color: 'var(--mp-fg-3)' }}>Cargando…</div></div>
+
+  const interests = profile.interests
+  const progByTopic: Record<number, typeof profile.progress[number]> = {}
+  for (const p of profile.progress) progByTopic[p.topic_id] = p
+
+  // Construyo "rutas" a partir de los intereses; las estaciones son demo derivadas del progress real
+  const routes = interests.map((t, idx) => {
+    const prog = progByTopic[t.id]
+    const stagesTotal = prog?.stages_total || 6
+    const stagesDone = prog?.stages_done || 0
+    const pct = prog?.pct ?? Math.round((stagesDone / stagesTotal) * 100)
+    const sessionsCount = prog?.sessions_count ?? sessions.filter(s => s.topic_id === t.id).length
+    const minutes = prog?.minutes_spoken ?? Math.round(sessions.filter(s => s.topic_id === t.id).reduce((sum, s) => sum + (s.duration_seconds || 0), 0) / 60)
+    const scores = sessions.filter(s => s.topic_id === t.id && s.score !== null).map(s => s.score as number)
+    const avgFluency = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null
+    const lastSess = sessions.filter(s => s.topic_id === t.id).sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())[0]
+
+    return {
+      topic: t,
+      idx,
+      stagesTotal,
+      stagesDone,
+      pct,
+      sessionsCount,
+      minutes,
+      avgFluency,
+      lastSess,
+      hasRescue: profile.user.insistent_mode_enabled && stagesDone >= 2 && stagesDone < stagesTotal && idx === 0, // demo: solo la primer ruta tiene rescate
+      isActive: stagesDone > 0,
+    }
+  }).sort((a, b) => b.stagesDone - a.stagesDone) // las que tienen progreso primero
+
+  const totalStations = routes.reduce((sum, r) => sum + r.stagesTotal, 0) || 28
+  const doneStations = routes.reduce((sum, r) => sum + r.stagesDone, 0)
+  const activeRoutes = routes.filter(r => r.isActive).length
+  const totalSessions = levelProg?.sessions_total ?? sessions.length
+  const totalMinutes = Math.round((levelProg?.hours_spoken ?? 0) * 60) || routes.reduce((sum, r) => sum + r.minutes, 0)
+  const xpWeek = sessions.filter(s => {
+    const d = new Date(s.started_at).getTime()
+    return Date.now() - d < 7 * 24 * 60 * 60 * 1000
+  }).reduce((sum, s) => sum + (s.score || 0), 0)
+
+  // tópicos por desbloquear: del catálogo, sacando los que ya son intereses
+  const interestIds = new Set(interests.map(i => i.id))
+  const toUnlock = allTopics.filter(t => !interestIds.has(t.id)).slice(0, 3)
+
+  const activeRoute = routes.find(r => r.hasRescue)
+
   return (
-    <div className="view">
-      <div className="view-head">
-        <h2>Mapa de progreso</h2>
-        <div className="sub">Tus tópicos activos. Las etapas se desbloquean charlando.</div>
+    <div className="mapa-page">
+      <section className="mp-greet">
+        <div className="mp-eyebrow">Mapa de progreso</div>
+        <h1 className="mp-title">
+          {doneStations} estaciones <em>desbloqueadas</em>, {Math.max(0, totalStations - doneStations)} por delante.
+        </h1>
+        <p className="mp-sub">
+          Cada tópico es una <b>ruta</b> con estaciones que se desbloquean charlando. Si un error se repite, una estación se bloquea hasta que la pelees — eso es el <b>modo insistente</b>.
+        </p>
+      </section>
+
+      {/* STATS */}
+      <div className="mp-stats">
+        <div className="mp-mst green">
+          <div className="k">Charlas totales</div>
+          <div className="v">{totalSessions}</div>
+          <div className="h">{Math.floor(totalMinutes / 60)}h {totalMinutes % 60}min hablando</div>
+        </div>
+        <div className="mp-mst">
+          <div className="k">Estaciones</div>
+          <div className="v">{doneStations}<small className="cold">/ {totalStations}</small></div>
+          <div className="h">{totalStations > 0 ? Math.round((doneStations / totalStations) * 100) : 0}% del mapa</div>
+        </div>
+        <div className="mp-mst">
+          <div className="k">Rutas activas</div>
+          <div className="v">{activeRoutes}<small className="cold">/ {interests.length} tópicos</small></div>
+          <div className="h">{interests.length - activeRoutes} sin empezar</div>
+        </div>
+        <div className="mp-mst">
+          <div className="k">Score esta semana</div>
+          <div className="v">+{xpWeek}</div>
+          <div className="h">{levelProg?.fluency_delta_30d !== null && levelProg?.fluency_delta_30d !== undefined ? `fluidez 30d ${levelProg.fluency_delta_30d > 0 ? '+' : ''}${levelProg.fluency_delta_30d}` : 'sumá una charla para arrancar'}</div>
+        </div>
       </div>
-      {profile.progress.length === 0 && (
-        <div style={{ padding: 30, textAlign: 'center', color: 'var(--fg-3)' }}>
-          Todavía no hay progreso. Empezá una charla para sumar tu primera etapa.
+
+      {/* RESCUE STRIP — visible solo si hay ruta con rescate */}
+      {activeRoute && (
+        <div className="mp-rescue-strip">
+          <div className="ri">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </div>
+          <div className="rt">
+            <div className="eye">Modo insistente activado</div>
+            <h4>Tu próxima estación está bloqueada hasta consolidar un error recurrente</h4>
+            <p>Detectamos un patrón repetido en <b>{activeRoute.topic.title}</b>. Cuando lo limpies, se libera la siguiente estación.</p>
+          </div>
+          <button className="mp-btn-dark" onClick={() => nav('/app/practicar')}>Empezar rescate →</button>
         </div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {profile.progress.map((p) => (
-          <div key={p.topic_id} className="card card-pad">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>{p.topic_title}</h3>
-              <span style={{ fontSize: 24, fontWeight: 800, color: 'var(--primary-dark)' }}>{p.pct}%</span>
+
+      <div className="mp-grid">
+        {/* LEFT — rutas */}
+        <div style={{ minWidth: 0 }}>
+
+          <div className="mp-sh">
+            <h2>Tus rutas</h2>
+            <div className="meta">{activeRoutes} activas · {Math.max(0, interests.length - activeRoutes)} por activar</div>
+          </div>
+
+          {routes.length === 0 && (
+            <div className="mp-card" style={{ padding: 30, textAlign: 'center', color: 'var(--mp-fg-3)' }}>
+              Todavía no tenés tópicos elegidos. <Link to="/app/perfil" style={{ color: 'var(--mp-green-700)', fontWeight: 600 }}>Elegí algunos →</Link>
             </div>
-            <div style={{ height: 8, background: 'var(--bg-3)', borderRadius: 4, margin: '14px 0 6px', overflow: 'hidden' }}>
-              <div style={{ width: `${p.pct}%`, height: '100%', background: 'var(--primary)', borderRadius: 4 }} />
+          )}
+
+          <div className="mp-routes">
+            {routes.map((r) => (
+              <RouteCard key={r.topic.id} route={r} onContinue={() => nav('/app/practicar')} />
+            ))}
+          </div>
+
+          {toUnlock.length > 0 && (
+            <>
+              <div className="mp-sh" style={{ marginTop: 32 }}>
+                <h2>Por desbloquear</h2>
+                <div className="meta">{toUnlock.length} tópicos sugeridos del catálogo</div>
+              </div>
+              <div className="mp-next-grid">
+                {toUnlock.map((t) => (
+                  <div key={t.id} className="mp-next-rt">
+                    <div className="nri" style={categoryIconStyle(t.category)}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                    </div>
+                    <div className="body">
+                      <div className="eye">{t.category}</div>
+                      <h4>{t.title}</h4>
+                      <div className="gauge-mini"><i style={{ width: '0%' }} /></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* RIGHT — legend + achievements */}
+        <aside className="mp-rc">
+          <div className="mp-card mp-legend-card">
+            <div className="mp-card-head"><h3>Cómo leer el mapa</h3></div>
+            <div className="row">
+              <div className="leg-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+              <div><div className="label">Estación dominada</div><div className="desc">la pasaste con buena fluidez</div></div>
             </div>
-            <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>
-              {p.stages_done} de {p.stages_total} etapas · {p.sessions_count} charlas · {p.minutes_spoken} min hablados
+            <div className="row">
+              <div className="leg-dot current" style={{ background: '#fff' }}></div>
+              <div><div className="label">Acá vas</div><div className="desc">la próxima estación de la ruta</div></div>
+            </div>
+            <div className="row">
+              <div className="leg-dot rescue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+              <div><div className="label">Misión de rescate</div><div className="desc">tenés un error repetido que pulir</div></div>
+            </div>
+            <div className="row">
+              <div className="leg-dot locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+              <div><div className="label">Bloqueada</div><div className="desc">se libera con la anterior</div></div>
+            </div>
+            <div className="row">
+              <div className="leg-dot" style={{ background: 'var(--mp-bg-2)', fontFamily: 'var(--mp-font-display)', fontWeight: 800, color: 'var(--mp-fg-4)', fontSize: 13 }}>★</div>
+              <div><div className="label">Final de ruta</div><div className="desc">desbloquea badge + nuevo tópico</div></div>
             </div>
           </div>
-        ))}
+
+          <div className="mp-card">
+            <div className="mp-card-head">
+              <h3>Logros</h3>
+              <span className="h-meta">{computeAchievements(profile, sessions).unlocked} / {computeAchievements(profile, sessions).total}</span>
+            </div>
+            <div className="mp-ach-grid">
+              {computeAchievements(profile, sessions).items.map((a) => (
+                <div key={a.id} className={`ach ${a.state}`}>
+                  <div className="ai">{a.icon}</div>
+                  <div className="at">{a.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   )
+}
+
+/* ── Route card ── */
+function RouteCard({ route, onContinue }: { route: any; onContinue: () => void }) {
+  const t = route.topic
+  const catKey = catSlug(t.category)
+  const stations = buildStations(route)
+  const lineProgress = Math.min(100, (route.stagesDone / Math.max(1, route.stagesTotal - 1)) * 100)
+  return (
+    <article className={`mp-route ${route.isActive ? 'active' : ''}`}>
+      <div className="mp-route-head">
+        <div className={`mp-route-ico cat-${catKey}`}>
+          <CategoryIcon cat={catKey} />
+        </div>
+        <div className="rinfo">
+          <div className={`rcat ${catKey}`}>{t.category}</div>
+          <h3>{t.title}</h3>
+        </div>
+        <div className="rprog">
+          <div className="p-num"><b>{route.stagesDone}</b> / {route.stagesTotal} estaciones</div>
+          <div className="p-bar"><i style={{ width: `${route.pct}%` }}></i></div>
+        </div>
+      </div>
+
+      <div className="mp-track" style={{ gridTemplateColumns: `repeat(${route.stagesTotal}, 1fr)` }}>
+        <div className="mp-track-line"><span className="progress" style={{ width: `${lineProgress}%` }}></span></div>
+        {stations.map((st, i) => (
+          <div key={i} className={`node ${st.state}`}>
+            <div className="dot">
+              {st.state === 'done' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>}
+              {st.state === 'current' && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg>}
+              {(st.state === 'locked' || st.state === 'rescue') && i < route.stagesTotal - 1 && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>}
+              {i === route.stagesTotal - 1 && st.state !== 'done' && st.state !== 'current' && <span style={{ fontWeight: 800 }}>★</span>}
+            </div>
+            <div className="nlabel">{st.label}</div>
+            <div className="nsub">{st.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mp-route-foot">
+        <div className="meta">
+          <span><b>{route.sessionsCount} charla{route.sessionsCount === 1 ? '' : 's'}</b> en esta ruta</span>
+          {route.avgFluency !== null && <span><b>fluidez {route.avgFluency}</b> promedio</span>}
+          {route.lastSess && <span>último: <b>{relativeDays(route.lastSess.started_at)}</b></span>}
+        </div>
+        <button className="mp-btn-primary" onClick={onContinue}>{route.stagesDone === 0 ? 'Empezar →' : 'Continuar →'}</button>
+      </div>
+    </article>
+  )
+}
+
+/* ── helpers de mapa ── */
+function catSlug(cat: string): string {
+  const c = (cat || '').toLowerCase()
+  if (c.includes('tec') || c.includes('ia')) return 'tec'
+  if (c.includes('arte') || c.includes('música') || c.includes('musica') || c.includes('entret')) return 'arte'
+  if (c.includes('vida') || c.includes('life') || c.includes('fit')) return 'life'
+  if (c.includes('depor')) return 'dep'
+  if (c.includes('cien')) return 'cien'
+  if (c.includes('viaj')) return 'via'
+  if (c.includes('gast') || c.includes('comid')) return 'gas'
+  return 'gen'
+}
+
+function CategoryIcon({ cat }: { cat: string }) {
+  const common = { fill: 'none' as const, stroke: 'currentColor' as const, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
+  if (cat === 'tec') return <svg viewBox="0 0 24 24" {...common}><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+  if (cat === 'arte') return <svg viewBox="0 0 24 24" {...common}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  if (cat === 'life') return <svg viewBox="0 0 24 24" {...common}><path d="M6 3v18M18 3v18M3 8h18M3 16h18"/></svg>
+  if (cat === 'dep') return <svg viewBox="0 0 24 24" {...common}><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+  if (cat === 'cien') return <svg viewBox="0 0 24 24" {...common}><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4"/></svg>
+  if (cat === 'via') return <svg viewBox="0 0 24 24" {...common}><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+  if (cat === 'gas') return <svg viewBox="0 0 24 24" {...common}><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/></svg>
+  return <svg viewBox="0 0 24 24" {...common}><circle cx="12" cy="12" r="9"/></svg>
+}
+
+function categoryIconStyle(cat: string): React.CSSProperties {
+  const s = catSlug(cat)
+  const colors: Record<string, { background: string; color: string }> = {
+    tec: { background: '#EEF2FF', color: '#4338CA' },
+    arte: { background: '#F3E8FF', color: '#7C3AED' },
+    life: { background: '#FCE7F3', color: '#BE185D' },
+    dep: { background: '#FFEDD5', color: '#C2410C' },
+    cien: { background: '#CFFAFE', color: '#0E7490' },
+    via: { background: '#DBEAFE', color: '#1D4ED8' },
+    gas: { background: '#FFE4E6', color: '#BE123C' },
+    gen: { background: '#F1F4F1', color: '#3A4441' },
+  }
+  return colors[s] || colors.gen
+}
+
+interface Station { label: string; sub: string; state: 'done' | 'current' | 'locked' | 'rescue' }
+
+function buildStations(route: any): Station[] {
+  const total = route.stagesTotal
+  const done = route.stagesDone
+  const labels = generateStationLabels(route.topic, total)
+  const stations: Station[] = []
+  for (let i = 0; i < total; i++) {
+    let state: Station['state'] = 'locked'
+    let sub = 'bloqueada'
+    if (i < done) {
+      state = 'done'
+      sub = ''
+    } else if (i === done && route.hasRescue && i === 2) {
+      state = 'rescue'
+      sub = 'rescate'
+    } else if (i === done) {
+      state = 'current'
+      sub = 'acá vas'
+    }
+    if (i === total - 1 && state === 'locked') sub = 'final'
+    stations.push({ label: labels[i] || `Estación ${i + 1}`, sub, state })
+  }
+  return stations
+}
+
+function generateStationLabels(topic: any, total: number): string[] {
+  const kws: string[] = topic.keywords || []
+  const base = topic.title.split(' ')[0]
+  const generic = ['Bases', 'Conceptos clave', 'Profundización', 'Casos reales', 'Vocabulario avanzado', 'Cierre y dominio']
+  const labels: string[] = []
+  for (let i = 0; i < total; i++) {
+    if (kws[i]) labels.push(kws[i])
+    else labels.push(generic[i] || `${base} · etapa ${i + 1}`)
+  }
+  return labels
+}
+
+function relativeDays(iso: string): string {
+  const d = new Date(iso)
+  const days = Math.floor((Date.now() - d.getTime()) / (24 * 60 * 60 * 1000))
+  if (days === 0) return 'hoy'
+  if (days === 1) return 'ayer'
+  return `hace ${days} días`
+}
+
+interface Achievement { id: string; label: string; state: 'unlocked' | 'amber' | 'locked'; icon: React.ReactNode }
+
+function computeAchievements(profile: MeProfile, sessions: SessionData[]): { items: Achievement[]; unlocked: number; total: number } {
+  const u = profile.user
+  const totalSessions = sessions.length
+  const streakBest = u.streak_best || 0
+  const hasRescue = sessions.some(s => s.is_rescue)
+  const fluencyScores = sessions.map(s => s.score).filter((s): s is number => s !== null)
+  const avgFluency = fluencyScores.length > 0 ? fluencyScores.reduce((a, b) => a + b, 0) / fluencyScores.length : 0
+  const activeRoutes = profile.interests.filter(t => sessions.some(s => s.topic_id === t.id)).length
+
+  const icon = (path: React.ReactNode) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{path}</svg>
+
+  const all: Achievement[] = [
+    { id: 'streak7', label: 'Racha 7 días', state: streakBest >= 7 ? 'unlocked' : 'locked', icon: icon(<path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/>) },
+    { id: 'rescue1', label: 'Primer rescate', state: hasRescue ? 'unlocked' : 'locked', icon: icon(<path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/>) },
+    { id: 'flu20', label: 'Fluidez 70+', state: avgFluency >= 70 ? 'unlocked' : 'locked', icon: icon(<path d="M3 12h4l3-8 4 16 3-8h4"/>) },
+    { id: 'streak14', label: 'Racha 14 días', state: streakBest >= 14 ? 'amber' : 'locked', icon: icon(<path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/>) },
+    { id: 'routes5', label: '5 rutas activas', state: activeRoutes >= 5 ? 'unlocked' : 'locked', icon: icon(<><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/></>) },
+    { id: 's10', label: '10 charlas', state: totalSessions >= 10 ? 'unlocked' : 'locked', icon: icon(<><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></>) },
+    { id: 'route1', label: 'Ruta completa', state: profile.progress.some(p => p.pct >= 100) ? 'unlocked' : 'locked', icon: icon(<path d="M5 12l5 5L20 7"/>) },
+    { id: 'c1', label: 'Nivel C1', state: (u.cefr_level === 'C1' || u.cefr_level === 'C2') ? 'unlocked' : 'locked', icon: icon(<path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/>) },
+    { id: 's100', label: '100 charlas', state: totalSessions >= 100 ? 'unlocked' : 'locked', icon: icon(<circle cx="12" cy="12" r="9"/>) },
+  ]
+  const unlocked = all.filter(a => a.state !== 'locked').length
+  return { items: all, unlocked, total: all.length }
 }
 
 /* ──────── HISTORIAL ──────── */
@@ -2094,9 +2594,10 @@ function TopicPick({ title, category, variant = 'catalog', position, hot, onClic
     titleColor = 'white'
   } else if (variant === 'interest') {
     cardStyle = {
-      background: 'white',
-      border: '1.5px solid var(--primary)',
-      boxShadow: '0 2px 8px rgba(0,179,126,.10)',
+      background: `linear-gradient(180deg, ${meta.bg} 0%, white 38%)`,
+      border: '1px solid var(--border-1)',
+      borderTop: `3px solid ${meta.color}`,
+      boxShadow: '0 1px 2px rgba(13,20,18,.04)',
     }
     iconBoxStyle = { background: meta.bg, color: meta.color }
     categoryTextColor = meta.color
@@ -2139,7 +2640,7 @@ function TopicPick({ title, category, variant = 'catalog', position, hot, onClic
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = variant === 'interest' ? '0 2px 8px rgba(0,179,126,.10)' : 'none'
+        e.currentTarget.style.boxShadow = variant === 'interest' ? '0 1px 2px rgba(13,20,18,.04)' : 'none'
       }}
     >
       {/* Top row: icono + chip hot */}
@@ -2168,9 +2669,11 @@ function TopicPick({ title, category, variant = 'catalog', position, hot, onClic
         )}
         {position !== undefined && (
           <span style={{
-            background: 'var(--primary-tint)', color: 'var(--primary-dark)',
+            background: isFeatured ? 'rgba(255,255,255,.22)' : meta.bg,
+            color: isFeatured ? 'white' : meta.color,
             fontSize: 11, fontWeight: 800,
             padding: '3px 8px', borderRadius: 999, fontVariantNumeric: 'tabular-nums',
+            border: isFeatured ? 'none' : `1px solid ${meta.color}22`,
           }}>
             #{position}
           </span>

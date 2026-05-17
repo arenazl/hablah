@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mapa de progreso — habláh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  .map-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px}
+  @media (max-width:1180px){.map-grid{grid-template-columns:1fr}}
+
+  /* ===== STATS STRIP ===== */
+  .map-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .mst{background:var(--surface);border:1px solid var(--border-1);border-radius:14px;padding:14px 16px;position:relative;overflow:hidden}
+  .mst .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg-3);font-weight:700}
+  .mst .v{font-family:var(--font-display);font-weight:800;font-size:30px;letter-spacing:-0.025em;color:var(--fg-1);margin-top:4px;line-height:1;font-feature-settings:"tnum"}
+  .mst .v small{font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--green-700);margin-left:5px;letter-spacing:0}
+  .mst .v small.cold{color:var(--fg-4)}
+  .mst .h{font-size:11.5px;color:var(--fg-3);margin-top:6px}
+  .mst.green{background:linear-gradient(160deg,#062B25,#054A3A);color:#fff;border-color:transparent}
+  .mst.green .k{color:#7CE7BD}
+  .mst.green .v{color:#fff}
+  .mst.green .v small{color:#5EE0B0}
+  .mst.green .h{color:rgba(255,255,255,.55)}
+  .mst.green::after{content:"";position:absolute;right:-40px;bottom:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(0,179,126,.25),transparent 70%)}
+
+  /* ===== RESCUE BANNER (compact) ===== */
+  .rescue-strip{background:linear-gradient(180deg,#FFFDF4,#FFF4D8);border:1px solid #F4E1A4;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:16px;margin-bottom:24px}
+  .rescue-strip .ri{width:38px;height:38px;border-radius:11px;background:var(--amber);color:#3A2A00;display:grid;place-items:center;flex-shrink:0;animation:pulse-amber 2s ease-out infinite}
+  .rescue-strip .rt{flex:1}
+  .rescue-strip .rt .eye{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#8A6A00;margin-bottom:2px}
+  .rescue-strip .rt h4{font-family:var(--font-display);font-weight:700;font-size:16px;margin:0;color:#3A2A00;letter-spacing:-0.01em}
+  .rescue-strip .rt p{margin:2px 0 0;font-size:12.5px;color:#6A4F00}
+  .rescue-strip .rt b{font-weight:600}
+
+  /* ===== SECTION HEADS ===== */
+  .sh{display:flex;align-items:baseline;justify-content:space-between;margin:8px 0 14px}
+  .sh h2{font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:-0.02em;margin:0}
+  .sh .meta{font-size:12.5px;color:var(--fg-3)}
+
+  /* ===== ROUTES (tracks) ===== */
+  .routes{display:flex;flex-direction:column;gap:14px}
+  .route{background:var(--surface);border:1px solid var(--border-1);border-radius:16px;padding:18px 20px;position:relative}
+  .route.active{border-color:rgba(0,179,126,.35);box-shadow:0 0 0 4px rgba(0,179,126,.06)}
+  .route.locked{opacity:.7;background:repeating-linear-gradient(135deg,#FAFBFA,#FAFBFA 6px,#F1F4F1 6px,#F1F4F1 12px)}
+  .route.locked .track .node{filter:grayscale(.4)}
+
+  .route-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .route-ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+  .route-ico svg{width:22px;height:22px;stroke-width:2.2}
+  .route-head .rinfo{flex:1;min-width:0}
+  .route-head .rcat{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;line-height:1}
+  .route-head h3{font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.01em;margin:4px 0 0;color:var(--fg-1)}
+  .route-head .rprog{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+  .route-head .rprog .p-num{font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:.02em;color:var(--fg-2);font-feature-settings:"tnum"}
+  .route-head .rprog .p-num b{font-size:20px;color:var(--fg-1);letter-spacing:-0.01em}
+  .route-head .rprog .p-bar{width:120px;height:5px;border-radius:99px;background:var(--bg-2);overflow:hidden}
+  .route-head .rprog .p-bar i{display:block;height:100%;background:var(--green);border-radius:99px}
+
+  /* TRACK */
+  .track{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:0;align-items:start;padding:6px 0 0}
+  .track-line{position:absolute;top:18px;left:5%;right:5%;height:2px;background:repeating-linear-gradient(90deg,var(--border-3) 0 6px,transparent 6px 12px);z-index:0}
+  .track-line .progress{position:absolute;left:0;top:0;bottom:0;background:var(--green);border-radius:99px;height:2px}
+  .node{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:0 4px;cursor:pointer}
+  .node .dot{width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid var(--border-3);display:grid;place-items:center;color:var(--fg-4);transition:all .18s var(--ease)}
+  .node .dot svg{width:16px;height:16px;stroke-width:2.4}
+  .node.done .dot{background:var(--green);border-color:var(--green);color:#fff}
+  .node.current .dot{background:#fff;border-color:var(--green);color:var(--green);box-shadow:0 0 0 4px rgba(0,179,126,.18);position:relative}
+  .node.current .dot::before{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(0,179,126,.5);animation:ringp 2s var(--ease) infinite}
+  @keyframes ringp{0%{transform:scale(.95);opacity:1}100%{transform:scale(1.5);opacity:0}}
+  .node.locked .dot{background:var(--bg-2);border-color:var(--border-2);color:var(--fg-4)}
+  .node.rescue .dot{background:#FFF7DD;border-color:var(--amber);color:#8A6A00;box-shadow:0 0 0 4px rgba(255,184,0,.18)}
+  .node .nlabel{font-size:11.5px;font-weight:600;color:var(--fg-2);line-height:1.3;max-width:120px}
+  .node.locked .nlabel{color:var(--fg-4);font-weight:500}
+  .node.current .nlabel{color:var(--fg-1)}
+  .node .nsub{font-size:10.5px;color:var(--fg-4);font-weight:500;margin-top:-2px}
+  .node.current .nsub{color:var(--green-700);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+  .node.rescue .nsub{color:#8A6A00;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+  .route-foot{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px dashed var(--border-2);gap:10px;flex-wrap:wrap}
+  .route-foot .meta{display:flex;gap:14px;font-size:12px;color:var(--fg-3)}
+  .route-foot .meta b{color:var(--fg-2);font-weight:600}
+
+  /* category colors reuse practicar */
+  .cat-tec{background:#EEF2FF;color:#4338CA}
+  .cat-arte{background:#F3E8FF;color:#7C3AED}
+  .cat-life{background:#FCE7F3;color:#BE185D}
+  .cat-dep{background:#FFEDD5;color:#C2410C}
+  .cat-cien{background:#CFFAFE;color:#0E7490}
+  .cat-via{background:#DBEAFE;color:#1D4ED8}
+  .rcat.tec{color:#4338CA}
+  .rcat.arte{color:#7C3AED}
+  .rcat.life{color:#BE185D}
+  .rcat.dep{color:#C2410C}
+  .rcat.cien{color:#0E7490}
+
+  /* ===== RIGHT COLUMN ===== */
+  .rc{display:flex;flex-direction:column;gap:18px;position:sticky;top:80px;align-self:start}
+  .legend-card .row{display:flex;align-items:center;gap:10px;font-size:13px;padding:8px 0;border-bottom:1px dashed var(--border-1)}
+  .legend-card .row:last-child{border-bottom:0}
+  .legend-card .leg-dot{width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--border-3);display:grid;place-items:center;flex-shrink:0}
+  .legend-card .leg-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+  .legend-card .leg-dot.current{border-color:var(--green);color:var(--green);box-shadow:0 0 0 3px rgba(0,179,126,.18)}
+  .legend-card .leg-dot.rescue{background:#FFF7DD;border-color:var(--amber);color:#8A6A00}
+  .legend-card .leg-dot.locked{background:var(--bg-2);color:var(--fg-4)}
+  .legend-card .row svg{width:11px;height:11px}
+  .legend-card .row .label{font-weight:600;color:var(--fg-1);font-size:13px}
+  .legend-card .row .desc{font-size:11.5px;color:var(--fg-3)}
+
+  /* Achievements */
+  .ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+  .ach{aspect-ratio:1;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px;text-align:center;background:var(--bg-2);border:1px solid var(--border-1);position:relative}
+  .ach .ai{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--bg-3);color:var(--fg-3)}
+  .ach .ai svg{width:18px;height:18px}
+  .ach .at{font-family:var(--font-display);font-weight:700;font-size:10.5px;line-height:1.2;color:var(--fg-2);max-width:90%}
+  .ach.unlocked{background:linear-gradient(160deg,#E6F7F0,#C9EEDC);border-color:rgba(0,179,126,.2)}
+  .ach.unlocked .ai{background:var(--green);color:#fff}
+  .ach.unlocked .at{color:#06321F}
+  .ach.amber{background:linear-gradient(160deg,#FFF7DD,#FFE9A6);border-color:rgba(255,184,0,.3)}
+  .ach.amber .ai{background:var(--amber);color:#3A2A00}
+  .ach.amber .at{color:#3A2A00}
+  .ach.locked{opacity:.6}
+  .ach.locked .ai{background:var(--bg-3);color:var(--fg-4)}
+
+  /* Coming soon (next to unlock) */
+  .next-rt{background:var(--bg-2);border:1px dashed var(--border-3);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+  .next-rt .nri{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#fff;color:var(--fg-3);flex-shrink:0;border:1px solid var(--border-2)}
+  .next-rt .body{flex:1;min-width:0}
+  .next-rt .eye{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--fg-3)}
+  .next-rt h4{font-family:var(--font-display);font-weight:700;font-size:14px;margin:2px 0 0;letter-spacing:-0.005em}
+  .next-rt .gauge-mini{height:4px;border-radius:99px;background:var(--bg-3);overflow:hidden;margin-top:8px}
+  .next-rt .gauge-mini i{display:block;height:100%;background:var(--green);border-radius:99px}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+    </div>
+    <nav class="nav">
+      <a href="Hoy.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>Hoy</a>
+      <a href="Practicar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>Practicar<span class="pill">DAILY</span></a>
+      <a href="Mapa.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>Mapa de progreso<span class="pill dot"></span></a>
+      <a href="Historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historial</a>
+      <a href="Perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Perfil</a>
+    </nav>
+
+    <div class="side-section">
+      <div class="label">Tu progreso</div>
+      <div class="level-row"><span class="nivel">Nivel</span><span class="b2">B2</span></div>
+      <div class="level-bar"><i style="width:62%"></i></div>
+      <div class="level-hint">62% hasta C1</div>
+    </div>
+
+    <div class="side-section">
+      <div class="label">Estaciones</div>
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#B7BFBB">
+        <span>desbloqueadas <b style="color:#7CE7BD;font-weight:700">12</b></span>
+        <span>totales <b style="color:#fff;font-weight:700">28</b></span>
+      </div>
+    </div>
+
+    <div class="side-user">
+      <div class="avatar">L</div>
+      <div class="meta"><span class="name">Lautaro M.</span><span class="plan">Plan pro</span></div>
+      <button class="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg></button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div class="crumbs">Mapa de progreso <span>· tus rutas</span></div>
+      <div class="top-actions">
+        <span class="streak-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB800" stroke="#7A5800" stroke-width="1.4" stroke-linejoin="round"><path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/></svg> 12 días</span>
+        <a href="Practicar.html" class="btn btn-sm btn-dark">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg>
+          Empezar charla
+        </a>
+      </div>
+    </header>
+
+    <section class="greet">
+      <div class="eyebrow">Mapa de progreso</div>
+      <h1 class="title">12 estaciones <em>desbloqueadas</em>, 16 por delante.</h1>
+      <p class="sub">Cada tópico es una <b>ruta</b> con estaciones que se desbloquean charlando. Si un error se repite, una estación se bloquea hasta que la pelees — eso es el <b>modo insistente</b>.</p>
+    </section>
+
+    <!-- STATS -->
+    <div class="map-stats">
+      <div class="mst green">
+        <div class="k">Charlas totales</div>
+        <div class="v">38<small>+5 esta semana</small></div>
+        <div class="h">3h 12min hablando</div>
+      </div>
+      <div class="mst">
+        <div class="k">Estaciones</div>
+        <div class="v">12<small>/ 28</small></div>
+        <div class="h">43% del mapa</div>
+      </div>
+      <div class="mst">
+        <div class="k">Rutas activas</div>
+        <div class="v">5<small>/ 20 tópicos</small></div>
+        <div class="h">próxima desbloquea en 2 charlas</div>
+      </div>
+      <div class="mst">
+        <div class="k">XP esta semana</div>
+        <div class="v">+318<small>+22%</small></div>
+        <div class="h">tu mejor semana del mes</div>
+      </div>
+    </div>
+
+    <!-- RESCUE BANNER -->
+    <div class="rescue-strip">
+      <div class="ri">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      </div>
+      <div class="rt">
+        <div class="eye">Modo insistente activado</div>
+        <h4>Tu próxima estación está bloqueada hasta consolidar pasado simple irregular</h4>
+        <p>3 sesiones repitiendo el mismo error. Cuando lo limpies, se libera <b>"Producción musical · técnica avanzada"</b>.</p>
+      </div>
+      <a href="Charla.html" class="btn btn-sm btn-dark">Empezar rescate →</a>
+    </div>
+
+    <div class="map-grid">
+      <!-- LEFT — routes -->
+      <div style="min-width:0">
+
+        <div class="sh">
+          <h2>Tus rutas</h2>
+          <div class="meta">5 activas · 15 por activar</div>
+        </div>
+
+        <div class="routes">
+
+          <!-- ROUTE 1 — UK Garage (active, with rescue) -->
+          <article class="route active">
+            <div class="route-head">
+              <div class="route-ico cat-arte">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              </div>
+              <div class="rinfo">
+                <div class="rcat arte">Arte · Música</div>
+                <h3>UK Garage · de los orígenes al hoy</h3>
+              </div>
+              <div class="rprog">
+                <div class="p-num"><b>2</b> / 6 estaciones</div>
+                <div class="p-bar"><i style="width:33%"></i></div>
+              </div>
+            </div>
+
+            <div class="track">
+              <div class="track-line"><span class="progress" style="width:40%"></span></div>
+
+              <div class="node done">
+                <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+                <div class="nlabel">Qué es y cuándo nació</div>
+                <div class="nsub">hace 9 días</div>
+              </div>
+              <div class="node done">
+                <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+                <div class="nlabel">Pirate radio y south london</div>
+                <div class="nsub">hace 4 días</div>
+              </div>
+              <div class="node rescue">
+                <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+                <div class="nlabel">Sub-géneros: 2-step, speed</div>
+                <div class="nsub">rescate</div>
+              </div>
+              <div class="node locked">
+                <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+                <div class="nlabel">Producción · técnica</div>
+                <div class="nsub">bloqueada</div>
+              </div>
+              <div class="node locked">
+                <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+                <div class="nlabel">Cultura · clubs y crews</div>
+                <div class="nsub">bloqueada</div>
+              </div>
+              <div class="node locked">
+                <div class="dot">★</div>
+                <div class="nlabel">Hoy: revival y futuro</div>
+                <div class="nsub">final</div>
+              </div>
+            </div>
+
+            <div class="route-foot">
+              <div class="meta">
+                <span><b>5 charlas</b> en esta ruta</span>
+                <span><b>fluidez 74</b> promedio</span>
+                <span>último: <b>hace 4 días</b></span>
+              </div>
+              <a href="Charla.html" class="btn btn-sm btn-primary">Continuar →</a>
+            </div>
+          </article>
+
+          <!-- ROUTE 2 — Software architecture -->
+          <article class="route">
+            <div class="route-head">
+              <div class="route-ico cat-tec">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              </div>
+              <div class="rinfo">
+                <div class="rcat tec">Tecnología</div>
+                <h3>Arquitectura de software</h3>
+              </div>
+              <div class="rprog">
+                <div class="p-num"><b>4</b> / 6 estaciones</div>
+                <div class="p-bar"><i style="width:67%"></i></div>
+              </div>
+            </div>
+
+            <div class="track">
+              <div class="track-line"><span class="progress" style="width:75%"></span></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Monolito vs servicios</div><div class="nsub">hace 18 días</div></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Microservicios · pros y contras</div><div class="nsub">hace 11 días</div></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Bases de datos · SQL/NoSQL</div><div class="nsub">hace 7 días</div></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Caching · CDN, redis</div><div class="nsub">hace 2 días</div></div>
+              <div class="node current"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg></div><div class="nlabel">Observabilidad · logs y métricas</div><div class="nsub">acá vas</div></div>
+              <div class="node locked"><div class="dot">★</div><div class="nlabel">Arquitectura distribuida</div><div class="nsub">final</div></div>
+            </div>
+
+            <div class="route-foot">
+              <div class="meta">
+                <span><b>8 charlas</b> en esta ruta</span>
+                <span><b>fluidez 81</b> promedio</span>
+                <span>último: <b>hace 2 días</b></span>
+              </div>
+              <a href="Charla.html" class="btn btn-sm btn-primary">Continuar →</a>
+            </div>
+          </article>
+
+          <!-- ROUTE 3 — Powerlifting -->
+          <article class="route">
+            <div class="route-head">
+              <div class="route-ico cat-life">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M18 3v18M3 8h18M3 16h18"/></svg>
+              </div>
+              <div class="rinfo">
+                <div class="rcat life">Lifestyle · fitness</div>
+                <h3>Entrenamiento de fuerza · powerlifting</h3>
+              </div>
+              <div class="rprog">
+                <div class="p-num"><b>3</b> / 5 estaciones</div>
+                <div class="p-bar"><i style="width:60%"></i></div>
+              </div>
+            </div>
+
+            <div class="track" style="grid-template-columns:repeat(5,1fr)">
+              <div class="track-line"><span class="progress" style="width:55%"></span></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Bases · forma y técnica</div><div class="nsub">hace 14 días</div></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Periodización</div><div class="nsub">hace 8 días</div></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">RPE y deload</div><div class="nsub">hace 2 días</div></div>
+              <div class="node current"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg></div><div class="nlabel">Suplementación basada en evidencia</div><div class="nsub">acá vas</div></div>
+              <div class="node locked"><div class="dot">★</div><div class="nlabel">Competir · meets y categorías</div><div class="nsub">final</div></div>
+            </div>
+
+            <div class="route-foot">
+              <div class="meta">
+                <span><b>6 charlas</b> en esta ruta</span>
+                <span><b>fluidez 78</b> promedio</span>
+                <span>último: <b>hace 2 días</b></span>
+              </div>
+              <a href="Charla.html" class="btn btn-sm btn-primary">Continuar →</a>
+            </div>
+          </article>
+
+          <!-- ROUTE 4 — AI ethics (less progress) -->
+          <article class="route">
+            <div class="route-head">
+              <div class="route-ico cat-tec">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6v6H9z"/><path d="M9 1v2M15 1v2M9 21v2M15 21v2M1 9h2M1 15h2M21 9h2M21 15h2"/></svg>
+              </div>
+              <div class="rinfo">
+                <div class="rcat tec">Tecnología · IA</div>
+                <h3>IA generativa · ética y aplicaciones</h3>
+              </div>
+              <div class="rprog">
+                <div class="p-num"><b>2</b> / 6 estaciones</div>
+                <div class="p-bar"><i style="width:33%"></i></div>
+              </div>
+            </div>
+
+            <div class="track">
+              <div class="track-line"><span class="progress" style="width:25%"></span></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Cómo funciona un LLM</div><div class="nsub">hace 21 días</div></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Sesgos en datasets</div><div class="nsub">hace 14 días</div></div>
+              <div class="node current"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg></div><div class="nlabel">Autoría y copyright</div><div class="nsub">acá vas</div></div>
+              <div class="node locked"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><div class="nlabel">Trabajos automatizables</div><div class="nsub">bloqueada</div></div>
+              <div class="node locked"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><div class="nlabel">Alineamiento y safety</div><div class="nsub">bloqueada</div></div>
+              <div class="node locked"><div class="dot">★</div><div class="nlabel">Futuro de la IA</div><div class="nsub">final</div></div>
+            </div>
+
+            <div class="route-foot">
+              <div class="meta">
+                <span><b>4 charlas</b> en esta ruta</span>
+                <span><b>fluidez 76</b> promedio</span>
+                <span>último: <b>hace 14 días</b> · revisitar</span>
+              </div>
+              <a href="Charla.html" class="btn btn-sm btn-primary">Continuar →</a>
+            </div>
+          </article>
+
+          <!-- ROUTE 5 — Travel (just started) -->
+          <article class="route">
+            <div class="route-head">
+              <div class="route-ico cat-via">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+              </div>
+              <div class="rinfo">
+                <div class="rcat" style="color:#1D4ED8">Viajes</div>
+                <h3>Aeropuertos en horarios pico</h3>
+              </div>
+              <div class="rprog">
+                <div class="p-num"><b>1</b> / 5 estaciones</div>
+                <div class="p-bar"><i style="width:20%"></i></div>
+              </div>
+            </div>
+
+            <div class="track" style="grid-template-columns:repeat(5,1fr)">
+              <div class="track-line"><span class="progress" style="width:15%"></span></div>
+              <div class="node done"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div><div class="nlabel">Checkin y bag drop</div><div class="nsub">hace 6 días</div></div>
+              <div class="node current"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg></div><div class="nlabel">Seguridad y aduana</div><div class="nsub">acá vas</div></div>
+              <div class="node locked"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><div class="nlabel">Demoras y reclamos</div><div class="nsub">bloqueada</div></div>
+              <div class="node locked"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><div class="nlabel">Layovers y conexiones</div><div class="nsub">bloqueada</div></div>
+              <div class="node locked"><div class="dot">★</div><div class="nlabel">Hubs internacionales</div><div class="nsub">final</div></div>
+            </div>
+
+            <div class="route-foot">
+              <div class="meta">
+                <span><b>2 charlas</b> en esta ruta</span>
+                <span><b>fluidez 68</b> promedio</span>
+                <span>último: <b>hace 6 días</b></span>
+              </div>
+              <a href="Charla.html" class="btn btn-sm btn-primary">Continuar →</a>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Section: about to unlock -->
+        <div class="sh" style="margin-top:32px">
+          <h2>Por desbloquear</h2>
+          <div class="meta">15 tópicos de tu lista todavía sin tocar</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div class="next-rt">
+            <div class="nri" style="background:#FFEDD5;color:#C2410C">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0v3a6 6 0 0 1-12 0z"/><path d="M6 9H3M21 9h-3M12 15v6M9 21h6"/></svg>
+            </div>
+            <div class="body">
+              <div class="eye">Deportes</div>
+              <h4>Fútbol · mundiales</h4>
+              <div class="gauge-mini"><i style="width:0%"></i></div>
+            </div>
+          </div>
+          <div class="next-rt">
+            <div class="nri" style="background:#FFE4E6;color:#BE123C">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/></svg>
+            </div>
+            <div class="body">
+              <div class="eye">Gastronomía</div>
+              <h4>Café de especialidad</h4>
+              <div class="gauge-mini"><i style="width:0%"></i></div>
+            </div>
+          </div>
+          <div class="next-rt">
+            <div class="nri" style="background:#CFFAFE;color:#0E7490">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4"/></svg>
+            </div>
+            <div class="body">
+              <div class="eye">Ciencia</div>
+              <h4>Biología y evolución</h4>
+              <div class="gauge-mini"><i style="width:0%"></i></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT — legend & achievements -->
+      <aside class="rc">
+        <div class="card legend-card">
+          <div class="card-head">
+            <h3>Cómo leer el mapa</h3>
+          </div>
+          <div class="row">
+            <div class="leg-dot done"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+            <div><div class="label">Estación dominada</div><div class="desc">la pasaste con buena fluidez</div></div>
+          </div>
+          <div class="row">
+            <div class="leg-dot current" style="background:#fff"></div>
+            <div><div class="label">Acá vas</div><div class="desc">la próxima estación de la ruta</div></div>
+          </div>
+          <div class="row">
+            <div class="leg-dot rescue"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+            <div><div class="label">Misión de rescate</div><div class="desc">tenés un error repetido que pulir</div></div>
+          </div>
+          <div class="row">
+            <div class="leg-dot locked"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+            <div><div class="label">Bloqueada</div><div class="desc">se libera con la anterior</div></div>
+          </div>
+          <div class="row">
+            <div class="leg-dot" style="background:var(--bg-2);font-family:var(--font-display);font-weight:800;color:var(--fg-4);font-size:13px">★</div>
+            <div><div class="label">Final de ruta</div><div class="desc">desbloquea badge + nuevo tópico</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Logros</h3>
+            <span class="h-meta">6 / 18</span>
+          </div>
+          <div class="ach-grid">
+            <div class="ach unlocked">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/></svg></div>
+              <div class="at">Racha 7 días</div>
+            </div>
+            <div class="ach unlocked">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+              <div class="at">Primer rescate</div>
+            </div>
+            <div class="ach unlocked">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+              <div class="at">Fluidez +20%</div>
+            </div>
+            <div class="ach amber">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/></svg></div>
+              <div class="at">Racha 14 días</div>
+            </div>
+            <div class="ach unlocked">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></div>
+              <div class="at">5 rutas activas</div>
+            </div>
+            <div class="ach unlocked">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <div class="at">10 charlas</div>
+            </div>
+            <div class="ach locked">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+              <div class="at">Ruta completa</div>
+            </div>
+            <div class="ach locked">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+              <div class="at">Nivel C1</div>
+            </div>
+            <div class="ach locked">
+              <div class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg></div>
+              <div class="at">100 charlas</div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
