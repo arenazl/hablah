@@ -238,6 +238,17 @@ function TopBar({ profile, onMenuClick }: { profile: MeProfile | null; onMenuCli
               <span><span className="tnum">{streak}</span><span className="l"> días</span></span>
             </div>
           )}
+          <button
+            className="settings-btn"
+            aria-label="Ajustes"
+            onClick={() => nav('/app/perfil')}
+            style={isDark ? { color: 'white' } : undefined}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" />
+            </svg>
+          </button>
           <div ref={menuRef} style={{ position: 'relative' }}>
             <button
               className="av-btn"
@@ -317,15 +328,83 @@ const menuItemStyle: React.CSSProperties = {
   textAlign: 'left',
 }
 
+/* Mancuerna para CTA "Entrenar" */
+const DumbbellIcon = ({ size = 22 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="9" width="3" height="6" rx="1" />
+    <rect x="19" y="9" width="3" height="6" rx="1" />
+    <rect x="6" y="7" width="3" height="10" rx="1" />
+    <rect x="15" y="7" width="3" height="10" rx="1" />
+    <line x1="9" y1="12" x2="15" y2="12" />
+  </svg>
+)
+const PlusIcon = ({ size = 22 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+)
+
 function MobileBar() {
+  const [moreOpen, setMoreOpen] = useState(false)
+  const nav = useNavigate()
+  const loc = useLocation()
+  const moreRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => { setMoreOpen(false) }, [loc.pathname])
+  useEffect(() => {
+    if (!moreOpen) return
+    const onDoc = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [moreOpen])
+
+  const go = (path: string) => { setMoreOpen(false); nav(path) }
+  const logout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    window.location.href = '/login'
+  }
+
   return (
-    <nav className="mobile-bar">
-      <NavLink to="/app" end className={({ isActive }) => `mb-item${isActive ? ' active' : ''}`}><HomeIcon /><span>Hoy</span></NavLink>
-      <NavLink to="/app/mapa" className={({ isActive }) => `mb-item${isActive ? ' active' : ''}`}><MapIcon /><span>Mapa</span></NavLink>
-      <NavLink to="/app/practicar" className="mb-item cta" aria-label="Practicar"><MicIcon size={24} /><span>Practicar</span></NavLink>
-      <NavLink to="/app/historial" className={({ isActive }) => `mb-item${isActive ? ' active' : ''}`}><ClockIcon /><span>Historial</span></NavLink>
-      <NavLink to="/app/perfil" className={({ isActive }) => `mb-item${isActive ? ' active' : ''}`}><UserIcon /><span>Perfil</span></NavLink>
-    </nav>
+    <>
+      {moreOpen && <div className="more-backdrop" onClick={() => setMoreOpen(false)} />}
+      <nav className="mobile-bar">
+        <NavLink to="/app" end className={({ isActive }) => `mb-item${isActive ? ' active' : ''}`}><HomeIcon /><span>Hoy</span></NavLink>
+        <NavLink to="/app/mapa" className={({ isActive }) => `mb-item${isActive ? ' active' : ''}`}><MapIcon /><span>Mapa</span></NavLink>
+        <NavLink to="/app/practicar" className="mb-item cta" aria-label="Entrenar"><DumbbellIcon size={24} /><span>Entrenar</span></NavLink>
+        <NavLink to="/app/historial" className={({ isActive }) => `mb-item${isActive ? ' active' : ''}`}><ClockIcon /><span>Historial</span></NavLink>
+        <div ref={moreRef} className="mb-more-wrap">
+          <button
+            className={`mb-item${moreOpen ? ' active' : ''}`}
+            onClick={() => setMoreOpen(v => !v)}
+            aria-label="Más opciones"
+            aria-expanded={moreOpen}
+          >
+            <PlusIcon /><span>Más</span>
+          </button>
+          {moreOpen && (
+            <div className="more-sheet" role="menu">
+              <button className="more-item" onClick={() => go('/app/perfil')}>
+                <UserIcon size={18} /><span>Perfil</span>
+              </button>
+              <button className="more-item" onClick={() => go('/app/historial')}>
+                <ClockIcon size={18} /><span>Historial</span>
+              </button>
+              <button className="more-item" onClick={() => go('/app/mapa')}>
+                <MapIcon /><span>Mapa de progreso</span>
+              </button>
+              <div className="more-sep" />
+              <button className="more-item danger" onClick={logout}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>
+                <span>Cerrar sesión</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </nav>
+    </>
   )
 }
 

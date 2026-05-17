@@ -502,12 +502,45 @@ export const WEBAPP_CSS = `
   }
   .webapp-root .mobile-bar .mb-item.active { color: var(--primary); }
   .webapp-root .mobile-bar .mb-item.cta {
-    background: var(--primary); color: white; border-radius: 999px;
-    width: 48px; height: 48px; flex: 0 0 48px; margin-top: -16px;
-    box-shadow: 0 6px 16px rgba(0,179,126,.4); justify-content: center;
+    background: linear-gradient(160deg, #00B37E 0%, #008F63 100%); color: white; border-radius: 999px;
+    width: 58px; height: 58px; flex: 0 0 58px; margin-top: -22px;
+    box-shadow: 0 8px 20px rgba(0,179,126,.45), 0 0 0 4px var(--bg-1);
+    justify-content: center; gap: 0;
   }
+  .webapp-root .mobile-bar .mb-item.cta:active { transform: scale(.94); }
   .webapp-root .mobile-bar .mb-item.cta span { display: none; }
+  .webapp-root .mb-more-wrap { flex: 1; position: relative; display: flex; justify-content: center; }
+  .webapp-root .mb-more-wrap .mb-item { width: 100%; }
+  .webapp-root .more-backdrop {
+    position: fixed; inset: 0; z-index: 49; background: rgba(0,0,0,.35);
+    animation: drawerFade .15s ease-out;
+  }
+  .webapp-root .more-sheet {
+    position: fixed; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    background: var(--surface); border: 1px solid var(--border-1); border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0,0,0,.18); padding: 6px; z-index: 51;
+    min-width: 200px; animation: sheetUp .18s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes sheetUp { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: translateY(0) } }
+  .webapp-root .more-item {
+    width: 100%; display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 10px; background: transparent; border: 0;
+    font-size: 14px; font-weight: 500; color: var(--fg-1); cursor: pointer; text-align: left;
+  }
+  .webapp-root .more-item:hover, .webapp-root .more-item:active { background: var(--bg-2); }
+  .webapp-root .more-item.danger { color: var(--danger); }
+  .webapp-root .more-item svg { flex-shrink: 0; }
+  .webapp-root .more-sep { height: 1px; background: var(--border-1); margin: 4px 8px; }
 }
+
+/* Settings btn (siempre visible en topbar) */
+.webapp-root .settings-btn {
+  background: none; border: 0; padding: 8px; color: var(--fg-2); cursor: pointer;
+  border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+  transition: background .15s, transform .15s;
+}
+.webapp-root .settings-btn:hover { background: var(--bg-2); color: var(--fg-1); }
+.webapp-root .settings-btn:active { transform: rotate(20deg); }
 @media (max-width: 480px) {
   .webapp-root .qp-grid { grid-template-columns: 1fr; }
   .webapp-root .week-days { gap: 4px; }
