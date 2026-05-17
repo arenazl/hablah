@@ -187,3 +187,90 @@ async def delete_topic(
     await db.delete(row)
     await db.commit()
     return {"ok": True}
+
+
+# ─── AI generation for seed_prompts + keywords ───────────────────────────────
+
+import httpx
+import json as _json
+from core.config import settings
+
+
+@router.post("/{topic_id}/generate-seeds")
+async def generate_seeds_ai(
+    topic_id: int,
+    lang: str = Query("es", description="Idioma objetivo del topic (es | pt | en | it)"),
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("admin")),
+):
+    """Genera seed_prompts (uno por nivel CEFR) + keywords usando Gemini.
+
+    No persiste cambios — devuelve la propuesta. El admin la revisa y guarda.
+    """
+    row = (await db.execute(select(Topic).where(Topic.id == topic_id))).scalar_one_or_none()
+    if not row:
+        raise HTTPException(404, "Topic no encontrado")
+
+    lang_name = {"en": "English", "pt": "Portuguese", "es": "Spanish", "it": "Italian"}.get(lang, lang)
+
+    prompt = f"""Sos un diseñador curricular de Habláh (app de aprendizaje de idiomas por conversación con AI).
+
+Dado este tópico:
+- Título: {row.title}
+- Categoría: {row.category}
+- Idioma objetivo del alumno: {lang_name}
+
+Generá contenido pedagógico de alta calidad en JSON estricto con este schema:
+
+{{
+  "seed_prompts": {{
+    "A1": string,
+    "A2": string,
+    "B1": string,
+    "B2": string,
+    "C1": string,
+    "C2": string
+  }},
+  "keywords": [string]   // 8 a 12 palabras o frases clave en {lang_name} que el alumno debería poder usar
+}}
+
+CRITERIOS:
+- Cada seed_prompt es una DIRECTIVA PARA EL TUTOR (no para el alumno) — le indica cómo arrancar la conversación. Ejemplo: "Iniciá preguntando sobre los origenes del genero y por qué le interesa al alumno"
+- Adaptá la complejidad al nivel CEFR (A1 = muy simple, C2 = sofisticado, debate)
+- Las keywords deben ser ESPECÍFICAS del tema, no genéricas (ej: para "Café de especialidad" → "v60", "espresso", "tueste claro", NO "delicioso", "rico")
+- Los seed_prompts están en castellano rioplatense (son instrucciones internas para el tutor)
+- Las keywords están en {lang_name}
+
+DEVOLVÉ SOLO EL JSON, sin comentarios."""
+
+    key = settings.GEMINI_API_KEY
+    model = settings.GEMINI_MODEL or "gemini-2.5-flash"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+    body = {
+        "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.5,
+            "maxOutputTokens": 2000,
+            "responseMimeType": "application/json",
+        },
+    }
+    try:
+        async with httpx.AsyncClient(timeout=60) as cli:
+            r = await cli.post(url, json=body)
+            r.raise_for_status()
+            data = r.json()
+        text = ""
+        for c in data.get("candidates", []):
+            for p in (c.get("content") or {}).get("parts", []):
+                text += p.get("text", "")
+        result = _json.loads(text)
+    except Exception as e:
+        raise HTTPException(500, f"Generación falló: {e}")
+
+    return {
+        "topic_id": topic_id,
+        "lang": lang,
+        "seed_prompts": result.get("seed_prompts", {}),
+        "keywords": result.get("keywords", []),
+        "note": "Propuesta generada por AI. Revisá y guardá con PATCH /topics/{id}",
+    }

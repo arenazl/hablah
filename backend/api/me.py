@@ -116,6 +116,8 @@ class SettingsUpdate(BaseModel):
     active_template_id: Optional[int] = None
     cefr_level: Optional[str] = None
     cefr_manual: Optional[bool] = None
+    target_language: Optional[str] = None  # en, pt, es, it
+    base_language: Optional[str] = None    # es, pt, en
 
 
 @router.patch("/settings")

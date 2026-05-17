@@ -159,6 +159,11 @@ export const topicsAPI = {
   update: (id: number, data: Partial<Topic>) =>
     api.patch<Topic>(`/topics/${id}`, data).then((r) => r.data),
   remove: (id: number) => api.delete(`/topics/${id}`).then((r) => r.data),
+  generateSeedsAI: (id: number, lang: 'es' | 'pt' | 'en' | 'it' = 'es') =>
+    api.post<{
+      topic_id: number; lang: string; seed_prompts: Record<string, string>;
+      keywords: string[]; note: string
+    }>(`/topics/${id}/generate-seeds?lang=${lang}`).then((r) => r.data),
 }
 
 /* ────────────── SESSIONS ────────────── */

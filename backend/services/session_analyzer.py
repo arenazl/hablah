@@ -36,7 +36,15 @@ def _build_analyzer_prompt(
 ) -> str:
     cefr = user.cefr_level or "B1"
     target = user.target_language or "en"
-    target_name = {"en": "English", "pt": "Portuguese", "it": "Italian"}.get(target, target)
+    target_name = {"en": "English", "pt": "Portuguese", "it": "Italian", "es": "Spanish"}.get(target, target)
+
+    base = (user.base_language or "es").lower()
+    base_desc = {
+        "es": ("español rioplatense", 'casual con "vos" y "che"'),
+        "pt": ("português brasileiro", 'casual com "você" e tom amigável'),
+        "en": ("English", "casual American tone"),
+    }.get(base, ("español rioplatense", 'casual con "vos" y "che"'))
+    base_lang_name, base_tone = base_desc
 
     # Defaults para legacy templates
     max_fb = getattr(template, "max_feedback_items", 3) if template else 3
@@ -64,7 +72,7 @@ def _build_analyzer_prompt(
         '"metrics": {"words_spoken": int, "wpm": int, "keywords_hit": int, "keywords_total": int}',
     ]
     if include_summary:
-        json_keys.append('"summary": string  // resumen narrativo en español rioplatense de 2-3 oraciones de la charla')
+        json_keys.append(f'"summary": string  // resumen narrativo en {base_lang_name} ({base_tone}) de 2-3 oraciones de la charla')
         json_keys.append(f'"summary_en": string  // mismo resumen pero en {target_name}, tono conversacional (para reproduccion TTS)')
     if include_connectors:
         json_keys.append('"connector_suggestions": [string]  // 3-5 conectores en inglés que enriquecerían el habla del alumno (ej: "however", "in fact", "as a result")')
@@ -73,7 +81,7 @@ def _build_analyzer_prompt(
     if include_pron:
         json_keys.append('"pronunciation_notes": [{"word": string, "issue": string, "tip": string}]  // 0-3 palabras que sonaron raras (basate en cómo Gemini Live las transcribió)')
     if include_next_tip:
-        json_keys.append('"next_session_tip": string  // UN consejo específico para la próxima sesión en 1 oración, en español rioplatense')
+        json_keys.append(f'"next_session_tip": string  // UN consejo específico para la próxima sesión en 1 oración, en {base_lang_name}')
 
     json_schema = "{\n  " + ",\n  ".join(json_keys) + "\n}"
 
@@ -97,7 +105,7 @@ Tu trabajo: analizar SOLO los turnos del USER, NO los del tutor.
 CRITERIOS:
 - praise: cosas CONCRETAS que el alumno hizo bien (con la frase exacta que dijo, no genéricos).
 - feedback: errores DENTRO del foco {focus_str}. Si está {error_threshold}, aplicá ese umbral.
-  Cada item: {{ "type": "grammar"|"vocab"|"pronunciation"|"fluency", "label": "Nombre del error en español (max 50 chars)", "snippet_wrong": "frase exacta del alumno", "snippet_correct": "versión correcta", "why": "explicación en español rioplatense en 1 oración casual" }}
+  Cada item: {{ "type": "grammar"|"vocab"|"pronunciation"|"fluency", "label": "Nombre del error en {base_lang_name} (max 50 chars)", "snippet_wrong": "frase exacta del alumno", "snippet_correct": "versión correcta", "why": "explicación en {base_lang_name} ({base_tone}) en 1 oración casual" }}
 - score: 0..100. Pondera fluidez, precisión, riqueza léxica, uso del foco del template.
 - Si el alumno habló muy poco (<30 palabras), score <60 y praise mínimo.
 
@@ -106,7 +114,7 @@ DEVOLVÉ UN JSON ESTRICTO con esta estructura:
 {json_schema}
 
 CRÍTICO:
-- Todos los textos en español rioplatense ("vos", "che", casual), EXCEPTO snippet_wrong/snippet_correct/word/context que van en {target_name}.
+- Todos los textos en {base_lang_name} ({base_tone}), EXCEPTO snippet_wrong/snippet_correct/word/context que van en {target_name}.
 - Si no podés llenar un campo (ej: no hay errores de pronunciación que reportar), devolvé array vacío [], NO inventes.
 - Sé específico, no genérico. "Usaste 'rewatchable' perfecto" > "Hablaste bien".
 """
