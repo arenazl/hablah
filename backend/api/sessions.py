@@ -5,7 +5,7 @@ from sqlalchemy import select, desc
 
 from core.database import get_db
 from core.security import get_current_user
-from models.template import Session as SessionModel, Topic, Template
+from models.template import Session as SessionModel, Topic, Template  # noqa: F401
 from models.user import User
 from schemas.template import SessionStartRequest, SessionResponse, SessionEndRequest
 
@@ -131,3 +131,52 @@ async def get_session(
     if not s or s.user_id != current.id:
         raise HTTPException(404, "Sesión no encontrada")
     return _serialize(s)
+
+
+from fastapi import Query, Response
+from services.elevenlabs import synth as elevenlabs_synth, TUTOR_VOICES
+
+
+@router.get("/{session_id}/feedback-audio")
+async def feedback_audio(
+    session_id: int,
+    which: str = Query("praise", description="praise | correction_{i}"),
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Sintetiza con ElevenLabs (voz del tutor de la sesión) el elogio o una
+    corrección del reporte. ON DEMAND — solo se llama si el usuario tappea play."""
+    s = (await db.execute(select(SessionModel).where(SessionModel.id == session_id))).scalar_one_or_none()
+    if not s or s.user_id != current.id:
+        raise HTTPException(404, "Sesión no encontrada")
+    if not s.report:
+        raise HTTPException(400, "Sesión sin reporte todavía")
+
+    text = ""
+    if which == "praise":
+        text = s.report.get("praise", "")
+    elif which.startswith("correction_"):
+        try:
+            idx = int(which.split("_")[1])
+            fb = (s.report.get("feedback") or [])
+            if 0 <= idx < len(fb):
+                text = fb[idx].get("snippet_correct", "")
+        except Exception:
+            pass
+
+    if not text:
+        raise HTTPException(404, "No hay texto para sintetizar")
+
+    # Voz del tutor de esa sesión
+    voice_id = None
+    if s.template_id:
+        tpl = (await db.execute(select(Template).where(Template.id == s.template_id))).scalar_one_or_none()
+        if tpl and tpl.voice_id:
+            voice_id = tpl.voice_id
+
+    try:
+        audio = await elevenlabs_synth(text, voice_id=voice_id)
+    except Exception as e:
+        raise HTTPException(500, f"TTS falló: {e}")
+
+    return Response(content=audio, media_type="audio/mpeg")
