@@ -6,6 +6,7 @@ import { WEBAPP_CSS } from './webapp.css'
 import { HOY_CSS } from './hoy.css'
 import { MAPA_CSS } from './mapa.css'
 import { PRACTICAR_CSS } from './practicar.css'
+import { HISTORIAL_CSS } from './historial.css'
 import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
@@ -86,6 +87,7 @@ export function WebApp() {
       <style>{HOY_CSS}</style>
       <style>{MAPA_CSS}</style>
       <style>{PRACTICAR_CSS}</style>
+      <style>{HISTORIAL_CSS}</style>
       <div className="shell">
         <Sidebar profile={profile} mobileOpen={drawerOpen} />
         {drawerOpen && <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />}
@@ -2344,6 +2346,8 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
 
         <LevelCard profile={profile} onChange={onChange} />
 
+        <LanguageCard profile={profile} onChange={onChange} />
+
         <div className="profile-card">
           <h3>Configuración</h3>
           <div className="settings-list">
@@ -2371,6 +2375,86 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
           >
             Cerrar sesión
           </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const LANG_OPTIONS = [
+  { code: 'es', label: 'Español', flag: 'ES' },
+  { code: 'pt', label: 'Português', flag: 'BR' },
+  { code: 'en', label: 'English', flag: 'EN' },
+] as const
+
+function LanguageCard({ profile, onChange }: { profile: MeProfile; onChange: () => void }) {
+  const u = profile.user
+  const [saving, setSaving] = useState(false)
+
+  const setLang = async (field: 'target_language' | 'base_language', code: string) => {
+    setSaving(true)
+    try {
+      await meAPI.updateSettings({ [field]: code } as any)
+      onChange()
+      toast.success('Idioma actualizado')
+    } catch { toast.error('No pudimos actualizar') }
+    finally { setSaving(false) }
+  }
+
+  return (
+    <div className="profile-card">
+      <h3>Idiomas</h3>
+      <div style={{ fontSize: 13, color: 'var(--fg-3)', marginBottom: 12 }}>
+        El idioma que querés practicar y el que hablás como nativo (para el feedback).
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 8 }}>Querés aprender</div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {LANG_OPTIONS.map((l) => {
+            const active = u.target_language === l.code
+            return (
+              <button
+                key={l.code}
+                onClick={() => setLang('target_language', l.code)}
+                disabled={saving}
+                style={{
+                  padding: '8px 14px', borderRadius: 10, border: '1.5px solid', cursor: 'pointer',
+                  background: active ? 'var(--primary-tint)' : 'var(--bg-1)',
+                  borderColor: active ? 'var(--primary)' : 'var(--border-1)',
+                  fontWeight: 600, fontSize: 13, color: active ? 'var(--primary-dark)' : 'var(--fg-2)',
+                  fontFamily: 'inherit',
+                }}
+              >
+                {l.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 8 }}>Tu idioma nativo (feedback)</div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {LANG_OPTIONS.map((l) => {
+            const active = u.base_language === l.code
+            return (
+              <button
+                key={l.code}
+                onClick={() => setLang('base_language', l.code)}
+                disabled={saving}
+                style={{
+                  padding: '8px 14px', borderRadius: 10, border: '1.5px solid', cursor: 'pointer',
+                  background: active ? 'var(--primary-tint)' : 'var(--bg-1)',
+                  borderColor: active ? 'var(--primary)' : 'var(--border-1)',
+                  fontWeight: 600, fontSize: 13, color: active ? 'var(--primary-dark)' : 'var(--fg-2)',
+                  fontFamily: 'inherit',
+                }}
+              >
+                {l.label}
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>

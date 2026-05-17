@@ -624,6 +624,8 @@ function TopicEditView({ onMenu }: { onMenu: () => void }) {
   const { id } = useParams()
   const nav = useNavigate()
   const [t, setT] = useState<Topic | null>(null)
+  const [aiLang, setAiLang] = useState<'es' | 'pt' | 'en' | 'it'>('es')
+  const [generating, setGenerating] = useState(false)
   useEffect(() => { if (id) topicsAPI.get(Number(id)).then(setT).catch(() => {}) }, [id])
 
   if (!t) return <><PageHead eyebrow="Tópicos · Editar" title="Cargando…" onMenu={onMenu} /></>
@@ -635,6 +637,20 @@ function TopicEditView({ onMenu }: { onMenu: () => void }) {
     } catch { toast.error('Error al guardar') }
   }
 
+  const generateAI = async () => {
+    setGenerating(true)
+    try {
+      const r = await topicsAPI.generateSeedsAI(t.id, aiLang)
+      // merge propuesta sobre el estado actual
+      setT({ ...t, seed_prompts: { ...(t.seed_prompts || {}), ...r.seed_prompts }, keywords: r.keywords })
+      toast.success(`Propuesta generada (${aiLang.toUpperCase()}). Revisá y guardá.`)
+    } catch (e: any) {
+      toast.error(e.response?.data?.detail || 'Error generando con AI')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   return (
     <>
       <PageHead eyebrow="Tópicos · Editar" title={t.title} onMenu={onMenu}
@@ -642,6 +658,21 @@ function TopicEditView({ onMenu }: { onMenu: () => void }) {
         actions={
           <>
             <button className="btn btn-ghost btn-sm" onClick={() => nav('/admin/topicos')}>← Volver</button>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginRight: 8 }}>
+              <select
+                value={aiLang}
+                onChange={(e) => setAiLang(e.target.value as any)}
+                style={{ height: 28, padding: '0 8px', borderRadius: 6, border: '1px solid var(--border-2)', fontSize: 12, background: 'white' }}
+              >
+                <option value="es">ES</option>
+                <option value="pt">PT</option>
+                <option value="en">EN</option>
+                <option value="it">IT</option>
+              </select>
+              <button className="btn btn-ghost btn-sm" onClick={generateAI} disabled={generating} style={{ background: '#FFF7DD', color: '#7A5800', border: '1px solid rgba(255,184,0,.3)' }}>
+                {generating ? 'Generando…' : '✨ Generar con AI'}
+              </button>
+            </div>
             <button className="btn btn-primary btn-sm" onClick={save}>Guardar</button>
           </>
         } />
