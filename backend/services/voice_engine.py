@@ -29,7 +29,11 @@ from fastapi import WebSocket
 
 
 class VoiceEngineContext:
-    """Contexto inyectado en cada sesión (mismo para todo engine)."""
+    """Contexto inyectado en cada sesión (mismo para todo engine).
+
+    Incluye config del template para que el engine pueda ajustar VAD,
+    permisos de interrupción, etc.
+    """
 
     def __init__(
         self,
@@ -40,6 +44,8 @@ class VoiceEngineContext:
         voice_id: Optional[str],
         language: str,
         target_language: str,
+        silence_tolerance_ms: int = 800,
+        interruption_allowed: bool = False,
     ) -> None:
         self.session_id = session_id
         self.user_id = user_id
@@ -47,6 +53,8 @@ class VoiceEngineContext:
         self.voice_id = voice_id  # ElevenLabs voice_id (para engines que lo soporten)
         self.language = language
         self.target_language = target_language
+        self.silence_tolerance_ms = silence_tolerance_ms
+        self.interruption_allowed = interruption_allowed
 
 
 class VoiceEngine(abc.ABC):

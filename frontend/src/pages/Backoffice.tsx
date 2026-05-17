@@ -305,71 +305,230 @@ function TemplateEditView({ onMenu }: { onMenu: () => void }) {
             <button className="btn btn-ghost btn-sm" onClick={() => nav('/admin/templates')}>← Volver</button>
             <button className="btn btn-secondary btn-sm" onClick={playVoice}>▶ Probar voz</button>
             <button className="btn btn-primary btn-sm" onClick={save} disabled={saving}>
-              {saving ? 'Guardando…' : 'Guardar'}
+              {saving ? 'Guardando…' : 'Guardar cambios'}
             </button>
           </>
         } />
       <div className="view">
-        <div className="editor-grid">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div className="card card-elev editor-section">
-              <span className="eyebrow">Identidad</span>
-              <input className="input" value={t.name} onChange={(e) => update({ name: e.target.value })} style={{ marginTop: 10, fontWeight: 600, fontSize: 15, height: 40 }} />
-              <input className="input" value={t.description} onChange={(e) => update({ description: e.target.value })} style={{ marginTop: 8, fontSize: 13, height: 36 }} />
-            </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-            <div className="card card-elev editor-section">
-              <div className="slider-row">
-                <div><div className="title">Rigurosidad</div><div className="sub">Umbral del analizador de errores</div></div>
-                <div className="val"><span className="n">{t.rigor}</span><span className="m">/ 5</span></div>
-              </div>
-              <input
-                type="range" min={1} max={5} value={t.rigor}
-                onChange={(e) => update({ rigor: parseInt(e.target.value) })}
-                style={{ width: '100%', accentColor: 'var(--ink-1)' }}
+            {/* Identidad */}
+            <Section title="Identidad" subtitle="Cómo se llama y describe este template">
+              <input className="input" value={t.name} onChange={(e) => update({ name: e.target.value })} style={{ marginTop: 4, fontWeight: 600, fontSize: 15, height: 40 }} />
+              <input className="input" value={t.description} onChange={(e) => update({ description: e.target.value })} style={{ marginTop: 8, fontSize: 13, height: 36 }} placeholder="Descripción breve" />
+            </Section>
+
+            {/* 1. Conversación */}
+            <Section title="1 · Conversación" subtitle="Cómo habla el tutor durante la charla">
+              <SelectRow
+                label="Largo de respuesta"
+                hint="terse = 1 oración · long = hasta 4"
+                value={t.response_length}
+                onChange={(v) => update({ response_length: v as any })}
+                options={[
+                  { value: 'terse', label: 'Terse (1 oración)' },
+                  { value: 'short', label: 'Short (1-2)' },
+                  { value: 'medium', label: 'Medium (2-3)' },
+                  { value: 'long', label: 'Long (3-4)' },
+                ]}
               />
-            </div>
+              <SliderRow label="Calidez del tutor" hint="1=distante  ·  5=súper cálido" value={t.warmth_level} min={1} max={5} onChange={(v) => update({ warmth_level: v })} />
+              <SliderRow label="% del tiempo que habla el tutor" hint="Resto = alumno" value={t.tutor_talk_ratio} min={10} max={50} step={5} suffix="%" onChange={(v) => update({ tutor_talk_ratio: v })} />
+              <ToggleRow t="Preguntas proactivas" s="Cierra cada turno con UNA pregunta abierta" on={t.proactive_questions} onChange={(v) => update({ proactive_questions: v })} />
+              <ToggleRow t="Comparte opiniones / anécdotas" s="El tutor aporta datos propios, no solo facilita" on={t.tutor_shares_opinions} onChange={(v) => update({ tutor_shares_opinions: v })} />
+            </Section>
 
-            <div className="card card-elev editor-section">
-              <div className="slider-row">
-                <div><div className="title">Retos por minuto</div><div className="sub">Tarjetas de reto enviadas durante la sesión</div></div>
-                <div className="val"><span className="n">{t.challenges_per_min}</span><span className="m">/ min</span></div>
-              </div>
-              <input
-                type="range" min={0} max={6} value={t.challenges_per_min}
-                onChange={(e) => update({ challenges_per_min: parseInt(e.target.value) })}
-                style={{ width: '100%', accentColor: 'var(--primary)' }}
+            {/* 2. Corrección */}
+            <Section title="2 · Corrección" subtitle="Cómo evalúa los errores del alumno">
+              <SelectRow
+                label="Modo de corrección"
+                hint="recast = reformula natural · explicit_strict = señala en vivo"
+                value={t.correction_mode}
+                onChange={(v) => update({ correction_mode: v as any })}
+                options={[
+                  { value: 'none', label: 'None — no corrige nada' },
+                  { value: 'recast', label: 'Recast — reformula natural sin marcar' },
+                  { value: 'explicit_soft', label: 'Explicit Soft — marca solo al cierre' },
+                  { value: 'explicit_strict', label: 'Explicit Strict — marca en vivo' },
+                ]}
               />
-            </div>
+              <SelectRow
+                label="Umbral de errores"
+                hint="Qué errores entran al reporte"
+                value={t.error_threshold}
+                onChange={(v) => update({ error_threshold: v as any })}
+                options={[
+                  { value: 'only_major', label: 'Solo errores graves' },
+                  { value: 'repeated', label: 'Repetidos o patrones del nivel' },
+                  { value: 'all', label: 'Todos los detectables' },
+                ]}
+              />
+              <ChipMultiSelect
+                label="Foco de corrección"
+                hint="Qué se evalúa al cierre"
+                value={t.correction_focus}
+                onChange={(v) => update({ correction_focus: v })}
+                options={['grammar', 'vocab', 'pronunciation', 'fluency']}
+              />
+              <SliderRow label="Máximo items en feedback" value={t.max_feedback_items} min={1} max={10} onChange={(v) => update({ max_feedback_items: v })} />
+              <SliderRow label="Cantidad de elogios" value={t.praise_count} min={1} max={5} onChange={(v) => update({ praise_count: v })} />
+            </Section>
 
-            <div className="card card-elev editor-section">
-              <h3>Switches</h3>
-              <ToggleRow t="Lógicas de interrupción" s="Permite interrupciones sutiles" on={t.allow_interruptions} onChange={(v) => update({ allow_interruptions: v })} />
-              <ToggleRow t="Bloqueo por repetición" s="Forzar misión de rescate al detectar error repetido" on={t.block_on_repeat} onChange={(v) => update({ block_on_repeat: v })} />
+            {/* 3. Reporte */}
+            <Section title="3 · Reporte final" subtitle="Qué secciones incluye el reporte al cierre">
+              <ToggleRow t="Resumen narrativo" s="2-3 oraciones describiendo cómo fue la charla" on={t.report_include_summary} onChange={(v) => update({ report_include_summary: v })} />
+              <ToggleRow t="Sugerencia de conectores" s="3-5 conectores que enriquecerían el habla" on={t.report_include_connectors} onChange={(v) => update({ report_include_connectors: v })} />
+              <ToggleRow t="Vocabulario sugerido" s="Palabras del nivel +1 para incorporar" on={t.report_include_vocab_suggestions} onChange={(v) => update({ report_include_vocab_suggestions: v })} />
+              <ToggleRow t="Notas de pronunciación" s="Palabras que sonaron raras y cómo decirlas" on={t.report_include_pronunciation} onChange={(v) => update({ report_include_pronunciation: v })} />
+              <ToggleRow t="Consejo para próxima sesión" s="Foco recomendado para la próxima charla" on={t.report_include_next_session_tip} onChange={(v) => update({ report_include_next_session_tip: v })} />
+            </Section>
+
+            {/* 4. Arranque */}
+            <Section title="4 · Arranque" subtitle="Cómo abre el tutor la sesión">
+              <SelectRow
+                label="Estilo de apertura"
+                value={t.opening_style}
+                onChange={(v) => update({ opening_style: v as any })}
+                options={[
+                  { value: 'direct', label: 'Direct — saludo breve + pregunta' },
+                  { value: 'warm', label: 'Warm — cálido + intro + pregunta' },
+                  { value: 'playful', label: 'Playful — enérgico + provocador' },
+                ]}
+              />
+              <ToggleRow t="Presenta el tema antes de preguntar" s="Si OFF, va directo a la primera pregunta" on={t.opening_includes_topic_intro} onChange={(v) => update({ opening_includes_topic_intro: v })} />
+            </Section>
+
+            {/* 5. Dinámica */}
+            <Section title="5 · Dinámica de sesión" subtitle="Cómo se comporta el VAD y el flujo">
+              <SliderRow label="Tolerancia al silencio" hint="Cuánto silencio espera antes de responder" value={t.silence_tolerance_ms} min={300} max={3000} step={100} suffix="ms" onChange={(v) => update({ silence_tolerance_ms: v })} />
+              <ToggleRow t="Permitir interrupciones" s="El tutor puede cortar al alumno si se traba" on={t.interruption_allowed} onChange={(v) => update({ interruption_allowed: v })} />
+              <ToggleRow t="Andamiar cuando el alumno se traba" s="Da sinónimo o pista, no la palabra exacta" on={t.scaffold_when_stuck} onChange={(v) => update({ scaffold_when_stuck: v })} />
+            </Section>
+
+            {/* Legacy v1/v2 */}
+            <Section title="Legacy (v1/v2)" subtitle="Campos viejos que se mantienen por compatibilidad">
+              <SliderRow label="Rigurosidad (legacy)" value={t.rigor} min={1} max={5} onChange={(v) => update({ rigor: v })} />
+              <SliderRow label="Retos por minuto" value={t.challenges_per_min} min={0} max={6} onChange={(v) => update({ challenges_per_min: v })} />
               <ToggleRow t="Salida JSON estructurada" s="Reporte de aciertos/errores al cierre" on={t.json_output} onChange={(v) => update({ json_output: v })} />
-            </div>
+            </Section>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div className="card card-elev editor-section">
-              <span className="eyebrow">Voz asignada</span>
-              <div style={{ marginTop: 10, padding: 14, background: 'var(--bg-2)', borderRadius: 12 }}>
+          {/* Sidebar derecha: voz + stats */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 90, alignSelf: 'flex-start' }}>
+            <Section title="Voz asignada">
+              <div style={{ padding: 12, background: 'var(--bg-2)', borderRadius: 12 }}>
                 <div style={{ fontSize: 14, fontWeight: 600 }}>{t.voice_label || '—'}</div>
-                <div style={{ fontSize: 11, color: 'var(--fg-3)', fontFamily: 'JetBrains Mono, monospace', marginTop: 4 }}>{t.voice_id}</div>
+                <div style={{ fontSize: 11, color: 'var(--fg-3)', fontFamily: 'JetBrains Mono, monospace', marginTop: 4, wordBreak: 'break-all' }}>{t.voice_id}</div>
               </div>
-              <button className="btn btn-secondary btn-sm" style={{ marginTop: 10 }} onClick={playVoice}>▶ Escuchar</button>
-            </div>
-            <div className="card card-elev editor-section">
-              <span className="eyebrow">Distribución actual</span>
-              <div style={{ fontSize: 22, fontWeight: 800, marginTop: 8 }}>{t.assigned_count?.toLocaleString('es-AR')} alumnos</div>
-              <div style={{ fontSize: 13, color: 'var(--fg-3)', marginTop: 4 }}>
+              <button className="btn btn-secondary btn-sm btn-block" style={{ marginTop: 10 }} onClick={playVoice}>▶ Escuchar voz</button>
+            </Section>
+            <Section title="Distribución">
+              <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--primary-dark)' }}>{t.assigned_count?.toLocaleString('es-AR')}</div>
+              <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>alumnos asignados</div>
+              <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 8, lineHeight: 1.4 }}>
                 Al guardar, los cambios aplican a la próxima sesión de cada alumno.
               </div>
-            </div>
+            </Section>
           </div>
         </div>
       </div>
     </>
+  )
+}
+
+/* ──────── Subcomponentes del editor ──────── */
+function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  return (
+    <div className="card card-elev editor-section">
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--fg-1)' }}>{title}</div>
+        {subtitle && <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 2 }}>{subtitle}</div>}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>{children}</div>
+    </div>
+  )
+}
+
+function SliderRow({ label, hint, value, min, max, step = 1, suffix, onChange }: {
+  label: string; hint?: string; value: number; min: number; max: number; step?: number; suffix?: string;
+  onChange: (v: number) => void
+}) {
+  return (
+    <div style={{ padding: '10px 0', borderTop: '1px dashed var(--border-1)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600 }}>{label}</div>
+          {hint && <div style={{ fontSize: 11, color: 'var(--fg-3)', marginTop: 1 }}>{hint}</div>}
+        </div>
+        <div style={{ fontSize: 18, fontWeight: 800, fontVariantNumeric: 'tabular-nums', color: 'var(--primary-dark)' }}>
+          {value}{suffix ? ` ${suffix}` : ''}
+        </div>
+      </div>
+      <input
+        type="range" min={min} max={max} step={step} value={value}
+        onChange={(e) => onChange(parseInt(e.target.value))}
+        style={{ width: '100%', accentColor: 'var(--primary)' }}
+      />
+    </div>
+  )
+}
+
+function SelectRow({ label, hint, value, onChange, options }: {
+  label: string; hint?: string; value: string; onChange: (v: string) => void;
+  options: { value: string; label: string }[]
+}) {
+  return (
+    <div style={{ padding: '10px 0', borderTop: '1px dashed var(--border-1)' }}>
+      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{label}</div>
+      {hint && <div style={{ fontSize: 11, color: 'var(--fg-3)', marginBottom: 6 }}>{hint}</div>}
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={{
+          width: '100%', padding: '8px 12px', borderRadius: 8,
+          border: '1px solid var(--border-2)', background: 'white',
+          fontSize: 13, fontFamily: 'inherit', cursor: 'pointer',
+        }}
+      >
+        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </div>
+  )
+}
+
+function ChipMultiSelect({ label, hint, value, onChange, options }: {
+  label: string; hint?: string; value: string[]; onChange: (v: string[]) => void; options: string[]
+}) {
+  const toggle = (opt: string) => {
+    if (value.includes(opt)) onChange(value.filter((v) => v !== opt))
+    else onChange([...value, opt])
+  }
+  return (
+    <div style={{ padding: '10px 0', borderTop: '1px dashed var(--border-1)' }}>
+      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{label}</div>
+      {hint && <div style={{ fontSize: 11, color: 'var(--fg-3)', marginBottom: 8 }}>{hint}</div>}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {options.map((opt) => {
+          const on = value.includes(opt)
+          return (
+            <button
+              key={opt}
+              onClick={() => toggle(opt)}
+              style={{
+                padding: '5px 12px', borderRadius: 999,
+                background: on ? 'var(--primary)' : 'var(--bg-2)',
+                color: on ? 'white' : 'var(--fg-2)',
+                border: 0, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                textTransform: 'capitalize',
+              }}
+            >
+              {on ? '✓ ' : ''}{opt}
+            </button>
+          )
+        })}
+      </div>
+    </div>
   )
 }
 function ToggleRow({ t, s, on, onChange }: { t: string; s: string; on: boolean; onChange: (v: boolean) => void }) {

@@ -51,6 +51,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             "voice_id": (template.voice_id if template else None),
             "language": user.target_language or "en",
             "target_language": user.target_language or "en",
+            "silence_tolerance_ms": getattr(template, "silence_tolerance_ms", 800) if template else 800,
+            "interruption_allowed": getattr(template, "interruption_allowed", False) if template else False,
         }
 
 
@@ -75,6 +77,8 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str) -> None:
         voice_id=ctx_dict["voice_id"],
         language=ctx_dict["language"],
         target_language=ctx_dict["target_language"],
+        silence_tolerance_ms=ctx_dict.get("silence_tolerance_ms", 800),
+        interruption_allowed=ctx_dict.get("interruption_allowed", False),
     )
 
     engine_name = os.environ.get("VOICE_ENGINE", "gemini_live")

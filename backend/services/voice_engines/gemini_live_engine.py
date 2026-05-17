@@ -57,9 +57,12 @@ class GeminiLiveEngine(VoiceEngine):
                         "startOfSpeechSensitivity": "START_SENSITIVITY_HIGH",
                         "endOfSpeechSensitivity": "END_SENSITIVITY_HIGH",
                         "prefixPaddingMs": 200,
-                        "silenceDurationMs": 800,
+                        # Configurable por template via silence_tolerance_ms
+                        "silenceDurationMs": ctx.silence_tolerance_ms,
                     },
-                    "activityHandling": "START_OF_ACTIVITY_INTERRUPTS",
+                    "activityHandling": (
+                        "START_OF_ACTIVITY_INTERRUPTS" if ctx.interruption_allowed else "NO_INTERRUPTION"
+                    ),
                 },
                 # Transcripción del usuario (lo que dijo, en texto)
                 "inputAudioTranscription": {},
@@ -117,10 +120,20 @@ class GeminiLiveEngine(VoiceEngine):
                         inline = part.get("inlineData")
                         if inline and inline.get("mimeType", "").startswith("audio"):
                             await ws.send_json({"type": "audio", "data": inline["data"]})
+                        # texto en parts: ocurre raro en modo audio, pero por las dudas
                         text = part.get("text")
                         if text:
                             transcript.append({"who": "ai", "text": text})
                             await ws.send_json({"type": "transcript", "who": "ai", "text": text})
+
+                    # outputTranscription = lo que dice el TUTOR (transcripción del audio que él genera)
+                    out_tr = sc.get("outputTranscription")
+                    if out_tr and out_tr.get("text"):
+                        t = out_tr["text"]
+                        transcript.append({"who": "ai", "text": t})
+                        await ws.send_json({"type": "transcript", "who": "ai", "text": t})
+
+                    # inputTranscription = lo que dice el USER
                     input_tr = sc.get("inputTranscription")
                     if input_tr and input_tr.get("text"):
                         t = input_tr["text"]

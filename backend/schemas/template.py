@@ -19,6 +19,28 @@ class TemplateBase(BaseModel):
     version: str = "v1.0"
     status: str = "active"
 
+    # ─── Pedagogía configurable (v3) ───
+    response_length: str = "short"          # terse | short | medium | long
+    tutor_talk_ratio: int = 25
+    proactive_questions: bool = True
+    tutor_shares_opinions: bool = True
+    warmth_level: int = 3
+    correction_mode: str = "recast"         # none | recast | explicit_soft | explicit_strict
+    correction_focus: list[str] = ["grammar", "vocab", "fluency"]
+    error_threshold: str = "repeated"       # only_major | repeated | all
+    max_feedback_items: int = 3
+    praise_count: int = 1
+    report_include_summary: bool = True
+    report_include_connectors: bool = True
+    report_include_vocab_suggestions: bool = True
+    report_include_pronunciation: bool = False
+    report_include_next_session_tip: bool = True
+    opening_style: str = "direct"           # direct | warm | playful
+    opening_includes_topic_intro: bool = True
+    silence_tolerance_ms: int = 800
+    interruption_allowed: bool = False
+    scaffold_when_stuck: bool = True
+
 
 class TemplateCreate(TemplateBase):
     pass
@@ -37,6 +59,28 @@ class TemplateUpdate(BaseModel):
     voice_label: Optional[str] = None
     icon_bg: Optional[str] = None
     status: Optional[str] = None
+
+    # v3
+    response_length: Optional[str] = None
+    tutor_talk_ratio: Optional[int] = None
+    proactive_questions: Optional[bool] = None
+    tutor_shares_opinions: Optional[bool] = None
+    warmth_level: Optional[int] = None
+    correction_mode: Optional[str] = None
+    correction_focus: Optional[list[str]] = None
+    error_threshold: Optional[str] = None
+    max_feedback_items: Optional[int] = None
+    praise_count: Optional[int] = None
+    report_include_summary: Optional[bool] = None
+    report_include_connectors: Optional[bool] = None
+    report_include_vocab_suggestions: Optional[bool] = None
+    report_include_pronunciation: Optional[bool] = None
+    report_include_next_session_tip: Optional[bool] = None
+    opening_style: Optional[str] = None
+    opening_includes_topic_intro: Optional[bool] = None
+    silence_tolerance_ms: Optional[int] = None
+    interruption_allowed: Optional[bool] = None
+    scaffold_when_stuck: Optional[bool] = None
 
 
 class TemplateResponse(TemplateBase):

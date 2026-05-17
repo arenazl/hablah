@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { NavLink, Routes, Route, useLocation, Link, useNavigate } from 'react-router-dom'
+import { NavLink, Routes, Route, useLocation, Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { WEBAPP_CSS } from './webapp.css'
@@ -84,6 +84,7 @@ export function WebApp() {
             <Route path="/practicar" element={<PracticarView profile={profile} onSessionEnd={refresh} />} />
             <Route path="/mapa" element={<MapaView profile={profile} />} />
             <Route path="/historial" element={<HistorialView />} />
+            <Route path="/sesiones/:id" element={<SessionDetailView />} />
             <Route path="/perfil" element={<PerfilView profile={profile} onChange={refresh} />} />
           </Routes>
         </main>
@@ -615,38 +616,10 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   )
 }
 
-/* ──────── REPORTE FINAL ──────── */
+/* ──────── REPORTE — overlay (al cierre de sesión) ──────── */
 function SessionReportOverlay({ report, sessionId, onClose }: {
   report: SessionData; sessionId: number; onClose: () => void
 }) {
-  const [data, setData] = useState<SessionData>(report)
-  const [polling, setPolling] = useState(report.status !== 'analyzed')
-
-  // Polling cada 2s hasta que status pase a 'analyzed'
-  useEffect(() => {
-    if (!polling) return
-    const interval = setInterval(async () => {
-      try {
-        const fresh = await sessionsAPI.get(sessionId)
-        setData(fresh)
-        if (fresh.status === 'analyzed') {
-          setPolling(false)
-          clearInterval(interval)
-        }
-      } catch {}
-    }, 2000)
-    // Timeout: parar después de 30s
-    const stopAfter = setTimeout(() => { setPolling(false); clearInterval(interval) }, 30000)
-    return () => { clearInterval(interval); clearTimeout(stopAfter) }
-  }, [polling, sessionId])
-
-  const r = data.report || {}
-  const metrics = data.metrics || {}
-  const score = data.score
-  const feedback: any[] = r.feedback || []
-  const praise: string = r.praise || ''
-  const durationMin = data.duration_seconds ? Math.round(data.duration_seconds / 60) : 0
-
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
@@ -654,115 +627,10 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
       display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
       overflowY: 'auto', padding: '40px 20px',
     }}>
-      <div style={{
-        maxWidth: 720, width: '100%', background: 'white', borderRadius: 24,
-        boxShadow: '0 24px 80px rgba(0,0,0,.4)', overflow: 'hidden',
-      }}>
-        {/* HEADER verde con score */}
-        <div style={{
-          background: 'linear-gradient(180deg, var(--primary), var(--primary-dark))',
-          color: 'white', padding: '32px 32px 40px', position: 'relative',
-        }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', opacity: .85, textTransform: 'uppercase', marginBottom: 8 }}>
-            Sesión finalizada · {durationMin} min
-          </div>
-          <h2 style={{ fontSize: 32, fontWeight: 800, margin: '0 0 8px', letterSpacing: '-.02em' }}>
-            {polling ? 'Analizando tu charla…' : (praise || '¡Buen trabajo!')}
-          </h2>
-          {!polling && (
-            <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-              <Stat label="Score" value={score != null ? `${score}` : '—'} highlight />
-              <Stat label="Palabras" value={metrics.words_spoken ?? '—'} />
-              <Stat label="WPM" value={metrics.wpm ?? '—'} />
-              <Stat label="Keywords" value={`${metrics.keywords_hit ?? 0}/${metrics.keywords_total ?? 0}`} />
-            </div>
-          )}
-        </div>
-
-        {/* BODY */}
-        <div style={{ padding: '24px 32px 32px' }}>
-          {polling && (
-            <div style={{ textAlign: 'center', padding: 30, color: 'var(--fg-3)' }}>
-              <div style={{ fontSize: 14, marginBottom: 8 }}>Estamos analizando lo que hablaste…</div>
-              <div style={{ fontSize: 12 }}>Tarda unos 5-10 segundos.</div>
-            </div>
-          )}
-
-          {!polling && feedback.length === 0 && (
-            <div style={{ textAlign: 'center', padding: 30, color: 'var(--fg-3)' }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--primary-dark)', marginBottom: 6 }}>
-                Sin errores importantes detectados.
-              </div>
-              <div style={{ fontSize: 13 }}>Hablaste fluido. Seguí así.</div>
-            </div>
-          )}
-
-          {feedback.map((fb, i) => (
-            <div key={i} style={{
-              border: '1px solid var(--border-1)', borderRadius: 12, padding: 16, marginBottom: 10,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                <span style={{
-                  fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase',
-                  padding: '3px 8px', borderRadius: 999,
-                  background: fb.type === 'pronunciation' ? '#FCE8E9' : 'var(--bg-2)',
-                  color: fb.type === 'pronunciation' ? '#B42127' : 'var(--fg-2)',
-                }}>
-                  {fb.type === 'grammar' ? 'Gramática' : fb.type === 'pronunciation' ? 'Pronunciación' : fb.type === 'vocabulary' ? 'Vocabulario' : 'Otro'}
-                </span>
-                <span style={{ fontSize: 12, color: 'var(--fg-3)' }}>{fb.label}</span>
-              </div>
-              {fb.snippet_wrong && (
-                <div style={{
-                  padding: 10, borderRadius: 8, fontSize: 13,
-                  background: '#FCE8E9', color: '#5A1F22', marginBottom: 6,
-                  display: 'flex', gap: 8, alignItems: 'flex-start',
-                }}>
-                  <span style={{ fontWeight: 800 }}>✕</span>
-                  <span>"{fb.snippet_wrong}"</span>
-                </div>
-              )}
-              {fb.snippet_correct && (
-                <div style={{
-                  padding: 10, borderRadius: 8, fontSize: 13,
-                  background: 'var(--primary-tint)', color: '#024E36',
-                  display: 'flex', gap: 8, alignItems: 'flex-start',
-                }}>
-                  <span style={{ fontWeight: 800 }}>✓</span>
-                  <span>"{fb.snippet_correct}"</span>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* TRANSCRIPCIÓN COMPLETA — collapsible */}
-          {data.transcript && data.transcript.length > 0 && (
-            <details style={{ marginTop: 20 }}>
-              <summary style={{
-                cursor: 'pointer', padding: 12, background: 'var(--bg-2)', borderRadius: 8,
-                fontSize: 13, fontWeight: 600, color: 'var(--fg-2)',
-              }}>
-                Ver transcripción completa ({data.transcript.length} turnos)
-              </summary>
-              <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {data.transcript.map((line, i) => (
-                  <div key={i} style={{
-                    padding: 10, borderRadius: 10, fontSize: 13, maxWidth: '90%',
-                    background: line.who === 'ai' ? 'var(--bg-2)' : 'var(--primary)',
-                    color: line.who === 'ai' ? 'var(--fg-1)' : 'white',
-                    alignSelf: line.who === 'ai' ? 'flex-start' : 'flex-end',
-                  }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.1em', opacity: .6, marginBottom: 3, textTransform: 'uppercase' }}>
-                      {line.who === 'ai' ? 'Tutor' : 'Vos'}
-                    </div>
-                    {line.text}
-                  </div>
-                ))}
-              </div>
-            </details>
-          )}
-
-          {/* ACTIONS */}
+      <SessionReport
+        sessionId={sessionId}
+        initial={report}
+        actions={
           <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
             <button onClick={onClose} className="btn btn-primary btn-lg" style={{ flex: 1 }}>
               Volver a Hoy
@@ -775,9 +643,307 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
               Practicar otra vez
             </button>
           </div>
+        }
+      />
+    </div>
+  )
+}
+
+/* ──────── REPORTE — componente reutilizable (overlay + /app/sesiones/:id) ──────── */
+interface SessionReportProps {
+  sessionId: number
+  initial?: SessionData
+  actions?: React.ReactNode
+}
+
+function SessionReport({ sessionId, initial, actions }: SessionReportProps) {
+  const [data, setData] = useState<SessionData | null>(initial ?? null)
+  const [loading, setLoading] = useState(!initial)
+  const [polling, setPolling] = useState(initial ? initial.status !== 'analyzed' : true)
+
+  // Carga inicial si no vino initial (caso /app/sesiones/:id)
+  useEffect(() => {
+    if (initial) return
+    sessionsAPI.get(sessionId)
+      .then((d) => { setData(d); setLoading(false); setPolling(d.status !== 'analyzed') })
+      .catch(() => setLoading(false))
+  }, [sessionId, initial])
+
+  // Polling cada 2s hasta status === 'analyzed'
+  useEffect(() => {
+    if (!polling) return
+    const interval = setInterval(async () => {
+      try {
+        const fresh = await sessionsAPI.get(sessionId)
+        setData(fresh)
+        if (fresh.status === 'analyzed') {
+          setPolling(false)
+          clearInterval(interval)
+        }
+      } catch {}
+    }, 2000)
+    const stopAfter = setTimeout(() => { setPolling(false); clearInterval(interval) }, 60000)
+    return () => { clearInterval(interval); clearTimeout(stopAfter) }
+  }, [polling, sessionId])
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--fg-3)' }}>Cargando sesión…</div>
+  if (!data) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--danger)' }}>Sesión no encontrada</div>
+
+  const r: any = data.report || {}
+  const metrics: any = data.metrics || {}
+  const score = data.score
+  const feedback: any[] = r.feedback || []
+  const praise = Array.isArray(r.praise) ? r.praise : (r.praise ? [r.praise] : [])
+  const summary: string = r.summary || ''
+  const connectors: string[] = r.connector_suggestions || []
+  const vocab: any[] = r.vocab_suggestions || []
+  const pron: any[] = r.pronunciation_notes || []
+  const nextTip: string = r.next_session_tip || ''
+  const durationMin = data.duration_seconds ? Math.round(data.duration_seconds / 60) : 0
+
+  return (
+    <div style={{
+      maxWidth: 760, width: '100%', background: 'white', borderRadius: 24,
+      boxShadow: '0 24px 80px rgba(0,0,0,.4)', overflow: 'hidden',
+    }}>
+      {/* HEADER */}
+      <div style={{
+        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)',
+        color: 'white', padding: '28px 32px 32px',
+      }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', opacity: .85, textTransform: 'uppercase', marginBottom: 6 }}>
+          {polling ? 'Sesión finalizada · analizando…' : `Sesión #${data.id} · ${durationMin} min`}
         </div>
+        <h2 style={{ fontSize: 28, fontWeight: 800, margin: '0 0 4px', letterSpacing: '-.02em' }}>
+          {polling
+            ? 'Analizando tu charla…'
+            : (praise[0] || '¡Buen trabajo!')}
+        </h2>
+        {!polling && praise.length > 1 && (
+          <div style={{ fontSize: 14, opacity: .92, marginTop: 4 }}>
+            {praise.slice(1).join(' · ')}
+          </div>
+        )}
+        {!polling && (
+          <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+            <Stat label="Score" value={score != null ? `${score}` : '—'} highlight />
+            <Stat label="Palabras" value={metrics.words_spoken ?? '—'} />
+            <Stat label="WPM" value={metrics.wpm ?? '—'} />
+            <Stat label="Keywords" value={`${metrics.keywords_hit ?? 0}/${metrics.keywords_total ?? 0}`} />
+          </div>
+        )}
+      </div>
+
+      {/* BODY */}
+      <div style={{ padding: '24px 32px 32px' }}>
+        {polling && (
+          <div style={{ textAlign: 'center', padding: '30px 10px', color: 'var(--fg-3)' }}>
+            <div style={{ fontSize: 14, marginBottom: 8 }}>Estamos analizando lo que hablaste con Gemini Pro…</div>
+            <div style={{ fontSize: 12 }}>Tarda 5-15 segundos. Al terminar aparece todo acá.</div>
+          </div>
+        )}
+
+        {!polling && (
+          <>
+            {/* Resumen narrativo */}
+            {summary && (
+              <ReportBlock title="Resumen de la charla">
+                <div style={{ fontSize: 14, color: 'var(--fg-2)', lineHeight: 1.55 }}>{summary}</div>
+              </ReportBlock>
+            )}
+
+            {/* Errores / Feedback */}
+            <ReportBlock title={feedback.length > 0 ? 'Puntos a pulir' : 'Sin errores importantes'}>
+              {feedback.length === 0 ? (
+                <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Hablaste fluido. Seguí así.</div>
+              ) : (
+                feedback.map((fb, i) => (
+                  <div key={i} style={{
+                    border: '1px solid var(--border-1)', borderRadius: 12, padding: 14, marginBottom: 10,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                      <TypeChip type={fb.type} />
+                      <span style={{ fontSize: 12, color: 'var(--fg-3)', fontWeight: 500 }}>{fb.label}</span>
+                    </div>
+                    {fb.snippet_wrong && (
+                      <div style={{
+                        padding: 10, borderRadius: 8, fontSize: 13,
+                        background: '#FCE8E9', color: '#5A1F22', marginBottom: 6,
+                        display: 'flex', gap: 8, alignItems: 'flex-start',
+                      }}>
+                        <span style={{ fontWeight: 800 }}>✕</span>
+                        <span>"{fb.snippet_wrong}"</span>
+                      </div>
+                    )}
+                    {fb.snippet_correct && (
+                      <div style={{
+                        padding: 10, borderRadius: 8, fontSize: 13,
+                        background: 'var(--primary-tint)', color: '#024E36', marginBottom: fb.why ? 8 : 0,
+                        display: 'flex', gap: 8, alignItems: 'flex-start',
+                      }}>
+                        <span style={{ fontWeight: 800 }}>✓</span>
+                        <span>"{fb.snippet_correct}"</span>
+                      </div>
+                    )}
+                    {fb.why && (
+                      <div style={{ fontSize: 12, color: 'var(--fg-3)', fontStyle: 'italic', paddingLeft: 4 }}>
+                        💡 {fb.why}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </ReportBlock>
+
+            {/* Conectores sugeridos */}
+            {connectors.length > 0 && (
+              <ReportBlock title="Conectores que enriquecerían tu habla">
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 10 }}>
+                  Estas palabras te dan fluidez profesional. Intentá usarlas en la próxima sesión.
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {connectors.map((c) => (
+                    <span key={c} style={{
+                      padding: '6px 12px', borderRadius: 999,
+                      background: 'var(--primary-tint)', color: 'var(--primary-dark)',
+                      fontSize: 13, fontWeight: 600,
+                    }}>
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </ReportBlock>
+            )}
+
+            {/* Vocabulario sugerido */}
+            {vocab.length > 0 && (
+              <ReportBlock title="Vocabulario para incorporar">
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 10 }}>
+                  Palabras del nivel siguiente que encajarían bien en este tema.
+                </div>
+                {vocab.map((v, i) => (
+                  <div key={i} style={{
+                    padding: 12, background: 'var(--bg-2)', borderRadius: 10, marginBottom: 8,
+                  }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-1)' }}>
+                      {v.word}
+                    </div>
+                    {v.context && (
+                      <div style={{ fontSize: 12, color: 'var(--fg-2)', marginTop: 4, fontStyle: 'italic' }}>
+                        "{v.context}"
+                      </div>
+                    )}
+                    {v.why && (
+                      <div style={{ fontSize: 11, color: 'var(--fg-3)', marginTop: 4 }}>
+                        {v.why}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </ReportBlock>
+            )}
+
+            {/* Pronunciación */}
+            {pron.length > 0 && (
+              <ReportBlock title="Notas de pronunciación">
+                {pron.map((p, i) => (
+                  <div key={i} style={{
+                    padding: 12, background: '#FFF7E5', border: '1px solid rgba(255,184,0,.3)',
+                    borderRadius: 10, marginBottom: 8,
+                  }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#5A3D00' }}>{p.word}</div>
+                    {p.issue && (
+                      <div style={{ fontSize: 12, color: '#8A5A00', marginTop: 4 }}>
+                        Sonó como: {p.issue}
+                      </div>
+                    )}
+                    {p.tip && (
+                      <div style={{ fontSize: 12, color: 'var(--fg-2)', marginTop: 4 }}>
+                        💡 {p.tip}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </ReportBlock>
+            )}
+
+            {/* Consejo para próxima sesión */}
+            {nextTip && (
+              <div style={{
+                marginTop: 18, padding: 16, borderRadius: 14,
+                background: 'linear-gradient(135deg, var(--ink-1), var(--ink-2))',
+                color: 'white',
+              }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.14em', opacity: .65, textTransform: 'uppercase', marginBottom: 6 }}>
+                  Para la próxima sesión
+                </div>
+                <div style={{ fontSize: 14, lineHeight: 1.5 }}>{nextTip}</div>
+              </div>
+            )}
+
+            {/* TRANSCRIPCIÓN COMPLETA — collapsible */}
+            {data.transcript && data.transcript.length > 0 && (
+              <details style={{ marginTop: 20 }}>
+                <summary style={{
+                  cursor: 'pointer', padding: 12, background: 'var(--bg-2)', borderRadius: 8,
+                  fontSize: 13, fontWeight: 600, color: 'var(--fg-2)',
+                }}>
+                  Ver transcripción completa ({data.transcript.length} turnos)
+                </summary>
+                <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {data.transcript.map((line, i) => (
+                    <div key={i} style={{
+                      padding: 10, borderRadius: 10, fontSize: 13, maxWidth: '90%',
+                      background: line.who === 'ai' ? 'var(--bg-2)' : 'var(--primary)',
+                      color: line.who === 'ai' ? 'var(--fg-1)' : 'white',
+                      alignSelf: line.who === 'ai' ? 'flex-start' : 'flex-end',
+                    }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.1em', opacity: .6, marginBottom: 3, textTransform: 'uppercase' }}>
+                        {line.who === 'ai' ? 'Tutor' : 'Vos'}
+                      </div>
+                      {line.text}
+                    </div>
+                  ))}
+                </div>
+              </details>
+            )}
+          </>
+        )}
+
+        {actions}
       </div>
     </div>
+  )
+}
+
+function ReportBlock({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div style={{
+        fontSize: 11, fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase',
+        color: 'var(--fg-3)', marginBottom: 10,
+      }}>{title}</div>
+      {children}
+    </div>
+  )
+}
+
+function TypeChip({ type }: { type: string }) {
+  const meta: Record<string, { label: string; bg: string; color: string }> = {
+    grammar: { label: 'Gramática', bg: 'var(--bg-2)', color: 'var(--fg-2)' },
+    vocab: { label: 'Vocabulario', bg: '#F1E8FF', color: '#5B21B6' },
+    vocabulary: { label: 'Vocabulario', bg: '#F1E8FF', color: '#5B21B6' },
+    pronunciation: { label: 'Pronunciación', bg: '#FCE8E9', color: '#B42127' },
+    fluency: { label: 'Fluidez', bg: 'var(--accent-tint)', color: '#8A5A00' },
+    tense: { label: 'Tiempos verbales', bg: 'var(--bg-2)', color: 'var(--fg-2)' },
+  }
+  const m = meta[type] || { label: type, bg: 'var(--bg-2)', color: 'var(--fg-2)' }
+  return (
+    <span style={{
+      fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase',
+      padding: '3px 8px', borderRadius: 999,
+      background: m.bg, color: m.color,
+    }}>{m.label}</span>
   )
 }
 
@@ -789,6 +955,29 @@ function Stat({ label, value, highlight }: { label: string; value: any; highligh
     }}>
       <div style={{ fontSize: 11, opacity: .85, marginBottom: 4 }}>{label}</div>
       <div style={{ fontSize: highlight ? 24 : 18, fontWeight: 800, lineHeight: 1 }}>{value}</div>
+    </div>
+  )
+}
+
+/* ──────── VISTA SESIÓN INDIVIDUAL desde historial ──────── */
+function SessionDetailView() {
+  const { id } = useParams()
+  const nav = useNavigate()
+  const sessionId = Number(id)
+  return (
+    <div className="view" style={{ background: 'var(--bg-1)', padding: '24px 32px' }}>
+      <div style={{ marginBottom: 16 }}>
+        <button onClick={() => nav('/app/historial')} className="btn btn-ghost btn-sm">
+          ← Volver al historial
+        </button>
+      </div>
+      <SessionReport sessionId={sessionId} actions={
+        <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
+          <button onClick={() => nav('/app/practicar')} className="btn btn-primary btn-lg" style={{ flex: 1 }}>
+            Empezar nueva charla
+          </button>
+        </div>
+      } />
     </div>
   )
 }
@@ -848,7 +1037,12 @@ function HistorialView() {
       )}
       <div className="history-grid">
         {sessions.map((s) => (
-          <div key={s.id} className="history-row">
+          <Link
+            key={s.id}
+            to={`/app/sesiones/${s.id}`}
+            className="history-row"
+            style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+          >
             <div className="when"><b>{formatDay(s.started_at)}</b>{formatTime(s.started_at)}</div>
             <div>
               <div className="h-title">Sesión #{s.id}</div>
@@ -859,7 +1053,7 @@ function HistorialView() {
             </div>
             <div className="metric"><span className="l">Status</span><span className="v">{s.status}</span></div>
             <div className="metric"><span className="l">Score</span><span className="v">{s.score ?? '—'}</span></div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

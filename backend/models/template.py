@@ -40,6 +40,37 @@ class Template(Base):
 
     assigned_count = Column(Integer, nullable=False, default=0)
 
+    # ─── PEDAGOGÍA CONFIGURABLE (v2) ──────────────────────────────────────
+    # Estilo conversacional del tutor
+    response_length = Column(String(20), nullable=False, default="short")   # terse | short | medium | long
+    tutor_talk_ratio = Column(Integer, nullable=False, default=25)          # 10..50 (% del tiempo)
+    proactive_questions = Column(Boolean, nullable=False, default=True)
+    tutor_shares_opinions = Column(Boolean, nullable=False, default=True)
+    warmth_level = Column(Integer, nullable=False, default=3)               # 1..5
+
+    # Estilo de corrección
+    correction_mode = Column(String(30), nullable=False, default="recast")  # none | recast | explicit_soft | explicit_strict
+    correction_focus = Column(JSON, nullable=False, default=lambda: ["grammar", "vocab", "fluency"])
+    error_threshold = Column(String(20), nullable=False, default="repeated")  # only_major | repeated | all
+    max_feedback_items = Column(Integer, nullable=False, default=3)         # 1..10
+    praise_count = Column(Integer, nullable=False, default=1)               # 1..5
+
+    # Estructura del reporte final
+    report_include_summary = Column(Boolean, nullable=False, default=True)
+    report_include_connectors = Column(Boolean, nullable=False, default=True)
+    report_include_vocab_suggestions = Column(Boolean, nullable=False, default=True)
+    report_include_pronunciation = Column(Boolean, nullable=False, default=False)
+    report_include_next_session_tip = Column(Boolean, nullable=False, default=True)
+
+    # Arranque de sesión
+    opening_style = Column(String(20), nullable=False, default="direct")    # direct | warm | playful
+    opening_includes_topic_intro = Column(Boolean, nullable=False, default=True)
+
+    # Dinámica de la sesión
+    silence_tolerance_ms = Column(Integer, nullable=False, default=800)     # 300..3000
+    interruption_allowed = Column(Boolean, nullable=False, default=False)
+    scaffold_when_stuck = Column(Boolean, nullable=False, default=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

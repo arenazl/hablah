@@ -73,6 +73,28 @@ export interface Template {
   tones: string[]; voice_id: string; voice_label: string
   icon_bg: string; is_preset: boolean; version: string; status: string
   assigned_count: number
+
+  // v3 pedagogía configurable
+  response_length: 'terse' | 'short' | 'medium' | 'long'
+  tutor_talk_ratio: number
+  proactive_questions: boolean
+  tutor_shares_opinions: boolean
+  warmth_level: number
+  correction_mode: 'none' | 'recast' | 'explicit_soft' | 'explicit_strict'
+  correction_focus: string[]
+  error_threshold: 'only_major' | 'repeated' | 'all'
+  max_feedback_items: number
+  praise_count: number
+  report_include_summary: boolean
+  report_include_connectors: boolean
+  report_include_vocab_suggestions: boolean
+  report_include_pronunciation: boolean
+  report_include_next_session_tip: boolean
+  opening_style: 'direct' | 'warm' | 'playful'
+  opening_includes_topic_intro: boolean
+  silence_tolerance_ms: number
+  interruption_allowed: boolean
+  scaffold_when_stuck: boolean
 }
 
 export const templatesAPI = {
