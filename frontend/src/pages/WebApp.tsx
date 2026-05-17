@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 
 import { WEBAPP_CSS } from './webapp.css'
 import { HOY_CSS } from './hoy.css'
-import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic } from '../services/api'
+import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic, HeatmapCell, LevelProgress } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 
@@ -234,8 +234,12 @@ function MobileBar() {
 function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boolean }) {
   const nav = useNavigate()
   const [recent, setRecent] = useState<SessionData[]>([])
+  const [heatmap, setHeatmap] = useState<HeatmapCell[]>([])
+  const [levelProg, setLevelProg] = useState<LevelProgress | null>(null)
   useEffect(() => {
     sessionsAPI.list().then(setRecent).catch(() => {})
+    meAPI.streakHeatmap(28).then(setHeatmap).catch(() => {})
+    meAPI.levelProgress().then(setLevelProg).catch(() => {})
   }, [])
 
   if (loading) return <div className="view"><div style={{ color: 'var(--fg-3)' }}>Cargando...</div></div>
@@ -249,7 +253,7 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   const topicTitle = firstInterest?.title || 'Tema libre'
   const topicCategory = firstInterest?.category || ''
   const tutorName = tpl?.name || 'Habláh'
-  const tutorRigor = tpl?.rigor ?? 3
+  const tutorRigor = (tpl as any)?.rigor ?? 3
   const tutorWarmth = (tpl as any)?.warmth_level ?? 3
   const tutorInitial = (tutorName.split(' ')[1] || tutorName)[0] || 'T'
   const langLabel = u.target_language === 'en' ? 'inglés' : u.target_language === 'pt' ? 'portugués' : u.target_language === 'it' ? 'italiano' : u.target_language
