@@ -252,3 +252,107 @@ async def level_progress(
         "hours_spoken": hours_spoken,
         "fluency_delta_30d": fluency_delta_30d,
     }
+
+
+# ─── Today (mision del dia) ──────────────────────────────────────────────────
+
+@router.get("/today")
+async def get_today(
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Mision del dia: tópico sugerido + tutor + 3 in-context prompts (vocab/gram/restr).
+
+    Pick del topico: round-robin sobre intereses del user evitando el de la ultima sesion.
+    Si no hay intereses, devuelve un tema libre sugerido.
+    """
+    # Tutor activo
+    template = None
+    if current.active_template_id:
+        template = (await db.execute(
+            select(Template).where(Template.id == current.active_template_id)
+        )).scalar_one_or_none()
+
+    # Intereses ordenados
+    interests = (await db.execute(
+        select(Topic).join(UserInterest, UserInterest.topic_id == Topic.id)
+        .where(UserInterest.user_id == current.id)
+        .order_by(UserInterest.position)
+    )).scalars().all()
+
+    # Topico de la ultima sesion (para evitar repetir)
+    last_session = (await db.execute(
+        select(SessionModel).where(SessionModel.user_id == current.id)
+        .order_by(SessionModel.started_at.desc()).limit(1)
+    )).scalar_one_or_none()
+    last_topic_id = last_session.topic_id if last_session else None
+
+    # Pick: primer interes que no sea el de ayer
+    pick: Topic | None = None
+    for t in interests:
+        if t.id != last_topic_id:
+            pick = t
+            break
+    if pick is None and interests:
+        pick = interests[0]
+
+    # 3 in-context prompts derivados del topico
+    keyword = (pick.keywords or ["nevertheless"])[0] if pick else "nevertheless"
+    topic_title = pick.title if pick else "tema libre"
+    in_context_prompts = [
+        {"kind": "vocab",  "label": "Vocabulario",
+         "text": f"Intentá usar **{keyword}** en alguna idea sobre {topic_title.lower()}."},
+        {"kind": "gram",   "label": "Gramática",
+         "text": "Contá cómo **empezó** el tema usando **pasado simple**."},
+        {"kind": "restr",  "label": "Restricción",
+         "text": "El tutor va a discrepar. Expresá **desacuerdo formal**."},
+    ]
+
+    # Deteccion simple de error recurrente (rescue): mismo error_key no resuelto en >=3 sesiones distintas
+    rescue = None
+    if current.insistent_mode_enabled:
+        # Top error_key con mas sesiones distintas en ultimos 7 dias, no resuelto
+        cutoff = datetime.now(timezone.utc) - timedelta(days=7)
+        rows = (await db.execute(
+            select(ErrorLog.error_key, ErrorLog.label, func.count(func.distinct(ErrorLog.session_id)).label("n"))
+            .where(ErrorLog.user_id == current.id)
+            .where(ErrorLog.resolved == False)
+            .where(ErrorLog.detected_at >= cutoff)
+            .group_by(ErrorLog.error_key, ErrorLog.label)
+            .having(func.count(func.distinct(ErrorLog.session_id)) >= 3)
+            .order_by(func.count(func.distinct(ErrorLog.session_id)).desc())
+            .limit(1)
+        )).all()
+        if rows:
+            error_key, label, n_sessions = rows[0]
+            # 3 ejemplos mas recientes de ese error
+            examples = (await db.execute(
+                select(ErrorLog.snippet_wrong, ErrorLog.snippet_correct, ErrorLog.detected_at)
+                .where(ErrorLog.user_id == current.id)
+                .where(ErrorLog.error_key == error_key)
+                .where(ErrorLog.resolved == False)
+                .order_by(ErrorLog.detected_at.desc())
+                .limit(3)
+            )).all()
+            rescue = {
+                "active": True,
+                "error_key": error_key,
+                "label": label,
+                "sessions_count": int(n_sessions),
+                "examples": [
+                    {"wrong": w, "correct": c, "ctx_date": d.isoformat() if d else None}
+                    for w, c, d in examples
+                ],
+            }
+
+    return {
+        "mission": {
+            "topic": {"id": pick.id, "slug": pick.slug, "title": pick.title, "category": pick.category} if pick else None,
+            "template": {"id": template.id, "name": template.name, "slug": template.slug, "rigor": template.rigor} if template else None,
+            "suggested_minutes": current.target_minutes_per_session,
+            "level": current.cefr_level,
+            "language": current.target_language,
+        },
+        "in_context_prompts": in_context_prompts,
+        "rescue": rescue,
+    }

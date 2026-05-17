@@ -75,6 +75,25 @@ export const meAPI = {
   }>) => api.patch('/me/settings', data).then((r) => r.data),
   streakHeatmap: (days = 28) => api.get<HeatmapCell[]>(`/me/streak-heatmap?days=${days}`).then((r) => r.data),
   levelProgress: () => api.get<LevelProgress>('/me/level-progress').then((r) => r.data),
+  today: () => api.get<TodayPayload>('/me/today').then((r) => r.data),
+}
+
+export interface TodayPayload {
+  mission: {
+    topic: { id: number; slug: string; title: string; category: string } | null
+    template: { id: number; name: string; slug: string; rigor: number } | null
+    suggested_minutes: number
+    level: string
+    language: string
+  }
+  in_context_prompts: { kind: 'vocab' | 'gram' | 'restr'; label: string; text: string }[]
+  rescue: {
+    active: boolean
+    error_key: string
+    label: string
+    sessions_count: number
+    examples: { wrong: string | null; correct: string | null; ctx_date: string | null }[]
+  } | null
 }
 
 /* ────────────── TEMPLATES ────────────── */

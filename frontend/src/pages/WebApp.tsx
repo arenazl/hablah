@@ -6,7 +6,7 @@ import { WEBAPP_CSS } from './webapp.css'
 import { HOY_CSS } from './hoy.css'
 import { MAPA_CSS } from './mapa.css'
 import { PRACTICAR_CSS } from './practicar.css'
-import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic, HeatmapCell, LevelProgress } from '../services/api'
+import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 
@@ -416,11 +416,13 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   const [recent, setRecent] = useState<SessionData[]>([])
   const [heatmap, setHeatmap] = useState<HeatmapCell[]>([])
   const [levelProg, setLevelProg] = useState<LevelProgress | null>(null)
+  const [today, setToday] = useState<TodayPayload | null>(null)
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({})
   useEffect(() => {
     sessionsAPI.list().then(setRecent).catch(() => {})
     meAPI.streakHeatmap(28).then(setHeatmap).catch(() => {})
     meAPI.levelProgress().then(setLevelProg).catch(() => {})
+    meAPI.today().then(setToday).catch(() => {})
   }, [])
 
   if (loading) return <div className="view"><div style={{ color: 'var(--fg-3)' }}>Cargando...</div></div>
@@ -515,27 +517,19 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
             <div className="hp-hero-r">
               <div className="hp-label">Desafíos en pantalla</div>
 
-              <div className="hp-prompt vocab">
-                <span className="hp-pgl">V</span>
-                <div className="hp-pt">
-                  <span className="hp-small">Vocabulario</span>
-                  Intentá usar <b>{focusKeyword}</b> en alguna idea sobre {topicTitle.toLowerCase()}.
+              {(today?.in_context_prompts || [
+                { kind: 'vocab' as const, label: 'Vocabulario', text: `Intentá usar **${focusKeyword}** en alguna idea sobre ${topicTitle.toLowerCase()}.` },
+                { kind: 'gram' as const, label: 'Gramática', text: 'Contá cómo **empezó** el tema usando **pasado simple**.' },
+                { kind: 'restr' as const, label: 'Restricción', text: 'El tutor va a discrepar. Expresá **desacuerdo formal**.' },
+              ]).map((p, i) => (
+                <div key={i} className={`hp-prompt ${p.kind}`}>
+                  <span className="hp-pgl">{p.kind === 'vocab' ? 'V' : p.kind === 'gram' ? 'G' : 'R'}</span>
+                  <div className="hp-pt">
+                    <span className="hp-small">{p.label}</span>
+                    {renderPromptText(p.text)}
+                  </div>
                 </div>
-              </div>
-              <div className="hp-prompt gram">
-                <span className="hp-pgl">G</span>
-                <div className="hp-pt">
-                  <span className="hp-small">Gramática</span>
-                  Contá cómo <b>empezó</b> el tema usando <b>pasado simple</b>.
-                </div>
-              </div>
-              <div className="hp-prompt restr">
-                <span className="hp-pgl">R</span>
-                <div className="hp-pt">
-                  <span className="hp-small">Restricción</span>
-                  El tutor va a discrepar. Expresá <b>desacuerdo formal</b>.
-                </div>
-              </div>
+              ))}
 
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,.55)', marginTop: 6, lineHeight: 1.4 }}>
                 Aparecen como tarjetas durante la charla. No tenés que cumplir todas.
@@ -543,48 +537,36 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
             </div>
           </div>
 
-          {/* RESCUE (visible solo si insistent_mode + hay errores recurrentes — DEMO) */}
-          {u.insistent_mode_enabled && totalSessions >= 3 && (
+          {/* RESCUE — visible solo si el backend detectó un error recurrente real */}
+          {today?.rescue?.active && (
             <div className="hp-card hp-rescue">
               <div className="hp-rescue-head">
                 <div>
                   <div className="hp-rescue-eye"><span className="hp-pulse"></span> Punto a pulir · misión de rescate activa</div>
-                  <h3>Verbos irregulares en pasado simple</h3>
-                  <p>Repetiste el mismo patrón en las últimas <b>3 sesiones</b>. La charla de hoy va a forzar narrativas históricas sobre el género para que pelees con este tema hasta consolidarlo. <span style={{ opacity: .6, fontSize: 11 }}>[demo · pendiente endpoint de rescate]</span></p>
+                  <h3>{today.rescue.label}</h3>
+                  <p>Repetiste el mismo patrón en las últimas <b>{today.rescue.sessions_count} sesiones</b>. La próxima charla va a forzar contextos para que pelees con este tema hasta consolidarlo.</p>
                 </div>
               </div>
 
               <div className="hp-rescue-body">
                 <div className="hp-rescue-examples">
-                  <div className="hp-ex">
-                    <span className="hp-bad">"It <b>beginned</b> in the late 90s."</span>
-                    <span className="hp-arr">→</span>
-                    <span className="hp-good">It <b>began</b> in the late 90s.</span>
-                  </div>
-                  <div className="hp-ex">
-                    <span className="hp-bad">"DJs <b>bringed</b> the sound to pirate radio."</span>
-                    <span className="hp-arr">→</span>
-                    <span className="hp-good">DJs <b>brought</b> the sound to pirate radio.</span>
-                  </div>
-                  <div className="hp-ex">
-                    <span className="hp-bad">"The crowd <b>goed</b> wild."</span>
-                    <span className="hp-arr">→</span>
-                    <span className="hp-good">The crowd <b>went</b> wild.</span>
-                  </div>
+                  {today.rescue.examples.map((ex, i) => (
+                    <div key={i} className="hp-ex">
+                      <span className="hp-bad">{ex.wrong || '—'}</span>
+                      <span className="hp-arr">→</span>
+                      <span className="hp-good">{ex.correct || '—'}</span>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="hp-rescue-aside">
                   <div>
-                    <div style={{ fontSize: 11, color: '#8A6A00', letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>Frecuencia · últimas 6 sesiones</div>
+                    <div style={{ fontSize: 11, color: '#8A6A00', letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>Detectado en {today.rescue.sessions_count} sesiones</div>
                     <div className="hp-freq">
-                      <i style={{ height: '30%', opacity: .35 }}></i>
-                      <i style={{ height: '50%', opacity: .55 }}></i>
-                      <i style={{ height: '55%', opacity: .7 }}></i>
-                      <i style={{ height: '70%' }}></i>
-                      <i style={{ height: '85%' }}></i>
-                      <i style={{ height: '95%', background: '#E5484D' }}></i>
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <i key={i} style={{ height: `${30 + i * 12}%`, opacity: 0.4 + i * 0.1, background: i === 5 ? '#E5484D' : undefined }} />
+                      ))}
                     </div>
-                    <div className="hp-freq-x"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Hoy</span></div>
                   </div>
                   <div className="hp-rescue-cta">
                     <button className="hp-btn-amber" onClick={() => nav('/app/practicar')}>
@@ -869,6 +851,17 @@ function warmthLabel(n: number): string {
   if (n === 3) return 'Media'
   if (n === 2) return 'Baja'
   return 'Muy baja'
+}
+
+function renderPromptText(text: string): React.ReactNode {
+  // Parsea **bold** del backend en <b>
+  const parts = text.split(/(\*\*[^*]+\*\*)/g)
+  return parts.map((p, i) => {
+    if (p.startsWith('**') && p.endsWith('**')) {
+      return <b key={i}>{p.slice(2, -2)}</b>
+    }
+    return <span key={i}>{p}</span>
+  })
 }
 
 function heatmapFromBackend(cells: HeatmapCell[]): Array<{ className: string }> {
