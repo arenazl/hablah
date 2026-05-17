@@ -160,8 +160,8 @@ export interface SessionData {
 }
 
 export const sessionsAPI = {
-  start: (topic_id?: number, template_id?: number) =>
-    api.post<SessionStart>('/sessions/start', { topic_id, template_id }).then((r) => r.data),
+  start: (topic_id?: number, template_id?: number, free_topic?: string) =>
+    api.post<SessionStart>('/sessions/start', { topic_id, template_id, free_topic }).then((r) => r.data),
   end: (sessionId: number, transcript: { who: string; text: string }[]) =>
     api.post<SessionData>(`/sessions/${sessionId}/end`, { transcript }).then((r) => r.data),
   list: () => api.get<SessionData[]>('/sessions/').then((r) => r.data),

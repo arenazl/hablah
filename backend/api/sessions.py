@@ -61,7 +61,7 @@ async def start_session(
     # Importar acá para evitar ciclos
     from services.super_prompt import build_super_prompt
 
-    super_prompt = build_super_prompt(user=current, template=template, topic=topic)
+    super_prompt = build_super_prompt(user=current, template=template, topic=topic, free_topic=payload.free_topic)
     voice_id = (template.voice_id if template else None) or ""
 
     return {
@@ -75,7 +75,7 @@ async def start_session(
         "topic": {
             "id": topic.id, "title": topic.title, "slug": topic.slug,
             "keywords": topic.keywords,
-        } if topic else None,
+        } if topic else ({"id": None, "title": payload.free_topic, "slug": "free", "keywords": []} if payload.free_topic else None),
     }
 
 

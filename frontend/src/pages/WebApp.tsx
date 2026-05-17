@@ -739,6 +739,8 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const [extraTopics, setExtraTopics] = useState<Topic[]>([])
   const [endedReport, setEndedReport] = useState<SessionData | null>(null)
   const [freeTopicText, setFreeTopicText] = useState('')
+  const [interestQuery, setInterestQuery] = useState('')
+  const [interestCategory, setInterestCategory] = useState<string>('all')
   const startedRef = useRef(false)
 
   // Cargo catálogo completo para que el usuario pueda elegir cualquiera, no solo sus intereses
@@ -751,13 +753,13 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     onError: (e) => toast.error(e.message),
   })
 
-  const beginSession = useCallback(async (topicId: number | null) => {
+  const beginSession = useCallback(async (topicId: number | null, freeTopic?: string) => {
     if (startedRef.current) return
     startedRef.current = true
     try {
-      const start = await sessionsAPI.start(topicId || undefined)
+      const start = await sessionsAPI.start(topicId || undefined, undefined, freeTopic)
       setSessionId(start.session_id)
-      setTopicTitle(start.topic?.title || 'Tema libre')
+      setTopicTitle(start.topic?.title || freeTopic || 'Tema libre')
       setKeywords(start.topic?.keywords || [])
       await live.start(start.session_id)
     } catch (e: any) {
@@ -962,7 +964,12 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               </h2>
             </div>
             <form
-              onSubmit={(e) => { e.preventDefault(); beginSession(null) }}
+              onSubmit={(e) => {
+                e.preventDefault()
+                const t = freeTopicText.trim()
+                if (!t) { toast.error('Escribí de qué querés hablar'); return }
+                beginSession(null, t)
+              }}
               style={{ display: 'flex', gap: 8 }}
             >
               <input

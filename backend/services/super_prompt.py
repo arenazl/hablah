@@ -104,6 +104,7 @@ def build_super_prompt(
     template: Optional[Template],
     topic: Optional[Topic],
     recent_errors: Optional[list[dict]] = None,
+    free_topic: Optional[str] = None,
 ) -> str:
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
@@ -135,6 +136,12 @@ def build_super_prompt(
             topic_block += "\n- Al abrir, presentá brevemente el tema antes de preguntar."
         else:
             topic_block += "\n- NO presentes el tema. Andá directo a una pregunta abierta sobre el tema."
+    elif free_topic and free_topic.strip():
+        topic_block = (
+            f"TÓPICO DE HOY (texto libre del alumno)\n"
+            f"- El alumno escribió: \"{free_topic.strip()}\".\n"
+            f"- Arrancá la charla EXACTAMENTE sobre eso. Hacé una pregunta abierta y específica sobre lo que mencionó."
+        )
     else:
         topic_block = "TÓPICO DE HOY\n- Libre. Preguntale al alumno qué le interesa charlar."
 

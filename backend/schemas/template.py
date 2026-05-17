@@ -131,6 +131,7 @@ class TopicResponse(TopicBase):
 class SessionStartRequest(BaseModel):
     topic_id: Optional[int] = None
     template_id: Optional[int] = None
+    free_topic: Optional[str] = None
 
 
 class SessionResponse(BaseModel):
