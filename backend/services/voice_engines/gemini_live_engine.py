@@ -50,6 +50,21 @@ class GeminiLiveEngine(VoiceEngine):
                         "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Aoede"}},
                     },
                 },
+                # VAD automático: Gemini detecta inicio/fin de turno por silencio
+                "realtimeInputConfig": {
+                    "automaticActivityDetection": {
+                        "disabled": False,
+                        "startOfSpeechSensitivity": "START_SENSITIVITY_HIGH",
+                        "endOfSpeechSensitivity": "END_SENSITIVITY_HIGH",
+                        "prefixPaddingMs": 200,
+                        "silenceDurationMs": 800,
+                    },
+                    "activityHandling": "START_OF_ACTIVITY_INTERRUPTS",
+                },
+                # Transcripción del usuario (lo que dijo, en texto)
+                "inputAudioTranscription": {},
+                # Transcripción del tutor también, para mostrar en el panel lateral
+                "outputAudioTranscription": {},
                 "systemInstruction": {"parts": [{"text": ctx.super_prompt}]},
             }
         }

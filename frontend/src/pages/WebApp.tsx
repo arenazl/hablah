@@ -310,19 +310,25 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const [topicTitle, setTopicTitle] = useState<string>('')
   const [keywords, setKeywords] = useState<string[]>([])
   const [audioLevel, setAudioLevel] = useState(0)
+  const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
+  const [extraTopics, setExtraTopics] = useState<Topic[]>([])
   const startedRef = useRef(false)
+
+  // Cargo catálogo completo para que el usuario pueda elegir cualquiera, no solo sus intereses
+  useEffect(() => {
+    topicsAPI.list().then(setExtraTopics).catch(() => {})
+  }, [])
 
   const live = useLiveVoice({
     onAudioLevel: setAudioLevel,
     onError: (e) => toast.error(e.message),
   })
 
-  const beginSession = useCallback(async () => {
+  const beginSession = useCallback(async (topicId: number | null) => {
     if (startedRef.current) return
     startedRef.current = true
     try {
-      const firstInterest = profile?.interests[0]
-      const start = await sessionsAPI.start(firstInterest?.id)
+      const start = await sessionsAPI.start(topicId || undefined)
       setSessionId(start.session_id)
       setTopicTitle(start.topic?.title || 'Tema libre')
       setKeywords(start.topic?.keywords || [])
@@ -331,11 +337,61 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       toast.error('No pudimos iniciar la sesión')
       startedRef.current = false
     }
-  }, [profile, live])
+  }, [live])
 
-  useEffect(() => {
-    if (profile && !sessionId) beginSession()
-  }, [profile, sessionId, beginSession])
+  // Si todavía no eligió tópico, NO arranco automático. Pantalla de selección.
+  if (!sessionId) {
+    if (!profile) return <div className="view">Cargando…</div>
+    const interests = profile.interests
+    // catálogo "extra" = catálogo completo menos los intereses (para no duplicar)
+    const interestIds = new Set(interests.map(i => i.id))
+    const others = extraTopics.filter(t => !interestIds.has(t.id))
+
+    return (
+      <div className="view">
+        <div className="view-head">
+          <h2>¿De qué charlamos hoy?</h2>
+          <div className="sub">Elegí un tópico de tus intereses o explorá el catálogo. La sesión arranca al hacer click.</div>
+        </div>
+
+        {interests.length > 0 && (
+          <>
+            <div className="eyebrow" style={{ marginTop: 24, marginBottom: 12 }}>Tus intereses</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+              {interests.map((t) => (
+                <TopicPick key={t.id} title={t.title} category={t.category} highlighted
+                  onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }} />
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className="eyebrow" style={{ marginTop: 32, marginBottom: 12 }}>Tema libre</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+          <TopicPick title="Sorprendéme · Tema libre" category="El tutor elige el ángulo"
+            onClick={() => { setSelectedTopicId(null); beginSession(null) }} />
+        </div>
+
+        {others.length > 0 && (
+          <>
+            <div className="eyebrow" style={{ marginTop: 32, marginBottom: 12 }}>Explorá del catálogo</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+              {others.slice(0, 12).map((t) => (
+                <TopicPick key={t.id} title={t.title} category={t.category}
+                  hot={t.is_hot}
+                  onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }} />
+              ))}
+            </div>
+            {others.length > 12 && (
+              <div style={{ marginTop: 12, fontSize: 13, color: 'var(--fg-3)' }}>
+                + {others.length - 12} tópicos más en el catálogo
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    )
+  }
 
   const handleEnd = useCallback(async () => {
     live.stop()
@@ -620,6 +676,33 @@ function SettingsRow({ label, sub, value, switchOn, onSwitchToggle }: {
         ? <div className={`switch${switchOn ? '' : ' off'}`} onClick={onSwitchToggle} style={{ cursor: 'pointer' }} />
         : value ? <span className="v">{value}</span> : null}
     </div>
+  )
+}
+
+/* ──────── topic picker ──────── */
+function TopicPick({ title, category, highlighted, hot, onClick }: {
+  title: string; category: string; highlighted?: boolean; hot?: boolean; onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6,
+        padding: 16, borderRadius: 14,
+        border: highlighted ? '2px solid var(--primary)' : '1px solid var(--border-1)',
+        background: highlighted ? 'var(--primary-tint)' : 'white',
+        cursor: 'pointer', textAlign: 'left',
+        transition: 'all .15s var(--ease)',
+      }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-card)' }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+    >
+      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: highlighted ? 'var(--primary-dark)' : 'var(--fg-3)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        {category}
+        {hot && <span style={{ background: 'var(--accent-tint)', color: '#8A5A00', padding: '1px 6px', borderRadius: 999, fontSize: 9 }}>🔥</span>}
+      </div>
+      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--fg-1)', lineHeight: 1.3 }}>{title}</div>
+    </button>
   )
 }
 
