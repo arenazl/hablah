@@ -45,6 +45,9 @@ export function Login() {
     await doLogin(email, password)
   }
 
+  const quickLoginAsAdmin = () => doLogin('admin@hablah.app', 'admin123')
+  const quickLoginAsStudent = () => doLogin('demo@hablah.app', 'demo123')
+
   return (
     <div
       className="h-screen w-full flex overflow-hidden"
@@ -237,6 +240,48 @@ export function Login() {
               {!loading && <ArrowRight className="h-4 w-4" />}
             </button>
           </form>
+
+          <div className="mt-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex-1 h-px" style={{ background: 'rgba(13,20,18,.14)' }} />
+              <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: '#5A625F' }}>
+                Acceso rápido demo
+              </span>
+              <div className="flex-1 h-px" style={{ background: 'rgba(13,20,18,.14)' }} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={quickLoginAsStudent}
+                disabled={loading}
+                className="group flex flex-col items-center gap-1.5 p-4 rounded-xl border transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50"
+                style={{ background: 'white', borderColor: 'rgba(13,20,18,.14)' }}
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold"
+                  style={{ background: HABLAH_GREEN }}
+                >
+                  L
+                </div>
+                <div className="text-sm font-bold" style={{ color: '#0D1412' }}>Usuario</div>
+                <div className="text-[11px]" style={{ color: '#5A625F' }}>Lautaro · B2</div>
+              </button>
+              <button
+                onClick={quickLoginAsAdmin}
+                disabled={loading}
+                className="group flex flex-col items-center gap-1.5 p-4 rounded-xl border transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50"
+                style={{ background: 'white', borderColor: 'rgba(13,20,18,.14)' }}
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold"
+                  style={{ background: HABLAH_INK }}
+                >
+                  A
+                </div>
+                <div className="text-sm font-bold" style={{ color: '#0D1412' }}>Admin</div>
+                <div className="text-[11px]" style={{ color: '#5A625F' }}>App + Backoffice</div>
+              </button>
+            </div>
+          </div>
 
           <div className="mt-6 text-center text-xs" style={{ color: '#5A625F' }}>
             ¿Todavía no tenés cuenta?{' '}
