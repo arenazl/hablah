@@ -82,6 +82,23 @@ class GeminiLiveEngine(VoiceEngine):
         }))
 
         transcript: list[dict] = []
+        # Gemini Live manda outputTranscription/inputTranscription en chunks
+        # palabra-por-palabra. Lo acumulamos en un buffer y persistimos UNA
+        # entrada por turno cuando llega turnComplete (o cuando cambia el rol).
+        ai_buf: list[str] = []
+        user_buf: list[str] = []
+
+        def _flush_buffers():
+            if ai_buf:
+                full = "".join(ai_buf).strip()
+                if full:
+                    transcript.append({"who": "ai", "text": full})
+                ai_buf.clear()
+            if user_buf:
+                full = "".join(user_buf).strip()
+                if full:
+                    transcript.append({"who": "user", "text": full})
+                user_buf.clear()
 
         async def client_to_google() -> None:
             try:
@@ -120,26 +137,28 @@ class GeminiLiveEngine(VoiceEngine):
                         inline = part.get("inlineData")
                         if inline and inline.get("mimeType", "").startswith("audio"):
                             await ws.send_json({"type": "audio", "data": inline["data"]})
-                        # texto en parts: ocurre raro en modo audio, pero por las dudas
+                        # texto en parts (raro en modo audio, lo bufferamos también)
                         text = part.get("text")
                         if text:
-                            transcript.append({"who": "ai", "text": text})
-                            await ws.send_json({"type": "transcript", "who": "ai", "text": text})
+                            ai_buf.append(text)
+                            await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": text})
 
-                    # outputTranscription = lo que dice el TUTOR (transcripción del audio que él genera)
+                    # outputTranscription = transcripción del audio del TUTOR (chunks palabra-por-palabra)
                     out_tr = sc.get("outputTranscription")
                     if out_tr and out_tr.get("text"):
-                        t = out_tr["text"]
-                        transcript.append({"who": "ai", "text": t})
-                        await ws.send_json({"type": "transcript", "who": "ai", "text": t})
+                        ai_buf.append(out_tr["text"])
+                        # Frente: chunk para actualizar el último mensaje IN-PLACE
+                        await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
 
-                    # inputTranscription = lo que dice el USER
+                    # inputTranscription = transcripción del audio del USER (chunks)
                     input_tr = sc.get("inputTranscription")
                     if input_tr and input_tr.get("text"):
-                        t = input_tr["text"]
-                        transcript.append({"who": "user", "text": t})
-                        await ws.send_json({"type": "transcript", "who": "user", "text": t})
+                        user_buf.append(input_tr["text"])
+                        await ws.send_json({"type": "transcript_chunk", "who": "user", "text": input_tr["text"]})
+
                     if sc.get("turnComplete"):
+                        # Consolidar buffers en UNA entrada por hablante en el transcript final
+                        _flush_buffers()
                         await ws.send_json({"type": "turn_complete"})
             except websockets.ConnectionClosed:
                 pass
@@ -149,6 +168,8 @@ class GeminiLiveEngine(VoiceEngine):
         try:
             await asyncio.gather(client_to_google(), google_to_client())
         finally:
+            # Flush por las dudas (turno parcial que no llegó a turnComplete)
+            _flush_buffers()
             try:
                 await google_ws.close()
             except Exception:

@@ -186,12 +186,32 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           if (msg.type === 'audio') {
             setStatus('speaking')
             pushAudioFromTutor(msg.data)
+          } else if (msg.type === 'transcript_chunk') {
+            // El backend manda chunks (palabra-por-palabra). Acumulamos en el
+            // ÚLTIMO mensaje del mismo 'who'; si el último es de otro hablante
+            // o no hay ninguno, creamos uno nuevo.
+            setTranscript((prev) => {
+              const last = prev[prev.length - 1]
+              if (last && last.who === msg.who) {
+                const updated = [...prev]
+                updated[updated.length - 1] = { who: last.who, text: last.text + msg.text }
+                return updated
+              }
+              return [...prev, { who: msg.who, text: msg.text }]
+            })
           } else if (msg.type === 'transcript') {
+            // Compatibilidad legacy: mensaje completo de una sola vez
             const line: TranscriptLine = { who: msg.who, text: msg.text }
             setTranscript((prev) => [...prev, line])
             optsRef.current.onTranscript?.(line)
           } else if (msg.type === 'turn_complete') {
             setStatus('listening')
+            // Notificar al consumidor con el último mensaje consolidado del USER (si hay)
+            setTranscript((prev) => {
+              const lastUser = [...prev].reverse().find((l) => l.who === 'user')
+              if (lastUser) optsRef.current.onTranscript?.(lastUser)
+              return prev
+            })
           } else if (msg.type === 'error') {
             optsRef.current.onError?.(new Error(msg.error || 'live error'))
             setStatus('error')
