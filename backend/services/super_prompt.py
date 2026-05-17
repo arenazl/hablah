@@ -77,7 +77,10 @@ def build_super_prompt(
             f"TÓPICO DE HOY\n"
             f"- Tema: {topic.title}.\n"
             f"- Dirección sugerida: {seed}\n"
-            f"- Si surgen naturalmente, intentá usar (o que el alumno use): {keywords}."
+            f"- Frases-pivote naturales que pueden surgir en la charla: {keywords}.\n"
+            f"  IMPORTANTE: estas frases son OPCIONALES — NO obligues al alumno a usarlas,\n"
+            f"  NO se las menciones, NO te desvíes de la conversación natural para meterlas.\n"
+            f"  Son solo señal de 'así habla un nativo de este tema'. Si surgen, bien. Si no, también."
         )
     else:
         topic_block = "TÓPICO DE HOY\n- Libre. Preguntale al alumno qué le interesa charlar."
