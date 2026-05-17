@@ -19,7 +19,7 @@ api.interceptors.response.use(
     if (err.response?.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      if (window.location.pathname !== '/login') {
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/') {
         window.location.href = '/login'
       }
     }
@@ -27,130 +27,161 @@ api.interceptors.response.use(
   },
 )
 
-export const authAPI = {
-  login: (email: string, password: string) => api.post('/auth/login', { email, password }),
-  me: () => api.get('/auth/me'),
-}
-
-export const clientesAPI = {
-  list: () => api.get('/clientes/'),
-  create: (data: any) => api.post('/clientes/', data),
-  update: (id: number, data: any) => api.patch(`/clientes/${id}`, data),
-  remove: (id: number) => api.delete(`/clientes/${id}`),
-}
-
-export const propiedadesAPI = {
-  list: () => api.get('/propiedades/'),
-  get: (id: number) => api.get(`/propiedades/${id}`),
-  create: (data: any) => api.post('/propiedades/', data),
-  update: (id: number, data: any) => api.patch(`/propiedades/${id}`, data),
-  remove: (id: number) => api.delete(`/propiedades/${id}`),
-}
-
-export const visitasAPI = {
-  list: () => api.get('/visitas/'),
-  create: (data: any) => api.post('/visitas/', data),
-  update: (id: number, data: any) => api.patch(`/visitas/${id}`, data),
-  remove: (id: number) => api.delete(`/visitas/${id}`),
-}
-
-export const autorizacionesAPI = {
-  list: () => api.get('/autorizaciones/'),
-  create: (data: any) => api.post('/autorizaciones/', data),
-  update: (id: number, data: any) => api.patch(`/autorizaciones/${id}`, data),
-}
-
-export const pipelineAPI = {
-  list: () => api.get('/pipeline/'),
-  create: (data: any) => api.post('/pipeline/', data),
-  update: (id: number, data: any) => api.patch(`/pipeline/${id}`, data),
-  remove: (id: number) => api.delete(`/pipeline/${id}`),
-}
-
-export const dmoAPI = {
-  dia: (fecha?: string) => api.get('/dmo/dia', { params: fecha ? { fecha } : {} }),
-  log: (data: any) => api.post('/dmo/log', data),
-}
-
-export const coachesAPI = {
-  list: () => api.get('/coaches/'),
-  create: (data: any) => api.post('/coaches/', data),
-  update: (id: number, data: any) => api.patch(`/coaches/${id}`, data),
-  remove: (id: number) => api.delete(`/coaches/${id}`),
-}
-
-export const dmoTemplatesAPI = {
-  list: () => api.get('/dmo-templates/'),
-  get: (id: number) => api.get(`/dmo-templates/${id}`),
-  create: (data: any) => api.post('/dmo-templates/', data),
-  update: (id: number, data: any) => api.patch(`/dmo-templates/${id}`, data),
-  remove: (id: number) => api.delete(`/dmo-templates/${id}`),
-  clone: (id: number) => api.post(`/dmo-templates/${id}/clone`),
-}
-
-export const dmoAssignmentsAPI = {
-  list: () => api.get('/dmo-assignments/'),
-  upsert: (data: { vendedor_id: number; template_id: number }) => api.post('/dmo-assignments/', data),
-  remove: (vendedor_id: number) => api.delete(`/dmo-assignments/${vendedor_id}`),
-}
-
-export const usersAPI = {
-  list: () => api.get('/users/'),
-  me: () => api.get('/users/me'),
-  updateMe: (data: any) => api.patch('/users/me', data),
-  update: (id: number, data: any) => api.patch(`/users/${id}`, data),
-  setAvailability: (is_available: boolean) => api.patch('/users/me/availability', { is_available }),
-}
-
-export const pushAPI = {
-  vapidKey: () => api.get('/push/vapid-public-key'),
-  subscribe: (data: { endpoint: string; keys: { p256dh: string; auth: string } }) =>
-    api.post('/push/subscribe', data),
-  unsubscribe: (endpoint: string) =>
-    api.delete('/push/subscribe', { params: { endpoint } }),
-  test: () => api.post('/push/test'),
-}
-
-export const botConfigAPI = {
-  get: () => api.get('/bot-config/'),
-  update: (data: any) => api.patch('/bot-config/', data),
-  baileysStatus: () => api.get('/bot-config/baileys-status'),
-  faqs: {
-    list: () => api.get('/bot-config/faqs'),
-    create: (data: any) => api.post('/bot-config/faqs', data),
-    update: (id: number, data: any) => api.patch(`/bot-config/faqs/${id}`, data),
-    remove: (id: number) => api.delete(`/bot-config/faqs/${id}`),
-  },
-}
-
-export const dashboardAPI = {
-  resumen: () => api.get('/dashboard/resumen'),
-  ranking: () => api.get('/dashboard/ranking-vendedores'),
-}
-
-export const whatsappAPI = {
-  list: (params?: { estado?: string; only_mine?: boolean; only_unassigned?: boolean }) =>
-    api.get('/whatsapp/conversations/', { params }),
-  get: (id: number) => api.get(`/whatsapp/conversations/${id}`),
-  update: (id: number, data: { assignee_id?: number | null; estado?: string; cliente_id?: number | null; nombre_contacto?: string | null; prompt_override?: string | null; voice_mode?: string | null; voice_id?: string | null }) =>
-    api.patch(`/whatsapp/conversations/${id}`, data),
-  send: (id: number, contenido: string, opts?: { as_audio?: boolean; voice_id?: string }) =>
-    api.post(`/whatsapp/conversations/${id}/send`, { contenido, ...(opts || {}) }),
-  sendVoiceClone: (id: number, audioBlob: Blob, voiceId?: string) => {
-    const fd = new FormData()
-    fd.append('audio', audioBlob, 'voice.webm')
-    if (voiceId) fd.append('voice_id', voiceId)
-    return api.post(`/whatsapp/conversations/${id}/send-voice-clone`, fd, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      timeout: 90000,
-    })
-  },
-  personalidades: () => api.get('/whatsapp/personalidades'),
-  markRead: (id: number) => api.post(`/whatsapp/conversations/${id}/mark-read`),
-  mockIncoming: (data: { telefono: string; nombre_contacto?: string; contenido: string }) =>
-    api.post('/whatsapp/mock/incoming', data),
-  iniciarConversacion: (data: { telefono: string; prompt: string; primer_mensaje: string; nombre?: string }) =>
-    api.post('/whatsapp/iniciar-conversacion', data),
-}
-
+export const API_BASE_URL = API_URL
 export default api
+
+/* ────────────── AUTH ────────────── */
+export const authAPI = {
+  login: (email: string, password: string) =>
+    api.post('/auth/login', { email, password }).then((r) => r.data),
+  me: () => api.get('/auth/me').then((r) => r.data),
+}
+
+/* ────────────── ME (perfil enriquecido) ────────────── */
+export interface MeProfile {
+  user: {
+    id: number; email: string; nombre: string; apellido: string; role: string
+    cefr_level: string; target_language: string; base_language: string
+    accent_preference: string; streak_days: number; streak_best: number
+    target_minutes_per_session: number; insistent_mode_enabled: boolean
+    daily_reminder_enabled: boolean; audio_retention_days: number; plan: string
+  }
+  active_template: { id: number; slug: string; name: string; description: string; voice_id: string; voice_label: string } | null
+  interests: { id: number; slug: string; title: string; category: string }[]
+  progress: { topic_id: number; topic_title: string; stages_done: number; stages_total: number; pct: number; minutes_spoken: number; sessions_count: number }[]
+  last_session: { id: number; topic_id: number | null; started_at: string; score: number | null } | null
+  total_sessions: number
+}
+
+export const meAPI = {
+  profile: () => api.get<MeProfile>('/me/profile').then((r) => r.data),
+  updateSettings: (data: Partial<{
+    accent_preference: string
+    target_minutes_per_session: number
+    insistent_mode_enabled: boolean
+    daily_reminder_enabled: boolean
+    audio_retention_days: number
+    active_template_id: number
+  }>) => api.patch('/me/settings', data).then((r) => r.data),
+}
+
+/* ────────────── TEMPLATES ────────────── */
+export interface Template {
+  id: number; slug: string; name: string; description: string
+  rigor: number; challenges_per_min: number
+  allow_interruptions: boolean; block_on_repeat: boolean; json_output: boolean
+  tones: string[]; voice_id: string; voice_label: string
+  icon_bg: string; is_preset: boolean; version: string; status: string
+  assigned_count: number
+}
+
+export const templatesAPI = {
+  list: () => api.get<Template[]>('/templates/').then((r) => r.data),
+  get: (id: number) => api.get<Template>(`/templates/${id}`).then((r) => r.data),
+  create: (data: Partial<Template>) => api.post<Template>('/templates/', data).then((r) => r.data),
+  update: (id: number, data: Partial<Template>) =>
+    api.patch<Template>(`/templates/${id}`, data).then((r) => r.data),
+  remove: (id: number) => api.delete(`/templates/${id}`).then((r) => r.data),
+}
+
+/* ────────────── TOPICS ────────────── */
+export interface Topic {
+  id: number; slug: string; title: string; category: string
+  seed_prompts: Record<string, string>; keywords: string[]
+  levels: string[]; is_hot: boolean; is_active: boolean; usage_count: number
+}
+
+export const topicsAPI = {
+  list: (params?: { category?: string; q?: string }) =>
+    api.get<Topic[]>('/topics/', { params }).then((r) => r.data),
+  get: (id: number) => api.get<Topic>(`/topics/${id}`).then((r) => r.data),
+  myInterests: () => api.get<Topic[]>('/topics/my-interests').then((r) => r.data),
+  addInterest: (topicId: number) => api.post(`/topics/my-interests/${topicId}`).then((r) => r.data),
+  removeInterest: (topicId: number) => api.delete(`/topics/my-interests/${topicId}`).then((r) => r.data),
+  create: (data: Partial<Topic>) => api.post<Topic>('/topics/', data).then((r) => r.data),
+  update: (id: number, data: Partial<Topic>) =>
+    api.patch<Topic>(`/topics/${id}`, data).then((r) => r.data),
+  remove: (id: number) => api.delete(`/topics/${id}`).then((r) => r.data),
+}
+
+/* ────────────── SESSIONS ────────────── */
+export interface SessionStart {
+  session_id: number
+  super_prompt: string
+  voice_id: string
+  template: { id: number; name: string; slug: string; rigor: number; challenges_per_min: number } | null
+  topic: { id: number; title: string; slug: string; keywords: string[] } | null
+}
+
+export interface SessionData {
+  id: number; user_id: number; template_id: number | null; topic_id: number | null
+  cefr_at_start: string; status: string
+  started_at: string; ended_at: string | null; duration_seconds: number | null
+  transcript: { who: string; text: string }[]
+  metrics: Record<string, any>
+  report: Record<string, any>
+  score: number | null; is_rescue: boolean
+}
+
+export const sessionsAPI = {
+  start: (topic_id?: number, template_id?: number) =>
+    api.post<SessionStart>('/sessions/start', { topic_id, template_id }).then((r) => r.data),
+  end: (sessionId: number, transcript: { who: string; text: string }[]) =>
+    api.post<SessionData>(`/sessions/${sessionId}/end`, { transcript }).then((r) => r.data),
+  list: () => api.get<SessionData[]>('/sessions/').then((r) => r.data),
+  get: (id: number) => api.get<SessionData>(`/sessions/${id}`).then((r) => r.data),
+}
+
+/* ────────────── ALUMNOS (admin) ────────────── */
+export interface Alumno {
+  id: number; email: string; nombre: string; apellido: string
+  cefr_level: string; tutor: string | null; tutor_slug: string | null
+  progress_pct: number; streak_days: number; plan: string
+  total_sessions: number; last_session_at: string | null
+}
+
+export const alumnosAPI = {
+  list: (params?: { q?: string; level?: string }) =>
+    api.get<Alumno[]>('/alumnos/', { params }).then((r) => r.data),
+  errors: (userId: number) =>
+    api.get(`/alumnos/${userId}/errors`).then((r) => r.data),
+}
+
+/* ────────────── PUSH ────────────── */
+export const pushAPI = {
+  vapidPublicKey: () => api.get('/push/vapid-public-key').then((r) => r.data),
+  vapidKey: () => api.get('/push/vapid-public-key').then((r) => r.data),
+  subscribe: (subscription: any) => api.post('/push/subscribe', subscription).then((r) => r.data),
+  unsubscribe: (endpoint: string) =>
+    api.delete('/push/subscribe', { data: { endpoint } }).then((r) => r.data),
+  test: () => api.post('/push/test').then((r) => r.data),
+}
+
+/* ────────────── DASHBOARD (admin) ────────────── */
+export const dashboardAPI = {
+  summary: () => api.get('/dashboard/summary').then((r) => r.data),
+}
+
+/* ────────────── TTS ────────────── */
+export const ttsAPI = {
+  voices: () => api.get('/tts/voices').then((r) => r.data),
+  /** Reproduce un sample TTS en el browser. Devuelve el Audio para controlar. */
+  async play(text: string, tutor?: string): Promise<HTMLAudioElement> {
+    const params = new URLSearchParams({ text })
+    if (tutor) params.set('tutor', tutor)
+    const r = await api.post(`/tts/sample?${params.toString()}`, null, { responseType: 'blob' })
+    const url = URL.createObjectURL(r.data as Blob)
+    const audio = new Audio(url)
+    audio.play().catch(() => {})
+    audio.onended = () => URL.revokeObjectURL(url)
+    return audio
+  },
+}
+
+/* ────────────── VOICE WS ────────────── */
+export function buildVoiceWsUrl(sessionId: number): string {
+  const httpBase = API_URL.replace(/\/$/, '')
+  const wsBase = httpBase.replace(/^http/, 'ws')
+  const token = localStorage.getItem('token') || ''
+  return `${wsBase}/voice/ws?session_id=${sessionId}&token=${encodeURIComponent(token)}`
+}

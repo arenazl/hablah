@@ -1,0 +1,131 @@
+"""Templates metodológicos del backoffice (Coach, Sincerist, Arcade, etc.).
+
+Cada template define el comportamiento del tutor: tono, rigor, frecuencia
+de retos, voz ElevenLabs asignada. Se combina con perfil de usuario y
+tópico activo para armar el super-prompt enviado al LLM.
+"""
+from sqlalchemy import Column, Integer, String, Boolean, JSON, DateTime, Text
+from sqlalchemy.sql import func
+
+from core.database import Base
+
+
+class Template(Base):
+    __tablename__ = "templates"
+
+    id = Column(Integer, primary_key=True, index=True)
+    slug = Column(String(80), unique=True, nullable=False, index=True)  # coach, sincerist, arcade
+    name = Column(String(150), nullable=False)
+    description = Column(String(300), nullable=False, default="")
+
+    # Personalidad
+    rigor = Column(Integer, nullable=False, default=3)            # 1..5
+    challenges_per_min = Column(Integer, nullable=False, default=2)  # 0..6
+    allow_interruptions = Column(Boolean, nullable=False, default=False)
+    block_on_repeat = Column(Boolean, nullable=False, default=True)
+    json_output = Column(Boolean, nullable=False, default=True)
+
+    # Tono — lista de adjetivos que se inyectan al prompt
+    tones = Column(JSON, nullable=False, default=list)  # ["profesional", "directo", "demandante"]
+
+    # Voz ElevenLabs asignada a este template
+    voice_id = Column(String(80), nullable=False, default="")
+    voice_label = Column(String(120), nullable=False, default="")
+
+    # UI
+    icon_bg = Column(String(40), nullable=False, default="#00B37E")  # CSS color
+    is_preset = Column(Boolean, nullable=False, default=False)
+    version = Column(String(20), nullable=False, default="v1.0")
+    status = Column(String(20), nullable=False, default="active")  # active | draft | beta
+
+    assigned_count = Column(Integer, nullable=False, default=0)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class Topic(Base):
+    """Punteros temáticos. Cada usuario elige 4-5 al onboarding."""
+    __tablename__ = "topics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    slug = Column(String(120), unique=True, nullable=False, index=True)
+    title = Column(String(200), nullable=False)
+    category = Column(String(80), nullable=False, default="general")  # tech, arte, lifestyle, diseno, negocios
+    seed_prompts = Column(JSON, nullable=False, default=dict)  # { "A2": "...", "B2": "...", "C1": "..." }
+    keywords = Column(JSON, nullable=False, default=list)      # ["two-step", "sub-bass", ...]
+    levels = Column(JSON, nullable=False, default=list)        # ["A2", "B1", "B2", "C1"]
+    is_hot = Column(Boolean, nullable=False, default=False)
+    is_active = Column(Boolean, nullable=False, default=True)
+    usage_count = Column(Integer, nullable=False, default=0)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class Session(Base):
+    """Cada charla del alumno. Contiene transcripción, métricas, audio."""
+    __tablename__ = "sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    template_id = Column(Integer, nullable=True, index=True)
+    topic_id = Column(Integer, nullable=True, index=True)
+
+    cefr_at_start = Column(String(4), nullable=False, default="B1")
+    status = Column(String(20), nullable=False, default="active")  # active | ended | analyzed
+    started_at = Column(DateTime(timezone=True), server_default=func.now())
+    ended_at = Column(DateTime(timezone=True), nullable=True)
+    duration_seconds = Column(Integer, nullable=True)
+
+    # Transcripción consolidada (alternancia AI/user)
+    transcript = Column(JSON, nullable=False, default=list)
+    # Métricas calculadas post-sesión
+    metrics = Column(JSON, nullable=False, default=dict)
+    # Reporte sincerista (1 elogio + 3 puntos a pulir)
+    report = Column(JSON, nullable=False, default=dict)
+    score = Column(Integer, nullable=True)  # 0..100
+
+    is_rescue = Column(Boolean, nullable=False, default=False)
+    audio_url = Column(String(500), nullable=True)  # Cloudinary del audio grabado
+
+
+class ErrorLog(Base):
+    """Errores recurrentes del alumno — disparador del modo insistente."""
+    __tablename__ = "error_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    session_id = Column(Integer, nullable=False, index=True)
+    kind = Column(String(40), nullable=False)  # grammar | pronunciation | vocabulary
+    error_key = Column(String(160), nullable=False, index=True)  # "past_simple_irregular"
+    label = Column(String(300), nullable=False)
+    snippet_wrong = Column(Text, nullable=True)
+    snippet_correct = Column(Text, nullable=True)
+    detected_at = Column(DateTime(timezone=True), server_default=func.now())
+    resolved = Column(Boolean, nullable=False, default=False)
+
+
+class TopicProgress(Base):
+    """Progreso del usuario por tópico (mapa de progreso)."""
+    __tablename__ = "topic_progress"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    topic_id = Column(Integer, nullable=False, index=True)
+    stages_done = Column(Integer, nullable=False, default=0)
+    stages_total = Column(Integer, nullable=False, default=6)
+    pct = Column(Integer, nullable=False, default=0)  # 0..100
+    minutes_spoken = Column(Integer, nullable=False, default=0)
+    sessions_count = Column(Integer, nullable=False, default=0)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class UserInterest(Base):
+    """N-to-N usuarios↔tópicos (los 4-5 punteros activos)."""
+    __tablename__ = "user_interests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    topic_id = Column(Integer, nullable=False, index=True)
+    added_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -22,4 +22,23 @@ class User(Base):
     foto_url = Column(String(500), nullable=True)
     role = Column(SAEnum(UserRole), nullable=False, default=UserRole.student)
     is_active = Column(Boolean, nullable=False, default=True)
+
+    # Habláh — perfil de aprendizaje
+    cefr_level = Column(String(4), nullable=False, default="B1")
+    target_language = Column(String(20), nullable=False, default="en")  # en, pt, it
+    base_language = Column(String(20), nullable=False, default="es")
+    accent_preference = Column(String(40), nullable=False, default="uk")  # uk, us, neutral
+
+    active_template_id = Column(Integer, nullable=True)
+    streak_days = Column(Integer, nullable=False, default=0)
+    streak_best = Column(Integer, nullable=False, default=0)
+    last_session_at = Column(DateTime(timezone=True), nullable=True)
+
+    target_minutes_per_session = Column(Integer, nullable=False, default=7)
+    insistent_mode_enabled = Column(Boolean, nullable=False, default=True)
+    daily_reminder_enabled = Column(Boolean, nullable=False, default=False)
+    audio_retention_days = Column(Integer, nullable=False, default=30)
+
+    plan = Column(String(40), nullable=False, default="free")  # free, pro, bootcamp
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())

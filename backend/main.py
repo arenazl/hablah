@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
-from api import auth, users, push
+from api import auth, users, push, templates, topics, sessions, me, alumnos, dashboard, tts, voice
 
 
 @asynccontextmanager
@@ -36,4 +36,12 @@ async def health():
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
+app.include_router(me.router, prefix="/api/me", tags=["me"])
 app.include_router(push.router, prefix="/api/push", tags=["push"])
+app.include_router(templates.router, prefix="/api/templates", tags=["templates"])
+app.include_router(topics.router, prefix="/api/topics", tags=["topics"])
+app.include_router(sessions.router, prefix="/api/sessions", tags=["sessions"])
+app.include_router(alumnos.router, prefix="/api/alumnos", tags=["alumnos"])
+app.include_router(dashboard.router, prefix="/api/dashboard", tags=["dashboard"])
+app.include_router(tts.router, prefix="/api/tts", tags=["tts"])
+app.include_router(voice.router, prefix="/api/voice", tags=["voice"])
