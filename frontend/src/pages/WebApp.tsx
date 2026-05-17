@@ -463,24 +463,26 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
           />
           <div className="convo-turn">
             <div className="l">{statusLabel}</div>
-            <div className="q">
-              {live.transcript.length > 0
-                ? live.transcript[live.transcript.length - 1].text
-                : 'Cuando arranque la sesión, hablale al tutor en inglés…'}
-            </div>
+            {/* Lo último que dijo el tutor — siempre visible para no perderse */}
+            {(() => {
+              const lastAi = [...live.transcript].reverse().find(l => l.who === 'ai')
+              if (lastAi) {
+                return (
+                  <div className="q" style={{ fontStyle: 'normal', color: 'white' }}>
+                    <div style={{ fontSize: 11, color: 'rgba(232,236,234,.5)', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 6 }}>
+                      Te dijo el tutor:
+                    </div>
+                    "{lastAi.text}"
+                  </div>
+                )
+              }
+              return (
+                <div className="q">
+                  Esperá unos segundos — el tutor te va a saludar y arrancar la charla.
+                </div>
+              )
+            })()}
           </div>
-
-          {keywords.length > 0 && (
-            <div className="challenge-float">
-              <div className="ico">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFB800"><polygon points="13 2 3 14 11 14 9 22 21 10 13 10 13 2" /></svg>
-              </div>
-              <div>
-                <div className="lbl">Keywords objetivo</div>
-                <div className="text">{keywords.slice(0, 6).join(' · ')}</div>
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="mic-row">
@@ -500,6 +502,41 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
         <div className="side-tabs">
           <div className="side-tab active">Transcripción</div>
         </div>
+
+        {/* Keywords con check-marks — los que ya dijiste en verde ✓, los pendientes en gris ○ */}
+        {keywords.length > 0 && (() => {
+          const userText = live.transcript.filter(l => l.who === 'user').map(l => l.text.toLowerCase()).join(' ')
+          const usedCount = keywords.filter(k => userText.includes(k.toLowerCase())).length
+          return (
+            <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,.06)' }}>
+              <div style={{ fontSize: 11, color: 'rgba(232,236,234,.55)', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
+                <span>Keywords objetivo</span>
+                <span className="tnum">{usedCount}/{keywords.length}</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                {keywords.map((k) => {
+                  const used = userText.includes(k.toLowerCase())
+                  return (
+                    <span
+                      key={k}
+                      style={{
+                        fontSize: 11,
+                        padding: '3px 8px',
+                        borderRadius: 999,
+                        background: used ? 'rgba(0,179,126,.2)' : 'rgba(255,255,255,.05)',
+                        color: used ? 'var(--primary)' : 'rgba(232,236,234,.6)',
+                        border: `1px solid ${used ? 'rgba(0,179,126,.4)' : 'rgba(255,255,255,.08)'}`,
+                      }}
+                    >
+                      {used ? '✓ ' : ''}{k}
+                    </span>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })()}
+
         <div className="side-body">
           {live.transcript.length === 0 && (
             <div style={{ color: 'rgba(232,236,234,.4)', fontSize: 13 }}>
@@ -507,7 +544,12 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
             </div>
           )}
           {live.transcript.map((line, i) => (
-            <div key={i} className={`line ${line.who === 'ai' ? 'ai' : 'you'}`}>{line.text}</div>
+            <div key={i} className={`line ${line.who === 'ai' ? 'ai' : 'you'}`}>
+              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.1em', opacity: 0.55, marginBottom: 3, textTransform: 'uppercase' }}>
+                {line.who === 'ai' ? 'Tutor' : 'Vos'}
+              </div>
+              {line.text}
+            </div>
           ))}
         </div>
       </aside>
