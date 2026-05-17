@@ -202,11 +202,12 @@ export const HOY_CSS = `
   .hoy-page h1.hp-title{font-size:24px}
   .hoy-page .hp-sub{font-size:13.5px}
   .hoy-page .hp-grid{grid-template-columns:1fr;gap:14px}
-  .hoy-page .hp-hero{grid-template-columns:1fr;min-height:auto}
-  .hoy-page .hp-hero-l{padding:20px 18px 18px;gap:10px}
-  .hoy-page .hp-hero h2{font-size:30px}
-  .hoy-page .hp-hero h2 small{font-size:14px}
-  .hoy-page .hp-hero-r{border-left:0;border-top:1px solid rgba(255,255,255,.10);padding:18px}
+  .hoy-page .hp-hero{display:flex;flex-direction:column;grid-template-columns:none;min-height:auto;height:auto;position:relative}
+  .hoy-page .hp-hero-l{position:relative;z-index:2;padding:20px 18px 18px;gap:10px;width:100%}
+  .hoy-page .hp-hero h2{font-size:24px;line-height:1.1;margin:4px 0;word-wrap:break-word;overflow-wrap:break-word}
+  .hoy-page .hp-hero h2 small{font-size:13.5px;margin-top:6px;max-width:none}
+  .hoy-page .hp-hero-r{position:relative;z-index:2;border-left:0;border-top:1px solid rgba(255,255,255,.10);padding:18px;width:100%}
+  .hoy-page .hp-hero .waveform,.hoy-page .hp-hero svg.waveform{display:none !important}
   .hoy-page .hp-btn{height:44px;padding:0 18px;font-size:14px;flex:1;justify-content:center}
   .hoy-page .hp-hero-cta{flex-direction:column;width:100%}
   .hoy-page .hp-hero-cta .hp-btn{width:100%}
