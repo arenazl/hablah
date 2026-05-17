@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { WEBAPP_CSS } from './webapp.css'
 import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
+import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -506,13 +507,17 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
         </div>
 
         <div className="convo-orb-area">
-          <div
-            className="convo-orb"
-            style={{
-              transform: `scale(${1 + Math.min(0.15, audioLevel * 2)})`,
-              transition: 'transform 0.05s linear',
-            }}
-          />
+          <div style={{ width: 'min(440px, 60vw)', aspectRatio: '1 / 1', position: 'relative' }}>
+            <AgentAudioVisualizerAura
+              status={live.status}
+              audioLevel={audioLevel}
+              color="#00B37E"
+              colorShift={0.18}
+              themeMode="dark"
+              size="xl"
+              style={{ width: '100%', height: '100%' }}
+            />
+          </div>
           <div className="convo-turn">
             <div className="l">{statusLabel}</div>
             {/* Lo último que dijo el tutor — siempre visible para no perderse */}
