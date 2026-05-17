@@ -122,10 +122,14 @@ class TopicProgress(Base):
 
 
 class UserInterest(Base):
-    """N-to-N usuarios↔tópicos (los 4-5 punteros activos)."""
+    """N-to-N usuarios↔tópicos (los 4-5 punteros activos).
+
+    `position` define el orden en que aparecen en /app/practicar (0 = primero).
+    """
     __tablename__ = "user_interests"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, nullable=False, index=True)
     topic_id = Column(Integer, nullable=False, index=True)
+    position = Column(Integer, nullable=False, default=0)
     added_at = Column(DateTime(timezone=True), server_default=func.now())

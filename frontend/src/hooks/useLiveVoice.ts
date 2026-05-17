@@ -29,6 +29,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const [status, setStatus] = useState<LiveStatus>('idle')
   const [transcript, setTranscript] = useState<TranscriptLine[]>([])
 
+  // Estabilizamos opts en un ref: el caller pasa literales nuevos cada render
+  // pero los callbacks adentro del hook usan optsRef.current para no
+  // invalidar dependencias y causar re-renders en loop (React error #310).
+  const optsRef = useRef(opts)
+  useEffect(() => { optsRef.current = opts })
+
   const wsRef = useRef<WebSocket | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
@@ -131,7 +137,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
         })
       } catch (e: any) {
-        opts.onError?.(new Error('Permiso de micrófono denegado'))
+        optsRef.current.onError?.(new Error('Permiso de micrófono denegado'))
         setStatus('error')
         return
       }
@@ -163,7 +169,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
             rms += s * s
           }
           rms = Math.sqrt(rms / input.length)
-          opts.onAudioLevel?.(rms)
+          optsRef.current.onAudioLevel?.(rms)
           const bytes = new Uint8Array(pcm.buffer)
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
@@ -183,25 +189,25 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           } else if (msg.type === 'transcript') {
             const line: TranscriptLine = { who: msg.who, text: msg.text }
             setTranscript((prev) => [...prev, line])
-            opts.onTranscript?.(line)
+            optsRef.current.onTranscript?.(line)
           } else if (msg.type === 'turn_complete') {
             setStatus('listening')
           } else if (msg.type === 'error') {
-            opts.onError?.(new Error(msg.error || 'live error'))
+            optsRef.current.onError?.(new Error(msg.error || 'live error'))
             setStatus('error')
           }
         } catch {}
       }
 
       ws.onerror = () => {
-        opts.onError?.(new Error('WebSocket error'))
+        optsRef.current.onError?.(new Error('WebSocket error'))
         setStatus('error')
       }
       ws.onclose = () => {
-        if (status !== 'ended') setStatus('ended')
+        setStatus((prev) => (prev !== 'ended' ? 'ended' : prev))
       }
     },
-    [opts, pushAudioFromTutor, status],
+    [pushAudioFromTutor],
   )
 
   return { start, stop, status, transcript }

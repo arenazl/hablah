@@ -52,12 +52,12 @@ async def my_interests(
     db: AsyncSession = Depends(get_db),
     current: User = Depends(get_current_user),
 ):
-    """Tópicos elegidos por el usuario logueado (sus 4-5 punteros)."""
+    """Tópicos elegidos por el usuario logueado, ordenados por position."""
     result = await db.execute(
         select(Topic)
         .join(UserInterest, UserInterest.topic_id == Topic.id)
         .where(UserInterest.user_id == current.id)
-        .order_by(UserInterest.added_at)
+        .order_by(UserInterest.position, UserInterest.added_at)
     )
     return result.scalars().all()
 
@@ -78,7 +78,13 @@ async def add_interest(
     )
     if exists.scalar_one_or_none():
         return {"ok": True, "already": True}
-    db.add(UserInterest(user_id=current.id, topic_id=topic_id))
+    # Posición = al final
+    from sqlalchemy import func as _func
+    max_pos = (await db.execute(
+        select(_func.coalesce(_func.max(UserInterest.position), -1))
+        .where(UserInterest.user_id == current.id)
+    )).scalar() or -1
+    db.add(UserInterest(user_id=current.id, topic_id=topic_id, position=max_pos + 1))
     await db.commit()
     return {"ok": True}
 
@@ -96,6 +102,31 @@ async def remove_interest(
     )
     await db.commit()
     return {"ok": True}
+
+
+from pydantic import BaseModel
+
+
+class ReorderRequest(BaseModel):
+    topic_ids: list[int]  # nuevo orden completo
+
+
+@router.post("/my-interests/reorder")
+async def reorder_interests(
+    payload: ReorderRequest,
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Reordena los intereses del usuario. Recibe lista completa de topic_ids
+    en el orden deseado y asigna position 0..N."""
+    for idx, topic_id in enumerate(payload.topic_ids):
+        await db.execute(
+            UserInterest.__table__.update()
+            .where(UserInterest.user_id == current.id, UserInterest.topic_id == topic_id)
+            .values(position=idx)
+        )
+    await db.commit()
+    return {"ok": True, "count": len(payload.topic_ids)}
 
 
 @router.get("/{topic_id}", response_model=TopicResponse)
