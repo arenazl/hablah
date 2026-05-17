@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { WEBAPP_CSS } from './webapp.css'
 import { HOY_CSS } from './hoy.css'
 import { MAPA_CSS } from './mapa.css'
+import { PRACTICAR_CSS } from './practicar.css'
 import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic, HeatmapCell, LevelProgress } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
@@ -84,6 +85,7 @@ export function WebApp() {
       <style>{WEBAPP_CSS}</style>
       <style>{HOY_CSS}</style>
       <style>{MAPA_CSS}</style>
+      <style>{PRACTICAR_CSS}</style>
       <div className="shell">
         <Sidebar profile={profile} mobileOpen={drawerOpen} />
         {drawerOpen && <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />}
@@ -1023,156 +1025,77 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
         </div>
 
         {/* 3 cards principales: Recomendado · Sorpréndeme · Tema libre */}
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40,
-        }}>
-          {/* Recomendado */}
-          {recommended && (
-            <button
-              onClick={() => { setSelectedTopicId(recommended.id); beginSession(recommended.id) }}
-              style={{
-                textAlign: 'left', cursor: 'pointer', border: 'none', padding: '22px 22px 20px',
-                borderRadius: 16, color: 'white', minHeight: 200,
-                background: 'linear-gradient(135deg, #00B37E 0%, #024c34 100%)',
-                boxShadow: '0 10px 30px -10px rgba(0,179,126,.45)',
-                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                transition: 'transform 200ms ease, box-shadow 200ms ease',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 36px -10px rgba(0,179,126,.6)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 30px -10px rgba(0,179,126,.45)' }}
-            >
-              <div>
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  fontSize: 10.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase',
-                  color: '#9CFCD2', marginBottom: 14,
-                }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#9CFCD2' }} />
+        <div className="practicar-page" style={{ marginBottom: 40 }}>
+          <section className="pp-quick">
+            {/* Recomendado / featured */}
+            {recommended && (
+              <button className="pp-qc featured" onClick={() => { setSelectedTopicId(recommended.id); beginSession(recommended.id) }}>
+                <div className="pp-qe">
+                  <span className="pp-live-dot" />
                   Recomendado para hoy
                 </div>
-                <h2 style={{
-                  fontSize: 22, fontWeight: 800, letterSpacing: '-.02em', lineHeight: 1.15,
-                  margin: '0 0 10px',
-                }}>
-                  {recommended.title}
-                </h2>
-                <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,.82)', margin: 0, lineHeight: 1.5 }}>
-                  Tu tópico #{interests.findIndex(i => i.id === recommended.id) + 1} — buen momento para retomarlo.
-                </p>
-              </div>
-              <div style={{
-                display: 'flex', gap: 14, alignItems: 'center', fontSize: 12,
-                color: 'rgba(255,255,255,.7)', marginTop: 16,
-              }}>
-                <span>~{profile.user.target_minutes_per_session} min</span>
-                <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'rgba(255,255,255,.4)' }} />
-                <span><b style={{ color: 'white' }}>{profile.user.cefr_level}</b></span>
-                <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'rgba(255,255,255,.4)' }} />
-                <span>{tutorLabel}</span>
-              </div>
-            </button>
-          )}
+                <h3>{recommended.title}</h3>
+                <p>Tu tópico #{interests.findIndex(i => i.id === recommended.id) + 1} — buen momento para retomarlo.</p>
+                <div className="pp-meta-row">
+                  <span>~{profile.user.target_minutes_per_session} min</span>
+                  <span className="pp-dot-sep" />
+                  <span><b>{profile.user.cefr_level}</b></span>
+                  <span className="pp-dot-sep" />
+                  <span>{tutorLabel}</span>
+                </div>
+              </button>
+            )}
 
-          {/* Sorpréndeme */}
-          <button
-            onClick={() => { if (surprise) { setSelectedTopicId(surprise.id); beginSession(surprise.id) } else beginSession(null) }}
-            style={{
-              textAlign: 'left', cursor: 'pointer',
-              border: '1px solid #F5D67A', padding: '22px 22px 20px',
-              borderRadius: 16, color: 'var(--fg-1)', minHeight: 200,
-              background: 'linear-gradient(135deg, #FFF8E0 0%, #FFEFB8 100%)',
-              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-              transition: 'transform 200ms ease, box-shadow 200ms ease',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 30px -12px rgba(245,214,122,.7)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
-          >
-            <div>
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                fontSize: 10.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase',
-                color: '#8A6A00', marginBottom: 14,
-              }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="3"/>
-                  <circle cx="8" cy="8" r="1.2" fill="currentColor"/>
-                  <circle cx="16" cy="8" r="1.2" fill="currentColor"/>
-                  <circle cx="12" cy="12" r="1.2" fill="currentColor"/>
-                  <circle cx="8" cy="16" r="1.2" fill="currentColor"/>
-                  <circle cx="16" cy="16" r="1.2" fill="currentColor"/>
-                </svg>
+            {/* Sorpréndeme */}
+            <button
+              className="pp-qc surprise"
+              onClick={() => { if (surprise) { setSelectedTopicId(surprise.id); beginSession(surprise.id) } else beginSession(null) }}
+            >
+              <div className="pp-qe">
+                <span className="pp-die" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="3"/>
+                    <circle cx="8" cy="8" r="1.3" fill="currentColor"/>
+                    <circle cx="16" cy="8" r="1.3" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="1.3" fill="currentColor"/>
+                    <circle cx="8" cy="16" r="1.3" fill="currentColor"/>
+                    <circle cx="16" cy="16" r="1.3" fill="currentColor"/>
+                  </svg>
+                </span>
                 Sorpréndeme
               </div>
-              <h2 style={{
-                fontSize: 22, fontWeight: 800, letterSpacing: '-.02em', lineHeight: 1.15,
-                margin: '0 0 10px',
-              }}>
-                {surprise ? surprise.title : 'Tópico al azar'}
-              </h2>
-              <p style={{ fontSize: 13.5, color: '#5A4400', margin: 0, lineHeight: 1.5 }}>
-                Te tiro un tópico que casi no tocás. Buena forma de salir de la zona de confort.
-              </p>
-            </div>
-          </button>
+              <h3>{surprise ? surprise.title : 'Tópico al azar'}</h3>
+              <p>Te tiro un tópico que casi no tocás. Buena forma de salir de la zona de confort.</p>
+            </button>
 
-          {/* Tema libre */}
-          <div
-            style={{
-              border: '1px solid var(--border)', padding: '22px 22px 20px',
-              borderRadius: 16, minHeight: 200, background: 'white',
-              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            }}
-          >
-            <div>
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                fontSize: 10.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase',
-                color: 'var(--primary-dark)', marginBottom: 14,
-              }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
+            {/* Tema libre */}
+            <div className="pp-qc free">
+              <div className="pp-qe">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 Tema libre
               </div>
-              <h2 style={{
-                fontSize: 22, fontWeight: 800, letterSpacing: '-.02em', lineHeight: 1.15,
-                margin: '0 0 14px', color: 'var(--fg-1)',
-              }}>
-                Decí de qué querés hablar
-              </h2>
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                const t = freeTopicText.trim()
-                if (!t) { toast.error('Escribí de qué querés hablar'); return }
-                beginSession(null, t)
-              }}
-              style={{ display: 'flex', gap: 8 }}
-            >
-              <input
-                type="text"
-                value={freeTopicText}
-                onChange={(e) => setFreeTopicText(e.target.value)}
-                placeholder="ej. mi último viaje a Berlín..."
-                style={{
-                  flex: 1, padding: '11px 14px', borderRadius: 10,
-                  border: '1px solid var(--border)', fontSize: 14,
-                  background: 'var(--bg-2)', color: 'var(--fg-1)',
-                }}
-              />
-              <button
-                type="submit"
-                style={{
-                  border: 'none', cursor: 'pointer', padding: '0 16px',
-                  borderRadius: 10, background: 'var(--primary)', color: 'white',
-                  fontWeight: 700, fontSize: 14,
+              <h3>Decí de qué querés hablar</h3>
+              <form
+                className="pp-free-input"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const t = freeTopicText.trim()
+                  if (!t) { toast.error('Escribí de qué querés hablar'); return }
+                  beginSession(null, t)
                 }}
               >
-                →
-              </button>
-            </form>
-          </div>
+                <input
+                  type="text"
+                  value={freeTopicText}
+                  onChange={(e) => setFreeTopicText(e.target.value)}
+                  placeholder="ej. mi último viaje a Berlín..."
+                />
+                <button type="submit" className="pp-send" aria-label="Empezar">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                </button>
+              </form>
+            </div>
+          </section>
         </div>
 
         {/* Tus intereses — primera card destacada, con buscador + chips */}
