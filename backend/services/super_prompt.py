@@ -124,7 +124,9 @@ def build_super_prompt(
     include_intro = getattr(template, "opening_includes_topic_intro", True) if template else True
 
     if topic:
-        seed = (topic.seed_prompts or {}).get(cefr) or (topic.seed_prompts or {}).get("B2") or topic.title
+        # Prioridad: seed por nivel+idioma (ej "B1_pt"), luego solo nivel ("B1"), luego B2 fallback
+        sp = topic.seed_prompts or {}
+        seed = sp.get(f"{cefr}_{target}") or sp.get(cefr) or sp.get(f"B2_{target}") or sp.get("B2") or topic.title
         keywords = ", ".join((topic.keywords or [])[:8])
         topic_block = (
             f"TÓPICO DE HOY\n"
