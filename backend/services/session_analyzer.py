@@ -65,6 +65,7 @@ def _build_analyzer_prompt(
     ]
     if include_summary:
         json_keys.append('"summary": string  // resumen narrativo en español rioplatense de 2-3 oraciones de la charla')
+        json_keys.append(f'"summary_en": string  // mismo resumen pero en {target_name}, tono conversacional (para reproduccion TTS)')
     if include_connectors:
         json_keys.append('"connector_suggestions": [string]  // 3-5 conectores en inglés que enriquecerían el habla del alumno (ej: "however", "in fact", "as a result")')
     if include_vocab:

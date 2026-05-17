@@ -180,3 +180,35 @@ async def feedback_audio(
         raise HTTPException(500, f"TTS falló: {e}")
 
     return Response(content=audio, media_type="audio/mpeg")
+
+
+@router.get("/{session_id}/summary-audio")
+async def summary_audio(
+    session_id: int,
+    lang: str = Query("es", description="es | en"),
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Audio del resumen narrativo de la sesion en castellano o ingles."""
+    s = (await db.execute(select(SessionModel).where(SessionModel.id == session_id))).scalar_one_or_none()
+    if not s or s.user_id != current.id:
+        raise HTTPException(404, "Sesion no encontrada")
+    if not s.report:
+        raise HTTPException(400, "Sesion sin reporte todavia")
+
+    text = s.report.get("summary_en") if lang == "en" else s.report.get("summary")
+    if not text:
+        raise HTTPException(404, f"No hay summary en {lang}")
+
+    voice_id = None
+    if s.template_id:
+        tpl = (await db.execute(select(Template).where(Template.id == s.template_id))).scalar_one_or_none()
+        if tpl and tpl.voice_id:
+            voice_id = tpl.voice_id
+
+    try:
+        audio = await elevenlabs_synth(text, voice_id=voice_id)
+    except Exception as e:
+        raise HTTPException(500, f"TTS fallo: {e}")
+
+    return Response(content=audio, media_type="audio/mpeg")

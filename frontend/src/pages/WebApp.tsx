@@ -1176,35 +1176,177 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   )
 }
 
-/* ──────── REPORTE — overlay (al cierre de sesión) ──────── */
+/* ──────── REPORTE — pantalla dividida full-screen (al cierre de sesión) ──────── */
 function SessionReportOverlay({ report, sessionId, onClose }: {
   report: SessionData; sessionId: number; onClose: () => void
 }) {
+  const [lang, setLang] = useState<'es' | 'en'>('es')
+  const [playing, setPlaying] = useState(false)
+  const [audioLevel, setAudioLevel] = useState(0)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const acRef = useRef<AudioContext | null>(null)
+  const rafRef = useRef<number | null>(null)
+
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    setPlaying(false)
+    setAudioLevel(0)
+  }, [])
+
+  const playSummary = useCallback(async (targetLang: 'es' | 'en') => {
+    stopAudio()
+    try {
+      const token = localStorage.getItem('hablah_token')
+      const base = (import.meta as any).env?.VITE_API_BASE || '/api'
+      const url = `${base}/sessions/${sessionId}/summary-audio?lang=${targetLang}`
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+      if (!res.ok) throw new Error('No hay audio del resumen todavía')
+      const blob = await res.blob()
+      const audio = new Audio(URL.createObjectURL(blob))
+      audioRef.current = audio
+
+      // Web Audio analyzer para el visualizer
+      try {
+        const AC = window.AudioContext || (window as any).webkitAudioContext
+        const ac = acRef.current || new AC()
+        acRef.current = ac
+        const src = ac.createMediaElementSource(audio)
+        const analyser = ac.createAnalyser()
+        analyser.fftSize = 256
+        src.connect(analyser)
+        analyser.connect(ac.destination)
+        const buf = new Uint8Array(analyser.frequencyBinCount)
+        const tick = () => {
+          analyser.getByteFrequencyData(buf)
+          let sum = 0
+          for (let i = 0; i < buf.length; i++) sum += buf[i]
+          setAudioLevel(Math.min(1, sum / buf.length / 128))
+          rafRef.current = requestAnimationFrame(tick)
+        }
+        tick()
+      } catch {
+        // fallback sin analyser
+      }
+
+      audio.onended = () => {
+        setPlaying(false)
+        setAudioLevel(0)
+        if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      }
+      await audio.play()
+      setPlaying(true)
+    } catch (e: any) {
+      toast.error(e.message || 'No pudimos reproducir el resumen')
+      setPlaying(false)
+    }
+  }, [sessionId, stopAudio])
+
+  useEffect(() => () => {
+    stopAudio()
+    if (acRef.current) acRef.current.close().catch(() => {})
+  }, [stopAudio])
+
+  const switchLang = (l: 'es' | 'en') => {
+    setLang(l)
+    if (playing) playSummary(l)
+  }
+
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(13,20,18,.94)', backdropFilter: 'blur(8px)',
-      display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-      overflowY: 'auto', padding: '40px 20px',
+      background: '#000', color: 'white',
+      display: 'grid', gridTemplateColumns: '1fr 1fr',
+      overflow: 'hidden',
     }}>
-      <SessionReport
-        sessionId={sessionId}
-        initial={report}
-        actions={
-          <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
-            <button onClick={onClose} className="btn btn-primary btn-lg" style={{ flex: 1 }}>
-              Volver a Hoy
-            </button>
+      {/* Izquierda: reporte */}
+      <div style={{ overflowY: 'auto', padding: '40px 32px 40px 48px', background: 'var(--bg-1, #FAFBFA)', color: 'var(--fg-1, #0D1412)' }}>
+        <SessionReport
+          sessionId={sessionId}
+          initial={report}
+          actions={
+            <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
+              <button onClick={() => { stopAudio(); onClose() }} className="btn btn-primary btn-lg" style={{ flex: 1 }}>
+                Volver a Hoy
+              </button>
+              <button
+                onClick={() => { stopAudio(); window.location.reload() }}
+                className="btn btn-secondary btn-lg"
+                style={{ flex: 1, background: 'var(--bg-2)', color: 'var(--fg-1)', border: 0 }}
+              >
+                Practicar otra vez
+              </button>
+            </div>
+          }
+        />
+      </div>
+
+      {/* Derecha: visualizer + toggle ES/EN */}
+      <div style={{
+        position: 'relative', background: '#000',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '40px 32px',
+      }}>
+        {/* Toggle ES/EN */}
+        <div style={{
+          position: 'absolute', top: 32, left: '50%', transform: 'translateX(-50%)',
+          display: 'inline-flex', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)',
+          borderRadius: 999, padding: 4, gap: 2,
+        }}>
+          {(['es', 'en'] as const).map((l) => (
             <button
-              onClick={() => { window.location.reload() }}
-              className="btn btn-secondary btn-lg"
-              style={{ flex: 1, background: 'var(--bg-2)', color: 'var(--fg-1)', border: 0 }}
+              key={l}
+              onClick={() => switchLang(l)}
+              style={{
+                padding: '8px 18px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+                background: lang === l ? '#00B37E' : 'transparent',
+                color: lang === l ? '#fff' : 'rgba(255,255,255,.7)',
+                border: 0, cursor: 'pointer', transition: 'all .15s',
+              }}
             >
-              Practicar otra vez
+              {l === 'es' ? 'Castellano' : 'English'}
             </button>
+          ))}
+        </div>
+
+        {/* Visualizer aura */}
+        <div style={{ width: 'min(440px, 80%)', aspectRatio: '1 / 1', position: 'relative' }}>
+          <AgentAudioVisualizerAura
+            status={playing ? 'speaking' : 'listening'}
+            audioLevel={audioLevel}
+            color="#00B37E"
+            colorShift={0.18}
+            themeMode="dark"
+            size="xl"
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+
+        {/* Botón play / pause */}
+        <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+          <button
+            onClick={() => (playing ? stopAudio() : playSummary(lang))}
+            style={{
+              width: 64, height: 64, borderRadius: '50%',
+              background: '#00B37E', color: '#fff', border: 0, cursor: 'pointer',
+              display: 'grid', placeItems: 'center', boxShadow: '0 8px 24px rgba(0,179,126,.4)',
+              transition: 'transform .15s',
+            }}
+          >
+            {playing ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            )}
+          </button>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,.5)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
+            {playing ? 'Resumiendo tu charla' : `Escuchar resumen en ${lang === 'es' ? 'castellano' : 'inglés'}`}
           </div>
-        }
-      />
+        </div>
+      </div>
     </div>
   )
 }
