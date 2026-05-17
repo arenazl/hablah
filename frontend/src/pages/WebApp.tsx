@@ -617,14 +617,8 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
           </div>
         </div>
 
-        <div className="profile-card">
-          <h3>Tus intereses</h3>
-          <div style={{ fontSize: 13, color: 'var(--fg-3)', marginBottom: 8 }}>Estos punteros alimentan cada charla.</div>
-          <div className="interest-chips">
-            {profile.interests.map((i) => <span key={i.id} className="chip">{i.title}</span>)}
-            {profile.interests.length === 0 && <span style={{ color: 'var(--fg-3)', fontSize: 13 }}>Todavía no elegiste intereses.</span>}
-          </div>
-        </div>
+        <InterestsCard profile={profile} onChange={onChange} />
+        <AddInterestCard profile={profile} onChange={onChange} />
 
         <div className="profile-card">
           <h3>Configuración</h3>
@@ -675,6 +669,158 @@ function SettingsRow({ label, sub, value, switchOn, onSwitchToggle }: {
       {switchOn !== undefined
         ? <div className={`switch${switchOn ? '' : ' off'}`} onClick={onSwitchToggle} style={{ cursor: 'pointer' }} />
         : value ? <span className="v">{value}</span> : null}
+    </div>
+  )
+}
+
+/* ──────── intereses card (drag & drop) ──────── */
+function InterestsCard({ profile, onChange }: { profile: MeProfile; onChange: () => void }) {
+  const [items, setItems] = useState(profile.interests)
+  const [dragIdx, setDragIdx] = useState<number | null>(null)
+  const [saving, setSaving] = useState(false)
+
+  // Sincronizar si el perfil del padre cambia (ej. después de un add/remove)
+  useEffect(() => { setItems(profile.interests) }, [profile.interests])
+
+  const persistOrder = async (newItems: typeof items) => {
+    setSaving(true)
+    try {
+      await topicsAPI.reorder(newItems.map(i => i.id))
+      onChange()
+    } catch {
+      toast.error('No se pudo guardar el orden')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDrop = (toIdx: number) => {
+    if (dragIdx === null || dragIdx === toIdx) { setDragIdx(null); return }
+    const next = [...items]
+    const [moved] = next.splice(dragIdx, 1)
+    next.splice(toIdx, 0, moved)
+    setItems(next)
+    setDragIdx(null)
+    persistOrder(next)
+  }
+
+  const handleRemove = async (topicId: number) => {
+    if (!confirm('¿Quitar este interés?')) return
+    try {
+      await topicsAPI.removeInterest(topicId)
+      toast.success('Interés quitado')
+      onChange()
+    } catch { toast.error('No se pudo quitar') }
+  }
+
+  return (
+    <div className="profile-card">
+      <h3>Tus intereses {saving && <span style={{ fontSize: 11, color: 'var(--fg-3)', fontWeight: 400 }}>guardando…</span>}</h3>
+      <div style={{ fontSize: 13, color: 'var(--fg-3)', marginBottom: 12 }}>
+        Arrastrá para reordenar. El orden manda en /Practicar.
+      </div>
+      {items.length === 0 ? (
+        <div style={{ color: 'var(--fg-3)', fontSize: 13 }}>Todavía no elegiste intereses.</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {items.map((i, idx) => (
+            <div
+              key={i.id}
+              draggable
+              onDragStart={() => setDragIdx(idx)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={() => handleDrop(idx)}
+              onDragEnd={() => setDragIdx(null)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '10px 12px', borderRadius: 10,
+                background: dragIdx === idx ? 'var(--primary-tint)' : 'var(--bg-2)',
+                border: '1px solid var(--border-1)',
+                cursor: 'grab',
+                opacity: dragIdx === idx ? 0.5 : 1,
+              }}
+            >
+              <span style={{ color: 'var(--fg-3)', fontSize: 18, cursor: 'grab' }}>⋮⋮</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--primary-dark)', minWidth: 18 }}>#{idx + 1}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>{i.title}</div>
+                <div style={{ fontSize: 11, color: 'var(--fg-3)', textTransform: 'capitalize' }}>{i.category}</div>
+              </div>
+              <button
+                onClick={() => handleRemove(i.id)}
+                style={{ background: 'transparent', border: 0, color: 'var(--fg-3)', cursor: 'pointer', padding: 6, borderRadius: 6 }}
+                title="Quitar"
+              >✕</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AddInterestCard({ profile, onChange }: { profile: MeProfile; onChange: () => void }) {
+  const [catalog, setCatalog] = useState<Topic[]>([])
+  const [q, setQ] = useState('')
+  useEffect(() => {
+    topicsAPI.list().then(setCatalog).catch(() => {})
+  }, [])
+  const interestIds = new Set(profile.interests.map(i => i.id))
+  const available = catalog.filter(t => !interestIds.has(t.id))
+  const filtered = q
+    ? available.filter(t => t.title.toLowerCase().includes(q.toLowerCase()) || t.category.toLowerCase().includes(q.toLowerCase()))
+    : available
+
+  const handleAdd = async (topicId: number) => {
+    try {
+      await topicsAPI.addInterest(topicId)
+      toast.success('Interés agregado')
+      onChange()
+    } catch { toast.error('No se pudo agregar') }
+  }
+
+  return (
+    <div className="profile-card">
+      <h3>Agregar interés</h3>
+      <div style={{ fontSize: 13, color: 'var(--fg-3)', marginBottom: 12 }}>
+        Del catálogo de {catalog.length} tópicos · {available.length} disponibles
+      </div>
+      <input
+        type="text"
+        placeholder="Buscar por título o categoría…"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        style={{
+          width: '100%', padding: '10px 12px', borderRadius: 10,
+          border: '1px solid var(--border-2)', background: 'white',
+          fontSize: 13, marginBottom: 12, outline: 'none',
+        }}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto' }}>
+        {filtered.length === 0 && (
+          <div style={{ color: 'var(--fg-3)', fontSize: 13, textAlign: 'center', padding: 20 }}>
+            {q ? 'Sin resultados' : 'No hay más tópicos disponibles'}
+          </div>
+        )}
+        {filtered.slice(0, 20).map((t) => (
+          <button
+            key={t.id}
+            onClick={() => handleAdd(t.id)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '10px 12px', borderRadius: 10,
+              background: 'white', border: '1px solid var(--border-1)',
+              cursor: 'pointer', textAlign: 'left',
+            }}
+          >
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{t.title} {t.is_hot && <span style={{ fontSize: 11 }}>🔥</span>}</div>
+              <div style={{ fontSize: 11, color: 'var(--fg-3)', textTransform: 'capitalize' }}>{t.category}</div>
+            </div>
+            <span style={{ color: 'var(--primary)', fontSize: 18, fontWeight: 700 }}>+</span>
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

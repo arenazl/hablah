@@ -98,6 +98,8 @@ export const topicsAPI = {
   myInterests: () => api.get<Topic[]>('/topics/my-interests').then((r) => r.data),
   addInterest: (topicId: number) => api.post(`/topics/my-interests/${topicId}`).then((r) => r.data),
   removeInterest: (topicId: number) => api.delete(`/topics/my-interests/${topicId}`).then((r) => r.data),
+  reorder: (topicIds: number[]) =>
+    api.post('/topics/my-interests/reorder', { topic_ids: topicIds }).then((r) => r.data),
   create: (data: Partial<Topic>) => api.post<Topic>('/topics/', data).then((r) => r.data),
   update: (id: number, data: Partial<Topic>) =>
     api.patch<Topic>(`/topics/${id}`, data).then((r) => r.data),
