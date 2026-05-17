@@ -38,7 +38,7 @@ log = logging.getLogger(__name__)
 LIVE_API_URL = (
     "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent"
 )
-LIVE_MODEL = "models/gemini-2.0-flash-exp"
+LIVE_MODEL = "models/gemini-2.5-flash-native-audio-latest"
 
 
 async def _load_session_context(session_id: int) -> Optional[dict]:

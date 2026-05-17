@@ -164,10 +164,18 @@ function TopBar({ profile }: { profile: MeProfile | null }) {
   const title = VIEW_TITLES[loc.pathname] ?? 'Hoy'
   const streak = profile?.user?.streak_days ?? 0
   const initial = profile?.user?.nombre?.[0]?.toUpperCase() || 'U'
+  const isDark = loc.pathname.startsWith('/app/practicar')
   return (
-    <header className="topbar">
+    <header
+      className="topbar"
+      style={isDark ? {
+        background: 'rgba(14,22,20,.92)',
+        borderBottom: '1px solid rgba(255,255,255,.06)',
+        color: 'white',
+      } : undefined}
+    >
       <div className="topbar-inner">
-        <h1>{title}</h1>
+        <h1 style={isDark ? { color: 'white' } : undefined}>{title}</h1>
         <div className="topbar-right">
           {streak > 0 && (
             <div className="streak-badge">
@@ -175,7 +183,13 @@ function TopBar({ profile }: { profile: MeProfile | null }) {
               <span><span className="tnum">{streak}</span><span className="l"> días</span></span>
             </div>
           )}
-          <button className="av-btn" aria-label="Perfil">{initial}</button>
+          <button
+            className="av-btn"
+            aria-label="Perfil"
+            style={isDark ? { background: 'rgba(255,255,255,.08)', color: 'white' } : undefined}
+          >
+            {initial}
+          </button>
         </div>
       </div>
     </header>

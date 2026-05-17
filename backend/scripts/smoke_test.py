@@ -197,6 +197,70 @@ def test_smtp() -> bool:
 
 
 # ─── 6. ElevenLabs TTS ────────────────────────────────────────────────────
+async def test_gemini_live() -> bool:
+    """Conecta al WebSocket de Gemini Live, manda un setup mínimo, valida respuesta.
+
+    Detecta errores como 1008 policy violation (modelo no disponible para tu key).
+    """
+    try:
+        import json as _json
+        import websockets
+
+        key = os.environ.get("GEMINI_API_KEY")
+        if not key:
+            fail("Gemini Live", "GEMINI_API_KEY missing")
+            return False
+
+        # Importar el modelo configurado (mismo que usa el proxy real)
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        try:
+            from services.gemini_live import LIVE_MODEL, LIVE_API_URL  # type: ignore
+        except Exception:
+            LIVE_MODEL = "models/gemini-live-2.5-flash-preview"
+            LIVE_API_URL = (
+                "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent"
+            )
+
+        url = f"{LIVE_API_URL}?key={key}"
+        try:
+            ws = await asyncio.wait_for(websockets.connect(url, max_size=2**20), timeout=15)
+        except Exception as e:
+            fail("Gemini Live", f"no se pudo abrir WS: {type(e).__name__}: {e}")
+            return False
+
+        # Setup mínimo: usar el mismo modelo que en producción
+        setup = {
+            "setup": {
+                "model": LIVE_MODEL,
+                "generationConfig": {"responseModalities": ["AUDIO"]},
+            }
+        }
+        await ws.send(_json.dumps(setup))
+        try:
+            raw = await asyncio.wait_for(ws.recv(), timeout=10)
+            data = _json.loads(raw)
+            # setupComplete o algo válido = OK
+            if "setupComplete" in data or "serverContent" in data:
+                ok("Gemini Live", f"setupComplete OK, model={LIVE_MODEL}")
+                await ws.close()
+                return True
+            fail("Gemini Live", f"respuesta inesperada: {str(data)[:200]}")
+            await ws.close()
+            return False
+        except websockets.ConnectionClosed as e:
+            # Google cierra con 1008 si el modelo no es válido para Live
+            reason = getattr(e, "reason", str(e))
+            fail("Gemini Live", f"closed: code={getattr(e, 'code', '?')} reason={reason[:200]}")
+            return False
+        except asyncio.TimeoutError:
+            fail("Gemini Live", "timeout esperando setupComplete")
+            await ws.close()
+            return False
+    except Exception as e:
+        fail("Gemini Live", f"{type(e).__name__}: {e}")
+        return False
+
+
 async def test_elevenlabs() -> bool:
     """Sintetiza un texto corto en cada una de las 4 voces y valida MP3."""
     try:
@@ -266,6 +330,7 @@ async def main() -> None:
     results: dict[str, bool] = {}
     results["DB Aiven"] = await test_db()
     results["Gemini"] = await test_gemini()
+    results["Gemini Live (WS)"] = await test_gemini_live()
     results["Groq Whisper"] = await test_groq_whisper()
     results["Cloudinary"] = test_cloudinary()
     results["SMTP Brevo"] = test_smtp()
