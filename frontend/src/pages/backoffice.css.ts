@@ -87,6 +87,7 @@ export const BACKOFFICE_CSS = `
 }
 .bo-root .sidebar .brand-name { color: white; font-weight: 800; font-size: 16px; letter-spacing: -.01em; }
 .bo-root .sidebar .brand-sub { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(232,236,234,.45); margin-top: 2px; }
+.bo-root .sidebar .brand-mark-img { width: 32px; height: 32px; border-radius: 8px; display: block; flex-shrink: 0; }
 .bo-root .sidebar-section {
   padding: 18px 18px 6px; font-size: 10.5px; letter-spacing: .14em;
   text-transform: uppercase; color: rgba(232,236,234,.45);

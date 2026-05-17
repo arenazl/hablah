@@ -115,7 +115,7 @@ function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpe
   return (
     <aside className={`sidebar${mobileOpen ? ' mobile-open' : ''}`}>
       <div className="brand">
-        <div className="brand-mark">h</div>
+        <img src="/logos/hablah-mark.svg" alt="habláh" className="brand-mark-img" width="32" height="32" />
         <div className="brand-name">habláh</div>
       </div>
       <nav className="sidebar-nav">

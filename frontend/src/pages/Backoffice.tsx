@@ -52,7 +52,7 @@ function BoSidebar({ open }: { open: boolean }) {
   return (
     <aside className={`sidebar${open ? ' open' : ''}`}>
       <NavLink to="/admin" className="brand" end>
-        <div className="brand-mark">h</div>
+        <img src="/logos/hablah-mark.svg" alt="habláh" className="brand-mark-img" width="32" height="32" />
         <div>
           <div className="brand-name">habláh</div>
           <div className="brand-sub">Backoffice</div>

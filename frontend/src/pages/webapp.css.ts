@@ -77,6 +77,7 @@ export const WEBAPP_CSS = `
   font-weight: 900; font-style: italic; font-size: 19px;
 }
 .webapp-root .sidebar .brand-name { color: white; font-weight: 800; font-size: 17px; letter-spacing: -.01em; }
+.webapp-root .sidebar .brand-mark-img { width: 32px; height: 32px; border-radius: 8px; display: block; flex-shrink: 0; }
 .webapp-root .sidebar-nav { padding: 0 12px; display: flex; flex-direction: column; gap: 2px; }
 .webapp-root .nav-item {
   display: flex; align-items: center; gap: 12px;

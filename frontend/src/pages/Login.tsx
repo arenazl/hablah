@@ -73,12 +73,7 @@ export function Login() {
 
         {/* Logo header */}
         <div className="relative flex items-center gap-3 mb-auto">
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center"
-            style={{ background: HABLAH_GREEN, color: 'white', fontWeight: 900, fontStyle: 'italic', fontSize: 24 }}
-          >
-            h
-          </div>
+          <img src="/logos/hablah-mark.svg" alt="habláh" width="48" height="48" className="rounded-xl" />
           <div>
             <div className="font-extrabold text-xl text-white leading-tight">habláh</div>
             <div className="text-xs uppercase tracking-widest" style={{ color: 'rgba(232,236,234,.5)' }}>

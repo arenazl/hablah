@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="habláh">
+  <defs>
+    <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00B37E"/>
+      <stop offset="100%" stop-color="#008F63"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#hg)"/>
+  <!-- Onda de voz que forma una h: 4 barras, las 2 del medio conectadas por una barra horizontal -->
+  <g fill="#FFFFFF">
+    <!-- Barra 1 (corta, izquierda) -->
+    <rect x="13" y="26" width="6" height="12" rx="3"/>
+    <!-- Barra 2 (alta, parte izq de la h) -->
+    <rect x="22" y="14" width="6" height="36" rx="3"/>
+    <!-- Conector horizontal (travesaño de la h) -->
+    <rect x="28" y="29" width="8" height="6" rx="3"/>
+    <!-- Barra 3 (media, parte der de la h) -->
+    <rect x="36" y="22" width="6" height="28" rx="3"/>
+    <!-- Barra 4 (corta der) -->
+    <rect x="45" y="28" width="6" height="14" rx="3"/>
+  </g>
+  <!-- Tilde flotante sobre la h -->
+  <path d="M 28 8 Q 31 5 34 8" stroke="#FFB800" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+</svg>
