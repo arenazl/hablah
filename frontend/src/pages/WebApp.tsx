@@ -145,6 +145,24 @@ function Sidebar({ profile }: { profile: MeProfile | null }) {
             <div className="name">{user?.nombre} {user?.apellido?.[0]}.</div>
             <div className="meta">Plan {user?.plan || 'free'}</div>
           </div>
+          <button
+            onClick={(e) => {
+              e.preventDefault(); e.stopPropagation()
+              localStorage.clear()
+              window.location.href = '/login'
+            }}
+            title="Cerrar sesión"
+            style={{
+              background: 'transparent', border: 0, color: 'rgba(232,236,234,.5)',
+              cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
         </Link>
       </div>
     </aside>
@@ -339,6 +357,29 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     }
   }, [live])
 
+  // IMPORTANTE: handleEnd se declara ANTES del early return para que el
+  // número de hooks no cambie entre renders (React error #310).
+  const handleEnd = useCallback(async () => {
+    live.stop()
+    if (sessionId) {
+      try {
+        await sessionsAPI.end(sessionId, live.transcript)
+        toast.success('Sesión finalizada. Analizando...')
+        onSessionEnd()
+      } catch {}
+    }
+    nav('/app')
+  }, [live, sessionId, onSessionEnd, nav])
+
+  const statusLabel = {
+    idle: 'Preparando…',
+    connecting: 'Conectando…',
+    listening: 'Tu turno',
+    speaking: 'El tutor habla',
+    error: 'Error',
+    ended: 'Finalizada',
+  }[live.status]
+
   // Si todavía no eligió tópico, NO arranco automático. Pantalla de selección.
   if (!sessionId) {
     if (!profile) return <div className="view">Cargando…</div>
@@ -392,27 +433,6 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       </div>
     )
   }
-
-  const handleEnd = useCallback(async () => {
-    live.stop()
-    if (sessionId) {
-      try {
-        await sessionsAPI.end(sessionId, live.transcript)
-        toast.success('Sesión finalizada. Analizando...')
-        onSessionEnd()
-      } catch {}
-    }
-    nav('/app')
-  }, [live, sessionId, onSessionEnd, nav])
-
-  const statusLabel = {
-    idle: 'Preparando…',
-    connecting: 'Conectando…',
-    listening: 'Tu turno',
-    speaking: 'El tutor habla',
-    error: 'Error',
-    ended: 'Finalizada',
-  }[live.status]
 
   return (
     <div className="convo-view">
