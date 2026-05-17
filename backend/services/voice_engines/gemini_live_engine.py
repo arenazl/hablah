@@ -78,9 +78,11 @@ class GeminiLiveEngine(VoiceEngine):
                     msg = await ws.receive_json()
                     if msg.get("type") == "audio":
                         b64 = msg.get("data", "")
+                        # Live API v1beta (modelo 3.1): realtimeInput.audio (singular)
+                        # — mediaChunks fue deprecado.
                         await google_ws.send(json.dumps({
                             "realtimeInput": {
-                                "mediaChunks": [{"mimeType": "audio/pcm;rate=16000", "data": b64}]
+                                "audio": {"mimeType": "audio/pcm;rate=16000", "data": b64}
                             }
                         }))
                     elif msg.get("type") == "end":

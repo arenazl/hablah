@@ -248,7 +248,26 @@ async def test_gemini_live() -> bool:
             data = _json.loads(raw)
             # setupComplete o algo válido = OK
             if "setupComplete" in data or "serverContent" in data:
-                ok("Gemini Live", f"setupComplete OK, model={LIVE_MODEL}")
+                # Mandar un chunk de audio real (silencio 100ms PCM 16kHz) para
+                # detectar cambios de protocolo en realtimeInput como el de
+                # mediaChunks → audio (deprecation 2026).
+                import struct
+                pcm = struct.pack("<" + "h" * 1600, *([0] * 1600))
+                import base64
+                b64 = base64.b64encode(pcm).decode("ascii")
+                await ws.send(_json.dumps({
+                    "realtimeInput": {"audio": {"mimeType": "audio/pcm;rate=16000", "data": b64}}
+                }))
+                # Espero 2s para ver si Google cierra con error de formato
+                try:
+                    await asyncio.wait_for(ws.recv(), timeout=2)
+                except asyncio.TimeoutError:
+                    pass  # silencio = OK
+                except websockets.ConnectionClosed as e:
+                    if getattr(e, "code", 0) == 1007:
+                        fail("Gemini Live", f"audio rechazado (formato): {getattr(e, 'reason', '')[:150]}")
+                        return False
+                ok("Gemini Live", f"setupComplete + audio OK, model={LIVE_MODEL}")
                 await ws.close()
                 return True
             fail("Gemini Live", f"respuesta inesperada: {str(data)[:200]}")
