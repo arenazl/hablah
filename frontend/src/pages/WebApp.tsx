@@ -3,6 +3,7 @@ import { NavLink, Routes, Route, useLocation, Link, useNavigate, useParams } fro
 import { toast } from 'sonner'
 
 import { WEBAPP_CSS } from './webapp.css'
+import { HOY_CSS } from './hoy.css'
 import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
@@ -75,6 +76,7 @@ export function WebApp() {
   return (
     <div className="webapp-root">
       <style>{WEBAPP_CSS}</style>
+      <style>{HOY_CSS}</style>
       <div className="shell">
         <Sidebar profile={profile} />
         <main className="main">
@@ -243,84 +245,455 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   const tpl = profile.active_template
   const firstInterest = profile.interests[0]
   const greeting = `Buen día, ${u.nombre}`
+  const minutes = u.target_minutes_per_session
+  const topicTitle = firstInterest?.title || 'Tema libre'
+  const topicCategory = firstInterest?.category || ''
+  const tutorName = tpl?.name || 'Habláh'
+  const tutorRigor = tpl?.rigor ?? 3
+  const tutorWarmth = (tpl as any)?.warmth_level ?? 3
+  const tutorInitial = (tutorName.split(' ')[1] || tutorName)[0] || 'T'
+  const langLabel = u.target_language === 'en' ? 'inglés' : u.target_language === 'pt' ? 'portugués' : u.target_language === 'it' ? 'italiano' : u.target_language
+  const cefrPctVal = cefrPct(u.cefr_level || 'B1')
+  const nextLevel = nextCefr(u.cefr_level || 'B1')
+  const totalSessions = profile.total_sessions ?? 0
+  const hoursSpoken = ((recent.reduce((sum, s) => sum + (s.duration_seconds || 0), 0)) / 3600).toFixed(1)
+
+  // Heatmap: últimos 28 días, calcula nivel por sesiones del día
+  const heatmap = buildHeatmap(recent)
+
+  // Streak / mejor racha
+  const streak = u.streak_days || 0
+  const best = Math.max(u.streak_best || 0, streak)
+  const daysToBeat = Math.max(0, best - streak)
+
+  // In-context prompts según el foco del día
+  const focusKeyword = (firstInterest as any)?.keywords?.[0] || 'nevertheless'
 
   return (
-    <div className="view">
-      <div className="view-head">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-          <span className="eyebrow" style={{ color: 'var(--primary-dark)' }}>{greeting}</span>
-        </div>
-        <h2>Hoy te toca una charla de {u.target_minutes_per_session} minutos.</h2>
-        <div className="sub">
-          Tu tutor activo es <strong style={{ color: 'var(--fg-1)' }}>{tpl?.name || 'Habláh'}</strong>.{' '}
-          {firstInterest && <>Foco del día: <strong style={{ color: 'var(--fg-1)' }}>{firstInterest.title}</strong>.</>}
-        </div>
-      </div>
+    <div className="hoy-page">
+      <section className="hp-greet">
+        <div className="hp-eyebrow">{greeting}</div>
+        <h1 className="hp-title">Hoy te toca una charla de <em>{minutes} minutos</em>.</h1>
+        <p className="hp-sub">
+          Tu tutor activo es <b>{tutorName}</b>. Foco del día: <b>{topicTitle}</b>
+          {topicCategory ? <> · {topicCategory}</> : null}.
+        </p>
+      </section>
 
-      <div className="today-grid">
-        <div className="mission-card">
-          <div className="mission-card-content">
-            <div className="mission-meta">
-              <span className="pill pill-dark" style={{ background: 'rgba(255,255,255,.1)' }}>Misión del día</span>
-              {firstInterest && <span className="pill pill-dark" style={{ background: 'rgba(255,255,255,.1)' }}>{firstInterest.title} · {u.cefr_level}</span>}
-              <span style={{ fontSize: 12, color: 'rgba(232,236,234,.6)', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
-                <ClockIcon size={13} />{u.target_minutes_per_session} min sugeridos
-              </span>
+      <div className="hp-grid">
+        {/* LEFT COLUMN */}
+        <div className="hp-col-l">
+
+          {/* HERO MISSION */}
+          <div className="hp-hero">
+            <div className="hp-hero-l">
+              <div className="hp-hero-chips">
+                <span className="hp-chip solid">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+                  Misión del día
+                </span>
+                <span className="hp-chip">{topicTitle}{topicCategory ? ` · ${topicCategory}` : ''}</span>
+                <span className="hp-chip">{u.cefr_level}</span>
+                <span className="hp-chip amber">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                  {minutes} min sugeridos
+                </span>
+              </div>
+
+              <h2>
+                {topicTitle}
+                <small>Empezá la charla cuando quieras. Hablás en {langLabel}; el tutor te corrige al cierre — sin interrupciones.</small>
+              </h2>
+
+              <div className="hp-hero-meta">
+                <div className="hp-row"><span className="hp-mic-dot"></span><b>Tutor listo</b></div>
+                <span className="hp-dot"></span>
+                <div className="hp-row">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                  <span>{tutorName}</span>
+                </div>
+                <span className="hp-dot"></span>
+                <div className="hp-row">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+                  <span>Rigurosidad <b>{tutorRigor} / 5</b></span>
+                </div>
+              </div>
+
+              <div className="hp-hero-cta">
+                <button className="hp-btn hp-btn-primary" onClick={() => nav('/app/practicar')}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+                  Empezar charla
+                </button>
+                <button className="hp-btn hp-btn-ghost" onClick={() => nav('/app/perfil')}>Cambiar tópico</button>
+              </div>
             </div>
-            <h3>{firstInterest?.title || 'Tema libre — vos elegís'}</h3>
-            <p>
-              Empezá la charla cuando quieras. Hablás en {u.target_language === 'en' ? 'inglés' : u.target_language}, el tutor te corrige al cierre — sin interrupciones.
-            </p>
-            <div className="actions">
-              <button className="btn btn-primary btn-lg" onClick={() => nav('/app/practicar')}>
-                <MicIcon size={18} />Empezar charla
-              </button>
-              <Link to="/app/perfil" className="btn btn-ghost" style={{ color: 'rgba(255,255,255,.85)' }}>Cambiar tópico</Link>
+
+            <div className="hp-hero-r">
+              <div className="hp-label">Desafíos en pantalla</div>
+
+              <div className="hp-prompt vocab">
+                <span className="hp-pgl">V</span>
+                <div className="hp-pt">
+                  <span className="hp-small">Vocabulario</span>
+                  Intentá usar <b>{focusKeyword}</b> en alguna idea sobre {topicTitle.toLowerCase()}.
+                </div>
+              </div>
+              <div className="hp-prompt gram">
+                <span className="hp-pgl">G</span>
+                <div className="hp-pt">
+                  <span className="hp-small">Gramática</span>
+                  Contá cómo <b>empezó</b> el tema usando <b>pasado simple</b>.
+                </div>
+              </div>
+              <div className="hp-prompt restr">
+                <span className="hp-pgl">R</span>
+                <div className="hp-pt">
+                  <span className="hp-small">Restricción</span>
+                  El tutor va a discrepar. Expresá <b>desacuerdo formal</b>.
+                </div>
+              </div>
+
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,.55)', marginTop: 6, lineHeight: 1.4 }}>
+                Aparecen como tarjetas durante la charla. No tenés que cumplir todas.
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="streak-panel">
-          <div className="card week-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 }}>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>Tu racha</div>
-              <div style={{ fontSize: 12, color: 'var(--fg-3)' }} className="tnum">{u.streak_days} / {u.streak_best} mejor</div>
-            </div>
-            <div style={{ fontSize: 13, color: 'var(--fg-2)' }}>
-              {u.streak_days > 0
-                ? <><b>{u.streak_days} días seguidos</b>. {u.streak_days >= u.streak_best ? '¡Es tu mejor racha!' : `Te faltan ${u.streak_best - u.streak_days} para igualar tu mejor.`}</>
-                : <>Hoy arrancás tu racha. <b>Primera charla = primer punto.</b></>}
-            </div>
-          </div>
-        </div>
-      </div>
+          {/* RESCUE (visible solo si insistent_mode + hay errores recurrentes — DEMO) */}
+          {u.insistent_mode_enabled && totalSessions >= 3 && (
+            <div className="hp-card hp-rescue">
+              <div className="hp-rescue-head">
+                <div>
+                  <div className="hp-rescue-eye"><span className="hp-pulse"></span> Punto a pulir · misión de rescate activa</div>
+                  <h3>Verbos irregulares en pasado simple</h3>
+                  <p>Repetiste el mismo patrón en las últimas <b>3 sesiones</b>. La charla de hoy va a forzar narrativas históricas sobre el género para que pelees con este tema hasta consolidarlo. <span style={{ opacity: .6, fontSize: 11 }}>[demo · pendiente endpoint de rescate]</span></p>
+                </div>
+              </div>
 
-      <div className="recent">
-        <div className="qp-head">
-          <div className="eyebrow">Últimas sesiones</div>
-          <Link to="/app/historial" className="btn btn-ghost btn-sm">Ver historial →</Link>
-        </div>
-        <div className="recent-list">
-          {recent.length === 0 && (
-            <div style={{ padding: 20, textAlign: 'center', color: 'var(--fg-3)', fontSize: 14 }}>
-              Todavía no tenés sesiones. <strong>Empezá tu primera charla.</strong>
+              <div className="hp-rescue-body">
+                <div className="hp-rescue-examples">
+                  <div className="hp-ex">
+                    <span className="hp-bad">"It <b>beginned</b> in the late 90s."</span>
+                    <span className="hp-arr">→</span>
+                    <span className="hp-good">It <b>began</b> in the late 90s.</span>
+                  </div>
+                  <div className="hp-ex">
+                    <span className="hp-bad">"DJs <b>bringed</b> the sound to pirate radio."</span>
+                    <span className="hp-arr">→</span>
+                    <span className="hp-good">DJs <b>brought</b> the sound to pirate radio.</span>
+                  </div>
+                  <div className="hp-ex">
+                    <span className="hp-bad">"The crowd <b>goed</b> wild."</span>
+                    <span className="hp-arr">→</span>
+                    <span className="hp-good">The crowd <b>went</b> wild.</span>
+                  </div>
+                </div>
+
+                <div className="hp-rescue-aside">
+                  <div>
+                    <div style={{ fontSize: 11, color: '#8A6A00', letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>Frecuencia · últimas 6 sesiones</div>
+                    <div className="hp-freq">
+                      <i style={{ height: '30%', opacity: .35 }}></i>
+                      <i style={{ height: '50%', opacity: .55 }}></i>
+                      <i style={{ height: '55%', opacity: .7 }}></i>
+                      <i style={{ height: '70%' }}></i>
+                      <i style={{ height: '85%' }}></i>
+                      <i style={{ height: '95%', background: '#E5484D' }}></i>
+                    </div>
+                    <div className="hp-freq-x"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Hoy</span></div>
+                  </div>
+                  <div className="hp-rescue-cta">
+                    <button className="hp-btn-amber" onClick={() => nav('/app/practicar')}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                      Empezar misión de rescate
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
-          {recent.slice(0, 3).map((s) => (
-            <div key={s.id} className="recent-row">
-              <div className="when"><span className="day-l">{formatDay(s.started_at)}</span> {formatTime(s.started_at)}</div>
-              <div>
-                <div className="title">{topicTitleFromSession(profile, s)}</div>
-                <div className="topic">{tpl?.name || 'Tutor'} · {s.duration_seconds ? `${Math.round(s.duration_seconds / 60)} min` : 'en curso'}</div>
-              </div>
-              <div>{s.score !== null && <span className="pill pill-primary">Score {s.score}</span>}</div>
-              <div className="score">{s.score ?? '—'}</div>
+
+          {/* SESSIONS */}
+          <div className="hp-card">
+            <div className="hp-card-head">
+              <h3>Últimas sesiones</h3>
+              <Link className="hp-link" to="/app/historial">Ver historial completo →</Link>
             </div>
-          ))}
+            <div className="hp-sessions">
+              <div className="hp-sess active">
+                <div className="hp-sess-date">Hoy<b>—</b></div>
+                <div className="hp-sess-body">
+                  <div className="hp-topic">{topicTitle}{topicCategory ? ` · ${topicCategory}` : ''} <span className={`hp-tutor${tutorName.toLowerCase().includes('sincerist') ? ' sincerist' : ''}`}>{tutorName}</span></div>
+                  <div className="hp-meta">
+                    <span className="hp-row"><span className="hp-live-dot"></span>en cola</span>
+                    <span>·</span><span>{minutes} min sugeridos</span>
+                    <span>·</span><span>3 desafíos en pantalla</span>
+                  </div>
+                </div>
+                <div className="hp-fluency"><span className="hp-fl-label">Fluidez</span><span className="hp-fl-num" style={{ color: 'var(--hp-fg-4)' }}>— —</span></div>
+                <div className="hp-dur">{minutes}:00<small>sugerido</small></div>
+                <span className="hp-sess-go">→</span>
+              </div>
+
+              {recent.length === 0 && (
+                <div style={{ padding: '24px 4px', textAlign: 'center', color: 'var(--hp-fg-3)', fontSize: 13 }}>
+                  Todavía no tenés sesiones cerradas. <b>Empezá la primera arriba.</b>
+                </div>
+              )}
+
+              {recent.slice(0, 5).map((s, idx) => {
+                const prev = recent[idx + 1]
+                const fluency = extractFluency(s)
+                const prevFluency = prev ? extractFluency(prev) : null
+                const delta = fluency !== null && prevFluency !== null ? fluency - prevFluency : null
+                const dur = s.duration_seconds || 0
+                const praiseCount = countReport(s, 'praise')
+                const feedbackCount = countReport(s, 'feedback')
+                const sessTitle = topicTitleFromSession(profile, s)
+                const sessTutor = tutorName
+                return (
+                  <div key={s.id} className="hp-sess" onClick={() => nav(`/app/sesiones/${s.id}`)} style={{ cursor: 'pointer' }}>
+                    <div className="hp-sess-date">{formatDow(s.started_at)}<b>{formatDayNum(s.started_at)}</b></div>
+                    <div className="hp-sess-body">
+                      <div className="hp-topic">{sessTitle} <span className={`hp-tutor${sessTutor.toLowerCase().includes('sincerist') ? ' sincerist' : ''}`}>{sessTutor}</span></div>
+                      <div className="hp-meta">
+                        {praiseCount > 0 && <span className="hp-ok">{praiseCount} acierto{praiseCount === 1 ? '' : 's'} notable{praiseCount === 1 ? '' : 's'}</span>}
+                        {praiseCount > 0 && feedbackCount > 0 && <span>·</span>}
+                        {feedbackCount > 0 && <span className="hp-err">{feedbackCount} punto{feedbackCount === 1 ? '' : 's'} a pulir</span>}
+                        {praiseCount === 0 && feedbackCount === 0 && <span>{s.status === 'analyzed' ? 'sin observaciones' : 'analizando…'}</span>}
+                      </div>
+                    </div>
+                    <div className="hp-fluency">
+                      <span className="hp-fl-label">Fluidez</span>
+                      <span className="hp-fl-num">
+                        {fluency ?? '—'}
+                        {delta !== null && delta !== 0 && (
+                          <span className={`hp-delta${delta < 0 ? ' down' : ''}`}>{delta > 0 ? `+${delta}` : delta}</span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="hp-dur">{formatMmSs(dur)}<small>charla</small></div>
+                    <span className="hp-sess-go">→</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
         </div>
+
+        {/* RIGHT COLUMN */}
+        <aside className="hp-rc">
+
+          <div className="hp-card hp-streak-card">
+            <div className="hp-card-head">
+              <h3>Tu racha</h3>
+              <span className="hp-h-meta">{best} / {best} mejor</span>
+            </div>
+            <div className="hp-big">
+              <span className="hp-n">{streak}</span>
+              <span className="hp-u">días seguidos</span>
+            </div>
+            <div className="hp-sub-text">
+              {streak === 0
+                ? <>Hoy arrancás tu racha. <b>Primera charla = primer punto.</b></>
+                : streak >= best
+                ? <><b>¡Es tu mejor racha!</b></>
+                : <>Te faltan <b>{daysToBeat} días</b> para empatar tu mejor racha.</>}
+            </div>
+
+            <div className="hp-heatmap" aria-label="Últimos 28 días de práctica">
+              {heatmap.map((cell, i) => (
+                <i key={i} className={cell.className}></i>
+              ))}
+            </div>
+            <div className="hp-heat-legend">
+              <span>hace 4 semanas</span>
+              <span className="hp-scale">menos
+                <i style={{ background: 'var(--hp-bg-2)' }}></i>
+                <i style={{ background: '#CFEFE1' }}></i>
+                <i style={{ background: '#7CE7BD' }}></i>
+                <i style={{ background: '#1FC18E' }}></i>
+                <i style={{ background: 'var(--hp-green-700)' }}></i>
+                más
+              </span>
+            </div>
+          </div>
+
+          <div className="hp-card hp-level-card">
+            <div className="hp-card-head">
+              <h3>Camino a {nextLevel}</h3>
+              <Link to="/app/mapa" className="hp-link">Ver mapa →</Link>
+            </div>
+
+            <div className="hp-lhead">
+              <div className="hp-ladder">
+                <b>{u.cefr_level}</b>
+                <span className="hp-arrow">→</span>
+                <span className="hp-next">{nextLevel}</span>
+              </div>
+              <div style={{ fontFamily: 'var(--hp-font-display)', fontWeight: 700, fontSize: 14 }}>{cefrPctVal}%</div>
+            </div>
+            <div className="hp-gauge"><i style={{ width: `${cefrPctVal}%` }}></i></div>
+
+            <div className="hp-lstats">
+              <div className="hp-li"><span className="hp-v">{totalSessions}</span><span className="hp-k">charlas</span></div>
+              <div className="hp-li"><span className="hp-v green">—</span><span className="hp-k">fluidez 30d</span></div>
+              <div className="hp-li"><span className="hp-v">{hoursSpoken}h</span><span className="hp-k">habladas</span></div>
+            </div>
+          </div>
+
+          <div className="hp-card">
+            <div className="hp-card-head">
+              <h3>Tus tópicos</h3>
+              <Link to="/app/perfil" className="hp-link">Editar →</Link>
+            </div>
+
+            {profile.interests.length === 0 && (
+              <div style={{ fontSize: 13, color: 'var(--hp-fg-3)' }}>
+                Todavía no elegiste tópicos. <Link to="/app/perfil" style={{ color: 'var(--hp-green-700)', fontWeight: 600 }}>Sumá algunos →</Link>
+              </div>
+            )}
+
+            {Object.entries(groupByCategory(profile.interests)).map(([cat, items]) => (
+              <div key={cat} style={{ marginBottom: 10 }}>
+                <span className="hp-tag cat">{cat}</span>
+                <div className="hp-tags" style={{ marginTop: 6 }}>
+                  {items.map((t: any, i: number) => (
+                    <span key={t.id} className={`hp-tag${i === 0 && cat === (firstInterest?.category || '') ? ' hot' : ''}`}>{t.title}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div style={{ fontSize: 11.5, color: 'var(--hp-fg-3)', marginTop: 12, lineHeight: 1.5 }}>Los tópicos alimentan cada charla. Cambialos cuando quieras.</div>
+          </div>
+
+          <div className="hp-card hp-tutor-card">
+            <div className="hp-card-head">
+              <h3>Tutor activo</h3>
+              <Link to="/app/perfil" className="hp-link">Cambiar →</Link>
+            </div>
+            <div className="hp-tutor-row">
+              <div className="hp-tutor-av">{tutorInitial}</div>
+              <div className="hp-tinf">
+                <div className="hp-tname">{tutorName}</div>
+                <div className="hp-tdesc">{tpl?.description || 'Tu compañero de práctica.'}</div>
+              </div>
+            </div>
+            <div className="hp-tutor-meters">
+              <div className="hp-meter">
+                <div className="hp-mlabel">Rigurosidad</div>
+                <div className="hp-mval">{rigorLabel(tutorRigor)} · {tutorRigor} / 5</div>
+                <div className="hp-bar"><i style={{ width: `${(tutorRigor / 5) * 100}%`, background: '#E5484D' }}></i></div>
+              </div>
+              <div className="hp-meter">
+                <div className="hp-mlabel">Calidez</div>
+                <div className="hp-mval">{warmthLabel(tutorWarmth)} · {tutorWarmth} / 5</div>
+                <div className="hp-bar"><i style={{ width: `${(tutorWarmth / 5) * 100}%`, background: '#FFB800' }}></i></div>
+              </div>
+            </div>
+            <div className="hp-tutor-tags">
+              {(tpl as any)?.block_on_repeat && <span className="hp-tutor-tag">Bloqueos por repetición</span>}
+              {(tpl as any)?.interruption_allowed === false && <span className="hp-tutor-tag">Sin interrupciones</span>}
+              {tutorRigor >= 4 && <span className="hp-tutor-tag amber">Presión temporal</span>}
+            </div>
+          </div>
+
+        </aside>
       </div>
     </div>
   )
+}
+
+/* ── helpers de Hoy ── */
+function nextCefr(level: string): string {
+  const order = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+  const idx = order.indexOf(level)
+  return idx >= 0 && idx < order.length - 1 ? order[idx + 1] : 'C2'
+}
+
+function extractFluency(s: SessionData): number | null {
+  const m: any = s.metrics
+  if (m && typeof m.fluency === 'number') return Math.round(m.fluency)
+  if (typeof s.score === 'number') return s.score
+  return null
+}
+
+function countReport(s: SessionData, key: 'praise' | 'feedback'): number {
+  const r: any = s.report
+  if (!r) return 0
+  const v = r[key]
+  if (Array.isArray(v)) return v.length
+  if (typeof v === 'string' && v.trim()) return 1
+  return 0
+}
+
+function formatDow(iso: string): string {
+  const d = new Date(iso)
+  const dows = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+  return dows[d.getDay()]
+}
+function formatDayNum(iso: string): string {
+  return String(new Date(iso).getDate())
+}
+function formatMmSs(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = Math.floor(seconds % 60)
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+function groupByCategory(interests: any[]): Record<string, any[]> {
+  return interests.reduce((acc, t) => {
+    const cat = t.category || 'Otros'
+    if (!acc[cat]) acc[cat] = []
+    acc[cat].push(t)
+    return acc
+  }, {} as Record<string, any[]>)
+}
+
+function rigorLabel(n: number): string {
+  if (n >= 5) return 'Muy alta'
+  if (n >= 4) return 'Alta'
+  if (n === 3) return 'Media'
+  if (n === 2) return 'Baja'
+  return 'Muy baja'
+}
+function warmthLabel(n: number): string {
+  if (n >= 5) return 'Muy alta'
+  if (n >= 4) return 'Alta'
+  if (n === 3) return 'Media'
+  if (n === 2) return 'Baja'
+  return 'Muy baja'
+}
+
+function buildHeatmap(sessions: SessionData[]): Array<{ className: string }> {
+  // 28 celdas, índice 0 = hace 27 días, índice 27 = hoy
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const byDay = new Map<string, number>() // key YYYY-MM-DD → count
+  for (const s of sessions) {
+    const d = new Date(s.started_at)
+    d.setHours(0, 0, 0, 0)
+    const key = d.toISOString().slice(0, 10)
+    byDay.set(key, (byDay.get(key) || 0) + 1)
+  }
+  const cells: Array<{ className: string }> = []
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(today)
+    d.setDate(today.getDate() - i)
+    const key = d.toISOString().slice(0, 10)
+    const count = byDay.get(key) || 0
+    let lvl = ''
+    if (count === 0) lvl = 'miss'
+    else if (count === 1) lvl = 'lvl1'
+    else if (count === 2) lvl = 'lvl2'
+    else if (count === 3) lvl = 'lvl3'
+    else lvl = 'lvl4'
+    const isToday = i === 0
+    cells.push({ className: `${lvl}${isToday ? ' today' : ''}` })
+  }
+  return cells
 }
 
 /* ──────── PRACTICAR (Gemini Live) ──────── */

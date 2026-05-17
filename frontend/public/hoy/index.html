@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hoy — habláh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Brand */
+    --green:#00B37E;
+    --green-600:#00A172;
+    --green-700:#008F63;
+    --green-900:#054A3A;
+    --green-950:#062B25;
+    --amber:#FFB800;
+    --danger:#E5484D;
+    --info:#3B82F6;
+
+    /* Warm neutrals (slight green tint) */
+    --bg-0:#F5F7F5;
+    --bg-1:#FAFBFA;
+    --bg-2:#F1F4F1;
+    --surface:#FFFFFF;
+    --border-1:rgba(13,20,18,.06);
+    --border-2:rgba(13,20,18,.10);
+    --fg-1:#0D1412;
+    --fg-2:#3A4441;
+    --fg-3:#6B7672;
+    --fg-4:#98A19D;
+
+    /* Type */
+    --font-sans:'Inter',ui-sans-serif,system-ui,sans-serif;
+    --font-display:'Sora',var(--font-sans);
+
+    /* Shadow */
+    --shadow-card:0 1px 2px rgba(13,20,18,.04), 0 2px 6px rgba(13,20,18,.04);
+    --shadow-float:0 6px 20px rgba(13,20,18,.10), 0 2px 6px rgba(13,20,18,.06);
+
+    --r-card:14px;
+    --r-pill:999px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg-1);color:var(--fg-1);font-family:var(--font-sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- LAYOUT SHELL ---------- */
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+
+  /* Sidebar */
+  .sidebar{background:#0D1412;color:#E6EAE7;display:flex;flex-direction:column;padding:18px 14px;gap:6px;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
+  .brand-mark{width:28px;height:28px;border-radius:8px;background:var(--green);display:grid;place-items:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:16px}
+  .brand-name{font-family:var(--font-display);font-weight:700;letter-spacing:-0.01em;font-size:17px}
+  .nav{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+  .nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:#B7BFBB;font-weight:500;font-size:13.5px}
+  .nav a:hover{color:#fff;background:rgba(255,255,255,.04)}
+  .nav a.active{background:rgba(0,179,126,.14);color:#fff}
+  .nav a.active svg{color:var(--green)}
+  .nav svg{width:18px;height:18px;color:#7A8480}
+  .nav .pill{margin-left:auto;font-size:10px;padding:2px 7px;background:var(--amber);color:#3a2a00;border-radius:var(--r-pill);font-weight:700;letter-spacing:.04em}
+  .nav .pill.dot{background:transparent;color:var(--green);padding:0}
+  .nav .pill.dot::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(0,179,126,.18)}
+
+  .side-section{margin-top:18px;padding:0 8px}
+  .side-section .label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6B7672;font-weight:600;margin-bottom:10px}
+  .level-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+  .level-row .nivel{color:#B7BFBB;font-size:12px}
+  .level-row .b2{font-family:var(--font-display);font-weight:700;font-size:14px;background:rgba(0,179,126,.18);color:#7CE7BD;padding:2px 8px;border-radius:6px}
+  .level-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}
+  .level-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--green),#5EE0B0);border-radius:99px}
+  .level-hint{margin-top:6px;font-size:11.5px;color:#7A8480}
+
+  .side-user{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04)}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#FFB800,#FF8A00);display:grid;place-items:center;color:#1B1300;font-weight:700;font-family:var(--font-display);font-size:14px}
+  .side-user .meta{display:flex;flex-direction:column;line-height:1.2}
+  .side-user .name{font-size:13px;font-weight:600;color:#fff}
+  .side-user .plan{font-size:11px;color:#7A8480}
+  .side-user .logout{margin-left:auto;width:30px;height:30px;border-radius:8px;color:#7A8480;display:grid;place-items:center}
+  .side-user .logout:hover{background:rgba(255,255,255,.05);color:#fff}
+
+  /* ---------- MAIN ---------- */
+  main{padding:0 32px 56px;max-width:1440px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0 8px;position:sticky;top:0;background:var(--bg-1);z-index:10}
+  .topbar .crumbs{font-family:var(--font-display);font-weight:600;font-size:18px;letter-spacing:-0.01em}
+  .topbar .crumbs span{color:var(--fg-4);font-weight:500}
+  .top-actions{display:flex;align-items:center;gap:8px}
+  .search{display:flex;align-items:center;gap:8px;border:1px solid var(--border-2);background:var(--surface);height:36px;padding:0 12px;border-radius:10px;color:var(--fg-3);min-width:240px}
+  .search input{border:0;outline:0;background:transparent;font-size:13px;color:var(--fg-1);flex:1}
+  .kbd{font-size:10.5px;color:var(--fg-4);border:1px solid var(--border-2);padding:1px 5px;border-radius:5px;font-family:var(--font-sans);background:var(--bg-2)}
+  .icon-btn{width:36px;height:36px;border:1px solid var(--border-2);background:var(--surface);border-radius:10px;display:grid;place-items:center;color:var(--fg-2);position:relative}
+  .icon-btn:hover{background:var(--bg-2)}
+  .icon-btn .dot{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 2px var(--surface)}
+  .streak-chip{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px solid rgba(255,184,0,.4);background:#FFF7DD;border-radius:var(--r-pill);font-weight:600;font-size:13px;color:#7A5800}
+  .streak-chip .flame{filter:drop-shadow(0 1px 0 rgba(255,140,0,.3))}
+
+  /* Greeting */
+  .greet{padding:18px 0 18px}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);font-weight:700}
+  h1.title{font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;font-size:34px;line-height:1.05;margin:6px 0 6px;color:var(--fg-1);max-width:820px}
+  .title em{font-style:normal;color:var(--green-700);background:linear-gradient(180deg,transparent 64%,rgba(0,179,126,.18) 64% 96%,transparent 96%);padding:0 2px}
+  .greet .sub{color:var(--fg-2);font-size:14.5px;max-width:760px}
+  .greet .sub b{color:var(--fg-1);font-weight:600}
+
+  /* Main grid */
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px}
+  @media (max-width:1200px){ .grid{grid-template-columns:1fr} }
+
+  /* ---------- HERO MISSION CARD ---------- */
+  .hero{position:relative;border-radius:20px;overflow:hidden;color:#fff;background:radial-gradient(120% 140% at 0% 0%, #00B37E 0%, #008F63 38%, #054A3A 78%, #042722 100%);box-shadow:var(--shadow-float);min-height:340px;display:grid;grid-template-columns:minmax(0,1fr) 340px}
+  .hero::before{content:"";position:absolute;inset:0;background:
+    radial-gradient(900px 360px at 110% 100%, rgba(255,184,0,.18), transparent 60%),
+    radial-gradient(700px 280px at 0% 0%, rgba(255,255,255,.10), transparent 60%);
+    pointer-events:none}
+  .hero-l{position:relative;padding:26px 28px 24px;display:flex;flex-direction:column;gap:14px}
+  .hero-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--r-pill);font-size:11.5px;font-weight:600;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);color:#fff;backdrop-filter:blur(4px)}
+  .chip.solid{background:rgba(255,255,255,.96);color:var(--green-900);border-color:transparent}
+  .chip.amber{background:rgba(255,184,0,.18);border-color:rgba(255,184,0,.4);color:#FFE9A6}
+  .chip svg{width:13px;height:13px}
+  .hero h2{font-family:var(--font-display);font-weight:700;letter-spacing:-0.025em;font-size:46px;line-height:1.02;margin:6px 0 4px}
+  .hero h2 small{display:block;font-weight:500;font-size:18px;color:rgba(255,255,255,.7);letter-spacing:-0.01em;margin-top:8px;max-width:480px;line-height:1.4}
+  .hero-meta{display:flex;align-items:center;gap:18px;color:rgba(255,255,255,.75);font-size:12.5px;margin-top:auto}
+  .hero-meta .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.4)}
+  .hero-meta b{color:#fff;font-weight:600}
+  .hero-meta .row{display:flex;align-items:center;gap:8px}
+  .hero-cta{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 22px;border-radius:12px;font-weight:600;font-size:15px;transition:transform .15s, filter .15s, background .15s}
+  .btn:active{transform:scale(.97);filter:brightness(.96)}
+  .btn-primary{background:#fff;color:var(--green-900)}
+  .btn-primary:hover{background:#F2FBF7}
+  .btn-ghost{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff}
+  .btn-ghost:hover{background:rgba(255,255,255,.16)}
+  .mic-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(0,179,126,.25);animation:pulse 1.8s ease-out infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,179,126,.45)}80%{box-shadow:0 0 0 10px rgba(0,179,126,0)}100%{box-shadow:0 0 0 0 rgba(0,179,126,0)}}
+
+  /* Hero right panel — in-context challenges preview */
+  .hero-r{position:relative;padding:24px 22px 22px;border-left:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg,rgba(0,0,0,.0),rgba(0,0,0,.18));display:flex;flex-direction:column;gap:10px}
+  .hero-r .label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:700;margin-bottom:2px}
+  .prompt{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start;backdrop-filter:blur(4px)}
+  .prompt .pgl{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;font-size:11px;font-weight:700;color:#fff}
+  .prompt.vocab .pgl{background:rgba(255,184,0,.22);color:#FFE9A6}
+  .prompt.gram .pgl{background:rgba(94,224,176,.22);color:#7CE7BD}
+  .prompt.restr .pgl{background:rgba(229,72,77,.22);color:#FFB4B6}
+  .prompt .pt{font-size:12.5px;color:rgba(255,255,255,.94);line-height:1.4}
+  .prompt .pt b{color:#fff;font-weight:600;background:rgba(255,255,255,.10);padding:1px 6px;border-radius:6px;font-family:var(--font-display);font-size:11.5px;letter-spacing:.01em}
+  .prompt .pt .small{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:3px}
+
+  .waveform{position:absolute;left:0;right:0;bottom:0;height:64px;opacity:.18;pointer-events:none}
+
+  /* ---------- GENERIC CARDS ---------- */
+  .card{background:var(--surface);border:1px solid var(--border-1);border-radius:var(--r-card);padding:18px}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .card-head h3{font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.01em;margin:0}
+  .card-head .h-meta{font-size:12px;color:var(--fg-3)}
+  .link{font-size:12.5px;color:var(--green-700);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+  .link:hover{color:var(--green-900)}
+
+  /* ---------- RESCUE (punto a pulir) ---------- */
+  .rescue{background:linear-gradient(180deg,#FFFDF4,#FFF9E2);border:1px solid #F4E1A4}
+  .rescue-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:10px}
+  .rescue-eye{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8A6A00;font-weight:700}
+  .rescue-eye .pulse{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px rgba(255,184,0,.18)}
+  .rescue h3{font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:-0.015em;margin:6px 0 4px;color:#3A2A00;line-height:1.15}
+  .rescue p{margin:0;color:#6A4F00;font-size:13.5px;max-width:520px}
+  .rescue-body{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;margin-top:14px;align-items:stretch}
+  .rescue-examples{display:flex;flex-direction:column;gap:8px}
+  .ex{background:#fff;border:1px solid #F1E6BB;border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;font-size:13px}
+  .ex .bad{color:#9A3030;text-decoration:line-through;text-decoration-color:rgba(229,72,77,.5);font-weight:500}
+  .ex .good{color:var(--green-700);font-weight:600}
+  .ex .arr{color:var(--fg-4);font-weight:700}
+  .ex .ctx{grid-column:1/-1;font-size:11px;color:var(--fg-3);font-style:italic;padding-top:2px;border-top:1px dashed #EEE0B0;margin-top:4px}
+  .rescue-aside{display:flex;flex-direction:column;justify-content:space-between;background:#fff;border:1px solid #F1E6BB;border-radius:10px;padding:14px}
+  .freq{display:flex;align-items:flex-end;gap:6px;height:60px}
+  .freq i{flex:1;background:var(--amber);border-radius:4px;opacity:.85}
+  .freq i:nth-child(1){height:30%;opacity:.35}
+  .freq i:nth-child(2){height:50%;opacity:.55}
+  .freq i:nth-child(3){height:55%;opacity:.7}
+  .freq i:nth-child(4){height:70%}
+  .freq i:nth-child(5){height:85%}
+  .freq i:nth-child(6){height:95%;background:#E5484D}
+  .freq-x{display:flex;justify-content:space-between;font-size:10px;color:var(--fg-4);margin-top:6px;letter-spacing:.04em}
+  .rescue-cta{display:flex;align-items:center;gap:10px;margin-top:12px}
+  .btn-amber{background:#0D1412;color:#fff;height:38px;padding:0 14px;border-radius:10px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:8px}
+  .btn-amber:hover{background:#000}
+  .btn-ghost-dark{background:transparent;color:#6A4F00;height:38px;padding:0 8px;font-weight:600;font-size:13px;border:0}
+
+  /* ---------- SESSIONS ---------- */
+  .sessions{display:flex;flex-direction:column}
+  .sess{display:grid;grid-template-columns:48px 1fr 130px 110px 24px;align-items:center;gap:14px;padding:14px 4px;border-bottom:1px solid var(--border-1)}
+  .sess:last-child{border-bottom:0}
+  .sess-date{font-family:var(--font-display);font-weight:600;font-size:12px;color:var(--fg-3);text-align:center;line-height:1.2}
+  .sess-date b{display:block;font-size:18px;color:var(--fg-1);font-weight:700;letter-spacing:-0.01em}
+  .sess-body .topic{font-weight:600;font-size:14px;color:var(--fg-1);margin-bottom:3px}
+  .sess-body .topic .tutor{display:inline-block;font-size:10.5px;color:var(--fg-3);font-weight:500;background:var(--bg-2);padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:middle}
+  .sess-body .topic .tutor.sincerist{background:#FFF1CF;color:#7A5800}
+  .sess-body .meta{font-size:12px;color:var(--fg-3);display:flex;gap:10px;align-items:center}
+  .sess-body .meta .ok{color:var(--green-700);font-weight:600}
+  .sess-body .meta .err{color:#B53337;font-weight:600}
+  .fluency{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+  .fluency .fl-label{font-size:10.5px;color:var(--fg-3);font-weight:500;text-transform:uppercase;letter-spacing:.08em}
+  .fluency .fl-num{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--fg-1)}
+  .fluency .fl-num .delta{font-size:11px;color:var(--green-700);font-weight:600;margin-left:4px}
+  .fluency .fl-num .delta.down{color:#B53337}
+  .dur{font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--fg-1);text-align:right}
+  .dur small{display:block;font-family:var(--font-sans);font-weight:500;font-size:11px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.08em}
+  .sess-go{color:var(--fg-4)}
+  .sess.active{background:linear-gradient(90deg,rgba(0,179,126,.06),transparent);border-radius:10px;border-bottom:0;padding-left:10px;padding-right:10px;margin:0 -10px}
+  .sess.active .sess-go{color:var(--green-700)}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(0,179,126,.2);animation:pulse 1.8s ease-out infinite}
+
+  /* ---------- RIGHT COLUMN ---------- */
+  .rc{display:flex;flex-direction:column;gap:20px}
+
+  /* Streak */
+  .streak-card .big{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+  .streak-card .big .n{font-family:var(--font-display);font-weight:800;font-size:46px;letter-spacing:-0.03em;line-height:1;color:var(--fg-1)}
+  .streak-card .big .u{font-family:var(--font-display);font-weight:600;color:var(--fg-3);font-size:14px}
+  .streak-card .sub{color:var(--fg-3);font-size:12.5px;margin-bottom:14px}
+  .streak-card .sub b{color:var(--amber);font-weight:700;background:#FFF7DD;padding:1px 6px;border-radius:6px}
+  .heatmap{display:grid;grid-template-columns:repeat(14,1fr);gap:5px}
+  .heatmap i{aspect-ratio:1;border-radius:4px;background:var(--bg-2);position:relative}
+  .heatmap i.lvl1{background:#CFEFE1}
+  .heatmap i.lvl2{background:#7CE7BD}
+  .heatmap i.lvl3{background:#1FC18E}
+  .heatmap i.lvl4{background:var(--green-700)}
+  .heatmap i.today{outline:2px solid var(--fg-1);outline-offset:1.5px}
+  .heatmap i.miss{background:#fff;border:1px solid var(--border-2)}
+  .heatmap i.future{background:#fff;border:1px dashed var(--border-2);opacity:.7}
+  .heat-legend{display:flex;justify-content:space-between;font-size:10.5px;color:var(--fg-4);margin-top:10px;letter-spacing:.04em;align-items:center}
+  .heat-legend .scale{display:flex;align-items:center;gap:5px}
+  .heat-legend .scale i{width:11px;height:11px;border-radius:3px}
+
+  /* Level progress */
+  .level-card .lhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .level-card .ladder{display:flex;align-items:center;gap:6px;font-family:var(--font-display);font-weight:700;font-size:12.5px;letter-spacing:.02em;color:var(--fg-3)}
+  .level-card .ladder b{color:var(--fg-1);background:#E6F7F0;padding:3px 9px;border-radius:99px;color:var(--green-700)}
+  .level-card .ladder .next{color:var(--fg-4)}
+  .arrow{color:var(--fg-4)}
+  .gauge{position:relative;height:10px;background:var(--bg-2);border-radius:99px;overflow:hidden}
+  .gauge i{display:block;height:100%;width:62%;background:linear-gradient(90deg,var(--green),#5EE0B0);border-radius:99px}
+  .gauge::after{content:"";position:absolute;top:-2px;left:62%;height:14px;width:3px;background:var(--fg-1);border-radius:99px;transform:translateX(-1.5px)}
+  .lstats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+  .lstats .li{display:flex;flex-direction:column}
+  .lstats .li .v{font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--fg-1);letter-spacing:-0.01em}
+  .lstats .li .v.green{color:var(--green-700)}
+  .lstats .li .k{font-size:11px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:2px}
+
+  /* Interests */
+  .interests .ihead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:var(--r-pill);font-size:12px;font-weight:500;background:var(--bg-2);color:var(--fg-2);border:1px solid var(--border-1)}
+  .tag.hot{background:#E6F7F0;color:var(--green-700);border-color:rgba(0,179,126,.2)}
+  .tag.hot::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+  .tag.cat{background:transparent;border-color:var(--border-2);color:var(--fg-3);text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;font-weight:700;padding:5px 10px}
+  .tag-add{background:transparent;border:1px dashed var(--border-2);color:var(--fg-3)}
+  .tag-add:hover{color:var(--fg-1);border-color:var(--fg-3)}
+
+  /* Tutor card */
+  .tutor-card{background:linear-gradient(180deg,#0D1412,#1B2624);color:#fff;border:0}
+  .tutor-card .card-head h3{color:#fff}
+  .tutor-card .card-head .link{color:#7CE7BD}
+  .tutor-row{display:flex;align-items:center;gap:14px}
+  .tutor-av{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#FFB800,#FF6A3D);display:grid;place-items:center;color:#1B0E00;font-family:var(--font-display);font-weight:800;font-size:22px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  .tutor-row .tinf{min-width:0}
+  .tutor-row .tname{font-family:var(--font-display);font-weight:700;font-size:16px;color:#fff;letter-spacing:-0.01em}
+  .tutor-row .tdesc{font-size:12px;color:#9DA8A4;margin-top:2px}
+  .tutor-meters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .meter{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px}
+  .meter .mlabel{font-size:10.5px;color:#7A8480;text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+  .meter .mval{font-family:var(--font-display);font-weight:700;font-size:13px;color:#fff;margin-top:6px;letter-spacing:.01em}
+  .meter .bar{height:4px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:8px;overflow:hidden}
+  .meter .bar i{display:block;height:100%;border-radius:99px}
+  .meter.rig .bar i{width:88%;background:#E5484D}
+  .meter.warmth .bar i{width:30%;background:#FFB800}
+
+  /* small helpers */
+  .row{display:flex;align-items:center;gap:8px}
+  .spacer{flex:1}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+        Hoy
+        <span class="pill dot"></span>
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+        Practicar
+        <span class="pill">DAILY</span>
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>
+        Mapa de progreso
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Historial
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        Perfil
+      </a>
+    </nav>
+
+    <div class="side-section">
+      <div class="label">Tu progreso</div>
+      <div class="level-row">
+        <span class="nivel">Nivel</span>
+        <span class="b2">B2</span>
+      </div>
+      <div class="level-bar"><i style="width:62%"></i></div>
+      <div class="level-hint">62% hasta C1</div>
+    </div>
+
+    <div class="side-section">
+      <div class="label">Tópicos activos</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:11px;color:#B7BFBB">
+        <span style="background:rgba(0,179,126,.14);color:#7CE7BD;padding:3px 8px;border-radius:99px;font-weight:600">UK Garage</span>
+        <span style="background:rgba(255,255,255,.04);padding:3px 8px;border-radius:99px">Arquitectura</span>
+        <span style="background:rgba(255,255,255,.04);padding:3px 8px;border-radius:99px">Fuerza</span>
+        <span style="background:rgba(255,255,255,.04);padding:3px 8px;border-radius:99px">IA</span>
+        <span style="background:rgba(255,255,255,.04);padding:3px 8px;border-radius:99px">Nómade</span>
+      </div>
+    </div>
+
+    <div class="side-user">
+      <div class="avatar">L</div>
+      <div class="meta">
+        <span class="name">Lautaro M.</span>
+        <span class="plan">Plan pro</span>
+      </div>
+      <button class="logout" title="Cerrar sesión">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main>
+    <header class="topbar">
+      <div class="crumbs">Hoy <span>· lunes 17 de noviembre</span></div>
+      <div class="top-actions">
+        <div class="search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input placeholder="Buscar tópicos, sesiones, errores…" />
+          <span class="kbd">⌘K</span>
+        </div>
+        <button class="icon-btn" title="Notificaciones">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="streak-chip" title="Racha">
+          <svg class="flame" width="14" height="14" viewBox="0 0 24 24" fill="#FFB800" stroke="#7A5800" stroke-width="1.4" stroke-linejoin="round"><path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/></svg>
+          <span>12 días</span>
+        </div>
+        <button class="icon-btn" style="background:var(--fg-1);color:#fff;border-color:var(--fg-1)" title="Empezar charla">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="greet">
+      <div class="eyebrow">Buen día, Lautaro</div>
+      <h1 class="title">Hoy te toca una charla de <em>7 minutos</em>.</h1>
+      <p class="sub">Tu tutor activo es <b>The Sincerist / Bootcamp</b>. Foco del día: <b>Música electrónica · UK Garage</b>, con énfasis en <b>pasado simple irregular</b>.</p>
+    </section>
+
+    <div class="grid">
+      <!-- LEFT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+
+        <!-- HERO MISSION -->
+        <div class="hero">
+          <div class="hero-l">
+            <div class="hero-chips">
+              <span class="chip solid">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+                Misión del día
+              </span>
+              <span class="chip">Música electrónica · UK Garage</span>
+              <span class="chip">B2</span>
+              <span class="chip amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                7 min sugeridos
+              </span>
+            </div>
+
+            <h2>
+              Música electrónica
+              <small>Empezá la charla cuando quieras. Hablás en inglés sobre los orígenes del UK Garage; el tutor te corrige al cierre — sin interrupciones.</small>
+            </h2>
+
+            <div class="hero-meta">
+              <div class="row"><span class="mic-dot"></span><b>Tutor listo</b></div>
+              <span class="dot"></span>
+              <div class="row">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                <span>The Sincerist / Bootcamp</span>
+              </div>
+              <span class="dot"></span>
+              <div class="row">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+                <span>Rigurosidad <b>4 / 5</b></span>
+              </div>
+            </div>
+
+            <div class="hero-cta">
+              <button class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+                Empezar charla
+              </button>
+              <button class="btn btn-ghost">Cambiar tópico</button>
+            </div>
+          </div>
+
+          <!-- Right preview of the in-context prompts -->
+          <div class="hero-r">
+            <div class="label">Desafíos en pantalla</div>
+
+            <div class="prompt vocab">
+              <span class="pgl">V</span>
+              <div class="pt">
+                <span class="small">Vocabulario</span>
+                Intentá usar <b>nevertheless</b> en alguna idea sobre los orígenes del género.
+              </div>
+            </div>
+            <div class="prompt gram">
+              <span class="pgl">G</span>
+              <div class="pt">
+                <span class="small">Gramática</span>
+                Contá cómo <b>empezó</b> el UK Garage usando <b>pasado simple</b>.
+              </div>
+            </div>
+            <div class="prompt restr">
+              <span class="pgl">R</span>
+              <div class="pt">
+                <span class="small">Restricción</span>
+                El tutor va a discrepar. Expresá <b>desacuerdo formal</b>.
+              </div>
+            </div>
+
+            <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:6px;line-height:1.4">
+              Aparecen como tarjetas durante la charla. No tenés que cumplir todas.
+            </div>
+          </div>
+
+          <!-- decorative waveform -->
+          <svg class="waveform" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 40 Q 30 20 60 40 T 120 40 T 180 40 T 240 40 T 300 40 T 360 40 T 420 40 T 480 40 T 540 40 T 600 40 T 660 40 T 720 40 T 780 40 T 840 40 T 900 40 T 960 40 T 1020 40 T 1080 40 T 1140 40 T 1200 40" stroke="#fff" stroke-width="2" fill="none"/>
+            <path d="M0 40 Q 30 5 60 40 T 120 40 T 180 40 T 240 40 T 300 40 T 360 40 T 420 40 T 480 40 T 540 40 T 600 40 T 660 40 T 720 40 T 780 40 T 840 40 T 900 40 T 960 40 T 1020 40 T 1080 40 T 1140 40 T 1200 40" stroke="#fff" stroke-width="1" fill="none" opacity=".5"/>
+          </svg>
+        </div>
+
+        <!-- RESCUE -->
+        <div class="card rescue">
+          <div class="rescue-head">
+            <div>
+              <div class="rescue-eye"><span class="pulse"></span> Punto a pulir · misión de rescate activa</div>
+              <h3>Verbos irregulares en pasado simple</h3>
+              <p>Repetiste el mismo patrón en las últimas <b>3 sesiones</b>. La charla de hoy va a forzar narrativas históricas sobre el género para que pelees con este tema hasta que lo consolides.</p>
+            </div>
+          </div>
+
+          <div class="rescue-body">
+            <div class="rescue-examples">
+              <div class="ex">
+                <span class="bad">"It <b>beginned</b> in the late 90s."</span>
+                <span class="arr">→</span>
+                <span class="good">It <b>began</b> in the late 90s.</span>
+                <span class="ctx">Dom 07:59 — Producción musical · Ableton</span>
+              </div>
+              <div class="ex">
+                <span class="bad">"DJs <b>bringed</b> the sound to pirate radio."</span>
+                <span class="arr">→</span>
+                <span class="good">DJs <b>brought</b> the sound to pirate radio.</span>
+                <span class="ctx">Sáb 22:14 — UK Garage · origen</span>
+              </div>
+              <div class="ex">
+                <span class="bad">"The crowd <b>goed</b> wild."</span>
+                <span class="arr">→</span>
+                <span class="good">The crowd <b>went</b> wild.</span>
+                <span class="ctx">Vie 18:02 — Festivales</span>
+              </div>
+            </div>
+
+            <div class="rescue-aside">
+              <div>
+                <div style="font-size:11px;color:#8A6A00;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:6px">Frecuencia · últimas 6 sesiones</div>
+                <div class="freq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="freq-x"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Hoy</span></div>
+              </div>
+              <div class="rescue-cta">
+                <button class="btn-amber">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                  Empezar misión de rescate
+                </button>
+                <button class="btn-ghost-dark">Ver los 12 errores</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SESSIONS -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Últimas sesiones</h3>
+            <a class="link" href="#">Ver historial completo →</a>
+          </div>
+          <div class="sessions">
+            <div class="sess active">
+              <div class="sess-date">Hoy<b>—</b></div>
+              <div class="sess-body">
+                <div class="topic">Música electrónica · UK Garage <span class="tutor sincerist">The Sincerist</span></div>
+                <div class="meta"><span class="row"><span class="live-dot"></span>en cola</span><span>·</span><span>7 min sugeridos</span><span>·</span><span>3 desafíos en pantalla</span></div>
+              </div>
+              <div class="fluency"><span class="fl-label">Fluidez</span><span class="fl-num" style="color:var(--fg-4)">— —</span></div>
+              <div class="dur">7:00<small>sugerido</small></div>
+              <span class="sess-go">→</span>
+            </div>
+
+            <div class="sess">
+              <div class="sess-date">Dom<b>16</b></div>
+              <div class="sess-body">
+                <div class="topic">Producción musical · Ableton <span class="tutor">The Sincerist</span></div>
+                <div class="meta"><span class="ok">2 aciertos notables</span><span>·</span><span class="err">3 puntos a pulir</span><span>·</span><span>verbos irregulares ×2</span></div>
+              </div>
+              <div class="fluency"><span class="fl-label">Fluidez</span><span class="fl-num">74<span class="delta">+6</span></span></div>
+              <div class="dur">5:12<small>charla</small></div>
+              <span class="sess-go">→</span>
+            </div>
+
+            <div class="sess">
+              <div class="sess-date">Dom<b>16</b></div>
+              <div class="sess-body">
+                <div class="topic">Trabajo remoto · nómade digital <span class="tutor">The Coach</span></div>
+                <div class="meta"><span class="ok">vocabulario rico</span><span>·</span><span class="err">2 puntos a pulir</span><span>·</span><span>pronunciación: <i>through</i></span></div>
+              </div>
+              <div class="fluency"><span class="fl-label">Fluidez</span><span class="fl-num">68<span class="delta">+2</span></span></div>
+              <div class="dur">9:48<small>charla</small></div>
+              <span class="sess-go">→</span>
+            </div>
+
+            <div class="sess">
+              <div class="sess-date">Sáb<b>15</b></div>
+              <div class="sess-body">
+                <div class="topic">Arquitectura · hormigón visto <span class="tutor sincerist">The Sincerist</span></div>
+                <div class="meta"><span class="ok">5 términos avanzados</span><span>·</span><span class="err">1 punto a pulir</span><span>·</span><span>misión cumplida</span></div>
+              </div>
+              <div class="fluency"><span class="fl-label">Fluidez</span><span class="fl-num">72<span class="delta">+4</span></span></div>
+              <div class="dur">6:31<small>charla</small></div>
+              <span class="sess-go">→</span>
+            </div>
+
+            <div class="sess">
+              <div class="sess-date">Vie<b>14</b></div>
+              <div class="sess-body">
+                <div class="topic">Festivales · UK Garage <span class="tutor sincerist">The Sincerist</span></div>
+                <div class="meta"><span class="ok">tono natural</span><span>·</span><span class="err">3 puntos a pulir</span><span>·</span><span>verbos irregulares ×2</span></div>
+              </div>
+              <div class="fluency"><span class="fl-label">Fluidez</span><span class="fl-num">66<span class="delta down">−2</span></span></div>
+              <div class="dur">4:48<small>charla</small></div>
+              <span class="sess-go">→</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <aside class="rc">
+
+        <!-- Streak -->
+        <div class="card streak-card">
+          <div class="card-head">
+            <h3>Tu racha</h3>
+            <span class="h-meta">14 / 14 mejor</span>
+          </div>
+          <div class="big">
+            <span class="n">12</span>
+            <span class="u">días seguidos</span>
+          </div>
+          <div class="sub">Te faltan <b>2 días</b> para empatar tu mejor racha.</div>
+
+          <div class="heatmap" aria-label="Últimos 28 días de práctica">
+            <!-- 28 days, last cell is today; some misses for realism -->
+            <i class="lvl2"></i><i class="lvl1"></i><i class="miss"></i><i class="lvl3"></i><i class="lvl2"></i><i class="lvl2"></i><i class="lvl4"></i>
+            <i class="lvl1"></i><i class="lvl2"></i><i class="lvl3"></i><i class="lvl3"></i><i class="miss"></i><i class="lvl2"></i><i class="lvl4"></i>
+            <i class="lvl2"></i><i class="lvl1"></i><i class="lvl2"></i><i class="lvl3"></i><i class="lvl2"></i><i class="lvl3"></i><i class="lvl4"></i>
+            <i class="lvl2"></i><i class="lvl3"></i><i class="lvl3"></i><i class="lvl4"></i><i class="lvl2"></i><i class="lvl2"></i><i class="today lvl1"></i>
+          </div>
+          <div class="heat-legend">
+            <span>hace 4 semanas</span>
+            <span class="scale">menos
+              <i style="background:var(--bg-2)"></i>
+              <i style="background:#CFEFE1"></i>
+              <i style="background:#7CE7BD"></i>
+              <i style="background:#1FC18E"></i>
+              <i style="background:var(--green-700)"></i>
+              más
+            </span>
+          </div>
+        </div>
+
+        <!-- Level progress -->
+        <div class="card level-card">
+          <div class="card-head">
+            <h3>Camino a C1</h3>
+            <a class="link" href="#">Ver mapa →</a>
+          </div>
+
+          <div class="lhead">
+            <div class="ladder">
+              <b>B2</b>
+              <span class="arrow">→</span>
+              <span class="next">C1</span>
+            </div>
+            <div style="font-family:var(--font-display);font-weight:700;font-size:14px">62%</div>
+          </div>
+          <div class="gauge"><i></i></div>
+
+          <div class="lstats">
+            <div class="li"><span class="v">38</span><span class="k">charlas</span></div>
+            <div class="li"><span class="v green">+18%</span><span class="k">fluidez 30d</span></div>
+            <div class="li"><span class="v">3.1h</span><span class="k">habladas</span></div>
+          </div>
+        </div>
+
+        <!-- Interest anchors -->
+        <div class="card interests">
+          <div class="ihead">
+            <h3 style="font-family:var(--font-display);font-weight:700;font-size:15px;margin:0">Tus tópicos</h3>
+            <a class="link" href="#">Rotar →</a>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div>
+              <span class="tag cat">Arte & entretenimiento</span>
+              <div class="tags" style="margin-top:6px">
+                <span class="tag hot">UK Garage</span>
+                <span class="tag">Producción musical</span>
+              </div>
+            </div>
+            <div>
+              <span class="tag cat">Tecnología</span>
+              <div class="tags" style="margin-top:6px">
+                <span class="tag">Inteligencia artificial</span>
+              </div>
+            </div>
+            <div>
+              <span class="tag cat">Estilo de vida</span>
+              <div class="tags" style="margin-top:6px">
+                <span class="tag">Entrenamiento de fuerza</span>
+                <span class="tag">Nómade digital</span>
+                <button class="tag tag-add">+ sumar uno</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:11.5px;color:var(--fg-3);margin-top:12px;line-height:1.5">Los tópicos alimentan cada charla. Cambialos cuando quieras.</div>
+        </div>
+
+        <!-- Tutor -->
+        <div class="card tutor-card">
+          <div class="card-head">
+            <h3>Tutor activo</h3>
+            <a class="link" href="#">Cambiar →</a>
+          </div>
+          <div class="tutor-row">
+            <div class="tutor-av">S</div>
+            <div class="tinf">
+              <div class="tname">The Sincerist / Bootcamp</div>
+              <div class="tdesc">Profesional, directo, exigente. No interrumpe — el feedback va al final.</div>
+            </div>
+          </div>
+          <div class="tutor-meters">
+            <div class="meter rig">
+              <div class="mlabel">Rigurosidad</div>
+              <div class="mval">Alta · 4 / 5</div>
+              <div class="bar"><i></i></div>
+            </div>
+            <div class="meter warmth">
+              <div class="mlabel">Calidez</div>
+              <div class="mval">Baja · 1.5 / 5</div>
+              <div class="bar"><i></i></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+            <span style="font-size:11px;background:rgba(255,255,255,.08);color:#B7BFBB;padding:4px 9px;border-radius:99px">Bloqueos por repetición</span>
+            <span style="font-size:11px;background:rgba(255,255,255,.08);color:#B7BFBB;padding:4px 9px;border-radius:99px">Sin interrupciones</span>
+            <span style="font-size:11px;background:rgba(255,184,0,.16);color:#FFE9A6;padding:4px 9px;border-radius:99px">Presión temporal</span>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
