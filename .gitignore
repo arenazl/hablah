@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+env/
+*.sqlite
+*.db
+
+# Secrets — NEVER commit
+.env
+.env.local
+.env.master.copy
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# Node / Vite
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build artifacts
+build/
+.cache/
+
+# Personal data (vcf, exports)
+*.vcf
+_design*/

@@ -1,0 +1,226 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Backgrounds — 3 capas de profundidad (crema cálido CB) */
+  --bg-app: #F2EEE5;
+  --bg-topbar: #ffffff;
+  --bg-sidebar: #002554;
+  --bg-card: #ffffff;
+  --bg-hover: #ECE7DA;
+
+  /* Surfaces escalonadas (Fase 1: tokens CB editorial) */
+  --surface: #FFFFFF;
+  --surface-2: #FBF9F3;
+  --surface-3: #F7F4EC;
+
+  /* Texto */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-sidebar: #f8fafc;
+
+  /* Ink scale (jerarquía de texto editorial) */
+  --ink-1: #0A1830;
+  --ink-2: #1C2A47;
+  --ink-3: #4A5266;
+  --ink-4: #6B7388;
+  --ink-5: #8E94A6;
+  --ink-6: #B2B7C5;
+
+  /* Brand Coldwell */
+  --color-primary: #002554;
+  --color-primary-hover: #003a7f;
+  --color-accent: #c9a45a;
+  --color-accent-hover: #d9b878;
+
+  /* Navy scale (para gradients, hover states, feature cards) */
+  --navy-950: #050F1F;
+  --navy-900: #07172E;
+  --navy-800: #0E2B4F;
+  --navy-700: #143560;
+  --navy-600: #1E4475;
+  --navy-500: #2D5A95;
+  --navy-400: #5C7FAD;
+  --navy-300: #8FA8C5;
+  --navy-200: #C2CFDD;
+  --navy-100: #E6ECF3;
+  --navy-50:  #F1F4F9;
+
+  /* Gold scale */
+  --gold-700: #8E7137;
+  --gold-600: #A88846;
+  --gold-500: #C9A158;
+  --gold-400: #DCBA7E;
+  --gold-300: #ECD3A4;
+  --gold-200: #F4E6C7;
+  --gold-100: #FAF3E1;
+  --gold-50:  #FBF7EC;
+
+  /* Warm neutrals (acompañan el fondo crema) */
+  --warm-100: #F2EEE5;
+  --warm-200: #E8E2D4;
+  --warm-300: #D9D1BD;
+
+  /* Bordes editoriales suaves */
+  --divider: rgba(14, 43, 79, 0.06);
+  --border-strong: rgba(14, 43, 79, 0.18);
+  --border-warm: rgba(142, 113, 55, 0.20);
+
+  /* Estados */
+  --color-success: #22c55e;
+  --color-success-bg: rgba(34, 197, 94, 0.10);
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-flame: #f97316;
+  --color-flame-bg: rgba(249, 115, 22, 0.12);
+  --color-blue: #3b82f6;
+  --color-accent-bg-soft: rgba(201, 164, 90, 0.08);
+  --color-accent-bg: rgba(201, 164, 90, 0.18);
+
+  --border-color: #e2e8f0;
+  --border-active: rgba(201, 164, 90, 0.5);
+  --border-glow: rgba(201, 164, 90, 0.18);
+
+  /* Tipografía editorial CB */
+  --font-display: 'Instrument Serif', 'Source Serif Pro', 'Times New Roman', serif;
+  --font-sans:    'Geist', 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'Geist Mono', 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+[data-theme="dark"] {
+  /* 3 capas reales para dar jerarquía */
+  --bg-app: #06112a;
+  --bg-topbar: #0f1d3a;
+  --bg-sidebar: #04091a;
+  --bg-card: #0f1d3a;
+  --bg-hover: #142447;
+
+  /* Surfaces dark */
+  --surface: #0E1F39;
+  --surface-2: #122749;
+  --surface-3: #163058;
+
+  /* Ink scale invertida (texto claro sobre dark) */
+  --ink-1: #F2EEE5;
+  --ink-2: #E5DFD0;
+  --ink-3: #B8BDCC;
+  --ink-4: #8E94A6;
+  --ink-5: #6B7388;
+  --ink-6: #4A5266;
+
+  /* Warm en dark = capas navy más profundas */
+  --warm-100: #0E1A2D;
+  --warm-200: #142340;
+  --warm-300: #1B2C4E;
+
+  --divider: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(201, 161, 88, 0.28);
+  --border-warm: rgba(201, 161, 88, 0.32);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-sidebar: #f8fafc;
+
+  --color-primary: #1e3a6f;
+  --color-primary-hover: #2c4f8c;
+  --color-accent: #c9a45a;
+  --color-accent-hover: #e2b66a;
+
+  --color-success: #22c55e;
+  --color-success-bg: rgba(34, 197, 94, 0.15);
+  --color-danger: #ef4444;
+  --color-warning: #fbbf24;
+  --color-flame: #f97316;
+  --color-flame-bg: rgba(249, 115, 22, 0.18);
+  --color-blue: #60a5fa;
+  --color-accent-bg-soft: rgba(201, 164, 90, 0.10);
+  --color-accent-bg: rgba(201, 164, 90, 0.22);
+
+  --border-color: #1e3358;
+  --border-active: rgba(201, 164, 90, 0.5);
+  --border-glow: rgba(201, 164, 90, 0.22);
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Utilidades tipográficas editoriales CB */
+.font-serif-display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.01em; }
+.font-mono-tnum { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.uppercase-label {
+  text-transform: uppercase;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--ink-4);
+}
+.eyebrow-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--gold-700);
+}
+.eyebrow-line::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: var(--gold-500);
+}
+
+/* Sacar las flechitas spinner default de inputs type=number */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+/* Scrollbar hide (sliders horizontales de chips en mobile) */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Animaciones reutilizables */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--border-active), 0 0 0 4px var(--border-glow); }
+  50% { box-shadow: 0 0 0 0 var(--border-active), 0 0 0 8px transparent; }
+}
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fade-in-up 0.3s ease-out both; }
