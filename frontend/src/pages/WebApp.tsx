@@ -2391,7 +2391,17 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
         <div className="profile-card">
           <h3>Configuración</h3>
           <div className="settings-list">
-            <SettingsRow label="Acento del tutor" sub="Cómo te suena la IA" value={u.accent_preference.toUpperCase()} />
+            <SettingsRow
+              label="Acento del tutor"
+              sub="Cómo te suena la IA"
+              selectValue={u.accent_preference}
+              selectOptions={[
+                { value: 'uk', label: 'UK · neutro' },
+                { value: 'us_f', label: 'US · Mujer' },
+                { value: 'us_m', label: 'US · Hombre' },
+              ]}
+              onSelectChange={async (v) => { await meAPI.updateSettings({ accent_preference: v }); onChange() }}
+            />
             <SettingsRow label="Duración objetivo" sub="Cuánto querés hablar por sesión" value={`${u.target_minutes_per_session} min`} />
             <SettingsRow label="Privacidad de audio" sub="Cuándo borramos lo que grabás" value={`${u.audio_retention_days} días`} />
             <SettingsRow label="Modo insistente" sub="Forzar misiones de rescate al detectar errores repetidos" switchOn={u.insistent_mode_enabled} onSwitchToggle={toggleInsistent} />
@@ -2578,9 +2588,12 @@ function LevelCard({ profile, onChange }: { profile: MeProfile; onChange: () => 
   )
 }
 
-function SettingsRow({ label, sub, value, switchOn, onSwitchToggle }: {
+function SettingsRow({ label, sub, value, switchOn, onSwitchToggle, selectValue, selectOptions, onSelectChange }: {
   label: string; sub: string; value?: string;
-  switchOn?: boolean; onSwitchToggle?: () => void
+  switchOn?: boolean; onSwitchToggle?: () => void;
+  selectValue?: string;
+  selectOptions?: { value: string; label: string }[];
+  onSelectChange?: (v: string) => void;
 }) {
   return (
     <div className="settings-row">
@@ -2591,7 +2604,19 @@ function SettingsRow({ label, sub, value, switchOn, onSwitchToggle }: {
         <div className="l">{label}</div>
         <div className="s">{sub}</div>
       </div>
-      {switchOn !== undefined
+      {selectOptions ? (
+        <select
+          value={selectValue}
+          onChange={(e) => onSelectChange?.(e.target.value)}
+          style={{
+            padding: '6px 10px', borderRadius: 8,
+            border: '1px solid var(--border)', background: 'var(--bg-2)',
+            color: 'var(--fg-1)', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          {selectOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      ) : switchOn !== undefined
         ? <div className={`switch${switchOn ? '' : ' off'}`} onClick={onSwitchToggle} style={{ cursor: 'pointer' }} />
         : value ? <span className="v">{value}</span> : null}
     </div>

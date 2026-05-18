@@ -48,7 +48,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             "session_id": s.id,
             "user_id": user.id,
             "super_prompt": build_super_prompt(user=user, template=template, topic=topic),
-            "voice_id": template_voice_for_lang(template, user.target_language) if template else None,
+            "voice_id": template_voice_for_lang(template, user.target_language, user=user) if template else None,
             "language": user.target_language or "en",
             "target_language": user.target_language or "en",
             "silence_tolerance_ms": getattr(template, "silence_tolerance_ms", 800) if template else 800,

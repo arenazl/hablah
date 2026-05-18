@@ -62,7 +62,7 @@ async def start_session(
     from services.super_prompt import build_super_prompt
 
     super_prompt = build_super_prompt(user=current, template=template, topic=topic, free_topic=payload.free_topic)
-    voice_id = template_voice_for_lang(template, current.target_language)
+    voice_id = template_voice_for_lang(template, current.target_language, user=current)
 
     return {
         "session_id": s.id,
@@ -172,7 +172,7 @@ async def feedback_audio(
     if s.template_id:
         tpl = (await db.execute(select(Template).where(Template.id == s.template_id))).scalar_one_or_none()
         if tpl:
-            voice_id = template_voice_for_lang(tpl, current.target_language) or None
+            voice_id = template_voice_for_lang(tpl, current.target_language, user=current) or None
 
     try:
         audio = await elevenlabs_synth(text, voice_id=voice_id)

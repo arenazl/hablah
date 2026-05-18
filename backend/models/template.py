@@ -169,8 +169,25 @@ class UserInterest(Base):
     added_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
-def template_voice_for_lang(template, lang: str | None) -> str:
-    """Devuelve voice_id para el target_language del user, con fallback al voice_id legacy."""
+ACCENT_VOICE_OVERRIDES = {
+    # ElevenLabs voice IDs — americanos
+    "us_f": "EXAVITQu4vr4xnSDxMaL",  # Sarah - US female, warm
+    "us_m": "TxGEqnHWrfWFTfGW9XjX",  # Josh - US male
+    "uk":   None,  # mantiene voz del template
+}
+
+
+def template_voice_for_lang(template, lang: str | None, user=None) -> str:
+    """Devuelve voice_id para el target_language del user, con fallback al voice_id legacy.
+
+    Si el user tiene accent_preference seteado (us_f / us_m / uk) y el idioma es 'en',
+    eso PISA la voz del template.
+    """
+    if user is not None and (lang == "en" or (lang is None and getattr(user, "target_language", None) == "en")):
+        accent = getattr(user, "accent_preference", None)
+        override = ACCENT_VOICE_OVERRIDES.get(accent or "")
+        if override:
+            return override
     if not template:
         return ""
     if lang:

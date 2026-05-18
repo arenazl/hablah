@@ -66,7 +66,7 @@ export interface LevelProgress {
 export const meAPI = {
   profile: () => api.get<MeProfile>('/me/profile').then((r) => r.data),
   updateSettings: (data: Partial<{
-    accent_preference: string
+    accent_preference: 'uk' | 'us_f' | 'us_m' | string
     target_minutes_per_session: number
     insistent_mode_enabled: boolean
     daily_reminder_enabled: boolean

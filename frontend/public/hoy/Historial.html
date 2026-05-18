@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Historial — habláh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  /* ===== HISTORIAL ===== */
+  .hist-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px}
+  @media (max-width:1180px){.hist-grid{grid-template-columns:1fr}}
+
+  /* summary */
+  .summary-strip{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px}
+  .ss{background:var(--surface);border:1px solid var(--border-1);border-radius:14px;padding:16px 18px}
+  .ss .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg-3);font-weight:700}
+  .ss .v{font-family:var(--font-display);font-weight:800;font-size:28px;letter-spacing:-0.025em;color:var(--fg-1);margin-top:4px;line-height:1;font-feature-settings:"tnum"}
+  .ss .v small{font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--green-700);margin-left:5px;letter-spacing:0}
+  .ss .v small.down{color:#B53337}
+  .ss .v small.cold{color:var(--fg-3)}
+  .ss .h{font-size:11.5px;color:var(--fg-3);margin-top:6px}
+
+  /* mini bar chart */
+  .chart{display:flex;align-items:flex-end;gap:6px;height:54px;margin-top:8px}
+  .chart i{flex:1;background:var(--bg-2);border-radius:3px;position:relative;transition:background .15s var(--ease)}
+  .chart i.on{background:linear-gradient(180deg,#5EE0B0,var(--green))}
+  .chart i.today{background:var(--green-700)}
+  .chart-x{display:flex;justify-content:space-between;font-size:10px;color:var(--fg-4);margin-top:4px;letter-spacing:.04em;font-weight:600;text-transform:uppercase}
+
+  /* filter bar */
+  .filter-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;background:var(--surface);border:1px solid var(--border-1);border-radius:14px;padding:12px 14px}
+  .fb-group{display:flex;align-items:center;gap:6px;padding-right:14px;border-right:1px solid var(--border-2)}
+  .fb-group:last-of-type{border-right:0;padding-right:0}
+  .fb-group .lbl{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3);font-weight:700;margin-right:4px}
+  .seg{display:inline-flex;background:var(--bg-2);border-radius:8px;padding:2px;gap:0}
+  .seg button{padding:4px 10px;font-size:12px;font-weight:600;border-radius:6px;color:var(--fg-3)}
+  .seg button.on{background:var(--surface);color:var(--fg-1);box-shadow:var(--shadow-soft)}
+  .pillbtn{height:30px;padding:0 12px;border:1px solid var(--border-2);background:transparent;border-radius:var(--r-pill);font-size:12px;color:var(--fg-2);font-weight:500;display:inline-flex;align-items:center;gap:6px}
+  .pillbtn:hover{background:var(--bg-2)}
+  .pillbtn.active{background:var(--fg-1);color:#fff;border-color:var(--fg-1)}
+  .pillbtn .x{margin-left:4px;color:rgba(255,255,255,.55);font-size:14px;line-height:1}
+  .pillbtn.toggle{border-style:dashed}
+  .pillbtn.toggle.on{background:#FFF7DD;border-color:rgba(255,184,0,.4);border-style:solid;color:#7A5800}
+
+  /* ===== TABLE ===== */
+  .week-hd{display:flex;align-items:baseline;justify-content:space-between;margin:28px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border-1)}
+  .week-hd h3{font-family:var(--font-display);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-3);margin:0}
+  .week-hd .meta{font-size:12px;color:var(--fg-3)}
+  .week-hd .meta b{color:var(--fg-1);font-family:var(--font-display);font-weight:700}
+
+  .sess-list{display:flex;flex-direction:column}
+  .row-sess{display:grid;grid-template-columns:54px 1fr 130px 110px 90px 30px;gap:14px;align-items:center;padding:14px 8px;border-bottom:1px solid var(--border-1);transition:background .15s var(--ease);cursor:pointer;border-radius:10px}
+  .row-sess:hover{background:var(--bg-2)}
+  .row-sess:last-child{border-bottom:0}
+  .rdate{font-family:var(--font-display);font-weight:600;font-size:11px;color:var(--fg-3);text-align:center;line-height:1.2;text-transform:uppercase;letter-spacing:.04em}
+  .rdate b{display:block;font-size:18px;color:var(--fg-1);font-weight:700;letter-spacing:-0.01em;margin-bottom:1px}
+  .rdate .time{display:block;font-size:10.5px;color:var(--fg-4);font-weight:500;margin-top:2px;text-transform:none;letter-spacing:0}
+  .rbody .topicrow{display:flex;align-items:center;gap:10px;margin-bottom:5px;flex-wrap:wrap}
+  .rbody .topic{font-weight:600;font-size:14px;color:var(--fg-1);font-family:var(--font-display);letter-spacing:-0.005em}
+  .rbody .cat-chip{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:2px 7px;border-radius:99px}
+  .cat-chip.arte{background:#F3E8FF;color:#7C3AED}
+  .cat-chip.tec{background:#EEF2FF;color:#4338CA}
+  .cat-chip.life{background:#FCE7F3;color:#BE185D}
+  .cat-chip.dep{background:#FFEDD5;color:#C2410C}
+  .cat-chip.cien{background:#CFFAFE;color:#0E7490}
+  .cat-chip.via{background:#DBEAFE;color:#1D4ED8}
+  .cat-chip.gas{background:#FFE4E6;color:#BE123C}
+  .rbody .tutor-chip{font-size:10px;letter-spacing:.04em;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--bg-2);color:var(--fg-3)}
+  .rbody .tutor-chip.sincerist{background:#FFF7DD;color:#7A5800}
+  .rbody .tutor-chip.coach{background:#E6F7F0;color:var(--green-700)}
+  .rbody .tutor-chip.arcade{background:#FCE7F3;color:#BE185D}
+  .rbody .tutor-chip.rescue{background:#FDECED;color:#9A2D31}
+  .rbody .meta{font-size:12.5px;color:var(--fg-3);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .rbody .meta .ok{color:var(--green-700);font-weight:600}
+  .rbody .meta .err{color:#B53337;font-weight:600}
+  .rbody .meta .dot{width:2.5px;height:2.5px;border-radius:50%;background:var(--fg-4)}
+  .rbody .meta em{font-style:italic;color:var(--fg-2);font-weight:500}
+
+  .rdur{text-align:right;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--fg-1);letter-spacing:-0.005em}
+  .rdur small{display:block;font-family:var(--font-sans);font-weight:500;font-size:10.5px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+
+  .rfluency{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .rfluency .num{font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--fg-1);letter-spacing:-0.01em;font-feature-settings:"tnum"}
+  .rfluency .num small{font-family:var(--font-display);font-weight:600;font-size:11px;color:var(--green-700);margin-left:3px}
+  .rfluency .num small.down{color:#B53337}
+  .rfluency .meter{width:70px;height:4px;border-radius:99px;background:var(--bg-2);overflow:hidden}
+  .rfluency .meter i{display:block;height:100%;background:var(--green);border-radius:99px}
+
+  .rstatus{display:flex;justify-content:center}
+  .rstatus svg{width:20px;height:20px;color:var(--green)}
+  .rstatus.rescue svg{color:var(--amber)}
+  .rstatus.cold svg{color:var(--fg-4)}
+
+  .rgo{color:var(--fg-4)}
+
+  /* tutor row for in-progress (top of list) */
+  .row-sess.live{background:linear-gradient(90deg,rgba(0,179,126,.06),transparent);border-bottom-color:transparent;margin:0}
+  .row-sess.live .rgo{color:var(--green-700)}
+
+  /* === RIGHT COLUMN === */
+  .rc{display:flex;flex-direction:column;gap:18px;position:sticky;top:80px;align-self:start}
+  .stat-line{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px dashed var(--border-1)}
+  .stat-line:last-child{border-bottom:0}
+  .stat-line .l{font-size:12.5px;color:var(--fg-3)}
+  .stat-line .v{font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--fg-1);font-feature-settings:"tnum"}
+  .stat-line .v small{font-family:var(--font-display);font-weight:600;font-size:11px;color:var(--green-700);margin-left:3px}
+
+  /* most-corrected list */
+  .corr-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+  .corr-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border-1);border-radius:10px}
+  .corr-item .ci{width:26px;height:26px;border-radius:7px;background:#FFF7DD;color:#8A6A00;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:11px;flex-shrink:0}
+  .corr-item.gram .ci{background:#FDECED;color:#9A2D31}
+  .corr-item .ct{flex:1;font-size:12.5px;color:var(--fg-1);font-weight:500;line-height:1.3}
+  .corr-item .ct small{display:block;color:var(--fg-3);font-size:10.5px;margin-top:2px;font-weight:500}
+  .corr-item .cn{font-family:var(--font-display);font-weight:700;font-size:11px;color:var(--fg-3);background:var(--bg-2);padding:2px 7px;border-radius:99px;flex-shrink:0;font-feature-settings:"tnum"}
+
+  /* tutor pie (radial) */
+  .pie-row{display:flex;align-items:center;gap:14px;margin-top:4px}
+  .pie{width:88px;height:88px;border-radius:50%;background:conic-gradient(#FFB800 0% 56%, var(--green-700) 56% 78%, #BE185D 78% 92%, var(--bg-3) 92% 100%);position:relative;flex-shrink:0}
+  .pie::after{content:"";position:absolute;inset:14px;background:var(--surface);border-radius:50%}
+  .pie-legend{flex:1;display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--fg-2)}
+  .pie-legend .pl{display:flex;align-items:center;gap:8px}
+  .pie-legend .pl i{width:9px;height:9px;border-radius:3px}
+  .pie-legend .pl b{margin-left:auto;font-family:var(--font-display);font-weight:700;color:var(--fg-1);font-size:12px}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+    </div>
+    <nav class="nav">
+      <a href="Hoy.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>Hoy</a>
+      <a href="Practicar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>Practicar<span class="pill">DAILY</span></a>
+      <a href="Mapa.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>Mapa de progreso</a>
+      <a href="Historial.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historial<span class="pill dot"></span></a>
+      <a href="Perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Perfil</a>
+    </nav>
+
+    <div class="side-section">
+      <div class="label">Tu progreso</div>
+      <div class="level-row"><span class="nivel">Nivel</span><span class="b2">B2</span></div>
+      <div class="level-bar"><i style="width:62%"></i></div>
+      <div class="level-hint">62% hasta C1</div>
+    </div>
+
+    <div class="side-user">
+      <div class="avatar">L</div>
+      <div class="meta"><span class="name">Lautaro M.</span><span class="plan">Plan pro</span></div>
+      <button class="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg></button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div class="crumbs">Historial <span>· últimos 90 días</span></div>
+      <div class="top-actions">
+        <button class="icon-btn" title="Exportar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+        <a href="Practicar.html" class="btn btn-sm btn-dark">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg>
+          Empezar charla
+        </a>
+      </div>
+    </header>
+
+    <section class="greet">
+      <div class="eyebrow">Historial</div>
+      <h1 class="title">38 charlas, <em>3h 12min</em> hablando.</h1>
+      <p class="sub">Cada sesión es revisable. Hacé click en cualquiera para ver su reporte y el audio.</p>
+    </section>
+
+    <!-- SUMMARY STRIP with chart -->
+    <div class="summary-strip">
+      <div class="ss">
+        <div class="k">Charlas por día · últimas 4 semanas</div>
+        <div class="chart" aria-hidden="true">
+          <i></i><i class="on" style="height:35%"></i><i class="on" style="height:55%"></i><i></i>
+          <i class="on" style="height:30%"></i><i class="on" style="height:60%"></i><i class="on" style="height:80%"></i>
+          <i class="on" style="height:40%"></i><i class="on" style="height:70%"></i><i></i>
+          <i class="on" style="height:35%"></i><i class="on" style="height:75%"></i><i class="on" style="height:50%"></i><i class="on" style="height:90%"></i>
+          <i class="on" style="height:60%"></i><i class="on" style="height:45%"></i><i></i>
+          <i class="on" style="height:80%"></i><i class="on" style="height:70%"></i><i class="on" style="height:90%"></i><i class="on" style="height:50%"></i>
+          <i class="on" style="height:60%"></i><i class="on" style="height:75%"></i><i class="on" style="height:55%"></i><i class="on" style="height:85%"></i>
+          <i class="on" style="height:70%"></i><i class="today" style="height:65%"></i>
+        </div>
+        <div class="chart-x"><span>hace 4 sem.</span><span>hoy</span></div>
+      </div>
+      <div class="ss">
+        <div class="k">Fluidez promedio</div>
+        <div class="v">74<small>+8</small></div>
+        <div class="h">vs 30 días anteriores</div>
+      </div>
+      <div class="ss">
+        <div class="k">Tiempo hablado</div>
+        <div class="v">3:12<small>+0:48</small></div>
+        <div class="h">horas:minutos</div>
+      </div>
+      <div class="ss">
+        <div class="k">Errores corregidos</div>
+        <div class="v">87<small>+22</small></div>
+        <div class="h">12 patrones recurrentes</div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="fb-group">
+        <span class="lbl">Rango</span>
+        <div class="seg">
+          <button>7d</button>
+          <button class="on">30d</button>
+          <button>90d</button>
+          <button>todo</button>
+        </div>
+      </div>
+      <div class="fb-group">
+        <span class="lbl">Categoría</span>
+        <button class="pillbtn active">Arte <span class="x">×</span></button>
+        <button class="pillbtn active">Tecnología <span class="x">×</span></button>
+        <button class="pillbtn">+ sumar</button>
+      </div>
+      <div class="fb-group">
+        <span class="lbl">Tutor</span>
+        <button class="pillbtn">Todos</button>
+      </div>
+      <div class="fb-group">
+        <span class="lbl">Filtros</span>
+        <button class="pillbtn toggle on">⚠ con error recurrente</button>
+        <button class="pillbtn toggle">misiones de rescate</button>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <button class="pillbtn" style="border-style:solid">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+          Más recientes
+        </button>
+      </div>
+    </div>
+
+    <div class="hist-grid">
+
+      <!-- LEFT — LIST -->
+      <div style="min-width:0">
+
+        <!-- WEEK: ESTA SEMANA -->
+        <div class="week-hd">
+          <h3>Esta semana</h3>
+          <div class="meta"><b>4</b> charlas · <b>32 min</b> · fluidez prom. <b>76</b></div>
+        </div>
+        <div class="sess-list">
+
+          <a href="Charla.html" class="row-sess live" style="text-decoration:none;color:inherit">
+            <div class="rdate">Hoy<b>—</b><span class="time">en cola</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip arte">Arte</span>
+                <span class="topic">Música electrónica · UK Garage</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+                <span class="tutor-chip rescue">misión de rescate</span>
+              </div>
+              <div class="meta">
+                <span class="live-dot"></span>
+                <em>preparando charla · 7 min sugeridos</em>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num" style="color:var(--fg-4)">—</span><span class="meter"><i style="width:0%"></i></span></div>
+            <div class="rdur">7:00<small>sugerido</small></div>
+            <div class="rstatus cold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Dom<b>16</b><span class="time">07:59</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip arte">Arte</span>
+                <span class="topic">Producción musical · Ableton</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+              </div>
+              <div class="meta">
+                <span class="ok">2 aciertos notables</span><span class="dot"></span>
+                <span class="err">3 puntos a pulir</span><span class="dot"></span>
+                <em>verbos irregulares ×2 · /θ/ pronunciación</em>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">74<small>+6</small></span><span class="meter"><i style="width:74%"></i></span></div>
+            <div class="rdur">5:12<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Dom<b>16</b><span class="time">07:36</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip life">Lifestyle</span>
+                <span class="topic">Trabajo remoto · nómade digital</span>
+                <span class="tutor-chip coach">The Coach</span>
+              </div>
+              <div class="meta">
+                <span class="ok">vocabulario rico</span><span class="dot"></span>
+                <span class="err">2 puntos a pulir</span><span class="dot"></span>
+                <em>pronunciación: through, smooth</em>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">68<small>+2</small></span><span class="meter"><i style="width:68%"></i></span></div>
+            <div class="rdur">9:48<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Sáb<b>15</b><span class="time">21:14</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip tec">Tecnología</span>
+                <span class="topic">Arquitectura · observabilidad</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+              </div>
+              <div class="meta">
+                <span class="ok">5 términos avanzados</span><span class="dot"></span>
+                <span class="err">1 punto a pulir</span><span class="dot"></span>
+                <em>misión cumplida · estación desbloqueada</em>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">81<small>+4</small></span><span class="meter"><i style="width:81%"></i></span></div>
+            <div class="rdur">6:31<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Vie<b>14</b><span class="time">18:02</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip arte">Arte</span>
+                <span class="topic">Festivales · UK Garage</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+              </div>
+              <div class="meta">
+                <span class="ok">tono natural</span><span class="dot"></span>
+                <span class="err">3 puntos a pulir</span><span class="dot"></span>
+                <em>verbos irregulares ×2 · uso de artículos</em>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">66<small class="down">−2</small></span><span class="meter"><i style="width:66%"></i></span></div>
+            <div class="rdur">4:48<small>charla</small></div>
+            <div class="rstatus rescue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+        </div>
+
+        <!-- WEEK: SEMANA PASADA -->
+        <div class="week-hd">
+          <h3>Semana del 3 al 9 de noviembre</h3>
+          <div class="meta"><b>6</b> charlas · <b>48 min</b> · fluidez prom. <b>72</b></div>
+        </div>
+        <div class="sess-list">
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Dom<b>09</b><span class="time">20:14</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip tec">Tecnología</span>
+                <span class="topic">IA generativa · autoría y copyright</span>
+                <span class="tutor-chip arcade">The Arcade</span>
+              </div>
+              <div class="meta">
+                <span class="ok">argumentación clara</span><span class="dot"></span>
+                <span class="err">2 puntos a pulir</span><span class="dot"></span>
+                <em>uso de condicionales</em>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">75<small>+3</small></span><span class="meter"><i style="width:75%"></i></span></div>
+            <div class="rdur">7:22<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Sáb<b>08</b><span class="time">19:33</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip life">Lifestyle</span>
+                <span class="topic">Powerlifting · RPE y deload</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+              </div>
+              <div class="meta">
+                <span class="ok">vocabulario técnico</span><span class="dot"></span>
+                <span class="err">2 puntos a pulir</span>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">71<small>+1</small></span><span class="meter"><i style="width:71%"></i></span></div>
+            <div class="rdur">8:15<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Vie<b>07</b><span class="time">18:48</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip arte">Arte</span>
+                <span class="topic">UK Garage · pirate radio y south london</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+              </div>
+              <div class="meta">
+                <span class="ok">3 términos avanzados</span><span class="dot"></span>
+                <span class="err">3 puntos a pulir</span><span class="dot"></span>
+                <em>verbos irregulares · uso de artículos</em>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">73<small>+2</small></span><span class="meter"><i style="width:73%"></i></span></div>
+            <div class="rdur">6:04<small>charla</small></div>
+            <div class="rstatus rescue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Jue<b>06</b><span class="time">07:22</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip tec">Tecnología</span>
+                <span class="topic">Arquitectura · caching y CDN</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+              </div>
+              <div class="meta">
+                <span class="ok">4 términos técnicos nuevos</span><span class="dot"></span>
+                <span class="err">1 punto a pulir</span>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">79<small>+5</small></span><span class="meter"><i style="width:79%"></i></span></div>
+            <div class="rdur">7:48<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Mié<b>05</b><span class="time">21:10</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip life">Lifestyle</span>
+                <span class="topic">Viajes · aeropuertos en horarios pico</span>
+                <span class="tutor-chip coach">The Coach</span>
+              </div>
+              <div class="meta">
+                <span class="ok">narrativa fluida</span><span class="dot"></span>
+                <span class="err">2 puntos a pulir</span>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">68<small class="down">−3</small></span><span class="meter"><i style="width:68%"></i></span></div>
+            <div class="rdur">9:22<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Lun<b>03</b><span class="time">07:14</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip arte">Arte</span>
+                <span class="topic">Producción musical · sidechain</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+              </div>
+              <div class="meta">
+                <span class="ok">3 términos avanzados</span><span class="dot"></span>
+                <span class="err">2 puntos a pulir</span>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">70<small>+2</small></span><span class="meter"><i style="width:70%"></i></span></div>
+            <div class="rdur">5:45<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+        </div>
+
+        <!-- WEEK: 2 SEMANAS ATRÁS -->
+        <div class="week-hd">
+          <h3>Semana del 27 de octubre al 2 de noviembre</h3>
+          <div class="meta"><b>5</b> charlas · <b>34 min</b> · fluidez prom. <b>69</b></div>
+        </div>
+        <div class="sess-list">
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Dom<b>02</b><span class="time">18:42</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip arte">Arte</span>
+                <span class="topic">UK Garage · qué es y cuándo nació</span>
+                <span class="tutor-chip sincerist">The Sincerist</span>
+              </div>
+              <div class="meta">
+                <span class="ok">primer logro: 5 sesiones consecutivas</span>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">72<small>+4</small></span><span class="meter"><i style="width:72%"></i></span></div>
+            <div class="rdur">6:18<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+          <a href="Reporte.html" class="row-sess" style="text-decoration:none;color:inherit">
+            <div class="rdate">Vie<b>31</b><span class="time">19:50</span></div>
+            <div class="rbody">
+              <div class="topicrow">
+                <span class="cat-chip tec">Tecnología</span>
+                <span class="topic">IA · sesgos en datasets</span>
+                <span class="tutor-chip coach">The Coach</span>
+              </div>
+              <div class="meta">
+                <span class="ok">argumentación clara</span><span class="dot"></span>
+                <span class="err">2 puntos a pulir</span>
+              </div>
+            </div>
+            <div class="rfluency"><span class="num">68</span><span class="meter"><i style="width:68%"></i></span></div>
+            <div class="rdur">7:02<small>charla</small></div>
+            <div class="rstatus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <span class="rgo">→</span>
+          </a>
+        </div>
+
+        <div style="display:flex;justify-content:center;margin-top:24px">
+          <button class="btn btn-ghost">Cargar más</button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT — TRENDS -->
+      <aside class="rc">
+        <div class="card">
+          <div class="card-head">
+            <h3>Resumen 30 días</h3>
+          </div>
+          <div class="stat-line">
+            <span class="l">Charlas</span>
+            <span class="v">15<small>+4</small></span>
+          </div>
+          <div class="stat-line">
+            <span class="l">Minutos hablados</span>
+            <span class="v">112<small>+22</small></span>
+          </div>
+          <div class="stat-line">
+            <span class="l">Fluidez media</span>
+            <span class="v">74<small>+8</small></span>
+          </div>
+          <div class="stat-line">
+            <span class="l">Palabras únicas</span>
+            <span class="v">1.842<small>+312</small></span>
+          </div>
+          <div class="stat-line">
+            <span class="l">Misiones de rescate</span>
+            <span class="v">3</span>
+          </div>
+          <div class="stat-line">
+            <span class="l">Sesiones perfectas</span>
+            <span class="v">2</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Tutor más usado</h3>
+          </div>
+          <div class="pie-row">
+            <div class="pie"></div>
+            <div class="pie-legend">
+              <div class="pl"><i style="background:#FFB800"></i> The Sincerist <b>56%</b></div>
+              <div class="pl"><i style="background:var(--green-700)"></i> The Coach <b>22%</b></div>
+              <div class="pl"><i style="background:#BE185D"></i> The Arcade <b>14%</b></div>
+              <div class="pl"><i style="background:var(--bg-3)"></i> Otros <b>8%</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Más corregido</h3>
+            <a class="link" href="Mapa.html">Ver →</a>
+          </div>
+          <div class="corr-list">
+            <div class="corr-item gram">
+              <span class="ci">G</span>
+              <div class="ct">Verbos irregulares en pasado simple <small>began, brought, went, came…</small></div>
+              <span class="cn">×8</span>
+            </div>
+            <div class="corr-item">
+              <span class="ci">F</span>
+              <div class="ct">Sonido /θ/ y /ð/ <small>through, smooth, weather…</small></div>
+              <span class="cn">×6</span>
+            </div>
+            <div class="corr-item gram">
+              <span class="ci">G</span>
+              <div class="ct">Uso de artículo definido <small>on the weekends, in the 90s…</small></div>
+              <span class="cn">×4</span>
+            </div>
+            <div class="corr-item">
+              <span class="ci">F</span>
+              <div class="ct">Acento en sílabas técnicas <small>compre·SSION, syn·THE·sizer…</small></div>
+              <span class="cn">×3</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
