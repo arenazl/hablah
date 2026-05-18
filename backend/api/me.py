@@ -222,7 +222,7 @@ async def level_progress(
         .order_by(SessionModel.started_at.desc())
         .limit(10)
     )).scalars().all()
-    avg_score = sum(last_scores) / len(last_scores) if last_scores else 0
+    avg_score = float(sum(last_scores)) / len(last_scores) if last_scores else 0.0
 
     # Banda CEFR: A1=0..30, A2=30..45, B1=45..60, B2=60..75, C1=75..90, C2=90..100
     bands = {"A1": (0, 30), "A2": (30, 45), "B1": (45, 60), "B2": (60, 75), "C1": (75, 90), "C2": (90, 100)}
