@@ -1396,11 +1396,16 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
   const playSummary = useCallback(async (targetLang: 'es' | 'en') => {
     stopAudio()
     try {
-      const token = localStorage.getItem('hablah_token')
-      const base = (import.meta as any).env?.VITE_API_BASE || '/api'
+      const token = localStorage.getItem('token')
+      const base = (import.meta as any).env?.VITE_API_URL || '/api'
       const url = `${base}/sessions/${sessionId}/summary-audio?lang=${targetLang}`
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
-      if (!res.ok) throw new Error('No hay audio del resumen todavía')
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '')
+        throw new Error(res.status === 404 ? 'El resumen aún se está generando (esperá 5s)' : `Audio no disponible (${res.status})${txt ? ': ' + txt : ''}`)
+      }
+      const ct = res.headers.get('content-type') || ''
+      if (!ct.includes('audio')) throw new Error('La respuesta no es audio')
       const blob = await res.blob()
       const audio = new Audio(URL.createObjectURL(blob))
       audioRef.current = audio
