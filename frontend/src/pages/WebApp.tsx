@@ -941,6 +941,25 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const [topicTitle, setTopicTitle] = useState<string>('')
   const [keywords, setKeywords] = useState<string[]>([])
   const [audioLevel, setAudioLevel] = useState(0)
+  const lastLevelTsRef = useRef(0)
+  const decayRafRef = useRef<number | null>(null)
+  // Decay suave: si no llega nuevo level en >150ms, baja exponencialmente a 0
+  useEffect(() => {
+    const tick = () => {
+      const now = performance.now()
+      const since = now - lastLevelTsRef.current
+      if (since > 150) {
+        setAudioLevel((prev) => (prev > 0.01 ? prev * 0.85 : 0))
+      }
+      decayRafRef.current = requestAnimationFrame(tick)
+    }
+    decayRafRef.current = requestAnimationFrame(tick)
+    return () => { if (decayRafRef.current) cancelAnimationFrame(decayRafRef.current) }
+  }, [])
+  const onAudioLevelTick = useCallback((lvl: number) => {
+    lastLevelTsRef.current = performance.now()
+    setAudioLevel((prev) => Math.max(prev * 0.6, lvl))  // smoothing: nuevo max o decay
+  }, [])
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
   const [extraTopics, setExtraTopics] = useState<Topic[]>([])
   const [endedReport, setEndedReport] = useState<SessionData | null>(null)
@@ -966,7 +985,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   }, [])
 
   const live = useLiveVoice({
-    onAudioLevel: setAudioLevel,
+    onAudioLevel: onAudioLevelTick,
     onError: (e) => toast.error(e.message),
   })
 

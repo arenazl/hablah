@@ -119,7 +119,15 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         // PCM 16-bit LE → Float32 [-1, 1]
         const samples = new Int16Array(bytes.buffer, bytes.byteOffset, Math.floor(bytes.byteLength / 2))
         const float = new Float32Array(samples.length)
-        for (let i = 0; i < samples.length; i++) float[i] = samples[i] / 32768
+        let sumSq = 0
+        for (let i = 0; i < samples.length; i++) {
+          const v = samples[i] / 32768
+          float[i] = v
+          sumSq += v * v
+        }
+        // RMS del chunk del tutor para alimentar el visualizer mientras habla
+        const rms = Math.sqrt(sumSq / Math.max(1, samples.length))
+        optsRef.current.onAudioLevel?.(Math.min(1, rms * 2.5))
         playQueueRef.current.push(float)
         if (!playCtxRef.current) {
           playCtxRef.current = new AudioContext({ sampleRate: 24000 })
