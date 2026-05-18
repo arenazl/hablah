@@ -7,6 +7,7 @@ import { HOY_CSS } from './hoy.css'
 import { MAPA_CSS } from './mapa.css'
 import { PRACTICAR_CSS } from './practicar.css'
 import { HISTORIAL_CSS } from './historial.css'
+import { CONVO_BG_CSS } from './convo-bg.css'
 import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
@@ -88,6 +89,7 @@ export function WebApp() {
       <style>{MAPA_CSS}</style>
       <style>{PRACTICAR_CSS}</style>
       <style>{HISTORIAL_CSS}</style>
+      <style>{CONVO_BG_CSS}</style>
       <div className="shell">
         <Sidebar profile={profile} mobileOpen={drawerOpen} />
         {drawerOpen && <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />}
@@ -916,6 +918,11 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const [freeTopicText, setFreeTopicText] = useState('')
   const [interestQuery, setInterestQuery] = useState('')
   const [interestCategory, setInterestCategory] = useState<string>('all')
+  const [convoBg, setConvoBg] = useState<number>(() => {
+    const v = parseInt(localStorage.getItem('convo_bg') || '0', 10)
+    return Number.isFinite(v) && v >= 0 && v <= 5 ? v : 0
+  })
+  useEffect(() => { localStorage.setItem('convo_bg', String(convoBg)) }, [convoBg])
   const startedRef = useRef(false)
 
   // Cargo catálogo completo para que el usuario pueda elegir cualquiera, no solo sus intereses
@@ -1245,7 +1252,8 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   return (
     <>
     {endedReport && <SessionReportOverlay report={endedReport} sessionId={sessionId!} onClose={() => nav('/app')} />}
-    <div className="convo-view">
+    <div className={`convo-view bg-${convoBg}`}>
+      <BgPicker value={convoBg} onChange={setConvoBg} />
       <div className="convo-stage">
         <div className="convo-header">
           <div>
@@ -2944,4 +2952,30 @@ function topicTitleFromSession(profile: MeProfile, s: SessionData): string {
   if (!s.topic_id) return 'Tema libre'
   const interest = profile.interests.find((i) => i.id === s.topic_id)
   return interest?.title || `Tópico #${s.topic_id}`
+}
+
+/* Selector de fondo para la pantalla de charla (5 opciones) */
+const BG_OPTIONS = [
+  { id: 0, label: 'Solid', short: 'S' },
+  { id: 1, label: 'Aurora', short: 'A' },
+  { id: 2, label: 'Mesh',   short: 'M' },
+  { id: 3, label: 'Grid',   short: 'G' },
+  { id: 4, label: 'Stars',  short: '*' },
+  { id: 5, label: 'Ripple', short: 'R' },
+]
+function BgPicker({ value, onChange }: { value: number; onChange: (n: number) => void }) {
+  return (
+    <div className="bg-picker" role="radiogroup" aria-label="Fondo de la pantalla">
+      {BG_OPTIONS.map((o) => (
+        <button
+          key={o.id}
+          className={`bgp-${o.id}${value === o.id ? ' active' : ''}`}
+          onClick={() => onChange(o.id)}
+          title={o.label}
+          aria-label={o.label}
+          aria-pressed={value === o.id}
+        />
+      ))}
+    </div>
+  )
 }
