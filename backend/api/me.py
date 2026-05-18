@@ -212,7 +212,7 @@ async def level_progress(
         select(func.coalesce(func.sum(SessionModel.duration_seconds), 0))
         .where(SessionModel.user_id == current.id)
     )).scalar() or 0
-    hours_spoken = round(total_seconds / 3600.0, 1)
+    hours_spoken = round(float(total_seconds) / 3600.0, 1)
 
     # Avg score last 10 sessions analizadas para % al proximo nivel
     last_scores = (await db.execute(
