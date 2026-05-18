@@ -238,9 +238,14 @@ export const dashboardAPI = {
 export const ttsAPI = {
   voices: () => api.get('/tts/voices').then((r) => r.data),
   /** Reproduce un sample TTS en el browser. Devuelve el Audio para controlar. */
-  async play(text: string, tutor?: string): Promise<HTMLAudioElement> {
+  async play(text: string, tutorOrOpts?: string | { tutor?: string; voice_id?: string }): Promise<HTMLAudioElement> {
     const params = new URLSearchParams({ text })
-    if (tutor) params.set('tutor', tutor)
+    if (typeof tutorOrOpts === 'string') {
+      params.set('tutor', tutorOrOpts)
+    } else if (tutorOrOpts) {
+      if (tutorOrOpts.tutor) params.set('tutor', tutorOrOpts.tutor)
+      if (tutorOrOpts.voice_id) params.set('voice_id', tutorOrOpts.voice_id)
+    }
     const r = await api.post(`/tts/sample?${params.toString()}`, null, { responseType: 'blob' })
     const url = URL.createObjectURL(r.data as Blob)
     const audio = new Audio(url)

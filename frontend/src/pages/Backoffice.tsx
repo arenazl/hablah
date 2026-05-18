@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { NavLink, Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -354,8 +354,15 @@ function TemplateEditView({ onMenu }: { onMenu: () => void }) {
               </div>
             </Section>
 
-            {/* 0b. Voz - cadencia/expresividad */}
-            <Section title="Voz del tutor" subtitle="Cómo suena. Afecta la velocidad, la expresividad y cuánto tarda en responder.">
+            {/* 0b. Voz - 1 selector por idioma con boton probar */}
+            <Section title="Voz por idioma" subtitle="Elegí qué voz usa este tutor en cada idioma. Tocá 'Probar' para escuchar.">
+              <VoicePerLangRow lang="en" label="Inglés (target_language=en)" template={t} update={update} />
+              <VoicePerLangRow lang="es" label="Español (target_language=es)" template={t} update={update} />
+              <VoicePerLangRow lang="pt" label="Português (target_language=pt)" template={t} update={update} />
+            </Section>
+
+            {/* 0c. Cadencia */}
+            <Section title="Cadencia y expresividad" subtitle="Velocidad, estabilidad y tiempo de respuesta.">
               <SliderRow label="Velocidad de habla" hint="70 = más lento · 130 = más rápido" value={(t as any).voice_speed ?? 100} min={70} max={130} step={5} suffix="%" onChange={(v) => update({ voice_speed: v } as any)} />
               <SliderRow label="Estabilidad de voz" hint="0 = muy expresiva (varía mucho) · 100 = muy estable (uniforme)" value={(t as any).voice_stability ?? 50} min={0} max={100} step={5} onChange={(v) => update({ voice_stability: v } as any)} />
               <SliderRow label="Estilo emocional" hint="0 = plano · 100 = muy emotivo" value={(t as any).voice_style ?? 30} min={0} max={100} step={5} onChange={(v) => update({ voice_style: v } as any)} />
@@ -810,5 +817,95 @@ function AlumnosView({ onMenu }: { onMenu: () => void }) {
         </div>
       </div>
     </>
+  )
+}
+
+/* ===== Catalogo de voces disponibles por idioma (mirror de los voice_id en backend) ===== */
+const VOICES_BY_LANG: Record<string, { id: string; name: string; tag: string }[]> = {
+  en: [
+    { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Sarah',  tag: 'US · Femenina · cálida' },
+    { id: 'cjVigY5qzO86Huf0OWal', name: 'Eric',   tag: 'US · Masculina · smooth' },
+    { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'Lily',   tag: 'UK · Femenina · velvety' },
+    { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George', tag: 'UK · Masculina · storyteller' },
+    { id: 'FGY2WhTYpPnrIDTdsKH5', name: 'Laura',  tag: 'US · Femenina · energética' },
+    { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel', tag: 'UK · Masculina · broadcaster' },
+  ],
+  es: [
+    { id: 'QK4xDwo9ESPHA4JNUpX3', name: 'Tomás',        tag: 'AR · Masculina · rioplatense' },
+    { id: 'rooCDyI2p1wGjgC5O5lH', name: 'Maxi',         tag: 'AR · Masculina · conversacional' },
+    { id: '9FG0AH71kXEuvM9IJg7u', name: 'Martin',       tag: 'AR · Masculina · profesional' },
+    { id: 'PoLFkTquRWtbexdwW3Xa', name: 'Paola Blasi',  tag: 'AR · Femenina · narrativa' },
+    { id: 'yA5jrK1S9cpCAojBYyMu', name: 'Lucia',        tag: 'ES · Femenina · expresiva' },
+    { id: '9rvdnhrYoXoUt4igKpBw', name: 'Mariana',      tag: 'ES · Femenina · íntima' },
+    { id: 'bN1bDXgDIGX5lw0rtY2B', name: 'Melanie',      tag: 'ES · Femenina · profesional' },
+  ],
+  pt: [
+    { id: 'AGNkIY6dMkIkc3g53Rdb', name: 'Rafael Silva', tag: 'BR · Masculina · conversacional' },
+    { id: 'soegYoc6KNWiqSWuHJUm', name: 'Kauan',        tag: 'BR · Masculina · serio' },
+    { id: 'fhtZMBwha5du5OxuvexO', name: 'Malu',         tag: 'BR · Femenina · casual' },
+  ],
+}
+
+const PROBE_TEXT: Record<string, string> = {
+  en: 'Hi there! I am your tutor. Let us practice speaking together today.',
+  es: 'Hola, soy tu tutor. Vamos a practicar hablando hoy.',
+  pt: 'Olá, sou seu tutor. Vamos praticar conversando hoje.',
+}
+
+function VoicePerLangRow({ lang, label, template, update }: {
+  lang: 'en' | 'es' | 'pt'
+  label: string
+  template: Template
+  update: (patch: Partial<Template>) => void
+}) {
+  const fieldKey = `voice_id_${lang}` as 'voice_id_en' | 'voice_id_es' | 'voice_id_pt'
+  const currentId = (template as any)[fieldKey] || ''
+  const voices = VOICES_BY_LANG[lang] || []
+  const [playing, setPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  const onProbe = async () => {
+    if (!currentId) { toast.error('Elegí una voz primero'); return }
+    if (audioRef.current) { try { audioRef.current.pause() } catch {} }
+    setPlaying(true)
+    try {
+      const audio = await ttsAPI.play(PROBE_TEXT[lang], { voice_id: currentId })
+      audioRef.current = audio
+      audio.onended = () => setPlaying(false)
+    } catch (e: any) {
+      setPlaying(false)
+      toast.error(e?.response?.data?.detail || 'No se pudo reproducir')
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '10px 0', borderBottom: '1px dashed var(--border-1)' }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-2)' }}>{label}</div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <select
+          value={currentId}
+          onChange={(e) => update({ [fieldKey]: e.target.value } as any)}
+          style={{
+            flex: 1, height: 36, padding: '0 10px',
+            border: '1px solid var(--border-2)', borderRadius: 8,
+            background: 'white', fontSize: 13, color: 'var(--fg-1)',
+            fontFamily: 'inherit',
+          }}
+        >
+          <option value="">— elegí voz —</option>
+          {voices.map((v) => (
+            <option key={v.id} value={v.id}>{v.name} · {v.tag}</option>
+          ))}
+        </select>
+        <button
+          onClick={onProbe}
+          disabled={playing || !currentId}
+          className="btn btn-secondary btn-sm"
+          style={{ minWidth: 90 }}
+        >
+          {playing ? '▶ ...' : '▶ Probar'}
+        </button>
+      </div>
+    </div>
   )
 }
