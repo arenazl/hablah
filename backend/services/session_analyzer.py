@@ -131,19 +131,34 @@ async def _gemini_complete(prompt: str, payload_text: str) -> dict:
         ],
         "generationConfig": {
             "temperature": 0.2,
-            "maxOutputTokens": 2500,
+            "maxOutputTokens": 6000,
             "responseMimeType": "application/json",
         },
     }
-    async with httpx.AsyncClient(timeout=60) as cli:
+    async with httpx.AsyncClient(timeout=90) as cli:
         r = await cli.post(url, json=body)
         r.raise_for_status()
         data = r.json()
     text = ""
+    finish_reason = None
     for c in data.get("candidates", []):
+        finish_reason = c.get("finishReason") or finish_reason
         for p in (c.get("content") or {}).get("parts", []):
             text += p.get("text", "")
-    return json.loads(text)
+    if not text.strip():
+        raise ValueError(f"Gemini devolvió texto vacío (finishReason={finish_reason})")
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as e:
+        # Intento de recuperación: cortar JSON truncado en el último } válido
+        log.warning("JSON truncado (finishReason=%s, err=%s), intentando recuperar", finish_reason, e)
+        last_brace = text.rfind("}")
+        if last_brace > 0:
+            try:
+                return json.loads(text[:last_brace + 1])
+            except Exception:
+                pass
+        raise
 
 
 async def analyze_session(session_id: int) -> Optional[dict]:
