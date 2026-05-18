@@ -112,12 +112,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     buf.getChannelData(0).set(chunk)
     const src = ctx.createBufferSource()
     src.buffer = buf
-    // Conectamos al analyser (que va al destination) en vez de directo al destination
+    // SIEMPRE conectar al destination (audio limpio sin pasar por analyser).
+    // El analyser se conecta en paralelo si existe, NO en serie.
+    src.connect(ctx.destination)
     const analyser = analyserRef.current
     if (analyser) {
-      src.connect(analyser)
-    } else {
-      src.connect(ctx.destination)
+      src.connect(analyser)  // tap paralelo, no afecta el audio que sale por parlantes
     }
     src.onended = () => {
       playingRef.current = false
@@ -132,8 +132,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     if (!ctx) return
     const analyser = ctx.createAnalyser()
     analyser.fftSize = 256
-    analyser.smoothingTimeConstant = 0.3  // suaviza un poco pero responde rapido
-    analyser.connect(ctx.destination)
+    analyser.smoothingTimeConstant = 0.3
+    // NO conectar a destination - es solo un tap, no debe duplicar el audio
     analyserRef.current = analyser
 
     // Loop que lee el level REAL del audio saliendo por parlantes

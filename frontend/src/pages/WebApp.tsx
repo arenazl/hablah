@@ -1342,8 +1342,9 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       <PedagogyPicker value={pedagogy} onChange={(p, label) => {
         setPedagogy(p)
         const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
-        const ok = live.sendSystemUpdate(`Cambio de estilo: a partir de ahora actua como ${label}. ${instruction}`)
-        toast.success(ok ? `Tutor ahora en modo: ${label}` : 'Conectá primero')
+        // Inyectamos como instruccion en INGLES para que Gemini Live no la verbalice ni la traduzca
+        const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
+        toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
       }} />
       <div className="convo-stage">
         <div className="convo-header">
