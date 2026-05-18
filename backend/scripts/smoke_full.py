@@ -229,6 +229,35 @@ else:
 # POST /tts/sample no lo invoco para no quemar credito ElevenLabs cada smoke
 skip("POST /tts/sample (omito para no consumir creditos)")
 
+# Summary-audio: usa una sesion analyzed (con summary ya generado)
+status, sess_list = http("GET", f"{API}/sessions/", token=lucas_token)
+analyzed = [s for s in (sess_list or []) if s.get("status") == "analyzed" and (s.get("report") or {}).get("summary")]
+if analyzed:
+    sid = analyzed[0]["id"]
+    # Bajo el audio en ES y verifico que es MP3 (primer byte ID3 o magic)
+    import urllib.request as ur
+    req = ur.Request(f"{API}/sessions/{sid}/summary-audio?lang=es", headers={"Authorization": f"Bearer {lucas_token}"})
+    try:
+        with ur.urlopen(req, timeout=30) as r:
+            ct = r.headers.get("Content-Type", "")
+            data = r.read(16)
+            is_mp3 = ct == "audio/mpeg" and (data[:3] == b"ID3" or data[:2] == b"\xff\xfb")
+            ok(f"GET /sessions/{sid}/summary-audio?lang=es -> {ct} {'MP3 valido' if is_mp3 else 'NO es MP3'}") if is_mp3 else fail(f"summary-audio ES: ct={ct} magic={data[:4].hex()}")
+    except Exception as e:
+        fail(f"summary-audio ES: {e}")
+
+    req = ur.Request(f"{API}/sessions/{sid}/summary-audio?lang=en", headers={"Authorization": f"Bearer {lucas_token}"})
+    try:
+        with ur.urlopen(req, timeout=30) as r:
+            ct = r.headers.get("Content-Type", "")
+            data = r.read(16)
+            is_mp3 = ct == "audio/mpeg" and (data[:3] == b"ID3" or data[:2] == b"\xff\xfb")
+            ok(f"GET /sessions/{sid}/summary-audio?lang=en -> {ct} {'MP3 valido' if is_mp3 else 'NO es MP3'}") if is_mp3 else fail(f"summary-audio EN: ct={ct} magic={data[:4].hex()}")
+    except Exception as e:
+        fail(f"summary-audio EN: {e}")
+else:
+    skip("summary-audio (no hay sesion analyzed con summary)")
+
 
 # ============================================================
 section("PUSH (web push subscription)")
