@@ -8,7 +8,7 @@ import { MAPA_CSS } from './mapa.css'
 import { PRACTICAR_CSS } from './practicar.css'
 import { HISTORIAL_CSS } from './historial.css'
 import { CONVO_BG_CSS } from './convo-bg.css'
-import { meAPI, sessionsAPI, topicsAPI, MeProfile, SessionData, Topic, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
+import { meAPI, sessionsAPI, topicsAPI, templatesAPI, MeProfile, SessionData, Topic, Template, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 
@@ -955,6 +955,9 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   })
   useEffect(() => { localStorage.setItem('convo_bg', String(convoBg)) }, [convoBg])
   const [pedagogy, setPedagogy] = useState<string>('balanced')
+  const [templates, setTemplates] = useState<Template[]>([])
+  const [switching, setSwitching] = useState(false)
+  useEffect(() => { templatesAPI.list().then(setTemplates).catch(() => {}) }, [])
   const startedRef = useRef(false)
 
   // Cargo catálogo completo para que el usuario pueda elegir cualquiera, no solo sus intereses
@@ -1009,6 +1012,37 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       nav('/app')
     }
   }, [live, sessionId, onSessionEnd, nav])
+
+  const handleSwitchTutor = useCallback(async (newTemplateId: number) => {
+    if (switching || !sessionId) return
+    if (newTemplateId === profile?.active_template?.id) return
+    setSwitching(true)
+    try {
+      const userName = profile?.user?.nombre || 'there'
+      const targetLang = profile?.user?.target_language || 'en'
+      const langName = targetLang === 'en' ? 'English' : targetLang === 'pt' ? 'Portuguese' : targetLang === 'it' ? 'Italian' : 'English'
+      // 1. Tutor actual se despide (en el idioma target)
+      live.say(`[USER_REQUEST_SWITCH_TUTOR] Say a short, warm goodbye to ${userName} in ${langName}. One sentence only. Example: "Hey ${userName}, gotta hand you over to another coach now — great chatting, talk soon!"`)
+      toast.success('Cambiando tutor…')
+      // 2. Esperar a que termine de hablar
+      await new Promise(r => setTimeout(r, 4500))
+      // 3. Cerrar sesión actual SIN analyzer (fue un cambio)
+      live.stop()
+      // 4. Persistir nuevo template
+      await meAPI.updateSettings({ active_template_id: newTemplateId })
+      onSessionEnd()
+      // 5. Reset y arrancar nueva sesión con mismo topic
+      startedRef.current = false
+      setSessionId(null)
+      // beginSession se invoca con el mismo topic
+      const currentTopic = selectedTopicId
+      setTimeout(() => beginSession(currentTopic), 600)
+    } catch (e) {
+      toast.error('No pudimos cambiar el tutor')
+    } finally {
+      setSwitching(false)
+    }
+  }, [switching, sessionId, profile, live, selectedTopicId, onSessionEnd])
 
   const statusLabel = {
     idle: 'Preparando…',
@@ -1296,8 +1330,27 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
         <div className="convo-header">
           <div>
             <h2>{topicTitle || 'Iniciando…'}</h2>
-            <div className="meta">
-              <span className="live">{profile?.active_template?.name || 'Habláh'}</span>
+            <div className="meta" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {templates.length > 0 ? (
+                <select
+                  value={profile?.active_template?.id ?? ''}
+                  disabled={switching}
+                  onChange={(e) => handleSwitchTutor(parseInt(e.target.value, 10))}
+                  style={{
+                    background: 'rgba(0,179,126,.18)', color: '#9CFCD2',
+                    border: '1px solid rgba(156,252,210,.3)', borderRadius: 999,
+                    padding: '3px 10px', fontSize: 12, fontWeight: 700,
+                    cursor: switching ? 'wait' : 'pointer',
+                    opacity: switching ? 0.6 : 1,
+                  }}
+                >
+                  {templates.map(t => (
+                    <option key={t.id} value={t.id} style={{ background: '#0E1614', color: 'white' }}>{t.name}</option>
+                  ))}
+                </select>
+              ) : (
+                <span className="live">{profile?.active_template?.name || 'Habláh'}</span>
+              )}
               <span>{profile?.user?.cefr_level} · {profile?.user?.target_language}</span>
             </div>
           </div>
@@ -2372,6 +2425,10 @@ function HistorialView() {
 
 /* ──────── PERFIL ──────── */
 function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange: () => void }) {
+  const [templates, setTemplates] = useState<Template[]>([])
+  useEffect(() => {
+    templatesAPI.list().then(setTemplates).catch(() => {})
+  }, [])
   if (!profile) return <div className="view">Cargando…</div>
   const u = profile.user
   const initial = u.nombre[0]?.toUpperCase() || 'U'
@@ -2382,6 +2439,11 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
   }
   const toggleReminder = async () => {
     await meAPI.updateSettings({ daily_reminder_enabled: !u.daily_reminder_enabled })
+    onChange()
+  }
+  const changeTemplate = async (newId: number) => {
+    await meAPI.updateSettings({ active_template_id: newId })
+    toast.success('Tutor cambiado')
     onChange()
   }
 
@@ -2414,9 +2476,26 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
               <span className="pill pill-primary">En uso</span>
             </div>
           )}
-          <div style={{ fontSize: 13, color: 'var(--fg-3)', marginTop: 12 }}>
-            Cambiá tu tutor desde el backoffice o pedile al equipo Habláh.
-          </div>
+          {templates.length > 0 && (
+            <div style={{ marginTop: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--fg-3)', marginBottom: 6 }}>
+                Cambiar tutor
+              </div>
+              <select
+                value={profile.active_template?.id ?? ''}
+                onChange={(e) => changeTemplate(parseInt(e.target.value, 10))}
+                style={{
+                  width: '100%', padding: '10px 12px', borderRadius: 10,
+                  border: '1px solid var(--border-2)', background: 'var(--surface)',
+                  color: 'var(--fg-1)', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                }}
+              >
+                {templates.map(t => (
+                  <option key={t.id} value={t.id}>{t.name} — {t.description}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         <InterestsCard profile={profile} onChange={onChange} />

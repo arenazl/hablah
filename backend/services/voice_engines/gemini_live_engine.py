@@ -113,6 +113,16 @@ class GeminiLiveEngine(VoiceEngine):
                                 "audio": {"mimeType": "audio/pcm;rate=16000", "data": b64}
                             }
                         }))
+                    elif msg.get("type") == "say":
+                        # Forzar al tutor a decir algo (ej. despedida al cambiar de tutor)
+                        text = (msg.get("text") or "").strip()
+                        if text:
+                            await google_ws.send(json.dumps({
+                                "clientContent": {
+                                    "turns": [{"role": "user", "parts": [{"text": text}]}],
+                                    "turnComplete": True,
+                                }
+                            }))
                     elif msg.get("type") == "system_update":
                         # Cambio en caliente de personalidad/pedagogia
                         text = (msg.get("text") or "").strip()

@@ -46,6 +46,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const playQueueRef = useRef<Float32Array[]>([])
   const playingRef = useRef(false)
 
+  const say = useCallback((text: string) => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: 'say', text }))
+    }
+  }, [])
+
   const stop = useCallback(() => {
     try {
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
@@ -240,5 +246,5 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     return false
   }, [])
 
-  return { start, stop, status, transcript, sendSystemUpdate }
+  return { start, stop, status, transcript, sendSystemUpdate, say }
 }
