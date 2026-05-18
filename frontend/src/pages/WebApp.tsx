@@ -2393,12 +2393,13 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
           <div className="settings-list">
             <SettingsRow
               label="Acento del tutor"
-              sub="Cómo te suena la IA"
+              sub="Cómo te suena la IA en inglés"
               selectValue={u.accent_preference}
               selectOptions={[
-                { value: 'uk', label: 'UK · neutro' },
-                { value: 'us_f', label: 'US · Mujer' },
-                { value: 'us_m', label: 'US · Hombre' },
+                { value: 'uk_f', label: 'UK · Mujer (Lily)' },
+                { value: 'uk_m', label: 'UK · Hombre (George)' },
+                { value: 'us_f', label: 'US · Mujer (Sarah)' },
+                { value: 'us_m', label: 'US · Hombre (Eric)' },
               ]}
               onSelectChange={async (v) => { await meAPI.updateSettings({ accent_preference: v }); onChange() }}
             />

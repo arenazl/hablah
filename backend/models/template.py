@@ -170,10 +170,14 @@ class UserInterest(Base):
 
 
 ACCENT_VOICE_OVERRIDES = {
-    # ElevenLabs voice IDs — americanos
+    # 4 voces explicitas para el target_language=en
+    "uk_f": "pFZP5JQG7iQjIQuC4Bku",  # Lily - UK female, velvety
+    "uk_m": "JBFqnCBsd6RMkjVDRZzb",  # George - UK male, storyteller
     "us_f": "EXAVITQu4vr4xnSDxMaL",  # Sarah - US female, warm
-    "us_m": "TxGEqnHWrfWFTfGW9XjX",  # Josh - US male
-    "uk":   None,  # mantiene voz del template
+    "us_m": "cjVigY5qzO86Huf0OWal",  # Eric - US male, smooth
+    # legacy keys
+    "uk":   "JBFqnCBsd6RMkjVDRZzb",  # alias -> George
+    "us":   "EXAVITQu4vr4xnSDxMaL",  # alias -> Sarah
 }
 
 
