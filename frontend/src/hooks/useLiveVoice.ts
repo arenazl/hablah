@@ -45,6 +45,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const playCtxRef = useRef<AudioContext | null>(null)
   const playQueueRef = useRef<Float32Array[]>([])
   const playingRef = useRef(false)
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const analyserRafRef = useRef<number | null>(null)
 
   const say = useCallback((text: string) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
@@ -77,6 +79,14 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       streamRef.current.getTracks().forEach((t) => t.stop())
       streamRef.current = null
     }
+    if (analyserRafRef.current) {
+      cancelAnimationFrame(analyserRafRef.current)
+      analyserRafRef.current = null
+    }
+    if (analyserRef.current) {
+      try { analyserRef.current.disconnect() } catch {}
+      analyserRef.current = null
+    }
     if (playCtxRef.current) {
       try { playCtxRef.current.close() } catch {}
       playCtxRef.current = null
@@ -102,12 +112,45 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     buf.getChannelData(0).set(chunk)
     const src = ctx.createBufferSource()
     src.buffer = buf
-    src.connect(ctx.destination)
+    // Conectamos al analyser (que va al destination) en vez de directo al destination
+    const analyser = analyserRef.current
+    if (analyser) {
+      src.connect(analyser)
+    } else {
+      src.connect(ctx.destination)
+    }
     src.onended = () => {
       playingRef.current = false
       playNextChunk()
     }
     src.start()
+  }, [])
+
+  const ensureAnalyser = useCallback(() => {
+    if (analyserRef.current) return
+    const ctx = playCtxRef.current
+    if (!ctx) return
+    const analyser = ctx.createAnalyser()
+    analyser.fftSize = 256
+    analyser.smoothingTimeConstant = 0.3  // suaviza un poco pero responde rapido
+    analyser.connect(ctx.destination)
+    analyserRef.current = analyser
+
+    // Loop que lee el level REAL del audio saliendo por parlantes
+    const buf = new Uint8Array(analyser.frequencyBinCount)
+    const tick = () => {
+      if (!analyserRef.current) return
+      analyserRef.current.getByteTimeDomainData(buf)
+      let sumSq = 0
+      for (let i = 0; i < buf.length; i++) {
+        const v = (buf[i] - 128) / 128  // 0..255 -> -1..1
+        sumSq += v * v
+      }
+      const rms = Math.sqrt(sumSq / buf.length)
+      optsRef.current.onAudioLevel?.(Math.min(1, rms * 3))
+      analyserRafRef.current = requestAnimationFrame(tick)
+    }
+    analyserRafRef.current = requestAnimationFrame(tick)
   }, [])
 
   const pushAudioFromTutor = useCallback(
@@ -116,28 +159,20 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         const bin = atob(b64)
         const bytes = new Uint8Array(bin.length)
         for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
-        // PCM 16-bit LE → Float32 [-1, 1]
         const samples = new Int16Array(bytes.buffer, bytes.byteOffset, Math.floor(bytes.byteLength / 2))
         const float = new Float32Array(samples.length)
-        let sumSq = 0
-        for (let i = 0; i < samples.length; i++) {
-          const v = samples[i] / 32768
-          float[i] = v
-          sumSq += v * v
-        }
-        // RMS del chunk del tutor para alimentar el visualizer mientras habla
-        const rms = Math.sqrt(sumSq / Math.max(1, samples.length))
-        optsRef.current.onAudioLevel?.(Math.min(1, rms * 2.5))
+        for (let i = 0; i < samples.length; i++) float[i] = samples[i] / 32768
         playQueueRef.current.push(float)
         if (!playCtxRef.current) {
           playCtxRef.current = new AudioContext({ sampleRate: 24000 })
         }
+        ensureAnalyser()
         playNextChunk()
       } catch (e) {
         // ignore
       }
     },
-    [playNextChunk],
+    [playNextChunk, ensureAnalyser],
   )
 
   const start = useCallback(
