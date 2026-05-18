@@ -10,6 +10,21 @@ export const WEBAPP_CSS = `
   --fg-1: #0D1412; --fg-2: #2D3431; --fg-3: #5A625F; --fg-4: #8E938F;
   --ink-1: #0E1614; --ink-2: #19211E; --ink-3: #243029;
   --ink-fg: #E8ECEA;
+}
+
+[data-theme="dark"] .webapp-root,
+[data-theme="dark"].webapp-root {
+  --primary-tint: rgba(0,179,126,.18); --primary-soft: rgba(0,179,126,.28);
+  --bg-1: #0B1210; --bg-2: #131B18; --bg-3: #1B2421;
+  --surface: #161E1B;
+  --border-1: rgba(232,236,234,.08); --border-2: rgba(232,236,234,.14);
+  --fg-1: #E8ECEA; --fg-2: #B6BDB9; --fg-3: #8E938F; --fg-4: #5A625F;
+  --accent-tint: rgba(255,184,0,.18);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+  --shadow-float: 0 6px 20px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.4);
+}
+
+.webapp-root {
   --t-xs: 11px; --t-sm: 13px; --t-base: 15px; --t-md: 16px;
   --t-lg: 20px; --t-xl: 25px; --t-2xl: 31px; --t-3xl: 39px; --t-4xl: 49px;
   --r-md: 10px; --r-lg: 12px; --r-xl: 16px; --r-2xl: 20px; --r-pill: 999px;

@@ -1,4 +1,14 @@
 export const BACKOFFICE_CSS = `
+[data-theme="dark"] .bo-root,
+[data-theme="dark"].bo-root {
+  --primary-tint: rgba(0,179,126,.18); --primary-soft: rgba(0,179,126,.28);
+  --bg-1: #0B1210; --bg-2: #131B18; --bg-3: #1B2421;
+  --surface: #161E1B;
+  --border-1: rgba(232,236,234,.08); --border-2: rgba(232,236,234,.14);
+  --fg-1: #E8ECEA; --fg-2: #B6BDB9; --fg-3: #8E938F; --fg-4: #5A625F;
+  --accent-tint: rgba(255,184,0,.18);
+}
+
 .bo-root {
   --primary: #00B37E; --primary-dark: #008F63;
   --primary-tint: #E6F7F1; --primary-soft: #C5EDDF;
