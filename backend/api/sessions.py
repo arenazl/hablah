@@ -5,7 +5,7 @@ from sqlalchemy import select, desc
 
 from core.database import get_db
 from core.security import get_current_user
-from models.template import Session as SessionModel, Topic, Template  # noqa: F401
+from models.template import Session as SessionModel, Topic, Template, template_voice_for_lang  # noqa: F401
 from models.user import User
 from schemas.template import SessionStartRequest, SessionResponse, SessionEndRequest
 
@@ -62,7 +62,7 @@ async def start_session(
     from services.super_prompt import build_super_prompt
 
     super_prompt = build_super_prompt(user=current, template=template, topic=topic, free_topic=payload.free_topic)
-    voice_id = (template.voice_id if template else None) or ""
+    voice_id = template_voice_for_lang(template, current.target_language)
 
     return {
         "session_id": s.id,
@@ -167,12 +167,12 @@ async def feedback_audio(
     if not text:
         raise HTTPException(404, "No hay texto para sintetizar")
 
-    # Voz del tutor de esa sesión
+    # Voz del tutor de esa sesión segun target_language del user
     voice_id = None
     if s.template_id:
         tpl = (await db.execute(select(Template).where(Template.id == s.template_id))).scalar_one_or_none()
-        if tpl and tpl.voice_id:
-            voice_id = tpl.voice_id
+        if tpl:
+            voice_id = template_voice_for_lang(tpl, current.target_language) or None
 
     try:
         audio = await elevenlabs_synth(text, voice_id=voice_id)

@@ -28,9 +28,12 @@ class Template(Base):
     # Tono — lista de adjetivos que se inyectan al prompt
     tones = Column(JSON, nullable=False, default=list)  # ["profesional", "directo", "demandante"]
 
-    # Voz ElevenLabs asignada a este template
-    voice_id = Column(String(80), nullable=False, default="")
+    # Voz ElevenLabs asignada a este template (voice_id legacy + por idioma)
+    voice_id = Column(String(80), nullable=False, default="")  # default / fallback
     voice_label = Column(String(120), nullable=False, default="")
+    voice_id_en = Column(String(80), nullable=True)
+    voice_id_es = Column(String(80), nullable=True)
+    voice_id_pt = Column(String(80), nullable=True)
 
     # UI
     icon_bg = Column(String(40), nullable=False, default="#00B37E")  # CSS color
@@ -164,3 +167,15 @@ class UserInterest(Base):
     topic_id = Column(Integer, nullable=False, index=True)
     position = Column(Integer, nullable=False, default=0)
     added_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+def template_voice_for_lang(template, lang: str | None) -> str:
+    """Devuelve voice_id para el target_language del user, con fallback al voice_id legacy."""
+    if not template:
+        return ""
+    if lang:
+        attr = f"voice_id_{lang}"
+        v = getattr(template, attr, None)
+        if v:
+            return v
+    return template.voice_id or ""
