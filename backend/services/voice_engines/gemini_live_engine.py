@@ -113,6 +113,16 @@ class GeminiLiveEngine(VoiceEngine):
                                 "audio": {"mimeType": "audio/pcm;rate=16000", "data": b64}
                             }
                         }))
+                    elif msg.get("type") == "system_update":
+                        # Cambio en caliente de personalidad/pedagogia
+                        text = (msg.get("text") or "").strip()
+                        if text:
+                            await google_ws.send(json.dumps({
+                                "clientContent": {
+                                    "turns": [{"role": "user", "parts": [{"text": f"[ACTUALIZACIÓN DE SISTEMA] {text}"}]}],
+                                    "turnComplete": False,
+                                }
+                            }))
                     elif msg.get("type") == "end":
                         await google_ws.close()
                         return

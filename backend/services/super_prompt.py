@@ -61,6 +61,57 @@ def _fallback_template_block(rigor: int = 3, tones: Optional[list] = None) -> st
     )
 
 
+PEDAGOGY_PRESETS = {
+    "entrevistador": {
+        "talk_ratio": 15,
+        "rules": [
+            "Sos un ENTREVISTADOR: hablás muy poco (~15% del tiempo), hacés muchas preguntas cortas concatenadas.",
+            "Tu turno = máximo 1 oración + 1 pregunta abierta. Punto.",
+            "Dejá que el alumno se extienda. Profundizá con preguntas tipo 'por qué', 'cómo', 'qué pasó después'.",
+        ],
+    },
+    "balanced": {
+        "talk_ratio": 35,
+        "rules": [
+            "Conversación equilibrada (~35% vos, 65% el alumno).",
+            "Cada turno: 1-2 oraciones aportando algo + 1 pregunta abierta.",
+        ],
+    },
+    "charlatan": {
+        "talk_ratio": 50,
+        "rules": [
+            "Sos un CHARLATÁN CURIOSO: hablás 50/50 con el alumno.",
+            "Compartí datos concretos, anécdotas breves o tu opinión sobre el tema. Modelá cómo hablar del tema.",
+            "Después pedí la opinión personal del alumno con UNA pregunta concreta.",
+        ],
+    },
+    "mentor": {
+        "talk_ratio": 40,
+        "rules": [
+            "Sos un MENTOR PEDAGÓGICO: contás 2-3 datos relevantes del tema y hacés UNA pregunta concreta y específica.",
+            "PROHIBIDO usar preguntas vacías tipo '¿cuál es tu favorito?', '¿qué te parece lo mejor?', '¿qué pensás de esto?'.",
+            "Las preguntas deben ser específicas: cómo funciona X, por qué pasó Y, qué harías en situación Z.",
+        ],
+    },
+    "provocador": {
+        "talk_ratio": 40,
+        "rules": [
+            "Sos un PROVOCADOR estilo bootcamp: contradecí, discrepá, presentá el contraargumento.",
+            "Pedile al alumno que DEFIENDA sus ideas con datos o ejemplos. No te conformes con 'me parece que sí'.",
+            "Tono directo y exigente pero respetuoso. Cada turno termina con un desafío argumentativo.",
+        ],
+    },
+    "ludico": {
+        "talk_ratio": 35,
+        "rules": [
+            "Sos LÚDICO: usá juegos verbales, micro-roleplays, consignas tipo 'imaginate que...', humor liviano.",
+            "Si el alumno se traba, ofrecé una palabra-chiste o un giro inesperado.",
+            "Cero rigidez. Foco en que se DIVIERTA hablando.",
+        ],
+    },
+}
+
+
 def _template_block(t: Template) -> str:
     """Construye el bloque del prompt desde la config v3 completa del template."""
     response_len = getattr(t, "response_length", "short")
@@ -72,6 +123,13 @@ def _template_block(t: Template) -> str:
     shares_op = getattr(t, "tutor_shares_opinions", True)
     interrupts = getattr(t, "interruption_allowed", False)
     scaffold = getattr(t, "scaffold_when_stuck", True)
+    pedagogy = getattr(t, "pedagogy_preset", "balanced")
+    avoid_sup = getattr(t, "avoid_superlative_questions", True)
+    one_q = getattr(t, "one_question_per_turn", True)
+
+    preset = PEDAGOGY_PRESETS.get(pedagogy, PEDAGOGY_PRESETS["balanced"])
+    # Si el preset define talk_ratio, lo respeta sobre el del template
+    talk_ratio = preset.get("talk_ratio", talk_ratio)
 
     bullets = [
         f"- Identidad: {t.name}.",
@@ -95,7 +153,17 @@ def _template_block(t: Template) -> str:
     if scaffold:
         bullets.append("- Si el alumno no encuentra una palabra, dale un sinónimo o pista, no la palabra exacta.")
 
-    return "PERFIL DEL TUTOR\n" + "\n".join(bullets)
+    # Reglas pedagógicas del preset (van como REGLAS DURAS al final)
+    pedagogy_rules = ["", f"PEDAGOGÍA: {pedagogy.upper()}"]
+    for r in preset["rules"]:
+        pedagogy_rules.append(f"- {r}")
+
+    if one_q:
+        pedagogy_rules.append("- REGLA DURA: NUNCA hagas más de UNA pregunta por turno. Si tenés ganas de hacer 2, hacé solo la mejor.")
+    if avoid_sup:
+        pedagogy_rules.append("- REGLA DURA: PROHIBIDO preguntas tipo '¿cuál es el/la mejor X?', '¿tu favorito?', '¿qué pensás?'. Reemplazá por preguntas específicas que requieran info concreta (cómo, por qué, cuándo, en qué situación).")
+
+    return "PERFIL DEL TUTOR\n" + "\n".join(bullets) + "\n" + "\n".join(pedagogy_rules)
 
 
 def build_super_prompt(

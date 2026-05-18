@@ -319,6 +319,49 @@ function TemplateEditView({ onMenu }: { onMenu: () => void }) {
               <input className="input" value={t.description} onChange={(e) => update({ description: e.target.value })} style={{ marginTop: 8, fontSize: 13, height: 36 }} placeholder="Descripción breve" />
             </Section>
 
+            {/* 0. Personalidad pedagógica (PRESETS) */}
+            <Section title="Personalidad pedagógica" subtitle="Elegí cómo se comporta el tutor en la conversación. Cada preset ajusta cuánto habla, qué tipo de preguntas hace y cómo interactúa.">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 6 }}>
+                {([
+                  { id: 'entrevistador', name: 'Entrevistador', desc: 'Habla poco. Hace muchas preguntas cortas. Para alumnos que necesitan hablar más.' },
+                  { id: 'balanced', name: 'Conversación pareja', desc: '50/50. Aporta y pregunta en partes iguales. Default seguro.' },
+                  { id: 'charlatan', name: 'Charlatán curioso', desc: 'Habla bastante. Cuenta data y modela cómo hablar del tema.' },
+                  { id: 'mentor', name: 'Mentor pedagógico', desc: 'Comparte info y hace preguntas específicas. Sin "cuál es tu favorito".' },
+                  { id: 'provocador', name: 'Provocador/Bootcamp', desc: 'Discrepa, contradice, pide defensa de ideas. Para B2+.' },
+                  { id: 'ludico', name: 'Lúdico', desc: 'Juegos verbales, micro-roleplays, humor liviano.' },
+                ] as const).map((p) => {
+                  const active = (t as any).pedagogy_preset === p.id
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => update({ pedagogy_preset: p.id } as any)}
+                      style={{
+                        textAlign: 'left', cursor: 'pointer', padding: '12px 14px',
+                        borderRadius: 12, border: `1.5px solid ${active ? 'var(--primary)' : 'var(--border-1)'}`,
+                        background: active ? 'var(--primary-tint)' : 'var(--surface)',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-1)', marginBottom: 4 }}>{p.name}</div>
+                      <div style={{ fontSize: 12, color: 'var(--fg-3)', lineHeight: 1.4 }}>{p.desc}</div>
+                    </button>
+                  )
+                })}
+              </div>
+              <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px dashed var(--border-1)' }}>
+                <ToggleRow t="Una sola pregunta por turno" s="Prohibe que el tutor encadene 2-3 preguntas al mismo tiempo" on={(t as any).one_question_per_turn ?? true} onChange={(v) => update({ one_question_per_turn: v } as any)} />
+                <ToggleRow t="Evitar preguntas tipo '¿cuál es el mejor?'" s="Reemplaza por preguntas específicas (cómo, por qué, cuándo)" on={(t as any).avoid_superlative_questions ?? true} onChange={(v) => update({ avoid_superlative_questions: v } as any)} />
+              </div>
+            </Section>
+
+            {/* 0b. Voz - cadencia/expresividad */}
+            <Section title="Voz del tutor" subtitle="Cómo suena. Afecta la velocidad, la expresividad y cuánto tarda en responder.">
+              <SliderRow label="Velocidad de habla" hint="70 = más lento · 130 = más rápido" value={(t as any).voice_speed ?? 100} min={70} max={130} step={5} suffix="%" onChange={(v) => update({ voice_speed: v } as any)} />
+              <SliderRow label="Estabilidad de voz" hint="0 = muy expresiva (varía mucho) · 100 = muy estable (uniforme)" value={(t as any).voice_stability ?? 50} min={0} max={100} step={5} onChange={(v) => update({ voice_stability: v } as any)} />
+              <SliderRow label="Estilo emocional" hint="0 = plano · 100 = muy emotivo" value={(t as any).voice_style ?? 30} min={0} max={100} step={5} onChange={(v) => update({ voice_style: v } as any)} />
+              <SliderRow label="Espera antes de hablar (ms)" hint="500ms = responde rápido · 3000ms = te deja respirar" value={t.silence_tolerance_ms} min={300} max={3500} step={100} suffix="ms" onChange={(v) => update({ silence_tolerance_ms: v })} />
+            </Section>
+
             {/* 1. Conversación */}
             <Section title="1 · Conversación" subtitle="Cómo habla el tutor durante la charla">
               <SelectRow

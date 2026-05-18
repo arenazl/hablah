@@ -35,6 +35,17 @@ class Template(Base):
     voice_id_es = Column(String(80), nullable=True)
     voice_id_pt = Column(String(80), nullable=True)
 
+    # Pedagogia (preset + reglas concretas inyectadas al super_prompt)
+    pedagogy_preset = Column(String(40), nullable=False, default="balanced")
+    # entrevistador | balanced | charlatan | mentor | provocador | ludico
+    avoid_superlative_questions = Column(Boolean, nullable=False, default=True)
+    one_question_per_turn = Column(Boolean, nullable=False, default=True)
+
+    # Voz ElevenLabs - settings de cadencia
+    voice_speed = Column(Integer, nullable=False, default=100)        # 70..130 (%)
+    voice_stability = Column(Integer, nullable=False, default=50)     # 0..100
+    voice_style = Column(Integer, nullable=False, default=30)         # 0..100 (expresividad emocional)
+
     # UI
     icon_bg = Column(String(40), nullable=False, default="#00B37E")  # CSS color
     is_preset = Column(Boolean, nullable=False, default=False)

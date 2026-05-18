@@ -230,5 +230,15 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     [pushAudioFromTutor],
   )
 
-  return { start, stop, status, transcript }
+  const sendSystemUpdate = useCallback((text: string) => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      try {
+        wsRef.current.send(JSON.stringify({ type: 'system_update', text }))
+        return true
+      } catch { return false }
+    }
+    return false
+  }, [])
+
+  return { start, stop, status, transcript, sendSystemUpdate }
 }

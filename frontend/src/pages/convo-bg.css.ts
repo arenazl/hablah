@@ -119,4 +119,24 @@ export const CONVO_BG_CSS = `
 .bg-picker .bgp-3 { background: #000 linear-gradient(rgba(0,179,126,.4) 1px, transparent 1px) 0 0 / 6px 6px; }
 .bg-picker .bgp-4 { background: #000; box-shadow: inset 2px 3px 0 #5EE0B0, inset -3px -2px 0 #00B37E, inset 5px -4px 0 #7CE7BD; }
 .bg-picker .bgp-5 { background: radial-gradient(circle, transparent 30%, #00B37E66 31%, transparent 33%, transparent 60%, #00B37E33 61%, transparent 63%); }
+
+/* ============== PEDAGOGY PICKER (botonera estilo tutor en vivo) ============== */
+.ped-picker {
+  position: absolute; top: 18px; left: 18px; z-index: 50;
+  display: flex; gap: 6px; padding: 5px;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.08); border-radius: 999px;
+}
+.ped-picker button {
+  width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.18);
+  cursor: pointer; padding: 0; transition: all .15s var(--ease);
+  display: grid; place-items: center;
+  font-family: var(--font-display, 'Inter'); font-weight: 700; font-size: 12px;
+  background: rgba(255,255,255,.04); color: rgba(255,255,255,.7);
+}
+.ped-picker button:hover { border-color: rgba(255,255,255,.45); transform: scale(1.08); color: #fff; }
+.ped-picker button.active {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+  box-shadow: 0 0 12px rgba(0,179,126,.4);
+}
 `

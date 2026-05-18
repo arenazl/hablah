@@ -169,17 +169,30 @@ async def feedback_audio(
 
     # Voz del tutor de esa sesión segun target_language del user
     voice_id = None
+    tpl = None
     if s.template_id:
         tpl = (await db.execute(select(Template).where(Template.id == s.template_id))).scalar_one_or_none()
         if tpl:
             voice_id = template_voice_for_lang(tpl, current.target_language, user=current) or None
 
+    # Aplicar voice settings configurables del template
+    vs = _voice_settings_from_template(tpl)
     try:
-        audio = await elevenlabs_synth(text, voice_id=voice_id)
+        audio = await elevenlabs_synth(text, voice_id=voice_id, **vs)
     except Exception as e:
         raise HTTPException(500, f"TTS falló: {e}")
 
     return Response(content=audio, media_type="audio/mpeg")
+
+
+def _voice_settings_from_template(tpl):
+    """Mapea los enteros 0..100 del template a los floats 0..1 que espera ElevenLabs."""
+    if not tpl:
+        return {}
+    return {
+        "stability": (getattr(tpl, "voice_stability", 50) or 50) / 100.0,
+        "style": (getattr(tpl, "voice_style", 30) or 30) / 100.0,
+    }
 
 
 @router.get("/{session_id}/summary-audio")
@@ -201,13 +214,15 @@ async def summary_audio(
         raise HTTPException(404, f"No hay summary en {lang}")
 
     voice_id = None
+    tpl_for_summary = None
     if s.template_id:
-        tpl = (await db.execute(select(Template).where(Template.id == s.template_id))).scalar_one_or_none()
-        if tpl and tpl.voice_id:
-            voice_id = tpl.voice_id
+        tpl_for_summary = (await db.execute(select(Template).where(Template.id == s.template_id))).scalar_one_or_none()
+        if tpl_for_summary:
+            voice_id = template_voice_for_lang(tpl_for_summary, lang, user=current) or tpl_for_summary.voice_id
 
+    vs = _voice_settings_from_template(tpl_for_summary)
     try:
-        audio = await elevenlabs_synth(text, voice_id=voice_id)
+        audio = await elevenlabs_synth(text, voice_id=voice_id, **vs)
     except Exception as e:
         raise HTTPException(500, f"TTS fallo: {e}")
 

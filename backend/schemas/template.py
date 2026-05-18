@@ -17,6 +17,13 @@ class TemplateBase(BaseModel):
     voice_id_en: Optional[str] = None
     voice_id_es: Optional[str] = None
     voice_id_pt: Optional[str] = None
+    # v6 pedagogia + voice sliders
+    pedagogy_preset: Optional[str] = "balanced"
+    avoid_superlative_questions: Optional[bool] = True
+    one_question_per_turn: Optional[bool] = True
+    voice_speed: Optional[int] = 100
+    voice_stability: Optional[int] = 50
+    voice_style: Optional[int] = 30
     icon_bg: str = "#00B37E"
     is_preset: bool = False
     version: str = "v1.0"
@@ -63,6 +70,12 @@ class TemplateUpdate(BaseModel):
     voice_id_en: Optional[str] = None
     voice_id_es: Optional[str] = None
     voice_id_pt: Optional[str] = None
+    pedagogy_preset: Optional[str] = None
+    avoid_superlative_questions: Optional[bool] = None
+    one_question_per_turn: Optional[bool] = None
+    voice_speed: Optional[int] = None
+    voice_stability: Optional[int] = None
+    voice_style: Optional[int] = None
     icon_bg: Optional[str] = None
     status: Optional[str] = None
 

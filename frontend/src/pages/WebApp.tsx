@@ -919,10 +919,13 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const [interestQuery, setInterestQuery] = useState('')
   const [interestCategory, setInterestCategory] = useState<string>('all')
   const [convoBg, setConvoBg] = useState<number>(() => {
-    const v = parseInt(localStorage.getItem('convo_bg') || '0', 10)
-    return Number.isFinite(v) && v >= 0 && v <= 5 ? v : 0
+    const stored = localStorage.getItem('convo_bg')
+    if (stored === null) return 3  // Grid default
+    const v = parseInt(stored, 10)
+    return Number.isFinite(v) && v >= 0 && v <= 5 ? v : 3
   })
   useEffect(() => { localStorage.setItem('convo_bg', String(convoBg)) }, [convoBg])
+  const [pedagogy, setPedagogy] = useState<string>('balanced')
   const startedRef = useRef(false)
 
   // Cargo catálogo completo para que el usuario pueda elegir cualquiera, no solo sus intereses
@@ -1254,6 +1257,12 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     {endedReport && <SessionReportOverlay report={endedReport} sessionId={sessionId!} onClose={() => nav('/app')} />}
     <div className={`convo-view bg-${convoBg}`}>
       <BgPicker value={convoBg} onChange={setConvoBg} />
+      <PedagogyPicker value={pedagogy} onChange={(p, label) => {
+        setPedagogy(p)
+        const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
+        const ok = live.sendSystemUpdate(`Cambio de estilo: a partir de ahora actua como ${label}. ${instruction}`)
+        toast.success(ok ? `Tutor ahora en modo: ${label}` : 'Conectá primero')
+      }} />
       <div className="convo-stage">
         <div className="convo-header">
           <div>
@@ -3001,6 +3010,42 @@ function BgPicker({ value, onChange }: { value: number; onChange: (n: number) =>
           aria-label={o.label}
           aria-pressed={value === o.id}
         />
+      ))}
+    </div>
+  )
+}
+
+const PEDAGOGY_OPTIONS = [
+  { id: 'entrevistador', label: 'Entrevistador', short: 'E', desc: 'Habla poco, pregunta mucho' },
+  { id: 'balanced',      label: 'Equilibrado',   short: 'B', desc: '50/50' },
+  { id: 'charlatan',     label: 'Charlatán',     short: 'C', desc: 'Cuenta y pregunta' },
+  { id: 'mentor',        label: 'Mentor',        short: 'M', desc: 'Info + pregunta concreta' },
+  { id: 'provocador',    label: 'Provocador',    short: 'P', desc: 'Discrepa, te desafía' },
+  { id: 'ludico',        label: 'Lúdico',        short: 'L', desc: 'Juegos verbales' },
+]
+const PEDAGOGY_INSTRUCTIONS = {
+  entrevistador: 'Hablá muy poco. Máximo 1 oración por turno + 1 pregunta corta. Dejá que el alumno se extienda.',
+  balanced: 'Conversación equilibrada. 1-2 oraciones aportando + 1 pregunta abierta.',
+  charlatan: 'Contá data concreta o anécdota breve sobre el tema. Después pedí opinión personal con 1 pregunta.',
+  mentor: 'Contá 2-3 datos relevantes + 1 pregunta ESPECÍFICA. PROHIBIDO preguntas tipo "cuál es el mejor X" o "cuál es tu favorito".',
+  provocador: 'Discrepá, contradecí, pedí al alumno que defienda sus ideas con datos. Tono exigente pero respetuoso.',
+  ludico: 'Usá juegos verbales, micro-roleplays, humor liviano. Cero rigidez.',
+} as const
+
+function PedagogyPicker({ value, onChange }: { value: string; onChange: (id: string, label: string) => void }) {
+  return (
+    <div className="ped-picker" role="radiogroup" aria-label="Estilo del tutor">
+      {PEDAGOGY_OPTIONS.map((o) => (
+        <button
+          key={o.id}
+          className={value === o.id ? 'active' : ''}
+          onClick={() => onChange(o.id, o.label)}
+          title={`${o.label} — ${o.desc}`}
+          aria-label={o.label}
+          aria-pressed={value === o.id}
+        >
+          {o.short}
+        </button>
       ))}
     </div>
   )

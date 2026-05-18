@@ -128,6 +128,16 @@ export interface Template {
   silence_tolerance_ms: number
   interruption_allowed: boolean
   scaffold_when_stuck: boolean
+  // v6 pedagogia + voz
+  pedagogy_preset?: 'entrevistador' | 'balanced' | 'charlatan' | 'mentor' | 'provocador' | 'ludico'
+  avoid_superlative_questions?: boolean
+  one_question_per_turn?: boolean
+  voice_speed?: number
+  voice_stability?: number
+  voice_style?: number
+  voice_id_en?: string
+  voice_id_es?: string
+  voice_id_pt?: string
 }
 
 export const templatesAPI = {
