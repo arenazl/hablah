@@ -1407,14 +1407,40 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
       const ct = res.headers.get('content-type') || ''
       if (!ct.includes('audio')) throw new Error('La respuesta no es audio')
       const blob = await res.blob()
-      const audio = new Audio(URL.createObjectURL(blob))
+      if (blob.size === 0) throw new Error('El audio vino vacio')
+      const blobUrl = URL.createObjectURL(blob)
+      const audio = new Audio()
+      audio.preload = 'auto'
+      audio.src = blobUrl
       audioRef.current = audio
 
-      // Web Audio analyzer para el visualizer
+      // Esperar a que el browser pueda reproducir (carga metadata)
+      await new Promise<void>((resolve, reject) => {
+        const onCanPlay = () => { cleanup(); resolve() }
+        const onErr = () => {
+          cleanup()
+          const code = audio.error?.code
+          const msgs: Record<number, string> = {
+            1: 'aborted', 2: 'network', 3: 'decode error (audio corrupto)', 4: 'src no soportado',
+          }
+          reject(new Error(`Audio error: ${msgs[code || 0] || 'desconocido'}`))
+        }
+        const cleanup = () => {
+          audio.removeEventListener('canplaythrough', onCanPlay)
+          audio.removeEventListener('error', onErr)
+        }
+        audio.addEventListener('canplaythrough', onCanPlay, { once: true })
+        audio.addEventListener('error', onErr, { once: true })
+        // safety timeout
+        setTimeout(() => { cleanup(); resolve() }, 4000)
+      })
+
+      // Web Audio analyzer para el visualizer (best-effort, no bloquea)
       try {
         const AC = window.AudioContext || (window as any).webkitAudioContext
         const ac = acRef.current || new AC()
         acRef.current = ac
+        if (ac.state === 'suspended') await ac.resume()
         const src = ac.createMediaElementSource(audio)
         const analyser = ac.createAnalyser()
         analyser.fftSize = 256
@@ -1429,14 +1455,15 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
           rafRef.current = requestAnimationFrame(tick)
         }
         tick()
-      } catch {
-        // fallback sin analyser
+      } catch (e) {
+        console.warn('[summary-audio] analyser disabled:', e)
       }
 
       audio.onended = () => {
         setPlaying(false)
         setAudioLevel(0)
         if (rafRef.current) cancelAnimationFrame(rafRef.current)
+        URL.revokeObjectURL(blobUrl)
       }
       await audio.play()
       setPlaying(true)
