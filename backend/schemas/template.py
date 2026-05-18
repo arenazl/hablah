@@ -14,6 +14,9 @@ class TemplateBase(BaseModel):
     tones: list[str] = []
     voice_id: str = ""
     voice_label: str = ""
+    voice_id_en: Optional[str] = None
+    voice_id_es: Optional[str] = None
+    voice_id_pt: Optional[str] = None
     icon_bg: str = "#00B37E"
     is_preset: bool = False
     version: str = "v1.0"
@@ -57,6 +60,9 @@ class TemplateUpdate(BaseModel):
     tones: Optional[list[str]] = None
     voice_id: Optional[str] = None
     voice_label: Optional[str] = None
+    voice_id_en: Optional[str] = None
+    voice_id_es: Optional[str] = None
+    voice_id_pt: Optional[str] = None
     icon_bg: Optional[str] = None
     status: Optional[str] = None
 
