@@ -50,17 +50,18 @@ export function useAgentAudioVisualizerAura(
     targetsRef.current = STATE_TARGETS[status] || STATE_TARGETS.idle
   }, [status])
 
-  // Cuando hay nivel de audio (alumno hablando), pulsamos scale + brightness
+  // Cuando hay nivel de audio (alumno o tutor hablando), pulsamos scale + brightness + amplitude
   useEffect(() => {
     const base = STATE_TARGETS[status] || STATE_TARGETS.idle
     if (status === 'speaking' || status === 'listening') {
-      // Mezcla audio level (0..1) → boost de scale y brightness
-      const boost = Math.min(1, audioLevel * 5)
+      // Boost dramático según RMS real del audio (0..1)
+      const boost = Math.min(1, audioLevel * 6)
       targetsRef.current = {
         ...base,
-        scale: base.scale + boost * 0.12,
-        brightness: base.brightness + boost * 0.8,
-        amplitude: base.amplitude + boost * 0.4,
+        scale: base.scale + boost * 0.25,           // 0.30 -> 0.55 (casi 2x)
+        brightness: 0.6 + boost * 1.6,              // 0.6 quieto -> 2.2 fuerte
+        amplitude: base.amplitude + boost * 1.4,    // 1.0 -> 2.4
+        speed: base.speed + boost * 40,             // 20 -> 60 cuando habla fuerte
       }
     } else {
       targetsRef.current = base
@@ -85,14 +86,11 @@ export function useAgentAudioVisualizerAura(
       }
       currentRef.current = next
 
-      // Pulso de brightness para connecting/listening (efecto "respira")
+      // Pulso de brightness solo durante connecting (cargando). Quieto = quieto.
       const now = performance.now()
       const elapsed = (now - tStartRef.current) / 1000
       if (status === 'connecting') {
         const pulse = 0.5 + 1.0 * (0.5 + 0.5 * Math.sin(elapsed * 5))
-        next.brightness = pulse
-      } else if (status === 'listening' && audioLevel < 0.02) {
-        const pulse = 1.5 + 0.4 * (0.5 + 0.5 * Math.sin(elapsed * 3))
         next.brightness = pulse
       }
 
