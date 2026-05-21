@@ -26,28 +26,16 @@ from models.template import Template
 
 QUICK_USERS = [
     {
-        "email": "lucas@hablah.app",
+        "email": "alumno@hablah.app",
         "password": "123",
-        "nombre": "Lucas",
-        "apellido": "Méndez",
+        "nombre": "Alumno",
+        "apellido": "",
         "role": UserRole.student,
-        "cefr_level": "B2",
-        "plan": "pro",
-        "tutor_slug": "sincerist",
-        "streak_days": 12,
-        "streak_best": 14,
-    },
-    {
-        "email": "nico@hablah.app",
-        "password": "123",
-        "nombre": "Nico",
-        "apellido": "Arenas",
-        "role": UserRole.student,
-        "cefr_level": "B1",
+        "cefr_level": "A1",
         "plan": "free",
         "tutor_slug": "coach",
-        "streak_days": 3,
-        "streak_best": 5,
+        "streak_days": 0,
+        "streak_best": 0,
     },
     {
         "email": "coach@hablah.app",
@@ -83,10 +71,11 @@ async def main() -> None:
                 existing.role = cfg["role"]
                 existing.nombre = cfg["nombre"]
                 existing.apellido = cfg["apellido"]
+                existing.cefr_level = cfg["cefr_level"]
                 existing.hashed_password = get_password_hash(cfg["password"])
                 if template_id:
                     existing.active_template_id = template_id
-                print(f"[update] {cfg['email']} (id={existing.id}) role={cfg['role'].value}")
+                print(f"[update] {cfg['email']} (id={existing.id}) role={cfg['role'].value} cefr={cfg['cefr_level']}")
             else:
                 u = User(
                     email=cfg["email"],

@@ -65,7 +65,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const token = data.access_token
     localStorage.setItem('token', token)
     api.defaults.headers.common.Authorization = `Bearer ${token}`
-    setUser(data.user)
+    // Pedir /me para tener los datos frescos (nivel, nombre, etc) y no
+    // el snapshot que devolvió /auth/login (puede estar cacheado).
+    try {
+      const me = await authAPI.me()
+      setUser(me)
+    } catch {
+      setUser(data.user)
+    }
   }
 
   const logout = () => {
