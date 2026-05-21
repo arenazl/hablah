@@ -984,8 +984,22 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     topicsAPI.list().then(setExtraTopics).catch(() => {})
   }, [])
 
+  const freqBinsRef = useRef<Float32Array | null>(null)
+  const [, forceRerender] = useState(0)
+  const rerenderRafRef = useRef<number | null>(null)
+
   const live = useLiveVoice({
     onAudioLevel: onAudioLevelTick,
+    onAudioFrequencies: (bins) => {
+      freqBinsRef.current = bins
+      // throttle re-render a ~30fps para que las barras animen sin matar perf
+      if (rerenderRafRef.current === null) {
+        rerenderRafRef.current = requestAnimationFrame(() => {
+          rerenderRafRef.current = null
+          forceRerender((n) => (n + 1) % 1000)
+        })
+      }
+    },
     onError: (e) => toast.error(e.message),
   })
 
@@ -1420,9 +1434,23 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
 
         <div className="mic-row">
           <div className="mic-wave">
-            {Array.from({ length: 32 }).map((_, i) => (
-              <i key={i} style={{ height: `${20 + Math.abs(Math.sin(i * 0.5 + audioLevel * 30)) * 80}%` }} />
-            ))}
+            {(() => {
+              const N = 48
+              const bins = freqBinsRef.current
+              return Array.from({ length: N }).map((_, i) => {
+                let h = 8  // altura mínima cuando hay silencio
+                if (bins && bins.length > 0) {
+                  // Sampleo el array de frecuencias para que entre en N barras
+                  // Tomo bandas bajas-medias (skip muy bajas e infra-agudas)
+                  const start = 2
+                  const end = Math.min(bins.length, Math.floor(bins.length * 0.7))
+                  const idx = start + Math.floor((i / N) * (end - start))
+                  const v = bins[idx] || 0
+                  h = Math.max(8, Math.min(100, v * 130))  // amp
+                }
+                return <i key={i} style={{ height: `${h}%` }} />
+              })
+            })()}
           </div>
           <div style={{ fontSize: 12, color: 'rgba(232,236,234,.6)', flexShrink: 0 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: live.status === 'listening' ? '#E5484D' : '#9CA3AF', display: 'inline-block', marginRight: 6 }} />

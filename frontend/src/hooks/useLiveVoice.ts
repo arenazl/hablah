@@ -21,6 +21,8 @@ export interface UseLiveVoiceOptions {
   onTranscript?: (line: TranscriptLine) => void
   onError?: (err: Error) => void
   onAudioLevel?: (level: number) => void
+  /** Array de frecuencias 0..1 del audio del tutor (real-time FFT). Para waveform en vivo. */
+  onAudioFrequencies?: (bins: Float32Array) => void
 }
 
 export type LiveStatus = 'idle' | 'connecting' | 'listening' | 'speaking' | 'error' | 'ended'
@@ -141,18 +143,28 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     // NO conectar a destination - es solo un tap, no debe duplicar el audio
     analyserRef.current = analyser
 
-    // Loop que lee el level REAL del audio saliendo por parlantes
-    const buf = new Uint8Array(analyser.frequencyBinCount)
+    // Loop que lee el level + frecuencias REALES del audio saliendo por parlantes
+    const timeBuf = new Uint8Array(analyser.frequencyBinCount)
+    const freqBuf = new Uint8Array(analyser.frequencyBinCount)
+    const freqNorm = new Float32Array(analyser.frequencyBinCount)
     const tick = () => {
       if (!analyserRef.current) return
-      analyserRef.current.getByteTimeDomainData(buf)
+      // RMS para el aura
+      analyserRef.current.getByteTimeDomainData(timeBuf)
       let sumSq = 0
-      for (let i = 0; i < buf.length; i++) {
-        const v = (buf[i] - 128) / 128  // 0..255 -> -1..1
+      for (let i = 0; i < timeBuf.length; i++) {
+        const v = (timeBuf[i] - 128) / 128
         sumSq += v * v
       }
-      const rms = Math.sqrt(sumSq / buf.length)
+      const rms = Math.sqrt(sumSq / timeBuf.length)
       optsRef.current.onAudioLevel?.(Math.min(1, rms * 3))
+
+      // Espectro para waveform en vivo
+      if (optsRef.current.onAudioFrequencies) {
+        analyserRef.current.getByteFrequencyData(freqBuf)
+        for (let i = 0; i < freqBuf.length; i++) freqNorm[i] = freqBuf[i] / 255
+        optsRef.current.onAudioFrequencies(freqNorm)
+      }
       analyserRafRef.current = requestAnimationFrame(tick)
     }
     analyserRafRef.current = requestAnimationFrame(tick)
