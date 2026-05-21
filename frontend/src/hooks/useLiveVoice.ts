@@ -44,10 +44,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const procRef = useRef<ScriptProcessorNode | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
 
-  // Cola de reproducción del audio del tutor
+  // Cola de reproducción del audio del tutor (scheduling continuo sin gaps)
   const playCtxRef = useRef<AudioContext | null>(null)
   const playQueueRef = useRef<Float32Array[]>([])
   const playingRef = useRef(false)
+  const nextStartTimeRef = useRef<number>(0)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const analyserRafRef = useRef<number | null>(null)
 
@@ -106,31 +107,23 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   useEffect(() => () => stop(), [stop])
 
   const playNextChunk = useCallback(() => {
-    if (playingRef.current) return
     const ctx = playCtxRef.current
     if (!ctx) return
-    const chunk = playQueueRef.current.shift()
-    if (!chunk) {
-      playingRef.current = false
-      return
+    // Schedule TODOS los chunks pendientes ahora con tiempos exactos para evitar gaps
+    while (playQueueRef.current.length > 0) {
+      const chunk = playQueueRef.current.shift()!
+      const buf = ctx.createBuffer(1, chunk.length, 24000)
+      buf.getChannelData(0).set(chunk)
+      const src = ctx.createBufferSource()
+      src.buffer = buf
+      src.connect(ctx.destination)
+      const analyser = analyserRef.current
+      if (analyser) src.connect(analyser)
+      // Si el proximo start es pasado o muy cercano, agendamos en currentTime + 50ms safety
+      const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + 0.02)
+      src.start(startAt)
+      nextStartTimeRef.current = startAt + buf.duration
     }
-    playingRef.current = true
-    const buf = ctx.createBuffer(1, chunk.length, 24000)
-    buf.getChannelData(0).set(chunk)
-    const src = ctx.createBufferSource()
-    src.buffer = buf
-    // SIEMPRE conectar al destination (audio limpio sin pasar por analyser).
-    // El analyser se conecta en paralelo si existe, NO en serie.
-    src.connect(ctx.destination)
-    const analyser = analyserRef.current
-    if (analyser) {
-      src.connect(analyser)  // tap paralelo, no afecta el audio que sale por parlantes
-    }
-    src.onended = () => {
-      playingRef.current = false
-      playNextChunk()
-    }
-    src.start()
   }, [])
 
   const ensureAnalyser = useCallback(() => {
@@ -143,12 +136,18 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     // NO conectar a destination - es solo un tap, no debe duplicar el audio
     analyserRef.current = analyser
 
-    // Loop que lee el level + frecuencias REALES del audio saliendo por parlantes
+    // Loop a ~30fps (no RAF a 60 que glitchea audio en mobile)
     const timeBuf = new Uint8Array(analyser.frequencyBinCount)
     const freqBuf = new Uint8Array(analyser.frequencyBinCount)
     const freqNorm = new Float32Array(analyser.frequencyBinCount)
-    const tick = () => {
+    let lastTick = 0
+    const FRAME_MS = 33  // ~30fps
+    const tick = (now: number) => {
       if (!analyserRef.current) return
+      analyserRafRef.current = requestAnimationFrame(tick)
+      if (now - lastTick < FRAME_MS) return  // throttle
+      lastTick = now
+
       // RMS para el aura
       analyserRef.current.getByteTimeDomainData(timeBuf)
       let sumSq = 0
@@ -159,13 +158,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       const rms = Math.sqrt(sumSq / timeBuf.length)
       optsRef.current.onAudioLevel?.(Math.min(1, rms * 3))
 
-      // Espectro para waveform en vivo
-      if (optsRef.current.onAudioFrequencies) {
+      // Espectro solo si hay listener Y si hay sonido (skip silencio para no quemar CPU)
+      if (optsRef.current.onAudioFrequencies && rms > 0.005) {
         analyserRef.current.getByteFrequencyData(freqBuf)
         for (let i = 0; i < freqBuf.length; i++) freqNorm[i] = freqBuf[i] / 255
         optsRef.current.onAudioFrequencies(freqNorm)
       }
-      analyserRafRef.current = requestAnimationFrame(tick)
     }
     analyserRafRef.current = requestAnimationFrame(tick)
   }, [])
