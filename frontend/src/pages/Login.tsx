@@ -31,7 +31,9 @@ export function Login() {
   const doLogin = async (emailToUse: string, passwordToUse: string) => {
     setLoading(true)
     try {
-      await login(emailToUse, passwordToUse)
+      // Permitir usuario sin "@" → completamos con @hablah.app
+      const normalized = emailToUse.includes('@') ? emailToUse : `${emailToUse.trim()}@hablah.app`
+      await login(normalized, passwordToUse)
       navigate('/')
     } catch (err: any) {
       toast.error(err.response?.data?.detail ?? 'Error al iniciar sesión')
@@ -155,14 +157,15 @@ export function Login() {
                 className="block text-xs uppercase tracking-wider font-bold mb-1.5"
                 style={{ color: '#5A625F' }}
               >
-                Email
+                Email o usuario
               </label>
               <input
-                type="email"
+                type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                autoComplete="email"
+                autoComplete="username"
+                placeholder="tizi  o  tizi@hablah.app"
                 className="w-full px-4 py-3 rounded-xl border transition-all"
                 style={{
                   borderColor: 'rgba(13,20,18,.14)',
