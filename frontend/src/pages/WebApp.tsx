@@ -1417,9 +1417,27 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               // En A0: extraemos la frase entre comillas (modelo a repetir)
               const phraseMatch = lastAi?.text?.match(/['"“”]([^'"“”]+)['"“”]/)
               const modelPhrase = phraseMatch?.[1]?.trim()
+              // Contador de frases practicadas (= turnos del user en la sesión)
+              const phrasesDone = live.transcript.filter(l => l.who === 'user' && l.text.trim().length > 0).length
+              const A0_GOAL = 10
               if (isA0 && modelPhrase) {
+                const progressPct = Math.min(100, (phrasesDone / A0_GOAL) * 100)
                 return (
                   <div style={{ textAlign: 'center', padding: '10px 16px' }}>
+                    <div style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      gap: 10, marginBottom: 14,
+                    }}>
+                      <span style={{ fontSize: 11, color: 'rgba(232,236,234,.6)', textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 700 }}>
+                        Frases logradas
+                      </span>
+                      <span style={{ fontSize: 13, color: 'white', fontWeight: 800 }}>
+                        {phrasesDone} / {A0_GOAL}
+                      </span>
+                      <div style={{ width: 120, height: 4, background: 'rgba(255,255,255,.1)', borderRadius: 999, overflow: 'hidden' }}>
+                        <div style={{ width: `${progressPct}%`, height: '100%', background: '#00B37E', transition: 'width 320ms ease' }} />
+                      </div>
+                    </div>
                     <div style={{ fontSize: 11, color: 'rgba(232,236,234,.55)', textTransform: 'uppercase', letterSpacing: '.16em', marginBottom: 12, fontWeight: 700 }}>
                       Repetí esta frase
                     </div>
