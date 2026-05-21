@@ -295,11 +295,21 @@ export const WEBAPP_CSS = `
   }
 }
 @media (max-width: 880px) {
-  .webapp-root .convo-orb-area { padding: 4px; min-height: 0; overflow: hidden; }
-  /* En mobile: orb cuadrado fijo, el min de 4 valores lo recorta lo que pase */
+  .webapp-root .convo-orb-area {
+    padding: 4px; min-height: 0; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* En mobile: orb FIJO chico - mejor que entre con respiracion que que se vea grande y cortado */
   .webapp-root .convo-orb-wrap {
-    width: min(72vw, 240px, 28dvh);
-    height: min(72vw, 240px, 28dvh);
+    width: 200px !important;
+    height: 200px !important;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;  /* recorta lo que pinta el shader fuera del circulo */
+  }
+  .webapp-root .convo-orb-wrap > * {
+    width: 100% !important;
+    height: 100% !important;
   }
   /* Practicar pre-charla: 3 cards en columna */
   .webapp-root .practicar-page .pp-quick { grid-template-columns: 1fr; gap: 10px; }
