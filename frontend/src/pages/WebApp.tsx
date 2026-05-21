@@ -2704,7 +2704,7 @@ function LanguageCard({ profile, onChange }: { profile: MeProfile; onChange: () 
 }
 
 const LEVEL_STEPS = [
-  { cefr: 'A0', name: 'Cero inglés',    desc: 'Modo repeat after me · el coach guía cada frase', color: '#FFB800' },
+  { cefr: 'A0', name: 'Nivel inicial',  desc: 'Cero base · el coach guía y modela cada frase', color: '#FFB800' },
   { cefr: 'A1', name: 'Recién empiezo', desc: 'Frases cortas, mucho refuerzo', color: '#5EE0B0' },
   { cefr: 'A2', name: 'Me defiendo',    desc: 'Charla simple, perdona errores chicos', color: '#1FC18E' },
   { cefr: 'B1', name: 'Hablo OK',       desc: 'Equilibrio fluidez y precisión', color: '#00B37E' },
