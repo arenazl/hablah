@@ -36,6 +36,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   useEffect(() => { optsRef.current = opts })
 
   const wsRef = useRef<WebSocket | null>(null)
+  const pingIntervalRef = useRef<number | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
   const procRef = useRef<ScriptProcessorNode | null>(null)
@@ -55,6 +56,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   }, [])
 
   const stop = useCallback(() => {
+    if (pingIntervalRef.current) {
+      window.clearInterval(pingIntervalRef.current)
+      pingIntervalRef.current = null
+    }
     try {
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({ type: 'end' }))
@@ -198,6 +203,13 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
       ws.onopen = () => {
         setStatus('listening')
+        // Keepalive ping cada 25s para evitar que Heroku/proxies maten el WS por idle
+        if (pingIntervalRef.current) window.clearInterval(pingIntervalRef.current)
+        pingIntervalRef.current = window.setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            try { ws.send(JSON.stringify({ type: 'ping' })) } catch {}
+          }
+        }, 25000)
         const ctx = new AudioContext({ sampleRate: 16000 })
         audioCtxRef.current = ctx
         const source = ctx.createMediaStreamSource(stream)

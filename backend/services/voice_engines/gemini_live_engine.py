@@ -124,15 +124,22 @@ class GeminiLiveEngine(VoiceEngine):
                                 }
                             }))
                     elif msg.get("type") == "system_update":
-                        # Cambio en caliente de personalidad/pedagogia
+                        # Cambio en caliente: lo mandamos como "user note" silencioso.
+                        # turnComplete: True para no romper el turno actual.
                         text = (msg.get("text") or "").strip()
                         if text:
                             await google_ws.send(json.dumps({
                                 "clientContent": {
-                                    "turns": [{"role": "user", "parts": [{"text": f"[ACTUALIZACIÓN DE SISTEMA] {text}"}]}],
-                                    "turnComplete": False,
+                                    "turns": [{"role": "user", "parts": [{"text": text}]}],
+                                    "turnComplete": True,
                                 }
                             }))
+                    elif msg.get("type") == "ping":
+                        # Keepalive del frontend - solo ACK, no propagar a Gemini
+                        try:
+                            await ws.send_json({"type": "pong"})
+                        except Exception:
+                            pass
                     elif msg.get("type") == "end":
                         await google_ws.close()
                         return
