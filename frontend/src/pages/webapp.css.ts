@@ -242,7 +242,7 @@ export const WEBAPP_CSS = `
   grid-template-columns: 1fr 380px;
   overflow: hidden;
 }
-.webapp-root .convo-stage { display: flex; flex-direction: column; min-width: 0; padding: 24px 32px; }
+.webapp-root .convo-stage { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 16px 24px; overflow: hidden; }
 .webapp-root .convo-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
 .webapp-root .convo-header h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; margin: 0; }
 .webapp-root .convo-header .meta { display: flex; gap: 14px; align-items: center; margin-top: 6px; font-size: 12px; color: rgba(232,236,234,.6); }
@@ -252,10 +252,10 @@ export const WEBAPP_CSS = `
 }
 .webapp-root .convo-header .end { background: rgba(229,72,77,.15); color: #FF6B70; border: 1px solid rgba(229,72,77,.3); }
 
-.webapp-root .convo-orb-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 20px; min-height: 0; }
+.webapp-root .convo-orb-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 12px; min-height: 0; overflow: hidden; }
 .webapp-root .convo-orb-wrap {
-  width: min(440px, 60vw, 60dvh);
-  height: min(440px, 60vw, 60dvh);
+  width: min(360px, 50vw, 42dvh);
+  height: min(360px, 50vw, 42dvh);
   position: relative;
   flex-shrink: 0;
 }
@@ -325,9 +325,9 @@ export const WEBAPP_CSS = `
 .webapp-root .convo-orb::before { inset: -28px; border: 1px solid rgba(0,179,126,.3); }
 .webapp-root .convo-orb::after  { inset: -64px; border: 1px solid rgba(0,179,126,.13); }
 
-.webapp-root .convo-turn { margin-top: 32px; text-align: center; }
-.webapp-root .convo-turn .l { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(232,236,234,.55); margin-bottom: 14px; }
-.webapp-root .convo-turn .q { font-size: 19px; max-width: 580px; line-height: 1.45; color: rgba(232,236,234,.85); font-style: italic; }
+.webapp-root .convo-turn { margin-top: 14px; text-align: center; max-height: 30dvh; overflow-y: auto; padding: 0 8px; }
+.webapp-root .convo-turn .l { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(232,236,234,.55); margin-bottom: 8px; }
+.webapp-root .convo-turn .q { font-size: 17px; max-width: 580px; line-height: 1.4; color: rgba(232,236,234,.9); font-style: italic; }
 .webapp-root .convo-turn .q b { color: white; font-style: normal; font-weight: 600; }
 
 .webapp-root .challenge-float {
