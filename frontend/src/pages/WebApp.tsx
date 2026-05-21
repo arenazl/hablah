@@ -2980,7 +2980,7 @@ function TopicPick({ title, category, variant = 'catalog', position, hot, onClic
     titleColor = 'white'
   } else if (variant === 'interest') {
     cardStyle = {
-      background: `linear-gradient(180deg, ${meta.bg} 0%, white 38%)`,
+      background: 'var(--surface)',
       border: '1px solid var(--border-1)',
       borderTop: `3px solid ${meta.color}`,
       boxShadow: '0 1px 2px rgba(13,20,18,.04)',
