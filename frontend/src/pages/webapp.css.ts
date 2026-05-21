@@ -126,11 +126,12 @@ export const WEBAPP_CSS = `
 
 .webapp-root .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .webapp-root .topbar {
-  background: rgba(250,251,250,.86);
+  background: rgba(250,251,250,.92);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border-bottom: 1px solid var(--border-1);
   position: sticky; top: 0; z-index: 30;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 .webapp-root .topbar-inner { height: 64px; display: flex; align-items: center; gap: 16px; padding: 0 32px; }
 .webapp-root .topbar h1 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; margin: 0; }

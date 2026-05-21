@@ -198,29 +198,87 @@ export const HOY_CSS = `
 
 /* ───── MOBILE ───── */
 @media (max-width: 880px){
-  .hoy-page{padding:8px 16px 96px}
-  .hoy-page h1.hp-title{font-size:24px}
-  .hoy-page .hp-sub{font-size:13.5px}
+  .hoy-page{padding:4px 14px 100px}
+
+  /* Greeting compacto, sin redundancia */
+  .hoy-page .hp-greet{padding:2px 0 14px}
+  .hoy-page .hp-eyebrow{font-size:10px}
+  .hoy-page h1.hp-title{font-size:22px;line-height:1.15;margin:4px 0 4px;font-weight:700}
+  .hoy-page .hp-sub{display:none}  /* en mobile, redundante con el hero abajo */
+
   .hoy-page .hp-grid{grid-template-columns:1fr;gap:14px}
-  .hoy-page .hp-hero{display:flex;flex-direction:column;grid-template-columns:none;min-height:auto;height:auto;position:relative}
-  .hoy-page .hp-hero-l{position:relative;z-index:2;padding:20px 18px 18px;gap:10px;width:100%}
-  .hoy-page .hp-hero h2{font-size:24px;line-height:1.1;margin:4px 0;word-wrap:break-word;overflow-wrap:break-word}
-  .hoy-page .hp-hero h2 small{font-size:13.5px;margin-top:6px;max-width:none}
-  .hoy-page .hp-hero-r{position:relative;z-index:2;border-left:0;border-top:1px solid rgba(255,255,255,.10);padding:18px;width:100%}
+
+  /* HERO mobile - editorial, no postal */
+  .hoy-page .hp-hero{
+    display:flex;flex-direction:column;grid-template-columns:none;
+    min-height:auto;height:auto;position:relative;
+    border-radius:24px;
+    background:linear-gradient(165deg,#00B37E 0%,#008F63 45%,#054A3A 100%);
+  }
+  .hoy-page .hp-hero::before{
+    background:
+      radial-gradient(600px 280px at 110% -10%, rgba(255,184,0,.16), transparent 55%),
+      radial-gradient(500px 240px at -10% 110%, rgba(255,255,255,.08), transparent 55%);
+  }
+  .hoy-page .hp-hero-l{position:relative;z-index:2;padding:22px 20px 18px;gap:10px;width:100%}
+  .hoy-page .hp-hero-chips{gap:5px}
+  .hoy-page .hp-chip{font-size:11px;padding:4px 9px}
+  .hoy-page .hp-hero h2{
+    font-size:30px;line-height:1.05;margin:8px 0 2px;
+    word-wrap:break-word;overflow-wrap:break-word;
+    letter-spacing:-0.028em;font-weight:800;
+  }
+  .hoy-page .hp-hero h2 small{display:none}  /* redundante con foco abajo */
+  .hoy-page .hp-hero-meta{
+    font-size:11px;gap:10px;color:rgba(255,255,255,.85);
+    padding:10px 12px;background:rgba(0,0,0,.18);border-radius:12px;
+    margin-top:4px;flex-wrap:wrap;
+  }
+  .hoy-page .hp-hero-r{
+    position:relative;z-index:2;border-left:0;
+    border-top:1px solid rgba(255,255,255,.10);
+    padding:16px 20px 20px;width:100%;
+    background:linear-gradient(180deg,rgba(0,0,0,.0),rgba(0,0,0,.25));
+  }
+  .hoy-page .hp-hero-r .hp-label{font-size:10px;margin-bottom:8px}
   .hoy-page .hp-hero .waveform,.hoy-page .hp-hero svg.waveform{display:none !important}
-  .hoy-page .hp-btn{height:44px;padding:0 18px;font-size:14px;flex:1;justify-content:center}
-  .hoy-page .hp-hero-cta{flex-direction:column;width:100%}
-  .hoy-page .hp-hero-cta .hp-btn{width:100%}
-  .hoy-page .hp-hero-meta{font-size:11px;gap:10px}
+
+  /* CTAs - primary alto + ghost compacto */
+  .hoy-page .hp-hero-cta{flex-direction:column;width:100%;gap:8px;margin-top:8px}
+  .hoy-page .hp-hero-cta .hp-btn{width:100%;justify-content:center}
+  .hoy-page .hp-btn-primary{
+    height:54px;font-size:16px;font-weight:700;
+    background:#fff;color:#054A3A;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);
+    letter-spacing:-0.01em;
+  }
+  .hoy-page .hp-btn-primary:active{transform:scale(.98)}
+  .hoy-page .hp-btn-ghost{
+    height:40px;font-size:13px;font-weight:500;
+    background:transparent;border:0;
+    color:rgba(255,255,255,.7);text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .hoy-page .hp-btn-ghost:hover,
+  .hoy-page .hp-btn-ghost:active{background:transparent;color:#fff}
+
+  /* Cards de desafios mas legibles sobre el verde */
+  .hoy-page .hp-prompt{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.16)}
+  .hoy-page .hp-prompt .hp-pt{font-size:13px}
+  .hoy-page .hp-prompt .hp-pt b{background:rgba(255,255,255,.18)}
+
   .hoy-page .hp-rescue h3{font-size:18px}
   .hoy-page .hp-rescue-body{grid-template-columns:1fr;gap:10px}
+
+  /* Sessions row compacto */
   .hoy-page .hp-sess{grid-template-columns:42px 1fr 70px;gap:8px;padding:12px 4px}
   .hoy-page .hp-sess .hp-dur,
   .hoy-page .hp-sess .hp-sess-go{display:none}
   .hoy-page .hp-sess-body .hp-meta{flex-wrap:wrap;gap:6px;font-size:11px}
   .hoy-page .hp-fluency{align-items:flex-end}
   .hoy-page .hp-fluency .hp-fl-num{font-size:13px}
-  .hoy-page .hp-card{padding:14px}
+
+  .hoy-page .hp-card{padding:14px;border-radius:16px}
   .hoy-page .hp-streak-card .hp-big .hp-n{font-size:38px}
   .hoy-page .hp-heatmap{grid-template-columns:repeat(14,1fr);gap:3px}
   .hoy-page .hp-tutor-meters{grid-template-columns:1fr}
