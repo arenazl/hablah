@@ -240,7 +240,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
             rms += s * s
           }
           rms = Math.sqrt(rms / input.length)
-          optsRef.current.onAudioLevel?.(rms)
+          // Boost x4 para que matchee la escala del audio del tutor (que viene * 3)
+          optsRef.current.onAudioLevel?.(Math.min(1, rms * 4))
           const bytes = new Uint8Array(pcm.buffer)
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
