@@ -50,6 +50,18 @@ QUICK_USERS = [
         "streak_best": 0,
     },
     {
+        "email": "tizi@hablah.app",
+        "password": "123",
+        "nombre": "Tizi",
+        "apellido": "",
+        "role": UserRole.student,
+        "cefr_level": "A0",
+        "plan": "free",
+        "tutor_slug": "coach",
+        "streak_days": 0,
+        "streak_best": 0,
+    },
+    {
         "email": "coach@hablah.app",
         "password": "123",
         "nombre": "Coach",
