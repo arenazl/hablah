@@ -31,7 +31,7 @@ QUICK_USERS = [
         "nombre": "Alumno",
         "apellido": "",
         "role": UserRole.student,
-        "cefr_level": "A1",
+        "cefr_level": "A0",
         "plan": "free",
         "tutor_slug": "coach",
         "streak_days": 0,

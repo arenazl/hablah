@@ -827,7 +827,7 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
 
 /* ── helpers de Hoy ── */
 function nextCefr(level: string): string {
-  const order = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+  const order = ['A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
   const idx = order.indexOf(level)
   return idx >= 0 && idx < order.length - 1 ? order[idx + 1] : 'C2'
 }
@@ -1413,6 +1413,41 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
             {/* Lo último que dijo el tutor — siempre visible para no perderse */}
             {(() => {
               const lastAi = [...live.transcript].reverse().find(l => l.who === 'ai')
+              const isA0 = profile?.user?.cefr_level === 'A0'
+              // En A0: extraemos la frase entre comillas (modelo a repetir)
+              const phraseMatch = lastAi?.text?.match(/['"“”]([^'"“”]+)['"“”]/)
+              const modelPhrase = phraseMatch?.[1]?.trim()
+              if (isA0 && modelPhrase) {
+                return (
+                  <div style={{ textAlign: 'center', padding: '10px 16px' }}>
+                    <div style={{ fontSize: 11, color: 'rgba(232,236,234,.55)', textTransform: 'uppercase', letterSpacing: '.16em', marginBottom: 12, fontWeight: 700 }}>
+                      Repetí esta frase
+                    </div>
+                    <div style={{
+                      fontSize: 'clamp(22px, 4vw, 36px)', fontWeight: 700, letterSpacing: '-.02em',
+                      color: 'white', lineHeight: 1.2, marginBottom: 14,
+                      fontFamily: 'Inter, sans-serif',
+                    }}>
+                      "{modelPhrase}"
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => live.say(`Por favor repetí lentamente y con buena pronunciación esta frase exacta, una sola vez, sin agregar nada más: "${modelPhrase}"`)}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 8,
+                        background: 'rgba(0,179,126,.18)', color: '#9CFCD2',
+                        border: '1px solid rgba(156,252,210,.3)', borderRadius: 999,
+                        padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                      </svg>
+                      Escuchar de nuevo
+                    </button>
+                  </div>
+                )
+              }
               if (lastAi) {
                 return (
                   <div className="q" style={{ fontStyle: 'normal', color: 'white' }}>
@@ -2669,6 +2704,7 @@ function LanguageCard({ profile, onChange }: { profile: MeProfile; onChange: () 
 }
 
 const LEVEL_STEPS = [
+  { cefr: 'A0', name: 'Cero inglés',    desc: 'Modo repeat after me · el coach guía cada frase', color: '#FFB800' },
   { cefr: 'A1', name: 'Recién empiezo', desc: 'Frases cortas, mucho refuerzo', color: '#5EE0B0' },
   { cefr: 'A2', name: 'Me defiendo',    desc: 'Charla simple, perdona errores chicos', color: '#1FC18E' },
   { cefr: 'B1', name: 'Hablo OK',       desc: 'Equilibrio fluidez y precisión', color: '#00B37E' },
@@ -3113,7 +3149,7 @@ function TopicPick({ title, category, variant = 'catalog', position, hot, onClic
 
 /* ──────── helpers ──────── */
 function cefrPct(level: string): number {
-  return { A1: 8, A2: 18, B1: 34, B2: 62, C1: 84, C2: 95 }[level] ?? 30
+  return { A0: 2, A1: 8, A2: 18, B1: 34, B2: 62, C1: 84, C2: 95 }[level] ?? 30
 }
 function formatDay(iso: string): string {
   if (!iso) return ''

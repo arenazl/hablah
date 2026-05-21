@@ -46,7 +46,7 @@ export function Login() {
   }
 
   const QUICK_PROFILES = [
-    { email: 'alumno@hablah.app', password: '123', name: 'Alumno', initial: 'A', tag: 'Alumno · A1', color: HABLAH_GREEN },
+    { email: 'alumno@hablah.app', password: '123', name: 'Alumno', initial: 'A', tag: 'Alumno · A0 (cero inglés)', color: HABLAH_GREEN },
     { email: 'alumno2@hablah.app', password: '123', name: 'Alumno 2', initial: '2', tag: 'Alumno · A1', color: '#FFB800' },
     { email: 'coach@hablah.app', password: '123', name: 'Coach', initial: 'C', tag: 'Admin · Backoffice', color: HABLAH_INK },
   ] as const
