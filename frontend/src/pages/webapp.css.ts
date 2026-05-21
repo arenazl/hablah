@@ -252,7 +252,13 @@ export const WEBAPP_CSS = `
 }
 .webapp-root .convo-header .end { background: rgba(229,72,77,.15); color: #FF6B70; border: 1px solid rgba(229,72,77,.3); }
 
-.webapp-root .convo-orb-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 20px; }
+.webapp-root .convo-orb-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 20px; min-height: 0; }
+.webapp-root .convo-orb-wrap { width: min(440px, 60vw); aspect-ratio: 1 / 1; position: relative; max-height: 60vh; }
+@media (max-width: 880px) {
+  .webapp-root .convo-orb-area { padding: 8px; }
+  /* En mobile: orb ocupa el menor entre 55vw, 280px y 38vh - asi NUNCA se corta */
+  .webapp-root .convo-orb-wrap { width: min(55vw, 280px, 38vh); max-height: none; }
+}
 .webapp-root .convo-orb {
   width: 280px; height: 280px; border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, var(--primary) 0%, var(--primary-dark) 60%, #003E2B 100%);
@@ -492,10 +498,19 @@ export const WEBAPP_CSS = `
   .webapp-root .recent-row { grid-template-columns: 56px 1fr auto; gap: 12px; padding: 12px 14px; }
   .webapp-root .recent-row .topic { display: none; }
   .webapp-root .recent-row .when .day-l { font-size: 13px; }
-  .webapp-root .convo-view { grid-template-columns: 1fr; height: calc(100vh - 64px - 64px); }
-  .webapp-root .convo-stage { padding: 16px; }
+  .webapp-root .convo-view {
+    grid-template-columns: 1fr;
+    height: calc(100dvh - 64px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+  .webapp-root .convo-stage { padding: 14px 16px; gap: 8px; }
+  /* Espacio arriba para que el header NO se solape con los pickers absolutos (ped + bg) */
+  .webapp-root .convo-header { margin-bottom: 12px; padding-top: 48px; }
+  .webapp-root .convo-header h2 { font-size: 17px; line-height: 1.2; }
+  .webapp-root .convo-header .meta { flex-wrap: wrap; gap: 6px !important; }
   .webapp-root .convo-orb { width: 200px; height: 200px; }
   .webapp-root .convo-side { display: none; }
+  .webapp-root .convo-turn { padding: 0 8px; }
+  .webapp-root .convo-turn .q { font-size: 14px; line-height: 1.45; }
   .webapp-root .map-grid { grid-template-columns: 1fr; }
   .webapp-root .stage .ball { width: 44px; height: 44px; }
   .webapp-root .history-row { grid-template-columns: 64px 1fr auto; gap: 10px; }

@@ -101,10 +101,14 @@ export const CONVO_BG_CSS = `
 
 /* ============== SELECTOR DE BG (5 botoncitos arriba derecha) ============== */
 .bg-picker {
-  position: absolute; top: 18px; right: 18px; z-index: 50;
+  position: absolute; top: 14px; right: 14px; z-index: 5;
   display: flex; gap: 6px; padding: 5px;
-  background: rgba(0,0,0,.5); backdrop-filter: blur(10px);
+  background: rgba(0,0,0,.55); backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,.08); border-radius: 999px;
+}
+@media (max-width: 880px) {
+  .bg-picker { top: 10px; right: 10px; padding: 4px; gap: 4px; }
+  .bg-picker button { width: 22px; height: 22px; }
 }
 .bg-picker button {
   width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.18);
@@ -122,10 +126,14 @@ export const CONVO_BG_CSS = `
 
 /* ============== PEDAGOGY PICKER (botonera estilo tutor en vivo) ============== */
 .ped-picker {
-  position: absolute; top: 18px; left: 18px; z-index: 50;
+  position: absolute; top: 14px; left: 14px; z-index: 5;
   display: flex; gap: 6px; padding: 5px;
-  background: rgba(0,0,0,.5); backdrop-filter: blur(10px);
+  background: rgba(0,0,0,.55); backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,.08); border-radius: 999px;
+}
+@media (max-width: 880px) {
+  .ped-picker { top: 10px; left: 10px; padding: 3px; gap: 3px; }
+  .ped-picker button { width: 24px; height: 24px; font-size: 10px; }
 }
 .ped-picker button {
   width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.18);

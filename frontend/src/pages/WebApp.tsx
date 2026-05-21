@@ -1383,7 +1383,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
         </div>
 
         <div className="convo-orb-area">
-          <div style={{ width: 'min(440px, 60vw)', aspectRatio: '1 / 1', position: 'relative' }}>
+          <div className="convo-orb-wrap">
             <AgentAudioVisualizerAura
               status={live.status}
               audioLevel={audioLevel}
