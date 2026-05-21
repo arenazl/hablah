@@ -1419,12 +1419,12 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
         </div>
 
         <div className="mic-row">
-          <div className="mic-wave" style={{ flex: '0 0 auto' }}>
-            {Array.from({ length: 18 }).map((_, i) => (
+          <div className="mic-wave">
+            {Array.from({ length: 32 }).map((_, i) => (
               <i key={i} style={{ height: `${20 + Math.abs(Math.sin(i * 0.5 + audioLevel * 30)) * 80}%` }} />
             ))}
           </div>
-          <div style={{ fontSize: 12, color: 'rgba(232,236,234,.6)', marginLeft: 'auto' }}>
+          <div style={{ fontSize: 12, color: 'rgba(232,236,234,.6)', flexShrink: 0 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: live.status === 'listening' ? '#E5484D' : '#9CA3AF', display: 'inline-block', marginRight: 6 }} />
             {live.status === 'listening' ? 'GRABANDO' : live.status.toUpperCase()}
           </div>
@@ -2888,7 +2888,7 @@ function AddInterestCard({ profile, onChange }: { profile: MeProfile; onChange: 
             style={{
               display: 'flex', alignItems: 'center', gap: 10,
               padding: '10px 12px', borderRadius: 10,
-              background: 'white', border: '1px solid var(--border-1)',
+              background: 'var(--surface)', border: '1px solid var(--border-1)',
               cursor: 'pointer', textAlign: 'left',
             }}
           >
@@ -2997,7 +2997,7 @@ function TopicPick({ title, category, variant = 'catalog', position, hot, onClic
     titleColor = 'white'
   } else {
     cardStyle = {
-      background: 'white', border: '1px solid var(--border-1)',
+      background: 'var(--surface)', border: '1px solid var(--border-1)',
     }
     iconBoxStyle = { background: meta.bg, color: meta.color }
     categoryTextColor = meta.color

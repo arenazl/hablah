@@ -347,8 +347,8 @@ export const WEBAPP_CSS = `
   padding: 18px 24px; background: var(--ink-2);
   border-radius: 16px; margin-top: 22px;
 }
-.webapp-root .mic-wave { flex: 1; display: flex; align-items: center; gap: 4px; height: 36px; }
-.webapp-root .mic-wave i { display: block; width: 3px; background: var(--primary); border-radius: 2px; opacity: .9; }
+.webapp-root .mic-wave { flex: 1; display: flex; align-items: center; gap: 4px; height: 36px; min-width: 0; overflow: hidden; }
+.webapp-root .mic-wave i { display: block; width: 3px; min-width: 3px; flex-shrink: 0; background: var(--primary); border-radius: 2px; opacity: .9; }
 .webapp-root .mic-controls { display: flex; gap: 8px; }
 .webapp-root .mic-btn { width: 44px; height: 44px; border-radius: 999px; display: grid; place-items: center; border: 0; color: white; }
 .webapp-root .mic-btn.pause { background: rgba(255,255,255,.08); }
