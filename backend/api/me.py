@@ -11,7 +11,7 @@ from models.template import Template, Topic, UserInterest, TopicProgress, Sessio
 
 router = APIRouter()
 
-CEFR_ORDER = ["A1", "A2", "B1", "B2", "C1", "C2"]
+CEFR_ORDER = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"]
 
 
 @router.get("/profile")
@@ -224,8 +224,8 @@ async def level_progress(
     )).scalars().all()
     avg_score = float(sum(last_scores)) / len(last_scores) if last_scores else 0.0
 
-    # Banda CEFR: A1=0..30, A2=30..45, B1=45..60, B2=60..75, C1=75..90, C2=90..100
-    bands = {"A1": (0, 30), "A2": (30, 45), "B1": (45, 60), "B2": (60, 75), "C1": (75, 90), "C2": (90, 100)}
+    # Banda CEFR: A0=0..15, A1=15..30, A2=30..45, B1=45..60, B2=60..75, C1=75..90, C2=90..100
+    bands = {"A0": (0, 15), "A1": (15, 30), "A2": (30, 45), "B1": (45, 60), "B2": (60, 75), "C1": (75, 90), "C2": (90, 100)}
     lo, hi = bands.get(current_level, (45, 60))
     if hi == lo:
         pct = 0
