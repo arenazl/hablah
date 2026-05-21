@@ -47,12 +47,6 @@ export function Login() {
     await doLogin(email, password)
   }
 
-  const QUICK_PROFILES = [
-    { email: 'alumno@hablah.app', password: '123', name: 'Alumno', initial: 'A', tag: 'Alumno · A0 (cero inglés)', color: HABLAH_GREEN },
-    { email: 'alumno2@hablah.app', password: '123', name: 'Alumno 2', initial: '2', tag: 'Alumno · A1', color: '#FFB800' },
-    { email: 'coach@hablah.app', password: '123', name: 'Coach', initial: 'C', tag: 'Admin · Backoffice', color: HABLAH_INK },
-  ] as const
-
   return (
     <div
       className="h-screen w-full flex overflow-hidden"
@@ -241,36 +235,6 @@ export function Login() {
               {!loading && <ArrowRight className="h-4 w-4" />}
             </button>
           </form>
-
-          <div className="mt-6">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex-1 h-px" style={{ background: 'rgba(13,20,18,.14)' }} />
-              <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: '#5A625F' }}>
-                Acceso rápido demo
-              </span>
-              <div className="flex-1 h-px" style={{ background: 'rgba(13,20,18,.14)' }} />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              {QUICK_PROFILES.map((p) => (
-                <button
-                  key={p.email}
-                  onClick={() => doLogin(p.email, p.password)}
-                  disabled={loading}
-                  className="group flex flex-col items-center gap-1.5 p-4 rounded-xl border transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50"
-                  style={{ background: 'white', borderColor: 'rgba(13,20,18,.14)' }}
-                >
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-extrabold"
-                    style={{ background: p.color }}
-                  >
-                    {p.initial}
-                  </div>
-                  <div className="text-sm font-bold" style={{ color: '#0D1412' }}>{p.name}</div>
-                  <div className="text-[11px]" style={{ color: '#5A625F' }}>{p.tag}</div>
-                </button>
-              ))}
-            </div>
-          </div>
 
           <div className="mt-6 text-center text-xs" style={{ color: '#5A625F' }}>
             ¿Todavía no tenés cuenta?{' '}
