@@ -253,11 +253,64 @@ export const WEBAPP_CSS = `
 .webapp-root .convo-header .end { background: rgba(229,72,77,.15); color: #FF6B70; border: 1px solid rgba(229,72,77,.3); }
 
 .webapp-root .convo-orb-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 20px; min-height: 0; }
-.webapp-root .convo-orb-wrap { width: min(440px, 60vw); aspect-ratio: 1 / 1; position: relative; max-height: 60vh; }
+.webapp-root .convo-orb-wrap {
+  width: min(440px, 60vw, 60dvh);
+  height: min(440px, 60vw, 60dvh);
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* ============== REPORT OVERLAY (split-screen al cerrar charla) ============== */
+.webapp-root .report-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000; color: white;
+  display: grid; grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+.webapp-root .report-pane-left {
+  overflow-y: auto;
+  padding: 40px 32px 40px 48px;
+  background: var(--bg-1, #FAFBFA);
+  color: var(--fg-1, #0D1412);
+}
+.webapp-root .report-pane-right {
+  position: relative; background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 32px;
+}
 @media (max-width: 880px) {
-  .webapp-root .convo-orb-area { padding: 8px; }
-  /* En mobile: orb ocupa el menor entre 55vw, 280px y 38vh - asi NUNCA se corta */
-  .webapp-root .convo-orb-wrap { width: min(55vw, 280px, 38vh); max-height: none; }
+  .webapp-root .report-overlay {
+    /* En mobile: stack vertical, derecha arriba (orb), izquierda abajo (reporte scrolleable) */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .webapp-root .report-pane-right {
+    order: -1;  /* el orb arriba */
+    padding: calc(24px + env(safe-area-inset-top, 0px)) 20px 20px;
+    min-height: 38dvh; max-height: 45dvh;
+  }
+  .webapp-root .report-pane-left {
+    padding: 22px 18px calc(100px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (max-width: 880px) {
+  .webapp-root .convo-orb-area { padding: 4px; min-height: 0; overflow: hidden; }
+  /* En mobile: orb cuadrado fijo, el min de 4 valores lo recorta lo que pase */
+  .webapp-root .convo-orb-wrap {
+    width: min(72vw, 240px, 28dvh);
+    height: min(72vw, 240px, 28dvh);
+  }
+  /* Practicar pre-charla: 3 cards en columna */
+  .webapp-root .practicar-page .pp-quick { grid-template-columns: 1fr; gap: 10px; }
+  .webapp-root .practicar-page .pp-qc { min-height: 100px; padding: 16px; }
+  /* Garantizar que ningun bloque rompa el ancho de la viewport */
+  .webapp-root, .webapp-root * { max-width: 100%; }
+  .webapp-root img, .webapp-root svg, .webapp-root canvas { max-width: 100%; height: auto; }
+}
+@media (max-width: 880px) and (max-height: 700px) {
+  /* Pantallas mas chicas (iphone SE / Android compacto): orb aun mas chico */
+  .webapp-root .convo-orb-wrap { width: min(60vw, 200px, 24dvh); height: min(60vw, 200px, 24dvh); }
 }
 .webapp-root .convo-orb {
   width: 280px; height: 280px; border-radius: 50%;

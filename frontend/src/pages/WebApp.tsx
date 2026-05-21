@@ -1603,14 +1603,9 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
-      background: '#000', color: 'white',
-      display: 'grid', gridTemplateColumns: '1fr 1fr',
-      overflow: 'hidden',
-    }}>
+    <div className="report-overlay">
       {/* Izquierda: reporte */}
-      <div style={{ overflowY: 'auto', padding: '40px 32px 40px 48px', background: 'var(--bg-1, #FAFBFA)', color: 'var(--fg-1, #0D1412)' }}>
+      <div className="report-pane-left">
         <SessionReport
           sessionId={sessionId}
           initial={report}
@@ -1632,11 +1627,7 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
       </div>
 
       {/* Derecha: visualizer + toggle ES/EN */}
-      <div style={{
-        position: 'relative', background: '#000',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '40px 32px',
-      }}>
+      <div className="report-pane-right">
         {/* Toggle ES/EN */}
         <div style={{
           position: 'absolute', top: 32, left: '50%', transform: 'translateX(-50%)',
@@ -1660,7 +1651,7 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
         </div>
 
         {/* Visualizer aura */}
-        <div style={{ width: 'min(440px, 80%)', aspectRatio: '1 / 1', position: 'relative' }}>
+        <div className="convo-orb-wrap">
           <AgentAudioVisualizerAura
             status={playing ? 'speaking' : 'listening'}
             audioLevel={audioLevel}
