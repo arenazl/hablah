@@ -50,18 +50,17 @@ export function useAgentAudioVisualizerAura(
     targetsRef.current = STATE_TARGETS[status] || STATE_TARGETS.idle
   }, [status])
 
-  // Cuando hay nivel de audio (alumno o tutor hablando), pulsamos scale + brightness + amplitude
+  // Cuando hay nivel de audio (alumno o tutor hablando), pulsamos scale + brightness
   useEffect(() => {
     const base = STATE_TARGETS[status] || STATE_TARGETS.idle
     if (status === 'speaking' || status === 'listening') {
-      // Boost dramático según RMS real del audio (0..1)
-      const boost = Math.min(1, audioLevel * 6)
+      // Boost SUTIL para no romper la forma del shader (valores originales que funcionaban)
+      const boost = Math.min(1, audioLevel * 5)
       targetsRef.current = {
         ...base,
-        scale: base.scale + boost * 0.25,           // 0.30 -> 0.55 (casi 2x)
-        brightness: 0.6 + boost * 1.6,              // 0.6 quieto -> 2.2 fuerte
-        amplitude: base.amplitude + boost * 1.4,    // 1.0 -> 2.4
-        speed: base.speed + boost * 40,             // 20 -> 60 cuando habla fuerte
+        scale: base.scale + boost * 0.12,
+        brightness: base.brightness + boost * 0.8,
+        amplitude: base.amplitude + boost * 0.4,
       }
     } else {
       targetsRef.current = base
