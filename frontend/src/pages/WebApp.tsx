@@ -300,7 +300,7 @@ function TopBar({ profile, onMenuClick }: { profile: MeProfile | null; onMenuCli
                 role="menu"
                 style={{
                   position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                  minWidth: 240, background: 'white',
+                  minWidth: 240, background: 'var(--surface)',
                   border: '1px solid var(--border-1)', borderRadius: 12,
                   boxShadow: '0 14px 32px rgba(13,20,18,.16)',
                   padding: 6, zIndex: 50,
@@ -1218,7 +1218,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
                 </div>
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 8,
-                  background: 'white', border: '1px solid var(--border-1)', borderRadius: 999,
+                  background: 'var(--surface)', border: '1px solid var(--border-1)', borderRadius: 999,
                   padding: '6px 12px', minWidth: 260, flex: '0 1 320px',
                   boxShadow: '0 1px 2px rgba(13,20,18,.04)',
                 }}>
@@ -1275,7 +1275,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               {filtered.length === 0 ? (
                 <div style={{
                   padding: 28, borderRadius: 14, border: '1px dashed var(--border-1)',
-                  background: 'white', textAlign: 'center', color: 'var(--fg-3)', fontSize: 13,
+                  background: 'var(--surface)', textAlign: 'center', color: 'var(--fg-3)', fontSize: 13,
                 }}>
                   Ningún interés coincide con “{interestQuery}”.
                 </div>
@@ -1743,7 +1743,7 @@ function SessionReport({ sessionId, initial, actions }: SessionReportProps) {
 
   return (
     <div style={{
-      maxWidth: 760, width: '100%', background: 'white', borderRadius: 24,
+      maxWidth: 760, width: '100%', background: 'var(--surface)', borderRadius: 24,
       boxShadow: '0 24px 80px rgba(0,0,0,.4)', overflow: 'hidden',
     }}>
       {/* HEADER */}
@@ -2871,8 +2871,8 @@ function AddInterestCard({ profile, onChange }: { profile: MeProfile; onChange: 
         onChange={(e) => setQ(e.target.value)}
         style={{
           width: '100%', padding: '10px 12px', borderRadius: 10,
-          border: '1px solid var(--border-2)', background: 'white',
-          fontSize: 13, marginBottom: 12, outline: 'none',
+          border: '1px solid var(--border-2)', background: 'var(--surface)',
+          color: 'var(--fg-1)', fontSize: 13, marginBottom: 12, outline: 'none',
         }}
       />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto' }}>

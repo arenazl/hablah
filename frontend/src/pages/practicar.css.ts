@@ -15,6 +15,23 @@ export const PRACTICAR_CSS = `
   --pp-font-display:'Sora','Inter',ui-sans-serif,system-ui,sans-serif;
 }
 
+[data-theme="dark"] .practicar-page,
+[data-theme="dark"] .webapp-root .practicar-page{
+  --pp-bg-2:#1B2421;
+  --pp-surface:#161E1B;
+  --pp-border-1:rgba(232,236,234,.08);
+  --pp-border-2:rgba(232,236,234,.14);
+  --pp-border-3:rgba(232,236,234,.22);
+  --pp-fg-1:#E8ECEA;
+  --pp-fg-3:#B6BDB9;
+  --pp-fg-4:#8E938F;
+  --pp-shadow-card:0 1px 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
+}
+[data-theme="dark"] .practicar-page .pp-qc input,
+[data-theme="dark"] .practicar-page .pp-free-input input{
+  background:var(--pp-bg-2);color:var(--pp-fg-1);border-color:var(--pp-border-2);
+}
+
 /* ───── QUICK START STRIP ───── */
 .practicar-page .pp-quick{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px;margin-bottom:24px}
 @media (max-width:880px){.practicar-page .pp-quick{grid-template-columns:1fr;gap:10px}}
