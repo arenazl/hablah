@@ -42,6 +42,15 @@ class User(Base):
 
     plan = Column(String(40), nullable=False, default="free")  # free, pro, bootcamp
 
+    # ─── Kids module ────────────────────────────────────────────────
+    # Si parent_user_id != null, este user es un perfil hijo dentro de la cuenta adulta.
+    parent_user_id = Column(Integer, nullable=True, index=True)
+    age_group = Column(String(10), nullable=True)  # 'mini' (4-7) | 'junior' (8-12) | None (adulto)
+    kid_coins = Column(Integer, nullable=False, default=0)
+    kid_rank_slug = Column(String(40), nullable=False, default="curioso")  # curioso | explorador | aventurero | capitan | embajador
+    kid_charlas_count = Column(Integer, nullable=False, default=0)
+    kid_avatar_color = Column(String(20), nullable=False, default="#FF6AA9")
+
     # Preferencias aprendidas en vivo durante las charlas (override del template).
     # El user dice "corrige menos" en voz alta → un detector lo persiste aquí
     # y se aplica en el super_prompt de la próxima sesión. Keys posibles:

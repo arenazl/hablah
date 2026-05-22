@@ -242,6 +242,31 @@ export function Login() {
               Empezá gratis
             </a>
           </div>
+
+          <div className="mt-5 pt-5" style={{ borderTop: '1px dashed rgba(13,20,18,.12)' }}>
+            <button
+              type="button"
+              onClick={() => navigate('/kids')}
+              className="w-full py-3 rounded-xl font-bold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
+              style={{
+                background: '#FFF7DD',
+                color: '#7A5800',
+                border: '2px solid #FFB800',
+                fontSize: 14,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#FFE9A6'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#FFF7DD'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              <span style={{ background: '#FFB800', color: '#3A2A00', padding: '2px 8px', borderRadius: 6, fontSize: 10, letterSpacing: '.08em' }}>KIDS</span>
+              Entrar al modo Habi
+            </button>
+          </div>
         </div>
       </div>
     </div>

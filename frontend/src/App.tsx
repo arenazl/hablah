@@ -8,6 +8,7 @@ import { Tutors } from './pages/landing/Tutors'
 import { Topics } from './pages/landing/Topics'
 import { Pricing } from './pages/landing/Pricing'
 import { Faq } from './pages/landing/Faq'
+import { KidsHome } from './pages/kids/KidsHome'
 import { WebApp } from './pages/WebApp'
 import { Backoffice } from './pages/Backoffice'
 
@@ -62,6 +63,8 @@ export default function App() {
         <Route path="/topicos" element={<Topics />} />
         <Route path="/precios" element={<Pricing />} />
         <Route path="/faq" element={<Faq />} />
+        <Route path="/kids" element={<KidsHome />} />
+        <Route path="/kids/*" element={<KidsHome />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/app/*"

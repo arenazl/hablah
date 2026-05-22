@@ -1,6 +1,7 @@
 from .user import User, UserRole
 from .push_subscription import PushSubscription
 from .template import Template, Topic, Session, ErrorLog, TopicProgress, UserInterest
+from .kids import AchievementCatalog, UserAchievement
 
 __all__ = [
     "User",
@@ -12,4 +13,6 @@ __all__ = [
     "ErrorLog",
     "TopicProgress",
     "UserInterest",
+    "AchievementCatalog",
+    "UserAchievement",
 ]
