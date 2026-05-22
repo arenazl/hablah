@@ -173,9 +173,20 @@ export function KidsSession() {
     navigate('/kids')
   }
 
-  // Status visual del orb
-  const orbStatus: 'idle' | 'speaking' = live.status === 'speaking' ? 'speaking' : 'idle'
-  const orbAudio = live.status === 'speaking' || live.status === 'listening' ? Math.max(0.3, audioLevel) : 0.2
+  // Status visual del orb: 'speaking' siempre que haya audio activo
+  // (tanto cuando Habi habla COMO cuando el chico habla — el audioLevel
+  // del mic hace palpitar el orb en tiempo real).
+  const orbStatus: 'idle' | 'speaking' =
+    live.status === 'speaking' || live.status === 'listening' ? 'speaking' : 'idle'
+
+  // Cuando el chico habla, usamos su audioLevel real (RMS del mic).
+  // Cuando Habi habla, usamos un valor más alto para que el orb palpite fuerte.
+  const orbAudio =
+    live.status === 'speaking'
+      ? Math.max(0.5, audioLevel)
+      : live.status === 'listening'
+      ? Math.max(0.15, audioLevel * 1.4) // amplificamos un poco la voz del chico
+      : 0.15
 
   const isActive = live.status === 'listening' || live.status === 'speaking' || live.status === 'connecting'
 
