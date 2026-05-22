@@ -2,7 +2,12 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { ThemedToaster } from './components/ThemedToaster'
 import { useAuth } from './contexts/AuthContext'
 import { Login } from './pages/Login'
-import { Landing } from './pages/Landing'
+import { Home as Landing } from './pages/landing/Home'
+import { HowItWorks } from './pages/landing/HowItWorks'
+import { Tutors } from './pages/landing/Tutors'
+import { Topics } from './pages/landing/Topics'
+import { Pricing } from './pages/landing/Pricing'
+import { Faq } from './pages/landing/Faq'
 import { WebApp } from './pages/WebApp'
 import { Backoffice } from './pages/Backoffice'
 
@@ -52,6 +57,11 @@ export default function App() {
     <>
       <Routes>
         <Route path="/" element={<RootRedirect />} />
+        <Route path="/como-funciona" element={<HowItWorks />} />
+        <Route path="/tutores" element={<Tutors />} />
+        <Route path="/topicos" element={<Topics />} />
+        <Route path="/precios" element={<Pricing />} />
+        <Route path="/faq" element={<Faq />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/app/*"
