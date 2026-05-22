@@ -544,23 +544,190 @@ function useFadeInOnScroll() {
   }, [])
 }
 
+interface FaqEntry {
+  q: string
+  a: string
+}
+
+const FAQ_ITEMS: ReadonlyArray<FaqEntry> = [
+  {
+    q: '¿Cómo decide mi nivel sin un examen?',
+    a: 'Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas) y precisión fonética. En 2 a 3 minutos te ubica en el marco CEFR (A1 a C2). Sin opción múltiple, sin presión.',
+  },
+  {
+    q: '¿Qué idiomas están disponibles?',
+    a: 'Hoy: inglés (US y UK), portugués (BR y PT) e italiano. Próximamente francés y alemán. Como alumno base aceptamos español (todas las variantes), portugués e inglés.',
+  },
+  {
+    q: '¿Necesito buena conexión?',
+    a: 'Funciona con 3G estable. El audio se procesa en streaming. Si la conexión se cae, la sesión guarda lo hablado y reanuda al volver.',
+  },
+  {
+    q: '¿Qué pasa con mi audio? ¿Lo guardan?',
+    a: 'Por defecto se borra a los 30 días. Podés cambiarlo a "borrar después de cada sesión" en tu perfil. Nunca lo usamos para entrenar modelos sin tu consentimiento explícito.',
+  },
+  {
+    q: '¿Puedo cancelar Pro cuando quiera?',
+    a: 'Sí, desde la app, en un toque. No hay permanencia. Si cancelás, mantenés tu nivel y rachas, solo pasás al plan Free.',
+  },
+  {
+    q: '¿Sirve para certificaciones (TOEFL, IELTS, Cambridge)?',
+    a: 'Sirve para llegar al nivel, pero no entrena formato de examen. Para eso usamos Bootcamp con coach humano, que arma simulacros específicos.',
+  },
+  {
+    q: '¿Y si soy ultra principiante (A0)?',
+    a: 'The Coach está pensado para vos. Las primeras semanas son híbridas: la IA te tira frases simples, vas repitiendo y construyendo. Al mes ya hacés charlas reales cortas.',
+  },
+]
+
+const STRUCTURED_DATA_ID = 'hablah-landing-jsonld'
+
+function useStructuredData() {
+  useEffect(() => {
+    const existing = document.getElementById(STRUCTURED_DATA_ID)
+    if (existing) existing.remove()
+
+    const faqPage = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: FAQ_ITEMS.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.a,
+        },
+      })),
+    }
+
+    const softwareApp = {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'Habláh',
+      url: 'https://hablah.com.ar/',
+      description:
+        'Plataforma adaptativa de aprendizaje de idiomas con tutores de IA conversacionales. Inglés, portugués e italiano.',
+      applicationCategory: 'EducationalApplication',
+      applicationSubCategory: 'Language Learning',
+      operatingSystem: 'iOS, Android, Web',
+      inLanguage: ['es-AR', 'es', 'en', 'pt', 'it'],
+      isAccessibleForFree: true,
+      offers: [
+        {
+          '@type': 'Offer',
+          name: 'Free',
+          price: '0',
+          priceCurrency: 'USD',
+          category: 'free',
+          description: '1 charla de 5 minutos por día con The Coach.',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Pro',
+          price: '12',
+          priceCurrency: 'USD',
+          category: 'subscription',
+          description:
+            'Charlas ilimitadas, 3 tutores, feedback sincerista completo, modo insistente. 14 días gratis.',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Bootcamp',
+          price: '49',
+          priceCurrency: 'USD',
+          category: 'subscription',
+          description:
+            'Todo lo de Pro más 1 sesión semanal con coach humano y plan a medida.',
+        },
+      ],
+      publisher: {
+        '@type': 'Organization',
+        name: 'Habláh',
+        url: 'https://hablah.com.ar/',
+      },
+    }
+
+    const breadcrumbList = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://hablah.com.ar/' },
+        { '@type': 'ListItem', position: 2, name: 'Cómo funciona', item: 'https://hablah.com.ar/#how' },
+        { '@type': 'ListItem', position: 3, name: 'Tutores', item: 'https://hablah.com.ar/#tutors' },
+        { '@type': 'ListItem', position: 4, name: 'Precios', item: 'https://hablah.com.ar/#pricing' },
+        { '@type': 'ListItem', position: 5, name: 'FAQ', item: 'https://hablah.com.ar/#faq' },
+      ],
+    }
+
+    const script = document.createElement('script')
+    script.id = STRUCTURED_DATA_ID
+    script.type = 'application/ld+json'
+    script.textContent = JSON.stringify([faqPage, softwareApp, breadcrumbList])
+    document.head.appendChild(script)
+
+    return () => {
+      const el = document.getElementById(STRUCTURED_DATA_ID)
+      if (el) el.remove()
+    }
+  }, [])
+}
+
+function setMeta(name: string, content: string, attr: 'name' | 'property' = 'name'): HTMLMetaElement | null {
+  if (typeof document === 'undefined') return null
+  let tag = document.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`)
+  const created = !tag
+  if (!tag) {
+    tag = document.createElement('meta')
+    tag.setAttribute(attr, name)
+    document.head.appendChild(tag)
+  }
+  tag.setAttribute('content', content)
+  return created ? tag : null
+}
+
 export function Landing() {
   useEffect(() => {
     ensureGoogleFont()
+
     const prevTitle = document.title
-    document.title = 'Habláh — Hablás. Aprendés. Sin exámenes.'
+    const prevDescription =
+      document.querySelector<HTMLMetaElement>('meta[name="description"]')?.getAttribute('content') ?? null
+
+    document.title = 'Habláh — Aprender inglés conversando con IA · Sin exámenes'
+
+    const created: HTMLMetaElement[] = []
+    const push = (tag: HTMLMetaElement | null) => {
+      if (tag) created.push(tag)
+    }
+
+    const description =
+      'Aprendé inglés, portugués o italiano hablando 5 minutos por día con un tutor de IA que se adapta a tu nivel, tus intereses y tus errores. Sin lecciones lineales, sin exámenes. 14 días Pro gratis.'
+
+    setMeta('description', description)
+    push(setMeta('og:title', 'Habláh — Aprender inglés conversando con IA · Sin exámenes', 'property'))
+    push(setMeta('og:description', description, 'property'))
+    push(setMeta('og:url', 'https://hablah.com.ar/', 'property'))
+    push(setMeta('og:type', 'website', 'property'))
+    push(setMeta('twitter:title', 'Habláh — Aprender inglés conversando con IA'))
+    push(setMeta('twitter:description', '5 minutos al día con un tutor de IA. Sin exámenes, sin lecciones lineales. 14 días Pro gratis.'))
+
     return () => {
       document.title = prevTitle
+      if (prevDescription !== null) {
+        setMeta('description', prevDescription)
+      }
+      created.forEach((tag) => tag.remove())
     }
   }, [])
 
   useFadeInOnScroll()
+  useStructuredData()
 
   return (
     <div className="landing-root">
       <style>{LANDING_CSS}</style>
 
-      <nav className="nav">
+      <nav className="nav" aria-label="Navegación principal">
         <div className="container nav-inner">
           <a href="#" className="logo">
             <img src="/logos/hablah-mark.svg" alt="habláh" className="logo-mark" width="30" height="30" />
@@ -587,14 +754,15 @@ export function Landing() {
         </div>
       </nav>
 
-      <section className="hero">
+      <main>
+      <section className="hero" aria-labelledby="hero-heading">
         <div className="container hero-grid">
           <div>
             <div className="hero-pill hero-fade-in">
               <span className="dot">NUEVO</span>
               Charlas reales, no flashcards
             </div>
-            <h1 className="hero-fade-in d1">
+            <h1 id="hero-heading" className="hero-fade-in d1">
               Hablás.<br />
               <em>Aprendés.</em>
               <br />
@@ -1034,13 +1202,9 @@ export function Landing() {
             <h2>Preguntas que recibimos seguido.</h2>
           </div>
           <div className="faq-list fade-stagger">
-            <FaqItem q="¿Cómo decide mi nivel sin un examen?" a="Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas) y precisión fonética. En 2 a 3 minutos te ubica en el marco CEFR (A1 a C2). Sin opción múltiple, sin presión." />
-            <FaqItem q="¿Qué idiomas están disponibles?" a="Hoy: inglés (US y UK), portugués (BR y PT) e italiano. Próximamente francés y alemán. Como alumno base aceptamos español (todas las variantes), portugués e inglés." />
-            <FaqItem q="¿Necesito buena conexión?" a="Funciona con 3G estable. El audio se procesa en streaming. Si la conexión se cae, la sesión guarda lo hablado y reanuda al volver." />
-            <FaqItem q="¿Qué pasa con mi audio? ¿Lo guardan?" a={'Por defecto se borra a los 30 días. Podés cambiarlo a "borrar después de cada sesión" en tu perfil. Nunca lo usamos para entrenar modelos sin tu consentimiento explícito.'} />
-            <FaqItem q="¿Puedo cancelar Pro cuando quiera?" a="Sí, desde la app, en un toque. No hay permanencia. Si cancelás, mantenés tu nivel y rachas, solo pasás al plan Free." />
-            <FaqItem q="¿Sirve para certificaciones (TOEFL, IELTS, Cambridge)?" a="Sirve para llegar al nivel, pero no entrena formato de examen. Para eso usamos Bootcamp con coach humano, que arma simulacros específicos." />
-            <FaqItem q="¿Y si soy ultra principiante (A0)?" a="The Coach está pensado para vos. Las primeras semanas son híbridas: la IA te tira frases simples, vas repitiendo y construyendo. Al mes ya hacés charlas reales cortas." />
+            {FAQ_ITEMS.map((item) => (
+              <FaqItem key={item.q} q={item.q} a={item.a} />
+            ))}
           </div>
         </div>
       </section>
@@ -1063,7 +1227,9 @@ export function Landing() {
         </div>
       </section>
 
-      <footer>
+      </main>
+
+      <footer role="contentinfo">
         <div className="container">
           <div className="footer-grid">
             <div className="footer-brand">
