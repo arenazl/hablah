@@ -41,20 +41,20 @@ const STYLES = `
 /* Estado al elegir: la galaxia entra en "selección" */
 .pg-stage.is-selecting .pg-orb-wrapper { animation-play-state: paused; pointer-events: none; }
 .pg-stage.is-selecting .pg-orb-wrapper:not(.is-selected) {
-  transform: translate(-50%, -50%) scale(.72) !important;
+  transform: translate(-50%, -50%) scale(.78) !important;
   opacity: 0;
-  filter: blur(2px);
-  transition: transform 520ms cubic-bezier(.4,0,.2,1), opacity 380ms ease, filter 380ms ease;
+  filter: blur(3px);
+  transition: transform 900ms cubic-bezier(.22,1,.36,1), opacity 700ms ease, filter 700ms ease;
 }
 .pg-stage.is-selecting .pg-orb-wrapper.is-selected {
-  transform: translate(-50%, -50%) scale(2.6) !important;
-  filter: brightness(1.35) saturate(1.4) drop-shadow(0 0 40px rgba(0,179,126,.55));
+  transform: translate(-50%, -50%) scale(2.2) !important;
+  filter: brightness(1.25) saturate(1.3) drop-shadow(0 0 40px rgba(0,179,126,.55));
   z-index: 50;
-  transition: transform 640ms cubic-bezier(.34,1.18,.5,1), filter 520ms ease;
+  transition: transform 1100ms cubic-bezier(.22,1,.36,1), filter 800ms ease;
 }
-.pg-stage.is-selecting .pg-orb-wrapper.is-selected .pg-orb-label { opacity: 0; }
+.pg-stage.is-selecting .pg-orb-wrapper.is-selected .pg-orb-label { opacity: 0; transition: opacity 500ms ease; }
 .pg-stage.is-selecting .pg-hero,
-.pg-stage.is-selecting .pg-footer { opacity: 0; transition: opacity 320ms ease; pointer-events: none; }
+.pg-stage.is-selecting .pg-footer { opacity: 0; transition: opacity 500ms ease; pointer-events: none; }
 `
 
 // Paleta vibrante de 12 colores — se asigna por hash de topic.id
@@ -119,7 +119,7 @@ function generatePositions(count: number, maxRadius: number = 0.38): { x: number
   return positions
 }
 
-const SELECT_ANIM_MS = 560
+const SELECT_ANIM_MS = 950
 
 export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFreeTopic }: Props) {
   const [freeText, setFreeText] = useState('')
