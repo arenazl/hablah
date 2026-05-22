@@ -335,9 +335,9 @@ export const WEBAPP_CSS = `
 .webapp-root .convo-orb::before { inset: -28px; border: 1px solid rgba(0,179,126,.3); }
 .webapp-root .convo-orb::after  { inset: -64px; border: 1px solid rgba(0,179,126,.13); }
 
-.webapp-root .convo-turn { margin-top: 14px; text-align: center; max-height: 30dvh; overflow-y: auto; padding: 0 8px; }
+.webapp-root .convo-turn { margin-top: 14px; text-align: center; max-height: min(50dvh, 320px); min-height: 80px; overflow-y: auto; padding: 0 8px; }
 .webapp-root .convo-turn .l { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(232,236,234,.55); margin-bottom: 8px; }
-.webapp-root .convo-turn .q { font-size: 17px; max-width: 580px; line-height: 1.4; color: rgba(232,236,234,.9); font-style: italic; }
+.webapp-root .convo-turn .q { font-size: 17px; max-width: 720px; margin: 0 auto; line-height: 1.4; color: rgba(232,236,234,.9); font-style: italic; }
 .webapp-root .convo-turn .q b { color: white; font-style: normal; font-weight: 600; }
 
 .webapp-root .challenge-float {
