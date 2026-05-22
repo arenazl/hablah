@@ -58,6 +58,80 @@ LIVE_API_URL = (
 # Modelo más nuevo habilitado en la API key actual (Gemini 3.1 Live preview)
 LIVE_MODEL = "models/gemini-3.1-flash-live-preview"
 
+# Gemini Live tiene un límite duro de ~10 minutos por sesión.
+# Antes de ese límite renovamos transparentemente la sesión.
+GEMINI_SESSION_MAX_SECONDS = 600
+# A los 8:30 avisamos al cliente (1m30 antes del corte).
+WARN_BEFORE_END_SECONDS = 90
+# A los 9:30 forzamos renovación preventiva para no chocar con el GoAway.
+RENEW_BEFORE_END_SECONDS = 30
+
+
+async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
+    """Abre una conexion a Gemini Live + manda el setup + trigger inicial.
+
+    Si transcript_so_far tiene contenido, lo inyectamos como historial para
+    que la sesion renovada continue la conversacion (no arranca de cero).
+    """
+    url = f"{LIVE_API_URL}?key={settings.GEMINI_API_KEY}"
+    google_ws = await websockets.connect(url, max_size=2**24)
+
+    setup = {
+        "setup": {
+            "model": LIVE_MODEL,
+            "generationConfig": {
+                "responseModalities": ["AUDIO"],
+                "speechConfig": {
+                    "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Aoede"}},
+                },
+            },
+            "realtimeInputConfig": {
+                "automaticActivityDetection": {
+                    "disabled": False,
+                    "startOfSpeechSensitivity": "START_SENSITIVITY_HIGH",
+                    "endOfSpeechSensitivity": "END_SENSITIVITY_HIGH",
+                    "prefixPaddingMs": 200,
+                    "silenceDurationMs": ctx.silence_tolerance_ms,
+                },
+                "activityHandling": (
+                    "START_OF_ACTIVITY_INTERRUPTS" if ctx.interruption_allowed else "NO_INTERRUPTION"
+                ),
+            },
+            "inputAudioTranscription": {},
+            "outputAudioTranscription": {},
+            "systemInstruction": {"parts": [{"text": ctx.super_prompt}]},
+        }
+    }
+    await google_ws.send(json.dumps(setup))
+
+    if transcript_so_far:
+        # Renovacion: reinyectamos el historial reciente como contexto al nuevo modelo
+        # (tomamos los ultimos 12 turnos para no exceder budget de tokens)
+        recent = transcript_so_far[-12:]
+        history_text = "\n".join(
+            f"{'Tutor' if t['who'] == 'ai' else 'Alumno'}: {t['text']}"
+            for t in recent
+        )
+        await google_ws.send(json.dumps({
+            "clientContent": {
+                "turns": [{"role": "user", "parts": [{"text": (
+                    f"(Continuando la conversacion. Esto es lo que se hablo antes, "
+                    f"no lo repitas - solo seguila naturalmente):\n\n{history_text}\n\n"
+                    f"(continua desde donde quedamos)"
+                )}]}],
+                "turnComplete": True,
+            }
+        }))
+    else:
+        await google_ws.send(json.dumps({
+            "clientContent": {
+                "turns": [{"role": "user", "parts": [{"text": "(start)"}]}],
+                "turnComplete": True,
+            }
+        }))
+
+    return google_ws
+
 
 class GeminiLiveEngine(VoiceEngine):
     name = "gemini_live"
@@ -67,53 +141,12 @@ class GeminiLiveEngine(VoiceEngine):
             await ws.send_json({"type": "error", "error": "GEMINI_API_KEY missing"})
             return
 
-        url = f"{LIVE_API_URL}?key={settings.GEMINI_API_KEY}"
         try:
-            google_ws = await websockets.connect(url, max_size=2**24)
+            google_ws = await _open_gemini_session(ctx, transcript_so_far=[])
         except Exception as e:
             log.exception("No pude abrir WS a Gemini Live: %s", e)
             await ws.send_json({"type": "error", "error": "live_unavailable"})
             return
-
-        setup = {
-            "setup": {
-                "model": LIVE_MODEL,
-                "generationConfig": {
-                    "responseModalities": ["AUDIO"],
-                    "speechConfig": {
-                        "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Aoede"}},
-                    },
-                },
-                # VAD automático: Gemini detecta inicio/fin de turno por silencio
-                "realtimeInputConfig": {
-                    "automaticActivityDetection": {
-                        "disabled": False,
-                        "startOfSpeechSensitivity": "START_SENSITIVITY_HIGH",
-                        "endOfSpeechSensitivity": "END_SENSITIVITY_HIGH",
-                        "prefixPaddingMs": 200,
-                        # Configurable por template via silence_tolerance_ms
-                        "silenceDurationMs": ctx.silence_tolerance_ms,
-                    },
-                    "activityHandling": (
-                        "START_OF_ACTIVITY_INTERRUPTS" if ctx.interruption_allowed else "NO_INTERRUPTION"
-                    ),
-                },
-                # Transcripción del usuario (lo que dijo, en texto)
-                "inputAudioTranscription": {},
-                # Transcripción del tutor también, para mostrar en el panel lateral
-                "outputAudioTranscription": {},
-                "systemInstruction": {"parts": [{"text": ctx.super_prompt}]},
-            }
-        }
-        await google_ws.send(json.dumps(setup))
-
-        # Trigger inicial: solo "start" — el tono y la apertura ya están en el system prompt.
-        await google_ws.send(json.dumps({
-            "clientContent": {
-                "turns": [{"role": "user", "parts": [{"text": "(start)"}]}],
-                "turnComplete": True,
-            }
-        }))
 
         transcript: list[dict] = []
         # Gemini Live manda outputTranscription/inputTranscription en chunks
@@ -134,116 +167,233 @@ class GeminiLiveEngine(VoiceEngine):
                     transcript.append({"who": "user", "text": full})
                 user_buf.clear()
 
+        # Holder mutable de la conexion a Gemini.
+        # Al renovar, reemplazamos gws_holder["ws"] sin tocar el WS del cliente.
+        gws_holder = {"ws": google_ws}
+        # Flag para que las tareas sepan cuando hay que terminar limpiamente
+        # (cliente envio "end" o se desconecto).
+        stop_event = asyncio.Event()
+        # Evento que dispara la renovacion preventiva
+        renew_event = asyncio.Event()
+
         async def client_to_google() -> None:
             try:
-                while True:
+                while not stop_event.is_set():
                     msg = await ws.receive_json()
                     if msg.get("type") == "audio":
                         b64 = msg.get("data", "")
-                        # Live API v1beta (modelo 3.1): realtimeInput.audio (singular)
-                        # — mediaChunks fue deprecado.
-                        await google_ws.send(json.dumps({
-                            "realtimeInput": {
-                                "audio": {"mimeType": "audio/pcm;rate=16000", "data": b64}
-                            }
-                        }))
+                        try:
+                            await gws_holder["ws"].send(json.dumps({
+                                "realtimeInput": {
+                                    "audio": {"mimeType": "audio/pcm;rate=16000", "data": b64}
+                                }
+                            }))
+                        except websockets.ConnectionClosed:
+                            # Si Gemini cerro a mitad de envio, esperamos a la renovacion
+                            await asyncio.sleep(0.5)
+                            continue
                     elif msg.get("type") == "say":
-                        # Forzar al tutor a decir algo (ej. despedida al cambiar de tutor)
                         text = (msg.get("text") or "").strip()
                         if text:
-                            await google_ws.send(json.dumps({
-                                "clientContent": {
-                                    "turns": [{"role": "user", "parts": [{"text": text}]}],
-                                    "turnComplete": True,
-                                }
-                            }))
+                            try:
+                                await gws_holder["ws"].send(json.dumps({
+                                    "clientContent": {
+                                        "turns": [{"role": "user", "parts": [{"text": text}]}],
+                                        "turnComplete": True,
+                                    }
+                                }))
+                            except websockets.ConnectionClosed:
+                                pass
                     elif msg.get("type") == "system_update":
-                        # Cambio en caliente: lo mandamos como "user note" silencioso.
-                        # turnComplete: True para no romper el turno actual.
                         text = (msg.get("text") or "").strip()
                         if text:
-                            await google_ws.send(json.dumps({
-                                "clientContent": {
-                                    "turns": [{"role": "user", "parts": [{"text": text}]}],
-                                    "turnComplete": True,
-                                }
-                            }))
+                            try:
+                                await gws_holder["ws"].send(json.dumps({
+                                    "clientContent": {
+                                        "turns": [{"role": "user", "parts": [{"text": text}]}],
+                                        "turnComplete": True,
+                                    }
+                                }))
+                            except websockets.ConnectionClosed:
+                                pass
                     elif msg.get("type") == "ping":
-                        # Keepalive del frontend - solo ACK, no propagar a Gemini
                         try:
                             await ws.send_json({"type": "pong"})
                         except Exception:
                             pass
                     elif msg.get("type") == "end":
-                        await google_ws.close()
+                        stop_event.set()
+                        try:
+                            await gws_holder["ws"].close()
+                        except Exception:
+                            pass
                         return
             except WebSocketDisconnect:
-                await google_ws.close()
+                stop_event.set()
+                try:
+                    await gws_holder["ws"].close()
+                except Exception:
+                    pass
             except Exception as e:
                 log.exception("client_to_google: %s", e)
-                await google_ws.close()
+                stop_event.set()
 
         async def google_to_client() -> None:
+            """Loop que consume la conexion actual de Gemini. Si la cierran con
+            1008 (timeout de sesion) NO termina - señaliza renovacion."""
+            while not stop_event.is_set():
+                current_ws = gws_holder["ws"]
+                try:
+                    async for raw in current_ws:
+                        try:
+                            data = json.loads(raw)
+                        except Exception:
+                            continue
+                        sc = data.get("serverContent")
+                        if not sc:
+                            continue
+                        model_turn = sc.get("modelTurn") or {}
+                        for part in model_turn.get("parts", []):
+                            inline = part.get("inlineData")
+                            if inline and inline.get("mimeType", "").startswith("audio"):
+                                await ws.send_json({"type": "audio", "data": inline["data"]})
+                            text = part.get("text")
+                            if text:
+                                ai_buf.append(text)
+                                await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": text})
+
+                        out_tr = sc.get("outputTranscription")
+                        if out_tr and out_tr.get("text"):
+                            ai_buf.append(out_tr["text"])
+                            await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
+
+                        input_tr = sc.get("inputTranscription")
+                        if input_tr and input_tr.get("text"):
+                            user_buf.append(input_tr["text"])
+                            await ws.send_json({"type": "transcript_chunk", "who": "user", "text": input_tr["text"]})
+
+                        if sc.get("turnComplete"):
+                            last_user_text = "".join(user_buf).strip()
+                            _flush_buffers()
+                            await ws.send_json({"type": "turn_complete"})
+                            if last_user_text and len(last_user_text) >= 6:
+                                asyncio.create_task(_maybe_detect_preference(
+                                    user_id=ctx.user_id,
+                                    user_text=last_user_text,
+                                    target_lang=ctx.target_language or "es",
+                                    google_ws=gws_holder["ws"],
+                                    client_ws=ws,
+                                ))
+                except websockets.ConnectionClosed as e:
+                    # Gemini cerro la sesion. Si fue por timeout (1008) o renovacion
+                    # preventiva, abrimos nueva sesion transparentemente.
+                    if stop_event.is_set():
+                        return
+                    code = getattr(e, "code", None)
+                    log.info("Gemini WS closed (code=%s) - intentando renovar sesion", code)
+                    renew_event.set()
+                    # Esperamos a que el renew_watchdog haya abierto una nueva
+                    for _ in range(40):  # hasta 4 segundos
+                        if gws_holder["ws"] is not current_ws or stop_event.is_set():
+                            break
+                        await asyncio.sleep(0.1)
+                    if stop_event.is_set():
+                        return
+                    # Si gws_holder no se renovo, salimos
+                    if gws_holder["ws"] is current_ws:
+                        log.error("No se pudo renovar la sesion Gemini, cerrando")
+                        return
+                    # Continuamos el while -> nuevo current_ws
+                except Exception as e:
+                    log.exception("google_to_client: %s", e)
+                    return
+
+        async def session_watchdog() -> None:
+            """Avisa al cliente 90s antes del corte + renueva preventivamente 30s
+            antes del corte para no chocar con el GoAway de Gemini."""
             try:
-                async for raw in google_ws:
-                    try:
-                        data = json.loads(raw)
-                    except Exception:
-                        continue
-                    sc = data.get("serverContent")
-                    if not sc:
-                        continue
-                    model_turn = sc.get("modelTurn") or {}
-                    for part in model_turn.get("parts", []):
-                        inline = part.get("inlineData")
-                        if inline and inline.get("mimeType", "").startswith("audio"):
-                            await ws.send_json({"type": "audio", "data": inline["data"]})
-                        # texto en parts (raro en modo audio, lo bufferamos también)
-                        text = part.get("text")
-                        if text:
-                            ai_buf.append(text)
-                            await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": text})
-
-                    # outputTranscription = transcripción del audio del TUTOR (chunks palabra-por-palabra)
-                    out_tr = sc.get("outputTranscription")
-                    if out_tr and out_tr.get("text"):
-                        ai_buf.append(out_tr["text"])
-                        # Frente: chunk para actualizar el último mensaje IN-PLACE
-                        await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
-
-                    # inputTranscription = transcripción del audio del USER (chunks)
-                    input_tr = sc.get("inputTranscription")
-                    if input_tr and input_tr.get("text"):
-                        user_buf.append(input_tr["text"])
-                        await ws.send_json({"type": "transcript_chunk", "who": "user", "text": input_tr["text"]})
-
-                    if sc.get("turnComplete"):
-                        # Capturamos lo último del user ANTES de flush
-                        last_user_text = "".join(user_buf).strip()
-                        # Consolidar buffers en UNA entrada por hablante en el transcript final
-                        _flush_buffers()
-                        await ws.send_json({"type": "turn_complete"})
-                        # Detección de preferencias del alumno (no bloqueante)
-                        if last_user_text and len(last_user_text) >= 6:
-                            asyncio.create_task(_maybe_detect_preference(
-                                user_id=ctx.user_id,
-                                user_text=last_user_text,
-                                target_lang=ctx.target_language or "es",
-                                google_ws=google_ws,
-                                client_ws=ws,
-                            ))
-            except websockets.ConnectionClosed:
+                # Aviso visual al cliente
+                await asyncio.wait_for(stop_event.wait(), timeout=GEMINI_SESSION_MAX_SECONDS - WARN_BEFORE_END_SECONDS)
+                return  # stop_event seteo -> sesion terminada por el user, no avisar
+            except asyncio.TimeoutError:
                 pass
-            except Exception as e:
-                log.exception("google_to_client: %s", e)
+
+            if stop_event.is_set():
+                return
+            try:
+                await ws.send_json({
+                    "type": "session_ending_soon",
+                    "seconds_left": WARN_BEFORE_END_SECONDS,
+                    "message": "Tu charla se está renovando en 90 segundos. Vas a poder seguir hablando sin cortes.",
+                })
+            except Exception:
+                pass
+
+            try:
+                await asyncio.wait_for(
+                    stop_event.wait(),
+                    timeout=WARN_BEFORE_END_SECONDS - RENEW_BEFORE_END_SECONDS,
+                )
+                return
+            except asyncio.TimeoutError:
+                pass
+
+            if not stop_event.is_set():
+                renew_event.set()
+
+        async def renew_watchdog() -> None:
+            """Cuando renew_event se setea, cierra la sesion actual y abre una
+            nueva con el historial de transcript inyectado."""
+            while not stop_event.is_set():
+                try:
+                    await asyncio.wait_for(renew_event.wait(), timeout=1)
+                except asyncio.TimeoutError:
+                    continue
+                renew_event.clear()
+                if stop_event.is_set():
+                    return
+
+                old_ws = gws_holder["ws"]
+                # Flush antes de renovar para conservar el ultimo turno parcial
+                _flush_buffers()
+                try:
+                    await ws.send_json({"type": "session_renewing"})
+                except Exception:
+                    pass
+                try:
+                    new_ws = await _open_gemini_session(ctx, transcript_so_far=transcript[:])
+                except Exception as e:
+                    log.exception("No pude renovar Gemini: %s", e)
+                    try:
+                        await ws.send_json({"type": "error", "error": "session_renew_failed"})
+                    except Exception:
+                        pass
+                    stop_event.set()
+                    return
+                gws_holder["ws"] = new_ws
+                try:
+                    await old_ws.close()
+                except Exception:
+                    pass
+                try:
+                    await ws.send_json({"type": "session_renewed", "message": "¡Listo, podés seguir hablando!"})
+                except Exception:
+                    pass
+                log.info("Sesion Gemini renovada exitosamente. Turnos en historial: %d", len(transcript))
 
         try:
-            await asyncio.gather(client_to_google(), google_to_client())
+            await asyncio.gather(
+                client_to_google(),
+                google_to_client(),
+                session_watchdog(),
+                renew_watchdog(),
+                return_exceptions=True,
+            )
         finally:
-            # Flush por las dudas (turno parcial que no llegó a turnComplete)
+            stop_event.set()
             _flush_buffers()
             try:
-                await google_ws.close()
+                await gws_holder["ws"].close()
             except Exception:
                 pass
 

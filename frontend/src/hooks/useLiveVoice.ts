@@ -31,6 +31,12 @@ export interface UseLiveVoiceOptions {
   onAudioFrequencies?: (bins: Float32Array) => void
   /** Llamado cuando el detector detecta y persiste una preferencia del alumno. */
   onPreferenceApplied?: (changes: PreferenceChanges, confirmation: string) => void
+  /** La sesión Gemini está cerca del límite de duración (~90s). */
+  onSessionEndingSoon?: (info: { secondsLeft: number; message: string }) => void
+  /** El backend está renovando la sesión Gemini transparentemente. */
+  onSessionRenewing?: () => void
+  /** La sesión se renovó exitosamente, podés seguir hablando. */
+  onSessionRenewed?: (message: string) => void
 }
 
 export type LiveStatus = 'idle' | 'connecting' | 'listening' | 'speaking' | 'error' | 'ended'
@@ -296,6 +302,17 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
             // El detector detectó que el alumno expresó una preferencia
             // (corrige menos / más corto / etc) y ya la aplicó al backend.
             optsRef.current.onPreferenceApplied?.(msg.changes, msg.confirmation)
+          } else if (msg.type === 'session_ending_soon') {
+            optsRef.current.onSessionEndingSoon?.({
+              secondsLeft: msg.seconds_left ?? 60,
+              message: msg.message ?? 'La sesión se va a renovar pronto',
+            })
+          } else if (msg.type === 'session_renewing') {
+            setStatus('connecting')
+            optsRef.current.onSessionRenewing?.()
+          } else if (msg.type === 'session_renewed') {
+            setStatus('listening')
+            optsRef.current.onSessionRenewed?.(msg.message ?? 'Sesión renovada')
           } else if (msg.type === 'error') {
             optsRef.current.onError?.(new Error(msg.error || 'live error'))
             setStatus('error')

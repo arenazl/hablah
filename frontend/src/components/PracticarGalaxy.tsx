@@ -19,40 +19,55 @@ const STYLES = `
 @keyframes pg-drift-2 { 0%,100%{transform:translate(0,0)} 25%{transform:translate(-50px,20px)} 50%{transform:translate(-30px,-40px)} 75%{transform:translate(25px,-25px)} }
 @keyframes pg-drift-3 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(35px,35px)} 66%{transform:translate(-25px,20px)} }
 @keyframes pg-drift-4 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-40px,-30px)} 66%{transform:translate(40px,-15px)} }
-@keyframes pg-pop-in { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.06);opacity:1} 100%{transform:scale(1);opacity:1} }
+@keyframes pg-pop-in {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0) }
+  60% { opacity: 1; transform: translate(-50%, -50%) scale(1.06) }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) }
+}
 @keyframes pg-fade-in { 0%{opacity:0} 100%{opacity:1} }
 @keyframes pg-star-twinkle { 0%,100%{opacity:.2} 50%{opacity:.9} }
 @keyframes pg-hero-glow { 0%,100%{text-shadow: 0 0 20px rgba(0,179,126,.3)} 50%{text-shadow: 0 0 35px rgba(0,179,126,.55)} }
-.pg-orb-wrapper {
-  transition: transform 280ms cubic-bezier(.2,.8,.2,1), filter 280ms, opacity 380ms ease;
+
+/* Slot: posición + centrado estable (nunca pisado por animaciones internas) */
+.pg-orb-slot {
+  position: absolute;
+  transition: opacity 600ms ease;
   will-change: transform, opacity;
 }
+/* Drift: la animación de flotar va aquí, aislada del centrado y del escalado */
+.pg-orb-drift { will-change: transform; }
+/* Wrapper: solo escalado en hover/active/selected. Transiciones suaves. */
+.pg-orb-wrapper {
+  transition: transform 360ms cubic-bezier(.22,1,.36,1), filter 360ms ease, opacity 380ms ease;
+  will-change: transform, opacity, filter;
+}
 @media (hover: hover) {
-  .pg-orb-wrapper:hover { transform: scale(1.15) !important; filter: brightness(1.25) saturate(1.3); z-index: 20; }
+  .pg-orb-wrapper:hover { transform: scale(1.12); filter: brightness(1.22) saturate(1.25); }
+  .pg-orb-slot:hover { z-index: 20; }
   .pg-orb-wrapper:hover .pg-orb-label { opacity: 1; transform: translateY(0); }
 }
-/* En touch (sin hover) los labels siempre visibles */
 @media (hover: none) {
   .pg-orb-label { opacity: 1 !important; transform: translateY(0) !important; }
 }
-.pg-orb-wrapper:active { transform: scale(.94) !important; transition: transform 90ms ease-out; }
+.pg-orb-wrapper:active { transform: scale(.96); transition: transform 160ms cubic-bezier(.4,0,.2,1); }
 .pg-orb-label { transition: opacity 220ms, transform 220ms; }
 
-/* Estado al elegir: la galaxia entra en "selección" */
-.pg-stage.is-selecting .pg-orb-wrapper { animation-play-state: paused; pointer-events: none; }
-.pg-stage.is-selecting .pg-orb-wrapper:not(.is-selected) {
-  transform: translate(-50%, -50%) scale(.78) !important;
+/* Estado al elegir: pausa drift y deja que el escalado del wrapper interpole suave */
+.pg-stage.is-selecting .pg-orb-slot { pointer-events: none; }
+.pg-stage.is-selecting .pg-orb-drift { animation-play-state: paused; }
+.pg-stage.is-selecting .pg-orb-slot:not(.is-selected) .pg-orb-wrapper {
+  transform: scale(.82);
   opacity: 0;
   filter: blur(3px);
   transition: transform 900ms cubic-bezier(.22,1,.36,1), opacity 700ms ease, filter 700ms ease;
 }
-.pg-stage.is-selecting .pg-orb-wrapper.is-selected {
-  transform: translate(-50%, -50%) scale(2.2) !important;
+.pg-stage.is-selecting .pg-orb-slot.is-selected { z-index: 50; }
+.pg-stage.is-selecting .pg-orb-slot.is-selected .pg-orb-wrapper {
+  transform: scale(2.0);
   filter: brightness(1.25) saturate(1.3) drop-shadow(0 0 40px rgba(0,179,126,.55));
-  z-index: 50;
   transition: transform 1100ms cubic-bezier(.22,1,.36,1), filter 800ms ease;
 }
-.pg-stage.is-selecting .pg-orb-wrapper.is-selected .pg-orb-label { opacity: 0; transition: opacity 500ms ease; }
+.pg-stage.is-selecting .pg-orb-slot.is-selected .pg-orb-label { opacity: 0; transition: opacity 500ms ease; }
 .pg-stage.is-selecting .pg-hero,
 .pg-stage.is-selecting .pg-footer { opacity: 0; transition: opacity 500ms ease; pointer-events: none; }
 `
@@ -337,49 +352,61 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
 
             const isSelected = selectedId === topic.id
             return (
-              <button
+              <div
                 key={topic.id}
-                className={`pg-orb-wrapper${isSelected ? ' is-selected' : ''}`}
-                onClick={() => handlePick(topic.id)}
+                className={`pg-orb-slot${isSelected ? ' is-selected' : ''}`}
                 style={{
-                  position: 'absolute',
                   left: `${pos.x}%`, top: `${pos.y}%`,
                   transform: 'translate(-50%, -50%)',
-                  background: 'transparent', border: 'none', cursor: 'pointer',
-                  padding: 0,
-                  animation: `pg-pop-in ${500 + i * 60}ms ease-out, pg-drift-${driftIdx + 1} ${driftDur}s ease-in-out infinite`,
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                  animation: `pg-pop-in ${500 + i * 60}ms ease-out backwards`,
                 }}
               >
-                <div style={{ width: sizePx, height: sizePx, position: 'relative' }}>
-                  <AgentAudioVisualizerAura
-                    status="speaking"
-                    audioLevel={pseudoAudio}
-                    color={color as `#${string}`}
-                    colorShift={0.14}
-                    themeMode="dark"
-                    size={orbSize as 'lg' | 'md'}
-                  />
-                </div>
-                <span
-                  className="pg-orb-label"
+                <div
+                  className="pg-orb-drift"
                   style={{
-                    color: 'white',
-                    fontSize: 13,
-                    fontWeight: 700,
-                    textAlign: 'center',
-                    textShadow: '0 2px 8px rgba(0,0,0,.85), 0 0 4px rgba(0,0,0,.9)',
-                    opacity: 0.85,
-                    transform: 'translateY(4px)',
-                    pointerEvents: 'none',
-                    maxWidth: sizePx + 40,
-                    lineHeight: 1.2,
-                    letterSpacing: '-.01em',
+                    animation: `pg-drift-${driftIdx + 1} ${driftDur}s ease-in-out infinite`,
                   }}
                 >
-                  {topic.title}
-                </span>
-              </button>
+                  <button
+                    className="pg-orb-wrapper"
+                    onClick={() => handlePick(topic.id)}
+                    style={{
+                      background: 'transparent', border: 'none', cursor: 'pointer',
+                      padding: 0,
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                    }}
+                  >
+                    <div style={{ width: sizePx, height: sizePx, position: 'relative' }}>
+                      <AgentAudioVisualizerAura
+                        status="speaking"
+                        audioLevel={pseudoAudio}
+                        color={color as `#${string}`}
+                        colorShift={0.14}
+                        themeMode="dark"
+                        size={orbSize as 'lg' | 'md'}
+                      />
+                    </div>
+                    <span
+                      className="pg-orb-label"
+                      style={{
+                        color: 'white',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        textAlign: 'center',
+                        textShadow: '0 2px 8px rgba(0,0,0,.85), 0 0 4px rgba(0,0,0,.9)',
+                        opacity: 0.85,
+                        transform: 'translateY(4px)',
+                        pointerEvents: 'none',
+                        maxWidth: sizePx + 40,
+                        lineHeight: 1.2,
+                        letterSpacing: '-.01em',
+                      }}
+                    >
+                      {topic.title}
+                    </span>
+                  </button>
+                </div>
+              </div>
             )
           })}
         </div>

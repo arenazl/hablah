@@ -70,6 +70,15 @@ const CSS = `
 .kids-transcript-line.user { align-self:flex-end; background:rgba(255,255,255,.08); color:#fff; }
 .kids-transcript-line .who { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.12em; text-transform:uppercase; opacity:.6; display:block; margin-bottom:2px; }
 
+.kids-renew-banner { position:fixed; top:env(safe-area-inset-top); left:50%; transform:translateX(-50%); margin-top:12px; padding:10px 16px; border-radius:99px; font-size:13px; font-weight:700; z-index:60; display:inline-flex; align-items:center; gap:8px; backdrop-filter:blur(8px); box-shadow:0 8px 24px rgba(0,0,0,.3); animation:kids-banner-in .4s cubic-bezier(.2,.8,.2,1); }
+.kids-renew-banner.warn { background:rgba(255,184,0,.92); color:#3A2A00; border:1px solid #FFB800; }
+.kids-renew-banner.renewing { background:rgba(59,130,246,.92); color:#fff; border:1px solid #3B82F6; }
+.kids-renew-banner.renewed { background:rgba(34,197,94,.92); color:#fff; border:1px solid #22C55E; }
+.kids-renew-banner .ico { width:18px; height:18px; }
+.kids-renew-banner.renewing .ico { animation:kids-spin 1s linear infinite; }
+@keyframes kids-spin { to { transform:rotate(360deg); } }
+@keyframes kids-banner-in { from { opacity:0; transform:translateX(-50%) translateY(-12px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+
 .kids-session-locked { max-width:480px; margin:0 auto; padding:32px 28px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.10); border-radius:24px; text-align:center; }
 .kids-session-locked .ico { width:64px; height:64px; border-radius:18px; background:rgba(255,184,0,.18); color:#FFB800; display:grid; place-items:center; margin:0 auto 16px; }
 .kids-session-locked h3 { font-weight:800; font-size:22px; margin:0 0 8px; }
@@ -88,6 +97,7 @@ export function KidsSession() {
   )
   const [sessionId, setSessionId] = useState<number | null>(null)
   const [audioLevel, setAudioLevel] = useState(0.2)
+  const [renewBanner, setRenewBanner] = useState<{ kind: 'warn' | 'renewing' | 'renewed'; msg: string } | null>(null)
   const startedRef = useRef(false)
 
   const live = useLiveVoice({
@@ -95,6 +105,16 @@ export function KidsSession() {
     onError: (e) => {
       console.error('[kids-voice]', e)
       alert('Hubo un problema con el micrófono. Asegurate de permitir el acceso.')
+    },
+    onSessionEndingSoon: ({ message }) => {
+      setRenewBanner({ kind: 'warn', msg: message })
+    },
+    onSessionRenewing: () => {
+      setRenewBanner({ kind: 'renewing', msg: 'Renovando charla… seguí hablando como siempre.' })
+    },
+    onSessionRenewed: (message) => {
+      setRenewBanner({ kind: 'renewed', msg: message })
+      setTimeout(() => setRenewBanner(null), 3500)
     },
   })
 
@@ -193,6 +213,21 @@ export function KidsSession() {
   return (
     <div className="kids-session-root">
       <style>{CSS}</style>
+
+      {renewBanner && (
+        <div className={`kids-renew-banner ${renewBanner.kind}`}>
+          {renewBanner.kind === 'warn' && (
+            <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          )}
+          {renewBanner.kind === 'renewing' && (
+            <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v8h8"/></svg>
+          )}
+          {renewBanner.kind === 'renewed' && (
+            <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          )}
+          {renewBanner.msg}
+        </div>
+      )}
 
       <div className="kids-session-top">
         <button className="kids-session-back" onClick={() => navigate(-1)}>

@@ -50,7 +50,10 @@ export function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <header className="flex-shrink-0 h-16 flex items-center justify-between px-4 md:px-6 bg-[var(--bg-topbar)] border-b border-[var(--border-color)] z-30">
+      <header
+        className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 bg-[var(--bg-topbar)] border-b border-[var(--border-color)] z-30"
+        style={{ paddingTop: 'env(safe-area-inset-top)', height: 'calc(4rem + env(safe-area-inset-top))' }}
+      >
         <div className="flex items-center gap-3 min-w-0">
           <BeykerLogo />
           <div className="hidden sm:block min-w-0">
