@@ -96,13 +96,16 @@ class Topic(Base):
     id = Column(Integer, primary_key=True, index=True)
     slug = Column(String(120), unique=True, nullable=False, index=True)
     title = Column(String(200), nullable=False)
-    category = Column(String(80), nullable=False, default="general")  # tech, arte, lifestyle, diseno, negocios
-    seed_prompts = Column(JSON, nullable=False, default=dict)  # { "A2": "...", "B2": "...", "C1": "..." }
+    category = Column(String(80), nullable=False, default="general")  # tech, arte, lifestyle, diseno, negocios, kids
+    seed_prompts = Column(JSON, nullable=False, default=dict)  # { "A2": "...", "B2": "...", "C1": "..." } o { "mini": "...", "junior": "...", "tween": "..." }
     keywords = Column(JSON, nullable=False, default=list)      # ["two-step", "sub-bass", ...]
     levels = Column(JSON, nullable=False, default=list)        # ["A2", "B1", "B2", "C1"]
     is_hot = Column(Boolean, nullable=False, default=False)
     is_active = Column(Boolean, nullable=False, default=True)
     usage_count = Column(Integer, nullable=False, default=0)
+
+    # Solo aplica si category='kids': nivel etario del tópico
+    kid_age_group = Column(String(10), nullable=True, index=True)  # 'mini' (4-7) | 'junior' (7-10) | 'tween' (10-14)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

@@ -9,6 +9,7 @@ import { Topics } from './pages/landing/Topics'
 import { Pricing } from './pages/landing/Pricing'
 import { Faq } from './pages/landing/Faq'
 import { KidsHome } from './pages/kids/KidsHome'
+import { KidsAgeSelect } from './pages/kids/KidsAgeSelect'
 import { WebApp } from './pages/WebApp'
 import { Backoffice } from './pages/Backoffice'
 
@@ -64,6 +65,7 @@ export default function App() {
         <Route path="/precios" element={<Pricing />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/kids" element={<KidsHome />} />
+        <Route path="/kids/seleccionar-edad" element={<KidsAgeSelect />} />
         <Route path="/kids/*" element={<KidsHome />} />
         <Route path="/login" element={<Login />} />
         <Route

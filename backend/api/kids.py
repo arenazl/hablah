@@ -245,11 +245,19 @@ async def kids_me(user: User = Depends(get_current_user)):
 
 
 @router.get("/topics", response_model=list[TopicResponse])
-async def list_kids_topics(db: AsyncSession = Depends(get_db)):
-    """Los 10 topicos curados para chicos. Publico (no requiere auth)."""
-    result = await db.execute(
-        select(Topic).where(Topic.category == "kids", Topic.is_active == True).order_by(Topic.id)
-    )
+async def list_kids_topics(
+    age_group: Optional[str] = None,  # 'mini' | 'junior' | 'tween' | None (todos)
+    db: AsyncSession = Depends(get_db),
+):
+    """Topicos curados para chicos. Publico (no requiere auth).
+    Si pasas ?age_group=mini, filtra solo los topicos de ese nivel.
+    """
+    query = select(Topic).where(Topic.category == "kids", Topic.is_active == True)
+    if age_group in ("mini", "junior", "tween"):
+        query = query.where(Topic.kid_age_group == age_group)
+    query = query.order_by(Topic.id)
+
+    result = await db.execute(query)
     topics = result.scalars().all()
     return [
         TopicResponse(

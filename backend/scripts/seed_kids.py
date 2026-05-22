@@ -1,18 +1,27 @@
-"""Seed completo del modulo Kids.
+"""Seed completo del modulo Kids — REEMPLAZA todos los topicos kids existentes.
 
 - Tutor 'friend' (Habi) en templates
-- 10 topicos curados para chicos en topics
+- 30 topicos curados (10 por nivel etario):
+    mini   (4-7 anios)  = "pantallas y juguetes"
+    junior (7-10 anios) = "creadores y coleccionables"
+    tween  (10-14 anios) = "preteens, streamers y tendencias"
 - Catalogo de achievements/stickers para coleccion
 - Niveles narrativos en codigo (Curioso, Explorador, Aventurero, Capitan, Embajador)
 
-Idempotente: chequea slug antes de insertar.
+IMPORTANTE: zero marcas literales en seed_prompts del LLM (Apple/Google rejection
+de apps kids con marcas sin licencia + TTS mispronuncia + LLM inventa). Hablamos
+de categorias genericas: "popular streamers" no "MrBeast", "sandbox games" no
+"Roblox", "fast food restaurants" no "McDonald's".
+
+Es idempotente: si ya existen, los actualiza por slug. Los topicos kids viejos
+se inactivan (is_active=False, category cambia a 'kids-deprecated').
 """
 import sys, os, asyncio
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from core.database import AsyncSessionLocal
 from models.template import Template, Topic
 from models.kids import AchievementCatalog
@@ -29,29 +38,28 @@ FRIEND_TUTOR = {
     "block_on_repeat": False,
     "json_output": True,
     "tones": ["dulce", "paciente", "juguetón", "alentador"],
-    "voice_id": "EXAVITQu4vr4xnSDxMaL",  # Sarah - US female warm
+    "voice_id": "EXAVITQu4vr4xnSDxMaL",
     "voice_label": "Sarah (Habi voice)",
     "pedagogy_preset": "ludico",
     "avoid_superlative_questions": True,
     "one_question_per_turn": True,
-    "voice_speed": 92,        # un poco más lento que normal (más claro)
+    "voice_speed": 92,
     "voice_stability": 65,
-    "voice_style": 55,        # bastante expresividad
+    "voice_style": 55,
     "icon_bg": "#00B37E",
     "is_preset": True,
     "version": "v1.0",
     "status": "active",
-    # Pedagogia v2
-    "response_length": "terse",         # frases cortísimas (5-8 palabras)
-    "tutor_talk_ratio": 35,             # habla un poco más que con adultos
+    "response_length": "terse",
+    "tutor_talk_ratio": 35,
     "proactive_questions": True,
     "tutor_shares_opinions": True,
-    "warmth_level": 5,                  # MAX
-    "correction_mode": "recast",        # NUNCA explícito - solo recast
+    "warmth_level": 5,
+    "correction_mode": "recast",
     "correction_focus": ["vocab", "fluency"],
     "error_threshold": "only_major",
-    "max_feedback_items": 1,            # solo 1 cosa al final (no abruma)
-    "praise_count": 3,                  # 3 elogios mínimo
+    "max_feedback_items": 1,
+    "praise_count": 3,
     "report_include_summary": True,
     "report_include_connectors": False,
     "report_include_vocab_suggestions": True,
@@ -59,176 +67,328 @@ FRIEND_TUTOR = {
     "report_include_next_session_tip": False,
     "opening_style": "playful",
     "opening_includes_topic_intro": True,
-    "silence_tolerance_ms": 2500,       # mucha paciencia
+    "silence_tolerance_ms": 2500,
     "interruption_allowed": False,
     "scaffold_when_stuck": True,
 }
 
 
-# ─── 10 TOPICOS PARA CHICOS ─────────────────────────────────────────
-# Cada uno con seed_prompts mini (4-7) y junior (8-12) en ingles base + español wrap.
+# ─── 30 TOPICOS PARA CHICOS ─────────────────────────────────────────
+# Mismo schema: keywords y seed_prompts pero sin marcas literales.
+# La marca solo aparece en el title (vendible en español) y en el sublabel.
 KIDS_TOPICS = [
+    # ─── MINI (4-7) ─────────────────────────────────────────────
     {
-        "slug": "kids-dinos",
-        "title": "Dinosaurios",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "Hi! I love dinosaurs! Do you have a favorite one? T-Rex was huge! What sound do you think he made?",
-            "junior": "Welcome explorer! Dinosaurs lived millions of years ago. Tell me your favorite one and what made it special.",
-        },
-        "keywords": ["dinosaur", "T-Rex", "huge", "ancient", "egg", "roar"],
-        "levels": ["A0", "A1", "A2"],
+        "slug": "kids-colors",
+        "title": "Mis colores favoritos",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Hi! What's your favorite color? Mine is green! Look around — what's red? What's blue?"},
+        "keywords": ["color", "red", "blue", "yellow", "green", "purple", "orange", "pink"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-animals-farm",
+        "title": "Animales de la granja y la selva",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Animals! A cow says moo. A dog says woof. What's your favorite animal? What sound does it make?"},
+        "keywords": ["animal", "cow", "dog", "cat", "lion", "elephant", "monkey", "fish"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-counting",
+        "title": "Contar del 1 al 10",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Let's count! One, two, three... how many fingers do you have? Count with me!"},
+        "keywords": ["one", "two", "three", "count", "number", "ten"],
         "is_hot": True,
     },
     {
-        "slug": "kids-space",
-        "title": "Espacio",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "Look up! The sky has the moon and stars. Have you seen a rocket? What's your favorite planet?",
-            "junior": "Space is huge! Eight planets, billions of stars. If you traveled to space, where would you go first and why?",
-        },
-        "keywords": ["planet", "rocket", "moon", "star", "astronaut", "Earth"],
-        "levels": ["A0", "A1", "A2"],
+        "slug": "kids-body",
+        "title": "Mi cuerpo",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Touch your head! Now your nose. Now your feet. What can you do with your hands?"},
+        "keywords": ["head", "nose", "eye", "mouth", "hand", "foot", "leg", "arm"],
         "is_hot": False,
-    },
-    {
-        "slug": "kids-sea",
-        "title": "Mar y animales",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "The sea is huge! Fish swim. Dolphins jump! Have you seen the ocean? What's your favorite sea animal?",
-            "junior": "Oceans cover most of Earth! Whales, sharks, octopus, jellyfish. Tell me which sea animal you find coolest.",
-        },
-        "keywords": ["fish", "whale", "shark", "dolphin", "ocean", "swim"],
-        "levels": ["A0", "A1", "A2"],
-        "is_hot": False,
-    },
-    {
-        "slug": "kids-sport",
-        "title": "Mi deporte",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "Do you play any sport? I like running! Soccer is fun. Do you kick a ball? Tell me about it!",
-            "junior": "Sports are awesome! Soccer, basketball, swimming, tennis. Which one do you play or watch? What's your team?",
-        },
-        "keywords": ["soccer", "basketball", "ball", "team", "score", "win"],
-        "levels": ["A0", "A1", "A2"],
-        "is_hot": False,
-    },
-    {
-        "slug": "kids-art",
-        "title": "Dibujar y crear",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "Do you like drawing? I love colors! Red, blue, yellow. What's your favorite color? What do you draw?",
-            "junior": "Art is magic! Painting, drawing, sculpture, crafts. Tell me what you create and what colors you choose.",
-        },
-        "keywords": ["draw", "color", "paint", "red", "blue", "yellow", "green"],
-        "levels": ["A0", "A1", "A2"],
-        "is_hot": False,
-    },
-    {
-        "slug": "kids-music",
-        "title": "Música y canciones",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "Music! Do you sing? La la la! What song do you know? Can you clap with me?",
-            "junior": "Music is everywhere. Songs, instruments, dancing. What's your favorite song or band? Do you play any instrument?",
-        },
-        "keywords": ["song", "sing", "dance", "music", "guitar", "drums"],
-        "levels": ["A0", "A1", "A2"],
-        "is_hot": False,
-    },
-    {
-        "slug": "kids-pets",
-        "title": "Mascotas",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "Do you have a pet? Dogs go woof! Cats go meow! What animal do you love? What's its name?",
-            "junior": "Pets are family! Dogs, cats, hamsters, fish. Tell me about your pet — or the one you wish you had.",
-        },
-        "keywords": ["dog", "cat", "pet", "soft", "fluffy", "loyal", "play"],
-        "levels": ["A0", "A1", "A2"],
-        "is_hot": True,
     },
     {
         "slug": "kids-family",
         "title": "Mi familia",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "Who lives with you? Mom? Dad? Brother? Sister? Tell me one person you love a lot!",
-            "junior": "Family is special. Parents, siblings, grandparents, cousins. Tell me about someone in your family — what they do, what's funny about them.",
-        },
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Who lives with you? Mom? Dad? Brother? Sister? Tell me one name!"},
         "keywords": ["mom", "dad", "brother", "sister", "grandma", "grandpa", "family"],
-        "levels": ["A0", "A1", "A2"],
         "is_hot": False,
     },
     {
-        "slug": "kids-feels",
-        "title": "Cómo me siento",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "How are you today? Happy? Sad? Tired? Tell me one feeling from today!",
-            "junior": "Feelings are important. Happy, sad, angry, scared, excited. Tell me one moment today when you felt strong about something.",
-        },
-        "keywords": ["happy", "sad", "angry", "scared", "excited", "calm", "tired"],
-        "levels": ["A0", "A1", "A2"],
+        "slug": "kids-food-basic",
+        "title": "Comidas ricas",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Food time! Do you like apples? Bread? Milk? What did you eat today?"},
+        "keywords": ["apple", "bread", "milk", "rice", "egg", "banana", "water", "yummy"],
+        "is_hot": False,
+    },
+    # COMERCIAL — sin marca literal
+    {
+        "slug": "kids-toy-unboxing",
+        "title": "Abrir juguetes",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Imagine you got a big box today. A surprise! What's inside? A toy car? A doll? Tell me what you'd open!"},
+        "keywords": ["box", "open", "surprise", "toy", "gift", "new", "wow"],
         "is_hot": True,
     },
     {
+        "slug": "kids-cartoons-heroes",
+        "title": "Dibujitos y superhéroes",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Do you watch cartoons? Tell me your favorite character! Are they fast? Strong? Funny? Do they fly?"},
+        "keywords": ["hero", "fast", "strong", "fly", "save", "funny", "cape", "power"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-gaming-basic",
+        "title": "Jugar en la pantalla",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Do you play games on a tablet or phone? What do you do in the game? Run? Jump? Win?"},
+        "keywords": ["play", "jump", "run", "win", "lose", "level", "game", "fun"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-treats",
+        "title": "Comida divertida",
+        "kid_age_group": "mini",
+        "seed_prompts": {"mini": "Yummy treats! Do you like nuggets? Fries? Burgers? Popcorn? What's your favorite?"},
+        "keywords": ["burger", "fries", "nuggets", "popcorn", "candy", "ice cream", "soda"],
+        "is_hot": True,
+    },
+
+    # ─── JUNIOR (7-10) ──────────────────────────────────────────
+    {
         "slug": "kids-school",
-        "title": "Mi cole",
-        "category": "kids",
-        "seed_prompts": {
-            "mini": "Do you go to school? Who's your teacher? Do you have a friend there? What's their name?",
-            "junior": "School day! Classes, friends, lunch, recess. Tell me the best thing that happened at school today — or the funniest.",
-        },
-        "keywords": ["school", "teacher", "friend", "class", "lunch", "recess", "learn"],
-        "levels": ["A0", "A1", "A2"],
+        "title": "La escuela",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "School day! Who's your teacher? What's your favorite subject? Tell me one thing that happened today."},
+        "keywords": ["school", "teacher", "friend", "class", "lunch", "recess", "homework"],
         "is_hot": False,
+    },
+    {
+        "slug": "kids-routine",
+        "title": "Mi día de la mañana a la noche",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "Walk me through your day. When do you wake up? Breakfast? School? After school? Bedtime?"},
+        "keywords": ["wake up", "breakfast", "lunch", "dinner", "bed", "morning", "night"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-house",
+        "title": "Mi casa y mis habitaciones",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "Tell me about your home. How many rooms? Where do you sleep? What's your favorite room and why?"},
+        "keywords": ["room", "kitchen", "bathroom", "bedroom", "house", "garden", "stairs"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-hobbies",
+        "title": "Pasatiempos y deportes",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "What do you do after school? Sports? Music? Drawing? Tell me what you love doing the most."},
+        "keywords": ["soccer", "basketball", "draw", "music", "play", "swim", "dance", "read"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-emotions",
+        "title": "Cómo me siento",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "How are you feeling today? Tell me one moment when you felt really happy. Or a moment when something bothered you."},
+        "keywords": ["happy", "sad", "angry", "scared", "excited", "calm", "tired", "proud"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-nature",
+        "title": "Naturaleza y dinosaurios",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "Nature is amazing! Forests, oceans, mountains, dinosaurs, jungles. Tell me what fascinates you most."},
+        "keywords": ["forest", "ocean", "mountain", "dinosaur", "jungle", "tree", "river"],
+        "is_hot": False,
+    },
+    # COMERCIAL — genéricos sin marcas
+    {
+        "slug": "kids-youtube-challenges",
+        "title": "Desafíos virales",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "If you had a YouTube channel, what challenge would you create? Eating something weird? A prank? A reaction? Tell me!"},
+        "keywords": ["challenge", "subscriber", "viral", "reaction", "prank", "video", "thumbnail"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-sandbox-worlds",
+        "title": "Mundos de bloques",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "Imagine you can build any world with blocks. What would you build? A house? A castle? An entire city?"},
+        "keywords": ["build", "block", "craft", "mine", "create", "server", "world"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-collecting",
+        "title": "Coleccionar cartas y figuritas",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "Do you collect anything? Cards? Stickers? Figures? What's the rarest one you have? Would you trade it?"},
+        "keywords": ["collection", "trade", "rare", "common", "card", "figure", "swap"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-fast-food",
+        "title": "Comida rápida y dulces",
+        "kid_age_group": "junior",
+        "seed_prompts": {"junior": "Imagine you're ordering at a fast food place. What combo do you want? Burger? Fries? Soda? Ice cream after?"},
+        "keywords": ["combo", "burger", "fries", "soda", "ice cream", "menu", "order"],
+        "is_hot": True,
+    },
+
+    # ─── TWEEN (10-14) ──────────────────────────────────────────
+    {
+        "slug": "kids-entertainment",
+        "title": "Música, pelis y series",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "What music do you listen to? What's the last series you binged? Any movie you've watched ten times?"},
+        "keywords": ["song", "movie", "series", "binge", "favorite", "playlist", "actor"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-travel",
+        "title": "Viajes y culturas",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "If you could go anywhere tomorrow, where? What's a country you want to visit one day and why?"},
+        "keywords": ["travel", "country", "culture", "language", "city", "trip", "passport"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-future-jobs",
+        "title": "Trabajos del futuro",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "What do you want to be when you grow up? It can be anything — even a job that doesn't exist yet."},
+        "keywords": ["job", "career", "engineer", "designer", "scientist", "creator", "future"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-cooking",
+        "title": "Cocinar y recetas",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "Have you ever cooked something? Walk me through a recipe — even a simple sandwich counts!"},
+        "keywords": ["recipe", "cook", "bake", "ingredient", "taste", "sweet", "salty"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-planet",
+        "title": "Cuidar el planeta",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "What worries you about the planet? Pollution? Animals? Climate? What's one small thing you do that helps?"},
+        "keywords": ["recycle", "pollution", "climate", "ocean", "plastic", "animal", "future"],
+        "is_hot": False,
+    },
+    {
+        "slug": "kids-opinions",
+        "title": "Decir lo que pensás",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "Give me your honest opinion: is school useful? Do you agree with screen time limits? Why?"},
+        "keywords": ["think", "agree", "disagree", "opinion", "because", "however", "feel"],
+        "is_hot": False,
+    },
+    # COMERCIAL — genéricos sin marcas
+    {
+        "slug": "kids-streaming",
+        "title": "Streamers y transmisiones",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "Do you watch live streamers? What makes a streamer fun? The game? The chat? The community? Would you stream?"},
+        "keywords": ["live", "stream", "chat", "follow", "donate", "clip", "subscriber", "community"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-sneakers",
+        "title": "Zapatillas y moda urbana",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "Are you into sneakers or streetwear? What's the best pair you own? What would you save up for?"},
+        "keywords": ["sneakers", "drop", "limited", "outfit", "style", "fit", "brand"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-esports",
+        "title": "Gaming pro y esports",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "Do you follow any pro gaming teams? What game do you play competitively? What rank are you?"},
+        "keywords": ["team", "tournament", "rank", "pro", "competitive", "strategy", "win"],
+        "is_hot": True,
+    },
+    {
+        "slug": "kids-slang",
+        "title": "Slang y tendencias online",
+        "kid_age_group": "tween",
+        "seed_prompts": {"tween": "Teach me a slang word you and your friends use. What does it mean? Use it in a sentence!"},
+        "keywords": ["slang", "trend", "vibe", "hype", "flex", "cringe", "cap", "lit"],
+        "is_hot": True,
     },
 ]
 
 
 # ─── ACHIEVEMENTS / COLECCION ────────────────────────────────────────
-# Iconos = nombres de Lucide React (NO emojis Unicode). Colores hex.
 ACHIEVEMENTS = [
-    # Por completar tópicos
-    {"slug": "first-dino", "name": "T-Rex", "description": "Tuviste tu primera charla sobre dinosaurios", "icon_name": "Sparkles", "icon_color": "#00B37E", "threshold": 1, "order": 1},
-    {"slug": "first-space", "name": "Cohete", "description": "Hablaste sobre el espacio por primera vez", "icon_name": "Rocket", "icon_color": "#A855F7", "threshold": 1, "order": 2},
-    {"slug": "first-sea", "name": "Ballena", "description": "Conociste a los animales del mar", "icon_name": "Fish", "icon_color": "#06B6D4", "threshold": 1, "order": 3},
-    {"slug": "first-art", "name": "Paleta", "description": "Hablaste de colores y arte", "icon_name": "Palette", "icon_color": "#FF6AA9", "threshold": 1, "order": 4},
-    {"slug": "first-sport", "name": "Pelota", "description": "Charlaste sobre tu deporte favorito", "icon_name": "Trophy", "icon_color": "#FB7C39", "threshold": 1, "order": 5},
-    {"slug": "first-music", "name": "Nota musical", "description": "Cantaste y hablaste de música", "icon_name": "Music", "icon_color": "#3B82F6", "threshold": 1, "order": 6},
-    {"slug": "first-pets", "name": "Perro fiel", "description": "Hablaste de mascotas", "icon_name": "Dog", "icon_color": "#FACC15", "threshold": 1, "order": 7},
-    {"slug": "first-family", "name": "Corazón familia", "description": "Contaste sobre tu familia", "icon_name": "Heart", "icon_color": "#EC4899", "threshold": 1, "order": 8},
-    {"slug": "first-feels", "name": "Carita feliz", "description": "Expresaste cómo te sentías", "icon_name": "Smile", "icon_color": "#22D3EE", "threshold": 1, "order": 9},
-    {"slug": "first-school", "name": "Mochila", "description": "Contaste sobre el cole", "icon_name": "Backpack", "icon_color": "#7C3AED", "threshold": 1, "order": 10},
+    # Por edad/nivel
+    {"slug": "first-mini", "name": "Primer paso Mini", "description": "Tu primera charla siendo Mini", "icon_name": "Sparkles", "icon_color": "#00B37E", "threshold": 1, "order": 1},
+    {"slug": "first-junior", "name": "Primer paso Junior", "description": "Tu primera charla siendo Junior", "icon_name": "Sparkles", "icon_color": "#3B82F6", "threshold": 1, "order": 2},
+    {"slug": "first-tween", "name": "Primer paso Tween", "description": "Tu primera charla siendo Tween", "icon_name": "Sparkles", "icon_color": "#A855F7", "threshold": 1, "order": 3},
+
+    # Por categoría temática
+    {"slug": "ach-colors", "name": "Maestro del color", "description": "Hablaste de colores", "icon_name": "Palette", "icon_color": "#EC4899", "threshold": 1, "order": 10},
+    {"slug": "ach-animals", "name": "Amigo de los animales", "description": "Hablaste de animales", "icon_name": "Bird", "icon_color": "#22C55E", "threshold": 1, "order": 11},
+    {"slug": "ach-counting", "name": "Buen matemático", "description": "Aprendiste a contar", "icon_name": "Hash", "icon_color": "#FACC15", "threshold": 1, "order": 12},
+    {"slug": "ach-cartoons", "name": "Fan de los dibujitos", "description": "Charlaste sobre tus personajes", "icon_name": "Smile", "icon_color": "#FF6AA9", "threshold": 1, "order": 13},
+    {"slug": "ach-toys", "name": "Abrir-cajas", "description": "Te metiste con el mundo de los juguetes", "icon_name": "Package", "icon_color": "#FB7C39", "threshold": 1, "order": 14},
+    {"slug": "ach-gaming", "name": "Gamer junior", "description": "Hablaste de tu juego favorito", "icon_name": "Gamepad2", "icon_color": "#7C3AED", "threshold": 1, "order": 15},
+    {"slug": "ach-treats", "name": "Goloso", "description": "Pediste comida rica en inglés", "icon_name": "IceCream", "icon_color": "#F472B6", "threshold": 1, "order": 16},
+    {"slug": "ach-school", "name": "Buen alumno", "description": "Contaste sobre el cole", "icon_name": "Backpack", "icon_color": "#7C3AED", "threshold": 1, "order": 17},
+    {"slug": "ach-collector", "name": "Coleccionista", "description": "Hablaste sobre tu colección", "icon_name": "Trophy", "icon_color": "#FACC15", "threshold": 1, "order": 18},
+    {"slug": "ach-creator", "name": "Creador de contenido", "description": "Imaginaste tu canal/desafío", "icon_name": "Video", "icon_color": "#EF4444", "threshold": 1, "order": 19},
+    {"slug": "ach-sandbox", "name": "Constructor", "description": "Diseñaste mundos en bloques", "icon_name": "Box", "icon_color": "#10B981", "threshold": 1, "order": 20},
+    {"slug": "ach-streamer", "name": "Conectado en vivo", "description": "Charlaste sobre streaming", "icon_name": "Radio", "icon_color": "#A855F7", "threshold": 1, "order": 21},
+    {"slug": "ach-sneakers", "name": "Sneakerhead", "description": "Hablaste de zapatillas", "icon_name": "Footprints", "icon_color": "#06B6D4", "threshold": 1, "order": 22},
+    {"slug": "ach-esports", "name": "Esports pro", "description": "Contaste sobre gaming competitivo", "icon_name": "Crosshair", "icon_color": "#FF4D6D", "threshold": 1, "order": 23},
+    {"slug": "ach-slang", "name": "Vibe-master", "description": "Enseñaste slang nuevo", "icon_name": "MessageCircle", "icon_color": "#22D3EE", "threshold": 1, "order": 24},
 
     # Por racha
-    {"slug": "streak-3", "name": "3 días seguidos", "description": "Tres días en fila hablando con Habi", "icon_name": "Flame", "icon_color": "#FB7C39", "threshold": 3, "order": 20},
-    {"slug": "streak-7", "name": "Una semana entera", "description": "Siete días seguidos sin parar", "icon_name": "Flame", "icon_color": "#EF4444", "threshold": 7, "order": 21},
-    {"slug": "streak-30", "name": "Un mes completo", "description": "Treinta días seguidos. ¡Increíble!", "icon_name": "Award", "icon_color": "#FACC15", "threshold": 30, "order": 22},
+    {"slug": "streak-3", "name": "3 días seguidos", "description": "Tres días en fila hablando con Habi", "icon_name": "Flame", "icon_color": "#FB7C39", "threshold": 3, "order": 30},
+    {"slug": "streak-7", "name": "Una semana entera", "description": "Siete días seguidos sin parar", "icon_name": "Flame", "icon_color": "#EF4444", "threshold": 7, "order": 31},
+    {"slug": "streak-30", "name": "Un mes completo", "description": "Treinta días seguidos", "icon_name": "Award", "icon_color": "#FACC15", "threshold": 30, "order": 32},
 
     # Por charlas totales
-    {"slug": "talks-10", "name": "10 charlas", "description": "Diez charlas completadas", "icon_name": "Star", "icon_color": "#00B37E", "threshold": 10, "order": 30},
-    {"slug": "talks-50", "name": "50 charlas", "description": "Cincuenta charlas. ¡Crack!", "icon_name": "Medal", "icon_color": "#A855F7", "threshold": 50, "order": 31},
-    {"slug": "talks-100", "name": "Cien charlas", "description": "Una centena. Sos imparable", "icon_name": "Crown", "icon_color": "#FACC15", "threshold": 100, "order": 32},
+    {"slug": "talks-10", "name": "10 charlas", "description": "Diez charlas completadas", "icon_name": "Star", "icon_color": "#00B37E", "threshold": 10, "order": 40},
+    {"slug": "talks-50", "name": "50 charlas", "description": "Cincuenta charlas. ¡Crack!", "icon_name": "Medal", "icon_color": "#A855F7", "threshold": 50, "order": 41},
+    {"slug": "talks-100", "name": "Cien charlas", "description": "Una centena", "icon_name": "Crown", "icon_color": "#FACC15", "threshold": 100, "order": 42},
 
-    # Por niveles
-    {"slug": "rank-explorador", "name": "Explorador", "description": "Subiste a Explorador", "icon_name": "Compass", "icon_color": "#00B37E", "threshold": None, "order": 40},
-    {"slug": "rank-aventurero", "name": "Aventurero", "description": "Llegaste a Aventurero", "icon_name": "Mountain", "icon_color": "#06B6D4", "threshold": None, "order": 41},
-    {"slug": "rank-capitan", "name": "Capitán", "description": "Sos Capitán de tu idioma", "icon_name": "Anchor", "icon_color": "#3B82F6", "threshold": None, "order": 42},
-    {"slug": "rank-embajador", "name": "Embajador", "description": "El nivel más alto. Embajador del idioma.", "icon_name": "Crown", "icon_color": "#FFB800", "threshold": None, "order": 43},
+    # Por niveles narrativos
+    {"slug": "rank-explorador", "name": "Explorador", "description": "Subiste a Explorador", "icon_name": "Compass", "icon_color": "#00B37E", "threshold": None, "order": 50},
+    {"slug": "rank-aventurero", "name": "Aventurero", "description": "Llegaste a Aventurero", "icon_name": "Mountain", "icon_color": "#06B6D4", "threshold": None, "order": 51},
+    {"slug": "rank-capitan", "name": "Capitán", "description": "Sos Capitán de tu idioma", "icon_name": "Anchor", "icon_color": "#3B82F6", "threshold": None, "order": 52},
+    {"slug": "rank-embajador", "name": "Embajador", "description": "El nivel más alto", "icon_name": "Crown", "icon_color": "#FFB800", "threshold": None, "order": 53},
 
-    # Especiales / monstruo del idioma
-    {"slug": "monster-catch", "name": "Atrapa-monstruo", "description": "Atrapaste tu primer monstruo del idioma", "icon_name": "Zap", "icon_color": "#EF4444", "threshold": 1, "order": 50},
+    # Especiales
+    {"slug": "monster-catch", "name": "Atrapa-monstruo", "description": "Atrapaste tu primer monstruo del idioma", "icon_name": "Zap", "icon_color": "#EF4444", "threshold": 1, "order": 60},
 ]
 
 
 async def main() -> None:
     async with AsyncSessionLocal() as db:
+        # ─── 0. Inactivar topicos kids viejos (con slug antiguo) ────
+        old_slugs = ["kids-dinos", "kids-space", "kids-sea", "kids-sport", "kids-art",
+                     "kids-music", "kids-pets", "kids-family", "kids-feels", "kids-school"]
+        # ojo: kids-family y kids-school siguen vigentes en lista nueva pero con otra edad
+        new_slugs = {t["slug"] for t in KIDS_TOPICS}
+        to_deprecate = [s for s in old_slugs if s not in new_slugs]
+        if to_deprecate:
+            await db.execute(
+                update(Topic)
+                .where(Topic.slug.in_(to_deprecate))
+                .values(category="kids-deprecated", is_active=False, kid_age_group=None)
+            )
+            print(f"[deprecate] {len(to_deprecate)} topicos kids viejos inactivados: {', '.join(to_deprecate)}")
+
         # ─── 1. Tutor Friend ──────────────────────────────────────────
         existing = (await db.execute(select(Template).where(Template.slug == FRIEND_TUTOR["slug"]))).scalar_one_or_none()
         if existing:
@@ -242,19 +402,25 @@ async def main() -> None:
             db.add(t)
             print(f"[create] template friend")
 
-        # ─── 2. 10 Topicos kids ──────────────────────────────────────
+        # ─── 2. 30 Topicos kids ──────────────────────────────────────
         for cfg in KIDS_TOPICS:
             existing_t = (await db.execute(select(Topic).where(Topic.slug == cfg["slug"]))).scalar_one_or_none()
+            full_cfg = {
+                **cfg,
+                "category": "kids",
+                "is_active": True,
+                "levels": ["A0", "A1", "A2"],
+            }
             if existing_t:
-                for k, v in cfg.items():
+                for k, v in full_cfg.items():
                     if k == "slug":
                         continue
                     setattr(existing_t, k, v)
-                print(f"[update] topic {cfg['slug']} (id={existing_t.id})")
+                print(f"[update] topic {cfg['slug']} ({cfg['kid_age_group']})")
             else:
-                t = Topic(**cfg, is_active=True)
+                t = Topic(**full_cfg)
                 db.add(t)
-                print(f"[create] topic {cfg['slug']}")
+                print(f"[create] topic {cfg['slug']} ({cfg['kid_age_group']})")
 
         # ─── 3. Catalogo Achievements ────────────────────────────────
         for cfg in ACHIEVEMENTS:
@@ -272,9 +438,14 @@ async def main() -> None:
 
         await db.commit()
 
+        # contar topicos por nivel
+        mini_count = sum(1 for t in KIDS_TOPICS if t["kid_age_group"] == "mini")
+        junior_count = sum(1 for t in KIDS_TOPICS if t["kid_age_group"] == "junior")
+        tween_count = sum(1 for t in KIDS_TOPICS if t["kid_age_group"] == "tween")
+
         print("\nOK - Seed Kids completo:")
         print(f"  - 1 tutor (friend / Habi)")
-        print(f"  - {len(KIDS_TOPICS)} topicos kids")
+        print(f"  - {len(KIDS_TOPICS)} topicos kids: {mini_count} mini + {junior_count} junior + {tween_count} tween")
         print(f"  - {len(ACHIEVEMENTS)} achievements en catalogo")
 
 
