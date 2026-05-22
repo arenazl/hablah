@@ -366,34 +366,43 @@ function TopicsStage({ parent, parentColor, topics, addedIds, onTopicClick, onBa
           )
         })}
       </div>
-      <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', alignItems: 'center' }}>
         <button
-          onClick={onMore}
+          onClick={onBack}
           style={{
-            padding: '12px 24px', borderRadius: 999,
-            background: 'transparent', color: 'white',
-            border: '1px solid rgba(255,255,255,.25)', fontSize: 14, fontWeight: 600,
+            padding: '12px 22px', borderRadius: 999,
+            background: 'transparent', color: 'rgba(255,255,255,.8)',
+            border: '1px solid rgba(255,255,255,.18)', fontSize: 13, fontWeight: 600,
             cursor: 'pointer',
           }}
         >
-          Explorar más categorías
+          Otra subcategoría
+        </button>
+        <button
+          onClick={onMore}
+          style={{
+            padding: '12px 22px', borderRadius: 999,
+            background: 'transparent', color: 'rgba(255,255,255,.8)',
+            border: '1px solid rgba(255,255,255,.18)', fontSize: 13, fontWeight: 600,
+            cursor: 'pointer',
+          }}
+        >
+          Otra categoría
         </button>
         <button
           onClick={onFinish}
           disabled={addedIds.size === 0}
           style={{
-            padding: '12px 32px', borderRadius: 999,
+            padding: '14px 36px', borderRadius: 999,
             background: addedIds.size > 0 ? '#00B37E' : 'rgba(0,179,126,.3)',
-            color: 'white', border: 'none', fontSize: 14, fontWeight: 700,
+            color: 'white', border: 'none', fontSize: 15, fontWeight: 800,
             cursor: addedIds.size > 0 ? 'pointer' : 'not-allowed',
             opacity: addedIds.size > 0 ? 1 : 0.5,
+            boxShadow: addedIds.size > 0 ? '0 10px 28px rgba(0,179,126,.45)' : 'none',
           }}
         >
-          Terminé ({addedIds.size})
+          Comenzar {addedIds.size > 0 && `(${addedIds.size})`}
         </button>
-      </div>
-      <div style={{ marginTop: 18, fontSize: 12, color: 'rgba(255,255,255,.4)' }}>
-        Color: <span style={{ display: 'inline-block', width: 8, height: 8, background: parentColor, borderRadius: '50%', verticalAlign: 'middle', marginLeft: 4 }} />
       </div>
     </div>
   )
@@ -427,7 +436,7 @@ function BubbleButton({ label, color, onClick, driftIndex }: {
           status="speaking"
           audioLevel={pseudoAudio}
           color={color as `#${string}`}
-          colorShift={0.22}
+          colorShift={0.05}
           themeMode="dark"
           size="md"
         />
