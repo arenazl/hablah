@@ -237,7 +237,7 @@ export const WEBAPP_CSS = `
   grid-template-columns: 64px 1fr auto auto;
   gap: 16px; align-items: center;
   padding: 14px 18px;
-  background: white; border: 1px solid var(--border-1); border-radius: var(--r-lg);
+  background: var(--surface); border: 1px solid var(--border-1); border-radius: var(--r-lg);
 }
 .webapp-root .recent-row .when { font-size: 12px; color: var(--fg-3); }
 .webapp-root .recent-row .when .day-l { font-weight: 700; color: var(--fg-1); font-size: 14px; }
@@ -405,7 +405,7 @@ export const WEBAPP_CSS = `
 .webapp-root .stage.done .ball { background: var(--primary); border-color: var(--primary); color: white; }
 .webapp-root .stage.current .ball { background: white; border: 2.5px dashed var(--primary); color: var(--primary); }
 .webapp-root .stage.locked-soon .ball { background: var(--bg-2); border-color: var(--border-1); color: var(--fg-3); }
-.webapp-root .stage .body { background: white; border: 1px solid var(--border-1); border-radius: var(--r-lg); padding: 14px 16px; }
+.webapp-root .stage .body { background: var(--surface); border: 1px solid var(--border-1); border-radius: var(--r-lg); padding: 14px 16px; }
 .webapp-root .stage.current .body { background: var(--primary-tint); border-color: var(--primary); }
 .webapp-root .stage .body .l { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
 .webapp-root .stage.done .body .l, .webapp-root .stage.current .body .l { color: var(--primary-dark); }
@@ -413,7 +413,7 @@ export const WEBAPP_CSS = `
 .webapp-root .stage .body .meta { font-size: 12px; color: var(--fg-3); margin-top: 6px; }
 
 .webapp-root .topic-panel { display: flex; flex-direction: column; gap: 16px; }
-.webapp-root .topic-progress { padding: 20px; background: white; border-radius: var(--r-xl); border: 1px solid var(--border-1); }
+.webapp-root .topic-progress { padding: 20px; background: var(--surface); border-radius: var(--r-xl); border: 1px solid var(--border-1); }
 .webapp-root .topic-progress .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
 .webapp-root .topic-progress h3 { font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
 .webapp-root .topic-progress .pct { font-size: 24px; font-weight: 800; color: var(--primary-dark); font-variant-numeric: tabular-nums; }
@@ -446,7 +446,7 @@ export const WEBAPP_CSS = `
   display: grid;
   grid-template-columns: 80px 1.4fr 1fr 1fr 1fr 36px;
   gap: 16px; align-items: center;
-  background: white; border: 1px solid var(--border-1); border-radius: var(--r-lg);
+  background: var(--surface); border: 1px solid var(--border-1); border-radius: var(--r-lg);
   padding: 16px 18px;
 }
 .webapp-root .history-row .when { font-size: 12px; color: var(--fg-3); }
@@ -460,13 +460,14 @@ export const WEBAPP_CSS = `
 .webapp-root .history-row .metric .v.down { color: var(--danger); }
 
 .webapp-root .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.webapp-root .profile-card { background: white; border-radius: var(--r-xl); border: 1px solid var(--border-1); padding: 24px; }
-.webapp-root .profile-card h3 { font-size: 16px; font-weight: 700; margin: 0 0 16px; letter-spacing: -.01em; }
+.webapp-root .profile-card { background: var(--surface); border-radius: var(--r-xl); border: 1px solid var(--border-1); padding: 24px; }
+.webapp-root .profile-card h3 { font-size: 16px; font-weight: 700; margin: 0 0 16px; letter-spacing: -.01em; color: var(--fg-1); }
 .webapp-root .profile-header {
-  background: white; border-radius: var(--r-xl); border: 1px solid var(--border-1);
+  background: var(--surface); border-radius: var(--r-xl); border: 1px solid var(--border-1);
   padding: 24px; display: flex; align-items: center; gap: 18px;
   grid-column: 1 / -1;
 }
+.webapp-root .profile-header h2 { color: var(--fg-1); }
 .webapp-root .profile-header .av {
   width: 72px; height: 72px; border-radius: 50%;
   background: var(--ink-1); color: white;
