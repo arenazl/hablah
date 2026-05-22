@@ -342,7 +342,16 @@ export function KidsHome() {
           <p>Habi conoce muchísimos. ¿Cuál es <b>tu favorito</b>? Si te trabás, Habi te va a ayudar.</p>
 
           <div className="kids-hero-cta">
-            <button className="btn-play">
+            <button
+              className="btn-play"
+              onClick={() => {
+                if (featured) {
+                  navigate(`/kids/sesion/${featured.id}`, { state: { topic: featured } })
+                } else {
+                  navigate('/kids/topicos')
+                }
+              }}
+            >
               <span className="pl-ico">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
               </span>
@@ -398,7 +407,7 @@ export function KidsHome() {
                     key={t.id}
                     className="kids-topic"
                     style={{ background: conf.bg }}
-                    onClick={() => alert(`Próximamente: arrancar charla sobre ${t.title}`)}
+                    onClick={() => navigate(`/kids/sesion/${t.id}`, { state: { topic: t } })}
                   >
                     {idx === 0 && <span className="recommend">★ hoy</span>}
                     <div className="t-ico" style={{ background: 'rgba(255,255,255,.18)' }}>

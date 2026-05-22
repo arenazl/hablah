@@ -11,6 +11,7 @@ import { Faq } from './pages/landing/Faq'
 import { KidsHome } from './pages/kids/KidsHome'
 import { KidsAgeSelect } from './pages/kids/KidsAgeSelect'
 import { KidsTopicsAll, KidsCollection, KidsAdventures, KidsProfile } from './pages/kids/KidsPages'
+import { KidsSession } from './pages/kids/KidsSession'
 import { KidsProvider } from './pages/kids/KidsContext'
 import { WebApp } from './pages/WebApp'
 import { Backoffice } from './pages/Backoffice'
@@ -72,6 +73,7 @@ export default function App() {
         <Route path="/kids/coleccion" element={<KidsProvider><KidsCollection /></KidsProvider>} />
         <Route path="/kids/aventuras" element={<KidsProvider><KidsAdventures /></KidsProvider>} />
         <Route path="/kids/perfil" element={<KidsProvider><KidsProfile /></KidsProvider>} />
+        <Route path="/kids/sesion/:topicId" element={<KidsProvider><KidsSession /></KidsProvider>} />
         <Route path="/kids/*" element={<KidsProvider><KidsHome /></KidsProvider>} />
         <Route path="/login" element={<Login />} />
         <Route

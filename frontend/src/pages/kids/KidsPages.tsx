@@ -4,11 +4,12 @@
  * Comparten KidsLayout (sidebar + tabbar). Foco en plomeria - estetica usa
  * mismos tokens del KIDS_CSS shared.
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { KidsLayout } from './_shared'
 import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
 import { KIDS_AGE_KEY } from './KidsAgeSelect'
+import { PracticarGalaxy } from '../../components/PracticarGalaxy'
 
 interface KidsTopic {
   id: number
@@ -95,48 +96,97 @@ const TOPIC_COLORS = [
 ]
 
 export function KidsTopicsAll() {
+  const navigate = useNavigate()
   const { kid } = useKid()
   const [topics, setTopics] = useState<KidsTopic[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    setLoading(true)
+    setError(null)
     fetch(`/api/kids/topics?age_group=${kid.age_group}`)
-      .then((r) => (r.ok ? r.json() : []))
-      .then(setTopics)
-      .catch(() => setTopics([]))
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
+      .then((data) => setTopics(Array.isArray(data) ? data : []))
+      .catch((e) => setError(String(e?.message || e)))
+      .finally(() => setLoading(false))
   }, [kid.age_group])
 
+  // Adaptamos a la forma que espera PracticarGalaxy
+  const interests = topics.map((t) => ({
+    id: t.id,
+    title: t.title,
+    category: 'kids',  // genérico para que el color shuffle de la galaxia
+  }))
+
+  // Si no cargó nada, mostramos el fallback con cards
+  const showCards = !loading && topics.length === 0
+
   return (
-    <KidsLayout>
-      <style>{PAGE_CSS}</style>
-      <div className="kids-page-header">
-        <h1>¿De qué <em>charlamos</em>?</h1>
-        <p>Todos los temas que Habi conoce para vos. Tocá uno y arrancamos.</p>
-      </div>
-
-      <div className="kids-pg-grid">
-        {topics.map((t, i) => (
-          <button
-            key={t.id}
-            className="kids-pg-card"
-            style={{ background: TOPIC_COLORS[i % TOPIC_COLORS.length] }}
-            onClick={() => alert(`Próximamente: arrancar charla sobre ${t.title}`)}
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
+      {!showCards && !loading && topics.length > 0 && (
+        <>
+          <PracticarGalaxy
+            userName={kid.name}
+            interests={interests}
+            onPick={(topicId) => {
+              const t = topics.find((x) => x.id === topicId)
+              navigate(`/kids/sesion/${topicId}`, { state: { topic: t } })
+            }}
+            onSurprise={() => {
+              if (topics.length === 0) return
+              const random = topics[Math.floor(Math.random() * topics.length)]
+              navigate(`/kids/sesion/${random.id}`, { state: { topic: random } })
+            }}
+            onFreeTopic={(text) => {
+              navigate(`/kids/sesion/free?q=${encodeURIComponent(text)}`)
+            }}
+          />
+          <Link
+            to="/kids"
+            style={{
+              position: 'fixed', top: 16, left: 16, zIndex: 100,
+              background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.18)',
+              color: '#fff', padding: '8px 14px', borderRadius: 99, fontSize: 13, fontWeight: 700,
+              backdropFilter: 'blur(8px)',
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+            }}
           >
-            {t.is_hot && <span className="pg-hot">★ popular</span>}
-            <div className="pg-name">{t.title}</div>
-            <div className="pg-tags">
-              {(t.keywords || []).slice(0, 4).map((k) => <span key={k}>{k}</span>)}
-            </div>
-          </button>
-        ))}
-      </div>
-
-      {topics.length === 0 && (
-        <div className="kids-empty">
-          <h3>Cargando temas...</h3>
-          <p>Si esto tarda, refrescá la página.</p>
-        </div>
+            ← Volver
+          </Link>
+        </>
       )}
-    </KidsLayout>
+
+      {loading && (
+        <KidsLayout>
+          <style>{PAGE_CSS}</style>
+          <div className="kids-page-header">
+            <h1>¿De qué <em>charlamos</em>?</h1>
+            <p>Todos los temas que Habi conoce para vos.</p>
+          </div>
+          <div className="kids-empty">
+            <h3>Cargando temas...</h3>
+          </div>
+        </KidsLayout>
+      )}
+
+      {showCards && (
+        <KidsLayout>
+          <style>{PAGE_CSS}</style>
+          <div className="kids-page-header">
+            <h1>¿De qué <em>charlamos</em>?</h1>
+            <p>Todos los temas que Habi conoce para vos.</p>
+          </div>
+          <div className="kids-empty">
+            <h3>No pudimos cargar los temas</h3>
+            <p>{error ?? 'Quizás el servidor está despertando — refrescá en un momento.'}</p>
+          </div>
+        </KidsLayout>
+      )}
+    </div>
   )
 }
 
