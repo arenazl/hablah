@@ -16,6 +16,7 @@ import { ArrowLeft, Mic, RefreshCw, Square, Lock } from 'lucide-react'
 import { AgentAudioVisualizerAura } from '../../components/agents-ui/agent-audio-visualizer-aura'
 import { useLiveVoice } from '../../hooks/useLiveVoice'
 import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
+import { InviteFriendButton } from '../../components/InviteFriendButton'
 
 interface TopicData {
   id: number
@@ -348,6 +349,14 @@ export function KidsSession() {
               <RefreshCw size={16} strokeWidth={2.2} />
               Cambiar tema
             </Link>
+            {topic && (
+              <InviteFriendButton
+                topicId={topic.id}
+                variant="light"
+                label="Invitar amigo"
+                authToken={localStorage.getItem(KIDS_TOKEN_KEY) ?? undefined}
+              />
+            )}
           </>
         )}
         {hasKidsToken && isActive && (

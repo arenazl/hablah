@@ -1,8 +1,24 @@
-from fastapi import APIRouter, WebSocket, Query
+import logging
 
+from fastapi import APIRouter, WebSocket, Query
+from sqlalchemy import select
+
+from core.database import AsyncSessionLocal
 from services.gemini_live import voice_proxy
+from services.voice_engine import VoiceEngineContext
+from services.voice_room_engine import (
+    Room,
+    RoomParticipant,
+    get_or_create_room,
+    handle_room_ws,
+)
+from services.super_prompt import build_super_prompt
+from models.rooms import VoiceRoom
+from models.user import User
+from models.template import Topic, Template
 
 router = APIRouter()
+log = logging.getLogger(__name__)
 
 
 @router.websocket("/ws")
@@ -17,3 +33,70 @@ async def voice_ws(
     """
     await websocket.accept()
     await voice_proxy(websocket, session_id, token)
+
+
+@router.websocket("/ws_room")
+async def voice_ws_room(
+    websocket: WebSocket,
+    room_token: str = Query(...),
+    pid: str = Query(...),
+):
+    """WebSocket de Voice Room: charla multi-participante con 1 sesion Gemini compartida.
+
+    NO requiere JWT - el room_token + pid son suficientes (modelo de invitacion publica).
+    El frontend debe pasar:
+      - room_token: el token que devolvio POST /api/rooms
+      - pid: el participant id (host_pid del host, o guest_pid devuelto por /join)
+    """
+    await websocket.accept()
+
+    # Cargar room desde BD para validar token + pid
+    async with AsyncSessionLocal() as db:
+        vroom = (await db.execute(select(VoiceRoom).where(VoiceRoom.token == room_token))).scalar_one_or_none()
+        if not vroom:
+            await websocket.close(code=4004)
+            return
+        if vroom.status != "open":
+            await websocket.close(code=4003)
+            return
+
+        participants = vroom.participants or []
+        match = next((p for p in participants if p["pid"] == pid), None)
+        if not match:
+            await websocket.close(code=4001)
+            return
+
+        # Construir el ctx una sola vez (cuando se crea la room en memoria)
+        host = (await db.execute(select(User).where(User.id == vroom.host_user_id))).scalar_one_or_none()
+        topic = None
+        if vroom.topic_id:
+            topic = (await db.execute(select(Topic).where(Topic.id == vroom.topic_id))).scalar_one_or_none()
+        template = None
+        if vroom.template_id:
+            template = (await db.execute(select(Template).where(Template.id == vroom.template_id))).scalar_one_or_none()
+
+        super_prompt = build_super_prompt(user=host, template=template, topic=topic)
+
+    ctx = VoiceEngineContext(
+        session_id=vroom.session_id or 0,
+        user_id=vroom.host_user_id,
+        super_prompt=super_prompt,
+        voice_id=template.voice_id if template else "",
+        language="en",
+        target_language=host.target_language if host else "en",
+        silence_tolerance_ms=template.silence_tolerance_ms if template else 800,
+        interruption_allowed=template.interruption_allowed if template else False,
+    )
+
+    room: Room = await get_or_create_room(room_token, ctx)
+    participant = RoomParticipant(
+        pid=pid,
+        name=match["name"],
+        is_host=match.get("is_host", False),
+        ws=websocket,
+    )
+
+    try:
+        await handle_room_ws(websocket, room, participant)
+    except Exception as e:
+        log.exception("voice_ws_room error: %s", e)
