@@ -11,7 +11,7 @@
  *     por id, asi se mantiene posición entre renders)
  *   - Footer: 2 acciones rápidas: Sorpréndeme + Tema libre
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AgentAudioVisualizerAura } from './agents-ui/agent-audio-visualizer-aura'
 
 const STYLES = `
@@ -136,8 +136,86 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
 
   const handlePick = (topicId: number) => {
     if (selectedId !== null) return
+    if (didDragRef.current) return  // Si arrastraste, no es click
     setSelectedId(topicId)
     window.setTimeout(() => onPick(topicId), SELECT_ANIM_MS)
+  }
+
+  // ─── PAN + PINCH ZOOM ────────────────────────────────────────
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [zoom, setZoom] = useState(1)
+  const panRef = useRef({ x: 0, y: 0 })
+  const zoomRef = useRef(1)
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null)
+  const pinchStartRef = useRef<{ dist: number; zoom: number } | null>(null)
+  const didDragRef = useRef(false)
+
+  // Mantenemos refs sincronizados con el state
+  useEffect(() => { panRef.current = pan }, [pan])
+  useEffect(() => { zoomRef.current = zoom }, [zoom])
+
+  const clampZoom = (z: number) => Math.max(0.5, Math.min(2.5, z))
+  const clampPan = (x: number, y: number) => {
+    const limit = 400 * zoomRef.current
+    return { x: Math.max(-limit, Math.min(limit, x)), y: Math.max(-limit, Math.min(limit, y)) }
+  }
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    didDragRef.current = false
+    if (e.touches.length === 1) {
+      dragStartRef.current = { x: e.touches[0].clientX - panRef.current.x, y: e.touches[0].clientY - panRef.current.y }
+    } else if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      pinchStartRef.current = { dist: Math.sqrt(dx * dx + dy * dy), zoom: zoomRef.current }
+      dragStartRef.current = null
+    }
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 2 && pinchStartRef.current) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      const ratio = dist / pinchStartRef.current.dist
+      setZoom(clampZoom(pinchStartRef.current.zoom * ratio))
+      didDragRef.current = true
+    } else if (e.touches.length === 1 && dragStartRef.current) {
+      const nx = e.touches[0].clientX - dragStartRef.current.x
+      const ny = e.touches[0].clientY - dragStartRef.current.y
+      if (Math.abs(nx - panRef.current.x) > 4 || Math.abs(ny - panRef.current.y) > 4) didDragRef.current = true
+      setPan(clampPan(nx, ny))
+    }
+  }
+
+  const handleTouchEnd = () => {
+    dragStartRef.current = null
+    pinchStartRef.current = null
+    // Reset didDrag tras un tick para que el click siguiente sí dispare
+    setTimeout(() => { didDragRef.current = false }, 100)
+  }
+
+  // Mouse (desktop)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    didDragRef.current = false
+    dragStartRef.current = { x: e.clientX - panRef.current.x, y: e.clientY - panRef.current.y }
+  }
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!dragStartRef.current) return
+    const nx = e.clientX - dragStartRef.current.x
+    const ny = e.clientY - dragStartRef.current.y
+    if (Math.abs(nx - panRef.current.x) > 4 || Math.abs(ny - panRef.current.y) > 4) didDragRef.current = true
+    setPan(clampPan(nx, ny))
+  }
+  const handleMouseUp = () => {
+    dragStartRef.current = null
+    setTimeout(() => { didDragRef.current = false }, 100)
+  }
+
+  // Wheel para zoom desktop
+  const handleWheel = (e: React.WheelEvent) => {
+    const delta = -e.deltaY * 0.002
+    setZoom((z) => clampZoom(z + delta))
   }
 
   // Mobile: 7 orbs (más espacio). Desktop: 11.
@@ -222,15 +300,30 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
         </p>
       </div>
 
-      {/* GALAXIA DE ORBS */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
+      {/* GALAXIA DE ORBS — pan + zoom interactivo */}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onWheel={handleWheel}
+        style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          touchAction: 'none', userSelect: 'none',
+          cursor: dragStartRef.current ? 'grabbing' : 'grab',
+        }}
+      >
         <div style={{
           position: 'relative',
           width: 'min(720px, 90vw)',
           height: 'min(720px, 70vh)',
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          transition: dragStartRef.current ? 'none' : 'transform 220ms cubic-bezier(.2,.8,.2,1)',
+          willChange: 'transform',
         }}>
           {visibleInterests.map((topic, i) => {
             const pos = positions[i]
