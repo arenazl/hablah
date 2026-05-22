@@ -120,6 +120,20 @@ async def get_topics(
     } for t in topics]}
 
 
+@router.post("/reset")
+async def reset_interests(
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Borra todos los UserInterest del user → dispara onboarding al volver a /app."""
+    from models.template import UserInterest
+    from sqlalchemy import delete
+
+    await db.execute(delete(UserInterest).where(UserInterest.user_id == current.id))
+    await db.commit()
+    return {"reset": True}
+
+
 @router.post("/finish")
 async def finish_onboarding(
     body: dict,

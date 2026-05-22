@@ -191,6 +191,8 @@ export const onboardingAPI = {
     api.post<{ topic_id: number; slug: string; title: string }>('/onboarding/add-fallback-topic', { title, category }).then((r) => r.data),
   finish: (pickedCategorySlugs: string[]) =>
     api.post<{ added: number; total_categories: number }>('/onboarding/finish', { picked_category_slugs: pickedCategorySlugs }).then((r) => r.data),
+  reset: () =>
+    api.post<{ reset: boolean }>('/onboarding/reset').then((r) => r.data),
 }
 
 /* ────────────── SESSIONS ────────────── */

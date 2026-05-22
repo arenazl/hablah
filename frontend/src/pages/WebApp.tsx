@@ -8,7 +8,7 @@ import { MAPA_CSS } from './mapa.css'
 import { PRACTICAR_CSS } from './practicar.css'
 import { HISTORIAL_CSS } from './historial.css'
 import { CONVO_BG_CSS } from './convo-bg.css'
-import { meAPI, sessionsAPI, topicsAPI, templatesAPI, MeProfile, SessionData, Topic, Template, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
+import { meAPI, sessionsAPI, topicsAPI, templatesAPI, onboardingAPI, MeProfile, SessionData, Topic, Template, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 import { OnboardingBubbles } from '../components/OnboardingBubbles'
@@ -69,6 +69,8 @@ export function WebApp() {
     try {
       const p = await meAPI.profile()
       setProfile(p)
+      // Si volvió a 0 intereses (ej. después de Reset), reactivar onboarding
+      if (p.interests.length === 0) setOnboardingSkipped(false)
     } catch (e: any) {
       toast.error('No pudimos cargar tu perfil')
     } finally {
@@ -1364,40 +1366,29 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     {endedReport && <SessionReportOverlay report={endedReport} sessionId={sessionId!} onClose={() => nav('/app')} />}
     <div className={`convo-view bg-${convoBg}`}>
       <BgPicker value={convoBg} onChange={setConvoBg} />
-      <PedagogyPicker value={pedagogy} onChange={(p, label) => {
-        setPedagogy(p)
-        const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
-        // Inyectamos como instruccion en INGLES para que Gemini Live no la verbalice ni la traduzca
-        const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
-        toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
-      }} />
       <div className="convo-stage">
         <div className="convo-header">
-          <div>
+          <div className="convo-header-main">
             <h2>{topicTitle || 'Iniciando…'}</h2>
-            <div className="meta" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="meta">
               {templates.length > 0 ? (
-                <select
-                  value={profile?.active_template?.id ?? ''}
+                <CoachPicker
+                  templates={templates}
+                  activeId={profile?.active_template?.id}
                   disabled={switching}
-                  onChange={(e) => handleSwitchTutor(parseInt(e.target.value, 10))}
-                  style={{
-                    background: 'rgba(0,179,126,.18)', color: '#9CFCD2',
-                    border: '1px solid rgba(156,252,210,.3)', borderRadius: 999,
-                    padding: '3px 10px', fontSize: 12, fontWeight: 700,
-                    cursor: switching ? 'wait' : 'pointer',
-                    opacity: switching ? 0.6 : 1,
-                  }}
-                >
-                  {templates.map(t => (
-                    <option key={t.id} value={t.id} style={{ background: '#0E1614', color: 'white' }}>{t.name}</option>
-                  ))}
-                </select>
+                  onSelect={handleSwitchTutor}
+                />
               ) : (
                 <span className="live">{profile?.active_template?.name || 'Habláh'}</span>
               )}
-              <span>{profile?.user?.cefr_level} · {profile?.user?.target_language}</span>
+              <span className="meta-level">{profile?.user?.cefr_level} · {profile?.user?.target_language}</span>
             </div>
+            <PedagogyPicker value={pedagogy} onChange={(p, label) => {
+              setPedagogy(p)
+              const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
+              const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
+              toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
+            }} />
           </div>
           <button className="btn btn-sm end" onClick={handleEnd}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
@@ -2540,6 +2531,16 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
     await meAPI.updateSettings({ insistent_mode_enabled: !u.insistent_mode_enabled })
     onChange()
   }
+  const handleResetInterests = async () => {
+    if (!confirm('¿Reiniciar tus intereses? Vas a volver a elegir tus tópicos desde cero.')) return
+    try {
+      await onboardingAPI.reset()
+      toast.success('Intereses reseteados — volvé a empezar')
+      onChange()
+    } catch {
+      toast.error('No pude resetear')
+    }
+  }
   const toggleReminder = async () => {
     await meAPI.updateSettings({ daily_reminder_enabled: !u.daily_reminder_enabled })
     onChange()
@@ -2627,6 +2628,27 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
             <SettingsRow label="Privacidad de audio" sub="Cuándo borramos lo que grabás" value={`${u.audio_retention_days} días`} />
             <SettingsRow label="Modo insistente" sub="Forzar misiones de rescate al detectar errores repetidos" switchOn={u.insistent_mode_enabled} onSwitchToggle={toggleInsistent} />
             <SettingsRow label="Recordatorio diario" sub="Notificación a las 8am" switchOn={u.daily_reminder_enabled} onSwitchToggle={toggleReminder} />
+            <div className="settings-row">
+              <div className="ico" style={{ color: 'var(--danger)' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>
+                </svg>
+              </div>
+              <div className="body">
+                <div className="l">Resetear intereses</div>
+                <div className="s">Borra tus tópicos y vuelve a preguntarte todo</div>
+              </div>
+              <button
+                onClick={handleResetInterests}
+                style={{
+                  padding: '7px 14px', borderRadius: 999,
+                  border: '1px solid var(--danger)', background: 'transparent',
+                  color: 'var(--danger)', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                }}
+              >
+                Reiniciar
+              </button>
+            </div>
           </div>
         </div>
 
@@ -3271,18 +3293,99 @@ const PEDAGOGY_INSTRUCTIONS = {
 function PedagogyPicker({ value, onChange }: { value: string; onChange: (id: string, label: string) => void }) {
   return (
     <div className="ped-picker" role="radiogroup" aria-label="Estilo del tutor">
-      {PEDAGOGY_OPTIONS.map((o) => (
-        <button
-          key={o.id}
-          className={value === o.id ? 'active' : ''}
-          onClick={() => onChange(o.id, o.label)}
-          title={`${o.label} — ${o.desc}`}
-          aria-label={o.label}
-          aria-pressed={value === o.id}
-        >
-          {o.short}
-        </button>
-      ))}
+      <span className="ped-picker-label">Estilo</span>
+      <div className="ped-picker-chips">
+        {PEDAGOGY_OPTIONS.map((o) => {
+          const active = value === o.id
+          return (
+            <button
+              key={o.id}
+              type="button"
+              className={`ped-chip${active ? ' active' : ''}`}
+              onClick={() => onChange(o.id, o.label)}
+              title={`${o.label} — ${o.desc}`}
+              aria-label={`${o.label}: ${o.desc}`}
+              aria-pressed={active}
+              style={{ ['--c' as string]: o.color }}
+            >
+              <span className="ped-chip-ico" aria-hidden="true">{o.icon}</span>
+              <span className="ped-chip-txt">{o.label}</span>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+interface CoachPickerProps {
+  templates: Template[]
+  activeId: number | undefined
+  disabled: boolean
+  onSelect: (id: number) => void
+}
+function CoachPicker({ templates, activeId, disabled, onSelect }: CoachPickerProps) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const active = templates.find(t => t.id === activeId) || templates[0]
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  if (!active) return null
+
+  return (
+    <div className={`coach-picker${open ? ' open' : ''}`} ref={rootRef}>
+      <button
+        type="button"
+        className="coach-trigger"
+        onClick={() => !disabled && setOpen(o => !o)}
+        disabled={disabled}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        style={{ ['--c' as string]: active.icon_bg || '#00B37E' }}
+      >
+        <span className="coach-orb" aria-hidden="true" />
+        <span className="coach-name">{active.name}</span>
+        <svg className="coach-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      {open && (
+        <div className="coach-panel" role="listbox">
+          {templates.map(t => {
+            const isActive = t.id === active.id
+            return (
+              <button
+                key={t.id}
+                type="button"
+                role="option"
+                aria-selected={isActive}
+                className={`coach-option${isActive ? ' active' : ''}`}
+                onClick={() => { onSelect(t.id); setOpen(false) }}
+                style={{ ['--c' as string]: t.icon_bg || '#00B37E' }}
+              >
+                <span className="coach-orb" aria-hidden="true" />
+                <span className="coach-option-body">
+                  <span className="coach-option-name">{t.name}</span>
+                  {t.description && <span className="coach-option-desc">{t.description}</span>}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

@@ -124,27 +124,102 @@ export const CONVO_BG_CSS = `
 .bg-picker .bgp-4 { background: #000; box-shadow: inset 2px 3px 0 #5EE0B0, inset -3px -2px 0 #00B37E, inset 5px -4px 0 #7CE7BD; }
 .bg-picker .bgp-5 { background: radial-gradient(circle, transparent 30%, #00B37E66 31%, transparent 33%, transparent 60%, #00B37E33 61%, transparent 63%); }
 
-/* ============== PEDAGOGY PICKER (botonera estilo tutor en vivo) ============== */
-.ped-picker {
-  position: absolute; top: 14px; left: 14px; z-index: 5;
-  display: flex; gap: 6px; padding: 5px;
-  background: rgba(0,0,0,.55); backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,.08); border-radius: 999px;
+/* ============== PEDAGOGY PICKER (estilo del tutor — chips con icono+label) ============== */
+.ped-picker { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.ped-picker-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: rgba(232,236,234,.45);
 }
-@media (max-width: 880px) {
-  .ped-picker { top: 10px; left: 10px; padding: 3px; gap: 3px; }
-  .ped-picker button { width: 24px; height: 24px; font-size: 10px; }
+.ped-picker-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.ped-chip {
+  --c: #00B37E;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 11px; height: 30px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.10);
+  color: rgba(232,236,234,.72);
+  font-size: 12px; font-weight: 600; letter-spacing: .01em;
+  cursor: pointer; transition: transform .15s var(--ease), background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease), box-shadow .25s var(--ease);
 }
-.ped-picker button {
-  width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.18);
-  cursor: pointer; padding: 0; transition: all .15s var(--ease);
-  display: grid; place-items: center;
-  font-family: var(--font-display, 'Inter'); font-weight: 700; font-size: 12px;
-  background: rgba(255,255,255,.04); color: rgba(255,255,255,.7);
+.ped-chip:hover { transform: translateY(-1px); color: #fff; border-color: color-mix(in oklab, var(--c) 60%, transparent); }
+.ped-chip-ico { display: inline-flex; color: var(--c); }
+.ped-chip.active {
+  color: #fff;
+  background: radial-gradient(120% 180% at 0% 50%, color-mix(in oklab, var(--c) 55%, transparent), color-mix(in oklab, var(--c) 22%, transparent) 60%, rgba(0,0,0,.4));
+  border-color: color-mix(in oklab, var(--c) 75%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 40%, transparent),
+              0 0 16px color-mix(in oklab, var(--c) 45%, transparent),
+              0 6px 22px color-mix(in oklab, var(--c) 30%, transparent);
 }
-.ped-picker button:hover { border-color: rgba(255,255,255,.45); transform: scale(1.08); color: #fff; }
-.ped-picker button.active {
-  background: var(--primary); color: #fff; border-color: var(--primary);
-  box-shadow: 0 0 12px rgba(0,179,126,.4);
+.ped-chip.active .ped-chip-ico { color: #fff; filter: drop-shadow(0 0 4px color-mix(in oklab, var(--c) 80%, transparent)); }
+@media (max-width: 720px) {
+  .ped-picker-label { display: none; }
+  .ped-chip { padding: 5px 9px; height: 28px; font-size: 11px; }
+  .ped-chip-txt { display: none; }
 }
+
+/* ============== COACH PICKER (dropdown custom para tutor activo) ============== */
+.coach-picker { position: relative; display: inline-block; }
+.coach-trigger {
+  --c: #00B37E;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px 5px 8px; height: 30px;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--c) 22%, transparent), color-mix(in oklab, var(--c) 6%, transparent));
+  border: 1px solid color-mix(in oklab, var(--c) 35%, transparent);
+  border-radius: 999px;
+  color: #E8ECEA; font-size: 13px; font-weight: 700; letter-spacing: -.005em;
+  cursor: pointer; transition: all .18s var(--ease);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 18%, transparent) inset;
+}
+.coach-trigger:hover:not(:disabled) {
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 35%, transparent) inset,
+              0 0 18px color-mix(in oklab, var(--c) 35%, transparent);
+  transform: translateY(-1px);
+}
+.coach-trigger:disabled { opacity: .55; cursor: wait; }
+.coach-orb {
+  width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+  background: radial-gradient(circle at 32% 30%, color-mix(in oklab, var(--c) 92%, white) 0%, var(--c) 45%, color-mix(in oklab, var(--c) 60%, black) 100%);
+  box-shadow: 0 0 10px color-mix(in oklab, var(--c) 70%, transparent),
+              inset 0 0 6px color-mix(in oklab, var(--c) 85%, white);
+  animation: coach-pulse 3.6s ease-in-out infinite;
+}
+@keyframes coach-pulse {
+  0%, 100% { box-shadow: 0 0 8px color-mix(in oklab, var(--c) 55%, transparent), inset 0 0 6px color-mix(in oklab, var(--c) 85%, white); }
+  50%      { box-shadow: 0 0 16px color-mix(in oklab, var(--c) 80%, transparent), inset 0 0 8px color-mix(in oklab, var(--c) 90%, white); }
+}
+.coach-chev { color: rgba(232,236,234,.7); transition: transform .2s var(--ease); }
+.coach-picker.open .coach-chev { transform: rotate(180deg); }
+
+.coach-panel {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
+  min-width: 280px; max-width: min(360px, calc(100vw - 32px));
+  padding: 6px; display: flex; flex-direction: column; gap: 2px;
+  background: rgba(14,22,20,.92); backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(0,179,126,.08);
+  animation: coach-pop .18s var(--ease);
+}
+@keyframes coach-pop { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: none; } }
+.coach-option {
+  --c: #00B37E;
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px;
+  background: transparent; border: 1px solid transparent; border-radius: 10px;
+  color: rgba(232,236,234,.85); text-align: left;
+  cursor: pointer; transition: background .15s var(--ease), border-color .15s var(--ease);
+}
+.coach-option:hover { background: rgba(255,255,255,.04); border-color: color-mix(in oklab, var(--c) 35%, transparent); }
+.coach-option.active {
+  background: color-mix(in oklab, var(--c) 14%, transparent);
+  border-color: color-mix(in oklab, var(--c) 45%, transparent);
+}
+.coach-option .coach-orb { width: 22px; height: 22px; margin-top: 1px; }
+.coach-option-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.coach-option-name { font-size: 13px; font-weight: 700; color: #F1F5F3; letter-spacing: -.005em; }
+.coach-option-desc { font-size: 11.5px; line-height: 1.35; color: rgba(232,236,234,.55); }
+
+.convo-header .meta-level { font-size: 12px; color: rgba(232,236,234,.55); }
 `
