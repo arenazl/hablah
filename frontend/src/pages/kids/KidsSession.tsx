@@ -32,23 +32,23 @@ function colorForTopic(topicId: number): `#${string}` {
 }
 
 const CSS = `
-.kids-session-root { position:fixed; inset:0; z-index:50; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom); overflow:hidden; font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
+.kids-session-root { min-height:100vh; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
 .kids-session-top { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; }
 .kids-session-back { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:99px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); color:#fff; font-size:13px; font-weight:700; backdrop-filter:blur(8px); cursor:pointer; }
 .kids-session-back:hover { background:rgba(255,255,255,.16); }
 .kids-session-topic-pill { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:99px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9CFCD2; }
 .kids-session-topic-pill .dot { width:8px; height:8px; border-radius:50%; }
 
-.kids-session-content { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; gap:24px; }
-.kids-session-h1 { font-weight:800; font-size:clamp(32px, 6vw, 56px); letter-spacing:-0.03em; line-height:1.05; margin:0; max-width:680px; }
+.kids-session-content { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 24px 12px; text-align:center; gap:18px; }
+.kids-session-h1 { font-weight:800; font-size:clamp(28px, 5vw, 44px); letter-spacing:-0.03em; line-height:1.05; margin:0; max-width:680px; }
 .kids-session-h1 em { font-style:normal; color:#9CFCD2; }
-.kids-session-sub { font-size:16px; color:rgba(255,255,255,.65); margin:0; max-width:520px; line-height:1.5; }
+.kids-session-sub { font-size:15px; color:rgba(255,255,255,.65); margin:0; max-width:520px; line-height:1.5; }
 .kids-session-sub b { color:#fff; font-weight:600; }
 
-.kids-orb-wrap { width:min(360px, 70vw); height:min(360px, 70vw); position:relative; display:grid; place-items:center; }
+.kids-orb-wrap { width:min(260px, 50vw); height:min(260px, 50vw); position:relative; display:grid; place-items:center; }
 .kids-orb-wrap::before { content:""; position:absolute; inset:-20px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.06), transparent 65%); }
 
-.kids-session-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:24px; padding-bottom:32px; }
+.kids-session-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:16px 24px 24px; position:sticky; bottom:0; background:linear-gradient(180deg, transparent 0%, rgba(5,10,9,.85) 50%); backdrop-filter:blur(8px); z-index:5; }
 .kids-session-btn-primary { display:inline-flex; align-items:center; gap:10px; padding:0 32px; height:64px; border-radius:99px; background:linear-gradient(180deg,#FFB800,#F09D00); color:#3A2A00; font-weight:800; font-size:17px; letter-spacing:-0.01em; box-shadow:0 12px 30px rgba(240,157,0,.45), 0 4px 12px rgba(0,0,0,.2); border:0; cursor:pointer; transition:transform .15s; font-family:inherit; }
 .kids-session-btn-primary:hover { transform:translateY(-2px) scale(1.02); }
 .kids-session-btn-primary:active { transform:scale(.97); }
