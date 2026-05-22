@@ -159,7 +159,7 @@ export function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="username"
-                placeholder="tizi  o  tizi@hablah.app"
+                placeholder="username"
                 className="w-full px-4 py-3 rounded-xl border transition-all"
                 style={{
                   borderColor: 'rgba(13,20,18,.14)',
