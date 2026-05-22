@@ -11,18 +11,14 @@ import {
   Gauge,
   Globe,
   Heart,
-  Instagram,
   Languages,
-  Linkedin,
   Menu,
   Play,
   ShieldCheck,
-  Smartphone,
   Sparkles,
   Square,
   Star,
   Timer,
-  Twitter,
   X as XIcon,
   Zap,
 } from 'lucide-react'
@@ -405,16 +401,14 @@ const LANDING_CSS = `
 .landing-root .cta-final-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
 
 .landing-root footer { background: var(--ink-1); color: rgba(232,236,234,.75); padding: 64px 0 32px; }
-.landing-root .footer-grid { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.landing-root .footer-slim { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 64px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.08); }
 .landing-root .footer-col h5 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: rgba(232,236,234,.5); margin: 0 0 14px; font-weight: 700; }
 .landing-root .footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
 .landing-root .footer-col a { font-size: 14px; color: rgba(232,236,234,.75); transition: color .15s var(--ease); }
 .landing-root .footer-col a:hover { color: white; }
 .landing-root .footer-brand .logo { color: white; margin-bottom: 12px; }
-.landing-root .footer-brand p { font-size: 13px; color: rgba(232,236,234,.55); line-height: 1.5; margin: 0 0 16px; max-width: 280px; }
+.landing-root .footer-brand p { font-size: 13px; color: rgba(232,236,234,.55); line-height: 1.5; margin: 0; max-width: 360px; }
 .landing-root .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; font-size: 12px; color: rgba(232,236,234,.45); flex-wrap: wrap; gap: 12px; }
-.landing-root .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,.05); display: grid; place-items: center; color: rgba(232,236,234,.75); transition: all .15s var(--ease); }
-.landing-root .social-btn:hover { background: rgba(255,255,255,.12); color: white; }
 
 .landing-root .fade-on-scroll {
   opacity: 0;
@@ -489,7 +483,7 @@ const LANDING_CSS = `
   .landing-root .feature-grid { grid-template-columns: 1fr; gap: 40px; }
   .landing-root .feature.reverse .feature-grid { direction: ltr; }
   .landing-root .price-card.featured { transform: none; }
-  .landing-root .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .landing-root .footer-slim { grid-template-columns: 1fr 1fr; gap: 32px; }
   .landing-root .footer-brand { grid-column: 1 / -1; }
   .landing-root .cta-final { padding: 64px 0; }
 }
@@ -729,7 +723,7 @@ export function Landing() {
 
       <nav className="nav" aria-label="Navegación principal">
         <div className="container nav-inner">
-          <a href="#" className="logo">
+          <a href="/" className="logo" aria-label="Habláh - Inicio">
             <img src="/logos/hablah-mark.svg" alt="habláh" className="logo-mark" width="30" height="30" />
             habláh
           </a>
@@ -1189,7 +1183,7 @@ export function Landing() {
                 <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Plan a medida (objetivo específico)</span></li>
                 <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Soporte prioritario</span></li>
               </ul>
-              <a href="#" className="btn btn-outline btn-block" style={{ marginTop: 'auto' }}>Hablar con ventas</a>
+              <Link to="/login" className="btn btn-outline btn-block" style={{ marginTop: 'auto' }}>Probar 14 días gratis</Link>
             </div>
           </div>
         </div>
@@ -1214,16 +1208,12 @@ export function Landing() {
           <h2>Hablás más en una semana<br />que en seis meses de cursos.</h2>
           <p>14 días de Pro, sin tarjeta. La primera charla se siente rara. La quinta, no podés parar.</p>
           <div className="cta-final-actions">
-            <a href="#" className="btn btn-light btn-lg">
-              <Smartphone size={18} strokeWidth={2.2} />
-              Descargar en App Store
-            </a>
-            <a href="#" className="btn btn-dark btn-lg" style={{ background: 'rgba(0,0,0,.25)', color: 'white', border: '1px solid rgba(255,255,255,.25)' }}>
-              <Play size={16} strokeWidth={2.2} fill="white" />
-              Disponible en Google Play
-            </a>
+            <Link to="/login" className="btn btn-light btn-lg">
+              Empezar gratis
+              <ArrowRight size={18} strokeWidth={2.4} />
+            </Link>
           </div>
-          <div style={{ marginTop: 24, fontSize: 13, opacity: .8 }}>o probalo en la web · 5 minutos · sin descarga</div>
+          <div style={{ marginTop: 24, fontSize: 13, opacity: .8 }}>5 minutos · sin descarga · sin tarjeta</div>
         </div>
       </section>
 
@@ -1231,15 +1221,13 @@ export function Landing() {
 
       <footer role="contentinfo">
         <div className="container">
-          <div className="footer-grid">
+          <div className="footer-slim">
             <div className="footer-brand">
-              <a href="#" className="logo"><img src="/logos/hablah-mark.svg" alt="habláh" className="logo-mark" width="30" height="30" /> habláh</a>
+              <a href="/" className="logo" aria-label="Habláh - Inicio">
+                <img src="/logos/hablah-mark.svg" alt="habláh" className="logo-mark" width="30" height="30" />
+                habláh
+              </a>
               <p>Plataforma adaptativa de aprendizaje de idiomas con IA. Hablás de lo que te gusta. El sistema se encarga del resto.</p>
-              <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                <a href="#" className="social-btn" aria-label="X/Twitter"><Twitter size={16} strokeWidth={2} /></a>
-                <a href="#" className="social-btn" aria-label="LinkedIn"><Linkedin size={16} strokeWidth={2} /></a>
-                <a href="#" className="social-btn" aria-label="Instagram"><Instagram size={16} strokeWidth={2} /></a>
-              </div>
             </div>
             <div className="footer-col">
               <h5>Producto</h5>
@@ -1248,33 +1236,14 @@ export function Landing() {
                 <li><a href="#tutors">Tutores</a></li>
                 <li><a href="#topics">Tópicos</a></li>
                 <li><a href="#pricing">Precios</a></li>
+                <li><a href="#faq">FAQ</a></li>
               </ul>
             </div>
             <div className="footer-col">
-              <h5>Empresa</h5>
+              <h5>Cuenta</h5>
               <ul>
-                <li><a href="#">Sobre nosotros</a></li>
-                <li><a href="#">Carreras</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Prensa</a></li>
-              </ul>
-            </div>
-            <div className="footer-col">
-              <h5>Recursos</h5>
-              <ul>
-                <li><a href="#">Centro de ayuda</a></li>
-                <li><a href="#">Para empresas</a></li>
-                <li><a href="#">API · próximamente</a></li>
-                <li><a href="#">Estado del servicio</a></li>
-              </ul>
-            </div>
-            <div className="footer-col">
-              <h5>Legal</h5>
-              <ul>
-                <li><a href="#">Términos</a></li>
-                <li><a href="#">Privacidad</a></li>
-                <li><a href="#">Cookies</a></li>
-                <li><a href="#">Manejo de audio</a></li>
+                <li><Link to="/login">Ingresar</Link></li>
+                <li><Link to="/login">Empezar gratis</Link></li>
               </ul>
             </div>
           </div>
