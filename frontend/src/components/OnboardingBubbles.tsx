@@ -52,6 +52,8 @@ export function OnboardingBubbles({ onDone, onSkip }: Props) {
   const [openTopics, setOpenTopics] = useState<OnboardingTopic[]>([])
   const [openLoading, setOpenLoading] = useState(false)
   const [addedCount, setAddedCount] = useState(0)
+  const [pickedCats, setPickedCats] = useState<Set<string>>(new Set())
+  const [finishing, setFinishing] = useState(false)
 
   useEffect(() => {
     onboardingAPI.categories().then(setCategories).catch(() => toast.error('No pude cargar las categorías'))
@@ -79,6 +81,7 @@ export function OnboardingBubbles({ onDone, onSkip }: Props) {
         await topicsAPI.addInterest(topic.id)
       }
       setAddedCount((c) => c + 1)
+      setPickedCats((s) => new Set(s).add(topic.category))
       toast.success(`Agregado: ${topic.title}`)
       // Cierre automatico tras tocar (vuelve a categorias)
       setTimeout(() => setOpenCat(null), 280)
@@ -87,12 +90,24 @@ export function OnboardingBubbles({ onDone, onSkip }: Props) {
     }
   }
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (addedCount === 0) {
       toast.error('Elegí al menos un tópico para empezar')
       return
     }
-    onDone()
+    setFinishing(true)
+    try {
+      // Auto-asignar hermanos del banco curado de las categorias tocadas
+      const result = await onboardingAPI.finish(Array.from(pickedCats))
+      if (result.added > 0) {
+        toast.success(`+${result.added} tópicos relacionados sumados a tus intereses`)
+      }
+    } catch {
+      // No bloquear si falla el auto-assign
+    } finally {
+      setFinishing(false)
+      onDone()
+    }
   }
 
   return (

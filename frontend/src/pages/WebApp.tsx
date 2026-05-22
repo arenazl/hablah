@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
 import { NavLink, Routes, Route, useLocation, Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -3227,13 +3227,37 @@ function BgPicker({ value, onChange }: { value: number; onChange: (n: number) =>
   )
 }
 
-const PEDAGOGY_OPTIONS = [
-  { id: 'entrevistador', label: 'Entrevistador', short: 'E', desc: 'Habla poco, pregunta mucho' },
-  { id: 'balanced',      label: 'Equilibrado',   short: 'B', desc: '50/50' },
-  { id: 'charlatan',     label: 'Charlatán',     short: 'C', desc: 'Cuenta y pregunta' },
-  { id: 'mentor',        label: 'Mentor',        short: 'M', desc: 'Info + pregunta concreta' },
-  { id: 'provocador',    label: 'Provocador',    short: 'P', desc: 'Discrepa, te desafía' },
-  { id: 'ludico',        label: 'Lúdico',        short: 'L', desc: 'Juegos verbales' },
+type PedagogyId = 'entrevistador' | 'balanced' | 'charlatan' | 'mentor' | 'provocador' | 'ludico'
+
+interface PedagogyOption {
+  id: PedagogyId
+  label: string
+  short: string
+  desc: string
+  color: string
+  icon: ReactNode
+}
+
+const PED_ICON_SIZE = 14
+const pedIcon = (path: ReactNode): ReactNode => (
+  <svg width={PED_ICON_SIZE} height={PED_ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {path}
+  </svg>
+)
+
+const PEDAGOGY_OPTIONS: PedagogyOption[] = [
+  { id: 'entrevistador', label: 'Entrevistador', short: 'E', desc: 'Habla poco, pregunta mucho', color: '#4A90E2',
+    icon: pedIcon(<><path d="M9.1 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><circle cx="12" cy="17" r=".5" fill="currentColor" /></>) },
+  { id: 'balanced',      label: 'Equilibrado',   short: 'B', desc: 'Conversación 50/50',          color: '#00B37E',
+    icon: pedIcon(<><path d="M12 3v18" /><path d="M5 8h14" /><path d="M5 8l-2 6a3 3 0 0 0 6 0L7 8" /><path d="M19 8l-2 6a3 3 0 0 0 6 0l-2-6" /></>) },
+  { id: 'charlatan',     label: 'Charlatán',     short: 'C', desc: 'Cuenta y pregunta',           color: '#A874E8',
+    icon: pedIcon(<><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></>) },
+  { id: 'mentor',        label: 'Mentor',        short: 'M', desc: 'Info + pregunta concreta',    color: '#E6A23C',
+    icon: pedIcon(<><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>) },
+  { id: 'provocador',    label: 'Provocador',    short: 'P', desc: 'Discrepa, te desafía',        color: '#E5484D',
+    icon: pedIcon(<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />) },
+  { id: 'ludico',        label: 'Lúdico',        short: 'L', desc: 'Juegos verbales',             color: '#EC4899',
+    icon: pedIcon(<><path d="M12 3v3" /><path d="M12 18v3" /><path d="M5.6 5.6l2.1 2.1" /><path d="M16.3 16.3l2.1 2.1" /><path d="M3 12h3" /><path d="M18 12h3" /><path d="M5.6 18.4l2.1-2.1" /><path d="M16.3 7.7l2.1-2.1" /></>) },
 ]
 const PEDAGOGY_INSTRUCTIONS = {
   entrevistador: 'Hablá muy poco. Máximo 1 oración por turno + 1 pregunta corta. Dejá que el alumno se extienda.',

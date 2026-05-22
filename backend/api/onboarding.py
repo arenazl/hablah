@@ -100,38 +100,69 @@ async def get_topics(
     db: AsyncSession = Depends(get_db),
     current: User = Depends(get_current_user),
 ):
-    """Devuelve topics directamente para una categoria amplia.
-
-    Estrategia:
-    1) Intenta traer topics del catalogo cuya categoria interna matchee.
-    2) Si encontró pocos, completa con titulos genericos del fallback.
-    3) Devuelve hasta 8 topics. Los del catalogo tienen id real; los fallback
-       tienen id negativo y al hacer click se crean on-the-fly.
-    """
-    aliases = CATEGORY_ALIASES.get(category_slug, [category_slug])
+    """Devuelve los 8 topics curados de la categoria (seed_curated_topics.py)."""
     result = await db.execute(
-        select(Topic).where(Topic.category.in_(aliases), Topic.is_active == True).limit(6)
+        select(Topic).where(Topic.category == category_slug, Topic.is_active == True)
     )
-    catalog_topics = result.scalars().all()
+    topics = result.scalars().all()
 
-    topics_out = [{
+    # Si no hay curados, fallback con titulos genericos
+    if not topics:
+        fallback_titles = FALLBACK_TOPICS_BY_CATEGORY.get(category_slug, [])
+        return {"topics": [{
+            "id": -1, "slug": "", "title": title,
+            "category": category_slug, "is_hot": False, "is_fallback": True,
+        } for title in fallback_titles[:6]]}
+
+    return {"topics": [{
         "id": t.id, "slug": t.slug, "title": t.title,
         "category": category_slug, "is_hot": t.is_hot, "is_fallback": False,
-    } for t in catalog_topics]
+    } for t in topics]}
 
-    # Completar con fallback hasta llegar a 6
-    fallback_titles = FALLBACK_TOPICS_BY_CATEGORY.get(category_slug, [])
-    existing_titles = {t["title"].lower() for t in topics_out}
-    for title in fallback_titles:
-        if len(topics_out) >= 6:
-            break
-        if title.lower() not in existing_titles:
-            topics_out.append({
-                "id": -1, "slug": "", "title": title,
-                "category": category_slug, "is_hot": False, "is_fallback": True,
-            })
 
-    return {"topics": topics_out[:6]}
+@router.post("/finish")
+async def finish_onboarding(
+    body: dict,
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Cuando el user toca 'Comenzar', agrega los topics elegidos + los hermanos
+    de la misma categoria como interes (auto-completar el banco curado).
+    body: { picked_category_slugs: [str] }  # slugs de categorias en las que tocó algo
+    """
+    from models.template import UserInterest
+
+    picked_cats = body.get("picked_category_slugs") or []
+    if not picked_cats:
+        return {"added": 0}
+
+    # Traer todos los topics curados de esas categorias
+    result = await db.execute(
+        select(Topic).where(Topic.category.in_(picked_cats), Topic.is_active == True)
+    )
+    topics = result.scalars().all()
+
+    # Cuales ya son interes?
+    existing = (await db.execute(
+        select(UserInterest.topic_id).where(UserInterest.user_id == current.id)
+    )).scalars().all()
+    existing_set = set(existing)
+
+    # Posicion siguiente
+    last_pos = (await db.execute(
+        select(UserInterest.position).where(UserInterest.user_id == current.id).order_by(UserInterest.position.desc()).limit(1)
+    )).scalar_one_or_none() or 0
+
+    added = 0
+    for t in topics:
+        if t.id in existing_set:
+            continue
+        last_pos += 1
+        db.add(UserInterest(user_id=current.id, topic_id=t.id, position=last_pos))
+        added += 1
+
+    await db.commit()
+    return {"added": added, "total_categories": len(picked_cats)}
 
 
 @router.post("/add-fallback-topic")
