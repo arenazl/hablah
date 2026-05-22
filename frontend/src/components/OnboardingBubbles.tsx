@@ -18,6 +18,7 @@ import {
   OnboardingTopic,
 } from '../services/api'
 import { toast } from 'sonner'
+import { AgentAudioVisualizerAura } from './agents-ui/agent-audio-visualizer-aura'
 
 const STYLES = `
 @keyframes ob-drift-1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(8px,-12px)} }
@@ -390,26 +391,50 @@ function TopicsStage({ parent, parentColor, topics, addedIds, onTopicClick, onBa
   )
 }
 
-/* ─── Bubble Button (reusable) ────────────────────────────────── */
+/* ─── Bubble Button (reusable) — Aura orb con label flotando ──── */
 function BubbleButton({ label, color, onClick, driftIndex, size }: {
   label: string; color: string; onClick: () => void; driftIndex: number; size: number
 }) {
+  // audioLevel pseudoaleatorio para que cada orb tenga vida propia
+  const pseudoAudio = 0.2 + ((driftIndex * 0.17) % 0.5)
+  const orbSize = size <= 110 ? 'sm' : 'md'
+
   return (
     <button
       className="ob-bubble"
       onClick={onClick}
       style={{
-        width: size, height: size, borderRadius: '50%',
-        background: `radial-gradient(circle at 30% 30%, ${color}DD, ${color}77 70%, ${color}33)`,
-        border: '1px solid rgba(255,255,255,.18)',
-        boxShadow: `0 8px 24px ${color}44`,
-        color: 'white', fontSize: 14, fontWeight: 700, lineHeight: 1.15,
-        cursor: 'pointer', padding: 8,
+        position: 'relative',
+        width: size, height: size,
+        background: 'transparent', border: 'none',
+        cursor: 'pointer', padding: 0,
         animation: `ob-pop-in 360ms ease-out, ob-drift-${driftIndex + 1} ${5 + driftIndex}s ease-in-out infinite`,
-        display: 'grid', placeItems: 'center', textAlign: 'center',
+        display: 'grid', placeItems: 'center',
       }}
     >
-      {label}
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'grid', placeItems: 'center',
+        pointerEvents: 'none',
+      }}>
+        <AgentAudioVisualizerAura
+          status="listening"
+          audioLevel={pseudoAudio}
+          color={color as `#${string}`}
+          colorShift={0.12}
+          themeMode="dark"
+          size={orbSize}
+        />
+      </div>
+      <span style={{
+        position: 'relative', zIndex: 2,
+        color: 'white', fontSize: size > 110 ? 14 : 12, fontWeight: 800, lineHeight: 1.15,
+        letterSpacing: '-.01em', textAlign: 'center',
+        padding: '0 10px', maxWidth: size - 16,
+        textShadow: '0 2px 12px rgba(0,0,0,.65), 0 0 2px rgba(0,0,0,.8)',
+      }}>
+        {label}
+      </span>
     </button>
   )
 }
