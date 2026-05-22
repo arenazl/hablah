@@ -11,7 +11,7 @@
  *     por id, asi se mantiene posición entre renders)
  *   - Footer: 2 acciones rápidas: Sorpréndeme + Tema libre
  */
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AgentAudioVisualizerAura } from './agents-ui/agent-audio-visualizer-aura'
 
 const STYLES = `
@@ -30,6 +30,10 @@ const STYLES = `
 @media (hover: hover) {
   .pg-orb-wrapper:hover { transform: scale(1.15) !important; filter: brightness(1.25) saturate(1.3); z-index: 20; }
   .pg-orb-wrapper:hover .pg-orb-label { opacity: 1; transform: translateY(0); }
+}
+/* En touch (sin hover) los labels siempre visibles */
+@media (hover: none) {
+  .pg-orb-label { opacity: 1 !important; transform: translateY(0) !important; }
 }
 .pg-orb-wrapper:active { transform: scale(.94) !important; transition: transform 90ms ease-out; }
 .pg-orb-label { transition: opacity 220ms, transform 220ms; }
@@ -99,13 +103,12 @@ function seedRandom(seed: number): () => number {
 }
 
 // Distribución estilo "Fibonacci-ish" alrededor del centro
-function generatePositions(count: number): { x: number; y: number }[] {
+function generatePositions(count: number, maxRadius: number = 0.38): { x: number; y: number }[] {
   const positions: { x: number; y: number }[] = []
   const GOLDEN = Math.PI * (3 - Math.sqrt(5))
   for (let i = 0; i < count; i++) {
-    // Espiral de Fibonacci normalizada
     const t = (i + 0.5) / count
-    const r = Math.sqrt(t) * 0.38 // radio (0-0.38 del viewport)
+    const r = Math.sqrt(t) * maxRadius
     const angle = i * GOLDEN
     positions.push({
       x: 50 + Math.cos(angle) * r * 100,
@@ -121,6 +124,15 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
   const [freeText, setFreeText] = useState('')
   const [freeOpen, setFreeOpen] = useState(false)
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches,
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)')
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   const handlePick = (topicId: number) => {
     if (selectedId !== null) return
@@ -128,12 +140,15 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
     window.setTimeout(() => onPick(topicId), SELECT_ANIM_MS)
   }
 
-  // Limitamos a 11 orbs visibles (límite WebGL). Si tiene más, mostramos
-  // los primeros 11 (estan ordenados por interest position).
-  const visibleInterests = useMemo(() => interests.slice(0, 11), [interests])
+  // Mobile: 7 orbs (más espacio). Desktop: 11.
+  const maxOrbs = isMobile ? 7 : 11
+  const visibleInterests = useMemo(() => interests.slice(0, maxOrbs), [interests, maxOrbs])
 
-  // Posiciones estables: spiral pattern
-  const positions = useMemo(() => generatePositions(visibleInterests.length), [visibleInterests.length])
+  // Posiciones estables: spiral pattern (radio más amplio en mobile)
+  const positions = useMemo(
+    () => generatePositions(visibleInterests.length, isMobile ? 0.46 : 0.38),
+    [visibleInterests.length, isMobile],
+  )
 
   // Stars de fondo (250 puntos estáticos pseudo-random)
   const stars = useMemo(() => {
@@ -287,13 +302,20 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
         </div>
       )}
 
-      {/* FOOTER: acciones rápidas */}
+      {/* FOOTER: acciones rápidas. Subo arriba del MobileBar en mobile */}
       <div className="pg-footer" style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        padding: '20px 24px calc(20px + env(safe-area-inset-bottom, 0px))',
+        position: 'absolute',
+        bottom: isMobile ? 92 : 0,
+        left: 0, right: 0,
+        padding: isMobile
+          ? '14px 16px calc(14px + env(safe-area-inset-bottom, 0px))'
+          : '20px 24px calc(20px + env(safe-area-inset-bottom, 0px))',
         display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12,
+        flexWrap: 'wrap',
         zIndex: 4,
-        background: 'linear-gradient(180deg, transparent 0%, rgba(5,10,9,.85) 50%)',
+        background: isMobile
+          ? 'transparent'
+          : 'linear-gradient(180deg, transparent 0%, rgba(5,10,9,.85) 50%)',
       }}>
         {!freeOpen ? (
           <>
