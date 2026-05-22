@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, ArrowUpRight, Gauge, Languages, Sparkles, Square, Timer, Zap } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, Gauge, Languages, Sparkles, Timer } from 'lucide-react'
 import { LandingLayout, breadcrumbList, webPageSchema, type PageMeta } from './_shared'
 
 const META: PageMeta = {
@@ -118,39 +118,6 @@ const HOME_CSS = `
 .landing-root .index-row .index-blurb { font-size: 14px; line-height: 1.45; color: rgba(232,236,234,.65); }
 .landing-root .index-row .index-arrow { justify-self: end; color: rgba(232,236,234,.55); transition: all .3s var(--ease); }
 
-.landing-root .phone-strip { padding: 100px 0; background: var(--bg-2); position: relative; overflow: hidden; }
-.landing-root .phone-strip::before { content: ''; position: absolute; top: -200px; right: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(0,179,126,.12) 0%, transparent 70%); pointer-events: none; }
-.landing-root .phone-strip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; }
-.landing-root .phone-strip h2 { font-size: clamp(36px, 4.5vw, 64px); line-height: 1.05; letter-spacing: -.03em; font-weight: 800; margin: 24px 0; }
-.landing-root .phone-strip h2 em { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--primary-dark); }
-.landing-root .phone-strip p { font-size: 19px; line-height: 1.55; color: var(--fg-2); margin: 0 0 24px; max-width: 480px; }
-
-.landing-root .phone-frame { width: 320px; height: 660px; border-radius: 44px; background: var(--ink-1); padding: 8px; box-shadow: 0 30px 80px rgba(13,20,18,.25), 0 8px 24px rgba(13,20,18,.12); transform: rotate(-1.5deg); margin: 0 auto; }
-.landing-root .phone-frame .pscreen { width: 100%; height: 100%; border-radius: 36px; background: var(--ink-1); overflow: hidden; color: white; position: relative; display: flex; flex-direction: column; }
-.landing-root .phone-frame .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 90px; height: 26px; background: black; border-radius: 999px; z-index: 5; }
-.landing-root .phone-status { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 0; color: white; font-size: 13px; font-weight: 600; }
-.landing-root .phone-status .icons { display: flex; gap: 5px; opacity: .9; }
-.landing-root .phone-status .icons span { display: block; width: 4px; height: 8px; background: white; border-radius: 1px; }
-.landing-root .phone-orb { margin: 60px auto 24px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--primary) 0%, var(--primary-dark) 60%, #003E2B 100%); box-shadow: 0 20px 60px rgba(0,179,126,.4); position: relative; }
-.landing-root .phone-orb::after, .landing-root .phone-orb::before { content: ''; position: absolute; inset: -16px; border-radius: 50%; border: 1px solid rgba(0,179,126,.3); }
-.landing-root .phone-orb::before { inset: -36px; border-color: rgba(0,179,126,.15); }
-.landing-root .phone-label { text-align: center; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(232,236,234,.5); margin-top: 4px; }
-.landing-root .phone-quote { text-align: center; padding: 12px 24px 0; font-size: 14px; color: rgba(232,236,234,.78); font-style: italic; line-height: 1.4; font-family: var(--font-serif); }
-.landing-root .phone-quote b { color: white; font-style: normal; font-weight: 600; font-family: var(--font-sans); }
-.landing-root .phone-challenge { margin: auto 16px 16px; background: linear-gradient(135deg, rgba(255,184,0,.18), rgba(255,184,0,.06)); border: 1px solid rgba(255,184,0,.35); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; }
-.landing-root .phone-challenge .ico { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,184,0,.22); display: grid; place-items: center; flex-shrink: 0; color: var(--accent); }
-.landing-root .phone-challenge .body { font-size: 13px; }
-.landing-root .phone-challenge .body .lbl { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; }
-.landing-root .phone-challenge .body strong { color: var(--accent); }
-.landing-root .phone-bottom { display: flex; align-items: center; gap: 10px; padding: 8px 16px 24px; }
-.landing-root .phone-mic-bar { flex: 1; height: 48px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; gap: 4px; padding: 0 16px; }
-.landing-root .phone-mic-bar i { display: block; width: 3px; background: var(--primary); border-radius: 2px; }
-.landing-root .phone-mic-bar i:nth-child(odd) { height: 60%; }
-.landing-root .phone-mic-bar i:nth-child(even) { height: 90%; }
-.landing-root .phone-mic-bar i:nth-child(3n) { height: 40%; }
-.landing-root .phone-mic-bar i:nth-child(5n) { height: 100%; }
-.landing-root .phone-stop { width: 48px; height: 48px; border-radius: 999px; background: var(--danger); display: grid; place-items: center; color: white; }
-
 .landing-root .product-section { padding: 120px 0; position: relative; overflow: hidden; }
 .landing-root .product-section.dark { background: var(--ink-1); color: white; }
 .landing-root .product-section.dark .label-tag { color: var(--primary); }
@@ -229,9 +196,6 @@ const HOME_CSS = `
   .landing-root .product-grid, .landing-root .product-grid.flip { grid-template-columns: 1fr; gap: 32px; }
   .landing-root .product-grid.flip .product-text { order: 0; }
   .landing-root .product-grid .product-text .stamp { font-size: 80px; }
-  .landing-root .phone-strip { padding: 64px 0; }
-  .landing-root .phone-strip-grid { grid-template-columns: 1fr; gap: 48px; }
-  .landing-root .phone-frame { transform: rotate(-1deg) scale(.85); }
   .landing-root .cta-editorial { padding: 80px 0; }
 }
 @media (max-width: 480px) {
@@ -405,61 +369,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="phone-strip">
-        <div className="container">
-          <div className="phone-strip-grid">
-            <div className="fade-on-scroll">
-              <span className="label-tag">La sesión</span>
-              <h2>Una <em>charla</em>. Cinco minutos. <em>Cada día.</em></h2>
-              <p>
-                Hablás de lo que te interesa — música, código, fitness, diseño. El tutor te tira retos en pantalla mientras hablás,
-                sin interrumpirte. Al final, el reporte: un elogio y tres puntos para pulir. Nada más.
-              </p>
-              <Link to="/como-funciona" className="btn btn-dark btn-lg">
-                Ver el método completo
-                <ArrowUpRight size={18} strokeWidth={2.4} />
-              </Link>
-            </div>
-            <div className="fade-on-scroll">
-              <div className="phone-frame">
-                <div className="pscreen">
-                  <div className="notch"></div>
-                  <div className="phone-status">
-                    <span>9:41</span>
-                    <div className="icons">
-                      <span></span><span></span><span></span>
-                    </div>
-                  </div>
-                  <div className="phone-orb"></div>
-                  <div className="phone-label">Tu turno</div>
-                  <div className="phone-quote">
-                    "And then producers in South London <b>started to mix</b> two-step rhythms…"
-                  </div>
-                  <div className="phone-challenge">
-                    <div className="ico"><Zap size={16} strokeWidth={2.4} /></div>
-                    <div className="body">
-                      <div className="lbl">Reto · vocabulario</div>
-                      <div style={{ marginTop: 4, color: 'white' }}>
-                        Incorporá <strong>"nevertheless"</strong> en tu próxima idea.
-                      </div>
-                    </div>
-                  </div>
-                  <div className="phone-bottom">
-                    <div className="phone-mic-bar">
-                      {Array.from({ length: 14 }).map((_, i) => <i key={i} />)}
-                    </div>
-                    <div className="phone-stop">
-                      <Square size={14} fill="white" strokeWidth={0} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div style={{ background: 'var(--bg-2)', padding: '32px 0', borderTop: '1px solid rgba(13,20,18,.08)', borderBottom: '1px solid rgba(13,20,18,.08)' }}>
+<div style={{ background: 'var(--bg-2)', padding: '32px 0', borderTop: '1px solid rgba(13,20,18,.08)', borderBottom: '1px solid rgba(13,20,18,.08)' }}>
         <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, fontFamily: 'var(--font-mono)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             <span style={{ fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-3)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
