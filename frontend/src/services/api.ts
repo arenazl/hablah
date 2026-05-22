@@ -276,9 +276,11 @@ export const ttsAPI = {
 }
 
 /* ────────────── VOICE WS ────────────── */
-export function buildVoiceWsUrl(sessionId: number): string {
+export function buildVoiceWsUrl(sessionId: number, explicitToken?: string): string {
   const httpBase = API_URL.replace(/\/$/, '')
-  const wsBase = httpBase.replace(/^http/, 'ws')
-  const token = localStorage.getItem('token') || ''
+  // Si el API_URL es relativo (/api), arma URL absoluto desde el origin actual.
+  const fullBase = httpBase.startsWith('/') ? `${window.location.origin}${httpBase}` : httpBase
+  const wsBase = fullBase.replace(/^http/, 'ws')
+  const token = explicitToken ?? localStorage.getItem('token') ?? ''
   return `${wsBase}/voice/ws?session_id=${sessionId}&token=${encodeURIComponent(token)}`
 }

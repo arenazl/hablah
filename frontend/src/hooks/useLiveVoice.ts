@@ -199,7 +199,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   )
 
   const start = useCallback(
-    async (sessionId: number) => {
+    async (sessionId: number, explicitToken?: string) => {
       setStatus('connecting')
       setTranscript([])
 
@@ -215,7 +215,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       }
       streamRef.current = stream
 
-      const url = buildVoiceWsUrl(sessionId)
+      const url = buildVoiceWsUrl(sessionId, explicitToken)
       const ws = new WebSocket(url)
       wsRef.current = ws
 
