@@ -125,12 +125,13 @@ export const KIDS_CSS = `
   .kids-main { padding:0 16px 24px; max-width:100%; }
   .kids-topbar { display:none; }
 
-  .kids-m-topbar { display:flex; align-items:center; gap:10px; padding:14px 16px; position:sticky; top:0; z-index:30; background:var(--bg-1); border-bottom:1px solid var(--border-1); }
-  .kids-m-menu { width:40px; height:40px; border-radius:12px; display:grid; place-items:center; color:var(--fg-1); background:transparent; }
-  .kids-m-title { font-family:var(--font-display); font-weight:800; font-size:18px; letter-spacing:-0.01em; flex:1; }
-  .kids-m-coins { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 12px; background:#fff; border:1px solid var(--border-2); border-radius:99px; font-weight:800; font-size:13.5px; color:var(--fg-1); font-family:var(--font-display); }
-  .kids-m-coins .ci { width:18px; height:18px; border-radius:50%; background:var(--amber); display:grid; place-items:center; color:#3A2A00; flex-shrink:0; box-shadow:inset 0 -2px 0 #C58F00; }
-  .kids-m-av { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#FF6AA9,#A855F7); color:#fff; font-family:var(--font-display); font-weight:800; font-size:15px; display:grid; place-items:center; }
+  .kids-m-topbar { display:flex; align-items:center; gap:8px; padding:12px 14px; position:sticky; top:0; z-index:30; background:var(--bg-1); border-bottom:1px solid var(--border-1); }
+  .kids-m-menu { width:38px; height:38px; border-radius:12px; display:grid; place-items:center; color:var(--fg-1); background:transparent; flex-shrink:0; padding:0; border:0; cursor:pointer; }
+  .kids-m-menu:active { background:var(--bg-2); }
+  .kids-m-title { font-family:var(--font-display); font-weight:800; font-size:15px; letter-spacing:-0.01em; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .kids-m-coins { display:inline-flex; align-items:center; gap:4px; height:32px; padding:0 10px; background:#fff; border:1px solid var(--border-2); border-radius:99px; font-weight:800; font-size:12.5px; color:var(--fg-1); font-family:var(--font-display); flex-shrink:0; }
+  .kids-m-coins .ci { width:16px; height:16px; border-radius:50%; background:var(--amber); display:grid; place-items:center; color:#3A2A00; flex-shrink:0; box-shadow:inset 0 -2px 0 #C58F00; }
+  .kids-m-av { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#FF6AA9,#A855F7); color:#fff; font-family:var(--font-display); font-weight:800; font-size:14px; display:grid; place-items:center; flex-shrink:0; }
 
   .kids-m-drawer-backdrop { display:none; position:fixed; inset:0; z-index:50; background:rgba(13,20,18,.5); opacity:0; transition:opacity .24s var(--ease); }
   .kids-m-drawer { display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:60; width:84%; max-width:320px; background:#062B25; color:#E6EAE7; padding:18px 14px calc(14px + env(safe-area-inset-bottom)); transform:translateX(-100%); transition:transform .28s var(--ease); overflow-y:auto; }
@@ -383,16 +384,28 @@ export function KidsSidebar({ kid }: { kid: KidsState }) {
         </div>
       </div>
 
-      <Link to="/app" className="kids-parental-link">
+      <button
+        type="button"
+        className="kids-parental-link"
+        onClick={() => {
+          const ok = window.confirm('¿Sos vos, mamá o papá? Esto sale del modo Habi y vuelve a tu cuenta. ¿Continuar?')
+          if (!ok) return
+          // Limpiamos el kids_token pero MANTENEMOS el del padre
+          localStorage.removeItem('kids_token')
+          localStorage.removeItem('kids_age_group')
+          window.location.href = '/app/kids'
+        }}
+        style={{ cursor: 'pointer', width: '100%', textAlign: 'left' }}
+      >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="8" r="4" />
           <path d="M4 21a8 8 0 0 1 16 0" />
         </svg>
-        <div className="pt"><b>Modo familia</b>Ver lo que practicó hoy</div>
+        <div className="pt"><b>Para mamá o papá</b>Salir del modo Habi</div>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M9 6l6 6-6 6" />
         </svg>
-      </Link>
+      </button>
     </aside>
   )
 }
@@ -401,16 +414,16 @@ export function KidsMobileTopbar({ kid }: { kid: KidsState }) {
   return (
     <header className="kids-m-topbar">
       <button className="kids-m-menu" aria-label="Abrir menú" onClick={() => document.body.classList.add('kids-drawer-open')}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
           <path d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
       <div className="kids-m-title">¡Hola, {kid.name}!</div>
-      <div className="kids-m-coins">
+      <div className="kids-m-coins" aria-label={`${kid.coins} monedas`}>
         <span className="ci">
           <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" /></svg>
         </span>
-        {kid.coins}
+        <span>{kid.coins}</span>
       </div>
       <Link to="/kids/perfil" className="kids-m-av" aria-label="Perfil">{kid.name.charAt(0)}</Link>
     </header>

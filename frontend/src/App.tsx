@@ -16,8 +16,15 @@ import { KidsProvider } from './pages/kids/KidsContext'
 import { WebApp } from './pages/WebApp'
 import { Backoffice } from './pages/Backoffice'
 
-function AuthGate({ children }: { children: React.ReactNode }) {
+function AuthGate({ children, allowKidMode = false }: { children: React.ReactNode; allowKidMode?: boolean }) {
   const { isAuthenticated, isLoading } = useAuth()
+
+  // Si hay un kid_token activo y NO estamos en una ruta que permita modo kid,
+  // redirigir al modo kids para no salir del entorno seguro
+  if (!allowKidMode && typeof window !== 'undefined' && localStorage.getItem('kids_token')) {
+    return <Navigate to="/kids" replace />
+  }
+
   if (isLoading) {
     return (
       <div
@@ -53,6 +60,10 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 function RootRedirect() {
   const { isAuthenticated, isLoading } = useAuth()
   if (isLoading) return null
+  // Si hay perfil hijo activo, "/" siempre devuelve a /kids
+  if (typeof window !== 'undefined' && localStorage.getItem('kids_token')) {
+    return <Navigate to="/kids" replace />
+  }
   if (isAuthenticated) return <Navigate to="/app" replace />
   return <Landing />
 }
