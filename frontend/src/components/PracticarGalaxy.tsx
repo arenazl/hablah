@@ -226,11 +226,12 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
             const sizePx = orbSize === 'lg' ? 180 : 110
             const pseudoAudio = 0.4 + ((i * 0.13) % 0.45)
 
+            const isSelected = selectedId === topic.id
             return (
               <button
                 key={topic.id}
-                className="pg-orb-wrapper"
-                onClick={() => onPick(topic.id)}
+                className={`pg-orb-wrapper${isSelected ? ' is-selected' : ''}`}
+                onClick={() => handlePick(topic.id)}
                 style={{
                   position: 'absolute',
                   left: `${pos.x}%`, top: `${pos.y}%`,
@@ -287,7 +288,7 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
       )}
 
       {/* FOOTER: acciones rápidas */}
-      <div style={{
+      <div className="pg-footer" style={{
         position: 'absolute', bottom: 0, left: 0, right: 0,
         padding: '20px 24px calc(20px + env(safe-area-inset-bottom, 0px))',
         display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12,

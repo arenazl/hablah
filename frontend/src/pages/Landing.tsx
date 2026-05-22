@@ -1,5 +1,31 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  AlertTriangle,
+  ArrowRight,
+  Check,
+  ChevronDown,
+  Compass,
+  Flame,
+  Gamepad2,
+  Gauge,
+  Globe,
+  Heart,
+  Instagram,
+  Languages,
+  Linkedin,
+  Menu,
+  Play,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
+  Square,
+  Star,
+  Timer,
+  Twitter,
+  X as XIcon,
+  Zap,
+} from 'lucide-react'
 
 const LANDING_CSS = `
 .landing-root {
@@ -140,19 +166,20 @@ const LANDING_CSS = `
 }
 .landing-root .hero h1 .strike { text-decoration: none; position: relative; color: var(--fg-3); font-weight: 600; display: inline-block; }
 .landing-root .hero h1 .strike::after {
-  content: ''; position: absolute; left: -2%; right: -2%; top: 52%; height: 6px;
-  background: var(--accent); transform: rotate(-3deg);
+  content: ''; position: absolute; left: -2%; right: -2%; top: 54%; height: 3px;
+  background: var(--accent); transform: rotate(-2deg); border-radius: 2px;
 }
 .landing-root .hero p { font-size: var(--t-xl); color: var(--fg-2); line-height: 1.4; margin: 0 0 32px; max-width: 540px; }
 .landing-root .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .landing-root .hero-actions .meta { font-size: 13px; color: var(--fg-3); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 20px; width: 100%; }
 .landing-root .hero-actions .meta b { color: var(--fg-1); font-weight: 600; }
+.landing-root .hero-actions .meta span { display: inline-flex; align-items: center; gap: 6px; }
 
 .landing-root .hero-phone-wrap { position: relative; display: flex; justify-content: center; perspective: 1200px; }
 .landing-root .hero-phone {
   width: 320px; height: 660px; border-radius: 44px; background: var(--ink-1);
   padding: 8px; box-shadow: 0 30px 80px rgba(13,20,18,.25), 0 8px 24px rgba(13,20,18,.12);
-  transform: rotate(-3deg); position: relative;
+  transform: rotate(-1.5deg); position: relative;
 }
 .landing-root .hero-phone .pscreen {
   width: 100%; height: 100%; border-radius: 36px; background: var(--ink-1);
@@ -194,7 +221,7 @@ const LANDING_CSS = `
 .landing-root .phone-challenge .ico {
   width: 28px; height: 28px; border-radius: 8px; background: rgba(255,184,0,.22);
   display: grid; place-items: center; flex-shrink: 0;
-  color: var(--accent); font-weight: 800; font-size: 16px;
+  color: var(--accent);
 }
 .landing-root .phone-challenge .body { font-size: 13px; }
 .landing-root .phone-challenge .body .lbl { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; }
@@ -223,16 +250,17 @@ const LANDING_CSS = `
 }
 .landing-root .hero-badge .ico { width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; }
 .landing-root .hero-badge.b1 { top: 60px; left: -30px; }
-.landing-root .hero-badge.b1 .ico { background: var(--primary-tint); color: var(--primary-dark); font-weight: 800; }
+.landing-root .hero-badge.b1 .ico { background: var(--primary-tint); color: var(--primary-dark); font-weight: 800; font-size: 13px; }
 .landing-root .hero-badge.b2 { bottom: 100px; right: -20px; }
 .landing-root .hero-badge.b2 .ico { background: var(--accent-tint); color: #8A5A00; }
 .landing-root .hero-badge .small { font-size: 11px; color: var(--fg-3); }
 
-.landing-root .trust { padding: 32px 0; background: var(--bg-2); border-top: 1px solid var(--border-1); border-bottom: 1px solid var(--border-1); }
-.landing-root .trust-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
-.landing-root .trust-stat { display: flex; align-items: center; gap: 14px; }
-.landing-root .trust-stat .num { font-size: 32px; font-weight: 800; letter-spacing: -.02em; color: var(--primary-dark); font-variant-numeric: tabular-nums; }
-.landing-root .trust-stat .lbl { font-size: 13px; color: var(--fg-3); max-width: 130px; line-height: 1.3; }
+.landing-root .pillars { padding: 32px 0; background: var(--bg-2); border-top: 1px solid var(--border-1); border-bottom: 1px solid var(--border-1); }
+.landing-root .pillars-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+.landing-root .pillar { display: flex; align-items: center; gap: 14px; }
+.landing-root .pillar .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border-1); display: grid; place-items: center; color: var(--primary-dark); flex-shrink: 0; }
+.landing-root .pillar .k { font-size: 15px; font-weight: 700; color: var(--fg-1); letter-spacing: -.01em; }
+.landing-root .pillar .lbl { font-size: 13px; color: var(--fg-3); max-width: 180px; line-height: 1.35; }
 
 .landing-root section { padding: 100px 0; }
 .landing-root .sec-head { max-width: 720px; margin: 0 auto 64px; text-align: center; }
@@ -258,7 +286,7 @@ const LANDING_CSS = `
 .landing-root .viz-feedback .row { display: flex; gap: 8px; padding: 8px 10px; border-radius: 10px; font-size: 12px; align-items: center; }
 .landing-root .viz-feedback .row.bad { background: #FCE8E9; color: #B42127; }
 .landing-root .viz-feedback .row.good { background: var(--primary-tint); color: var(--primary-dark); }
-.landing-root .viz-feedback .row .mark { font-weight: 800; }
+.landing-root .viz-feedback .row .mark { display: inline-flex; align-items: center; }
 
 .landing-root .tutors { background: var(--ink-1); color: white; padding: 100px 0; }
 .landing-root .tutors .sec-head h2 { color: white; }
@@ -267,11 +295,12 @@ const LANDING_CSS = `
 .landing-root .tutors-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .landing-root .tutor { background: var(--ink-2); border-radius: var(--r-2xl); padding: 32px; border: 1px solid rgba(255,255,255,.08); display: flex; flex-direction: column; gap: 18px; }
 .landing-root .tutor.featured { background: linear-gradient(160deg, rgba(0,179,126,.16) 0%, rgba(0,179,126,.02) 100%); border-color: rgba(0,179,126,.4); }
-.landing-root .tutor-ico { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; color: white; font-size: 22px; font-weight: 800; }
+.landing-root .tutor-ico { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; color: white; }
 .landing-root .tutor.coach .tutor-ico { background: var(--primary); }
 .landing-root .tutor.sincerist .tutor-ico { background: #5A6BFF; }
 .landing-root .tutor.arcade .tutor-ico { background: var(--accent); color: #5A3D00; }
-.landing-root .tutor h3 { font-size: var(--t-xl); margin: 0; font-weight: 700; letter-spacing: -.01em; }
+.landing-root .tutor h3 { font-size: var(--t-xl); margin: 0; font-weight: 700; letter-spacing: -.01em; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.landing-root .tutor h3 .badge-most { font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; }
 .landing-root .tutor .desc { font-size: 14px; color: rgba(232,236,234,.7); margin: 0; line-height: 1.5; }
 .landing-root .tutor .meter { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px dashed rgba(255,255,255,.1); }
 .landing-root .tutor .meter:last-of-type { border-bottom: 1px dashed rgba(255,255,255,.1); margin-bottom: 8px; }
@@ -303,12 +332,12 @@ const LANDING_CSS = `
 .landing-root .feature h2 { font-size: clamp(28px, 3.4vw, 39px); line-height: 1.12; letter-spacing: -.02em; font-weight: 800; margin: 12px 0 16px; }
 .landing-root .feature p { font-size: var(--t-lg); color: var(--fg-3); line-height: 1.5; margin: 0 0 24px; }
 .landing-root .feature ul { list-style: none; padding: 0; margin: 0; }
-.landing-root .feature ul li { display: flex; gap: 10px; padding: 8px 0; font-size: 15px; color: var(--fg-2); }
-.landing-root .feature ul li::before { content: '\\2713'; color: var(--primary); font-weight: 800; flex-shrink: 0; }
+.landing-root .feature ul li { display: flex; gap: 10px; padding: 8px 0; font-size: 15px; color: var(--fg-2); align-items: flex-start; }
+.landing-root .feature ul li .li-ico { color: var(--primary); flex-shrink: 0; margin-top: 3px; }
 
 .landing-root .mock-report { background: white; border-radius: var(--r-2xl); padding: 0; box-shadow: var(--shadow-lift); overflow: hidden; max-width: 460px; margin: 0 auto; }
 .landing-root .mock-report .head { background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 24px 24px 32px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
-.landing-root .mock-report .head .lbl { font-size: 12px; font-weight: 600; opacity: .9; margin-bottom: 8px; }
+.landing-root .mock-report .head .lbl { font-size: 12px; font-weight: 600; opacity: .9; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 6px; }
 .landing-root .mock-report .head h3 { font-size: 24px; font-weight: 800; margin: 0 0 6px; letter-spacing: -.015em; }
 .landing-root .mock-report .head p { font-size: 14px; opacity: .9; margin: 0 0 16px; }
 .landing-root .mock-report .head .stats { display: flex; gap: 8px; }
@@ -318,12 +347,13 @@ const LANDING_CSS = `
 .landing-root .mock-report .body { padding: 20px 24px; }
 .landing-root .mock-report .body .feed { border: 1px solid var(--border-1); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
 .landing-root .mock-report .body .feed .type { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--fg-3); text-transform: uppercase; margin-bottom: 8px; }
-.landing-root .mock-report .body .feed .bad, .landing-root .mock-report .body .feed .good { padding: 10px; border-radius: 8px; font-size: 13px; display: flex; gap: 8px; margin-bottom: 6px; }
+.landing-root .mock-report .body .feed .bad, .landing-root .mock-report .body .feed .good { padding: 10px; border-radius: 8px; font-size: 13px; display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
 .landing-root .mock-report .body .feed .bad { background: #FCE8E9; color: #5A1F22; }
 .landing-root .mock-report .body .feed .good { background: var(--primary-tint); color: #024E36; }
+.landing-root .mock-report .body .feed .listen { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; background: var(--primary-dark); color: white; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
 
 .landing-root .mock-rescue { background: white; border-radius: var(--r-2xl); padding: 28px; box-shadow: var(--shadow-lift); max-width: 420px; margin: 0 auto; border: 2px solid #FFE9A0; }
-.landing-root .mock-rescue .ico-big { width: 64px; height: 64px; border-radius: 20px; background: #FCE8E9; display: grid; place-items: center; margin: 0 auto 16px; color: var(--danger); font-size: 28px; font-weight: 800; }
+.landing-root .mock-rescue .ico-big { width: 64px; height: 64px; border-radius: 20px; background: #FCE8E9; display: grid; place-items: center; margin: 0 auto 16px; color: var(--danger); }
 .landing-root .mock-rescue h3 { text-align: center; font-size: 24px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 6px; }
 .landing-root .mock-rescue .sub { text-align: center; color: var(--fg-3); font-size: 14px; margin: 0 0 20px; }
 .landing-root .mock-rescue .weak { background: #FFF7E5; border: 1px solid rgba(255,184,0,.35); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
@@ -331,18 +361,17 @@ const LANDING_CSS = `
 .landing-root .mock-rescue .weak .t { font-size: 16px; font-weight: 700; margin-top: 2px; }
 .landing-root .mock-rescue .weak .s { font-size: 13px; color: var(--fg-3); margin-top: 4px; font-style: italic; }
 .landing-root .mock-rescue .list { padding: 0; margin: 0; list-style: none; }
-.landing-root .mock-rescue .list li { display: flex; gap: 10px; padding: 5px 0; font-size: 14px; }
-.landing-root .mock-rescue .list li::before { content: '\\2713'; color: var(--primary); font-weight: 800; }
+.landing-root .mock-rescue .list li { display: flex; gap: 10px; padding: 5px 0; font-size: 14px; align-items: flex-start; }
+.landing-root .mock-rescue .list li .li-ico { color: var(--primary); flex-shrink: 0; margin-top: 3px; }
 
-.landing-root .testimonials { background: var(--bg-2); }
-.landing-root .quotes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.landing-root .quote { background: var(--surface); border-radius: var(--r-xl); padding: 28px; border: 1px solid var(--border-1); display: flex; flex-direction: column; gap: 16px; }
-.landing-root .quote .stars { color: var(--accent); letter-spacing: 2px; }
-.landing-root .quote blockquote { font-size: 17px; line-height: 1.45; margin: 0; color: var(--fg-1); font-weight: 500; }
-.landing-root .quote .meta { display: flex; align-items: center; gap: 12px; margin-top: auto; }
-.landing-root .quote .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: white; font-weight: 700; }
-.landing-root .quote .meta .name { font-size: 14px; font-weight: 600; }
-.landing-root .quote .meta .where { font-size: 12px; color: var(--fg-3); }
+.landing-root .for-who { background: var(--bg-2); }
+.landing-root .for-who-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.landing-root .for-who-card { background: var(--surface); border-radius: var(--r-2xl); padding: 32px; border: 1px solid var(--border-1); display: flex; flex-direction: column; gap: 16px; }
+.landing-root .for-who-card .ico { width: 48px; height: 48px; border-radius: 12px; background: var(--primary-tint); color: var(--primary-dark); display: grid; place-items: center; }
+.landing-root .for-who-card h3 { font-size: var(--t-xl); margin: 0; font-weight: 700; letter-spacing: -.015em; }
+.landing-root .for-who-card .scenario { font-size: 14px; color: var(--fg-3); line-height: 1.5; margin: 0; font-style: italic; }
+.landing-root .for-who-card .fit { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-1); font-size: 13px; color: var(--fg-2); }
+.landing-root .for-who-card .fit b { color: var(--fg-1); }
 
 .landing-root .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
 .landing-root .price-card { background: var(--surface); border-radius: var(--r-2xl); padding: 32px; border: 1px solid var(--border-1); display: flex; flex-direction: column; gap: 16px; position: relative; }
@@ -355,16 +384,16 @@ const LANDING_CSS = `
 .landing-root .price-card .per { font-size: 14px; color: var(--fg-3); }
 .landing-root .price-card.featured .per { color: rgba(232,236,234,.65); }
 .landing-root .price-card .feats { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-.landing-root .price-card .feats li { display: flex; gap: 10px; font-size: 14px; line-height: 1.4; }
-.landing-root .price-card .feats li::before { content: '\\2713'; color: var(--primary); font-weight: 800; flex-shrink: 0; }
+.landing-root .price-card .feats li { display: flex; gap: 10px; font-size: 14px; line-height: 1.4; align-items: flex-start; }
+.landing-root .price-card .feats li .li-ico { color: var(--primary); flex-shrink: 0; margin-top: 3px; }
 .landing-root .price-card .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #5A3D00; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
 
 .landing-root .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
-.landing-root .faq-item { background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--border-1); padding: 0; }
-.landing-root .faq-item details summary { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; font-weight: 600; font-size: 16px; cursor: pointer; list-style: none; }
+.landing-root .faq-item { background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--border-1); padding: 0; overflow: hidden; }
+.landing-root .faq-item details summary { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; font-weight: 600; font-size: 16px; cursor: pointer; list-style: none; gap: 16px; }
 .landing-root .faq-item details summary::-webkit-details-marker { display: none; }
-.landing-root .faq-item details summary::after { content: '+'; font-size: 22px; color: var(--fg-3); font-weight: 400; transition: transform .2s var(--ease); }
-.landing-root .faq-item details[open] summary::after { content: '\\2212'; }
+.landing-root .faq-item details summary .chev { color: var(--fg-3); transition: transform .25s var(--ease); flex-shrink: 0; }
+.landing-root .faq-item details[open] summary .chev { transform: rotate(180deg); color: var(--primary-dark); }
 .landing-root .faq-item details p { padding: 0 20px 18px; margin: 0; color: var(--fg-3); font-size: 15px; line-height: 1.5; }
 
 .landing-root .cta-final { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 100px 0; text-align: center; position: relative; overflow: hidden; }
@@ -384,6 +413,61 @@ const LANDING_CSS = `
 .landing-root .footer-brand .logo { color: white; margin-bottom: 12px; }
 .landing-root .footer-brand p { font-size: 13px; color: rgba(232,236,234,.55); line-height: 1.5; margin: 0 0 16px; max-width: 280px; }
 .landing-root .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; font-size: 12px; color: rgba(232,236,234,.45); flex-wrap: wrap; gap: 12px; }
+.landing-root .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,.05); display: grid; place-items: center; color: rgba(232,236,234,.75); transition: all .15s var(--ease); }
+.landing-root .social-btn:hover { background: rgba(255,255,255,.12); color: white; }
+
+.landing-root .fade-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+  will-change: opacity, transform;
+}
+.landing-root .fade-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.landing-root .fade-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.landing-root .fade-stagger.is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+.landing-root .fade-stagger.is-visible > *:nth-child(1) { transition-delay: 0ms; }
+.landing-root .fade-stagger.is-visible > *:nth-child(2) { transition-delay: 90ms; }
+.landing-root .fade-stagger.is-visible > *:nth-child(3) { transition-delay: 180ms; }
+.landing-root .fade-stagger.is-visible > *:nth-child(4) { transition-delay: 270ms; }
+.landing-root .fade-stagger.is-visible > *:nth-child(5) { transition-delay: 360ms; }
+.landing-root .fade-stagger.is-visible > *:nth-child(6) { transition-delay: 450ms; }
+.landing-root .fade-stagger.is-visible > *:nth-child(7) { transition-delay: 540ms; }
+.landing-root .fade-stagger.is-visible > *:nth-child(8) { transition-delay: 630ms; }
+
+.landing-root .hero-fade-in {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: heroFadeIn .9s var(--ease) forwards;
+}
+.landing-root .hero-fade-in.d1 { animation-delay: 120ms; }
+.landing-root .hero-fade-in.d2 { animation-delay: 220ms; }
+.landing-root .hero-fade-in.d3 { animation-delay: 320ms; }
+.landing-root .hero-fade-in.d4 { animation-delay: 420ms; }
+.landing-root .hero-fade-in.d5 { animation-delay: 520ms; }
+@keyframes heroFadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-root .fade-on-scroll,
+  .landing-root .fade-stagger > *,
+  .landing-root .hero-fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+}
 
 @media (max-width: 880px) {
   .landing-root section { padding: 64px 0; }
@@ -393,14 +477,13 @@ const LANDING_CSS = `
   .landing-root .hero { padding: 56px 0 64px; }
   .landing-root .hero-grid { grid-template-columns: 1fr; gap: 48px; }
   .landing-root .hero p { font-size: 17px; max-width: none; }
-  .landing-root .hero-phone { transform: rotate(-2deg) scale(.9); }
+  .landing-root .hero-phone { transform: rotate(-1deg) scale(.9); }
   .landing-root .hero-badge.b1 { left: 0; top: 24px; }
   .landing-root .hero-badge.b2 { right: 0; bottom: 60px; }
-  .landing-root .trust-inner { justify-content: flex-start; }
-  .landing-root .trust-stat { flex: 1 1 calc(50% - 24px); min-width: 140px; }
-  .landing-root .trust-stat .num { font-size: 28px; }
+  .landing-root .pillars-inner { justify-content: flex-start; }
+  .landing-root .pillar { flex: 1 1 calc(50% - 24px); min-width: 160px; }
   .landing-root .sec-head { margin-bottom: 40px; }
-  .landing-root .how-grid, .landing-root .tutors-grid, .landing-root .quotes-grid, .landing-root .pricing-grid { grid-template-columns: 1fr; gap: 16px; }
+  .landing-root .how-grid, .landing-root .tutors-grid, .landing-root .for-who-grid, .landing-root .pricing-grid { grid-template-columns: 1fr; gap: 16px; }
   .landing-root .topics-grid { grid-template-columns: repeat(2, 1fr); }
   .landing-root .feature { padding: 64px 0; }
   .landing-root .feature-grid { grid-template-columns: 1fr; gap: 40px; }
@@ -437,6 +520,30 @@ function ensureGoogleFont() {
   document.head.appendChild(link)
 }
 
+function useFadeInOnScroll() {
+  useEffect(() => {
+    const targets = document.querySelectorAll<HTMLElement>(
+      '.landing-root .fade-on-scroll, .landing-root .fade-stagger',
+    )
+    if (targets.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -60px 0px' },
+    )
+
+    targets.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+}
+
 export function Landing() {
   useEffect(() => {
     ensureGoogleFont()
@@ -446,6 +553,8 @@ export function Landing() {
       document.title = prevTitle
     }
   }, [])
+
+  useFadeInOnScroll()
 
   return (
     <div className="landing-root">
@@ -472,11 +581,7 @@ export function Landing() {
               Empezar gratis
             </Link>
             <button className="nav-toggle" aria-label="Menú">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
+              <Menu size={22} strokeWidth={2} />
             </button>
           </div>
         </div>
@@ -485,35 +590,37 @@ export function Landing() {
       <section className="hero">
         <div className="container hero-grid">
           <div>
-            <div className="hero-pill">
+            <div className="hero-pill hero-fade-in">
               <span className="dot">NUEVO</span>
               Charlas reales, no flashcards
             </div>
-            <h1>
+            <h1 className="hero-fade-in d1">
               Hablás.<br />
               <em>Aprendés.</em>
               <br />
               Sin <span className="strike">exámenes</span>.
             </h1>
-            <p>
+            <p className="hero-fade-in d2">
               Cinco minutos de conversación al día con un tutor de IA que se adapta a tu nivel, tus intereses y tus errores.
               Olvidate de las lecciones lineales.
             </p>
-            <div className="hero-actions">
+            <div className="hero-actions hero-fade-in d3">
               <Link to="/login" className="btn btn-primary btn-lg">
-                Empezar gratis →
+                Empezar gratis
+                <ArrowRight size={18} strokeWidth={2.4} />
               </Link>
               <a href="#how" className="btn btn-ghost btn-lg">
+                <Play size={18} strokeWidth={2.2} />
                 Ver demo (90 s)
               </a>
               <div className="meta">
-                <span>✓ <b>14 días</b> sin tarjeta</span>
-                <span>✓ iOS y Android</span>
-                <span>✓ Inglés, portugués, italiano</span>
+                <span><Check size={14} strokeWidth={2.6} color="var(--primary-dark)" /> <b>14 días</b> sin tarjeta</span>
+                <span><Check size={14} strokeWidth={2.6} color="var(--primary-dark)" /> iOS y Android</span>
+                <span><Check size={14} strokeWidth={2.6} color="var(--primary-dark)" /> Inglés, portugués, italiano</span>
               </div>
             </div>
           </div>
-          <div className="hero-phone-wrap">
+          <div className="hero-phone-wrap hero-fade-in d4">
             <div className="hero-badge b1">
               <div className="ico">B2</div>
               <div>
@@ -539,7 +646,7 @@ export function Landing() {
                   "And then producers in South London <b>started to mix</b> two-step rhythms…"
                 </div>
                 <div className="phone-challenge">
-                  <div className="ico">⚡</div>
+                  <div className="ico"><Zap size={16} strokeWidth={2.4} /></div>
                   <div className="body">
                     <div className="lbl">Reto · vocabulario</div>
                     <div style={{ marginTop: 4, color: 'white' }}>
@@ -552,41 +659,63 @@ export function Landing() {
                     {Array.from({ length: 14 }).map((_, i) => <i key={i} />)}
                   </div>
                   <div className="phone-stop">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                      <rect x="6" y="6" width="12" height="12" rx="2" />
-                    </svg>
+                    <Square size={14} fill="white" strokeWidth={0} />
                   </div>
                 </div>
               </div>
             </div>
             <div className="hero-badge b2">
-              <div className="ico">🔥</div>
+              <div className="ico"><Flame size={18} strokeWidth={2.2} /></div>
               <div>
-                <div><b>12 días seguidos</b></div>
-                <div className="small">Tu mejor racha</div>
+                <div><b>Racha diaria</b></div>
+                <div className="small">Mantenida automáticamente</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="trust">
-        <div className="container trust-inner">
-          <div className="trust-stat"><div className="num">47K+</div><div className="lbl">Alumnos activos en LatAm</div></div>
-          <div className="trust-stat"><div className="num">6.2M</div><div className="lbl">Charlas en el último mes</div></div>
-          <div className="trust-stat"><div className="num">+38%</div><div className="lbl">Fluidez promedio en 8 semanas</div></div>
-          <div className="trust-stat"><div className="num">4.9★</div><div className="lbl">App Store · 12 200 reseñas</div></div>
+      <div className="pillars fade-on-scroll">
+        <div className="container pillars-inner fade-stagger">
+          <div className="pillar">
+            <div className="ico"><Timer size={20} strokeWidth={2} /></div>
+            <div>
+              <div className="k">5 min al día</div>
+              <div className="lbl">Sesiones cortas, diseñadas para sostener el hábito</div>
+            </div>
+          </div>
+          <div className="pillar">
+            <div className="ico"><Sparkles size={20} strokeWidth={2} /></div>
+            <div>
+              <div className="k">Cero exámenes</div>
+              <div className="lbl">Diagnóstico continuo en segundo plano</div>
+            </div>
+          </div>
+          <div className="pillar">
+            <div className="ico"><Gauge size={20} strokeWidth={2} /></div>
+            <div>
+              <div className="k">CEFR A1 a C2</div>
+              <div className="lbl">Calibración nativa del nivel sin tests</div>
+            </div>
+          </div>
+          <div className="pillar">
+            <div className="ico"><Languages size={20} strokeWidth={2} /></div>
+            <div>
+              <div className="k">3 idiomas activos</div>
+              <div className="lbl">Inglés, portugués e italiano · más en camino</div>
+            </div>
+          </div>
         </div>
       </div>
 
       <section className="how" id="how">
         <div className="container">
-          <div className="sec-head">
+          <div className="sec-head fade-on-scroll">
             <span className="eyebrow">Cómo funciona</span>
             <h2>Tres pasos. Cero exámenes.</h2>
             <p>La IA arma cada conversación a tu medida — combina tu nivel real, tus intereses y los errores que arrastrás de las charlas anteriores.</p>
           </div>
-          <div className="how-grid">
+          <div className="how-grid fade-stagger">
             <div className="how-card">
               <div className="num">01 · Diagnóstico</div>
               <h3>Una charla informal, no un examen.</h3>
@@ -604,7 +733,7 @@ export function Landing() {
             <div className="how-card">
               <div className="num">02 · Tu nivel CEFR</div>
               <h3>Sabemos exactamente dónde estás.</h3>
-              <p>En 3 minutos te ubicamos en el marco europeo (A1–C2). De ahí en adelante, el contenido se calibra solo.</p>
+              <p>En 3 minutos te ubicamos en el marco europeo (A1 a C2). De ahí en adelante, el contenido se calibra solo.</p>
               <div className="how-viz">
                 <div className="viz-cefr">
                   <div>A1</div><div>A2</div><div>B1</div><div className="active">B2</div><div>C1</div><div>C2</div>
@@ -617,9 +746,9 @@ export function Landing() {
               <p>Hablás de lo que te gusta — música, código, fitness, lo que sea. Al final: 1 elogio + 3 puntos para pulir.</p>
               <div className="how-viz">
                 <div className="viz-feedback">
-                  <div className="row bad"><span className="mark">✕</span> "producers started <i>to mixing</i>…"</div>
-                  <div className="row good"><span className="mark">✓</span> "producers started <i>mixing</i>…"</div>
-                  <div className="row good"><span className="mark">✓</span> Usaste "nevertheless" perfecto</div>
+                  <div className="row bad"><span className="mark"><XIcon size={14} strokeWidth={2.6} /></span> "producers started <i>to mixing</i>…"</div>
+                  <div className="row good"><span className="mark"><Check size={14} strokeWidth={2.6} /></span> "producers started <i>mixing</i>…"</div>
+                  <div className="row good"><span className="mark"><Check size={14} strokeWidth={2.6} /></span> Usaste "nevertheless" perfecto</div>
                 </div>
               </div>
             </div>
@@ -629,14 +758,14 @@ export function Landing() {
 
       <section className="tutors" id="tutors">
         <div className="container">
-          <div className="sec-head">
+          <div className="sec-head fade-on-scroll">
             <span className="eyebrow">Tres personalidades</span>
             <h2>Elegí tu tutor.<br />O dejá que el sistema lo elija.</h2>
             <p>Cada uno tiene un tono, una rigurosidad y una velocidad distinta. Podés cambiar cuando quieras.</p>
           </div>
-          <div className="tutors-grid">
+          <div className="tutors-grid fade-stagger">
             <div className="tutor coach">
-              <div className="tutor-ico">♥</div>
+              <div className="tutor-ico"><Heart size={26} strokeWidth={2.2} /></div>
               <h3>The Coach</h3>
               <p className="desc">Empático, paciente, motivador. Prioriza la consistencia sobre la precisión. No penaliza.</p>
               <div className="meter">
@@ -658,11 +787,12 @@ export function Landing() {
             </div>
 
             <div className="tutor sincerist featured">
-              <div className="tutor-ico">⚡</div>
+              <div className="tutor-ico"><Zap size={26} strokeWidth={2.2} /></div>
               <h3>
-                The Sincerist{' '}
-                <span style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', marginLeft: 6 }}>
-                  ★ Más usado
+                The Sincerist
+                <span className="badge-most">
+                  <Star size={11} strokeWidth={2.4} fill="currentColor" />
+                  Más usado
                 </span>
               </h3>
               <p className="desc">Profesional, directo, demandante. Evalúa cada palabra. Bloqueos por error repetido.</p>
@@ -680,12 +810,12 @@ export function Landing() {
               </div>
               <div className="ideal">
                 <b>Ideal para</b>
-                <span className="small">Preparar entrevistas · certificaciones · acelerar B2 → C1</span>
+                <span className="small">Preparar entrevistas · certificaciones · acelerar B2 a C1</span>
               </div>
             </div>
 
             <div className="tutor arcade">
-              <div className="tutor-ico">🎮</div>
+              <div className="tutor-ico"><Gamepad2 size={26} strokeWidth={2.2} /></div>
               <h3>The Arcade</h3>
               <p className="desc">Enérgico, lúdico, veloz. Sesiones cortas con recompensas visuales y velocidad alta.</p>
               <div className="meter">
@@ -711,12 +841,12 @@ export function Landing() {
 
       <section className="topics" id="topics">
         <div className="container">
-          <div className="sec-head">
+          <div className="sec-head fade-on-scroll">
             <span className="eyebrow">Tópicos</span>
             <h2>Hablás de lo que te interesa.<br />Punto.</h2>
             <p>Elegís 4 o 5 punteros — son el combustible de cada conversación. Más de 75 tópicos activos.</p>
           </div>
-          <div className="topics-grid">
+          <div className="topics-grid fade-stagger">
             <TopicCard cat="Tecnología" title="Arquitectura de software" tags={['microservicios', 'DDD', 'event sourcing']} />
             <TopicCard cat="Arte" title="Música electrónica · UK Garage" tags={['two-step', 'sub-bass', 'producción']} />
             <TopicCard cat="Lifestyle" title="Entrenamiento de fuerza" tags={['powerlifting', 'nutrición', 'recovery']} />
@@ -726,27 +856,29 @@ export function Landing() {
             <TopicCard cat="Lifestyle" title="Viajes internacionales" tags={['aeropuertos', 'cultura', 'nómadas']} />
             <TopicCard cat="Negocios" title="Metodologías ágiles" tags={['retros', 'OKRs', 'scrum']} />
           </div>
-          <p className="topics-more">+ 67 tópicos más. ¿No está el tuyo? <b>Lo agregamos.</b></p>
+          <p className="topics-more fade-on-scroll">+ 67 tópicos más. ¿No está el tuyo? <b>Lo agregamos.</b></p>
         </div>
       </section>
 
       <section className="feature">
         <div className="container feature-grid">
-          <div>
+          <div className="fade-on-scroll">
             <span className="eyebrow">Feedback sincerista</span>
             <h2>Te decimos lo que está mal.<br />Sin "Oops, algo salió mal".</h2>
             <p>La IA tiene prohibido interrumpirte mientras hablás. Todo el feedback se guarda y se entrega al final — claro, directo, accionable.</p>
             <ul>
-              <li><b>1 elogio</b> · qué hiciste mejor que ayer</li>
-              <li><b>Máximo 3 puntos a pulir</b> · gramática, pronunciación o léxico</li>
-              <li>Frases <b>exactas</b> que dijiste, con la versión natural al lado</li>
-              <li>Audio nativo de la pronunciación correcta · tocá para escuchar</li>
+              <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span><b>1 elogio</b> · qué hiciste mejor que ayer</span></li>
+              <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span><b>Máximo 3 puntos a pulir</b> · gramática, pronunciación o léxico</span></li>
+              <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Frases <b>exactas</b> que dijiste, con la versión natural al lado</span></li>
+              <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Audio nativo de la pronunciación correcta · tocá para escuchar</span></li>
             </ul>
           </div>
-          <div>
+          <div className="fade-on-scroll">
             <div className="mock-report">
               <div className="head">
-                <div className="lbl">✓ Sesión completa · 6 min 12 s</div>
+                <div className="lbl">
+                  <Check size={14} strokeWidth={2.6} /> Sesión completa · 6 min 12 s
+                </div>
                 <h3>¡Buenísima charla!</h3>
                 <p>Tu fluidez subió un <b>10%</b> respecto de ayer.</p>
                 <div className="stats">
@@ -758,16 +890,17 @@ export function Landing() {
               <div className="body">
                 <div className="feed">
                   <div className="type">Gramática · pasado simple</div>
-                  <div className="bad"><span>✕</span> "producers started <i>to mixing</i>…"</div>
-                  <div className="good"><span>✓</span> "producers started <i>mixing</i>…"</div>
+                  <div className="bad"><XIcon size={14} strokeWidth={2.6} /> <span>"producers started <i>to mixing</i>…"</span></div>
+                  <div className="good"><Check size={14} strokeWidth={2.6} /> <span>"producers started <i>mixing</i>…"</span></div>
                 </div>
                 <div className="feed">
                   <div className="type">Pronunciación · garage</div>
-                  <div className="bad"><span>✕</span> /ˈɡærɪdʒ/</div>
+                  <div className="bad"><XIcon size={14} strokeWidth={2.6} /> <span>/ˈɡærɪdʒ/</span></div>
                   <div className="good">
-                    <span>✓</span> /ˈɡærɑːʒ/
-                    <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4, background: 'var(--primary-dark)', color: 'white', padding: '2px 8px', borderRadius: 999, fontSize: 11 }}>
-                      ▶ escuchar
+                    <Check size={14} strokeWidth={2.6} /> <span>/ˈɡærɑːʒ/</span>
+                    <span className="listen">
+                      <Play size={11} strokeWidth={2.6} fill="white" />
+                      escuchar
                     </span>
                   </div>
                 </div>
@@ -779,20 +912,20 @@ export function Landing() {
 
       <section className="feature reverse" style={{ background: 'var(--bg-2)' }}>
         <div className="container feature-grid">
-          <div>
+          <div className="fade-on-scroll">
             <span className="eyebrow">Modo insistente</span>
             <h2>El error que se repite,<br />te lo cobramos.</h2>
             <p>Si tropezás con la misma cosa tres sesiones seguidas, el sistema pausa tu mapa y dispara una <b>Misión de rescate</b>: una charla diseñada para forzar exactamente ese punto débil hasta que lo resuelvas.</p>
             <ul>
-              <li>Detección automática · sin que tengas que pedirla</li>
-              <li>Sobre <b>verbos irregulares</b>, <b>fonemas</b> o cualquier otra cosa</li>
-              <li>Liberación con <b>8 instancias correctas</b> en una conversación</li>
-              <li>72% de los rescates se resuelven en ≤ 2 sesiones</li>
+              <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Detección automática · sin que tengas que pedirla</span></li>
+              <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Sobre <b>verbos irregulares</b>, <b>fonemas</b> o cualquier otra cosa</span></li>
+              <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Liberación con <b>8 instancias correctas</b> en una conversación</span></li>
+              <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Sin progreso nuevo hasta que el bloqueo se resuelve</span></li>
             </ul>
           </div>
-          <div>
+          <div className="fade-on-scroll">
             <div className="mock-rescue">
-              <div className="ico-big">⚠</div>
+              <div className="ico-big"><AlertTriangle size={32} strokeWidth={2.2} /></div>
               <h3>Misión de rescate.</h3>
               <p className="sub">Tropezaste con lo mismo 3 sesiones seguidas. Hoy lo dejamos atrás.</p>
               <div className="weak">
@@ -801,33 +934,40 @@ export function Landing() {
                 <div className="s">"go → goed", "buy → buyed", "begin → beginned".</div>
               </div>
               <ul className="list">
-                <li>Tu mapa queda pausado hasta resolverlo.</li>
-                <li>El tutor va a forzar contextos narrativos en pasado.</li>
-                <li>Mínimo 8 verbos irregulares correctos en una charla.</li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Tu mapa queda pausado hasta resolverlo.</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>El tutor va a forzar contextos narrativos en pasado.</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Mínimo 8 verbos irregulares correctos en una charla.</span></li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="testimonials">
+      <section className="for-who">
         <div className="container">
-          <div className="sec-head">
-            <span className="eyebrow">Alumnos</span>
-            <h2>Gente que ya está hablando.</h2>
+          <div className="sec-head fade-on-scroll">
+            <span className="eyebrow">Para quién está pensado</span>
+            <h2>Tres formas de usarlo.<br />Las tres funcionan.</h2>
+            <p>No importa de dónde arranques — el sistema se calibra solo. Estas son las situaciones más comunes.</p>
           </div>
-          <div className="quotes-grid">
-            <Quote
-              text={<>"Después de tres apps de idiomas, esta es la primera donde <b>sí o sí termino hablando</b>. Y se nota muchísimo cuando viajo."</>}
-              avLetter="M" avColor="var(--primary)" name="Mariana T." where="Marketing · Buenos Aires"
+          <div className="for-who-grid fade-stagger">
+            <UseCase
+              icon={<Compass size={22} strokeWidth={2.2} />}
+              title="Si retomás después de años"
+              scenario={`"Estudié inglés en el secundario y nunca más lo usé. Lo entiendo, pero al hablar me trabo."`}
+              fit="The Coach baja la presión. Empezás con frases cortas, sin penalización, hasta que recuperás el reflejo."
             />
-            <Quote
-              text={<>"Lo mejor son los <b>retos en pantalla</b>. Me obligan a usar palabras que tengo en el placard. En 6 semanas mi inglés técnico explotó."</>}
-              avLetter="J" avColor="#5A6BFF" name="Juan Pablo S." where="Dev senior · Córdoba"
+            <UseCase
+              icon={<Zap size={22} strokeWidth={2.2} />}
+              title="Si necesitás entrevistas en inglés"
+              scenario={`"Trabajo en producto/dev/diseño y la próxima entrevista es 100% en inglés técnico."`}
+              fit="The Sincerist te exige precisión. Cargás los tópicos de tu rubro y simula conversaciones de presión."
             />
-            <Quote
-              text={<>"La Misión de rescate me forzó a sentarme con los condicionales. Ya no los esquivo. <b>Está bueno que te empuje</b>."</>}
-              avLetter="C" avColor="var(--accent)" avText="#5A3D00" name="Carla G." where="Diseñadora · Montevideo"
+            <UseCase
+              icon={<Globe size={22} strokeWidth={2.2} />}
+              title="Si viajás seguido"
+              scenario={`"Me defiendo, pero al pedir comida o pedir ayuda en la calle me quedo en blanco."`}
+              fit="The Arcade te tira micro-sesiones rápidas con situaciones cotidianas. Ideal para usar en el subte."
             />
           </div>
         </div>
@@ -835,21 +975,21 @@ export function Landing() {
 
       <section id="pricing">
         <div className="container">
-          <div className="sec-head">
+          <div className="sec-head fade-on-scroll">
             <span className="eyebrow">Precios</span>
             <h2>Empezás gratis.<br />Pagás cuando te enganche.</h2>
             <p>14 días de Pro sin tarjeta. Después elegís el plan que te haga sentido.</p>
           </div>
-          <div className="pricing-grid">
+          <div className="pricing-grid fade-stagger">
             <div className="price-card">
               <div className="name">Free</div>
               <div className="blurb">Para probar y mantener la racha</div>
               <div className="price"><span className="amount">$0</span><span className="per">/ mes</span></div>
               <ul className="feats">
-                <li>1 charla de 5 minutos por día</li>
-                <li>Tutor The Coach</li>
-                <li>3 punteros de interés</li>
-                <li>Feedback básico</li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>1 charla de 5 minutos por día</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Tutor The Coach</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>3 punteros de interés</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Feedback básico</span></li>
               </ul>
               <Link to="/login" className="btn btn-outline btn-block" style={{ marginTop: 'auto' }}>Empezar gratis</Link>
             </div>
@@ -860,12 +1000,12 @@ export function Landing() {
               <div className="blurb">Para los que quieren ver progreso real</div>
               <div className="price"><span className="amount">US$ 12</span><span className="per">/ mes</span></div>
               <ul className="feats">
-                <li>Charlas ilimitadas</li>
-                <li>Los 3 tutores (Coach, Sincerist, Arcade)</li>
-                <li>Hasta 5 punteros de interés</li>
-                <li>Feedback sincerista completo + audio nativo</li>
-                <li>Misiones de rescate · modo insistente</li>
-                <li>Mapa de progreso por tema</li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Charlas ilimitadas</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Los 3 tutores (Coach, Sincerist, Arcade)</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Hasta 5 punteros de interés</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Feedback sincerista completo + audio nativo</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Misiones de rescate · modo insistente</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Mapa de progreso por tema</span></li>
               </ul>
               <Link to="/login" className="btn btn-primary btn-block" style={{ marginTop: 'auto' }}>Probar 14 días gratis</Link>
             </div>
@@ -875,11 +1015,11 @@ export function Landing() {
               <div className="blurb">Para acelerar fuerte (incluye coach humano)</div>
               <div className="price"><span className="amount">US$ 49</span><span className="per">/ mes</span></div>
               <ul className="feats">
-                <li>Todo lo de Pro</li>
-                <li><b>1 sesión semanal</b> con coach humano</li>
-                <li>Templates personalizados</li>
-                <li>Plan a medida (objetivo específico)</li>
-                <li>Soporte prioritario</li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Todo lo de Pro</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span><b>1 sesión semanal</b> con coach humano</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Templates personalizados</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Plan a medida (objetivo específico)</span></li>
+                <li><Check size={16} strokeWidth={2.4} className="li-ico" /><span>Soporte prioritario</span></li>
               </ul>
               <a href="#" className="btn btn-outline btn-block" style={{ marginTop: 'auto' }}>Hablar con ventas</a>
             </div>
@@ -889,11 +1029,11 @@ export function Landing() {
 
       <section style={{ background: 'var(--bg-2)' }} id="faq">
         <div className="container">
-          <div className="sec-head">
+          <div className="sec-head fade-on-scroll">
             <span className="eyebrow">FAQ</span>
             <h2>Preguntas que recibimos seguido.</h2>
           </div>
-          <div className="faq-list">
+          <div className="faq-list fade-stagger">
             <FaqItem q="¿Cómo decide mi nivel sin un examen?" a="Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas) y precisión fonética. En 2 a 3 minutos te ubica en el marco CEFR (A1 a C2). Sin opción múltiple, sin presión." />
             <FaqItem q="¿Qué idiomas están disponibles?" a="Hoy: inglés (US y UK), portugués (BR y PT) e italiano. Próximamente francés y alemán. Como alumno base aceptamos español (todas las variantes), portugués e inglés." />
             <FaqItem q="¿Necesito buena conexión?" a="Funciona con 3G estable. El audio se procesa en streaming. Si la conexión se cae, la sesión guarda lo hablado y reanuda al volver." />
@@ -906,12 +1046,18 @@ export function Landing() {
       </section>
 
       <section className="cta-final" id="cta">
-        <div className="container">
+        <div className="container fade-on-scroll">
           <h2>Hablás más en una semana<br />que en seis meses de cursos.</h2>
           <p>14 días de Pro, sin tarjeta. La primera charla se siente rara. La quinta, no podés parar.</p>
           <div className="cta-final-actions">
-            <a href="#" className="btn btn-light btn-lg">📱 Descargar en App Store</a>
-            <a href="#" className="btn btn-dark btn-lg" style={{ background: 'rgba(0,0,0,.25)', color: 'white', border: '1px solid rgba(255,255,255,.25)' }}>▶ Disponible en Google Play</a>
+            <a href="#" className="btn btn-light btn-lg">
+              <Smartphone size={18} strokeWidth={2.2} />
+              Descargar en App Store
+            </a>
+            <a href="#" className="btn btn-dark btn-lg" style={{ background: 'rgba(0,0,0,.25)', color: 'white', border: '1px solid rgba(255,255,255,.25)' }}>
+              <Play size={16} strokeWidth={2.2} fill="white" />
+              Disponible en Google Play
+            </a>
           </div>
           <div style={{ marginTop: 24, fontSize: 13, opacity: .8 }}>o probalo en la web · 5 minutos · sin descarga</div>
         </div>
@@ -924,10 +1070,9 @@ export function Landing() {
               <a href="#" className="logo"><img src="/logos/hablah-mark.svg" alt="habláh" className="logo-mark" width="30" height="30" /> habláh</a>
               <p>Plataforma adaptativa de aprendizaje de idiomas con IA. Hablás de lo que te gusta. El sistema se encarga del resto.</p>
               <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                <a href="#" style={socialBtn}>𝕏</a>
-                <a href="#" style={socialBtn}>in</a>
-                <a href="#" style={socialBtn}>ig</a>
-                <a href="#" style={socialBtn}>tt</a>
+                <a href="#" className="social-btn" aria-label="X/Twitter"><Twitter size={16} strokeWidth={2} /></a>
+                <a href="#" className="social-btn" aria-label="LinkedIn"><Linkedin size={16} strokeWidth={2} /></a>
+                <a href="#" className="social-btn" aria-label="Instagram"><Instagram size={16} strokeWidth={2} /></a>
               </div>
             </div>
             <div className="footer-col">
@@ -968,22 +1113,16 @@ export function Landing() {
             </div>
           </div>
           <div className="footer-bottom">
-            <span>© 2026 Habláh. Hecho en LatAm.</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <ShieldCheck size={13} strokeWidth={2.2} />
+              © 2026 Habláh. Hecho en LatAm.
+            </span>
             <span>Hablás. Aprendés. Sin exámenes.</span>
           </div>
         </div>
       </footer>
     </div>
   )
-}
-
-const socialBtn: React.CSSProperties = {
-  width: 36,
-  height: 36,
-  borderRadius: 8,
-  background: 'rgba(255,255,255,.05)',
-  display: 'grid',
-  placeItems: 'center',
 }
 
 interface TopicCardProps {
@@ -1006,29 +1145,20 @@ function TopicCard({ cat, title, tags }: TopicCardProps) {
   )
 }
 
-interface QuoteProps {
-  text: React.ReactNode
-  avLetter: string
-  avColor: string
-  avText?: string
-  name: string
-  where: string
+interface UseCaseProps {
+  icon: React.ReactNode
+  title: string
+  scenario: string
+  fit: string
 }
 
-function Quote({ text, avLetter, avColor, avText, name, where }: QuoteProps) {
+function UseCase({ icon, title, scenario, fit }: UseCaseProps) {
   return (
-    <div className="quote">
-      <div className="stars">★★★★★</div>
-      <blockquote>{text}</blockquote>
-      <div className="meta">
-        <div className="av" style={{ background: avColor, color: avText || 'white' }}>
-          {avLetter}
-        </div>
-        <div>
-          <div className="name">{name}</div>
-          <div className="where">{where}</div>
-        </div>
-      </div>
+    <div className="for-who-card">
+      <div className="ico">{icon}</div>
+      <h3>{title}</h3>
+      <p className="scenario">{scenario}</p>
+      <div className="fit"><b>Para vos si:</b> {fit}</div>
     </div>
   )
 }
@@ -1042,7 +1172,10 @@ function FaqItem({ q, a }: FaqItemProps) {
   return (
     <div className="faq-item">
       <details>
-        <summary>{q}</summary>
+        <summary>
+          {q}
+          <ChevronDown size={20} strokeWidth={2} className="chev" />
+        </summary>
         <p>{a}</p>
       </details>
     </div>

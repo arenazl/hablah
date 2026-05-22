@@ -557,7 +557,10 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
               </div>
 
               <div className="hp-hero-cta">
-                <button className="hp-btn hp-btn-primary" onClick={() => nav('/app/practicar')}>
+                <button
+                  className="hp-btn hp-btn-primary"
+                  onClick={() => nav(firstInterest ? `/app/practicar?topic=${firstInterest.id}` : '/app/practicar')}
+                >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
                   Empezar charla
                 </button>
@@ -1035,6 +1038,23 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       startedRef.current = false
     }
   }, [live])
+
+  // Auto-start desde query param ?topic=<id> (botón "Empezar charla" del Hoy)
+  const location = useLocation()
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const topicParam = params.get('topic')
+    if (topicParam && !startedRef.current && profile) {
+      const topicId = parseInt(topicParam, 10)
+      if (Number.isFinite(topicId) && topicId > 0) {
+        setSelectedTopicId(topicId)
+        beginSession(topicId)
+        // Limpiar URL para que un refresh no relance
+        nav('/app/practicar', { replace: true })
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search, profile])
 
   // IMPORTANTE: handleEnd se declara ANTES del early return para que el
   // número de hooks no cambie entre renders (React error #310).
