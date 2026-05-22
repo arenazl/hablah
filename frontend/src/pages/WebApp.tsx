@@ -1022,12 +1022,15 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       if (Number.isFinite(topicId) && topicId > 0) {
         setSelectedTopicId(topicId)
         beginSession(topicId)
-        // Limpiar URL para que un refresh no relance
-        nav('/app/practicar', { replace: true })
+        // Limpio el query SIN react-router (history.replaceState) para no desmontar
+        // el componente; nav({replace:true}) re-monta y dispara cleanup→stop.
+        if (typeof window !== 'undefined') {
+          window.history.replaceState({}, '', '/app/practicar')
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.search, profile])
+  }, [profile])
 
   // IMPORTANTE: handleEnd se declara ANTES del early return para que el
   // número de hooks no cambie entre renders (React error #310).
