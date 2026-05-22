@@ -1,20 +1,20 @@
 /**
  * OnboardingBubbles — primera experiencia post-login.
  *
- * Flujo:
- *   1) 8 globos flotando con drift CSS — el user toca una categoria.
- *   2) Se expande a 3-5 subcategorias en globos mas chicos.
- *   3) Se expande a 4-8 topics — cada toque agrega el topic como interes.
- *   4) "Listo!" cuando el user terminó.
- *
- * No usa framer-motion (drift via @keyframes CSS).
+ * Flujo simplificado (2 niveles, vuelve automaticamente):
+ *   1) Splash con boton "Empecemos!"
+ *   2) Pantalla principal: ~20 categorías como orbs flotantes (Aura).
+ *      Boton "Comenzar (N)" siempre visible abajo.
+ *   3) Tocá una categoría → expande a topics (modal/overlay).
+ *      Cada tap = agrega como interes (toast verde).
+ *      Auto-vuelve a categorías principal al cerrar.
+ *   4) Boton "Comenzar (N)" cierra el onboarding cuando el user quiere.
  */
 import { useEffect, useState } from 'react'
 import {
   onboardingAPI,
   topicsAPI,
   OnboardingCategory,
-  OnboardingSubcategory,
   OnboardingTopic,
 } from '../services/api'
 import { toast } from 'sonner'
@@ -25,19 +25,9 @@ const STYLES = `
 @keyframes ob-drift-2 { 0%,100%{transform:translate(0,0)} 25%{transform:translate(-42px,16px)} 50%{transform:translate(-28px,-32px)} 75%{transform:translate(20px,-22px)} }
 @keyframes ob-drift-3 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(28px,28px)} 66%{transform:translate(-22px,18px)} }
 @keyframes ob-drift-4 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-30px,-26px)} 66%{transform:translate(34px,-12px)} }
-@keyframes ob-pop-in {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-@keyframes ob-fade-up {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-@keyframes ob-pulse-glow {
-  0%,100% { opacity: .55; transform: scale(1); }
-  50% { opacity: .9; transform: scale(1.12); }
-}
+@keyframes ob-pop-in { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.08);opacity:1} 100%{transform:scale(1);opacity:1} }
+@keyframes ob-fade-up { 0%{opacity:0;transform:translateY(20px)} 100%{opacity:1;transform:translateY(0)} }
+@keyframes ob-overlay-in { 0%{opacity:0} 100%{opacity:1} }
 .ob-bubble { transition: filter 240ms; }
 .ob-bubble:hover { filter: brightness(1.15) saturate(1.2); z-index: 5; }
 .ob-bubble:active { filter: brightness(.9); }
@@ -48,159 +38,182 @@ interface Props {
   onSkip: () => void
 }
 
-type Step = 'splash' | 'categories' | 'subcategories' | 'topics' | 'done'
+type Step = 'splash' | 'main'
 
 export function OnboardingBubbles({ onDone, onSkip }: Props) {
   const [step, setStep] = useState<Step>('splash')
   const [categories, setCategories] = useState<OnboardingCategory[]>([])
-  const [activeCat, setActiveCat] = useState<OnboardingCategory | null>(null)
-  const [subcategories, setSubcategories] = useState<OnboardingSubcategory[]>([])
-  const [activeSub, setActiveSub] = useState<OnboardingSubcategory | null>(null)
-  const [topics, setTopics] = useState<OnboardingTopic[]>([])
-  const [addedTopicIds, setAddedTopicIds] = useState<Set<number>>(new Set())
-  const [loading, setLoading] = useState(false)
+  const [openCat, setOpenCat] = useState<OnboardingCategory | null>(null)
+  const [openTopics, setOpenTopics] = useState<OnboardingTopic[]>([])
+  const [openLoading, setOpenLoading] = useState(false)
+  const [addedCount, setAddedCount] = useState(0)
 
-  // Cargar categorías al iniciar
   useEffect(() => {
     onboardingAPI.categories().then(setCategories).catch(() => toast.error('No pude cargar las categorías'))
   }, [])
 
-  const handleStart = () => setStep('categories')
-
   const handleCategoryClick = async (cat: OnboardingCategory) => {
-    setActiveCat(cat)
-    setLoading(true)
+    setOpenCat(cat)
+    setOpenLoading(true)
+    setOpenTopics([])
     try {
-      const subs = await onboardingAPI.subcategories(cat.slug)
-      setSubcategories(subs)
-      setStep('subcategories')
-    } catch {
-      toast.error('Error cargando subcategorías')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleSubcategoryClick = async (sub: OnboardingSubcategory) => {
-    if (!activeCat) return
-    setActiveSub(sub)
-    setLoading(true)
-    try {
-      const tops = await onboardingAPI.topics(activeCat.slug, sub.slug)
-      setTopics(tops)
-      setStep('topics')
+      const tops = await onboardingAPI.topics(cat.slug)
+      setOpenTopics(tops)
     } catch {
       toast.error('Error cargando tópicos')
     } finally {
-      setLoading(false)
+      setOpenLoading(false)
     }
   }
 
   const handleTopicClick = async (topic: OnboardingTopic) => {
-    if (addedTopicIds.has(topic.id)) return
     try {
-      await topicsAPI.addInterest(topic.id)
-      setAddedTopicIds((s) => new Set(s).add(topic.id))
+      if (topic.is_fallback) {
+        await onboardingAPI.addFallbackTopic(topic.title, topic.category)
+      } else {
+        await topicsAPI.addInterest(topic.id)
+      }
+      setAddedCount((c) => c + 1)
       toast.success(`Agregado: ${topic.title}`)
+      // Cierre automatico tras tocar (vuelve a categorias)
+      setTimeout(() => setOpenCat(null), 280)
     } catch {
       toast.error('No pude agregar este tópico')
     }
   }
 
-  const goBack = () => {
-    if (step === 'topics') { setStep('subcategories'); setActiveSub(null); setTopics([]) }
-    else if (step === 'subcategories') { setStep('categories'); setActiveCat(null); setSubcategories([]) }
-  }
-
   const handleFinish = () => {
-    if (addedTopicIds.size === 0) {
+    if (addedCount === 0) {
       toast.error('Elegí al menos un tópico para empezar')
       return
     }
-    setStep('done')
-    setTimeout(onDone, 800)
+    onDone()
   }
 
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 200,
       background: 'radial-gradient(circle at 30% 20%, #0E1614 0%, #050A09 100%)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: 24,
+      display: 'flex', flexDirection: 'column',
       animation: 'ob-fade-up 400ms ease-out',
     }}>
       <style>{STYLES}</style>
 
-      {/* SKIP corner */}
-      {step !== 'splash' && step !== 'done' && (
-        <button
-          onClick={onSkip}
-          style={{
-            position: 'absolute', top: 18, right: 24,
-            background: 'transparent', border: 'none', cursor: 'pointer',
-            color: 'rgba(255,255,255,.5)', fontSize: 12, fontWeight: 600,
-          }}
-        >
-          Saltar →
-        </button>
-      )}
-
       {step === 'splash' && (
-        <SplashStage onStart={handleStart} addedCount={0} />
-      )}
-
-      {step === 'categories' && (
-        <CategoriesStage categories={categories} onPick={handleCategoryClick} />
-      )}
-
-      {step === 'subcategories' && activeCat && (
-        <SubcategoriesStage
-          parent={activeCat}
-          subcategories={subcategories}
-          onPick={handleSubcategoryClick}
-          onBack={goBack}
-          loading={loading}
-        />
-      )}
-
-      {step === 'topics' && activeCat && activeSub && (
-        <TopicsStage
-          parent={activeSub}
-          parentColor={activeCat.color}
-          topics={topics}
-          addedIds={addedTopicIds}
-          onTopicClick={handleTopicClick}
-          onBack={goBack}
-          onMore={() => setStep('categories')}
-          onFinish={handleFinish}
-          loading={loading}
-        />
-      )}
-
-      {step === 'done' && (
-        <div style={{ textAlign: 'center', animation: 'ob-pop-in 600ms ease-out' }}>
-          <div style={{ fontSize: 60, marginBottom: 16 }}>
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#00B37E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-              <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-          </div>
-          <h1 style={{ color: 'white', fontSize: 32, fontWeight: 800, margin: 0 }}>
-            ¡Listo!
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,.7)', marginTop: 8 }}>
-            {addedTopicIds.size} tópicos agregados. Vamos a charlar.
-          </p>
+        <div style={{
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+        }}>
+          <SplashStage onStart={() => setStep('main')} onSkip={onSkip} />
         </div>
+      )}
+
+      {step === 'main' && (
+        <>
+          {/* HEADER fijo */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0,
+            padding: '18px 24px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            zIndex: 10,
+          }}>
+            <div>
+              <div style={{ fontSize: 10, letterSpacing: '.16em', textTransform: 'uppercase', color: '#9CFCD2', fontWeight: 800 }}>
+                Elegí tus intereses
+              </div>
+              <h2 style={{ color: 'white', fontSize: 20, fontWeight: 800, margin: '2px 0 0' }}>
+                ¿De qué te gusta hablar?
+              </h2>
+            </div>
+            <button
+              onClick={onSkip}
+              style={{
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                color: 'rgba(255,255,255,.5)', fontSize: 12, fontWeight: 600,
+              }}
+            >
+              Saltar →
+            </button>
+          </div>
+
+          {/* GRID de categorías centrado */}
+          <div style={{
+            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '90px 16px 110px',
+            overflow: 'auto',
+          }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+              gap: 12, rowGap: 22,
+              maxWidth: 980, width: '100%',
+            }}>
+              {categories.map((cat, i) => (
+                <BubbleButton
+                  key={cat.slug}
+                  label={cat.title}
+                  color={cat.color}
+                  onClick={() => handleCategoryClick(cat)}
+                  driftIndex={i}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* FOOTER fijo: botón Comenzar */}
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0,
+            padding: '16px 24px calc(16px + env(safe-area-inset-bottom, 0px))',
+            background: 'linear-gradient(180deg, transparent 0%, rgba(5,10,9,.8) 40%, rgba(5,10,9,.95) 100%)',
+            display: 'flex', justifyContent: 'center', zIndex: 10,
+          }}>
+            <button
+              onClick={handleFinish}
+              disabled={addedCount === 0}
+              style={{
+                padding: '14px 42px', borderRadius: 999,
+                background: addedCount > 0 ? '#00B37E' : 'rgba(255,255,255,.08)',
+                color: 'white', border: 'none',
+                fontSize: 16, fontWeight: 800, letterSpacing: '.01em',
+                cursor: addedCount > 0 ? 'pointer' : 'not-allowed',
+                opacity: addedCount > 0 ? 1 : 0.55,
+                boxShadow: addedCount > 0 ? '0 12px 36px rgba(0,179,126,.5)' : 'none',
+                transition: 'all 220ms',
+              }}
+            >
+              Comenzar {addedCount > 0 && `(${addedCount})`}
+            </button>
+          </div>
+
+          {/* OVERLAY de topics cuando hay categoría seleccionada */}
+          {openCat && (
+            <TopicsOverlay
+              category={openCat}
+              topics={openTopics}
+              loading={openLoading}
+              onTopicClick={handleTopicClick}
+              onClose={() => setOpenCat(null)}
+            />
+          )}
+        </>
       )}
     </div>
   )
 }
 
 /* ─── Splash ──────────────────────────────────────────────────── */
-function SplashStage({ onStart }: { onStart: () => void; addedCount: number }) {
+function SplashStage({ onStart, onSkip }: { onStart: () => void; onSkip: () => void }) {
   return (
-    <div style={{ textAlign: 'center', maxWidth: 520, animation: 'ob-fade-up 500ms ease-out' }}>
+    <div style={{ textAlign: 'center', maxWidth: 520, animation: 'ob-fade-up 500ms ease-out', position: 'relative' }}>
+      <button
+        onClick={onSkip}
+        style={{
+          position: 'absolute', top: -50, right: 0,
+          background: 'transparent', border: 'none', cursor: 'pointer',
+          color: 'rgba(255,255,255,.5)', fontSize: 12, fontWeight: 600,
+        }}
+      >
+        Saltar →
+      </button>
       <div style={{
         fontSize: 11, letterSpacing: '.18em', textTransform: 'uppercase', fontWeight: 800,
         color: '#9CFCD2', marginBottom: 16,
@@ -217,8 +230,8 @@ function SplashStage({ onStart }: { onStart: () => void; addedCount: number }) {
         }}>tópicos favoritos</span>
       </h1>
       <p style={{ color: 'rgba(255,255,255,.65)', fontSize: 16, lineHeight: 1.5, margin: '0 0 32px' }}>
-        En 30 segundos vamos a saber de qué te gusta hablar.
-        Vas a poder cambiarlos cuando quieras.
+        Elegí lo que te interese. Podés sumar muchos.
+        Cuando estés listo, tocá <b>Comenzar</b>.
       </p>
       <button
         onClick={onStart}
@@ -237,190 +250,18 @@ function SplashStage({ onStart }: { onStart: () => void; addedCount: number }) {
   )
 }
 
-/* ─── Stage 1: Categorías (8 globos flotando, grid 4x2 fijo) ──── */
-function CategoriesStage({ categories, onPick }: {
-  categories: OnboardingCategory[]
-  onPick: (c: OnboardingCategory) => void
-}) {
-  return (
-    <div style={{ textAlign: 'center', width: '100%', maxWidth: 880, animation: 'ob-fade-up 400ms ease-out' }}>
-      <h2 style={{ color: 'white', fontSize: 'clamp(20px, 3vw, 28px)', fontWeight: 800, margin: '0 0 6px' }}>
-        ¿De qué te gusta hablar?
-      </h2>
-      <p style={{ color: 'rgba(255,255,255,.55)', fontSize: 13, marginBottom: 18 }}>
-        Tocá una categoría para explorar
-      </p>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 8,
-        rowGap: 14,
-        padding: '0 12px',
-      }}>
-        {categories.map((cat, i) => (
-          <BubbleButton
-            key={cat.slug}
-            label={cat.title}
-            color={cat.color}
-            onClick={() => onPick(cat)}
-            driftIndex={i}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/* ─── Stage 2: Subcategorías ──────────────────────────────────── */
-function SubcategoriesStage({ parent, subcategories, onPick, onBack, loading }: {
-  parent: OnboardingCategory
-  subcategories: OnboardingSubcategory[]
-  onPick: (s: OnboardingSubcategory) => void
-  onBack: () => void
-  loading: boolean
-}) {
-  return (
-    <div style={{ textAlign: 'center', maxWidth: 900, animation: 'ob-fade-up 400ms ease-out' }}>
-      <BackButton onClick={onBack} />
-      <h2 style={{ color: 'white', fontSize: 'clamp(22px, 4vw, 30px)', fontWeight: 800, margin: '0 0 6px' }}>
-        {parent.title}
-      </h2>
-      <p style={{ color: 'rgba(255,255,255,.6)', marginBottom: 36 }}>
-        ¿Qué te interesa más?
-      </p>
-      {loading && <div style={{ color: 'rgba(255,255,255,.4)' }}>Cargando…</div>}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${Math.min(subcategories.length, 4)}, 1fr)`,
-        gap: 8, rowGap: 14, padding: '0 12px',
-        maxWidth: 760, margin: '0 auto',
-      }}>
-        {subcategories.map((sub, i) => (
-          <BubbleButton
-            key={sub.slug}
-            label={sub.title}
-            color={parent.color}
-            onClick={() => onPick(sub)}
-            driftIndex={i}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/* ─── Stage 3: Topics ────────────────────────────────────────── */
-function TopicsStage({ parent, parentColor, topics, addedIds, onTopicClick, onBack, onMore, onFinish, loading }: {
-  parent: OnboardingSubcategory
-  parentColor: string
-  topics: OnboardingTopic[]
-  addedIds: Set<number>
-  onTopicClick: (t: OnboardingTopic) => void
-  onBack: () => void
-  onMore: () => void
-  onFinish: () => void
-  loading: boolean
-}) {
-  return (
-    <div style={{ textAlign: 'center', maxWidth: 900, animation: 'ob-fade-up 400ms ease-out' }}>
-      <BackButton onClick={onBack} />
-      <h2 style={{ color: 'white', fontSize: 'clamp(20px, 3.5vw, 28px)', fontWeight: 800, margin: '0 0 6px' }}>
-        {parent.title}
-      </h2>
-      <p style={{ color: 'rgba(255,255,255,.6)', marginBottom: 30 }}>
-        Tocá los tópicos que te interesen — podés elegir varios
-      </p>
-      {loading && <div style={{ color: 'rgba(255,255,255,.4)' }}>Cargando…</div>}
-      {!loading && topics.length === 0 && (
-        <div style={{ color: 'rgba(255,255,255,.55)', padding: 30 }}>
-          No hay tópicos por aquí. Probá otra categoría.
-        </div>
-      )}
-      <div style={{
-        display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', maxWidth: 720, margin: '0 auto 36px',
-      }}>
-        {topics.map((t) => {
-          const added = addedIds.has(t.id)
-          return (
-            <button
-              key={t.id}
-              onClick={() => onTopicClick(t)}
-              className="ob-bubble"
-              style={{
-                padding: '12px 20px', borderRadius: 999,
-                border: `1.5px solid ${added ? '#00B37E' : 'rgba(255,255,255,.2)'}`,
-                background: added ? 'rgba(0,179,126,.18)' : 'rgba(255,255,255,.06)',
-                color: added ? '#9CFCD2' : 'white',
-                fontSize: 14, fontWeight: 600, cursor: 'pointer',
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                animation: 'ob-pop-in 320ms ease-out',
-              }}
-            >
-              {added && (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              )}
-              {t.title}
-            </button>
-          )
-        })}
-      </div>
-      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', alignItems: 'center' }}>
-        <button
-          onClick={onBack}
-          style={{
-            padding: '12px 22px', borderRadius: 999,
-            background: 'transparent', color: 'rgba(255,255,255,.8)',
-            border: '1px solid rgba(255,255,255,.18)', fontSize: 13, fontWeight: 600,
-            cursor: 'pointer',
-          }}
-        >
-          Otra subcategoría
-        </button>
-        <button
-          onClick={onMore}
-          style={{
-            padding: '12px 22px', borderRadius: 999,
-            background: 'transparent', color: 'rgba(255,255,255,.8)',
-            border: '1px solid rgba(255,255,255,.18)', fontSize: 13, fontWeight: 600,
-            cursor: 'pointer',
-          }}
-        >
-          Otra categoría
-        </button>
-        <button
-          onClick={onFinish}
-          disabled={addedIds.size === 0}
-          style={{
-            padding: '14px 36px', borderRadius: 999,
-            background: addedIds.size > 0 ? '#00B37E' : 'rgba(0,179,126,.3)',
-            color: 'white', border: 'none', fontSize: 15, fontWeight: 800,
-            cursor: addedIds.size > 0 ? 'pointer' : 'not-allowed',
-            opacity: addedIds.size > 0 ? 1 : 0.5,
-            boxShadow: addedIds.size > 0 ? '0 10px 28px rgba(0,179,126,.45)' : 'none',
-          }}
-        >
-          Comenzar {addedIds.size > 0 && `(${addedIds.size})`}
-        </button>
-      </div>
-    </div>
-  )
-}
-
-/* ─── Bubble Button — Aura orb (libreria del orb) flotando ───── */
+/* ─── Bubble (orb Aura + label) ───────────────────────────────── */
 function BubbleButton({ label, color, onClick, driftIndex }: {
-  label: string; color: string; onClick: () => void; driftIndex: number; size?: number
+  label: string; color: string; onClick: () => void; driftIndex: number
 }) {
-  // Cada orb tiene audioLevel y velocidad distinta para que se mueva organico
-  const pseudoAudio = 0.45 + ((driftIndex * 0.13) % 0.4)
+  const pseudoAudio = 0.4 + ((driftIndex * 0.13) % 0.45)
 
   return (
     <div
       style={{
         position: 'relative',
-        animation: `ob-pop-in 460ms ease-out, ob-drift-${(driftIndex % 4) + 1} ${6 + driftIndex * 0.7}s ease-in-out infinite`,
-        display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+        animation: `ob-pop-in 420ms ease-out, ob-drift-${(driftIndex % 4) + 1} ${6 + (driftIndex % 5)}s ease-in-out infinite`,
+        display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 6,
       }}
     >
       <button
@@ -428,7 +269,7 @@ function BubbleButton({ label, color, onClick, driftIndex }: {
         onClick={onClick}
         style={{
           background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
-          width: 120, height: 120, position: 'relative',
+          width: 100, height: 100, position: 'relative',
           display: 'grid', placeItems: 'center',
         }}
       >
@@ -442,10 +283,10 @@ function BubbleButton({ label, color, onClick, driftIndex }: {
         />
       </button>
       <span style={{
-        color: 'white', fontSize: 13, fontWeight: 700, lineHeight: 1.15,
+        color: 'white', fontSize: 12, fontWeight: 700, lineHeight: 1.15,
         letterSpacing: '-.01em', textAlign: 'center',
         textShadow: '0 2px 8px rgba(0,0,0,.6)',
-        maxWidth: 140, pointerEvents: 'none',
+        maxWidth: 130, pointerEvents: 'none',
       }}>
         {label}
       </span>
@@ -453,23 +294,94 @@ function BubbleButton({ label, color, onClick, driftIndex }: {
   )
 }
 
-/* ─── Back button ─────────────────────────────────────────────── */
-function BackButton({ onClick }: { onClick: () => void }) {
+/* ─── Topics Overlay ──────────────────────────────────────────── */
+function TopicsOverlay({ category, topics, loading, onTopicClick, onClose }: {
+  category: OnboardingCategory
+  topics: OnboardingTopic[]
+  loading: boolean
+  onTopicClick: (t: OnboardingTopic) => void
+  onClose: () => void
+}) {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        position: 'absolute', top: 18, left: 24,
-        background: 'transparent', border: 'none', cursor: 'pointer',
-        color: 'rgba(255,255,255,.7)', fontSize: 13, fontWeight: 600,
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-      }}
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 50,
+      background: 'rgba(5,10,9,.88)',
+      backdropFilter: 'blur(12px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 20,
+      animation: 'ob-overlay-in 220ms ease-out',
+    }}
+    onClick={onClose}
     >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12" />
-        <polyline points="12 19 5 12 12 5" />
-      </svg>
-      Volver
-    </button>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: 720, width: '100%',
+          textAlign: 'center',
+          animation: 'ob-fade-up 320ms ease-out',
+        }}
+      >
+        <div style={{
+          fontSize: 11, letterSpacing: '.16em', textTransform: 'uppercase', fontWeight: 800,
+          color: 'rgba(255,255,255,.55)', marginBottom: 6,
+        }}>
+          {category.title}
+        </div>
+        <h2 style={{
+          color: 'white', fontSize: 'clamp(22px, 4vw, 30px)', fontWeight: 800,
+          margin: '0 0 28px', letterSpacing: '-.02em',
+        }}>
+          ¿De qué te gustaría hablar?
+        </h2>
+
+        {loading && <div style={{ color: 'rgba(255,255,255,.4)', padding: 30 }}>Cargando…</div>}
+
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center',
+          marginBottom: 32,
+        }}>
+          {topics.map((t) => (
+            <button
+              key={`${t.id}-${t.title}`}
+              onClick={() => onTopicClick(t)}
+              className="ob-bubble"
+              style={{
+                padding: '14px 22px', borderRadius: 999,
+                border: `1.5px solid ${category.color}66`,
+                background: `${category.color}1A`,
+                color: 'white',
+                fontSize: 15, fontWeight: 600, cursor: 'pointer',
+                animation: 'ob-pop-in 320ms ease-out',
+                transition: 'all 200ms',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = `${category.color}33`
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = `0 8px 24px ${category.color}55`
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = `${category.color}1A`
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              {t.title}
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={onClose}
+          style={{
+            padding: '10px 22px', borderRadius: 999,
+            background: 'transparent', color: 'rgba(255,255,255,.7)',
+            border: '1px solid rgba(255,255,255,.2)',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          Volver
+        </button>
+      </div>
+    </div>
   )
 }

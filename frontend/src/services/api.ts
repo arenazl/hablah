@@ -178,16 +178,17 @@ export const topicsAPI = {
 
 /* ────────────── ONBOARDING ────────────── */
 export interface OnboardingCategory { slug: string; title: string; color: string }
-export interface OnboardingSubcategory { slug: string; title: string; match: string[] }
-export interface OnboardingTopic { id: number; slug: string; title: string; category: string; is_hot: boolean }
+export interface OnboardingTopic {
+  id: number; slug: string; title: string; category: string; is_hot: boolean; is_fallback: boolean
+}
 
 export const onboardingAPI = {
   categories: () =>
     api.get<{ categories: OnboardingCategory[] }>('/onboarding/categories').then((r) => r.data.categories),
-  subcategories: (catSlug: string) =>
-    api.get<{ subcategories: OnboardingSubcategory[] }>(`/onboarding/subcategories/${catSlug}`).then((r) => r.data.subcategories),
-  topics: (catSlug: string, subSlug: string) =>
-    api.get<{ topics: OnboardingTopic[] }>(`/onboarding/topics/${catSlug}/${subSlug}`).then((r) => r.data.topics),
+  topics: (catSlug: string) =>
+    api.get<{ topics: OnboardingTopic[] }>(`/onboarding/topics/${catSlug}`).then((r) => r.data.topics),
+  addFallbackTopic: (title: string, category: string) =>
+    api.post<{ topic_id: number; slug: string; title: string }>('/onboarding/add-fallback-topic', { title, category }).then((r) => r.data),
 }
 
 /* ────────────── SESSIONS ────────────── */

@@ -16,67 +16,28 @@ from models.user import User
 router = APIRouter()
 
 
-# Subcategorias hardcoded por categoria. Cada subcategoria define keywords
-# para matchear topics del catalogo.
-SUBCATEGORIES: dict[str, list[dict]] = {
-    "arte": [
-        {"slug": "musica",       "title": "Música",            "match": ["musica", "music", "ableton", "rock", "garage", "electrónica"]},
-        {"slug": "cine",         "title": "Cine y series",     "match": ["cine", "pelicula", "movie", "serie", "stream", "drama", "pulp"]},
-        {"slug": "gaming",       "title": "Videojuegos",       "match": ["videojuego", "game", "indie", "aaa", "gaming"]},
-        {"slug": "comedia",      "title": "Stand-up",          "match": ["comedia", "stand-up", "humor"]},
-        {"slug": "literatura",   "title": "Literatura",        "match": ["libro", "literatura", "novela", "poesia"]},
-    ],
-    "tech": [
-        {"slug": "software",     "title": "Arquitectura software", "match": ["arquitectura", "software", "monolith", "microservic"]},
-        {"slug": "ia",           "title": "IA y ética",         "match": ["ia", "ai", "ética", "generativa", "alignment"]},
-        {"slug": "gadgets",      "title": "Gadgets y hardware", "match": ["gadget", "hardware", "device"]},
-        {"slug": "web",          "title": "Desarrollo web",     "match": ["web", "frontend", "backend", "javascript"]},
-    ],
-    "lifestyle": [
-        {"slug": "fitness",      "title": "Entrenamiento",      "match": ["fuerza", "powerlifting", "fitness", "running", "deadlift"]},
-        {"slug": "nutricion",    "title": "Nutrición",          "match": ["nutricion", "dieta", "macro", "comida sana"]},
-        {"slug": "mindfulness",  "title": "Meditación",         "match": ["meditacion", "mindfulness", "yoga", "respiracion"]},
-        {"slug": "moda",         "title": "Moda",                "match": ["moda", "streetwear", "sneaker", "estilo"]},
-        {"slug": "trabajo",      "title": "Trabajo remoto",      "match": ["remoto", "nomade", "freelance"]},
-    ],
-    "negocios": [
-        {"slug": "startup",      "title": "Emprender",          "match": ["startup", "emprend", "founder", "early-stage"]},
-        {"slug": "agile",        "title": "Métodos ágiles",     "match": ["agile", "scrum", "sprint", "retrospect"]},
-        {"slug": "inversion",    "title": "Inversiones",        "match": ["invers", "stock", "crypto", "finan"]},
-    ],
-    "viajes": [
-        {"slug": "aeropuertos",  "title": "Aeropuertos",        "match": ["aeropuerto", "boarding", "gate", "layover"]},
-        {"slug": "destinos",     "title": "Destinos",           "match": ["destino", "ciudad", "playa", "mountain"]},
-        {"slug": "cultura",      "title": "Cultura local",      "match": ["cultura", "local", "tradicion"]},
-    ],
-    "deportes": [
-        {"slug": "futbol",       "title": "Fútbol",             "match": ["futbol", "football", "mundial", "seleccion"]},
-        {"slug": "basket",       "title": "Básquet",            "match": ["basket", "nba"]},
-        {"slug": "tenis",        "title": "Tenis",               "match": ["tenis", "tennis", "grand slam"]},
-    ],
-    "gastronomia": [
-        {"slug": "asado",        "title": "Asado y parrilla",   "match": ["asado", "parrilla", "carne", "grill"]},
-        {"slug": "cafe",         "title": "Café",                "match": ["cafe", "coffee", "barista"]},
-        {"slug": "cocina",       "title": "Cocinar en casa",    "match": ["cocina", "receta", "ingrediente"]},
-    ],
-    "ciencia": [
-        {"slug": "clima",        "title": "Clima",               "match": ["clima", "climatico", "weather"]},
-        {"slug": "espacio",      "title": "Espacio",             "match": ["espacio", "space", "nasa", "marte"]},
-        {"slug": "biologia",     "title": "Biología",            "match": ["biolog", "celula", "genet"]},
-    ],
-}
-
-
-# Categorias visibles en el onboarding (iconos se mapean en el frontend por slug)
+# Categorias amplias para que sirvan a chicos y adultos por igual
 CATEGORIES = [
-    {"slug": "arte",        "title": "Arte y cultura",  "color": "#5B21B6"},
-    {"slug": "tech",        "title": "Tecnología",      "color": "#1E4FB0"},
-    {"slug": "lifestyle",   "title": "Lifestyle",       "color": "#008F63"},
-    {"slug": "deportes",    "title": "Deportes",        "color": "#C2410C"},
-    {"slug": "gastronomia", "title": "Gastronomía",     "color": "#B91C1C"},
-    {"slug": "viajes",      "title": "Viajes",          "color": "#3B82F6"},
-    {"slug": "negocios",    "title": "Negocios",        "color": "#0E1614"},
-    {"slug": "ciencia",     "title": "Ciencia",         "color": "#0891B2"},
+    {"slug": "musica",       "title": "Música",            "color": "#5B21B6"},
+    {"slug": "peliculas",    "title": "Películas y series", "color": "#7C3AED"},
+    {"slug": "deportes",     "title": "Deportes",          "color": "#C2410C"},
+    {"slug": "videojuegos",  "title": "Videojuegos",       "color": "#DB2777"},
+    {"slug": "comida",       "title": "Comida",            "color": "#B91C1C"},
+    {"slug": "animales",     "title": "Animales",          "color": "#65A30D"},
+    {"slug": "naturaleza",   "title": "Naturaleza",        "color": "#16A34A"},
+    {"slug": "viajes",       "title": "Viajes",            "color": "#3B82F6"},
+    {"slug": "tech",         "title": "Tecnología",        "color": "#1E4FB0"},
+    {"slug": "ciencia",      "title": "Ciencia",           "color": "#0891B2"},
+    {"slug": "arte",         "title": "Arte y cultura",    "color": "#8B5CF6"},
+    {"slug": "historia",     "title": "Historia",          "color": "#8A5A00"},
+    {"slug": "libros",       "title": "Libros",            "color": "#92400E"},
+    {"slug": "fitness",      "title": "Fitness y bienestar","color": "#10B981"},
+    {"slug": "familia",      "title": "Familia y vida",    "color": "#F472B6"},
+    {"slug": "trabajo",      "title": "Trabajo y carrera", "color": "#0E1614"},
+    {"slug": "emprender",    "title": "Emprender",         "color": "#475569"},
+    {"slug": "fotografia",   "title": "Fotografía",        "color": "#0EA5E9"},
+    {"slug": "autos",        "title": "Autos y motos",     "color": "#374151"},
+    {"slug": "moda",         "title": "Moda y estilo",     "color": "#EC4899"},
 ]
 
 
@@ -88,56 +49,149 @@ async def get_categories(
     return {"categories": CATEGORIES}
 
 
-@router.get("/subcategories/{category_slug}")
-async def get_subcategories(
-    category_slug: str,
-    current: User = Depends(get_current_user),
-):
-    """Devuelve nivel 2: subcategorías de una categoría dada."""
-    subs = SUBCATEGORIES.get(category_slug, [])
-    return {"category": category_slug, "subcategories": subs}
+# Mapping de categorias amplias -> categorias internas del modelo Topic.
+# Si la categoria amplia no matchea ninguna interna, devolvemos topics dummy
+# generados a partir del titulo de la categoria (para que siempre haya algo).
+CATEGORY_ALIASES: dict[str, list[str]] = {
+    "musica":      ["arte"],
+    "peliculas":   ["arte"],
+    "videojuegos": ["arte"],
+    "deportes":    ["deportes"],
+    "comida":      ["gastronomia"],
+    "animales":    ["lifestyle", "ciencia"],
+    "naturaleza":  ["viajes", "ciencia"],
+    "viajes":      ["viajes"],
+    "tech":        ["tech"],
+    "ciencia":     ["ciencia"],
+    "arte":        ["arte"],
+    "historia":    ["arte"],
+    "libros":      ["arte"],
+    "fitness":     ["lifestyle"],
+    "familia":     ["lifestyle"],
+    "trabajo":     ["negocios", "tech"],
+    "emprender":   ["negocios"],
+    "fotografia":  ["arte"],
+    "autos":       ["lifestyle"],
+    "moda":        ["lifestyle"],
+}
+
+# Topics genericos por categoria amplia (siempre 6, niveles A0-B2 friendly).
+# Se devuelven SIEMPRE — el seed_quick_users no garantiza que el catalogo
+# tenga topics que matcheen perfecto, asi que aseguramos contenido fresco.
+FALLBACK_TOPICS_BY_CATEGORY: dict[str, list[str]] = {
+    "musica":      ["Mi banda favorita", "Música para entrenar", "Géneros que descubrí", "Conciertos memorables", "Aprender un instrumento", "Música y emociones"],
+    "peliculas":   ["Una peli que me marcó", "Series para maratonear", "Géneros favoritos", "Personajes inolvidables", "Bandas sonoras", "Cine vs. streaming"],
+    "deportes":    ["Mi deporte favorito", "Equipos que sigo", "Un partido inolvidable", "Hacer deporte vs mirarlo", "Ídolos del deporte", "Cómo empecé a practicar"],
+    "videojuegos": ["Un juego que no pude soltar", "Multiplayer vs single", "Mi consola", "Indie vs AAA", "Speedruns y secretos", "Historias en videojuegos"],
+    "comida":      ["Mi comida favorita", "Cocinar en casa", "Restaurantes memorables", "Postres que amo", "Comida típica de mi país", "Dietas y hábitos"],
+    "animales":    ["Mi mascota", "Animales salvajes", "Especies en peligro", "Animales del zoológico", "Animales graciosos", "Cuidar mascotas"],
+    "naturaleza":  ["Lugares al aire libre", "Montañas y caminatas", "Playas favoritas", "Bosques y selvas", "Plantas y jardines", "Cambio climático"],
+    "viajes":      ["Mi viaje favorito", "Ciudades que quiero conocer", "Comida en viajes", "Anécdotas de aeropuertos", "Mochilero vs hotel", "Viajar solo o acompañado"],
+    "tech":        ["Apps que uso todos los días", "Inteligencia artificial", "Gadgets favoritos", "Redes sociales", "Programar y aprender a codear", "Privacidad online"],
+    "ciencia":     ["Una curiosidad de la ciencia", "El espacio", "El cuerpo humano", "Inventos que cambiaron todo", "Experimentos caseros", "Ciencia en la escuela"],
+    "arte":        ["Un artista que admiro", "Visitar museos", "Pintura vs digital", "Arte callejero", "Crear arte propio", "Arte y emociones"],
+    "historia":    ["Una época que me fascina", "Personajes históricos", "Historia de mi país", "Civilizaciones antiguas", "La Segunda Guerra", "Aprender historia hoy"],
+    "libros":      ["Un libro que me marcó", "Géneros favoritos", "Libros vs películas", "Autores que sigo", "Leer en papel o digital", "Recomendar un libro"],
+    "fitness":     ["Mi rutina de ejercicio", "Empezar a entrenar", "Yoga y mindfulness", "Nutrición básica", "Correr para principiantes", "Cuidar la salud mental"],
+    "familia":     ["Mi familia", "Recuerdos de infancia", "Tradiciones familiares", "Hermanos y padres", "Tener hijos", "Reuniones familiares"],
+    "trabajo":     ["Mi trabajo actual", "Trabajo remoto", "Profesiones que me gustaron", "Equilibrio vida-trabajo", "Cambio de carrera", "Primer día de trabajo"],
+    "emprender":   ["Una idea de negocio", "Empezar un proyecto", "Fracasos que enseñan", "Marketing personal", "Trabajo en equipo", "Mi mentor"],
+    "fotografia":  ["Mi última foto favorita", "Celular vs cámara", "Paisajes vs retratos", "Edición de fotos", "Fotos de viaje", "Instagram y fotografía"],
+    "autos":       ["Mi auto soñado", "Aprender a manejar", "Autos eléctricos", "Motos vs autos", "Viajes en ruta", "Cuidar el auto"],
+    "moda":        ["Mi estilo personal", "Marcas favoritas", "Sneakers y accesorios", "Comprar online", "Vintage vs moderno", "Moda y identidad"],
+}
 
 
-@router.get("/topics/{category_slug}/{subcategory_slug}")
+@router.get("/topics/{category_slug}")
 async def get_topics(
     category_slug: str,
-    subcategory_slug: str,
     db: AsyncSession = Depends(get_db),
     current: User = Depends(get_current_user),
 ):
-    """Devuelve nivel 3: topics del catalogo que matchean la subcategoria."""
-    subs = SUBCATEGORIES.get(category_slug, [])
-    sub = next((s for s in subs if s["slug"] == subcategory_slug), None)
-    if not sub:
-        return {"topics": []}
+    """Devuelve topics directamente para una categoria amplia.
 
-    # Traer topics de esa categoria
+    Estrategia:
+    1) Intenta traer topics del catalogo cuya categoria interna matchee.
+    2) Si encontró pocos, completa con titulos genericos del fallback.
+    3) Devuelve hasta 8 topics. Los del catalogo tienen id real; los fallback
+       tienen id negativo y al hacer click se crean on-the-fly.
+    """
+    aliases = CATEGORY_ALIASES.get(category_slug, [category_slug])
     result = await db.execute(
-        select(Topic).where(Topic.category == category_slug, Topic.is_active == True)
+        select(Topic).where(Topic.category.in_(aliases), Topic.is_active == True).limit(6)
     )
-    all_topics = result.scalars().all()
+    catalog_topics = result.scalars().all()
 
-    # Filtrar por match de keywords con title/keywords del topic
-    match_terms = [m.lower() for m in sub.get("match", [])]
-    matched = []
-    for t in all_topics:
-        title_lower = (t.title or "").lower()
-        keywords_text = " ".join([str(k).lower() for k in (t.keywords or [])])
-        haystack = f"{title_lower} {keywords_text}"
-        if any(m in haystack for m in match_terms):
-            matched.append({
-                "id": t.id,
-                "slug": t.slug,
-                "title": t.title,
-                "category": t.category,
-                "is_hot": t.is_hot,
+    topics_out = [{
+        "id": t.id, "slug": t.slug, "title": t.title,
+        "category": category_slug, "is_hot": t.is_hot, "is_fallback": False,
+    } for t in catalog_topics]
+
+    # Completar con fallback hasta llegar a 6
+    fallback_titles = FALLBACK_TOPICS_BY_CATEGORY.get(category_slug, [])
+    existing_titles = {t["title"].lower() for t in topics_out}
+    for title in fallback_titles:
+        if len(topics_out) >= 6:
+            break
+        if title.lower() not in existing_titles:
+            topics_out.append({
+                "id": -1, "slug": "", "title": title,
+                "category": category_slug, "is_hot": False, "is_fallback": True,
             })
 
-    # Si no matchea ninguno, devolver hasta 6 de la categoria como fallback
-    if not matched:
-        matched = [{
-            "id": t.id, "slug": t.slug, "title": t.title,
-            "category": t.category, "is_hot": t.is_hot,
-        } for t in all_topics[:6]]
+    return {"topics": topics_out[:6]}
 
-    return {"topics": matched[:8]}
+
+@router.post("/add-fallback-topic")
+async def add_fallback_topic(
+    body: dict,
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Crea un topic real desde un fallback y lo agrega como interes del user."""
+    from sqlalchemy import insert
+    from models.template import UserInterest
+
+    title = (body.get("title") or "").strip()
+    category = body.get("category") or "general"
+    if not title:
+        return {"error": "missing title"}
+
+    slug = title.lower().replace(" ", "-").replace("ñ", "n").replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
+    slug = "".join(c for c in slug if c.isalnum() or c == "-")[:80]
+
+    # Buscar si ya existe (por slug)
+    existing = (await db.execute(select(Topic).where(Topic.slug == slug))).scalar_one_or_none()
+    if existing:
+        topic = existing
+    else:
+        topic = Topic(
+            slug=slug or f"topic-{abs(hash(title))}",
+            title=title,
+            category=category,
+            seed_prompts={},
+            keywords=[],
+            levels=["A1","A2","B1","B2"],
+            is_active=True,
+        )
+        db.add(topic)
+        await db.commit()
+        await db.refresh(topic)
+
+    # Agregar como interes (idempotente)
+    existing_interest = (await db.execute(
+        select(UserInterest).where(UserInterest.user_id == current.id, UserInterest.topic_id == topic.id)
+    )).scalar_one_or_none()
+    if not existing_interest:
+        # position = ultimo + 1
+        last_pos = (await db.execute(
+            select(UserInterest.position).where(UserInterest.user_id == current.id).order_by(UserInterest.position.desc()).limit(1)
+        )).scalar_one_or_none()
+        db.add(UserInterest(
+            user_id=current.id,
+            topic_id=topic.id,
+            position=(last_pos or 0) + 1,
+        ))
+        await db.commit()
+
+    return {"topic_id": topic.id, "slug": topic.slug, "title": topic.title}
