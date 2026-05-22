@@ -69,7 +69,7 @@ const HOME_CSS = `
 .landing-root .home-hero-meta-row .col-right .btn { width: 100%; max-width: 320px; }
 
 .landing-root .marquee { background: var(--ink-1); color: white; padding: 28px 0; overflow: hidden; }
-.landing-root .marquee-track { display: flex; gap: 56px; white-space: nowrap; animation: marquee 38s linear infinite; will-change: transform; }
+.landing-root .marquee-track { display: flex; gap: 56px; white-space: nowrap; animation: marquee 18s linear infinite; will-change: transform; }
 .landing-root .marquee-item { display: inline-flex; align-items: center; gap: 14px; font-family: var(--font-serif); font-size: 32px; font-weight: 300; font-style: italic; flex-shrink: 0; }
 .landing-root .marquee-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
 @keyframes marquee { from { transform: translateX(-50%); } to { transform: translateX(0); } }
