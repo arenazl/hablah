@@ -21,10 +21,10 @@ import { toast } from 'sonner'
 import { AgentAudioVisualizerAura } from './agents-ui/agent-audio-visualizer-aura'
 
 const STYLES = `
-@keyframes ob-drift-1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(8px,-12px)} }
-@keyframes ob-drift-2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-10px,6px)} }
-@keyframes ob-drift-3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(6px,10px)} }
-@keyframes ob-drift-4 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-7px,-9px)} }
+@keyframes ob-drift-1 { 0%,100%{transform:translate(0,0)} 25%{transform:translate(36px,-22px)} 50%{transform:translate(48px,18px)} 75%{transform:translate(12px,32px)} }
+@keyframes ob-drift-2 { 0%,100%{transform:translate(0,0)} 25%{transform:translate(-42px,16px)} 50%{transform:translate(-28px,-32px)} 75%{transform:translate(20px,-22px)} }
+@keyframes ob-drift-3 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(28px,28px)} 66%{transform:translate(-22px,18px)} }
+@keyframes ob-drift-4 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-30px,-26px)} 66%{transform:translate(34px,-12px)} }
 @keyframes ob-pop-in {
   0% { transform: scale(0); opacity: 0; }
   60% { transform: scale(1.1); opacity: 1; }
@@ -34,9 +34,13 @@ const STYLES = `
   0% { opacity: 0; transform: translateY(20px); }
   100% { opacity: 1; transform: translateY(0); }
 }
-.ob-bubble { transition: transform 240ms cubic-bezier(.2,.8,.2,1), box-shadow 240ms; }
-.ob-bubble:hover { transform: scale(1.08) !important; box-shadow: 0 12px 30px rgba(0,0,0,.25); }
-.ob-bubble:active { transform: scale(.95) !important; }
+@keyframes ob-pulse-glow {
+  0%,100% { opacity: .55; transform: scale(1); }
+  50% { opacity: .9; transform: scale(1.12); }
+}
+.ob-bubble { transition: filter 240ms; }
+.ob-bubble:hover { filter: brightness(1.15) saturate(1.2); z-index: 5; }
+.ob-bubble:active { filter: brightness(.9); }
 `
 
 interface Props {
@@ -233,22 +237,25 @@ function SplashStage({ onStart }: { onStart: () => void; addedCount: number }) {
   )
 }
 
-/* ─── Stage 1: Categorías (8 globos flotando) ─────────────────── */
+/* ─── Stage 1: Categorías (8 globos flotando, grid 4x2 fijo) ──── */
 function CategoriesStage({ categories, onPick }: {
   categories: OnboardingCategory[]
   onPick: (c: OnboardingCategory) => void
 }) {
   return (
-    <div style={{ textAlign: 'center', maxWidth: 1000, animation: 'ob-fade-up 400ms ease-out' }}>
-      <h2 style={{ color: 'white', fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 800, margin: '0 0 12px' }}>
+    <div style={{ textAlign: 'center', width: '100%', maxWidth: 880, animation: 'ob-fade-up 400ms ease-out' }}>
+      <h2 style={{ color: 'white', fontSize: 'clamp(20px, 3vw, 28px)', fontWeight: 800, margin: '0 0 6px' }}>
         ¿De qué te gusta hablar?
       </h2>
-      <p style={{ color: 'rgba(255,255,255,.6)', marginBottom: 40 }}>
+      <p style={{ color: 'rgba(255,255,255,.55)', fontSize: 13, marginBottom: 18 }}>
         Tocá una categoría para explorar
       </p>
       <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-        gap: 18, maxWidth: 720, margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 8,
+        rowGap: 14,
+        padding: '0 12px',
       }}>
         {categories.map((cat, i) => (
           <BubbleButton
@@ -256,8 +263,7 @@ function CategoriesStage({ categories, onPick }: {
             label={cat.title}
             color={cat.color}
             onClick={() => onPick(cat)}
-            driftIndex={i % 4}
-            size={130}
+            driftIndex={i}
           />
         ))}
       </div>
@@ -284,7 +290,10 @@ function SubcategoriesStage({ parent, subcategories, onPick, onBack, loading }: 
       </p>
       {loading && <div style={{ color: 'rgba(255,255,255,.4)' }}>Cargando…</div>}
       <div style={{
-        display: 'flex', flexWrap: 'wrap', gap: 18, justifyContent: 'center', maxWidth: 720, margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: `repeat(${Math.min(subcategories.length, 4)}, 1fr)`,
+        gap: 8, rowGap: 14, padding: '0 12px',
+        maxWidth: 760, margin: '0 auto',
       }}>
         {subcategories.map((sub, i) => (
           <BubbleButton
@@ -292,8 +301,7 @@ function SubcategoriesStage({ parent, subcategories, onPick, onBack, loading }: 
             label={sub.title}
             color={parent.color}
             onClick={() => onPick(sub)}
-            driftIndex={i % 4}
-            size={120}
+            driftIndex={i}
           />
         ))}
       </div>
@@ -391,51 +399,48 @@ function TopicsStage({ parent, parentColor, topics, addedIds, onTopicClick, onBa
   )
 }
 
-/* ─── Bubble Button (reusable) — Aura orb con label flotando ──── */
-function BubbleButton({ label, color, onClick, driftIndex, size }: {
-  label: string; color: string; onClick: () => void; driftIndex: number; size: number
+/* ─── Bubble Button — Aura orb (libreria del orb) flotando ───── */
+function BubbleButton({ label, color, onClick, driftIndex }: {
+  label: string; color: string; onClick: () => void; driftIndex: number; size?: number
 }) {
-  // audioLevel pseudoaleatorio para que cada orb tenga vida propia
-  const pseudoAudio = 0.2 + ((driftIndex * 0.17) % 0.5)
-  const orbSize = size <= 110 ? 'sm' : 'md'
+  // Cada orb tiene audioLevel y velocidad distinta para que se mueva organico
+  const pseudoAudio = 0.45 + ((driftIndex * 0.13) % 0.4)
 
   return (
-    <button
-      className="ob-bubble"
-      onClick={onClick}
+    <div
       style={{
         position: 'relative',
-        width: size, height: size,
-        background: 'transparent', border: 'none',
-        cursor: 'pointer', padding: 0,
-        animation: `ob-pop-in 360ms ease-out, ob-drift-${driftIndex + 1} ${5 + driftIndex}s ease-in-out infinite`,
-        display: 'grid', placeItems: 'center',
+        animation: `ob-pop-in 460ms ease-out, ob-drift-${(driftIndex % 4) + 1} ${6 + driftIndex * 0.7}s ease-in-out infinite`,
+        display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8,
       }}
     >
-      <div style={{
-        position: 'absolute', inset: 0,
-        display: 'grid', placeItems: 'center',
-        pointerEvents: 'none',
-      }}>
+      <button
+        className="ob-bubble"
+        onClick={onClick}
+        style={{
+          background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
+          width: 120, height: 120, position: 'relative',
+          display: 'grid', placeItems: 'center',
+        }}
+      >
         <AgentAudioVisualizerAura
-          status="listening"
+          status="speaking"
           audioLevel={pseudoAudio}
           color={color as `#${string}`}
-          colorShift={0.12}
+          colorShift={0.22}
           themeMode="dark"
-          size={orbSize}
+          size="md"
         />
-      </div>
+      </button>
       <span style={{
-        position: 'relative', zIndex: 2,
-        color: 'white', fontSize: size > 110 ? 14 : 12, fontWeight: 800, lineHeight: 1.15,
+        color: 'white', fontSize: 13, fontWeight: 700, lineHeight: 1.15,
         letterSpacing: '-.01em', textAlign: 'center',
-        padding: '0 10px', maxWidth: size - 16,
-        textShadow: '0 2px 12px rgba(0,0,0,.65), 0 0 2px rgba(0,0,0,.8)',
+        textShadow: '0 2px 8px rgba(0,0,0,.6)',
+        maxWidth: 140, pointerEvents: 'none',
       }}>
         {label}
       </span>
-    </button>
+    </div>
   )
 }
 
