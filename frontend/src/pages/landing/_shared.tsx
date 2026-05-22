@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { Menu, ShieldCheck } from 'lucide-react'
+import { ShieldCheck } from 'lucide-react'
 
 export const LANDING_CSS = `
 .landing-root {
@@ -43,7 +43,11 @@ export const LANDING_CSS = `
   --container-w: 1200px;
   --gutter: 24px;
 
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-serif: 'Fraunces', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+
+  font-family: var(--font-sans);
   font-size: var(--t-base);
   line-height: 1.25;
   color: var(--fg-1);
@@ -173,7 +177,6 @@ export const LANDING_CSS = `
   .landing-root section { padding: 64px 0; }
   .landing-root .nav-links { display: none; }
   .landing-root .nav-cta .btn-outline { display: none; }
-  .landing-root .nav-toggle { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 8px; background: transparent; border: 0; color: var(--fg-1); }
   .landing-root .page-hero { padding: 48px 0 32px; }
   .landing-root .page-hero h1 { font-size: 38px; }
   .landing-root .sec-head { margin-bottom: 40px; }
@@ -200,7 +203,7 @@ export function ensureGoogleFont() {
   link.id = 'hablah-google-fonts'
   link.rel = 'stylesheet'
   link.href =
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap'
+    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,600;1,9..144,700&family=JetBrains+Mono:wght@400;600&display=swap'
   document.head.appendChild(pre1)
   document.head.appendChild(pre2)
   document.head.appendChild(link)
@@ -424,9 +427,6 @@ export function LandingNav({ current }: LandingNavProps) {
           <Link to="/login" className="btn btn-primary btn-sm">
             Empezar gratis
           </Link>
-          <button className="nav-toggle" aria-label="Menú">
-            <Menu size={22} strokeWidth={2} />
-          </button>
         </div>
       </div>
     </nav>

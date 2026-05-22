@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Gauge, Languages, Play, Sparkles, Square, Timer, Zap } from 'lucide-react'
-import { LandingLayout, RelatedCard, breadcrumbList, webPageSchema, type PageMeta } from './_shared'
+import { ArrowRight, ArrowUpRight, Gauge, Languages, Sparkles, Square, Timer, Zap } from 'lucide-react'
+import { LandingLayout, breadcrumbList, webPageSchema, type PageMeta } from './_shared'
 
 const META: PageMeta = {
   title: 'Habláh — Aprender inglés conversando con IA · Sin exámenes',
@@ -33,22 +33,99 @@ const STRUCTURED = [
 ]
 
 const HOME_CSS = `
-.landing-root .home-hero { position: relative; padding: 80px 0 100px; overflow: hidden; }
-.landing-root .home-hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 80px; align-items: center; }
-.landing-root .home-hero-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; background: var(--surface); border: 1px solid var(--border-1); border-radius: var(--r-pill); box-shadow: var(--shadow-card); font-size: 13px; font-weight: 500; color: var(--fg-2); margin-bottom: 24px; }
-.landing-root .home-hero-pill .dot { background: var(--primary-tint); color: var(--primary-dark); padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
-.landing-root .home-hero h1 { font-size: clamp(38px, 6vw, 76px); line-height: 1.02; letter-spacing: -.035em; font-weight: 800; margin: 0 0 24px; }
-.landing-root .home-hero h1 em { font-style: normal; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.landing-root .home-hero h1 .strike { text-decoration: none; position: relative; color: var(--fg-3); font-weight: 600; display: inline-block; }
-.landing-root .home-hero h1 .strike::after { content: ''; position: absolute; left: -2%; right: -2%; top: 54%; height: 3px; background: var(--accent); transform: rotate(-2deg); border-radius: 2px; }
-.landing-root .home-hero p { font-size: var(--t-xl); color: var(--fg-2); line-height: 1.4; margin: 0 0 32px; max-width: 540px; }
-.landing-root .home-hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.landing-root .home-hero-actions .meta { font-size: 13px; color: var(--fg-3); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 20px; width: 100%; }
-.landing-root .home-hero-actions .meta b { color: var(--fg-1); font-weight: 600; }
-.landing-root .home-hero-actions .meta span { display: inline-flex; align-items: center; gap: 6px; }
+.landing-root .ed-meta { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
+.landing-root .ed-rule { border: 0; height: 1px; background: var(--fg-1); opacity: .12; margin: 0; }
+.landing-root .ed-rule.thick { height: 2px; opacity: 1; background: var(--fg-1); }
 
-.landing-root .phone-wrap { position: relative; display: flex; justify-content: center; perspective: 1200px; }
-.landing-root .phone-frame { width: 320px; height: 660px; border-radius: 44px; background: var(--ink-1); padding: 8px; box-shadow: 0 30px 80px rgba(13,20,18,.25), 0 8px 24px rgba(13,20,18,.12); transform: rotate(-1.5deg); position: relative; }
+.landing-root .home-hero { position: relative; padding: 48px 0 100px; overflow: hidden; }
+.landing-root .home-hero-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 24px; border-bottom: 1px solid rgba(13,20,18,.12); margin-bottom: 64px; }
+.landing-root .home-hero-top .left { display: flex; gap: 32px; align-items: center; }
+.landing-root .home-hero-top .issue { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
+.landing-root .home-hero-top .issue b { color: var(--fg-1); font-weight: 600; }
+.landing-root .home-hero-top .center { font-family: var(--font-serif); font-style: italic; font-size: 15px; color: var(--fg-2); font-weight: 400; }
+
+.landing-root .home-hero-headline {
+  font-size: clamp(56px, 12.5vw, 188px);
+  line-height: .92;
+  letter-spacing: -.045em;
+  font-weight: 900;
+  margin: 0;
+  color: var(--fg-1);
+}
+.landing-root .home-hero-headline .l { display: block; }
+.landing-root .home-hero-headline .l-light { font-weight: 300; font-style: italic; font-family: var(--font-serif); letter-spacing: -.03em; color: var(--fg-2); }
+.landing-root .home-hero-headline .l-grad { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.landing-root .home-hero-headline .strike { font-weight: 300; color: var(--fg-3); position: relative; display: inline-block; font-style: italic; font-family: var(--font-serif); }
+.landing-root .home-hero-headline .strike::after { content: ''; position: absolute; left: -1%; right: -1%; top: 52%; height: 4px; background: var(--accent); transform: rotate(-2deg); border-radius: 2px; }
+
+.landing-root .home-hero-meta-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 48px; margin-top: 64px; padding-top: 32px; border-top: 1px solid rgba(13,20,18,.12); }
+.landing-root .home-hero-meta-row .col-left { max-width: 360px; }
+.landing-root .home-hero-meta-row .col-left p { font-size: 17px; line-height: 1.45; color: var(--fg-2); margin: 8px 0 0; }
+.landing-root .home-hero-meta-row .col-left p .drop { font-family: var(--font-serif); font-size: 56px; line-height: .8; font-weight: 700; color: var(--primary-dark); float: left; margin: 4px 8px -4px 0; }
+.landing-root .home-hero-meta-row .col-mid { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.landing-root .home-hero-meta-row .col-mid .num { font-family: var(--font-serif); font-size: 88px; font-weight: 300; line-height: 1; color: var(--fg-1); letter-spacing: -.04em; font-feature-settings: 'lnum'; }
+.landing-root .home-hero-meta-row .col-mid .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--fg-3); text-align: center; max-width: 140px; line-height: 1.4; }
+.landing-root .home-hero-meta-row .col-right { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; }
+.landing-root .home-hero-meta-row .col-right .btn { width: 100%; max-width: 320px; }
+
+.landing-root .marquee { background: var(--ink-1); color: white; padding: 28px 0; overflow: hidden; }
+.landing-root .marquee-track { display: flex; gap: 56px; white-space: nowrap; animation: marquee 38s linear infinite; }
+.landing-root .marquee-item { display: inline-flex; align-items: center; gap: 14px; font-family: var(--font-serif); font-size: 32px; font-weight: 300; font-style: italic; flex-shrink: 0; }
+.landing-root .marquee-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.landing-root .marquee:hover .marquee-track { animation-play-state: paused; }
+
+.landing-root .editorial-section { padding: 120px 0; }
+.landing-root .editorial-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.landing-root .editorial-grid-2 .col-num { font-family: var(--font-serif); font-size: clamp(120px, 18vw, 240px); line-height: .85; font-weight: 200; color: var(--fg-1); letter-spacing: -.05em; }
+.landing-root .editorial-grid-2 .col-text h2 { font-size: clamp(36px, 4.5vw, 64px); line-height: 1.02; letter-spacing: -.03em; font-weight: 800; margin: 24px 0; color: var(--fg-1); }
+.landing-root .editorial-grid-2 .col-text h2 em { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--primary-dark); }
+.landing-root .editorial-grid-2 .col-text p { font-size: 19px; line-height: 1.55; color: var(--fg-2); margin: 0 0 20px; max-width: 540px; }
+
+.landing-root .editorial-section .label-tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--primary-dark); display: inline-flex; align-items: center; gap: 10px; }
+.landing-root .editorial-section .label-tag::before { content: ''; width: 24px; height: 1px; background: var(--primary); }
+
+.landing-root .pillquote {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4.6vw, 64px);
+  line-height: 1.1;
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: -.02em;
+  color: var(--fg-1);
+  margin: 0;
+  max-width: 1100px;
+  padding: 60px 0;
+}
+.landing-root .pillquote em { font-style: normal; font-weight: 700; color: var(--primary-dark); }
+
+.landing-root .index-section { background: var(--ink-1); color: white; padding: 120px 0; }
+.landing-root .index-section .index-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.landing-root .index-section .index-top h2 { font-size: clamp(36px, 5vw, 72px); line-height: 1; letter-spacing: -.035em; font-weight: 800; margin: 0; max-width: 600px; color: white; }
+.landing-root .index-section .index-top h2 em { font-family: var(--font-serif); font-style: italic; font-weight: 300; }
+.landing-root .index-section .index-top .label-tag { color: var(--primary); }
+.landing-root .index-section .index-top .label-tag::before { background: var(--primary); }
+
+.landing-root .index-list { display: flex; flex-direction: column; }
+.landing-root .index-row { display: grid; grid-template-columns: 80px 1.4fr 1fr 1fr 60px; gap: 32px; align-items: center; padding: 28px 0; border-top: 1px solid rgba(255,255,255,.1); transition: all .25s var(--ease); color: rgba(232,236,234,.8); }
+.landing-root .index-row:last-child { border-bottom: 1px solid rgba(255,255,255,.1); }
+.landing-root .index-row:hover { color: white; padding-left: 8px; }
+.landing-root .index-row:hover .index-arrow { transform: translate(4px, -4px); color: var(--primary); }
+.landing-root .index-row .index-num { font-family: var(--font-mono); font-size: 13px; letter-spacing: .14em; color: rgba(232,236,234,.45); }
+.landing-root .index-row .index-title { font-size: clamp(22px, 2.4vw, 32px); font-weight: 700; letter-spacing: -.015em; color: white; }
+.landing-root .index-row .index-title em { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: rgba(232,236,234,.85); }
+.landing-root .index-row .index-cat { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(232,236,234,.55); }
+.landing-root .index-row .index-blurb { font-size: 14px; line-height: 1.45; color: rgba(232,236,234,.65); }
+.landing-root .index-row .index-arrow { justify-self: end; color: rgba(232,236,234,.55); transition: all .3s var(--ease); }
+
+.landing-root .phone-strip { padding: 100px 0; background: var(--bg-2); position: relative; overflow: hidden; }
+.landing-root .phone-strip::before { content: ''; position: absolute; top: -200px; right: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(0,179,126,.12) 0%, transparent 70%); pointer-events: none; }
+.landing-root .phone-strip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; }
+.landing-root .phone-strip h2 { font-size: clamp(36px, 4.5vw, 64px); line-height: 1.05; letter-spacing: -.03em; font-weight: 800; margin: 24px 0; }
+.landing-root .phone-strip h2 em { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--primary-dark); }
+.landing-root .phone-strip p { font-size: 19px; line-height: 1.55; color: var(--fg-2); margin: 0 0 24px; max-width: 480px; }
+
+.landing-root .phone-frame { width: 320px; height: 660px; border-radius: 44px; background: var(--ink-1); padding: 8px; box-shadow: 0 30px 80px rgba(13,20,18,.25), 0 8px 24px rgba(13,20,18,.12); transform: rotate(-1.5deg); margin: 0 auto; }
 .landing-root .phone-frame .pscreen { width: 100%; height: 100%; border-radius: 36px; background: var(--ink-1); overflow: hidden; color: white; position: relative; display: flex; flex-direction: column; }
 .landing-root .phone-frame .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 90px; height: 26px; background: black; border-radius: 999px; z-index: 5; }
 .landing-root .phone-status { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 0; color: white; font-size: 13px; font-weight: 600; }
@@ -58,8 +135,8 @@ const HOME_CSS = `
 .landing-root .phone-orb::after, .landing-root .phone-orb::before { content: ''; position: absolute; inset: -16px; border-radius: 50%; border: 1px solid rgba(0,179,126,.3); }
 .landing-root .phone-orb::before { inset: -36px; border-color: rgba(0,179,126,.15); }
 .landing-root .phone-label { text-align: center; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(232,236,234,.5); margin-top: 4px; }
-.landing-root .phone-quote { text-align: center; padding: 12px 24px 0; font-size: 14px; color: rgba(232,236,234,.78); font-style: italic; line-height: 1.4; }
-.landing-root .phone-quote b { color: white; font-style: normal; font-weight: 600; }
+.landing-root .phone-quote { text-align: center; padding: 12px 24px 0; font-size: 14px; color: rgba(232,236,234,.78); font-style: italic; line-height: 1.4; font-family: var(--font-serif); }
+.landing-root .phone-quote b { color: white; font-style: normal; font-weight: 600; font-family: var(--font-sans); }
 .landing-root .phone-challenge { margin: auto 16px 16px; background: linear-gradient(135deg, rgba(255,184,0,.18), rgba(255,184,0,.06)); border: 1px solid rgba(255,184,0,.35); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; }
 .landing-root .phone-challenge .ico { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,184,0,.22); display: grid; place-items: center; flex-shrink: 0; color: var(--accent); }
 .landing-root .phone-challenge .body { font-size: 13px; }
@@ -74,38 +151,145 @@ const HOME_CSS = `
 .landing-root .phone-mic-bar i:nth-child(5n) { height: 100%; }
 .landing-root .phone-stop { width: 48px; height: 48px; border-radius: 999px; background: var(--danger); display: grid; place-items: center; color: white; }
 
-.landing-root .pillars { padding: 40px 0; background: var(--bg-2); border-top: 1px solid var(--border-1); border-bottom: 1px solid var(--border-1); }
-.landing-root .pillars-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
-.landing-root .pillar { display: flex; align-items: center; gap: 14px; }
-.landing-root .pillar .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border-1); display: grid; place-items: center; color: var(--primary-dark); flex-shrink: 0; }
-.landing-root .pillar .k { font-size: 15px; font-weight: 700; color: var(--fg-1); letter-spacing: -.01em; }
-.landing-root .pillar .lbl { font-size: 13px; color: var(--fg-3); max-width: 180px; line-height: 1.35; }
+.landing-root .product-section { padding: 120px 0; position: relative; overflow: hidden; }
+.landing-root .product-section.dark { background: var(--ink-1); color: white; }
+.landing-root .product-section.dark .label-tag { color: var(--primary); }
+.landing-root .product-section.dark .label-tag::before { background: var(--primary); }
+.landing-root .product-section.dark h2 { color: white; }
+.landing-root .product-section.dark p { color: rgba(232,236,234,.72); }
 
-.landing-root .explore-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.landing-root .product-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 80px; align-items: center; }
+.landing-root .product-grid.flip { grid-template-columns: 1.3fr 1fr; }
+.landing-root .product-grid.flip .product-text { order: 2; }
+.landing-root .product-grid .product-text .stamp { font-family: var(--font-serif); font-size: clamp(96px, 12vw, 168px); line-height: .85; font-weight: 200; letter-spacing: -.05em; color: var(--fg-1); margin: 0 0 16px; }
+.landing-root .product-section.dark .product-text .stamp { color: white; opacity: .92; }
+.landing-root .product-grid .product-text h2 { font-size: clamp(32px, 4vw, 56px); line-height: 1.05; letter-spacing: -.03em; font-weight: 800; margin: 16px 0 20px; }
+.landing-root .product-grid .product-text h2 em { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--primary-dark); }
+.landing-root .product-section.dark .product-text h2 em { color: var(--primary); }
+.landing-root .product-grid .product-text p { font-size: 18px; line-height: 1.55; color: var(--fg-2); margin: 0 0 16px; max-width: 480px; }
+.landing-root .product-grid .product-text .feats { list-style: none; padding: 0; margin: 24px 0 32px; display: flex; flex-direction: column; gap: 10px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
+.landing-root .product-section.dark .product-text .feats { color: rgba(232,236,234,.55); }
+.landing-root .product-grid .product-text .feats li { display: flex; gap: 12px; align-items: center; }
+.landing-root .product-grid .product-text .feats li::before { content: ''; display: block; width: 18px; height: 1px; background: var(--primary); flex-shrink: 0; }
 
-.landing-root .cta-final { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 100px 0; text-align: center; position: relative; overflow: hidden; }
-.landing-root .cta-final::before, .landing-root .cta-final::after { content: ''; position: absolute; border-radius: 50%; background: rgba(255,255,255,.06); }
-.landing-root .cta-final::before { width: 400px; height: 400px; top: -200px; right: -100px; }
-.landing-root .cta-final::after { width: 300px; height: 300px; bottom: -150px; left: -50px; }
-.landing-root .cta-final h2 { font-size: clamp(32px, 5vw, 61px); line-height: 1.05; letter-spacing: -.03em; font-weight: 800; margin: 0 0 16px; position: relative; }
-.landing-root .cta-final p { font-size: var(--t-xl); opacity: .9; max-width: 540px; margin: 0 auto 32px; position: relative; }
-.landing-root .cta-final-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
+.landing-root .product-screen-wrap { position: relative; perspective: 1400px; }
+.landing-root .product-screen { display: block; width: 100%; height: auto; border-radius: var(--r-2xl); box-shadow: 0 30px 80px rgba(13,20,18,.22), 0 8px 24px rgba(13,20,18,.10); border: 1px solid var(--border-1); background: var(--surface); transition: transform .5s var(--ease); }
+.landing-root .product-section.dark .product-screen { border-color: rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.3); }
+.landing-root .product-screen-wrap:hover .product-screen { transform: translateY(-6px); }
+
+.landing-root .product-screen-wrap .tag {
+  position: absolute; top: 16px; left: 16px;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--fg-2);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-1);
+  box-shadow: var(--shadow-card);
+  z-index: 2;
+}
+.landing-root .product-section.dark .product-screen-wrap .tag { background: rgba(14,22,20,.85); color: rgba(232,236,234,.85); border-color: rgba(255,255,255,.12); backdrop-filter: blur(8px); }
+
+.landing-root .cta-editorial { background: var(--fg-1); color: white; padding: 140px 0; text-align: center; position: relative; overflow: hidden; }
+.landing-root .cta-editorial::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 100%, rgba(0,179,126,.25) 0%, transparent 60%); pointer-events: none; }
+.landing-root .cta-editorial .label-tag { color: var(--primary); justify-content: center; margin-bottom: 24px; position: relative; }
+.landing-root .cta-editorial .label-tag::before { background: var(--primary); }
+.landing-root .cta-editorial h2 { font-size: clamp(48px, 8vw, 120px); line-height: .95; letter-spacing: -.04em; font-weight: 900; margin: 0 0 24px; position: relative; max-width: 1000px; margin-inline: auto; }
+.landing-root .cta-editorial h2 em { font-family: var(--font-serif); font-style: italic; font-weight: 300; color: var(--primary); }
+.landing-root .cta-editorial p { font-size: 19px; opacity: .75; max-width: 540px; margin: 0 auto 40px; position: relative; line-height: 1.5; }
+.landing-root .cta-editorial .btn { position: relative; }
 
 @media (max-width: 880px) {
-  .landing-root .home-hero { padding: 56px 0 64px; }
-  .landing-root .home-hero-grid { grid-template-columns: 1fr; gap: 48px; }
-  .landing-root .home-hero p { font-size: 17px; max-width: none; }
-  .landing-root .phone-frame { transform: rotate(-1deg) scale(.9); }
-  .landing-root .pillars-inner { justify-content: flex-start; }
-  .landing-root .pillar { flex: 1 1 calc(50% - 24px); min-width: 160px; }
-  .landing-root .explore-grid { grid-template-columns: 1fr; gap: 16px; }
-  .landing-root .cta-final { padding: 64px 0; }
-  .landing-root .home-hero-actions .btn { flex: 1; }
+  .landing-root .home-hero { padding: 32px 0 64px; }
+  .landing-root .home-hero-top { flex-direction: column; gap: 12px; align-items: flex-start; margin-bottom: 32px; }
+  .landing-root .home-hero-top .center { display: none; }
+  .landing-root .home-hero-headline { font-size: clamp(48px, 14vw, 80px); }
+  .landing-root .home-hero-meta-row { grid-template-columns: 1fr; gap: 32px; margin-top: 40px; }
+  .landing-root .home-hero-meta-row .col-mid { order: -1; align-items: flex-start; }
+  .landing-root .home-hero-meta-row .col-mid .num { font-size: 64px; }
+  .landing-root .home-hero-meta-row .col-mid .lbl { text-align: left; max-width: none; }
+  .landing-root .home-hero-meta-row .col-right { align-items: stretch; }
+  .landing-root .home-hero-meta-row .col-right .btn { max-width: none; }
+  .landing-root .marquee-item { font-size: 22px; }
+  .landing-root .editorial-section { padding: 64px 0; }
+  .landing-root .editorial-grid-2 { grid-template-columns: 1fr; gap: 24px; }
+  .landing-root .editorial-grid-2 .col-num { font-size: 96px; }
+  .landing-root .pillquote { padding: 32px 0; }
+  .landing-root .index-section { padding: 56px 0; }
+  .landing-root .index-section .index-top { flex-direction: column; gap: 8px; align-items: flex-start; margin-bottom: 24px; padding-bottom: 16px; }
+  .landing-root .index-section .index-top h2 { font-size: 44px; line-height: 1; }
+  .landing-root .index-row { grid-template-columns: 40px 1fr 32px; gap: 16px; padding: 18px 0; }
+  .landing-root .index-row .index-blurb { display: none; }
+  .landing-root .index-row .index-cat { display: none; }
+  .landing-root .index-row .index-title { font-size: 20px; }
+  .landing-root .product-section { padding: 64px 0; }
+  .landing-root .product-grid, .landing-root .product-grid.flip { grid-template-columns: 1fr; gap: 32px; }
+  .landing-root .product-grid.flip .product-text { order: 0; }
+  .landing-root .product-grid .product-text .stamp { font-size: 80px; }
+  .landing-root .phone-strip { padding: 64px 0; }
+  .landing-root .phone-strip-grid { grid-template-columns: 1fr; gap: 48px; }
+  .landing-root .phone-frame { transform: rotate(-1deg) scale(.85); }
+  .landing-root .cta-editorial { padding: 80px 0; }
 }
 @media (max-width: 480px) {
-  .landing-root .home-hero h1 { font-size: 42px; }
+  .landing-root .home-hero-headline { font-size: clamp(44px, 14vw, 72px); }
 }
 `
+
+interface IndexItem {
+  num: string
+  to: string
+  category: string
+  title: string
+  titleEm?: string
+  blurb: string
+}
+
+const INDEX_ITEMS: IndexItem[] = [
+  {
+    num: '01',
+    to: '/como-funciona',
+    category: 'Metodología',
+    title: 'Cómo',
+    titleEm: 'funciona',
+    blurb: 'Diagnóstico continuo, calibración CEFR y feedback sincerista al final de cada charla.',
+  },
+  {
+    num: '02',
+    to: '/tutores',
+    category: 'Personalidades',
+    title: 'Tres',
+    titleEm: 'tutores',
+    blurb: 'Coach, Sincerist y Arcade — cada uno con tono, rigurosidad y velocidad distintos.',
+  },
+  {
+    num: '03',
+    to: '/topicos',
+    category: 'Contenido',
+    title: 'Tópicos',
+    titleEm: 'curados',
+    blurb: 'Más de 75 temas — tecnología, arte, lifestyle, diseño, negocios.',
+  },
+  {
+    num: '04',
+    to: '/precios',
+    category: 'Planes',
+    title: 'Precios',
+    titleEm: 'claros',
+    blurb: 'Free, Pro y Bootcamp con coach humano. 14 días Pro sin tarjeta.',
+  },
+  {
+    num: '05',
+    to: '/faq',
+    category: 'Dudas',
+    title: 'Preguntas',
+    titleEm: 'frecuentes',
+    blurb: 'Cómo decidimos tu nivel, qué pasa con tu audio, certificaciones, cancelación.',
+  },
+]
 
 export function Home() {
   return (
@@ -113,68 +297,160 @@ export function Home() {
       <style>{HOME_CSS}</style>
 
       <section className="home-hero" aria-labelledby="hero-heading">
-        <div className="container home-hero-grid">
-          <div>
-            <div className="home-hero-pill hero-fade-in">
-              <span className="dot">NUEVO</span>
-              Charlas reales, no flashcards
+        <div className="container">
+          <div className="home-hero-top">
+            <div className="left">
+              <span className="issue">N° <b>001</b></span>
+              <span className="issue">Edición · LatAm</span>
+              <span className="issue">2026</span>
             </div>
-            <h1 id="hero-heading" className="hero-fade-in d1">
-              Hablás.<br />
-              <em>Aprendés.</em>
-              <br />
-              Sin <span className="strike">exámenes</span>.
-            </h1>
-            <p className="hero-fade-in d2">
-              Cinco minutos de conversación al día con un tutor de IA que se adapta a tu nivel, tus intereses y tus errores.
-              Olvidate de las lecciones lineales.
-            </p>
-            <div className="home-hero-actions hero-fade-in d3">
+            <span className="center">Una conversación al día. Sin profesores, sin exámenes.</span>
+            <span className="issue">Plataforma de idiomas con IA</span>
+          </div>
+
+          <h1 id="hero-heading" className="home-hero-headline hero-fade-in d1">
+            <span className="l">Hablás.</span>
+            <span className="l l-grad">Aprendés.</span>
+            <span className="l l-light">sin <span className="strike">exámenes</span>.</span>
+          </h1>
+
+          <div className="home-hero-meta-row hero-fade-in d3">
+            <div className="col-left">
+              <span className="label-tag">Premisa</span>
+              <p>
+                <span className="drop">C</span>inco minutos de conversación al día con un tutor de IA que se adapta a tu
+                nivel, tus intereses y los errores que arrastrás. Olvidate de las lecciones lineales.
+              </p>
+            </div>
+            <div className="col-mid">
+              <div className="num">05</div>
+              <div className="lbl">Minutos al día<br />Sin más.</div>
+            </div>
+            <div className="col-right">
               <Link to="/login" className="btn btn-primary btn-lg">
                 Empezar gratis
                 <ArrowRight size={18} strokeWidth={2.4} />
               </Link>
-              <Link to="/como-funciona" className="btn btn-ghost btn-lg">
-                <Play size={18} strokeWidth={2.2} />
-                Ver cómo funciona
+              <Link to="/como-funciona" className="btn btn-ghost btn-sm">
+                Ver el método
+                <ArrowUpRight size={14} strokeWidth={2.4} />
               </Link>
-              <div className="meta">
-                <span><Check size={14} strokeWidth={2.6} color="var(--primary-dark)" /> <b>14 días</b> sin tarjeta</span>
-                <span><Check size={14} strokeWidth={2.6} color="var(--primary-dark)" /> iOS y Android</span>
-                <span><Check size={14} strokeWidth={2.6} color="var(--primary-dark)" /> Inglés, portugués, italiano</span>
-              </div>
             </div>
           </div>
-          <div className="phone-wrap hero-fade-in d4">
-            <div className="phone-frame">
-              <div className="pscreen">
-                <div className="notch"></div>
-                <div className="phone-status">
-                  <span>9:41</span>
-                  <div className="icons">
-                    <span></span><span></span><span></span>
-                  </div>
-                </div>
-                <div className="phone-orb"></div>
-                <div className="phone-label">Tu turno</div>
-                <div className="phone-quote">
-                  "And then producers in South London <b>started to mix</b> two-step rhythms…"
-                </div>
-                <div className="phone-challenge">
-                  <div className="ico"><Zap size={16} strokeWidth={2.4} /></div>
-                  <div className="body">
-                    <div className="lbl">Reto · vocabulario</div>
-                    <div style={{ marginTop: 4, color: 'white' }}>
-                      Incorporá <strong>"nevertheless"</strong> en tu próxima idea.
+        </div>
+      </section>
+
+      <div className="marquee">
+        <div className="marquee-track">
+          {[1, 2].map((rep) => (
+            <div key={rep} style={{ display: 'flex', gap: 56 }}>
+              <span className="marquee-item"><span className="dot" /> Inglés</span>
+              <span className="marquee-item"><span className="dot" /> Portugués</span>
+              <span className="marquee-item"><span className="dot" /> Italiano</span>
+              <span className="marquee-item"><span className="dot" /> CEFR A1 a C2</span>
+              <span className="marquee-item"><span className="dot" /> Cinco minutos</span>
+              <span className="marquee-item"><span className="dot" /> Sin exámenes</span>
+              <span className="marquee-item"><span className="dot" /> Tres tutores</span>
+              <span className="marquee-item"><span className="dot" /> Conversación real</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <section className="editorial-section">
+        <div className="container">
+          <div className="editorial-grid-2 fade-on-scroll">
+            <div className="col-num">01</div>
+            <div className="col-text">
+              <span className="label-tag">La idea</span>
+              <h2>El idioma se aprende <em>hablándolo</em>. Lo demás es teoría.</h2>
+              <p>
+                Habláh existe porque las apps de idiomas más populares de la última década enseñaron una sola cosa bien:
+                a hacer ejercicios. Hablar en serio —entonación, fluidez, equivocarse en vivo y corregirse— pasó a segundo plano.
+              </p>
+              <p>
+                Acá invertimos esa ecuación. Cada sesión es una charla real. La gramática emerge del feedback, no de la pantalla.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr className="ed-rule" />
+
+      <section className="editorial-section" style={{ background: 'var(--bg-2)' }}>
+        <div className="container">
+          <p className="pillquote fade-on-scroll">
+            "Hablás más en una <em>semana</em><br />que en seis meses de <em>cursos</em>."
+          </p>
+        </div>
+      </section>
+
+      <section className="editorial-section">
+        <div className="container">
+          <div className="editorial-grid-2 fade-on-scroll">
+            <div className="col-text">
+              <span className="label-tag">El método</span>
+              <h2>Diagnóstico continuo. <em>Sin exámenes.</em></h2>
+              <p>
+                Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas)
+                y precisión fonética. En tres minutos te ubica en el marco europeo CEFR — A1 a C2 — sin que tengas que llenar un solo formulario.
+              </p>
+              <p>
+                Lo que sigue, todos los días: una misión de 5 a 10 minutos calibrada a tu nivel real, no al que dijiste tener.
+              </p>
+            </div>
+            <div className="col-num" style={{ textAlign: 'right' }}>02</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="phone-strip">
+        <div className="container">
+          <div className="phone-strip-grid">
+            <div className="fade-on-scroll">
+              <span className="label-tag">La sesión</span>
+              <h2>Una <em>charla</em>. Cinco minutos. <em>Cada día.</em></h2>
+              <p>
+                Hablás de lo que te interesa — música, código, fitness, diseño. El tutor te tira retos en pantalla mientras hablás,
+                sin interrumpirte. Al final, el reporte: un elogio y tres puntos para pulir. Nada más.
+              </p>
+              <Link to="/como-funciona" className="btn btn-dark btn-lg">
+                Ver el método completo
+                <ArrowUpRight size={18} strokeWidth={2.4} />
+              </Link>
+            </div>
+            <div className="fade-on-scroll">
+              <div className="phone-frame">
+                <div className="pscreen">
+                  <div className="notch"></div>
+                  <div className="phone-status">
+                    <span>9:41</span>
+                    <div className="icons">
+                      <span></span><span></span><span></span>
                     </div>
                   </div>
-                </div>
-                <div className="phone-bottom">
-                  <div className="phone-mic-bar">
-                    {Array.from({ length: 14 }).map((_, i) => <i key={i} />)}
+                  <div className="phone-orb"></div>
+                  <div className="phone-label">Tu turno</div>
+                  <div className="phone-quote">
+                    "And then producers in South London <b>started to mix</b> two-step rhythms…"
                   </div>
-                  <div className="phone-stop">
-                    <Square size={14} fill="white" strokeWidth={0} />
+                  <div className="phone-challenge">
+                    <div className="ico"><Zap size={16} strokeWidth={2.4} /></div>
+                    <div className="body">
+                      <div className="lbl">Reto · vocabulario</div>
+                      <div style={{ marginTop: 4, color: 'white' }}>
+                        Incorporá <strong>"nevertheless"</strong> en tu próxima idea.
+                      </div>
+                    </div>
+                  </div>
+                  <div className="phone-bottom">
+                    <div className="phone-mic-bar">
+                      {Array.from({ length: 14 }).map((_, i) => <i key={i} />)}
+                    </div>
+                    <div className="phone-stop">
+                      <Square size={14} fill="white" strokeWidth={0} />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -183,92 +459,148 @@ export function Home() {
         </div>
       </section>
 
-      <div className="pillars fade-on-scroll">
-        <div className="container pillars-inner fade-stagger">
-          <div className="pillar">
-            <div className="ico"><Timer size={20} strokeWidth={2} /></div>
-            <div>
-              <div className="k">5 min al día</div>
-              <div className="lbl">Sesiones cortas, diseñadas para sostener el hábito</div>
-            </div>
+      <div style={{ background: 'var(--bg-2)', padding: '32px 0', borderTop: '1px solid rgba(13,20,18,.08)', borderBottom: '1px solid rgba(13,20,18,.08)' }}>
+        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, fontFamily: 'var(--font-mono)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-3)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <Timer size={12} /> 01
+            </span>
+            <span style={{ fontSize: 16, fontWeight: 600, fontFamily: 'var(--font-sans)', color: 'var(--fg-1)' }}>5 min/día</span>
+            <span style={{ fontSize: 12, color: 'var(--fg-3)', fontFamily: 'var(--font-sans)' }}>Sesiones cortas</span>
           </div>
-          <div className="pillar">
-            <div className="ico"><Sparkles size={20} strokeWidth={2} /></div>
-            <div>
-              <div className="k">Cero exámenes</div>
-              <div className="lbl">Diagnóstico continuo en segundo plano</div>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-3)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <Sparkles size={12} /> 02
+            </span>
+            <span style={{ fontSize: 16, fontWeight: 600, fontFamily: 'var(--font-sans)', color: 'var(--fg-1)' }}>Cero exámenes</span>
+            <span style={{ fontSize: 12, color: 'var(--fg-3)', fontFamily: 'var(--font-sans)' }}>Diagnóstico en background</span>
           </div>
-          <div className="pillar">
-            <div className="ico"><Gauge size={20} strokeWidth={2} /></div>
-            <div>
-              <div className="k">CEFR A1 a C2</div>
-              <div className="lbl">Calibración nativa del nivel sin tests</div>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-3)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <Gauge size={12} /> 03
+            </span>
+            <span style={{ fontSize: 16, fontWeight: 600, fontFamily: 'var(--font-sans)', color: 'var(--fg-1)' }}>CEFR A1 a C2</span>
+            <span style={{ fontSize: 12, color: 'var(--fg-3)', fontFamily: 'var(--font-sans)' }}>Marco europeo</span>
           </div>
-          <div className="pillar">
-            <div className="ico"><Languages size={20} strokeWidth={2} /></div>
-            <div>
-              <div className="k">3 idiomas activos</div>
-              <div className="lbl">Inglés, portugués e italiano · más en camino</div>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-3)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <Languages size={12} /> 04
+            </span>
+            <span style={{ fontSize: 16, fontWeight: 600, fontFamily: 'var(--font-sans)', color: 'var(--fg-1)' }}>3 idiomas</span>
+            <span style={{ fontSize: 12, color: 'var(--fg-3)', fontFamily: 'var(--font-sans)' }}>Inglés, portugués, italiano</span>
           </div>
         </div>
       </div>
 
-      <section>
+      <section className="product-section">
         <div className="container">
-          <div className="sec-head fade-on-scroll">
-            <span className="eyebrow">Explorá</span>
-            <h2>Conocé Habláh en detalle.</h2>
-            <p>Cinco páginas, cada una con lo que necesitás para decidir. Hechas para leerse en orden o saltar a lo que te interese.</p>
-          </div>
-          <div className="explore-grid fade-stagger">
-            <RelatedCard
-              to="/como-funciona"
-              eyebrow="Metodología"
-              title="Cómo funciona"
-              description="El pipeline de diagnóstico continuo, el marco CEFR, las misiones diarias y el feedback sincerista."
-            />
-            <RelatedCard
-              to="/tutores"
-              eyebrow="Tres personalidades"
-              title="Tutores de IA"
-              description="The Coach, The Sincerist y The Arcade. Cada uno con su rigurosidad, tono y velocidad."
-            />
-            <RelatedCard
-              to="/topicos"
-              eyebrow="Contenido"
-              title="Tópicos disponibles"
-              description="Más de 75 tópicos curados — tecnología, arte, lifestyle, diseño, negocios. Hablás de lo que te interesa."
-            />
-            <RelatedCard
-              to="/precios"
-              eyebrow="Planes"
-              title="Precios"
-              description="Free, Pro (US$ 12) y Bootcamp (US$ 49 con coach humano). 14 días Pro sin tarjeta."
-            />
-            <RelatedCard
-              to="/faq"
-              eyebrow="Dudas frecuentes"
-              title="FAQ"
-              description="Cómo decidimos tu nivel, qué pasa con tu audio, qué idiomas hay, si sirve para TOEFL e IELTS."
-            />
+          <div className="product-grid fade-on-scroll">
+            <div className="product-text">
+              <span className="label-tag">Pantalla 01 · Hoy</span>
+              <div className="stamp">01</div>
+              <h2>Una <em>misión nueva</em> cada día. Calibrada a vos.</h2>
+              <p>Apenas abrís Habláh, te recibe la pantalla "Hoy" con la charla del día —tópico, tutor, duración estimada— elegida por el sistema según tu nivel real, los tópicos que cargaste y los errores que arrastrás.</p>
+              <ul className="feats">
+                <li>Misión del día con tópico recomendado</li>
+                <li>Rachas y mapa de progreso CEFR</li>
+                <li>Botón único · "Empezar charla"</li>
+              </ul>
+              <Link to="/como-funciona" className="btn btn-dark btn-lg">
+                Ver cómo se calibra
+                <ArrowUpRight size={18} strokeWidth={2.4} />
+              </Link>
+            </div>
+            <div className="product-screen-wrap">
+              <span className="tag">Web app · vista "Hoy"</span>
+              <img className="product-screen" src="/landing-screens/mision-hoy.png" alt="Pantalla Hoy de Habláh - misión del día con tópico, tutor y rachas" loading="lazy" width="1280" height="800" />
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="cta-final">
-        <div className="container fade-on-scroll">
-          <h2>Hablás más en una semana<br />que en seis meses de cursos.</h2>
-          <p>14 días de Pro, sin tarjeta. La primera charla se siente rara. La quinta, no podés parar.</p>
-          <div className="cta-final-actions">
-            <Link to="/login" className="btn btn-light btn-lg">
-              Empezar gratis
-              <ArrowRight size={18} strokeWidth={2.4} />
-            </Link>
+      <section className="product-section dark">
+        <div className="container">
+          <div className="product-grid flip fade-on-scroll">
+            <div className="product-screen-wrap">
+              <span className="tag">Web app · "¿De qué charlamos?"</span>
+              <img className="product-screen" src="/landing-screens/galaxia-topicos.png" alt="Galaxia de tópicos en Habláh - orbs flotando sobre fondo espacial" loading="lazy" width="1280" height="800" />
+            </div>
+            <div className="product-text">
+              <span className="label-tag">Pantalla 02 · Galaxia</span>
+              <div className="stamp">02</div>
+              <h2>Elegís de qué hablar. <em>O te sorprendemos.</em></h2>
+              <p>Tus tópicos aparecen como orbs flotantes en una galaxia espacial. Tocás uno y empezás. Si no sabés por dónde, el botón "Sorprendéme" elige por vos uno que calce con tus debilidades pendientes.</p>
+              <ul className="feats">
+                <li>Galaxia inmersiva con tus tópicos</li>
+                <li>Modo "Sorprendéme" inteligente</li>
+                <li>Tema libre cuando querés improvisar</li>
+              </ul>
+              <Link to="/topicos" className="btn btn-light btn-lg">
+                Ver todos los tópicos
+                <ArrowUpRight size={18} strokeWidth={2.4} />
+              </Link>
+            </div>
           </div>
-          <div style={{ marginTop: 24, fontSize: 13, opacity: .8 }}>5 minutos · sin descarga · sin tarjeta</div>
+        </div>
+      </section>
+
+      <section className="product-section dark" style={{ background: '#050a08' }}>
+        <div className="container">
+          <div className="product-grid fade-on-scroll">
+            <div className="product-text">
+              <span className="label-tag">Pantalla 03 · Sesión</span>
+              <div className="stamp">03</div>
+              <h2>Tocás un orb. <em>Empezás a hablar.</em></h2>
+              <p>La sesión activa es minimalista por diseño: un orb gigante que palpita al ritmo del tutor, una transcripción en vivo y una barra de mic abajo. Sin menús, sin distracciones. Solo conversación.</p>
+              <ul className="feats">
+                <li>Streaming de audio en tiempo real</li>
+                <li>Transcripción en vivo · ambos lados</li>
+                <li>Estilo de tutor seleccionable mid-charla</li>
+              </ul>
+              <Link to="/tutores" className="btn btn-light btn-lg">
+                Conocer los 3 tutores
+                <ArrowUpRight size={18} strokeWidth={2.4} />
+              </Link>
+            </div>
+            <div className="product-screen-wrap">
+              <span className="tag">Web app · sesión en vivo</span>
+              <img className="product-screen" src="/landing-screens/sesion-vivo.png" alt="Sesión en vivo de Habláh - orb gigante palpitando con transcripción" loading="lazy" width="1280" height="800" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="index-section">
+        <div className="container">
+          <div className="index-top fade-on-scroll">
+            <h2>Índice<br /><em>del producto.</em></h2>
+            <span className="label-tag">Explorá en orden o saltá</span>
+          </div>
+          <div className="index-list fade-stagger">
+            {INDEX_ITEMS.map((item) => (
+              <Link key={item.to} to={item.to} className="index-row">
+                <span className="index-num">{item.num}</span>
+                <span className="index-title">
+                  {item.title} {item.titleEm && <em>{item.titleEm}</em>}
+                </span>
+                <span className="index-cat">{item.category}</span>
+                <span className="index-blurb">{item.blurb}</span>
+                <ArrowUpRight size={24} strokeWidth={1.5} className="index-arrow" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="cta-editorial">
+        <div className="container fade-on-scroll">
+          <span className="label-tag">Última página</span>
+          <h2>Empezás <em>gratis.</em><br />Pagás cuando te <em>enganche.</em></h2>
+          <p>14 días de Pro sin tarjeta. La primera charla se siente rara. La quinta, no podés parar.</p>
+          <Link to="/login" className="btn btn-light btn-lg">
+            Empezar la primera charla
+            <ArrowRight size={18} strokeWidth={2.4} />
+          </Link>
         </div>
       </section>
     </LandingLayout>
