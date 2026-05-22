@@ -18,6 +18,7 @@ import {
   OnboardingTopic,
 } from '../services/api'
 import { toast } from 'sonner'
+import { AgentAudioVisualizerAura } from './agents-ui/agent-audio-visualizer-aura'
 
 const STYLES = `
 @keyframes ob-drift-1 { 0%,100%{transform:translate(0,0)} 25%{transform:translate(36px,-22px)} 50%{transform:translate(48px,18px)} 75%{transform:translate(12px,32px)} }
@@ -254,14 +255,11 @@ function SplashStage({ onStart, onSkip }: { onStart: () => void; onSkip: () => v
   )
 }
 
-/* ─── Bubble — orb CSS (sin WebGL, escala a 20+ instancias) ──── */
+/* ─── Bubble — orb Aura (WebGL) ──────────────────────────────── */
 function BubbleButton({ label, color, onClick, driftIndex }: {
   label: string; color: string; onClick: () => void; driftIndex: number
 }) {
-  const SIZE = 100
-  const rotateDur = 18 + (driftIndex % 5) * 4
-  const breatheDur = 3.5 + (driftIndex % 4) * 0.6
-  const rotateDir = driftIndex % 2 === 0 ? 'ob-rotate' : 'ob-rotate-rev'
+  const pseudoAudio = 0.4 + ((driftIndex * 0.13) % 0.45)
 
   return (
     <div
@@ -276,48 +274,18 @@ function BubbleButton({ label, color, onClick, driftIndex }: {
         onClick={onClick}
         style={{
           background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
-          width: SIZE, height: SIZE, position: 'relative',
+          width: 110, height: 110, position: 'relative',
           display: 'grid', placeItems: 'center',
         }}
       >
-        {/* Halo exterior - glow blureado breathing */}
-        <div style={{
-          position: 'absolute', inset: -10,
-          borderRadius: '50%',
-          background: `radial-gradient(circle, ${color}AA 0%, ${color}44 35%, transparent 65%)`,
-          filter: 'blur(10px)',
-          animation: `ob-breathe ${breatheDur}s ease-in-out infinite`,
-          pointerEvents: 'none',
-        }} />
-        {/* Anillo rotante con conic-gradient (simula el ondulado Aura) */}
-        <div
-          className="ob-orb-ring"
-          style={{
-            position: 'absolute', inset: 8,
-            borderRadius: '50%',
-            background: `conic-gradient(from 0deg, ${color}, ${color}66, ${color}EE, ${color}33, ${color}DD, ${color}77, ${color})`,
-            animation: `${rotateDir} ${rotateDur}s linear infinite`,
-            filter: 'blur(2px)',
-            pointerEvents: 'none',
-          }}
+        <AgentAudioVisualizerAura
+          status="speaking"
+          audioLevel={pseudoAudio}
+          color={color as `#${string}`}
+          colorShift={0.05}
+          themeMode="dark"
+          size="md"
         />
-        {/* Núcleo oscuro central (efecto donut/anillo) */}
-        <div style={{
-          position: 'absolute', inset: 22,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, #0E1614 0%, #050A09 80%)',
-          boxShadow: `inset 0 0 12px ${color}55`,
-          pointerEvents: 'none',
-        }} />
-        {/* Highlight especular */}
-        <div style={{
-          position: 'absolute', top: '12%', left: '20%',
-          width: '24%', height: '14%',
-          borderRadius: '50%',
-          background: 'radial-gradient(ellipse, rgba(255,255,255,.45) 0%, transparent 70%)',
-          filter: 'blur(1.5px)',
-          pointerEvents: 'none',
-        }} />
       </button>
       <span style={{
         color: 'white', fontSize: 12, fontWeight: 700, lineHeight: 1.15,

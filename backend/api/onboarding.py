@@ -16,7 +16,7 @@ from models.user import User
 router = APIRouter()
 
 
-# Categorias amplias para que sirvan a chicos y adultos por igual
+# 12 categorias amplias (limite WebGL del browser permite ~12 shaders simultaneos)
 CATEGORIES = [
     {"slug": "musica",       "title": "Música",            "color": "#5B21B6"},
     {"slug": "peliculas",    "title": "Películas y series", "color": "#7C3AED"},
@@ -24,19 +24,11 @@ CATEGORIES = [
     {"slug": "videojuegos",  "title": "Videojuegos",       "color": "#DB2777"},
     {"slug": "comida",       "title": "Comida",            "color": "#B91C1C"},
     {"slug": "animales",     "title": "Animales",          "color": "#65A30D"},
-    {"slug": "naturaleza",   "title": "Naturaleza",        "color": "#16A34A"},
     {"slug": "viajes",       "title": "Viajes",            "color": "#3B82F6"},
     {"slug": "tech",         "title": "Tecnología",        "color": "#1E4FB0"},
     {"slug": "ciencia",      "title": "Ciencia",           "color": "#0891B2"},
     {"slug": "arte",         "title": "Arte y cultura",    "color": "#8B5CF6"},
-    {"slug": "historia",     "title": "Historia",          "color": "#8A5A00"},
-    {"slug": "libros",       "title": "Libros",            "color": "#92400E"},
     {"slug": "fitness",      "title": "Fitness y bienestar","color": "#10B981"},
-    {"slug": "familia",      "title": "Familia y vida",    "color": "#F472B6"},
-    {"slug": "trabajo",      "title": "Trabajo y carrera", "color": "#0E1614"},
-    {"slug": "emprender",    "title": "Emprender",         "color": "#475569"},
-    {"slug": "fotografia",   "title": "Fotografía",        "color": "#0EA5E9"},
-    {"slug": "autos",        "title": "Autos y motos",     "color": "#374151"},
     {"slug": "moda",         "title": "Moda y estilo",     "color": "#EC4899"},
 ]
 
