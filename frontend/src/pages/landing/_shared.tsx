@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ShieldCheck } from 'lucide-react'
 
 export const LANDING_CSS = `
@@ -207,6 +207,14 @@ export function ensureGoogleFont() {
   document.head.appendChild(pre1)
   document.head.appendChild(pre2)
   document.head.appendChild(link)
+}
+
+export function useScrollToTopOnNav() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+  }, [pathname])
 }
 
 export function useFadeInOnScroll() {
@@ -510,6 +518,7 @@ export function LandingLayout({ children, meta, structuredData, current }: Landi
   useEffect(() => {
     ensureGoogleFont()
   }, [])
+  useScrollToTopOnNav()
   usePageMeta(meta)
   useStructuredData(structuredData)
   useFadeInOnScroll()
