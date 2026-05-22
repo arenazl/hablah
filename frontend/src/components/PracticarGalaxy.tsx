@@ -23,11 +23,34 @@ const STYLES = `
 @keyframes pg-fade-in { 0%{opacity:0} 100%{opacity:1} }
 @keyframes pg-star-twinkle { 0%,100%{opacity:.2} 50%{opacity:.9} }
 @keyframes pg-hero-glow { 0%,100%{text-shadow: 0 0 20px rgba(0,179,126,.3)} 50%{text-shadow: 0 0 35px rgba(0,179,126,.55)} }
-.pg-orb-wrapper { transition: transform 280ms cubic-bezier(.2,.8,.2,1), filter 280ms; }
-.pg-orb-wrapper:hover { transform: scale(1.15) !important; filter: brightness(1.25) saturate(1.3); z-index: 20; }
-.pg-orb-wrapper:hover .pg-orb-label { opacity: 1; transform: translateY(0); }
-.pg-orb-wrapper:active { transform: scale(.94) !important; }
+.pg-orb-wrapper {
+  transition: transform 280ms cubic-bezier(.2,.8,.2,1), filter 280ms, opacity 380ms ease;
+  will-change: transform, opacity;
+}
+@media (hover: hover) {
+  .pg-orb-wrapper:hover { transform: scale(1.15) !important; filter: brightness(1.25) saturate(1.3); z-index: 20; }
+  .pg-orb-wrapper:hover .pg-orb-label { opacity: 1; transform: translateY(0); }
+}
+.pg-orb-wrapper:active { transform: scale(.94) !important; transition: transform 90ms ease-out; }
 .pg-orb-label { transition: opacity 220ms, transform 220ms; }
+
+/* Estado al elegir: la galaxia entra en "selección" */
+.pg-stage.is-selecting .pg-orb-wrapper { animation-play-state: paused; pointer-events: none; }
+.pg-stage.is-selecting .pg-orb-wrapper:not(.is-selected) {
+  transform: translate(-50%, -50%) scale(.72) !important;
+  opacity: 0;
+  filter: blur(2px);
+  transition: transform 520ms cubic-bezier(.4,0,.2,1), opacity 380ms ease, filter 380ms ease;
+}
+.pg-stage.is-selecting .pg-orb-wrapper.is-selected {
+  transform: translate(-50%, -50%) scale(2.6) !important;
+  filter: brightness(1.35) saturate(1.4) drop-shadow(0 0 40px rgba(0,179,126,.55));
+  z-index: 50;
+  transition: transform 640ms cubic-bezier(.34,1.18,.5,1), filter 520ms ease;
+}
+.pg-stage.is-selecting .pg-orb-wrapper.is-selected .pg-orb-label { opacity: 0; }
+.pg-stage.is-selecting .pg-hero,
+.pg-stage.is-selecting .pg-footer { opacity: 0; transition: opacity 320ms ease; pointer-events: none; }
 `
 
 // Mapeo de categoria slug -> color (mismo que onboarding y backoffice)
@@ -92,9 +115,18 @@ function generatePositions(count: number): { x: number; y: number }[] {
   return positions
 }
 
+const SELECT_ANIM_MS = 560
+
 export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFreeTopic }: Props) {
   const [freeText, setFreeText] = useState('')
   const [freeOpen, setFreeOpen] = useState(false)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+
+  const handlePick = (topicId: number) => {
+    if (selectedId !== null) return
+    setSelectedId(topicId)
+    window.setTimeout(() => onPick(topicId), SELECT_ANIM_MS)
+  }
 
   // Limitamos a 11 orbs visibles (límite WebGL). Si tiene más, mostramos
   // los primeros 11 (estan ordenados por interest position).
@@ -115,12 +147,15 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
   }, [])
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 5,
-      background: 'radial-gradient(ellipse at 50% 40%, #1a2b26 0%, #050A09 70%)',
-      overflow: 'hidden',
-      animation: 'pg-fade-in 600ms ease-out',
-    }}>
+    <div
+      className={`pg-stage${selectedId !== null ? ' is-selecting' : ''}`}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 5,
+        background: 'radial-gradient(ellipse at 50% 40%, #1a2b26 0%, #050A09 70%)',
+        overflow: 'hidden',
+        animation: 'pg-fade-in 600ms ease-out',
+      }}
+    >
       <style>{STYLES}</style>
 
       {/* STARS DE FONDO */}
@@ -140,7 +175,7 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
       ))}
 
       {/* HERO CENTRAL */}
-      <div style={{
+      <div className="pg-hero" style={{
         position: 'absolute', top: '5vh', left: 0, right: 0,
         textAlign: 'center', zIndex: 3,
         pointerEvents: 'none',

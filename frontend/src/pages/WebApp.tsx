@@ -64,6 +64,18 @@ export function WebApp() {
   const [loading, setLoading] = useState(true)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [onboardingSkipped, setOnboardingSkipped] = useState(false)
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'light'
+    return (localStorage.getItem('hablah-theme') as 'light' | 'dark') || 'light'
+  })
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeMode)
+    document.body.setAttribute('data-theme', themeMode)
+    localStorage.setItem('hablah-theme', themeMode)
+  }, [themeMode])
+  const toggleTheme = useCallback(() => {
+    setThemeMode(m => m === 'dark' ? 'light' : 'dark')
+  }, [])
   const loc = useLocation()
 
   const refresh = useCallback(async () => {
@@ -91,7 +103,7 @@ export function WebApp() {
   const shouldOnboard = !loading && profile && profile.interests.length === 0 && !onboardingSkipped
 
   return (
-    <div className="webapp-root">
+    <div className="webapp-root" data-theme={themeMode}>
       <style>{WEBAPP_CSS}</style>
       <style>{HOY_CSS}</style>
       <style>{MAPA_CSS}</style>
@@ -102,7 +114,7 @@ export function WebApp() {
         <Sidebar profile={profile} mobileOpen={drawerOpen} />
         {drawerOpen && <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />}
         <main className="main">
-          <TopBar profile={profile} onMenuClick={() => setDrawerOpen(true)} />
+          <TopBar profile={profile} onMenuClick={() => setDrawerOpen(true)} themeMode={themeMode} onToggleTheme={toggleTheme} />
           <Routes>
             <Route path="/" element={<HoyView profile={profile} loading={loading} />} />
             <Route path="/practicar" element={<PracticarView profile={profile} onSessionEnd={refresh} />} />
@@ -208,7 +220,7 @@ function SidebarItem({ to, icon, label, badge, exact }: { to: string; icon: Reac
   )
 }
 
-function TopBar({ profile, onMenuClick }: { profile: MeProfile | null; onMenuClick?: () => void }) {
+function TopBar({ profile, onMenuClick, themeMode, onToggleTheme }: { profile: MeProfile | null; onMenuClick?: () => void; themeMode: 'light' | 'dark'; onToggleTheme: () => void }) {
   const loc = useLocation()
   const nav = useNavigate()
   const title = VIEW_TITLES[loc.pathname] ?? 'Hoy'
@@ -218,15 +230,7 @@ function TopBar({ profile, onMenuClick }: { profile: MeProfile | null; onMenuCli
   const isDark = loc.pathname.startsWith('/app/practicar')
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'light'
-    return (localStorage.getItem('hablah-theme') as 'light' | 'dark') || 'light'
-  })
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', themeMode)
-    localStorage.setItem('hablah-theme', themeMode)
-  }, [themeMode])
-  const toggleTheme = () => setThemeMode(m => m === 'dark' ? 'light' : 'dark')
+  const toggleTheme = onToggleTheme
 
   useEffect(() => {
     if (!menuOpen) return
