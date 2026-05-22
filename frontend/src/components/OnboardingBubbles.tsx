@@ -18,7 +18,6 @@ import {
   OnboardingTopic,
 } from '../services/api'
 import { toast } from 'sonner'
-import { AgentAudioVisualizerAura } from './agents-ui/agent-audio-visualizer-aura'
 
 const STYLES = `
 @keyframes ob-drift-1 { 0%,100%{transform:translate(0,0)} 25%{transform:translate(36px,-22px)} 50%{transform:translate(48px,18px)} 75%{transform:translate(12px,32px)} }
@@ -28,9 +27,14 @@ const STYLES = `
 @keyframes ob-pop-in { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.08);opacity:1} 100%{transform:scale(1);opacity:1} }
 @keyframes ob-fade-up { 0%{opacity:0;transform:translateY(20px)} 100%{opacity:1;transform:translateY(0)} }
 @keyframes ob-overlay-in { 0%{opacity:0} 100%{opacity:1} }
+@keyframes ob-rotate { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+@keyframes ob-rotate-rev { 0%{transform:rotate(0)} 100%{transform:rotate(-360deg)} }
+@keyframes ob-breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
 .ob-bubble { transition: filter 240ms; }
-.ob-bubble:hover { filter: brightness(1.15) saturate(1.2); z-index: 5; }
+.ob-bubble:hover { filter: brightness(1.18) saturate(1.25); z-index: 5; }
+.ob-bubble:hover .ob-orb-ring { transform: scale(1.05); }
 .ob-bubble:active { filter: brightness(.9); }
+.ob-orb-ring { transition: transform 220ms; }
 `
 
 interface Props {
@@ -250,11 +254,14 @@ function SplashStage({ onStart, onSkip }: { onStart: () => void; onSkip: () => v
   )
 }
 
-/* ─── Bubble (orb Aura + label) ───────────────────────────────── */
+/* ─── Bubble — orb CSS (sin WebGL, escala a 20+ instancias) ──── */
 function BubbleButton({ label, color, onClick, driftIndex }: {
   label: string; color: string; onClick: () => void; driftIndex: number
 }) {
-  const pseudoAudio = 0.4 + ((driftIndex * 0.13) % 0.45)
+  const SIZE = 100
+  const rotateDur = 18 + (driftIndex % 5) * 4
+  const breatheDur = 3.5 + (driftIndex % 4) * 0.6
+  const rotateDir = driftIndex % 2 === 0 ? 'ob-rotate' : 'ob-rotate-rev'
 
   return (
     <div
@@ -269,18 +276,48 @@ function BubbleButton({ label, color, onClick, driftIndex }: {
         onClick={onClick}
         style={{
           background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
-          width: 100, height: 100, position: 'relative',
+          width: SIZE, height: SIZE, position: 'relative',
           display: 'grid', placeItems: 'center',
         }}
       >
-        <AgentAudioVisualizerAura
-          status="speaking"
-          audioLevel={pseudoAudio}
-          color={color as `#${string}`}
-          colorShift={0.05}
-          themeMode="dark"
-          size="md"
+        {/* Halo exterior - glow blureado breathing */}
+        <div style={{
+          position: 'absolute', inset: -10,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${color}AA 0%, ${color}44 35%, transparent 65%)`,
+          filter: 'blur(10px)',
+          animation: `ob-breathe ${breatheDur}s ease-in-out infinite`,
+          pointerEvents: 'none',
+        }} />
+        {/* Anillo rotante con conic-gradient (simula el ondulado Aura) */}
+        <div
+          className="ob-orb-ring"
+          style={{
+            position: 'absolute', inset: 8,
+            borderRadius: '50%',
+            background: `conic-gradient(from 0deg, ${color}, ${color}66, ${color}EE, ${color}33, ${color}DD, ${color}77, ${color})`,
+            animation: `${rotateDir} ${rotateDur}s linear infinite`,
+            filter: 'blur(2px)',
+            pointerEvents: 'none',
+          }}
         />
+        {/* Núcleo oscuro central (efecto donut/anillo) */}
+        <div style={{
+          position: 'absolute', inset: 22,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, #0E1614 0%, #050A09 80%)',
+          boxShadow: `inset 0 0 12px ${color}55`,
+          pointerEvents: 'none',
+        }} />
+        {/* Highlight especular */}
+        <div style={{
+          position: 'absolute', top: '12%', left: '20%',
+          width: '24%', height: '14%',
+          borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(255,255,255,.45) 0%, transparent 70%)',
+          filter: 'blur(1.5px)',
+          pointerEvents: 'none',
+        }} />
       </button>
       <span style={{
         color: 'white', fontSize: 12, fontWeight: 700, lineHeight: 1.15,
