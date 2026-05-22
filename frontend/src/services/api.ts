@@ -74,6 +74,7 @@ export const meAPI = {
     active_template_id: number
     cefr_level: string
     cefr_manual: boolean
+    target_language: string
   }>) => api.patch('/me/settings', data).then((r) => r.data),
   streakHeatmap: (days = 28) => api.get<HeatmapCell[]>(`/me/streak-heatmap?days=${days}`).then((r) => r.data),
   levelProgress: () => api.get<LevelProgress>('/me/level-progress').then((r) => r.data),
