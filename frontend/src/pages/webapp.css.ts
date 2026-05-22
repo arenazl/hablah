@@ -86,13 +86,13 @@ export const WEBAPP_CSS = `
   text-transform: uppercase; color: var(--fg-3);
 }
 
-.webapp-root .shell { display: flex; min-height: 100vh; }
+.webapp-root .shell { display: flex; min-height: calc(100vh - 64px); }
 
 .webapp-root .sidebar {
   width: var(--sidebar-w);
   background: var(--ink-1); color: rgba(232,236,234,.8);
   display: flex; flex-direction: column;
-  position: sticky; top: 0; height: 100vh; flex-shrink: 0;
+  position: sticky; top: 64px; height: calc(100vh - 64px); flex-shrink: 0;
 }
 .webapp-root .sidebar .brand { padding: 20px 18px 22px; display: flex; align-items: center; gap: 10px; }
 .webapp-root .sidebar .brand-mark {

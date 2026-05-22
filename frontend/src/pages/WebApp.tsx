@@ -110,11 +110,11 @@ export function WebApp() {
       <style>{PRACTICAR_CSS}</style>
       <style>{HISTORIAL_CSS}</style>
       <style>{CONVO_BG_CSS}</style>
+      <TopBar profile={profile} onMenuClick={() => setDrawerOpen(true)} themeMode={themeMode} onToggleTheme={toggleTheme} />
       <div className="shell">
         <Sidebar profile={profile} mobileOpen={drawerOpen} />
         {drawerOpen && <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />}
         <main className="main">
-          <TopBar profile={profile} onMenuClick={() => setDrawerOpen(true)} themeMode={themeMode} onToggleTheme={toggleTheme} />
           <Routes>
             <Route path="/" element={<HoyView profile={profile} loading={loading} />} />
             <Route path="/practicar" element={<PracticarView profile={profile} onSessionEnd={refresh} />} />
