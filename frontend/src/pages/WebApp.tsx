@@ -64,13 +64,19 @@ export function WebApp() {
   const [loading, setLoading] = useState(true)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [onboardingSkipped, setOnboardingSkipped] = useState(false)
-  const loc = useLocation()
-  // Limpieza: si quedó data-theme en localStorage o en el DOM, sacarlo
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'light'
+    return (localStorage.getItem('hablah-theme') as 'light' | 'dark') || 'light'
+  })
   useEffect(() => {
-    document.documentElement.removeAttribute('data-theme')
-    document.body.removeAttribute('data-theme')
-    localStorage.removeItem('hablah-theme')
+    document.documentElement.setAttribute('data-theme', themeMode)
+    document.body.setAttribute('data-theme', themeMode)
+    localStorage.setItem('hablah-theme', themeMode)
+  }, [themeMode])
+  const toggleTheme = useCallback(() => {
+    setThemeMode(m => m === 'dark' ? 'light' : 'dark')
   }, [])
+  const loc = useLocation()
 
   const refresh = useCallback(async () => {
     try {
@@ -97,7 +103,7 @@ export function WebApp() {
   const shouldOnboard = !loading && profile && profile.interests.length === 0 && !onboardingSkipped
 
   return (
-    <div className="webapp-root">
+    <div className="webapp-root" data-theme={themeMode}>
       <style>{WEBAPP_CSS}</style>
       <style>{HOY_CSS}</style>
       <style>{MAPA_CSS}</style>
@@ -108,7 +114,7 @@ export function WebApp() {
         <Sidebar profile={profile} mobileOpen={drawerOpen} />
         {drawerOpen && <div className="drawer-backdrop" onClick={() => setDrawerOpen(false)} />}
         <main className="main">
-          <TopBar profile={profile} onMenuClick={() => setDrawerOpen(true)} />
+          <TopBar profile={profile} onMenuClick={() => setDrawerOpen(true)} themeMode={themeMode} onToggleTheme={toggleTheme} />
           <Routes>
             <Route path="/" element={<HoyView profile={profile} loading={loading} />} />
             <Route path="/practicar" element={<PracticarView profile={profile} onSessionEnd={refresh} />} />
@@ -214,7 +220,7 @@ function SidebarItem({ to, icon, label, badge, exact }: { to: string; icon: Reac
   )
 }
 
-function TopBar({ profile, onMenuClick }: { profile: MeProfile | null; onMenuClick?: () => void }) {
+function TopBar({ profile, onMenuClick, themeMode, onToggleTheme }: { profile: MeProfile | null; onMenuClick?: () => void; themeMode: 'light' | 'dark'; onToggleTheme: () => void }) {
   const loc = useLocation()
   const nav = useNavigate()
   const title = VIEW_TITLES[loc.pathname] ?? 'Hoy'
@@ -264,6 +270,26 @@ function TopBar({ profile, onMenuClick }: { profile: MeProfile | null; onMenuCli
               <span><span className="tnum">{streak}</span><span className="l"> días</span></span>
             </div>
           )}
+          <button
+            className="settings-btn"
+            aria-label={themeMode === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+            onClick={onToggleTheme}
+            style={isDark ? { color: 'white' } : undefined}
+          >
+            {themeMode === 'dark' ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2"/><path d="M12 20v2"/>
+                <path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>
+                <path d="M2 12h2"/><path d="M20 12h2"/>
+                <path d="m4.93 19.07 1.41-1.41"/><path d="m17.66 6.34 1.41-1.41"/>
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            )}
+          </button>
           <button
             className="settings-btn"
             aria-label="Ajustes"

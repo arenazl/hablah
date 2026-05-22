@@ -1,4 +1,17 @@
 export const HISTORIAL_CSS = `
+[data-theme="dark"] .hist-page,
+[data-theme="dark"] .webapp-root .hist-page {
+  --hi-bg-1:#050807;
+  --hi-bg-2:#0A0F0D;
+  --hi-bg-3:#111815;
+  --hi-surface:#0A100E;
+  --hi-border-1:rgba(232,236,234,.07);
+  --hi-border-2:rgba(232,236,234,.12);
+  --hi-fg-1:#E8ECEA;
+  --hi-fg-2:#B6BDB9;
+  --hi-fg-3:#8E938F;
+  --hi-fg-4:#5A625F;
+}
 .hist-page{
   --hi-green:#00B37E;
   --hi-green-700:#008F63;

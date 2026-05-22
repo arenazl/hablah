@@ -1,4 +1,17 @@
 export const HOY_CSS = `
+[data-theme="dark"] .hoy-page,
+[data-theme="dark"] .webapp-root .hoy-page {
+  --hp-bg-1:#050807;
+  --hp-bg-2:#0A0F0D;
+  --hp-surface:#0A100E;
+  --hp-border-1:rgba(232,236,234,.07);
+  --hp-border-2:rgba(232,236,234,.12);
+  --hp-fg-1:#E8ECEA;
+  --hp-fg-2:#B6BDB9;
+  --hp-fg-3:#8E938F;
+  --hp-fg-4:#5A625F;
+  --hp-shadow-card:0 1px 2px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.4);
+}
 .hoy-page{
   --hp-green:#00B37E;
   --hp-green-600:#00A172;

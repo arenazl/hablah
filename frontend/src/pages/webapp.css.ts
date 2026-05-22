@@ -15,14 +15,24 @@ export const WEBAPP_CSS = `
 [data-theme="dark"] .webapp-root,
 [data-theme="dark"].webapp-root {
   --primary-tint: rgba(0,179,126,.18); --primary-soft: rgba(0,179,126,.28);
-  --bg-1: #0B1210; --bg-2: #131B18; --bg-3: #1B2421;
-  --surface: #161E1B;
-  --border-1: rgba(232,236,234,.08); --border-2: rgba(232,236,234,.14);
+  --bg-1: #050807; --bg-2: #0A0F0D; --bg-3: #111815;
+  --surface: #0A100E;
+  --border-1: rgba(232,236,234,.07); --border-2: rgba(232,236,234,.12);
   --fg-1: #E8ECEA; --fg-2: #B6BDB9; --fg-3: #8E938F; --fg-4: #5A625F;
   --accent-tint: rgba(255,184,0,.18);
-  --shadow-card: 0 1px 2px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.3);
-  --shadow-float: 0 6px 20px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.4);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.4);
+  --shadow-float: 0 8px 24px rgba(0,0,0,.6), 0 2px 8px rgba(0,0,0,.5);
 }
+/* Topbar y main en dark mode */
+[data-theme="dark"] .webapp-root .topbar {
+  background: rgba(5,8,7,.92);
+  border-bottom-color: rgba(232,236,234,.06);
+}
+[data-theme="dark"] .webapp-root .topbar h1 { color: white; }
+[data-theme="dark"] .webapp-root .settings-btn { color: rgba(232,236,234,.7); }
+[data-theme="dark"] .webapp-root .settings-btn:hover { background: rgba(255,255,255,.06); color: white; }
+[data-theme="dark"] .webapp-root .av-btn { background: rgba(255,255,255,.06); color: white; }
+[data-theme="dark"] .webapp-root .streak-badge { background: rgba(255,184,0,.16); color: #FFB800; }
 
 .webapp-root {
   --t-xs: 11px; --t-sm: 13px; --t-base: 15px; --t-md: 16px;

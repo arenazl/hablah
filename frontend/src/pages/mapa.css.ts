@@ -1,4 +1,18 @@
 export const MAPA_CSS = `
+[data-theme="dark"] .mapa-page,
+[data-theme="dark"] .webapp-root .mapa-page {
+  --mp-bg-1:#050807;
+  --mp-bg-2:#0A0F0D;
+  --mp-bg-3:#111815;
+  --mp-surface:#0A100E;
+  --mp-border-1:rgba(232,236,234,.07);
+  --mp-border-2:rgba(232,236,234,.12);
+  --mp-border-3:rgba(232,236,234,.22);
+  --mp-fg-1:#E8ECEA;
+  --mp-fg-2:#B6BDB9;
+  --mp-fg-3:#8E938F;
+  --mp-fg-4:#5A625F;
+}
 .mapa-page{
   --mp-green:#00B37E;
   --mp-green-700:#008F63;
