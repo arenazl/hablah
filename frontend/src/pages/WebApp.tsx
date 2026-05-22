@@ -12,6 +12,7 @@ import { meAPI, sessionsAPI, topicsAPI, templatesAPI, onboardingAPI, MeProfile, 
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 import { OnboardingBubbles } from '../components/OnboardingBubbles'
+import { PracticarGalaxy } from '../components/PracticarGalaxy'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -1099,267 +1100,27 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     ended: 'Finalizada',
   }[live.status]
 
-  // Si todavía no eligió tópico, NO arranco automático. Pantalla de selección.
+  // Si todavía no eligió tópico, NO arranco automático. Pantalla inmersiva de galaxia.
   if (!sessionId) {
     if (!profile) return <div className="view">Cargando…</div>
     const interests = profile.interests
-    // catálogo "extra" = catálogo completo menos los intereses (para no duplicar)
     const interestIds = new Set(interests.map(i => i.id))
     const others = extraTopics.filter(t => !interestIds.has(t.id))
     const userName = profile.user.nombre
-    // Recomendado = interés #3 (proxy: el que menos tocaste recientemente) o primer interés
-    const recommended = interests[2] || interests[0]
-    // Sorpréndeme = random de tus intereses no tocados hace tiempo, sino random del catálogo
     const surprisePool = interests.length > 5 ? interests.slice(3) : others
     const surprise = surprisePool[Math.floor(Math.random() * surprisePool.length)] || others[0] || interests[0]
-    const tutorLabel = profile.active_template?.name || 'Habláh'
 
     return (
-      <div className="view" style={{ maxWidth: 1320 }}>
-        {/* Hero */}
-        <div style={{ marginBottom: 28, maxWidth: 820 }}>
-          <div style={{
-            fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase',
-            color: 'var(--primary-dark)', marginBottom: 10,
-          }}>
-            ¿Listo, {userName}?
-          </div>
-          <h1 style={{
-            fontSize: 44, fontWeight: 800, letterSpacing: '-.03em',
-            margin: '0 0 14px', lineHeight: 1.05, color: 'var(--fg-1)',
-          }}>
-            ¿De qué <span style={{
-              background: 'linear-gradient(180deg, transparent 60%, rgba(0,179,126,.28) 60%)',
-              padding: '0 4px',
-            }}>charlamos</span> hoy?
-          </h1>
-          <p style={{ fontSize: 15.5, color: 'var(--fg-3)', margin: 0, lineHeight: 1.55, maxWidth: 640 }}>
-            Elegí un tópico de tus intereses, dejá que te sorprendamos, o tirá un tema libre. La sesión arranca cuando tocás <b>empezar charla</b>.
-          </p>
-        </div>
-
-        {/* 3 cards principales: Recomendado · Sorpréndeme · Tema libre */}
-        <div className="practicar-page" style={{ marginBottom: 40 }}>
-          <section className="pp-quick">
-            {/* Recomendado / featured */}
-            {recommended && (
-              <button className="pp-qc featured" onClick={() => { setSelectedTopicId(recommended.id); beginSession(recommended.id) }}>
-                <div className="pp-qe">
-                  <span className="pp-live-dot" />
-                  Recomendado para hoy
-                </div>
-                <h3>{recommended.title}</h3>
-                <p>Tu tópico #{interests.findIndex(i => i.id === recommended.id) + 1} — buen momento para retomarlo.</p>
-                <div className="pp-meta-row">
-                  <span>~{profile.user.target_minutes_per_session} min</span>
-                  <span className="pp-dot-sep" />
-                  <span><b>{profile.user.cefr_level}</b></span>
-                  <span className="pp-dot-sep" />
-                  <span>{tutorLabel}</span>
-                </div>
-              </button>
-            )}
-
-            {/* Sorpréndeme */}
-            <button
-              className="pp-qc surprise"
-              onClick={() => { if (surprise) { setSelectedTopicId(surprise.id); beginSession(surprise.id) } else beginSession(null) }}
-            >
-              <div className="pp-qe">
-                <span className="pp-die" aria-hidden="true">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="3"/>
-                    <circle cx="8" cy="8" r="1.3" fill="currentColor"/>
-                    <circle cx="16" cy="8" r="1.3" fill="currentColor"/>
-                    <circle cx="12" cy="12" r="1.3" fill="currentColor"/>
-                    <circle cx="8" cy="16" r="1.3" fill="currentColor"/>
-                    <circle cx="16" cy="16" r="1.3" fill="currentColor"/>
-                  </svg>
-                </span>
-                Sorpréndeme
-              </div>
-              <h3>{surprise ? surprise.title : 'Tópico al azar'}</h3>
-              <p>Te tiro un tópico que casi no tocás. Buena forma de salir de la zona de confort.</p>
-            </button>
-
-            {/* Tema libre */}
-            <div className="pp-qc free">
-              <div className="pp-qe">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Tema libre
-              </div>
-              <h3>Decí de qué querés hablar</h3>
-              <form
-                className="pp-free-input"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  const t = freeTopicText.trim()
-                  if (!t) { toast.error('Escribí de qué querés hablar'); return }
-                  beginSession(null, t)
-                }}
-              >
-                <input
-                  type="text"
-                  value={freeTopicText}
-                  onChange={(e) => setFreeTopicText(e.target.value)}
-                  placeholder="ej. mi último viaje a Berlín..."
-                />
-                <button type="submit" className="pp-send" aria-label="Empezar">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
-                </button>
-              </form>
-            </div>
-          </section>
-        </div>
-
-        {/* Tus intereses — primera card destacada, con buscador + chips */}
-        {interests.length > 0 && (() => {
-          const cats = Array.from(new Set(interests.map(i => i.category)))
-          const q = interestQuery.trim().toLowerCase()
-          const userLevel = profile.user.cefr_level || 'B1'
-          const filtered = interests
-            .map((t, idx) => ({ t, originalIdx: idx }))
-            .filter(({ t }) => interestCategory === 'all' || t.category === interestCategory)
-            .filter(({ t }) =>
-              q === '' ||
-              t.title.toLowerCase().includes(q) ||
-              (getCategoryMeta(t.category).label || '').toLowerCase().includes(q),
-            )
-            .sort((a, b) => {
-              // Topics compatibles con el nivel del user primero
-              const al = isLevelMatch(a.t as any, userLevel) ? 0 : 1
-              const bl = isLevelMatch(b.t as any, userLevel) ? 0 : 1
-              if (al !== bl) return al - bl
-              return a.originalIdx - b.originalIdx
-            })
-          return (
-            <div style={{ marginBottom: 36 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginBottom: 14, flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                  <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-2)' }}>
-                    Tus intereses
-                  </div>
-                  <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>
-                    {filtered.length} de {interests.length} · editalos en <Link to="/app/perfil" style={{ color: 'var(--primary-dark)', fontWeight: 600 }}>Perfil</Link>
-                  </div>
-                </div>
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  background: 'var(--surface)', border: '1px solid var(--border-1)', borderRadius: 999,
-                  padding: '6px 12px', minWidth: 260, flex: '0 1 320px',
-                  boxShadow: '0 1px 2px rgba(13,20,18,.04)',
-                }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fg-3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  </svg>
-                  <input
-                    value={interestQuery}
-                    onChange={(e) => setInterestQuery(e.target.value)}
-                    placeholder="Buscar en tus intereses…"
-                    style={{
-                      border: 'none', outline: 'none', background: 'transparent',
-                      fontSize: 13, color: 'var(--fg-1)', flex: 1, minWidth: 0,
-                    }}
-                  />
-                  {interestQuery && (
-                    <button
-                      onClick={() => setInterestQuery('')}
-                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--fg-3)', padding: 2, display: 'grid', placeItems: 'center' }}
-                      aria-label="Limpiar búsqueda"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {cats.length > 1 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
-                  {(['all', ...cats] as string[]).map(cat => {
-                    const active = interestCategory === cat
-                    const meta = cat === 'all' ? null : getCategoryMeta(cat)
-                    return (
-                      <button
-                        key={cat}
-                        onClick={() => setInterestCategory(cat)}
-                        style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 6,
-                          padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 600,
-                          border: active ? '1.5px solid var(--primary)' : '1px solid var(--border-1)',
-                          background: active ? 'var(--primary-tint)' : 'white',
-                          color: active ? 'var(--primary-dark)' : 'var(--fg-2)',
-                          cursor: 'pointer', transition: 'all .15s var(--ease)',
-                        }}
-                      >
-                        {meta && <span style={{ color: meta.color, display: 'inline-flex' }}>{meta.icon}</span>}
-                        {cat === 'all' ? 'Todas' : meta!.label}
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-
-              {filtered.length === 0 ? (
-                <div style={{
-                  padding: 28, borderRadius: 14, border: '1px dashed var(--border-1)',
-                  background: 'var(--surface)', textAlign: 'center', color: 'var(--fg-3)', fontSize: 13,
-                }}>
-                  Ningún interés coincide con “{interestQuery}”.
-                </div>
-              ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
-                  {filtered.map(({ t, originalIdx }) => (
-                    <TopicPick
-                      key={t.id}
-                      title={t.title}
-                      category={t.category}
-                      variant={originalIdx === 0 ? 'featured' : 'interest'}
-                      position={originalIdx + 1}
-                      onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        })()}
-
-        {/* Tema libre */}
-        <div style={{ marginBottom: 36 }}>
-          <SectionTitle eyebrow="Tema libre" hint="Sin guión predefinido" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
-            <TopicPick
-              title="Sorprendéme · El tutor elige"
-              category="general"
-              variant="free"
-              onClick={() => { setSelectedTopicId(null); beginSession(null) }}
-            />
-          </div>
-        </div>
-
-        {/* Catálogo */}
-        {others.length > 0 && (
-          <div>
-            <SectionTitle eyebrow="Explorá del catálogo" hint={`${others.length} tópicos disponibles`} />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
-              {others.slice(0, 12).map((t) => (
-                <TopicPick
-                  key={t.id} title={t.title} category={t.category}
-                  hot={t.is_hot}
-                  onClick={() => { setSelectedTopicId(t.id); beginSession(t.id) }}
-                />
-              ))}
-            </div>
-            {others.length > 12 && (
-              <div style={{ marginTop: 16, fontSize: 13, color: 'var(--fg-3)', textAlign: 'center' }}>
-                + {others.length - 12} tópicos más · agregalos a tus intereses en <Link to="/app/perfil" style={{ color: 'var(--primary-dark)', fontWeight: 600 }}>Perfil</Link>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <PracticarGalaxy
+        userName={userName}
+        interests={interests.map(i => ({ id: i.id, title: i.title, category: i.category }))}
+        onPick={(topicId) => beginSession(topicId)}
+        onSurprise={() => { if (surprise) beginSession(surprise.id); else beginSession(null) }}
+        onFreeTopic={(text) => beginSession(null, text)}
+      />
     )
   }
+
 
   return (
     <>
