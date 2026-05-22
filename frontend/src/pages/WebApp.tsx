@@ -2330,7 +2330,54 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
           <div className="av">{initial}</div>
           <div style={{ flex: 1 }}>
             <h2>{u.nombre} {u.apellido}</h2>
-            <div className="meta">{u.target_language === 'en' ? 'Inglés' : u.target_language} · {u.cefr_level} · {profile.total_sessions} charlas</div>
+            <div className="meta">{u.target_language === 'en' ? 'Inglés' : u.target_language === 'pt' ? 'Portugués' : u.target_language === 'it' ? 'Italiano' : u.target_language === 'fr' ? 'Francés' : u.target_language === 'de' ? 'Alemán' : u.target_language} · {u.cefr_level} · {profile.total_sessions} charlas</div>
+          </div>
+        </div>
+
+        <div className="profile-card">
+          <h3>¿Qué idioma querés aprender?</h3>
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 14,
+          }}>
+            {[
+              { code: 'en', label: 'Inglés', short: 'EN', color: '#1E4FB0' },
+              { code: 'pt', label: 'Portugués', short: 'PT', color: '#65A30D' },
+              { code: 'it', label: 'Italiano', short: 'IT', color: '#16A34A' },
+              { code: 'fr', label: 'Francés', short: 'FR', color: '#3B82F6' },
+              { code: 'de', label: 'Alemán', short: 'DE', color: '#0E1614' },
+            ].map((opt) => {
+              const active = u.target_language === opt.code
+              return (
+                <button
+                  key={opt.code}
+                  onClick={async () => {
+                    if (active) return
+                    await meAPI.updateSettings({ target_language: opt.code })
+                    toast.success(`Idioma: ${opt.label}`)
+                    onChange()
+                  }}
+                  style={{
+                    flex: '1 1 140px', minWidth: 130,
+                    padding: '14px 16px', borderRadius: 14,
+                    border: active ? '2px solid var(--primary)' : '1px solid var(--border-2)',
+                    background: active ? 'var(--primary-tint)' : 'var(--surface)',
+                    color: active ? 'var(--primary-dark)' : 'var(--fg-1)',
+                    fontSize: 15, fontWeight: 700, cursor: active ? 'default' : 'pointer',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                    boxShadow: active ? '0 4px 14px rgba(0,179,126,.18)' : 'none',
+                    transition: 'all 180ms',
+                  }}
+                >
+                  <span style={{
+                    width: 38, height: 38, borderRadius: '50%',
+                    background: opt.color, color: 'white',
+                    display: 'grid', placeItems: 'center',
+                    fontSize: 12, fontWeight: 800, letterSpacing: '.04em',
+                  }}>{opt.short}</span>
+                  <span>{opt.label}</span>
+                </button>
+              )
+            })}
           </div>
         </div>
 
