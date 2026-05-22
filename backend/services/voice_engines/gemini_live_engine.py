@@ -18,6 +18,40 @@ from services.voice_engine import VoiceEngine, VoiceEngineContext
 log = logging.getLogger(__name__)
 
 
+async def _maybe_detect_preference(*, user_id, user_text, target_lang, google_ws, client_ws):
+    """Wrapper que llama al detector y, si aplicó cambio, notifica al cliente."""
+    from services.preference_detector import detect_and_apply
+
+    async def send_system_update(text: str) -> None:
+        # Inyectamos un mensaje system al Gemini Live para que el tutor adapte el próximo turno
+        await google_ws.send(json.dumps({
+            "clientContent": {
+                "turns": [{"role": "user", "parts": [{"text": text}]}],
+                "turnComplete": True,
+            }
+        }))
+
+    try:
+        result = await detect_and_apply(
+            user_id=user_id,
+            user_text=user_text,
+            target_lang=target_lang,
+            send_system_update=send_system_update,
+        )
+        if result:
+            # Notificar al frontend para mostrar toast
+            try:
+                await client_ws.send_json({
+                    "type": "preference_applied",
+                    "changes": result["changes"],
+                    "confirmation": result.get("confirmation", ""),
+                })
+            except Exception:
+                pass
+    except Exception as e:
+        log.exception("preference detector failed: %s", e)
+
+
 LIVE_API_URL = (
     "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent"
 )
@@ -184,9 +218,20 @@ class GeminiLiveEngine(VoiceEngine):
                         await ws.send_json({"type": "transcript_chunk", "who": "user", "text": input_tr["text"]})
 
                     if sc.get("turnComplete"):
+                        # Capturamos lo último del user ANTES de flush
+                        last_user_text = "".join(user_buf).strip()
                         # Consolidar buffers en UNA entrada por hablante en el transcript final
                         _flush_buffers()
                         await ws.send_json({"type": "turn_complete"})
+                        # Detección de preferencias del alumno (no bloqueante)
+                        if last_user_text and len(last_user_text) >= 6:
+                            asyncio.create_task(_maybe_detect_preference(
+                                user_id=ctx.user_id,
+                                user_text=last_user_text,
+                                target_lang=ctx.target_language or "es",
+                                google_ws=google_ws,
+                                client_ws=ws,
+                            ))
             except websockets.ConnectionClosed:
                 pass
             except Exception as e:

@@ -166,11 +166,16 @@ PEDAGOGY_PRESETS = {
 }
 
 
-def _template_block(t: Template) -> str:
-    """Construye el bloque del prompt desde la config v3 completa del template."""
-    response_len = getattr(t, "response_length", "short")
-    warmth = getattr(t, "warmth_level", 3)
-    correction = getattr(t, "correction_mode", "recast")
+def _template_block(t: Template, user_overrides: Optional[dict] = None) -> str:
+    """Construye el bloque del prompt desde la config v3 completa del template.
+
+    Si user_overrides está presente (user.user_preferences detectadas en vivo),
+    pisa las keys correspondientes del template.
+    """
+    overrides = user_overrides or {}
+    response_len = overrides.get("response_length") or getattr(t, "response_length", "short")
+    warmth = overrides.get("warmth_level") or getattr(t, "warmth_level", 3)
+    correction = overrides.get("correction_mode") or getattr(t, "correction_mode", "recast")
     opening = getattr(t, "opening_style", "direct")
     talk_ratio = getattr(t, "tutor_talk_ratio", 25)
     proactive_q = getattr(t, "proactive_questions", True)
@@ -233,7 +238,8 @@ def build_super_prompt(
     target = user.target_language or "en"
     target_lang_name = {"en": "English", "pt": "Portuguese", "it": "Italian"}.get(target, target)
 
-    template_block = _template_block(template) if template else _fallback_template_block()
+    user_overrides = getattr(user, "user_preferences", None) or {}
+    template_block = _template_block(template, user_overrides) if template else _fallback_template_block()
 
     user_block = (
         f"EL ALUMNO\n"

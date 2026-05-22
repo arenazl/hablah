@@ -17,12 +17,20 @@ export interface TranscriptLine {
   text: string
 }
 
+export interface PreferenceChanges {
+  correction_mode?: string
+  response_length?: string
+  warmth_level?: number
+}
+
 export interface UseLiveVoiceOptions {
   onTranscript?: (line: TranscriptLine) => void
   onError?: (err: Error) => void
   onAudioLevel?: (level: number) => void
   /** Array de frecuencias 0..1 del audio del tutor (real-time FFT). Para waveform en vivo. */
   onAudioFrequencies?: (bins: Float32Array) => void
+  /** Llamado cuando el detector detecta y persiste una preferencia del alumno. */
+  onPreferenceApplied?: (changes: PreferenceChanges, confirmation: string) => void
 }
 
 export type LiveStatus = 'idle' | 'connecting' | 'listening' | 'speaking' | 'error' | 'ended'
@@ -284,6 +292,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
               if (lastUser) optsRef.current.onTranscript?.(lastUser)
               return prev
             })
+          } else if (msg.type === 'preference_applied') {
+            // El detector detectó que el alumno expresó una preferencia
+            // (corrige menos / más corto / etc) y ya la aplicó al backend.
+            optsRef.current.onPreferenceApplied?.(msg.changes, msg.confirmation)
           } else if (msg.type === 'error') {
             optsRef.current.onError?.(new Error(msg.error || 'live error'))
             setStatus('error')

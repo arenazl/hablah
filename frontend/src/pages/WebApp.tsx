@@ -995,6 +995,13 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       }
     },
     onError: (e) => toast.error(e.message),
+    onPreferenceApplied: (changes, confirmation) => {
+      const parts: string[] = []
+      if (changes.correction_mode) parts.push(`corrección: ${changes.correction_mode}`)
+      if (changes.response_length) parts.push(`largo: ${changes.response_length}`)
+      if (changes.warmth_level) parts.push(`calidez: ${changes.warmth_level}/5`)
+      toast.success(confirmation || `Preferencia guardada (${parts.join(' · ')})`)
+    },
   })
 
   const beginSession = useCallback(async (topicId: number | null, freeTopic?: string) => {

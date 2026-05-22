@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Enum as SAEnum
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON, Enum as SAEnum
 from sqlalchemy.sql import func
 import enum
 
@@ -41,5 +41,13 @@ class User(Base):
     audio_retention_days = Column(Integer, nullable=False, default=30)
 
     plan = Column(String(40), nullable=False, default="free")  # free, pro, bootcamp
+
+    # Preferencias aprendidas en vivo durante las charlas (override del template).
+    # El user dice "corrige menos" en voz alta → un detector lo persiste aquí
+    # y se aplica en el super_prompt de la próxima sesión. Keys posibles:
+    #   correction_mode: "none" | "recast" | "explicit_soft" | "explicit_strict"
+    #   response_length: "terse" | "short" | "medium" | "long"
+    #   warmth_level: 1..5
+    user_preferences = Column(JSON, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
