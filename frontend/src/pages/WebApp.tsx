@@ -11,6 +11,7 @@ import { CONVO_BG_CSS } from './convo-bg.css'
 import { meAPI, sessionsAPI, topicsAPI, templatesAPI, MeProfile, SessionData, Topic, Template, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
+import { OnboardingBubbles } from '../components/OnboardingBubbles'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -61,6 +62,7 @@ export function WebApp() {
   const [profile, setProfile] = useState<MeProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [onboardingSkipped, setOnboardingSkipped] = useState(false)
   const loc = useLocation()
 
   const refresh = useCallback(async () => {
@@ -81,6 +83,9 @@ export function WebApp() {
 
   // Cerrar drawer al cambiar de ruta
   useEffect(() => { setDrawerOpen(false) }, [loc.pathname])
+
+  // Onboarding solo si user nuevo (sin intereses) y no lo saltó en esta sesión
+  const shouldOnboard = !loading && profile && profile.interests.length === 0 && !onboardingSkipped
 
   return (
     <div className="webapp-root">
@@ -106,6 +111,12 @@ export function WebApp() {
         </main>
       </div>
       <MobileBar />
+      {shouldOnboard && (
+        <OnboardingBubbles
+          onDone={() => refresh()}
+          onSkip={() => setOnboardingSkipped(true)}
+        />
+      )}
     </div>
   )
 }

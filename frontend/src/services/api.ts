@@ -176,6 +176,20 @@ export const topicsAPI = {
     }>(`/topics/${id}/generate-seeds?lang=${lang}`).then((r) => r.data),
 }
 
+/* ────────────── ONBOARDING ────────────── */
+export interface OnboardingCategory { slug: string; title: string; color: string }
+export interface OnboardingSubcategory { slug: string; title: string; match: string[] }
+export interface OnboardingTopic { id: number; slug: string; title: string; category: string; is_hot: boolean }
+
+export const onboardingAPI = {
+  categories: () =>
+    api.get<{ categories: OnboardingCategory[] }>('/onboarding/categories').then((r) => r.data.categories),
+  subcategories: (catSlug: string) =>
+    api.get<{ subcategories: OnboardingSubcategory[] }>(`/onboarding/subcategories/${catSlug}`).then((r) => r.data.subcategories),
+  topics: (catSlug: string, subSlug: string) =>
+    api.get<{ topics: OnboardingTopic[] }>(`/onboarding/topics/${catSlug}/${subSlug}`).then((r) => r.data.topics),
+}
+
 /* ────────────── SESSIONS ────────────── */
 export interface SessionStart {
   session_id: number
