@@ -331,8 +331,8 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
             const color = colorForTopic(topic.id)
             const driftIdx = i % 4
             const driftDur = 7 + (i % 6) * 1.2
-            const orbSize = i === 0 ? 'lg' : 'md'  // El primero más grande (top interest)
-            const sizePx = orbSize === 'lg' ? 180 : 110
+            const orbSize = 'md' as const  // Todos iguales - galaxia uniforme
+            const sizePx = 140
             const pseudoAudio = 0.4 + ((i * 0.13) % 0.45)
 
             const isSelected = selectedId === topic.id
@@ -365,14 +365,14 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
                   className="pg-orb-label"
                   style={{
                     color: 'white',
-                    fontSize: orbSize === 'lg' ? 14 : 12,
+                    fontSize: 13,
                     fontWeight: 700,
                     textAlign: 'center',
                     textShadow: '0 2px 8px rgba(0,0,0,.85), 0 0 4px rgba(0,0,0,.9)',
-                    opacity: orbSize === 'lg' ? 1 : 0.65,
+                    opacity: 0.85,
                     transform: 'translateY(4px)',
                     pointerEvents: 'none',
-                    maxWidth: sizePx + 30,
+                    maxWidth: sizePx + 40,
                     lineHeight: 1.2,
                     letterSpacing: '-.01em',
                   }}
