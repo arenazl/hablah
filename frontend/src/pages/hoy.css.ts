@@ -12,6 +12,12 @@ export const HOY_CSS = `
   --hp-fg-4:#5A625F;
   --hp-shadow-card:0 1px 2px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.4);
 }
+/* Hero verde más oscuro/profundo en dark */
+[data-theme="dark"] .hoy-page .hp-hero,
+[data-theme="dark"] .webapp-root .hoy-page .hp-hero {
+  background: radial-gradient(120% 140% at 0% 0%, #035C3F 0%, #044A33 38%, #062B22 78%, #031813 100%);
+  box-shadow: 0 8px 28px rgba(0,0,0,.5);
+}
 .hoy-page{
   --hp-green:#00B37E;
   --hp-green-600:#00A172;
