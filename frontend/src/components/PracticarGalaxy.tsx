@@ -57,26 +57,27 @@ const STYLES = `
 .pg-stage.is-selecting .pg-footer { opacity: 0; transition: opacity 320ms ease; pointer-events: none; }
 `
 
-// Mapeo de categoria slug -> color (mismo que onboarding y backoffice)
-const CATEGORY_COLORS: Record<string, string> = {
-  musica: '#5B21B6',
-  peliculas: '#7C3AED',
-  deportes: '#C2410C',
-  videojuegos: '#DB2777',
-  comida: '#B91C1C',
-  animales: '#65A30D',
-  viajes: '#3B82F6',
-  tech: '#1E4FB0',
-  ciencia: '#0891B2',
-  arte: '#8B5CF6',
-  fitness: '#10B981',
-  moda: '#EC4899',
-  // fallback para categorias legacy del catalogo
-  lifestyle: '#10B981',
-  diseno: '#EC4899',
-  negocios: '#0E1614',
-  gastronomia: '#B91C1C',
-  general: '#475569',
+// Paleta vibrante de 12 colores — se asigna por hash de topic.id
+// garantizando que cada orb tenga color distinto, sin importar la categoría.
+const VIBRANT_PALETTE: readonly string[] = [
+  '#FF5E7E', // coral rosa
+  '#FF8A4C', // naranja vivo
+  '#FFC83D', // amarillo saturado
+  '#A8E60E', // lima brillante
+  '#22D67A', // verde vibrante
+  '#1AC5A0', // teal
+  '#22D3EE', // cyan eléctrico
+  '#3B82F6', // azul vivo
+  '#7C5CFF', // violeta
+  '#C026D3', // magenta
+  '#EC4899', // rosa fuerte
+  '#FF4D6D', // fucsia
+]
+
+function colorForTopic(topicId: number): string {
+  // Hash simple para distribuir parejo en la paleta
+  const idx = Math.abs((topicId * 2654435761) >>> 0) % VIBRANT_PALETTE.length
+  return VIBRANT_PALETTE[idx]
 }
 
 interface InterestTopic {
@@ -327,7 +328,7 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
         }}>
           {visibleInterests.map((topic, i) => {
             const pos = positions[i]
-            const color = CATEGORY_COLORS[topic.category] || '#00B37E'
+            const color = colorForTopic(topic.id)
             const driftIdx = i % 4
             const driftDur = 7 + (i % 6) * 1.2
             const orbSize = i === 0 ? 'lg' : 'md'  // El primero más grande (top interest)
@@ -355,7 +356,7 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
                     status="speaking"
                     audioLevel={pseudoAudio}
                     color={color as `#${string}`}
-                    colorShift={0.06}
+                    colorShift={0.14}
                     themeMode="dark"
                     size={orbSize as 'lg' | 'md'}
                   />
