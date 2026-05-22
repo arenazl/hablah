@@ -13,8 +13,9 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Habi, KidsLayout, MOCK_KID } from './_shared'
+import { Habi, KidsLayout } from './_shared'
 import { KIDS_AGE_KEY, type KidsAgeGroup } from './KidsAgeSelect'
+import { useKid, KIDS_RANKS } from './KidsContext'
 
 interface KidsTopic {
   id: number
@@ -240,14 +241,6 @@ const HOME_CSS = `
 }
 `
 
-const RANKS = [
-  { slug: 'curioso', name: 'Curioso' },
-  { slug: 'explorador', name: 'Explorador' },
-  { slug: 'aventurero', name: 'Aventurero' },
-  { slug: 'capitan', name: 'Capitán' },
-  { slug: 'embajador', name: 'Embajador' },
-]
-
 const AGE_LABEL: Record<KidsAgeGroup, string> = {
   mini: 'Mini · 4-7 años',
   junior: 'Junior · 7-10 años',
@@ -276,29 +269,35 @@ const MOCK_STICKERS: StickerSlot[] = [
 
 export function KidsHome() {
   const navigate = useNavigate()
+  const { kid: profile } = useKid()
   const [topics, setTopics] = useState<KidsTopic[]>([])
-  const [ageGroup, setAgeGroup] = useState<KidsAgeGroup | null>(null)
+  const ageGroup = profile.age_group
 
   useEffect(() => {
     const stored = localStorage.getItem(KIDS_AGE_KEY) as KidsAgeGroup | null
-    if (!stored || !['mini', 'junior', 'tween'].includes(stored)) {
+    // Si no hay perfil real (id null) y no hay localStorage -> selector
+    if (!profile.is_real && (!stored || !['mini', 'junior', 'tween'].includes(stored))) {
       navigate('/kids/seleccionar-edad', { replace: true })
       return
     }
-    setAgeGroup(stored)
 
-    fetch(`/api/kids/topics?age_group=${stored}`)
+    fetch(`/api/kids/topics?age_group=${ageGroup}`)
       .then((r) => (r.ok ? r.json() : []))
       .then(setTopics)
       .catch(() => setTopics([]))
-  }, [navigate])
+  }, [navigate, ageGroup, profile.is_real])
 
-  const kid = MOCK_KID
   const featured = topics[0]
-  const currentRankIdx = RANKS.findIndex((r) => r.slug === kid.rank_slug)
-
-  if (!ageGroup) {
-    return null // redirigiendo
+  const currentRankIdx = KIDS_RANKS.findIndex((r) => r.slug === profile.rank_slug)
+  // kid local para uso en JSX (matches el shape original)
+  const kid = {
+    name: profile.name,
+    coins: profile.coins,
+    rank_slug: profile.rank_slug,
+    rank_label: (KIDS_RANKS.find(r => r.slug === profile.rank_slug)?.name) ?? 'Curioso',
+    progress_pct: 0,
+    next_rank_label: '',
+    charlas_to_next: 0,
   }
 
   return (
@@ -498,13 +497,13 @@ export function KidsHome() {
           <div className="kids-path" style={{ marginTop: 18 }}>
             <h4 className="kids-path-h">Mi camino</h4>
             <p className="kids-path-sub">Cada nivel te abre temas nuevos.</p>
-            <div className="kids-ranks-line"><i style={{ width: `${(currentRankIdx / (RANKS.length - 1)) * 100}%` }} /></div>
+            <div className="kids-ranks-line"><i style={{ width: `${(currentRankIdx / (KIDS_RANKS.length - 1)) * 100}%` }} /></div>
             <div className="kids-ranks">
-              {RANKS.map((r, i) => {
+              {KIDS_RANKS.map((r, i) => {
                 const klass = i < currentRankIdx ? 'done' : i === currentRankIdx ? 'now' : 'next'
                 return (
                   <div key={r.slug} className={`kids-rank ${klass}`}>
-                    <div className="r-ico">{i === RANKS.length - 1 ? '★' : i + 1}</div>
+                    <div className="r-ico">{i === KIDS_RANKS.length - 1 ? '★' : i + 1}</div>
                     <div className="r-name">{r.name}</div>
                   </div>
                 )

@@ -9,6 +9,7 @@
  */
 import { useEffect, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useKid, KIDS_RANKS } from './KidsContext'
 
 export const KIDS_CSS = `
 .kids-root {
@@ -302,7 +303,9 @@ export const KIDS_NAV: KidsNavItem[] = [
 ]
 
 // ──────────────────────────────────────────────────────────────
-// Datos mock del kid actual (mientras no conectamos /api/kids/me)
+// Datos del kid actual (preview / fallback). El contexto real
+// vive en KidsContext.tsx. KidsState es el shape que esperan los
+// componentes de UI.
 // ──────────────────────────────────────────────────────────────
 export interface KidsState {
   name: string
@@ -314,8 +317,9 @@ export interface KidsState {
   charlas_to_next: number
 }
 
+// Solo para usar en pantallas preview que NO usan KidsContext
 export const MOCK_KID: KidsState = {
-  name: 'Mateo',
+  name: 'Explorador',
   coins: 248,
   rank_slug: 'explorador',
   rank_label: 'Explorador',
@@ -448,6 +452,34 @@ export function KidsMobileTabbar() {
 }
 
 // ──────────────────────────────────────────────────────────────
+// Adapter: convierte KidProfile (context) -> KidsState (UI shape)
+// ──────────────────────────────────────────────────────────────
+function profileToState(profile: { name: string; coins: number; rank_slug: string; charlas_count: number }): KidsState {
+  const rankIdx = KIDS_RANKS.findIndex((r) => r.slug === profile.rank_slug)
+  const current = KIDS_RANKS[rankIdx] ?? KIDS_RANKS[0]
+  const next = KIDS_RANKS[rankIdx + 1]
+
+  let progress_pct = 100
+  let charlas_to_next = 0
+  if (next) {
+    const span = next.minCharlas - current.minCharlas
+    const done = Math.max(0, profile.charlas_count - current.minCharlas)
+    progress_pct = Math.min(100, Math.round((done / span) * 100))
+    charlas_to_next = Math.max(0, next.minCharlas - profile.charlas_count)
+  }
+
+  return {
+    name: profile.name,
+    coins: profile.coins,
+    rank_slug: profile.rank_slug,
+    rank_label: current.name,
+    progress_pct,
+    next_rank_label: next?.name ?? '¡Máximo!',
+    charlas_to_next,
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
 // Layout
 // ──────────────────────────────────────────────────────────────
 export function KidsLayout({ children }: { children: ReactNode }) {
@@ -464,6 +496,9 @@ export function KidsLayout({ children }: { children: ReactNode }) {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
   }, [pathname])
 
+  const { kid: profile } = useKid()
+  const kid = profileToState(profile)
+
   return (
     <div className="kids-root">
       <style>{KIDS_CSS}
@@ -472,10 +507,10 @@ export function KidsLayout({ children }: { children: ReactNode }) {
         `}
       </style>
 
-      <KidsMobileTopbar kid={MOCK_KID} />
+      <KidsMobileTopbar kid={kid} />
 
       <div className="kids-app">
-        <KidsSidebar kid={MOCK_KID} />
+        <KidsSidebar kid={kid} />
         <main className="kids-main">{children}</main>
       </div>
 

@@ -10,6 +10,8 @@ import { Pricing } from './pages/landing/Pricing'
 import { Faq } from './pages/landing/Faq'
 import { KidsHome } from './pages/kids/KidsHome'
 import { KidsAgeSelect } from './pages/kids/KidsAgeSelect'
+import { KidsTopicsAll, KidsCollection, KidsAdventures, KidsProfile } from './pages/kids/KidsPages'
+import { KidsProvider } from './pages/kids/KidsContext'
 import { WebApp } from './pages/WebApp'
 import { Backoffice } from './pages/Backoffice'
 
@@ -64,9 +66,13 @@ export default function App() {
         <Route path="/topicos" element={<Topics />} />
         <Route path="/precios" element={<Pricing />} />
         <Route path="/faq" element={<Faq />} />
-        <Route path="/kids" element={<KidsHome />} />
+        <Route path="/kids" element={<KidsProvider><KidsHome /></KidsProvider>} />
         <Route path="/kids/seleccionar-edad" element={<KidsAgeSelect />} />
-        <Route path="/kids/*" element={<KidsHome />} />
+        <Route path="/kids/topicos" element={<KidsProvider><KidsTopicsAll /></KidsProvider>} />
+        <Route path="/kids/coleccion" element={<KidsProvider><KidsCollection /></KidsProvider>} />
+        <Route path="/kids/aventuras" element={<KidsProvider><KidsAdventures /></KidsProvider>} />
+        <Route path="/kids/perfil" element={<KidsProvider><KidsProfile /></KidsProvider>} />
+        <Route path="/kids/*" element={<KidsProvider><KidsHome /></KidsProvider>} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/app/*"

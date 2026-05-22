@@ -13,6 +13,11 @@ import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 import { OnboardingBubbles } from '../components/OnboardingBubbles'
 import { PracticarGalaxy } from '../components/PracticarGalaxy'
+import { KidsParentSwitch } from './kids/KidsParentSwitch'
+
+function KidsParentSwitchLazy() {
+  return <KidsParentSwitch />
+}
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -45,6 +50,12 @@ const MapIcon = () => (
 const ClockIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+  </svg>
+)
+const KidsIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="9" cy="7" r="3" /><circle cx="16" cy="9" r="2.5" />
+    <path d="M3 21a6 6 0 0 1 12 0" /><path d="M14 21a4 4 0 0 1 8 0" />
   </svg>
 )
 const UserIcon = ({ size = 20 }: { size?: number }) => (
@@ -122,6 +133,7 @@ export function WebApp() {
             <Route path="/historial" element={<HistorialView />} />
             <Route path="/sesiones/:id" element={<SessionDetailView />} />
             <Route path="/perfil" element={<PerfilView profile={profile} onChange={refresh} />} />
+            <Route path="/kids" element={<KidsParentSwitchLazy />} />
           </Routes>
         </main>
       </div>
@@ -153,6 +165,7 @@ function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpe
         <SidebarItem to="/app/practicar" icon={<MicIcon />} label="Practicar" badge="DAILY" />
         <SidebarItem to="/app/mapa" icon={<MapIcon />} label="Mapa de progreso" />
         <SidebarItem to="/app/historial" icon={<ClockIcon />} label="Historial" />
+        <SidebarItem to="/app/kids" icon={<KidsIcon />} label="Modo Kids" badge="HABI" />
       </nav>
 
       {isAdmin && (
