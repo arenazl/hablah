@@ -128,11 +128,21 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches,
   )
+  const [isTablet, setIsTablet] = useState(() =>
+    typeof window !== 'undefined' &&
+    window.matchMedia('(min-width: 769px) and (max-width: 1100px)').matches,
+  )
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 768px)')
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
+    const mqMobile = window.matchMedia('(max-width: 768px)')
+    const mqTablet = window.matchMedia('(min-width: 769px) and (max-width: 1100px)')
+    const onM = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    const onT = (e: MediaQueryListEvent) => setIsTablet(e.matches)
+    mqMobile.addEventListener('change', onM)
+    mqTablet.addEventListener('change', onT)
+    return () => {
+      mqMobile.removeEventListener('change', onM)
+      mqTablet.removeEventListener('change', onT)
+    }
   }, [])
 
   const handlePick = (topicId: number) => {
@@ -219,14 +229,16 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
     setZoom((z) => clampZoom(z + delta))
   }
 
-  // Mobile: 7 orbs (más espacio). Desktop: 11.
-  const maxOrbs = isMobile ? 7 : 11
+  // Mobile (<768): 7 orbs, radio amplio. Tablet (769-1100): 8 orbs, radio
+  // intermedio. Desktop (>1100): 11 orbs, radio compacto.
+  const maxOrbs = isMobile ? 7 : isTablet ? 8 : 11
   const visibleInterests = useMemo(() => interests.slice(0, maxOrbs), [interests, maxOrbs])
 
-  // Posiciones estables: spiral pattern (radio más amplio en mobile)
+  // Posiciones estables: spiral pattern. Radio mayor cuanto más chico el viewport.
+  const orbRadius = isMobile ? 0.46 : isTablet ? 0.44 : 0.38
   const positions = useMemo(
-    () => generatePositions(visibleInterests.length, isMobile ? 0.46 : 0.38),
-    [visibleInterests.length, isMobile],
+    () => generatePositions(visibleInterests.length, orbRadius),
+    [visibleInterests.length, orbRadius],
   )
 
   // Stars de fondo (250 puntos estáticos pseudo-random)
@@ -332,7 +344,8 @@ export function PracticarGalaxy({ userName, interests, onPick, onSurprise, onFre
             const driftIdx = i % 4
             const driftDur = 7 + (i % 6) * 1.2
             const orbSize = 'md' as const  // Todos iguales - galaxia uniforme
-            const sizePx = 140
+            // En tablet bajamos el tamaño un poco para que no se solapen
+            const sizePx = isMobile ? 130 : isTablet ? 115 : 140
             const pseudoAudio = 0.4 + ((i * 0.13) % 0.45)
 
             const isSelected = selectedId === topic.id
