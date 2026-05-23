@@ -2021,7 +2021,7 @@ function MapaView({ profile }: { profile: MeProfile | null }) {
             <h4>Tu próxima estación está bloqueada hasta consolidar un error recurrente</h4>
             <p>Detectamos un patrón repetido en <b>{activeRoute.topic.title}</b>. Cuando lo limpies, se libera la siguiente estación.</p>
           </div>
-          <button className="mp-btn-dark" onClick={() => nav('/app/practicar')}>Empezar rescate →</button>
+          <button className="mp-btn-dark" onClick={() => nav(`/app/practicar?topic=${activeRoute.topic.id}`)}>Empezar rescate →</button>
         </div>
       )}
 
@@ -2042,7 +2042,11 @@ function MapaView({ profile }: { profile: MeProfile | null }) {
 
           <div className="mp-routes">
             {routes.map((r) => (
-              <RouteCard key={r.topic.id} route={r} onContinue={() => nav('/app/practicar')} />
+              <RouteCard
+                key={r.topic.id}
+                route={r}
+                onContinue={() => nav(`/app/practicar?topic=${r.topic.id}`)}
+              />
             ))}
           </div>
 
