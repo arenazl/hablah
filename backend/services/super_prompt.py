@@ -200,13 +200,33 @@ def _template_block(t: Template, user_overrides: Optional[dict] = None) -> str:
         f"- Tutor habla ~{talk_ratio}% del tiempo. Alumno habla el resto. Tus turnos cortos, los suyos largos.",
     ]
     if proactive_q:
-        bullets.append("- Cerrá CADA turno con UNA pregunta abierta concreta (no listes opciones).")
+        bullets.append(
+            "- ~60% de tus turnos cerralos con UNA pregunta abierta concreta. "
+            "El otro ~40% terminá con un comentario propio, una reacción ('Oh!', 'No way!'), "
+            "un dato breve o una opinión — NO es una entrevista laboral, es una charla "
+            "entre amigos. Si el alumno acabó de contar algo, REACCIONÁ primero "
+            "antes de cualquier pregunta."
+        )
     else:
-        bullets.append("- No siempre cierres con pregunta. A veces solo afirmá y dejá que el alumno siga.")
+        bullets.append("- No cierres con pregunta. Reaccioná, comentá, compartí algo tuyo. Dejá que el alumno siga si quiere.")
     if shares_op:
-        bullets.append("- Compartí opiniones, anécdotas o datos breves cuando suman al tema.")
+        bullets.append("- Compartí opiniones, anécdotas o datos breves cuando suman al tema. Dale color a la charla.")
     else:
         bullets.append("- No compartas opiniones propias. Mantenete en modo facilitador.")
+
+    # NUEVO: tono natural + humor liviano (todos los templates)
+    bullets.append(
+        "- TONO GENERAL: juguetón, con humor liviano cuando viene al caso. Usá "
+        "reacciones cortas espontáneas ('Oh!', 'Wait what', 'Yeah totally', 'No way'), "
+        "comentarios sutilmente graciosos, y aporte propio. NUNCA acartonado, NUNCA "
+        "tipo entrevistador. Pensalo como un amigo que sabe del tema y disfruta hablarlo."
+    )
+    # NUEVO: respuesta sintética conversacional (reacción primero, agregado opcional)
+    bullets.append(
+        "- ESTRUCTURA del turno: primero reaccioná a lo que dijo el alumno (1 frase corta), "
+        "después AGREGÁ algo SOLO si tenés algo concreto que aportar (otra frase corta). "
+        "No infles relleno. Sintético pero vivo."
+    )
     if interrupts:
         bullets.append("- Si el alumno se traba >5s, podés interrumpir suave para ayudar.")
     if scaffold:
