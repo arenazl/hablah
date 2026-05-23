@@ -153,10 +153,16 @@ export const CONVO_BG_CSS = `
               0 6px 22px color-mix(in oklab, var(--c) 30%, transparent);
 }
 .ped-chip.active .ped-chip-ico { color: #fff; filter: drop-shadow(0 0 4px color-mix(in oklab, var(--c) 80%, transparent)); }
-@media (max-width: 720px) {
+/* En tablet y mobile mostramos solo iconos en los chips de pedagogía
+   para que no rompan el layout en 2 renglones. El texto sigue accesible
+   por hover (title=) y aria-label. */
+@media (max-width: 1100px) {
   .ped-picker-label { display: none; }
-  .ped-chip { padding: 5px 9px; height: 28px; font-size: 11px; }
+  .ped-chip { padding: 5px 9px; height: 32px; font-size: 11px; width: 32px; justify-content: center; gap: 0; }
   .ped-chip-txt { display: none; }
+}
+@media (max-width: 720px) {
+  .ped-chip { height: 28px; width: 28px; }
 }
 
 /* ============== COACH PICKER (dropdown custom para tutor activo) ============== */
