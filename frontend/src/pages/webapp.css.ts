@@ -569,15 +569,31 @@ export const WEBAPP_CSS = `
     grid-template-columns: 1fr;
     height: calc(100dvh - 64px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   }
-  .webapp-root .convo-stage { padding: 14px 16px; gap: 8px; }
-  /* Espacio arriba para que el header NO se solape con los pickers absolutos (ped + bg) */
-  .webapp-root .convo-header { margin-bottom: 12px; padding-top: 48px; }
-  .webapp-root .convo-header h2 { font-size: 17px; line-height: 1.2; }
+  .webapp-root .convo-stage { padding: 14px 16px 16px; gap: 8px; position: relative; }
+  /* En mobile el header es columna - el boton Terminar se va a position absolute
+     para que no compita por horizontal space con el titulo + pickers */
+  .webapp-root .convo-header { flex-direction: column; align-items: stretch; margin-bottom: 12px; padding-top: 48px; padding-right: 96px; gap: 6px; }
+  .webapp-root .convo-header-main { min-width: 0; }
+  .webapp-root .convo-header h2 { font-size: 16px; line-height: 1.2; padding-right: 0; }
   .webapp-root .convo-header .meta { flex-wrap: wrap; gap: 6px !important; }
-  .webapp-root .convo-orb { width: 200px; height: 200px; }
+  .webapp-root .convo-header .end {
+    position: absolute;
+    top: 12px; right: 12px;
+    z-index: 20;
+    padding: 7px 12px !important;
+    font-size: 12px !important;
+    font-weight: 700;
+    height: auto;
+    background: rgba(229,72,77,.18) !important;
+    color: #FF6B70 !important;
+    border: 1px solid rgba(229,72,77,.4) !important;
+    box-shadow: 0 4px 12px rgba(229,72,77,.15);
+  }
+  .webapp-root .convo-orb { width: 180px; height: 180px; }
   .webapp-root .convo-side { display: none; }
-  .webapp-root .convo-turn { padding: 0 8px; }
-  .webapp-root .convo-turn .q { font-size: 14px; line-height: 1.45; }
+  .webapp-root .convo-turn { padding: 0 8px; max-height: min(35dvh, 220px); }
+  .webapp-root .convo-turn .l { font-size: 10px; margin-bottom: 4px; }
+  .webapp-root .convo-turn .q { font-size: 14.5px; line-height: 1.45; }
   .webapp-root .map-grid { grid-template-columns: 1fr; }
   .webapp-root .stage .ball { width: 44px; height: 44px; }
   .webapp-root .history-row { grid-template-columns: 64px 1fr auto; gap: 10px; }
