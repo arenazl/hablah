@@ -8,34 +8,70 @@ Stack: **FastAPI** (Python 3.12) + **aiomysql** (Aiven) en backend · **React 18
 
 ## ⚠️ DEPLOY — leer antes de tocar nada
 
-**Netlify NO auto-deploya desde GitHub.** El repo no está linkeado al hosting. Push a `main` **no** dispara build. Cada cambio frontend hay que deployarlo manualmente con la CLI:
+**TL;DR — copy/paste para deploy completo (front + back):**
 
 ```powershell
-cd frontend
-npm run build
-netlify deploy --prod --dir=dist
-```
-
-Tarda ~2 min total (build ~10s, upload ~60s, propagación ~30s). El comando usa el `netlify.toml` de la raíz (que ya define `base=frontend`, `publish=dist`, etc.).
-
-**Backend (Heroku)** sí auto-deploya desde `main` — solo `git push origin main` y Heroku rebuildea.
-
-### Atajo: deploy completo (front + push)
-
-Si tocaste front y back en el mismo cambio:
-
-```powershell
+# 1) commit + push a GitHub (solo guarda código, NO deploya nada)
 git add -A; git commit -m "feat(...): ..."; git push origin main
+
+# 2) deploy backend → Heroku
+git push heroku main
+
+# 3) deploy frontend → Netlify
 cd frontend; npm run build; netlify deploy --prod --dir=dist
 ```
 
-### Si querés que Netlify auto-deployee desde GitHub (recomendado)
+Total ~3-4 min. Después de esto, https://hablah.com.ar y https://hablah-api-abcaf6c43a5d.herokuapp.com tienen la versión nueva.
 
-1. https://app.netlify.com/projects/hablah-app/configuration/deploys
-2. "Link site to Git" → conectar el repo `arenazl/hablah`
-3. Branch: `main`, Build command y publish dir ya están en `netlify.toml`
+### Por qué hay que hacerlo a mano (estado actual)
 
-Después de eso, `git push origin main` deploya solo y se puede borrar el paso manual de arriba.
+| Plataforma | Auto-deploy desde GitHub | Cómo se deploya hoy |
+|------------|--------------------------|---------------------|
+| **Netlify** (`hablah-app`, front) | ❌ NO | `netlify deploy --prod --dir=dist` desde `frontend/` |
+| **Heroku** (`hablah-api`, back) | ❌ NO | `git push heroku main` (remote ya configurado) |
+| **GitHub Actions** | ❌ NO existen | No hay `.github/workflows/` — nada corre en CI |
+
+**El `git push origin main` solo actualiza GitHub. NO dispara deploy en ningún lado.** Si solo pusheás a `origin`, los sitios siguen mostrando la versión vieja.
+
+### Detalle por plataforma
+
+#### Frontend — Netlify (manual via CLI)
+
+```powershell
+cd frontend
+npm run build                            # vite build + prerender, ~10s
+netlify deploy --prod --dir=dist         # upload + activate, ~60-90s
+```
+
+- Site ID: `f7daf480-dced-4ad5-89ab-bbb00024fd59` (proyecto `hablah-app`)
+- Config en [netlify.toml](netlify.toml) de la raíz: `base=frontend`, `publish=dist`, `command=npm install && npm run build`, redirect `/api/*` → Heroku
+- Login CLI: `netlify login` (ya logueado como `arenazl@gmail.com`)
+- Status: `netlify status` desde la raíz del repo
+- Ver deploy: `netlify api listSiteDeploys --data "{\"site_id\":\"f7daf480-dced-4ad5-89ab-bbb00024fd59\",\"per_page\":3}"`
+
+#### Backend — Heroku (manual via git push)
+
+```powershell
+git push heroku main      # build + release, ~60-90s
+```
+
+- App: `hablah-api` (URL externa `hablah-api-abcaf6c43a5d.herokuapp.com`)
+- Remote `heroku` ya configurado: `https://git.heroku.com/hablah-api.git`
+- Login CLI: `heroku login` (ya logueado)
+- Ver releases: `heroku releases -a hablah-api --num 5`
+- Logs en vivo: `heroku logs --tail -a hablah-api`
+- Config vars: `heroku config -a hablah-api`
+- Restart manual: `heroku restart -a hablah-api`
+
+### Opciones para automatizar (no implementadas — pendiente decidir)
+
+Si en algún momento se quiere `git push origin main` → deploy automático en ambos:
+
+1. **Netlify**: en https://app.netlify.com/projects/hablah-app/configuration/deploys → "Link site to Git" → repo `arenazl/hablah` → branch `main`. El `netlify.toml` ya está listo, no requiere cambios.
+2. **Heroku**: en el dashboard del app → tab "Deploy" → "Deployment method: GitHub" → conectar repo → habilitar "Automatic deploys" en `main`.
+3. **GitHub Actions** (alternativa unificada): crear `.github/workflows/deploy.yml` que dispare ambos deploys en cada push a `main`. Requiere guardar `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, `HEROKU_API_KEY` y `HEROKU_APP_NAME` como secrets del repo.
+
+Cualquiera de los 3 elimina el paso manual. Mientras no se decida, el flujo actual es el del TL;DR arriba.
 
 ---
 
