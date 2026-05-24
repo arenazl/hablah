@@ -3,6 +3,7 @@ import { useNavigate, Navigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ArrowRight, Mic, Languages, Flame } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 
 const HABLAH_GREEN = '#00B37E'
 const HABLAH_GREEN_DARK = '#008F63'
@@ -15,6 +16,19 @@ export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Orb del panel izquierdo: oscilación suave del audioLevel para que
+  // se sienta vivo (no estático). Cambia cada 1.8s con transición lenta.
+  const [orbLevel, setOrbLevel] = useState(0.5)
+  useEffect(() => {
+    const tick = () => {
+      // Valores random suaves entre 0.32 y 0.72 — variación orgánica
+      const next = 0.32 + Math.random() * 0.4
+      setOrbLevel(next)
+    }
+    const id = window.setInterval(tick, 1800)
+    return () => window.clearInterval(id)
+  }, [])
 
   useEffect(() => {
     if (document.getElementById('hablah-google-fonts')) return
@@ -66,6 +80,39 @@ export function Login() {
           className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none"
           style={{ background: `radial-gradient(circle, ${HABLAH_GREEN}33, transparent)` }}
         />
+
+        {/* Orb decorativo - flota arriba derecha con oscilacion suave */}
+        <div
+          className="absolute pointer-events-none login-orb-float"
+          style={{
+            top: '8%',
+            right: '8%',
+            width: 'min(380px, 32vw)',
+            height: 'min(380px, 32vw)',
+            opacity: 0.85,
+            mixBlendMode: 'screen',
+          }}
+        >
+          <AgentAudioVisualizerAura
+            status="speaking"
+            audioLevel={orbLevel}
+            color={HABLAH_GREEN as `#${string}`}
+            colorShift={0.12}
+            themeMode="dark"
+            size="lg"
+          />
+        </div>
+        <style>{`
+          @keyframes login-orb-drift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33%      { transform: translate(-14px, 10px) rotate(2deg); }
+            66%      { transform: translate(8px, -12px) rotate(-1.5deg); }
+          }
+          .login-orb-float { animation: login-orb-drift 14s ease-in-out infinite; }
+          @media (prefers-reduced-motion: reduce) {
+            .login-orb-float { animation: none; }
+          }
+        `}</style>
 
         {/* Logo header */}
         <div className="relative flex items-center gap-3 mb-auto">
