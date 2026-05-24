@@ -61,7 +61,31 @@ async def start_session(
     # Importar acá para evitar ciclos
     from services.super_prompt import build_super_prompt
 
-    super_prompt = build_super_prompt(user=current, template=template, topic=topic, free_topic=payload.free_topic)
+    # Si el alumno eligió free_topic (texto libre tipo "cocina mediterránea",
+    # "estar soltero a los 40"), pre-generamos un brief narrativo con Gemini Flash.
+    # Esto le da al tutor ángulos concretos, hooks y opening line natural —
+    # para que la charla NO arranque con preguntas robóticas tipo "tell me about X".
+    # Capa de "creatividad conversacional" de Habláh. Ver services/topic_brief.py.
+    topic_brief = None
+    if payload.free_topic and payload.free_topic.strip() and not topic:
+        from services.topic_brief import build_topic_brief
+        age_group = getattr(current, "age_group", None)
+        is_kid = bool(age_group) or bool(getattr(current, "parent_user_id", None))
+        topic_brief = await build_topic_brief(
+            free_topic=payload.free_topic,
+            cefr=current.cefr_level or "B1",
+            target_lang=current.target_language or "en",
+            base_lang=current.base_language or "es",
+            is_kid=is_kid,
+        )
+
+    super_prompt = build_super_prompt(
+        user=current,
+        template=template,
+        topic=topic,
+        free_topic=payload.free_topic,
+        topic_brief=topic_brief,
+    )
     voice_id = template_voice_for_lang(template, current.target_language, user=current)
 
     return {

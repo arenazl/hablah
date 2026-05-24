@@ -425,6 +425,7 @@ def build_super_prompt(
     topic: Optional[Topic],
     recent_errors: Optional[list[dict]] = None,
     free_topic: Optional[str] = None,
+    topic_brief: Optional[dict] = None,
 ) -> str:
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
@@ -475,8 +476,18 @@ def build_super_prompt(
         topic_block = (
             f"TÓPICO DE HOY (texto libre del alumno)\n"
             f"- El alumno escribió: \"{free_topic.strip()}\".\n"
-            f"- Arrancá la charla EXACTAMENTE sobre eso. Hacé una pregunta abierta y específica sobre lo que mencionó."
+            f"- Arrancá la charla EXACTAMENTE sobre eso. NO arranques con preguntas vacías\n"
+            f"  tipo 'tell me about X' o 'what do you think about X' o 'what does it feel like'.\n"
+            f"  Tu primer turno debe incluir UN ángulo concreto, dato u observación específica\n"
+            f"  ANTES de preguntar."
         )
+        # Brief narrativo opcional (capa de "creatividad conversacional") generado
+        # por Gemini Flash antes de iniciar la sesión. Si está, da ángulos no
+        # obvios, hooks concretos y una opening line natural — para que el tutor
+        # NO improvise preguntas robóticas. Ver services/topic_brief.py.
+        if topic_brief:
+            from services.topic_brief import format_brief_for_prompt
+            topic_block += "\n\n" + format_brief_for_prompt(topic_brief, free_topic.strip())
     else:
         topic_block = "TÓPICO DE HOY\n- Libre. Preguntale al alumno qué le interesa charlar."
 
