@@ -16,6 +16,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Habi, KidsLayout } from './_shared'
 import { KIDS_AGE_KEY, type KidsAgeGroup } from './KidsAgeSelect'
 import { useKid, KIDS_RANKS } from './KidsContext'
+import { TopicScene, KIDS_SCENE_CSS } from './KidsTopicScenes'
 
 interface KidsTopic {
   id: number
@@ -58,54 +59,6 @@ const TOPIC_COLOR_MAP: Record<string, { bg: string; sublabel: string }> = {
   'kids-sneakers':         { bg: 'linear-gradient(135deg,#0EA5E9,#0369A1)', sublabel: 'moda urbana' },
   'kids-esports':          { bg: 'linear-gradient(135deg,#7C3AED,#5B21B6)', sublabel: 'gaming pro' },
   'kids-slang':            { bg: 'linear-gradient(135deg,#F472B6,#DB2777)', sublabel: 'memes y slang' },
-}
-
-// Iconos genéricos por categoría (sin marcas literales)
-const GENERIC_ICON = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-    <circle cx="9" cy="10" r="1" fill="currentColor" />
-    <circle cx="15" cy="10" r="1" fill="currentColor" />
-  </svg>
-)
-
-const TOPIC_ICONS: Record<string, JSX.Element> = {
-  // Mini
-  'kids-colors':           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22a10 10 0 1 1 10-10 4 4 0 0 1-4 4h-2a2 2 0 0 0-2 2 4 4 0 0 1-2 4z"/><circle cx="7" cy="11" r="1" fill="currentColor"/><circle cx="10" cy="7" r="1" fill="currentColor"/><circle cx="14" cy="7" r="1" fill="currentColor"/><circle cx="17" cy="11" r="1" fill="currentColor"/></svg>,
-  'kids-animals-farm':     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 10c0-3 3-5 7-5s7 2 7 5v3c0 4-3 6-7 6s-7-2-7-6z"/><circle cx="9" cy="11" r="1" fill="currentColor"/><circle cx="15" cy="11" r="1" fill="currentColor"/><path d="M10 15c1 1 3 1 4 0"/></svg>,
-  'kids-counting':         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 6h2v12"/><path d="M11 18c0-3 6-4 6-8 0-2-2-4-4-4s-3 1-3 3"/></svg>,
-  'kids-body':             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="3"/><path d="M12 8v8M8 12h8M9 22l3-6 3 6"/></svg>,
-  'kids-family':           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M3 21a6 6 0 0 1 12 0"/><path d="M14 21a4 4 0 0 1 8 0"/></svg>,
-  'kids-food-basic':       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3c4 0 8 3 8 8 0 6-4 10-8 10s-8-4-8-10c0-5 4-8 8-8z"/><path d="M12 3v3"/></svg>,
-  'kids-toy-unboxing':     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>,
-  'kids-cartoons-heroes':  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l2 4 4 1-3 3 1 4-4-2-4 2 1-4-3-3 4-1z"/></svg>,
-  'kids-gaming-basic':     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M7 12h4M9 10v4"/><circle cx="15" cy="11" r="1" fill="currentColor"/><circle cx="17" cy="13" r="1" fill="currentColor"/></svg>,
-  'kids-treats':           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 10l1 10h12l1-10"/><path d="M3 10h18l-2-3H5z"/></svg>,
-
-  // Junior
-  'kids-school':           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8h12v12H6z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/><path d="M9 14h6"/></svg>,
-  'kids-routine':          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>,
-  'kids-house':            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l9-7 9 7v9H3z"/><path d="M10 20v-6h4v6"/></svg>,
-  'kids-hobbies':          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5 7l14 10M19 7L5 17"/></svg>,
-  'kids-emotions':         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>,
-  'kids-nature':           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 16 c0-2 2-3 4-3 0-3 3-7 8-7 3 0 6 2 6 5 0 1-1 2-2 2 0 2-1 5-4 6 -3 1-5 1-7 0v3h-2v-3c-2 0-3-1-3-3z"/></svg>,
-  'kids-youtube-challenges':<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="6" width="18" height="12" rx="3"/><polygon points="10 9 16 12 10 15" fill="currentColor"/></svg>,
-  'kids-sandbox-worlds':   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>,
-  'kids-collecting':       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>,
-  'kids-fast-food':        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10c0-3 4-5 8-5s8 2 8 5"/><path d="M3 10h18l-1 3H4z"/><path d="M5 16h14l-1 4H6z"/></svg>,
-
-  // Tween
-  'kids-entertainment':    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="18" cy="16" r="3" fill="currentColor"/></svg>,
-  'kids-travel':           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>,
-  'kids-future-jobs':      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3"/><path d="M3 13h18"/></svg>,
-  'kids-cooking':          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3v6c0 2 2 3 6 3s6-1 6-3V3"/><path d="M6 12v9h12v-9"/></svg>,
-  'kids-planet':           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3c4 4 6 8 6 12l-3 4h-6l-3-4c0-4 2-8 6-12z"/><path d="M9 12c1 1 2 1 3 0s2-1 3 0"/></svg>,
-  'kids-opinions':         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
-  'kids-streaming':        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>,
-  'kids-sneakers':         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 15c0-2 2-4 5-4l3-3h6c3 0 4 3 4 6v3H3z"/><path d="M11 8v3"/></svg>,
-  'kids-esports':          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="3"/></svg>,
-  'kids-slang':            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg>,
 }
 
 const HOME_CSS = `
@@ -159,8 +112,24 @@ const HOME_CSS = `
 .kids-sh .link { font-size:13.5px; color:var(--green-700); font-weight:700; }
 
 .kids-topics { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-@media (max-width:760px) { .kids-topics { grid-template-columns:repeat(2,1fr); } }
-.kids-topic { position:relative; border-radius:var(--r-card); padding:18px 18px 16px; min-height:160px; overflow:hidden; cursor:pointer; color:#fff; transition:transform .38s cubic-bezier(.22,1,.36,1), box-shadow .38s cubic-bezier(.22,1,.36,1), background .38s ease, border-color .38s ease; text-align:left; display:flex; flex-direction:column; justify-content:space-between; border:0; will-change:transform; }
+@media (max-width:760px) {
+  .kids-topics { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .kids-topic { min-height:172px !important; padding:10px 12px 12px !important; }
+  .kids-topic .t-scene { height:92px; margin-bottom:4px; }
+  .kids-topic .t-name { font-size:14px; }
+  .kids-topic .t-name small { font-size:10.5px; }
+  .kids-topic .recommend { font-size:9px; padding:2px 7px; top:-6px; left:10px; }
+}
+@media (max-width:380px) {
+  .kids-topics { gap:8px; }
+  .kids-topic { min-height:160px !important; padding:8px 10px 10px !important; }
+  .kids-topic .t-scene { height:80px; }
+  .kids-topic .t-name { font-size:13px; }
+  .kids-topic .t-name small { font-size:10px; line-height:1.2; }
+}
+.kids-topic { position:relative; border-radius:var(--r-card); padding:12px 14px 14px; min-height:180px; overflow:hidden; cursor:pointer; color:#fff; transition:transform .38s cubic-bezier(.22,1,.36,1), box-shadow .38s cubic-bezier(.22,1,.36,1), background .38s ease, border-color .38s ease; text-align:left; display:flex; flex-direction:column; justify-content:flex-end; border:0; will-change:transform; }
+.kids-topic .t-scene { width:100%; height:108px; display:flex; align-items:flex-end; justify-content:center; margin-bottom:6px; flex-shrink:0; }
+.kids-topic .t-scene svg { max-height:100%; max-width:100%; }
 .kids-topic:hover { transform:translateY(-2px); box-shadow:0 14px 28px rgba(15,28,24,.10), 0 4px 10px rgba(15,28,24,.06); }
 .kids-topic:active { transform:translateY(-1px) scale(.992); transition:transform .14s cubic-bezier(.4,0,.2,1); }
 
@@ -382,10 +351,8 @@ const HOME_CSS = `
 /* ── Recommend badge: dark fallback en variantes oscuras ── */
 .kids-style-v9 .kids-topic .recommend { background:#FFB800; color:#3A2A00; box-shadow:0 4px 10px rgba(255,184,0,.5); }
 
-.kids-topic .t-ico { width:60px; height:60px; border-radius:18px; backdrop-filter:blur(6px); display:grid; place-items:center; margin-bottom:auto; color:#fff; transition:background .38s ease, color .38s ease, border-color .38s ease, box-shadow .38s ease; }
-.kids-topic .t-ico svg { width:34px; height:34px; stroke-width:1.8; }
-.kids-topic .t-name { font-family:var(--font-display); font-weight:800; font-size:18px; letter-spacing:-0.015em; line-height:1.1; margin-top:14px; }
-.kids-topic .t-name small { display:block; font-family:var(--font-sans); font-weight:500; font-size:12px; color:rgba(255,255,255,.78); margin-top:4px; }
+.kids-topic .t-name { font-family:var(--font-display); font-weight:800; font-size:16px; letter-spacing:-0.015em; line-height:1.15; margin-top:0; }
+.kids-topic .t-name small { display:block; font-family:var(--font-sans); font-weight:500; font-size:11.5px; opacity:.7; margin-top:3px; }
 .kids-topic .recommend { position:absolute; top:-8px; left:14px; background:var(--amber); color:#3A2A00; font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:99px; box-shadow:0 4px 10px rgba(255,184,0,.4); }
 
 .kids-streak { background:linear-gradient(160deg,#FFF7DD 0%,#FFE9A6 100%); border:2px solid rgba(255,184,0,.3); border-radius:var(--r-card); padding:22px; position:relative; overflow:hidden; }
@@ -555,6 +522,7 @@ export function KidsHome() {
   return (
     <KidsLayout>
       <style>{HOME_CSS}</style>
+      <style>{KIDS_SCENE_CSS}</style>
 
       <header className="kids-topbar">
         <div className="kids-crumbs">
@@ -680,8 +648,8 @@ export function KidsHome() {
                     onClick={() => navigate(`/kids/sesion/${t.id}`, { state: { topic: t } })}
                   >
                     {idx === 0 && <span className="recommend">★ hoy</span>}
-                    <div className="t-ico">
-                      {TOPIC_ICONS[t.slug] ?? GENERIC_ICON}
+                    <div className="t-scene">
+                      <TopicScene slug={t.slug} color={topicColor} />
                     </div>
                     <div className="t-name">
                       {t.title}
