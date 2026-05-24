@@ -92,18 +92,43 @@ const SHARED_STYLES = `
 .lhv-v1-chip svg { width: 13px; height: 13px; color: ${GREEN}; }
 
 /* ===== V2: Editorial ===== */
-.lhv-v2-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; position: relative; }
-.lhv-v2-headline { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; font-style: italic; font-size: clamp(56px, 8vw, 110px); line-height: .92; letter-spacing: -.03em; margin: 0; max-width: 720px; }
+.lhv-v2-stage { flex: 1; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 56px; align-items: center; position: relative; }
+.lhv-v2-text { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.lhv-v2-headline { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; font-style: italic; font-size: clamp(48px, 6.4vw, 96px); line-height: .94; letter-spacing: -.03em; margin: 0; }
 .lhv-v2-headline em { font-style: normal; font-weight: 900; color: ${GREEN}; font-family: 'Inter', sans-serif; letter-spacing: -.04em; }
 .lhv-v2-headline .strike { font-weight: 300; color: rgba(255,255,255,.55); position: relative; display: inline-block; }
 .lhv-v2-headline .strike::after { content: ''; position: absolute; left: -2%; right: -2%; top: 53%; height: 4px; background: ${GREEN}; transform: rotate(-2deg); border-radius: 2px; }
-.lhv-v2-sub { max-width: 480px; font-size: 15px; line-height: 1.6; color: rgba(232,236,234,.7); }
+.lhv-v2-sub { max-width: 540px; font-size: 15px; line-height: 1.6; color: rgba(232,236,234,.72); }
 .lhv-v2-sub b { color: white; font-weight: 700; }
-.lhv-v2-orb-corner { position: absolute; bottom: 5%; right: 0; width: 160px; height: 160px; opacity: .6; animation: lhv-v2-spin 30s linear infinite; }
-@keyframes lhv-v2-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-.lhv-v2-tags { display: flex; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: rgba(232,236,234,.5); }
+.lhv-v2-tags { display: flex; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: rgba(232,236,234,.5); flex-wrap: wrap; }
 .lhv-v2-tags span::after { content: '·'; margin: 0 6px 0 8px; opacity: .5; }
 .lhv-v2-tags span:last-child::after { display: none; }
+
+/* Columna derecha: orb centrado con halo verde */
+.lhv-v2-orb-col { position: relative; display: grid; place-items: center; align-self: center; height: 100%; min-height: 420px; }
+.lhv-v2-orb-col::before {
+  content: '';
+  position: absolute;
+  width: min(560px, 60vh);
+  height: min(560px, 60vh);
+  border-radius: 50%;
+  background: radial-gradient(circle, ${GREEN}38 0%, ${GREEN}12 35%, transparent 65%);
+  filter: blur(30px);
+  animation: lhv-v2-halo 7s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes lhv-v2-halo { 0%,100% { transform: scale(1); opacity: .85; } 50% { transform: scale(1.06); opacity: 1; } }
+.lhv-v2-orb { position: relative; width: min(380px, 48vh); height: min(380px, 48vh); animation: lhv-v2-bob 6s ease-in-out infinite; filter: drop-shadow(0 20px 50px ${GREEN}66); z-index: 2; }
+@keyframes lhv-v2-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.lhv-v2-orb-meta { position: absolute; bottom: 6%; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(232,236,234,.4); display: inline-flex; align-items: center; gap: 6px; z-index: 3; }
+.lhv-v2-orb-meta .dot { width: 6px; height: 6px; border-radius: 50%; background: ${GREEN}; box-shadow: 0 0 8px ${GREEN}; animation: lhv-pulse 1.2s ease-out infinite; }
+@keyframes lhv-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: .5; } }
+
+@media (max-width: 1100px) {
+  .lhv-v2-stage { grid-template-columns: 1fr; gap: 32px; }
+  .lhv-v2-orb-col { min-height: 300px; }
+  .lhv-v2-orb { width: min(280px, 40vh); height: min(280px, 40vh); }
+}
 
 /* ===== V3: Constelación ===== */
 .lhv-v3-stage { flex: 1; position: relative; display: flex; flex-direction: column; justify-content: center; }
@@ -252,24 +277,31 @@ function VariantEditorial({ level }: { level: number }) {
     <>
       <BrandBlock />
       <div className="lhv-v2-stage">
-        <span className="lhv-eyebrow"><Zap /> Conversaciones reales</span>
-        <h1 className="lhv-v2-headline">
-          Hablás.<br/>
-          <em>Aprendés.</em><br/>
-          Sin <span className="strike">exámenes</span>.
-        </h1>
-        <p className="lhv-v2-sub">
-          Conversaciones reales con un <b>tutor de IA</b> que se adapta a tu nivel, tus intereses y tus errores.
-          Olvidate de las lecciones lineales — acá cada charla es distinta, como con un amigo paciente que sabe inglés.
-        </p>
-        <div className="lhv-v2-tags">
-          <span>5 min/día</span>
-          <span>nivel CEFR A1-C2</span>
-          <span>Inglés · Portugués · Italiano</span>
-          <span>v0.1 MVP</span>
+        <div className="lhv-v2-text">
+          <span className="lhv-eyebrow"><Zap /> Conversaciones reales</span>
+          <h1 className="lhv-v2-headline">
+            Hablás.<br/>
+            <em>Aprendés.</em><br/>
+            Sin <span className="strike">exámenes</span>.
+          </h1>
+          <p className="lhv-v2-sub">
+            Conversaciones reales con un <b>tutor de IA</b> que se adapta a tu nivel, tus intereses y tus errores.
+            Olvidate de las lecciones lineales — acá cada charla es distinta, como con un amigo paciente que sabe inglés.
+          </p>
+          <div className="lhv-v2-tags">
+            <span>5 min/día</span>
+            <span>nivel CEFR A1-C2</span>
+            <span>Inglés · Portugués · Italiano</span>
+            <span>v0.1 MVP</span>
+          </div>
         </div>
-        <div className="lhv-v2-orb-corner">
-          <AgentAudioVisualizerAura status="speaking" audioLevel={level} color={GREEN as `#${string}`} colorShift={0.05} themeMode="dark" size="md" />
+        <div className="lhv-v2-orb-col">
+          <div className="lhv-v2-orb">
+            <AgentAudioVisualizerAura status="speaking" audioLevel={level} color={GREEN as `#${string}`} colorShift={0.10} themeMode="dark" size="lg" />
+          </div>
+          <div className="lhv-v2-orb-meta">
+            <span className="dot" /> Tu tutor te espera
+          </div>
         </div>
       </div>
       <FooterBlock />
