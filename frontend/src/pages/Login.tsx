@@ -21,9 +21,9 @@ export function Login() {
   // Variante del hero panel - persistida en localStorage para que el user
   // mantenga su preferencia entre sesiones.
   const [variant, setVariant] = useState<number>(() => {
-    if (typeof window === 'undefined') return 1
-    const stored = parseInt(localStorage.getItem(LOGIN_VARIANT_KEY) || '1', 10)
-    return Number.isFinite(stored) && stored >= 1 && stored <= 6 ? stored : 1
+    if (typeof window === 'undefined') return 7
+    const stored = parseInt(localStorage.getItem(LOGIN_VARIANT_KEY) || '7', 10)
+    return Number.isFinite(stored) && stored >= 1 && stored <= 12 ? stored : 7
   })
   const handleVariantChange = (v: number) => {
     setVariant(v)

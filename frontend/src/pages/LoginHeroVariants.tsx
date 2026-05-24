@@ -16,12 +16,18 @@ const GREEN_DARK = '#008F63'
 const INK = '#0E1614'
 
 export const VARIANT_LABELS: { id: number; name: string; tagline: string }[] = [
-  { id: 1, name: 'Orb Hero',     tagline: 'protagonista central' },
-  { id: 2, name: 'Editorial',    tagline: 'tipografía gigante' },
-  { id: 3, name: 'Constelación', tagline: 'multi-orb flotante' },
-  { id: 4, name: 'Studio Live',  tagline: 'orb + waveform' },
-  { id: 5, name: 'Pulsos',       tagline: 'anillos concéntricos' },
-  { id: 6, name: 'Bento',        tagline: 'stats + orb en grid' },
+  { id: 7,  name: 'Clase Live',   tagline: 'preview real de adentro' },
+  { id: 8,  name: 'Chat Burbujas',tagline: 'mensajes saliendo del orb' },
+  { id: 9,  name: 'Pizarra',      tagline: 'chalkboard + tiza' },
+  { id: 10, name: 'Now Playing',  tagline: 'spotify-like card' },
+  { id: 11, name: 'Newsroom',     tagline: 'transmisión TV' },
+  { id: 12, name: 'Cinema',       tagline: 'subtítulos peli' },
+  { id: 1,  name: 'Orb Hero',     tagline: 'protagonista central' },
+  { id: 2,  name: 'Editorial',    tagline: 'tipografía gigante' },
+  { id: 3,  name: 'Constelación', tagline: 'multi-orb flotante' },
+  { id: 4,  name: 'Studio Live',  tagline: 'orb + waveform' },
+  { id: 5,  name: 'Pulsos',       tagline: 'anillos concéntricos' },
+  { id: 6,  name: 'Bento',        tagline: 'stats + orb en grid' },
 ]
 
 export function useOscillatingLevel(baseInterval = 1500, min = 0.32, max = 0.75) {
@@ -403,8 +409,18 @@ function VariantBento({ level }: { level: number }) {
 // ─────────────────────────────────────────────────────────────
 // Wrapper
 // ─────────────────────────────────────────────────────────────
+import { LoginHeroPlus } from './LoginHeroVariantsPlus'
+
 export function LoginHero({ variant }: { variant: number }) {
   const level = useOscillatingLevel()
+  // Variants 7-12 viven en LoginHeroVariantsPlus (mas creativas)
+  if (variant >= 7 && variant <= 12) {
+    return (
+      <div className="lhv-root">
+        <LoginHeroPlus variant={variant} level={level} />
+      </div>
+    )
+  }
   const renderVariant = () => {
     switch (variant) {
       case 1: return <VariantOrbHero level={level} />
@@ -440,13 +456,15 @@ export function VariantPicker({ variant, onChange }: VariantPickerProps) {
       transform: 'translateX(-50%)',
       zIndex: 9999,
       display: 'flex',
-      gap: 6,
-      padding: 6,
+      gap: 4,
+      padding: 5,
       borderRadius: 99,
-      background: 'rgba(13,20,18,.88)',
-      border: '1px solid rgba(255,255,255,.12)',
+      background: 'rgba(13,20,18,.92)',
+      border: '1px solid rgba(255,255,255,.14)',
       backdropFilter: 'blur(12px)',
-      boxShadow: '0 8px 24px rgba(0,0,0,.4)',
+      boxShadow: '0 8px 24px rgba(0,0,0,.5)',
+      maxWidth: '94vw',
+      overflowX: 'auto',
     }}>
       {VARIANT_LABELS.map((v) => {
         const active = v.id === variant
@@ -456,11 +474,11 @@ export function VariantPicker({ variant, onChange }: VariantPickerProps) {
             onClick={() => onChange(v.id)}
             title={`${v.name} — ${v.tagline}`}
             style={{
-              padding: '7px 13px',
+              padding: '6px 11px',
               borderRadius: 99,
               border: 0,
               cursor: 'pointer',
-              fontSize: 12,
+              fontSize: 11.5,
               fontWeight: 700,
               fontFamily: 'Inter, sans-serif',
               background: active ? GREEN : 'transparent',
@@ -468,12 +486,14 @@ export function VariantPicker({ variant, onChange }: VariantPickerProps) {
               transition: 'all .15s',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 6,
+              gap: 5,
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
             }}
             onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255,255,255,.08)' }}
             onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent' }}
           >
-            <span style={{ opacity: active ? 1 : .55, fontFamily: 'JetBrains Mono, monospace' }}>{v.id}</span>
+            <span style={{ opacity: active ? 1 : .55, fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>{v.id}</span>
             <span>{v.name}</span>
           </button>
         )
