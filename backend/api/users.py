@@ -40,6 +40,13 @@ async def create_user(
     db.add(u)
     await db.commit()
     await db.refresh(u)
+
+    # Auto-asignar 10 topicos default para que la galaxia tenga contenido
+    # apenas el user entra (sin onboarding obligatorio).
+    from scripts.backfill_default_interests import assign_default_interests
+    await assign_default_interests(u.id, db)
+    await db.commit()
+
     return u
 
 

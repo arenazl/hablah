@@ -15,7 +15,9 @@ if ('serviceWorker' in navigator) {
   })
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const container = document.getElementById('root')!
+
+const tree = (
   <React.StrictMode>
     <ThemeProvider>
       <AuthProvider>
@@ -24,5 +26,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )
+
+// Si el HTML viene prerenderizado (tiene contenido dentro de #root), hidratamos
+// para "tomar" ese HTML sin re-pintar ni parpadear. Si está vacío (rutas de la
+// app servidas por el fallback SPA), renderizamos normal.
+if (container.hasChildNodes()) {
+  ReactDOM.hydrateRoot(container, tree)
+} else {
+  ReactDOM.createRoot(container).render(tree)
+}

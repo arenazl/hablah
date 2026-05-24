@@ -60,12 +60,18 @@ function AuthGate({ children, allowKidMode = false }: { children: React.ReactNod
 
 function RootRedirect() {
   const { isAuthenticated, isLoading } = useAuth()
-  if (isLoading) return null
   // Si hay perfil hijo activo, "/" siempre devuelve a /kids
   if (typeof window !== 'undefined' && localStorage.getItem('kids_token')) {
     return <Navigate to="/kids" replace />
   }
+  // Si ya confirmamos sesión, ir a la app
   if (isAuthenticated) return <Navigate to="/app" replace />
+  // Mientras carga el auth: solo esperamos (sin pintar) si HAY token, porque
+  // probablemente sea un usuario logueado que va a ser redirigido a /app.
+  // Si NO hay token (visitante anónimo, Googlebot, crawler de IA), mostramos
+  // la landing pública de inmediato para que el contenido esté en el HTML.
+  const hasToken = typeof window !== 'undefined' && !!localStorage.getItem('token')
+  if (isLoading && hasToken) return null
   return <Landing />
 }
 
