@@ -118,8 +118,22 @@ const HOME_CSS = `
 .landing-root .index-row .index-blurb { font-size: 14px; line-height: 1.45; color: rgba(232,236,234,.65); }
 .landing-root .index-row .index-arrow { justify-self: end; color: rgba(232,236,234,.55); transition: all .3s var(--ease); }
 
-.landing-root .product-section { padding: 120px 0; position: relative; overflow: hidden; }
-.landing-root .product-section.dark { background: var(--ink-1); color: white; }
+/* Trio wrapper: gradient continuo cremoso -> oscuro a lo largo de las 3 secciones.
+   Asi no hay corte abrupto entre claro y oscuro - flujo organico. */
+.landing-root .product-trio {
+  background: linear-gradient(
+    180deg,
+    var(--bg-1) 0%,
+    var(--bg-2) 14%,
+    #C9B998 28%,
+    #6E6754 42%,
+    #2D3431 58%,
+    var(--ink-1) 75%,
+    #050a08 100%
+  );
+}
+.landing-root .product-section { padding: 120px 0; position: relative; overflow: hidden; background: transparent; }
+.landing-root .product-section.dark { color: white; }
 .landing-root .product-section.dark .label-tag { color: var(--primary); }
 .landing-root .product-section.dark .label-tag::before { background: var(--primary); }
 .landing-root .product-section.dark h2 { color: white; }
@@ -402,6 +416,7 @@ export function Home() {
         </div>
       </div>
 
+      <div className="product-trio">
       <section className="product-section">
         <div className="container">
           <div className="product-grid fade-on-scroll">
@@ -454,7 +469,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="product-section dark" style={{ background: '#050a08' }}>
+      <section className="product-section dark">
         <div className="container">
           <div className="product-grid fade-on-scroll">
             <div className="product-text">
@@ -479,6 +494,7 @@ export function Home() {
           </div>
         </div>
       </section>
+      </div>
 
       <section className="index-section">
         <div className="container">
