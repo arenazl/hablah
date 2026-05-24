@@ -117,8 +117,9 @@ const HOME_CSS = `
 .kids-greet .sub { color:var(--fg-2); font-size:16px; margin:0; max-width:580px; }
 .kids-greet .sub b { color:var(--fg-1); font-weight:700; }
 
-.kids-stars-today { display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border-2); border-radius:18px; padding:10px 14px; box-shadow:var(--shadow-soft); }
-.kids-stars-today .sti { width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg,var(--amber),#FFC93B); display:grid; place-items:center; box-shadow:inset 0 -3px 0 #C58F00; color:#fff; }
+/* Stars-today: integrado con el greet, no pill flotante */
+.kids-stars-today { display:flex; align-items:center; gap:12px; padding:4px 0; }
+.kids-stars-today .sti { width:34px; height:34px; border-radius:11px; background:linear-gradient(135deg,var(--amber),#FFC93B); display:grid; place-items:center; box-shadow:0 4px 10px rgba(255,184,0,.25); color:#fff; }
 .kids-stars-today .stt { font-size:11px; color:var(--fg-3); font-weight:700; letter-spacing:.08em; text-transform:uppercase; line-height:1.1; }
 .kids-stars-today .stt b { display:block; font-family:var(--font-display); font-weight:800; font-size:22px; color:var(--fg-1); letter-spacing:-0.02em; margin-top:2px; }
 
@@ -146,9 +147,9 @@ const HOME_CSS = `
 .kids-hero-r { position:relative; display:flex; align-items:center; justify-content:center; padding:20px; }
 .habi-wrap { position:relative; width:280px; height:280px; display:grid; place-items:center; }
 .habi-wrap::before { content:""; position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.12),transparent 65%); }
-.habi-bubble { position:absolute; top:18px; right:-10px; background:#fff; color:var(--green-900); font-family:var(--font-display); font-weight:700; font-size:13px; padding:9px 14px; border-radius:18px; box-shadow:0 6px 16px rgba(0,0,0,.18); animation:habi-bubble-pop .5s var(--ease) backwards; animation-delay:.8s; }
+.habi-bubble { position:absolute; top:18px; right:-10px; background:#fff; color:var(--green-900); font-family:var(--font-display); font-weight:700; font-size:13px; padding:9px 14px; border-radius:18px; box-shadow:0 6px 16px rgba(0,0,0,.18); animation:habi-bubble-pop .7s cubic-bezier(.22,1,.36,1) backwards; animation-delay:.8s; }
 .habi-bubble::after { content:""; position:absolute; bottom:-6px; left:24px; width:14px; height:14px; background:#fff; transform:rotate(45deg); border-radius:3px; }
-@keyframes habi-bubble-pop { 0%{transform:scale(.5);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+@keyframes habi-bubble-pop { 0%{transform:translateY(6px) scale(.95);opacity:0} 100%{transform:translateY(0) scale(1);opacity:1} }
 
 .kids-grid { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:22px; }
 @media (max-width:1180px) { .kids-grid { grid-template-columns:1fr; } }
@@ -159,10 +160,230 @@ const HOME_CSS = `
 
 .kids-topics { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
 @media (max-width:760px) { .kids-topics { grid-template-columns:repeat(2,1fr); } }
-.kids-topic { position:relative; border-radius:var(--r-card); padding:18px 18px 16px; min-height:160px; overflow:hidden; cursor:pointer; color:#fff; transition:transform .18s var(--ease), box-shadow .18s var(--ease); text-align:left; display:flex; flex-direction:column; justify-content:space-between; border:0; }
-.kids-topic:hover { transform:translateY(-3px) rotate(-.5deg); box-shadow:var(--shadow-pop); }
-.kids-topic .t-ico { width:56px; height:56px; border-radius:18px; backdrop-filter:blur(6px); display:grid; place-items:center; margin-bottom:auto; color:#fff; }
-.kids-topic .t-ico svg { width:30px; height:30px; }
+.kids-topic { position:relative; border-radius:var(--r-card); padding:18px 18px 16px; min-height:160px; overflow:hidden; cursor:pointer; color:#fff; transition:transform .38s cubic-bezier(.22,1,.36,1), box-shadow .38s cubic-bezier(.22,1,.36,1), background .38s ease, border-color .38s ease; text-align:left; display:flex; flex-direction:column; justify-content:space-between; border:0; will-change:transform; }
+.kids-topic:hover { transform:translateY(-2px); box-shadow:0 14px 28px rgba(15,28,24,.10), 0 4px 10px rgba(15,28,24,.06); }
+.kids-topic:active { transform:translateY(-1px) scale(.992); transition:transform .14s cubic-bezier(.4,0,.2,1); }
+
+/* ─────────────────────────────────────────────────────────────
+   PICKER de estilos: 10 variantes para iterar visualmente.
+   ───────────────────────────────────────────────────────────── */
+.kids-style-picker {
+  display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+  padding:10px 12px; margin:0 0 16px;
+  background:rgba(255,255,255,.72); border:1px solid var(--border-1);
+  border-radius:14px; backdrop-filter:blur(10px);
+}
+.kids-style-picker .ksp-label {
+  font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--fg-3); margin-right:6px;
+}
+.ksp-chip {
+  padding:6px 11px; border-radius:99px; background:transparent;
+  border:1px solid var(--border-2); color:var(--fg-2);
+  font-size:12px; font-weight:700; cursor:pointer;
+  transition:all .18s cubic-bezier(.22,1,.36,1);
+}
+.ksp-chip:hover { background:#fff; transform:translateY(-1px); }
+.ksp-chip.active { background:var(--green); color:#fff; border-color:var(--green); box-shadow:0 4px 10px rgba(0,179,126,.25); }
+
+/* Idle motion común — staggered con nth-child para que no respiren todas en sync */
+@keyframes kids-breathe   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+@keyframes kids-float-a   { 0%,100%{transform:translate(0,0)} 50%{transform:translate(2px,-4px)} }
+@keyframes kids-float-b   { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-2px,-3px)} }
+@keyframes kids-pulse     { 0%,100%{transform:scale(1)} 50%{transform:scale(1.012)} }
+@keyframes kids-sway      { 0%,100%{transform:rotate(-.4deg)} 50%{transform:rotate(.4deg)} }
+@keyframes kids-glow-pulse { 0%,100%{filter:brightness(1) saturate(1)} 50%{filter:brightness(1.06) saturate(1.08)} }
+
+/* ── V1: Acuarela — pastel washes, breathing ── */
+.kids-style-v1 .kids-topic {
+  background: color-mix(in srgb, var(--topic-color, #00B37E) 14%, #FFF9F0);
+  color:#1F2A26;
+  border:1px solid color-mix(in srgb, var(--topic-color, #00B37E) 22%, transparent);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--topic-color, #00B37E) 14%, transparent);
+  animation: kids-breathe 5.5s ease-in-out infinite;
+}
+.kids-style-v1 .kids-topic:nth-child(even) { animation-delay:-1.8s; animation-duration:6.2s; }
+.kids-style-v1 .kids-topic:nth-child(3n)   { animation-delay:-3.4s; animation-duration:5s; }
+.kids-style-v1 .kids-topic .t-name small { color: rgba(31,42,38,.55); }
+.kids-style-v1 .kids-topic .t-ico {
+  background: color-mix(in srgb, var(--topic-color, #00B37E) 88%, white);
+  color:#fff;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--topic-color, #00B37E) 35%, transparent), inset 0 -2px 0 color-mix(in srgb, var(--topic-color, #00B37E) 70%, black);
+}
+
+/* ── V2: Cristal — glassmorphism ── */
+.kids-style-v2 .kids-topic {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--topic-color, #00B37E) 28%, rgba(255,255,255,.75)),
+    color-mix(in srgb, var(--topic-color, #00B37E) 16%, rgba(255,255,255,.55))
+  );
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 10px 22px color-mix(in srgb, var(--topic-color, #00B37E) 18%, transparent);
+  color:#1a2b26;
+  animation: kids-glow-pulse 6s ease-in-out infinite;
+}
+.kids-style-v2 .kids-topic:nth-child(even) { animation-delay:-2s; }
+.kids-style-v2 .kids-topic:nth-child(3n)   { animation-delay:-4s; }
+.kids-style-v2 .kids-topic .t-name small { color: rgba(26,43,38,.62); }
+.kids-style-v2 .kids-topic .t-ico {
+  background:rgba(255,255,255,.6); color:var(--topic-color, #00B37E);
+  backdrop-filter:blur(6px); box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+/* ── V3: Papel Crema — paper texture, ink, suave sway ── */
+.kids-style-v3 .kids-topic {
+  background:
+    radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--topic-color, #00B37E) 18%, transparent), transparent 60%),
+    #FFF8EA;
+  color:#3A2F1C;
+  border:1.5px solid color-mix(in srgb, var(--topic-color, #00B37E) 32%, #E8DCC2);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--topic-color, #00B37E) 22%, #E8DCC2);
+  animation: kids-sway 7s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+.kids-style-v3 .kids-topic:nth-child(even) { animation-delay:-2.5s; animation-duration:8s; }
+.kids-style-v3 .kids-topic:nth-child(3n)   { animation-delay:-4.5s; }
+.kids-style-v3 .kids-topic .t-name small { color:rgba(58,47,28,.62); }
+.kids-style-v3 .kids-topic .t-ico {
+  background: color-mix(in srgb, var(--topic-color, #00B37E) 12%, white);
+  color: color-mix(in srgb, var(--topic-color, #00B37E) 88%, black);
+  border:1.5px solid color-mix(in srgb, var(--topic-color, #00B37E) 40%, transparent);
+  box-shadow:none;
+}
+
+/* ── V4: Jardín — tonos tierra, float orgánico ── */
+.kids-style-v4 .kids-topic {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--topic-color, #00B37E) 55%, #F5EBD8),
+    color-mix(in srgb, var(--topic-color, #00B37E) 32%, #E7D7B5)
+  );
+  color:#2A2419;
+  border:0;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--topic-color, #00B37E) 22%, transparent), inset 0 1px 0 rgba(255,255,255,.4);
+  animation: kids-float-a 7s ease-in-out infinite;
+}
+.kids-style-v4 .kids-topic:nth-child(even) { animation:kids-float-b 7.5s ease-in-out infinite; animation-delay:-2.2s; }
+.kids-style-v4 .kids-topic:nth-child(3n)   { animation-delay:-4s; animation-duration:8s; }
+.kids-style-v4 .kids-topic .t-name small { color:rgba(42,36,25,.62); }
+.kids-style-v4 .kids-topic .t-ico {
+  background:rgba(255,255,255,.4); color:#2A2419;
+  backdrop-filter:blur(4px);
+}
+
+/* ── V5: Bento Editorial — blanco + stripe, static (claridad editorial) ── */
+.kids-style-v5 .kids-topic {
+  background:#fff; color:#0D1412; border:1px solid var(--border-1);
+  border-left:5px solid var(--topic-color, #00B37E);
+  box-shadow:0 1px 0 rgba(15,28,24,.04);
+  animation:none;
+}
+.kids-style-v5 .kids-topic:hover { box-shadow:0 8px 20px rgba(15,28,24,.08); }
+.kids-style-v5 .kids-topic .t-name { color:#0D1412; }
+.kids-style-v5 .kids-topic .t-name small { color:#6B7672; }
+.kids-style-v5 .kids-topic .t-ico {
+  background: color-mix(in srgb, var(--topic-color, #00B37E) 12%, white);
+  color: var(--topic-color, #00B37E);
+  border-radius:10px;
+}
+
+/* ── V6: Arcilla — claymorphism soft 3D, pulse ── */
+.kids-style-v6 .kids-topic {
+  background: color-mix(in srgb, var(--topic-color, #00B37E) 22%, #F4EDE3);
+  color:#1F2A26; border-radius:26px; border:0;
+  box-shadow:
+    inset 0 -4px 0 color-mix(in srgb, var(--topic-color, #00B37E) 32%, black 8%),
+    inset 0 2px 0 rgba(255,255,255,.5),
+    0 8px 18px color-mix(in srgb, var(--topic-color, #00B37E) 20%, transparent);
+  animation: kids-pulse 5s ease-in-out infinite;
+}
+.kids-style-v6 .kids-topic:nth-child(even) { animation-delay:-1.5s; animation-duration:5.6s; }
+.kids-style-v6 .kids-topic:nth-child(3n)   { animation-delay:-3s; }
+.kids-style-v6 .kids-topic .t-name small { color:rgba(31,42,38,.55); }
+.kids-style-v6 .kids-topic .t-ico {
+  background: color-mix(in srgb, var(--topic-color, #00B37E) 75%, white);
+  color:#fff; border-radius:18px;
+  box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--topic-color, #00B37E) 85%, black), inset 0 2px 0 rgba(255,255,255,.4);
+}
+
+/* ── V7: Neón Tenue — vibrante pero suavizado, glow ── */
+.kids-style-v7 .kids-topic {
+  background:
+    linear-gradient(rgba(255,255,255,.38), rgba(255,255,255,.38)),
+    linear-gradient(135deg, var(--topic-color, #00B37E), color-mix(in srgb, var(--topic-color, #00B37E) 60%, black));
+  color:#0D1412;
+  border:1px solid color-mix(in srgb, var(--topic-color, #00B37E) 45%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--topic-color, #00B37E) 10%, transparent), 0 8px 22px color-mix(in srgb, var(--topic-color, #00B37E) 22%, transparent);
+  animation: kids-glow-pulse 4.5s ease-in-out infinite;
+}
+.kids-style-v7 .kids-topic:nth-child(even) { animation-delay:-1.6s; }
+.kids-style-v7 .kids-topic:nth-child(3n)   { animation-delay:-3.2s; }
+.kids-style-v7 .kids-topic .t-name small { color:rgba(13,20,18,.62); }
+.kids-style-v7 .kids-topic .t-ico {
+  background:rgba(255,255,255,.55); color:var(--topic-color, #00B37E);
+  box-shadow:0 0 14px color-mix(in srgb, var(--topic-color, #00B37E) 38%, transparent);
+}
+
+/* ── V8: Riso Print — 2-tone print, no anim ── */
+.kids-style-v8 .kids-topic {
+  background:
+    radial-gradient(circle at 80% 90%, color-mix(in srgb, var(--topic-color, #00B37E) 65%, transparent) 0%, transparent 55%),
+    color-mix(in srgb, var(--topic-color, #00B37E) 18%, #FAF3E4);
+  color:#1A1410;
+  border:2px solid #1A1410; border-radius:12px;
+  box-shadow:4px 4px 0 #1A1410;
+  animation:none;
+}
+.kids-style-v8 .kids-topic:hover { transform:translate(-2px,-2px); box-shadow:6px 6px 0 #1A1410; }
+.kids-style-v8 .kids-topic .t-name small { color:rgba(26,20,16,.65); }
+.kids-style-v8 .kids-topic .t-ico {
+  background:#1A1410; color: color-mix(in srgb, var(--topic-color, #00B37E) 65%, #FAF3E4);
+  border-radius:10px;
+}
+
+/* ── V9: Crepúsculo — lavender/dusk, sway ambiente ── */
+.kids-style-v9 .kids-topic {
+  background: linear-gradient(165deg,
+    color-mix(in srgb, var(--topic-color, #00B37E) 35%, #2D2050),
+    color-mix(in srgb, var(--topic-color, #00B37E) 18%, #1A1238)
+  );
+  color:#F4E8FF;
+  border:1px solid color-mix(in srgb, var(--topic-color, #00B37E) 30%, rgba(255,255,255,.12));
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--topic-color, #00B37E) 22%, rgba(45,32,80,.4));
+  animation: kids-sway 8s ease-in-out infinite;
+  transform-origin: 50% 80%;
+}
+.kids-style-v9 .kids-topic:nth-child(even) { animation-delay:-2.8s; animation-duration:9s; }
+.kids-style-v9 .kids-topic:nth-child(3n)   { animation-delay:-5s; }
+.kids-style-v9 .kids-topic .t-name small { color:rgba(244,232,255,.6); }
+.kids-style-v9 .kids-topic .t-ico {
+  background:rgba(255,255,255,.14); color:#F4E8FF;
+  backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.18);
+}
+
+/* ── V10: Sketch — outline, hand-drawn rotate ── */
+.kids-style-v10 .kids-topic {
+  background:#FFFEF8; color:#1A1410;
+  border:2.5px solid var(--topic-color, #00B37E);
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--topic-color, #00B37E) 28%, transparent);
+  border-radius:18px;
+  animation: kids-sway 6.5s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+.kids-style-v10 .kids-topic:nth-child(even) { animation-delay:-2.2s; animation-duration:7s; }
+.kids-style-v10 .kids-topic:nth-child(3n)   { animation-delay:-4s; }
+.kids-style-v10 .kids-topic .t-name { color:#1A1410; }
+.kids-style-v10 .kids-topic .t-name small { color:rgba(26,20,16,.62); }
+.kids-style-v10 .kids-topic .t-ico {
+  background:transparent; color: var(--topic-color, #00B37E);
+  border:2px solid var(--topic-color, #00B37E); border-radius:14px;
+}
+
+/* ── Recommend badge: dark fallback en variantes oscuras ── */
+.kids-style-v9 .kids-topic .recommend { background:#FFB800; color:#3A2A00; box-shadow:0 4px 10px rgba(255,184,0,.5); }
+
+.kids-topic .t-ico { width:60px; height:60px; border-radius:18px; backdrop-filter:blur(6px); display:grid; place-items:center; margin-bottom:auto; color:#fff; transition:background .38s ease, color .38s ease, border-color .38s ease, box-shadow .38s ease; }
+.kids-topic .t-ico svg { width:34px; height:34px; stroke-width:1.8; }
 .kids-topic .t-name { font-family:var(--font-display); font-weight:800; font-size:18px; letter-spacing:-0.015em; line-height:1.1; margin-top:14px; }
 .kids-topic .t-name small { display:block; font-family:var(--font-sans); font-weight:500; font-size:12px; color:rgba(255,255,255,.78); margin-top:4px; }
 .kids-topic .recommend { position:absolute; top:-8px; left:14px; background:var(--amber); color:#3A2A00; font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:99px; box-shadow:0 4px 10px rgba(255,184,0,.4); }
@@ -183,8 +404,8 @@ const HOME_CSS = `
 /* MONSTRUO DEL IDIOMA */
 .kids-monster { background:linear-gradient(180deg,#FFFDF4,#FFF4D8); border:2px solid #F4E1A4; border-radius:var(--r-card); padding:22px 24px; display:grid; grid-template-columns:auto 1fr auto; gap:18px; align-items:center; }
 .kids-monster .m-vis { width:88px; height:88px; flex-shrink:0; position:relative; }
-.kids-monster .m-vis svg { width:100%; height:100%; animation:kids-wiggle 2s ease-in-out infinite; }
-@keyframes kids-wiggle { 0%,100%{transform:rotate(-4deg)} 50%{transform:rotate(6deg)} }
+.kids-monster .m-vis svg { width:100%; height:100%; animation:kids-wiggle 5s ease-in-out infinite; transform-origin:50% 70%; }
+@keyframes kids-wiggle { 0%,100%{transform:rotate(-1.5deg) translateY(0)} 50%{transform:rotate(2deg) translateY(-2px)} }
 .kids-monster .m-txt h4 { font-family:var(--font-display); font-weight:800; font-size:20px; letter-spacing:-0.015em; margin:0 0 4px; color:#3A2A00; line-height:1.15; }
 .kids-monster .m-txt h4 small { display:block; font-family:var(--font-sans); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:#9A2D31; margin-bottom:6px; }
 .kids-monster .m-txt p { margin:0; color:#6A4F00; font-size:13.5px; line-height:1.5; max-width:380px; }
@@ -203,8 +424,9 @@ const HOME_CSS = `
 .kids-stickers-card { background:#fff; border:1px solid var(--border-1); border-radius:var(--r-card); padding:20px; }
 .kids-stickers-card .sh { margin:0 0 16px; }
 .kids-stickers-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-.kids-sticker { aspect-ratio:1; border-radius:18px; display:grid; place-items:center; position:relative; cursor:pointer; transition:transform .15s var(--ease); border:0; }
-.kids-sticker:hover { transform:scale(1.08) rotate(-3deg); }
+.kids-sticker { aspect-ratio:1; border-radius:18px; display:grid; place-items:center; position:relative; cursor:pointer; transition:transform .32s cubic-bezier(.22,1,.36,1), box-shadow .32s cubic-bezier(.22,1,.36,1); border:0; will-change:transform; }
+.kids-sticker:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 8px 18px rgba(15,28,24,.10); }
+.kids-sticker:active { transform:scale(.98); transition:transform .12s ease-out; }
 .kids-sticker.locked { background:repeating-linear-gradient(135deg,#F2EAD9,#F2EAD9 6px,#E8DFCA 6px 12px); opacity:.6; cursor:default; }
 .kids-sticker.locked:hover { transform:none; }
 .kids-sticker svg { width:60%; height:60%; }
@@ -267,11 +489,41 @@ const MOCK_STICKERS: StickerSlot[] = [
   { locked: true, bg: '', label: 'Bloqueado', icon: <svg viewBox="0 0 24 24" fill="none" stroke="#98A19D" strokeWidth="2" strokeLinecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> },
 ]
 
+const STYLE_VARIANTS: { id: number; name: string }[] = [
+  { id: 1, name: 'Acuarela' },
+  { id: 2, name: 'Cristal' },
+  { id: 3, name: 'Papel Crema' },
+  { id: 4, name: 'Jardín' },
+  { id: 5, name: 'Bento' },
+  { id: 6, name: 'Arcilla' },
+  { id: 7, name: 'Neón Tenue' },
+  { id: 8, name: 'Riso Print' },
+  { id: 9, name: 'Crepúsculo' },
+  { id: 10, name: 'Sketch' },
+]
+
+const KIDS_STYLE_KEY = 'kids-style-variant'
+
+function baseColor(bg: string): string {
+  const match = bg.match(/#[0-9A-Fa-f]{6}/)
+  return match ? match[0] : '#00B37E'
+}
+
 export function KidsHome() {
   const navigate = useNavigate()
   const { kid: profile } = useKid()
   const [topics, setTopics] = useState<KidsTopic[]>([])
   const ageGroup = profile.age_group
+  const [styleVariant, setStyleVariant] = useState<number>(() => {
+    if (typeof window === 'undefined') return 1
+    const stored = window.localStorage.getItem(KIDS_STYLE_KEY)
+    const n = stored ? parseInt(stored, 10) : 1
+    return Number.isFinite(n) && n >= 1 && n <= 10 ? n : 1
+  })
+
+  useEffect(() => {
+    window.localStorage.setItem(KIDS_STYLE_KEY, String(styleVariant))
+  }, [styleVariant])
 
   useEffect(() => {
     const stored = localStorage.getItem(KIDS_AGE_KEY) as KidsAgeGroup | null
@@ -390,7 +642,20 @@ export function KidsHome() {
       <div className="kids-grid">
         <div>
           {/* TOPICS */}
-          <div>
+          <div className={`kids-style-v${styleVariant}`}>
+            <div className="kids-style-picker">
+              <span className="ksp-label">Estilo</span>
+              {STYLE_VARIANTS.map((v) => (
+                <button
+                  key={v.id}
+                  className={`ksp-chip${styleVariant === v.id ? ' active' : ''}`}
+                  onClick={() => setStyleVariant(v.id)}
+                  title={`Variante ${v.id}: ${v.name}`}
+                >
+                  {v.id}. {v.name}
+                </button>
+              ))}
+            </div>
             <div className="kids-sh">
               <h3>¿De qué charlamos?</h3>
               <Link to="/kids/topicos" className="link">Ver todos →</Link>
@@ -402,15 +667,20 @@ export function KidsHome() {
               )}
               {topics.map((t, idx) => {
                 const conf = TOPIC_COLOR_MAP[t.slug] ?? { bg: 'linear-gradient(135deg,#00B37E,#008F63)', sublabel: '' }
+                const topicColor = baseColor(conf.bg)
+                const isRich = styleVariant === 0 // placeholder; variantes pintan ellas
                 return (
                   <button
                     key={t.id}
                     className="kids-topic"
-                    style={{ background: conf.bg }}
+                    style={{
+                      ['--topic-color' as string]: topicColor,
+                      background: isRich ? conf.bg : undefined,
+                    }}
                     onClick={() => navigate(`/kids/sesion/${t.id}`, { state: { topic: t } })}
                   >
                     {idx === 0 && <span className="recommend">★ hoy</span>}
-                    <div className="t-ico" style={{ background: 'rgba(255,255,255,.18)' }}>
+                    <div className="t-ico">
                       {TOPIC_ICONS[t.slug] ?? GENERIC_ICON}
                     </div>
                     <div className="t-name">

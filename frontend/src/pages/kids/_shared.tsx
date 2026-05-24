@@ -179,7 +179,7 @@ export function Habi({ size = 240, variant = 'big', className, bounce = false }:
         width={size}
         height={size}
         viewBox="0 0 100 100"
-        style={bounce ? { animation: 'habi-bounce 2.6s ease-in-out infinite' } : undefined}
+        style={bounce ? { animation: 'habi-bounce 4s ease-in-out infinite' } : undefined}
       >
         <defs>
           <radialGradient id="habi-mini-g" cx="35%" cy="35%">
@@ -516,7 +516,7 @@ export function KidsLayout({ children }: { children: ReactNode }) {
     <div className="kids-root">
       <style>{KIDS_CSS}
         {`
-          @keyframes habi-bounce { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+          @keyframes habi-bounce { 0%,100%{transform:translateY(0) rotate(-.5deg)} 50%{transform:translateY(-6px) rotate(1deg)} }
         `}
       </style>
 
