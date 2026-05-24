@@ -185,6 +185,41 @@ const SHARED_STYLES = `
 .lhv-v5-headline h1 { font-size: clamp(34px, 4.5vw, 54px); font-weight: 900; letter-spacing: -.025em; line-height: 1.05; margin: 0 0 12px; }
 .lhv-v5-headline h1 em { font-style: italic; color: ${GREEN}; font-weight: 800; }
 .lhv-v5-headline p { font-size: 15.5px; color: rgba(232,236,234,.65); max-width: 460px; margin: 0 auto; line-height: 1.5; }
+
+/* Slogan editorial italic gigante con strike verde sobre "Sin exámenes" */
+.lhv-v5-slogan h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: .96;
+  letter-spacing: -.025em;
+  margin: 0;
+}
+.lhv-v5-slogan h1 em {
+  font-style: normal;
+  font-weight: 900;
+  color: ${GREEN};
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -.035em;
+}
+.lhv-v5-slogan h1 .strike {
+  font-weight: 300;
+  color: rgba(255,255,255,.55);
+  position: relative;
+  display: inline-block;
+}
+.lhv-v5-slogan h1 .strike::after {
+  content: '';
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 53%;
+  height: 4px;
+  background: ${GREEN};
+  transform: rotate(-2deg);
+  border-radius: 2px;
+}
 .lhv-v5-flow { margin-top: 32px; display: flex; gap: 14px; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(232,236,234,.45); }
 .lhv-v5-flow .step { padding: 6px 12px; border-radius: 99px; border: 1px solid rgba(255,255,255,.10); color: rgba(232,236,234,.7); }
 .lhv-v5-flow .step.active { color: ${GREEN}; border-color: ${GREEN}55; background: rgba(0,179,126,.12); }
@@ -395,10 +430,12 @@ function VariantPulses({ level }: { level: number }) {
           <div className="lhv-v5-orb">
             <AgentAudioVisualizerAura status="speaking" audioLevel={level} color={GREEN as `#${string}`} colorShift={0.08} themeMode="dark" size="lg" />
           </div>
-          <div className="lhv-v5-headline">
-            <div className="lbl">Escucha · Procesa · Responde</div>
-            <h1>El loop de un<br/><em>hablante real</em>.</h1>
-            <p>No memorices reglas. Hablá, equivocate, escuchá la versión correcta en contexto. Tu cerebro aprende como aprendió a hablar tu lengua materna.</p>
+          <div className="lhv-v5-headline lhv-v5-slogan">
+            <h1>
+              Hablás.<br/>
+              <em>Aprendés.</em><br/>
+              <span className="strike">Sin exámenes</span>.
+            </h1>
           </div>
           <div className="lhv-v5-flow">
             <span className="step">Hablás</span>

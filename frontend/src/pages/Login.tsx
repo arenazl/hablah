@@ -3,9 +3,7 @@ import { useNavigate, Navigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ArrowRight } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { LoginHero, VariantPicker } from './LoginHeroVariants'
-
-const LOGIN_VARIANT_KEY = 'login_hero_variant'
+import { LoginHero } from './LoginHeroVariants'
 
 const HABLAH_GREEN = '#00B37E'
 const HABLAH_GREEN_DARK = '#008F63'
@@ -18,17 +16,9 @@ export function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Variante del hero panel - persistida en localStorage para que el user
-  // mantenga su preferencia entre sesiones.
-  const [variant, setVariant] = useState<number>(() => {
-    if (typeof window === 'undefined') return 7
-    const stored = parseInt(localStorage.getItem(LOGIN_VARIANT_KEY) || '7', 10)
-    return Number.isFinite(stored) && stored >= 1 && stored <= 12 ? stored : 7
-  })
-  const handleVariantChange = (v: number) => {
-    setVariant(v)
-    localStorage.setItem(LOGIN_VARIANT_KEY, String(v))
-  }
+  // Variante fija: V5 Pulsos con slogan editorial.
+  // (La botonera quedó oculta, archivada en LoginHeroVariants por si volvemos.)
+  const variant = 5
 
   useEffect(() => {
     if (document.getElementById('hablah-google-fonts')) return
@@ -66,12 +56,7 @@ export function Login() {
       className="h-screen w-full flex overflow-hidden"
       style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}
     >
-      {/* Botonera flotante para elegir variante del hero */}
-      <div className="hidden lg:block">
-        <VariantPicker variant={variant} onChange={handleVariantChange} />
-      </div>
-
-      {/* IZQUIERDA: hero panel (6 variantes intercambiables) */}
+      {/* IZQUIERDA: hero panel fijo (V5 Pulsos con slogan editorial) */}
       <div className="hidden lg:flex flex-col flex-1 min-w-0">
         <LoginHero variant={variant} />
       </div>
