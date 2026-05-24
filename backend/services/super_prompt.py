@@ -25,6 +25,63 @@ CEFR_GUIDANCE = {
 }
 
 
+# Instrucción especial para modo KIDS (override completo, no importa el cefr).
+KIDS_OVERRIDE_RULES = """
+═══════════════════════════════════════════════════════════════
+MODO KIDS — TUTOR HABI PARA UN CHICO/A
+═══════════════════════════════════════════════════════════════
+
+Sos HABI, el amigo de Habláh. El alumno es un CHICO/A (no un adulto). Olvidate
+de toda la pedagogía adulta. Hablás como un amigo paciente, juguetón y cariñoso.
+
+REGLAS NO NEGOCIABLES:
+
+1. **TONO**: dulce, cálido, entusiasta. Felicitá MUCHO ("Awesome!", "Great job!",
+   "I love that!"). NUNCA crítico, NUNCA "wrong", NUNCA "no". Si dice algo
+   mal, repetí la forma correcta naturalmente sin señalar el error.
+
+2. **VOCABULARIO INFANTIL**: usá palabras simples y concretas. Nada de
+   "professional", "negotiate", "infrastructure". Hablá de COSAS QUE EL CHICO
+   CONOCE: family, pets, school, toys, food, cartoons, games, colors, animals.
+
+3. **FRASES CORTAS**: máximo 5-8 palabras por oración. Ejemplos:
+   - "Wow, you have a dog! What's his name?"
+   - "Pizza is yummy! Do you like cheese pizza?"
+   - "Mom is funny? Tell me what she does!"
+
+4. **CONTEXTO DEL TEMA**: respetá EL TEMA del bloque "TÓPICO DE HOY". Si el
+   tópico es "Mi familia", hablá DE FAMILIA. Si es "Animales", hablá DE
+   ANIMALES. NUNCA arranques con escenarios adultos (café, oficina, presentarse
+   en trabajo, llegar tarde).
+
+5. **PREGUNTAS APROPIADAS PARA LA EDAD**:
+   - Mini (4-7): preguntas con respuesta corta. "Who is in your family?"
+     "What animal do you like?" "What's your favorite color?"
+   - Junior (7-10): podés pedir más detalle. "Tell me one funny thing
+     your brother does." "What did you eat today?"
+   - Tween (10-14): podés explorar opiniones cortas. "What show are you
+     into now?" "Would you have a cat or a dog?"
+
+6. **ARRANQUE de la sesión**: saludá al chico por nombre, decile UNA cosa
+   relacionada al tópico, hacé UNA pregunta concreta sobre el tópico.
+   Ejemplo para "Mi familia": "Hi Timo! Families are the best. Who do you
+   live with? Mom? Dad? A brother?"
+
+7. **PROHIBIDO**: cualquier referencia a trabajo, oficina, café, barista,
+   profesional, ejecutivo, reunión, presentación, entrevista. Eso es mundo
+   adulto.
+
+8. **CUANDO EL CHICO HABLA**: reaccioná emocionalmente primero ("Oh, that's
+   so cool!", "Aw, that's sweet!", "Hahaha really?"), después ampliá con UNA
+   pregunta o un comentario corto.
+
+ESTE MODO ANULA cualquier override de adultos (A0 "repeat after me",
+pedagogy presets de entrevistador/mentor/etc). El chico aprende JUGANDO
+una conversación, no repitiendo frases sueltas.
+═══════════════════════════════════════════════════════════════
+"""
+
+
 # Instrucción especial para modo A0 (override completo de las reglas habituales).
 A0_OVERRIDE_RULES = """
 ═══════════════════════════════════════════════════════════════
@@ -258,6 +315,12 @@ def build_super_prompt(
     target = user.target_language or "en"
     target_lang_name = {"en": "English", "pt": "Portuguese", "it": "Italian"}.get(target, target)
 
+    # Detección de modo KIDS: el alumno tiene age_group seteado (mini/junior/tween)
+    # o es un perfil hijo (parent_user_id != null).
+    age_group = getattr(user, "age_group", None)
+    is_kid = bool(age_group) or bool(getattr(user, "parent_user_id", None))
+    age_label = {"mini": "Mini (4-7 años)", "junior": "Junior (7-10 años)", "tween": "Tween (10-14 años)"}.get(age_group or "", "Kid")
+
     user_overrides = getattr(user, "user_preferences", None) or {}
     template_block = _template_block(template, user_overrides) if template else _fallback_template_block()
 
@@ -268,13 +331,19 @@ def build_super_prompt(
         f"- Idioma que quiere aprender: {target_lang_name}.\n"
         f"- Idioma materno: {user.base_language or 'es'}."
     )
+    if is_kid:
+        user_block += f"\n- IMPORTANTE: es un CHICO/A · grupo etario {age_label}."
 
     include_intro = getattr(template, "opening_includes_topic_intro", True) if template else True
 
     if topic:
-        # Prioridad: seed por nivel+idioma (ej "B1_pt"), luego solo nivel ("B1"), luego B2 fallback
+        # Para topicos kids el seed se elige por age_group (mini/junior/tween).
+        # Para topicos adultos por CEFR como antes.
         sp = topic.seed_prompts or {}
-        seed = sp.get(f"{cefr}_{target}") or sp.get(cefr) or sp.get(f"B2_{target}") or sp.get("B2") or topic.title
+        if is_kid and age_group:
+            seed = sp.get(age_group) or sp.get("junior") or sp.get("mini") or sp.get(cefr) or topic.title
+        else:
+            seed = sp.get(f"{cefr}_{target}") or sp.get(cefr) or sp.get(f"B2_{target}") or sp.get("B2") or topic.title
         keywords = ", ".join((topic.keywords or [])[:8])
         topic_block = (
             f"TÓPICO DE HOY\n"
@@ -311,7 +380,21 @@ def build_super_prompt(
 4. SOS UN HUMANO INFORMADO. Sabés del tema. Aportá UN dato concreto cuando suma.
 5. SI EL ALUMNO SE TRABA, ayudá suave ("Take your time" o reformulá tu pregunta más fácil)."""
 
-    # MODO A0: override completo del comportamiento conversacional.
+    # MODO KIDS: override propio que respeta el topic kid y usa vocabulario infantil.
+    # Tiene PRIORIDAD sobre A0 (un kid de 5 años no quiere escenarios de café/oficina).
+    if is_kid:
+        return (
+            f"[INSTRUCCIÓN DE SISTEMA — TUTOR HABLÁH · MODO KIDS]\n\n"
+            f"{user_block}\n\n"
+            f"{KIDS_OVERRIDE_RULES}\n\n"
+            f"{topic_block}\n\n"
+            f"IDIOMA: hablás SIEMPRE en {target_lang_name}. Frases cortas, simples, claras.\n"
+            f"Si el chico se traba o no entiende, NO traduzcas — reformulá MÁS SIMPLE en {target_lang_name}.\n"
+            f"ARRANQUE: saludá a {user.nombre} por nombre, decí UNA cosa corta y entusiasta sobre el tema,\n"
+            f"hacé UNA pregunta abierta y simple del tema. Máximo 2 oraciones cortas.\n"
+        )
+
+    # MODO A0 (adultos principiantes): override completo del comportamiento conversacional.
     if cefr == "A0":
         base_lang_name = {
             "es": "español", "en": "inglés", "pt": "portugués",
