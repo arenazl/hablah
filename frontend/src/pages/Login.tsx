@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { ArrowRight, Mic, Languages, Flame } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
+import { LoginHero, VariantPicker } from './LoginHeroVariants'
+
+const LOGIN_VARIANT_KEY = 'login_hero_variant'
 
 const HABLAH_GREEN = '#00B37E'
 const HABLAH_GREEN_DARK = '#008F63'
-const HABLAH_INK = '#0E1614'
 const HABLAH_TINT = '#E6F7F1'
 
 export function Login() {
@@ -17,18 +18,17 @@ export function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Orb del panel izquierdo: oscilación suave del audioLevel para que
-  // se sienta vivo (no estático). Cambia cada 1.8s con transición lenta.
-  const [orbLevel, setOrbLevel] = useState(0.5)
-  useEffect(() => {
-    const tick = () => {
-      // Valores random suaves entre 0.32 y 0.72 — variación orgánica
-      const next = 0.32 + Math.random() * 0.4
-      setOrbLevel(next)
-    }
-    const id = window.setInterval(tick, 1800)
-    return () => window.clearInterval(id)
-  }, [])
+  // Variante del hero panel - persistida en localStorage para que el user
+  // mantenga su preferencia entre sesiones.
+  const [variant, setVariant] = useState<number>(() => {
+    if (typeof window === 'undefined') return 1
+    const stored = parseInt(localStorage.getItem(LOGIN_VARIANT_KEY) || '1', 10)
+    return Number.isFinite(stored) && stored >= 1 && stored <= 6 ? stored : 1
+  })
+  const handleVariantChange = (v: number) => {
+    setVariant(v)
+    localStorage.setItem(LOGIN_VARIANT_KEY, String(v))
+  }
 
   useEffect(() => {
     if (document.getElementById('hablah-google-fonts')) return
@@ -66,101 +66,14 @@ export function Login() {
       className="h-screen w-full flex overflow-hidden"
       style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}
     >
-      {/* IZQUIERDA: branding Habláh */}
-      <div
-        className="hidden lg:flex flex-col flex-1 relative overflow-hidden p-12 xl:p-16"
-        style={{ backgroundColor: HABLAH_INK, color: 'white' }}
-      >
-        {/* Green glow accents */}
-        <div
-          className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none"
-          style={{ background: `radial-gradient(circle, ${HABLAH_GREEN}55, transparent)` }}
-        />
-        <div
-          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none"
-          style={{ background: `radial-gradient(circle, ${HABLAH_GREEN}33, transparent)` }}
-        />
+      {/* Botonera flotante para elegir variante del hero */}
+      <div className="hidden lg:block">
+        <VariantPicker variant={variant} onChange={handleVariantChange} />
+      </div>
 
-        {/* Orb decorativo - flota arriba derecha con oscilacion suave */}
-        <div
-          className="absolute pointer-events-none login-orb-float"
-          style={{
-            top: '8%',
-            right: '8%',
-            width: 'min(380px, 32vw)',
-            height: 'min(380px, 32vw)',
-            opacity: 0.85,
-            mixBlendMode: 'screen',
-          }}
-        >
-          <AgentAudioVisualizerAura
-            status="speaking"
-            audioLevel={orbLevel}
-            color={HABLAH_GREEN as `#${string}`}
-            colorShift={0.12}
-            themeMode="dark"
-            size="lg"
-          />
-        </div>
-        <style>{`
-          @keyframes login-orb-drift {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33%      { transform: translate(-14px, 10px) rotate(2deg); }
-            66%      { transform: translate(8px, -12px) rotate(-1.5deg); }
-          }
-          .login-orb-float { animation: login-orb-drift 14s ease-in-out infinite; }
-          @media (prefers-reduced-motion: reduce) {
-            .login-orb-float { animation: none; }
-          }
-        `}</style>
-
-        {/* Logo header */}
-        <div className="relative flex items-center gap-3 mb-auto">
-          <img src="/logos/hablah-mark.svg" alt="habláh" width="48" height="48" className="rounded-xl" />
-          <div>
-            <div className="font-extrabold text-xl text-white leading-tight">habláh</div>
-            <div className="text-xs uppercase tracking-widest" style={{ color: 'rgba(232,236,234,.5)' }}>
-              Hablás. Aprendés.
-            </div>
-          </div>
-        </div>
-
-        {/* Headline central */}
-        <div className="relative my-auto">
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-6"
-            style={{ backgroundColor: `${HABLAH_GREEN}26`, color: HABLAH_GREEN }}
-          >
-            <Flame className="h-3.5 w-3.5" />
-            <span className="uppercase tracking-wider">5 minutos por día</span>
-          </div>
-          <h1
-            className="text-5xl xl:text-6xl font-extrabold leading-[1.05] tracking-tight"
-            style={{ letterSpacing: '-0.025em' }}
-          >
-            Tu próxima<br />
-            charla te está<br />
-            <span style={{ color: HABLAH_GREEN }}>esperando.</span>
-          </h1>
-          <p
-            className="mt-6 text-base xl:text-lg max-w-md leading-relaxed"
-            style={{ color: 'rgba(232,236,234,.75)' }}
-          >
-            Conversaciones reales con un tutor de IA que se adapta a tu nivel, tus intereses y tus errores. Sin exámenes, sin lecciones lineales.
-          </p>
-
-          <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
-            <Feature icon={Mic} label="Práctica" value="por voz" />
-            <Feature icon={Languages} label="Idiomas" value="3 activos" />
-            <Feature icon={Flame} label="Racha" value="diaria" />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="relative mt-auto text-xs flex items-center justify-between" style={{ color: 'rgba(232,236,234,.45)' }}>
-          <div>Habláh · v0.1 MVP</div>
-          <div>Hecho en LatAm</div>
-        </div>
+      {/* IZQUIERDA: hero panel (6 variantes intercambiables) */}
+      <div className="hidden lg:flex flex-col flex-1 min-w-0">
+        <LoginHero variant={variant} />
       </div>
 
       {/* DERECHA: form */}
@@ -320,20 +233,3 @@ export function Login() {
   )
 }
 
-function Feature({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
-  return (
-    <div
-      className="rounded-xl p-3 border"
-      style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.04)',
-        borderColor: `${HABLAH_GREEN}33`,
-      }}
-    >
-      <Icon className="h-4 w-4 mb-2" style={{ color: HABLAH_GREEN }} />
-      <div className="text-[10px] uppercase tracking-wider font-bold" style={{ color: 'rgba(232,236,234,.55)' }}>
-        {label}
-      </div>
-      <div className="text-sm font-bold text-white mt-0.5">{value}</div>
-    </div>
-  )
-}
