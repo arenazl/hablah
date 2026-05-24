@@ -18,6 +18,54 @@ from services.voice_engine import VoiceEngine, VoiceEngineContext
 log = logging.getLogger(__name__)
 
 
+async def _handle_admin_directive(*, raw_text: str, feedback_body: str, ctx, google_ws, client_ws):
+    """Procesa una directiva admin disparada durante una sesion Live.
+
+    Snapshot del prompt antes -> Flash refine -> insert AdminDirective -> snapshot
+    despues. Despues le inyecta al modelo Gemini un mensaje user sintetico para
+    que confirme en voz al admin. Notifica al frontend para mostrar toast.
+    """
+    from services.admin_feedback import apply_admin_directive
+
+    if not getattr(ctx, "template_id", None):
+        log.warning("admin_directive: ctx.template_id es None, ignorando")
+        return
+
+    try:
+        result = await apply_admin_directive(
+            raw_feedback=raw_text,
+            feedback_body=feedback_body,
+            template_id=ctx.template_id,
+            session_id=ctx.session_id,
+            user_id=ctx.user_id,
+        )
+        if not result:
+            return
+
+        # Inyectar mensaje sintetico al modelo para que confirme en voz
+        try:
+            await google_ws.send(json.dumps({
+                "clientContent": {
+                    "turns": [{"role": "user", "parts": [{"text": result["confirmation_text"]}]}],
+                    "turnComplete": True,
+                }
+            }))
+        except Exception as e:
+            log.warning("admin_directive: no pude inyectar confirmacion al modelo: %s", e)
+
+        # Toast al frontend
+        try:
+            await client_ws.send_json({
+                "type": "admin_directive_applied",
+                "directive_id": result["id"],
+                "directive_text": result["directive_text"],
+            })
+        except Exception:
+            pass
+    except Exception as e:
+        log.exception("admin_directive: handler fallo: %s", e)
+
+
 async def _maybe_detect_preference(*, user_id, user_text, target_lang, google_ws, client_ws):
     """Wrapper que llama al detector y, si aplicó cambio, notifica al cliente."""
     from services.preference_detector import detect_and_apply
@@ -277,13 +325,27 @@ class GeminiLiveEngine(VoiceEngine):
                             _flush_buffers()
                             await ws.send_json({"type": "turn_complete"})
                             if last_user_text and len(last_user_text) >= 6:
-                                asyncio.create_task(_maybe_detect_preference(
-                                    user_id=ctx.user_id,
-                                    user_text=last_user_text,
-                                    target_lang=ctx.target_language or "es",
-                                    google_ws=gws_holder["ws"],
-                                    client_ws=ws,
-                                ))
+                                # Modo evolutivo: check admin trigger ANTES del preference
+                                # detector. Si matchea, se procesa como directiva y se
+                                # SALTEA el preference detector (es admin, no charla).
+                                from services.admin_feedback import detect_admin_trigger
+                                admin_body = detect_admin_trigger(last_user_text)
+                                if admin_body:
+                                    asyncio.create_task(_handle_admin_directive(
+                                        raw_text=last_user_text,
+                                        feedback_body=admin_body,
+                                        ctx=ctx,
+                                        google_ws=gws_holder["ws"],
+                                        client_ws=ws,
+                                    ))
+                                else:
+                                    asyncio.create_task(_maybe_detect_preference(
+                                        user_id=ctx.user_id,
+                                        user_text=last_user_text,
+                                        target_lang=ctx.target_language or "es",
+                                        google_ws=gws_holder["ws"],
+                                        client_ws=ws,
+                                    ))
                 except websockets.ConnectionClosed as e:
                     # Gemini cerro la sesion. Si fue por timeout (1008) o renovacion
                     # preventiva, abrimos nueva sesion transparentemente.

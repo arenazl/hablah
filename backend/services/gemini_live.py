@@ -44,10 +44,18 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             topic = (await db.execute(select(Topic).where(Topic.id == s.topic_id))).scalar_one_or_none()
         if not user:
             return None
+        admin_directives: list[str] = []
+        if template:
+            from services.admin_feedback import load_active_directives
+            admin_directives = await load_active_directives(template.id, db)
         return {
             "session_id": s.id,
             "user_id": user.id,
-            "super_prompt": build_super_prompt(user=user, template=template, topic=topic),
+            "template_id": template.id if template else None,
+            "super_prompt": build_super_prompt(
+                user=user, template=template, topic=topic,
+                admin_directives=admin_directives,
+            ),
             "voice_id": template_voice_for_lang(template, user.target_language, user=user) if template else None,
             "language": user.target_language or "en",
             "target_language": user.target_language or "en",
@@ -73,6 +81,7 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str) -> None:
     ctx = VoiceEngineContext(
         session_id=ctx_dict["session_id"],
         user_id=ctx_dict["user_id"],
+        template_id=ctx_dict.get("template_id"),
         super_prompt=ctx_dict["super_prompt"],
         voice_id=ctx_dict["voice_id"],
         language=ctx_dict["language"],

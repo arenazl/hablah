@@ -418,6 +418,24 @@ def _template_block(t: Template, user_overrides: Optional[dict] = None) -> str:
     return "PERFIL DEL TUTOR\n" + "\n".join(bullets) + "\n" + "\n".join(pedagogy_rules)
 
 
+def _admin_directives_block(directives: Optional[list[str]]) -> str:
+    """Bloque de reglas duras venido del super-admin (modo evolutivo del coach).
+    Estas directivas pesan MAS que cualquier otra cosa del prompt — son ajustes
+    que el admin sumo en vivo viendo charlas reales. Ver services/admin_feedback.py.
+    """
+    if not directives:
+        return ""
+    items = "\n".join(f"  · {d}" for d in directives)
+    return (
+        "\n═══════════════════════════════════════════════════════════════\n"
+        "DIRECTIVAS DEL SUPER-ADMIN (reglas duras, prioridad maxima)\n"
+        "═══════════════════════════════════════════════════════════════\n"
+        "Estas reglas las sumo el super-admin en vivo viendo charlas reales.\n"
+        "Pesan MAS que cualquier otra instruccion. Aplicalas SIEMPRE:\n"
+        f"{items}\n"
+    )
+
+
 def build_super_prompt(
     *,
     user: User,
@@ -426,6 +444,7 @@ def build_super_prompt(
     recent_errors: Optional[list[dict]] = None,
     free_topic: Optional[str] = None,
     topic_brief: Optional[dict] = None,
+    admin_directives: Optional[list[str]] = None,
 ) -> str:
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
@@ -507,6 +526,8 @@ def build_super_prompt(
 4. SOS UN HUMANO INFORMADO. Sabés del tema. Aportá UN dato concreto cuando suma.
 5. SI EL ALUMNO SE TRABA, ayudá suave ("Take your time" o reformulá tu pregunta más fácil)."""
 
+    admin_block = _admin_directives_block(admin_directives)
+
     # MODO KIDS A0: chico que NO sabe NADA de inglés. Profesor de jardín:
     # 90% español + frases inglés cortas entre comillas + escenarios del topic
     # (familia/animales/colores) NUNCA cafe/oficina.
@@ -525,6 +546,7 @@ def build_super_prompt(
             f"ARRANQUE: saludá a {user.nombre} por nombre EN {base_lang_name.upper()}, decí en español algo\n"
             f"corto y entusiasta sobre el tópico ('Vamos a aprender palabras de tu familia en inglés'),\n"
             f"y dale la primera frase modelo en {target_lang_name} entre comillas (2-4 palabras max).\n"
+            f"{admin_block}"
         )
 
     # MODO KIDS (A1+): chico que ya tiene base. Conversa todo en ingles simple.
@@ -538,6 +560,7 @@ def build_super_prompt(
             f"Si el chico se traba o no entiende, NO traduzcas — reformulá MÁS SIMPLE en {target_lang_name}.\n"
             f"ARRANQUE: saludá a {user.nombre} por nombre, decí UNA cosa corta y entusiasta sobre el tema,\n"
             f"hacé UNA pregunta abierta y simple del tema. Máximo 2 oraciones cortas.\n"
+            f"{admin_block}"
         )
 
     # MODO A0 (adultos principiantes): override completo del comportamiento conversacional.
@@ -557,6 +580,7 @@ def build_super_prompt(
             f"en {base_lang_name} DERIVADO DEL TÓPICO DE HOY (ver bloque arriba — NO uses café/oficina si el\n"
             f"tópico es otra cosa), y dale la primera frase modelo en {target_lang_name} entre comillas,\n"
             f"relacionada al tópico. Frase corta (3-5 palabras).\n"
+            f"{admin_block}"
         )
 
     return (
@@ -569,4 +593,5 @@ def build_super_prompt(
         f"IDIOMA: hablás SIEMPRE en {target_lang_name}. Nunca en español, salvo que el alumno se trabe completamente.\n\n"
         f"ARRANQUE: empezá YA con un saludo + una pregunta concreta. Tu primer turno es CORTO. "
         f"Ejemplo: 'Hey {user.nombre}! Pulp Fiction, huh — solid pick. What scene grabbed you the first time you watched it?'\n"
+        f"{admin_block}"
     )

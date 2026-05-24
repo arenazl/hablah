@@ -79,12 +79,20 @@ async def start_session(
             is_kid=is_kid,
         )
 
+    # Directivas vigentes del super-admin para este template (modo evolutivo).
+    # Se inyectan como reglas duras al final del super_prompt.
+    admin_directives: list[str] = []
+    if template:
+        from services.admin_feedback import load_active_directives
+        admin_directives = await load_active_directives(template.id, db)
+
     super_prompt = build_super_prompt(
         user=current,
         template=template,
         topic=topic,
         free_topic=payload.free_topic,
         topic_brief=topic_brief,
+        admin_directives=admin_directives,
     )
     voice_id = template_voice_for_lang(template, current.target_language, user=current)
 

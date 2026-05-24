@@ -46,9 +46,11 @@ class VoiceEngineContext:
         target_language: str,
         silence_tolerance_ms: int = 800,
         interruption_allowed: bool = False,
+        template_id: Optional[int] = None,
     ) -> None:
         self.session_id = session_id
         self.user_id = user_id
+        self.template_id = template_id  # para detector admin (modo evolutivo)
         self.super_prompt = super_prompt
         self.voice_id = voice_id  # ElevenLabs voice_id (para engines que lo soporten)
         self.language = language

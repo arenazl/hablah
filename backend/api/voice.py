@@ -75,11 +75,19 @@ async def voice_ws_room(
         if vroom.template_id:
             template = (await db.execute(select(Template).where(Template.id == vroom.template_id))).scalar_one_or_none()
 
-        super_prompt = build_super_prompt(user=host, template=template, topic=topic)
+        admin_directives: list[str] = []
+        if template:
+            from services.admin_feedback import load_active_directives
+            admin_directives = await load_active_directives(template.id, db)
+        super_prompt = build_super_prompt(
+            user=host, template=template, topic=topic,
+            admin_directives=admin_directives,
+        )
 
     ctx = VoiceEngineContext(
         session_id=vroom.session_id or 0,
         user_id=vroom.host_user_id,
+        template_id=template.id if template else None,
         super_prompt=super_prompt,
         voice_id=template.voice_id if template else "",
         language="en",
