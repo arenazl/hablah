@@ -119,18 +119,31 @@ const HOME_CSS = `
 .landing-root .index-row .index-arrow { justify-self: end; color: rgba(232,236,234,.55); transition: all .3s var(--ease); }
 
 /* Trio wrapper: gradient continuo cremoso -> oscuro a lo largo de las 3 secciones.
-   Asi no hay corte abrupto entre claro y oscuro - flujo organico. */
+   Stops calibrados para que la transicion empiece YA en la seccion 01 (asi el
+   screenshot claro no queda flotando en blanco total) y termine antes del medio
+   de la seccion 02 (que ya esta oscura en el bg). */
 .landing-root .product-trio {
   background: linear-gradient(
     180deg,
     var(--bg-1) 0%,
-    var(--bg-2) 14%,
-    #C9B998 28%,
-    #6E6754 42%,
-    #2D3431 58%,
-    var(--ink-1) 75%,
+    var(--bg-2) 6%,
+    #E8DECB 15%,
+    #9C9482 25%,
+    #4A4944 36%,
+    var(--ink-1) 50%,
+    var(--ink-1) 80%,
     #050a08 100%
   );
+}
+/* Marco oscuro sutil que envuelve el screenshot de la seccion 01 (claro)
+   para que no quede "blanco sobre blanco" gigante. Se aplica solo en la PRIMER
+   .product-section del trio. */
+.landing-root .product-trio > .product-section:first-child .product-screen-wrap {
+  padding: 18px;
+  background: linear-gradient(160deg, rgba(13,20,18,.06), rgba(13,20,18,.02));
+  border-radius: calc(var(--r-2xl) + 18px);
+  border: 1px solid rgba(13,20,18,.10);
+  box-shadow: 0 20px 50px rgba(13,20,18,.12);
 }
 .landing-root .product-section { padding: 120px 0; position: relative; overflow: hidden; background: transparent; }
 .landing-root .product-section.dark { color: white; }
