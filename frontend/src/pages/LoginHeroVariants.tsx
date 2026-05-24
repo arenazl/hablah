@@ -54,10 +54,33 @@ const SHARED_STYLES = `
 .lhv-eyebrow svg { width: 14px; height: 14px; }
 
 /* ===== V1: Orb Hero ===== */
-.lhv-v1-stage { position: relative; flex: 1; display: grid; grid-template-rows: auto 1fr auto; gap: 24px; }
-.lhv-v1-orb-wrap { position: relative; display: grid; place-items: center; align-self: center; width: 100%; }
-.lhv-v1-orb { width: min(420px, 50vh); height: min(420px, 50vh); position: relative; animation: lhv-v1-bob 5s ease-in-out infinite; }
-@keyframes lhv-v1-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.lhv-v1-stage { position: relative; flex: 1; display: grid; grid-template-rows: 1fr auto; gap: 24px; place-items: center; }
+.lhv-v1-orb-wrap { position: relative; display: grid; place-items: center; justify-content: center; width: 100%; height: 100%; }
+/* Halo radial verde detras del orb - cintura mas ancha que el orb mismo */
+.lhv-v1-orb-wrap::before {
+  content: '';
+  position: absolute;
+  width: min(780px, 80vh);
+  height: min(780px, 80vh);
+  border-radius: 50%;
+  background: radial-gradient(circle, ${GREEN}55 0%, ${GREEN}1F 30%, transparent 65%);
+  filter: blur(40px);
+  pointer-events: none;
+  animation: lhv-v1-halo 6s ease-in-out infinite;
+}
+.lhv-v1-orb-wrap::after {
+  content: '';
+  position: absolute;
+  width: min(560px, 65vh);
+  height: min(560px, 65vh);
+  border-radius: 50%;
+  background: radial-gradient(circle, ${GREEN}22 0%, transparent 70%);
+  pointer-events: none;
+  animation: lhv-v1-halo 6s ease-in-out infinite reverse;
+}
+@keyframes lhv-v1-halo { 0%,100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.08); opacity: 1; } }
+.lhv-v1-orb { width: min(560px, 65vh); height: min(560px, 65vh); position: relative; animation: lhv-v1-bob 5.5s ease-in-out infinite; z-index: 2; filter: drop-shadow(0 30px 60px ${GREEN}66); }
+@keyframes lhv-v1-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
 .lhv-v1-orbital-text { position: absolute; inset: 0; pointer-events: none; }
 .lhv-v1-orbital-text span { position: absolute; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.55); font-weight: 700; white-space: nowrap; }
 .lhv-v1-headline { text-align: center; }
@@ -197,13 +220,12 @@ function VariantOrbHero({ level }: { level: number }) {
     <>
       <BrandBlock />
       <div className="lhv-v1-stage">
-        <div />
         <div className="lhv-v1-orb-wrap">
           <div className="lhv-v1-orb">
-            <AgentAudioVisualizerAura status="speaking" audioLevel={level} color={GREEN as `#${string}`} colorShift={0.08} themeMode="dark" size="lg" />
+            <AgentAudioVisualizerAura status="speaking" audioLevel={level} color={GREEN as `#${string}`} colorShift={0.10} themeMode="dark" size="lg" />
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'center', position: 'relative', zIndex: 2 }}>
           <span className="lhv-eyebrow"><Sparkles /> Tutor de IA conversacional</span>
           <div className="lhv-v1-headline">
             <h1>Aprendés <em>hablando</em>.<br/>Sin lecciones, sin pizarrón.</h1>
