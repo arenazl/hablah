@@ -16,27 +16,41 @@
  *   new AudioWorkletNode(ctx, 'mic-processor', {processorOptions: {samples: 2048}})
  */
 /**
- * Umbral de silencio. RMS < SILENCE_THRESHOLD = silencio.
- * Despues de speechToSilenceFrames frames de silencio consecutivos,
- * dejamos de enviar al main thread (VAD client-side).
- * Esto reduce bandwidth y carga del backend cuando estas callado.
- * Gemini Live tiene su propio VAD server-side asi que igual detecta
- * cuando arrancas a hablar de nuevo.
+ * Configurable via processorOptions al instanciar el AudioWorkletNode:
+ *   new AudioWorkletNode(ctx, 'mic-processor', {
+ *     processorOptions: {
+ *       samples: 2048,        // buffer size en samples
+ *       vadEnabled: true,     // VAD on/off
+ *       vadThreshold: 0.005,  // umbral RMS para silencio
+ *       vadTailFrames: 2,     // frames "tail" tras voz
+ *     }
+ *   })
+ *
+ * Tambien soporta cambios runtime via port.postMessage({type:'config', ...}).
  */
-const SILENCE_THRESHOLD = 0.005
-const TAIL_FRAMES = 2  // mandar 2 chunks despues de cortar para no truncar palabras
-
 class MicProcessor extends AudioWorkletProcessor {
   constructor(options) {
     super()
     const opts = (options && options.processorOptions) || {}
     this.target = opts.samples || 2048
+    this.vadEnabled = opts.vadEnabled !== false
+    this.vadThreshold = opts.vadThreshold ?? 0.005
+    this.vadTailFrames = opts.vadTailFrames ?? 2
     this.acc = new Int16Array(this.target)
     this.pos = 0
     this.rmsAcc = 0
     this.rmsCount = 0
-    this.silentTail = 0  // cuantos frames silenciosos llevo enviados tras voz
+    this.silentTail = 0
     this.lastWasVoice = false
+
+    // Permitir reconfigurar en runtime
+    this.port.onmessage = (ev) => {
+      const d = ev.data
+      if (!d || d.type !== 'config') return
+      if (typeof d.vadEnabled === 'boolean') this.vadEnabled = d.vadEnabled
+      if (typeof d.vadThreshold === 'number') this.vadThreshold = d.vadThreshold
+      if (typeof d.vadTailFrames === 'number') this.vadTailFrames = d.vadTailFrames
+    }
   }
 
   process(inputs) {
@@ -53,23 +67,23 @@ class MicProcessor extends AudioWorkletProcessor {
 
       if (this.pos >= this.target) {
         const rms = Math.sqrt(this.rmsAcc / Math.max(1, this.rmsCount))
-        const isVoice = rms >= SILENCE_THRESHOLD
-        let shouldSend = false
+        let shouldSend = true
 
-        if (isVoice) {
-          shouldSend = true
-          this.silentTail = 0
-          this.lastWasVoice = true
-        } else if (this.lastWasVoice && this.silentTail < TAIL_FRAMES) {
-          // Acabamos de pasar de voz a silencio: mandar unos frames mas
-          // para que Gemini tenga el "fin" claro y no corte palabras.
-          shouldSend = true
-          this.silentTail++
-          if (this.silentTail >= TAIL_FRAMES) {
-            this.lastWasVoice = false
+        if (this.vadEnabled) {
+          const isVoice = rms >= this.vadThreshold
+          shouldSend = false
+          if (isVoice) {
+            shouldSend = true
+            this.silentTail = 0
+            this.lastWasVoice = true
+          } else if (this.lastWasVoice && this.silentTail < this.vadTailFrames) {
+            shouldSend = true
+            this.silentTail++
+            if (this.silentTail >= this.vadTailFrames) {
+              this.lastWasVoice = false
+            }
           }
         }
-        // Si NO hay voz Y ya pasaron los tail frames: NO mandar nada.
 
         if (shouldSend) {
           const out = new ArrayBuffer(this.target * 2)

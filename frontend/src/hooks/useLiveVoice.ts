@@ -11,6 +11,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { buildVoiceWsUrl } from '../services/api'
+import { loadAudioSettings } from '../lib/audioSettings'
 
 export interface TranscriptLine {
   who: 'ai' | 'user'
@@ -165,25 +166,39 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const playNextChunk = useCallback(() => {
     const ctx = playCtxRef.current
     if (!ctx) return
-    // NOTA: tuvimos catch-up con threshold 1.5s aca, pero rompia audio en
-    // cada palabra. Causa: Gemini Live envia chunks MAS RAPIDO que real-time
-    // (10s de audio en 3s wall-clock), entonces nextStartTimeRef se adelanta
-    // naturalmente y el catch-up disparaba cortando audio bueno.
-    // Sin catch-up el playback fluye natural. La acumulacion de delay es
-    // un caso raro (sesion muy larga + AudioContext suspendido). Si llega
-    // a pasar, el resume() de AudioContext en pushAudioFromTutor ayuda.
-    // Schedule TODOS los chunks pendientes ahora con tiempos exactos para evitar gaps
+    const settings = loadAudioSettings()
+    // Catch-up opcional (default OFF). Si on y delay > threshold, cancelar
+    // buffers futuros y resetear cursor. Default OFF porque Gemini envia
+    // chunks faster-than-realtime y el catch-up corta audio bueno.
+    if (settings.catchUpEnabled) {
+      const ahead = nextStartTimeRef.current - ctx.currentTime
+      if (ahead > settings.catchUpThresholdSeconds) {
+        for (const src of playSourcesRef.current) {
+          try { src.stop() } catch {}
+          try { src.disconnect() } catch {}
+        }
+        playSourcesRef.current = []
+        nextStartTimeRef.current = ctx.currentTime
+        optsRef.current.onAudioGlitch?.({
+          reason: 'audio_drift_reset',
+          delayMs: Math.round(ahead * 1000),
+        })
+      }
+    }
     while (playQueueRef.current.length > 0) {
       const item = playQueueRef.current.shift()!
       const buf = ctx.createBuffer(1, item.floats.length, item.sampleRate)
       buf.getChannelData(0).set(item.floats)
       const src = ctx.createBufferSource()
       src.buffer = buf
-      src.connect(ctx.destination)
+      // Gain node para controlar volumen del coach/participant
+      const gain = ctx.createGain()
+      gain.gain.value = settings.coachVolume
+      src.connect(gain)
+      gain.connect(ctx.destination)
       const analyser = analyserRef.current
-      if (analyser) src.connect(analyser)
-      // Si el proximo start es pasado o muy cercano, agendamos en currentTime + 20ms safety
-      const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + 0.02)
+      if (analyser) gain.connect(analyser)
+      const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + settings.playbackCushionSeconds)
       src.start(startAt)
       nextStartTimeRef.current = startAt + buf.duration
       playSourcesRef.current.push(src)
@@ -191,6 +206,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         const arr = playSourcesRef.current
         const idx = arr.indexOf(src)
         if (idx >= 0) arr.splice(idx, 1)
+        try { gain.disconnect() } catch {}
       }
     }
   }, [])
@@ -265,10 +281,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         for (let i = 0; i < samples.length; i++) float[i] = samples[i] / 32768
         playQueueRef.current.push({ floats: float, sampleRate })
         if (!playCtxRef.current) {
-          // AudioContext a 24kHz (el mayor de los SR que recibimos). Los chunks
-          // a 16kHz se resamplean automaticamente por el browser al asignar
-          // sampleRate del AudioBuffer correctamente.
-          playCtxRef.current = new AudioContext({ sampleRate: 24000 })
+          const settings = loadAudioSettings()
+          playCtxRef.current = new AudioContext({ sampleRate: settings.playbackSampleRate })
         }
         // Recovery: si el AudioContext quedo suspended (por autoplay policy,
         // o porque el browser lo suspendio al cambiar de WS en upgradeToRoom)
@@ -292,14 +306,17 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       setStatus('connecting')
       setTranscript([])
 
+      const settings = loadAudioSettings()
       let stream: MediaStream
       try {
-        // 16kHz: probamos bajar a 8kHz pero rompio la captura (el usuario
-        // hablaba y Gemini no transcribia nada). Sesion 195 evidencia:
-        // 39s, coach repitio la misma pregunta 2 veces, 0 turnos del user.
-        // Volvemos a 16kHz que andaba estable.
         stream = await navigator.mediaDevices.getUserMedia({
-          audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
+          audio: {
+            channelCount: 1,
+            sampleRate: settings.captureSampleRate,
+            echoCancellation: settings.echoCancellation,
+            noiseSuppression: settings.noiseSuppression,
+            autoGainControl: settings.autoGainControl,
+          },
         })
       } catch (e: any) {
         optsRef.current.onError?.(new Error('Permiso de micrófono denegado'))
@@ -320,8 +337,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           if (ws.readyState === WebSocket.OPEN) {
             try { ws.send(JSON.stringify({ type: 'ping' })) } catch {}
           }
-        }, 25000)
-        const ctx = new AudioContext({ sampleRate: 16000 })
+        }, settings.wsPingIntervalMs)
+        const ctx = new AudioContext({ sampleRate: settings.captureSampleRate })
         audioCtxRef.current = ctx
         const source = ctx.createMediaStreamSource(stream)
         sourceRef.current = source
@@ -340,14 +357,19 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           liveWs.send(JSON.stringify({ type: 'audio', data: b64 }))
         }
 
-        // Preferido: AudioWorkletNode. Corre en thread de audio (no main),
-        // libera la UI y reduce glitches. Buffer interno 2048 samples = 128ms.
+        // Preferido: AudioWorkletNode. Corre en thread de audio (no main).
+        // El buffer y VAD config vienen de los settings del user.
         let useWorklet = false
-        if (ctx.audioWorklet && typeof ctx.audioWorklet.addModule === 'function') {
+        if (settings.useAudioWorklet && ctx.audioWorklet && typeof ctx.audioWorklet.addModule === 'function') {
           try {
             await ctx.audioWorklet.addModule('/audio-worklet/mic-processor.js')
             const node = new AudioWorkletNode(ctx, 'mic-processor', {
-              processorOptions: { samples: 2048 },
+              processorOptions: {
+                samples: settings.workletBufferSamples,
+                vadEnabled: settings.vadEnabled,
+                vadThreshold: settings.vadThreshold,
+                vadTailFrames: settings.vadTailFrames,
+              },
             })
             workletNodeRef.current = node
             node.port.onmessage = (ev: MessageEvent) => {
@@ -373,10 +395,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         }
 
         if (!useWorklet) {
-          // Fallback: ScriptProcessor (deprecado pero universal). Buffer 2048
-          // (era 4096 antes) = 128ms por callback, mas reactivo.
+          // Fallback: ScriptProcessor (deprecado pero universal).
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const proc = (ctx as any).createScriptProcessor(2048, 1, 1) as ScriptProcessorNode
+          const proc = (ctx as any).createScriptProcessor(settings.workletBufferSamples, 1, 1) as ScriptProcessorNode
           procRef.current = proc
           proc.onaudioprocess = (e) => {
             const input = e.inputBuffer.getChannelData(0)

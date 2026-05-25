@@ -16,6 +16,7 @@ import { KidsProvider } from './pages/kids/KidsContext'
 import { GuestRoom } from './pages/GuestRoom'
 import { WebApp } from './pages/WebApp'
 import { Backoffice } from './pages/Backoffice'
+import { AudioTuningPage } from './pages/AudioTuningPage'
 
 function AuthGate({ children, allowKidMode = false }: { children: React.ReactNode; allowKidMode?: boolean }) {
   const { isAuthenticated, isLoading } = useAuth()
@@ -94,6 +95,7 @@ export default function App() {
         <Route path="/kids/sesion/:topicId" element={<KidsProvider><KidsSession /></KidsProvider>} />
         <Route path="/kids/*" element={<KidsProvider><KidsHome /></KidsProvider>} />
         <Route path="/charla/:token" element={<GuestRoom />} />
+        <Route path="/tune" element={<AudioTuningPage />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/app/*"
