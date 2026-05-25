@@ -190,9 +190,9 @@ export function GuestRoom() {
     let stream: MediaStream
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        // 8kHz (telefonico): mitad de bandwidth de la captura a 16kHz,
-        // suficiente para conversacion. Reduce latencia en voice room.
-        audio: { channelCount: 1, sampleRate: 8000, echoCancellation: true, noiseSuppression: true },
+        // 16kHz: probamos 8kHz pero rompio la captura (Gemini no transcribia
+        // los turnos del user). Volvemos a 16kHz estable.
+        audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
       })
     } catch {
       setError('Necesitamos acceso al microfono')
@@ -210,7 +210,7 @@ export function GuestRoom() {
     ws.onopen = () => {
       setStatus('live')
       // Audio capture loop
-      const ctx = new AudioContext({ sampleRate: 8000 })
+      const ctx = new AudioContext({ sampleRate: 16000 })
       audioCtxRef.current = ctx
       const source = ctx.createMediaStreamSource(stream)
       const proc = ctx.createScriptProcessor(2048, 1, 1)
@@ -246,7 +246,7 @@ export function GuestRoom() {
         if (msg.type === 'audio') {
           playPCMChunk(msg.data)
         } else if (msg.type === 'participant_audio') {
-          // Audio de otro participante humano (PCM 8kHz - captura del mic).
+          // Audio de otro participante humano (PCM 16kHz - captura del mic).
           try {
             const bytes = atob(msg.data)
             const buf = new ArrayBuffer(bytes.length)
@@ -262,7 +262,7 @@ export function GuestRoom() {
             if (nextStartTimeRef.current > ctx.currentTime + 0.25) {
               nextStartTimeRef.current = ctx.currentTime
             }
-            const audioBuf = ctx.createBuffer(1, floats.length, 8000)
+            const audioBuf = ctx.createBuffer(1, floats.length, 16000)
             audioBuf.getChannelData(0).set(floats)
             const src = ctx.createBufferSource()
             src.buffer = audioBuf

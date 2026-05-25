@@ -291,11 +291,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
       let stream: MediaStream
       try {
-        // Captura a 8kHz (telefonico) en vez de 16kHz: mitad de bandwidth al
-        // backend y al broadcast inter-participants, sin perdida significativa
-        // de inteligibilidad para conversacion. Gemini Live soporta 8kHz input.
+        // 16kHz: probamos bajar a 8kHz pero rompio la captura (el usuario
+        // hablaba y Gemini no transcribia nada). Sesion 195 evidencia:
+        // 39s, coach repitio la misma pregunta 2 veces, 0 turnos del user.
+        // Volvemos a 16kHz que andaba estable.
         stream = await navigator.mediaDevices.getUserMedia({
-          audio: { channelCount: 1, sampleRate: 8000, echoCancellation: true, noiseSuppression: true },
+          audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
         })
       } catch (e: any) {
         optsRef.current.onError?.(new Error('Permiso de micrófono denegado'))
@@ -317,7 +318,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
             try { ws.send(JSON.stringify({ type: 'ping' })) } catch {}
           }
         }, 25000)
-        const ctx = new AudioContext({ sampleRate: 8000 })
+        const ctx = new AudioContext({ sampleRate: 16000 })
         audioCtxRef.current = ctx
         const source = ctx.createMediaStreamSource(stream)
         sourceRef.current = source
@@ -369,10 +370,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         setStatus('speaking')
         pushAudioFromTutor(msg.data, 24000)
       } else if (msg.type === 'participant_audio') {
-        // Otro participante humano en la voice room: PCM 8kHz (captura del mic
-        // ahora a 8kHz para reducir bandwidth y latencia).
+        // Otro participante humano en la voice room: PCM 16kHz (captura mic).
         setStatus('speaking')
-        pushAudioFromTutor(msg.data, 8000)
+        pushAudioFromTutor(msg.data, 16000)
       } else if (msg.type === 'transcript_chunk') {
         // Para el USER mostramos chunks en vivo: es lo que el alumno acaba de
         // decir, queremos feedback inmediato.
