@@ -117,9 +117,15 @@ RENEW_BEFORE_END_SECONDS = 30
 # Watchdog "el coach nunca se muere": si despues de un turnComplete del usuario
 # pasan COACH_SILENCE_TRIGGER_SECONDS sin que el coach diga nada, disparamos
 # rescate. Cascada: trigger sintetico -> renew forzado -> mensaje verbal.
-# Para kids es mas corto porque 8s de silencio es eterno para un nene.
-COACH_SILENCE_TRIGGER_SECONDS = 4
-COACH_SILENCE_HARD_RESCUE_SECONDS = 10
+#
+# Antes era 4s pero disparaba MAL: cuando el user terminaba de hablar, Gemini
+# Live a veces tarda 3-6s en arrancar a generar audio (procesamiento normal),
+# y durante esa ventana el watchdog interpretaba que el coach se quedo mudo.
+# El trigger sintetico se metia en el medio del turno coach causando frases
+# concatenadas tipo "...Decila vos!¡Ay perdon no te escuche!". Subido a 12s
+# real (tras evidencia en logs de Timo session 181).
+COACH_SILENCE_TRIGGER_SECONDS = 12
+COACH_SILENCE_HARD_RESCUE_SECONDS = 22
 
 
 async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
@@ -526,30 +532,23 @@ class GeminiLiveEngine(VoiceEngine):
                 if silence < COACH_SILENCE_TRIGGER_SECONDS:
                     continue
 
-                # Nivel 1: trigger sintetico suave
+                # Nivel 1: trigger sintetico SUAVE - SOLO si pasaron 12s+ y NO
+                # hay audio del coach reciente. Mensaje conservador: NO le pedimos
+                # que diga "no te escuche" ni "perdon" - solo que continue suave
+                # si el silencio es real. Para el modelo Live esto es un nudge,
+                # no un comando que verbalice.
                 if attempts == 0:
                     log.warning(
                         "coach_watchdog: silencio %.1fs tras turno user. "
-                        "Nivel 1: trigger sintetico.", silence,
+                        "Nivel 1: nudge silencioso.", silence,
                     )
                     timing["rescue_attempts"] = 1
-                    is_kid_ctx = bool(getattr(ctx, "is_kid", False))
-                    if is_kid_ctx:
-                        trigger_text = (
-                            "(Sistema: el alumno te dijo algo corto/ambiguo "
-                            "(quiza 'como?', 'que?', 'eh?', o un balbuceo) y "
-                            "te quedaste callado. NO te quedes mudo. Asumí que "
-                            "fue una interrupcion casual: pedile perdon corto y "
-                            "REPETI tu ULTIMA frase modelo entera entre comillas. "
-                            "Una sola oracion. Ej: 'Ay perdon, te repito: \"I love mom\". "
-                            "Ahora vos.')"
-                        )
-                    else:
-                        trigger_text = (
-                            "(Sistema: el alumno esta esperando tu respuesta. "
-                            "Continua la charla naturalmente desde donde quedaste. "
-                            "Una sola frase corta.)"
-                        )
+                    trigger_text = (
+                        "(Internal nudge - do NOT verbalize this, do NOT say sorry, "
+                        "do NOT say you didn't hear: the student seems to be quiet. "
+                        "If you have something natural to say to continue, say it in "
+                        "ONE short sentence. If not, stay silent.)"
+                    )
                     try:
                         await gws_holder["ws"].send(json.dumps({
                             "clientContent": {
