@@ -7,9 +7,10 @@
  *
  * NO usar emojis Unicode aquí - solo iconos SVG.
  */
-import { useEffect, type ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { useKid, KIDS_RANKS } from './KidsContext'
+import { useEffect, useState, type ReactNode } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { useKid, KIDS_RANKS, KIDS_TOKEN_KEY } from './KidsContext'
 
 export const KIDS_CSS = `
 .kids-root {
@@ -138,15 +139,21 @@ export const KIDS_CSS = `
   body.kids-drawer-open .kids-m-drawer-backdrop { display:block; opacity:1; }
   body.kids-drawer-open .kids-m-drawer { transform:translateX(0); }
 
-  .kids-m-tabbar { display:grid; grid-template-columns:1fr 1fr 64px 1fr 1fr; align-items:center; position:fixed; left:0; right:0; bottom:0; z-index:40; background:rgba(255,252,246,.96); border-top:1px solid var(--border-1); backdrop-filter:blur(20px); padding:6px 6px calc(8px + env(safe-area-inset-bottom)); }
+  .kids-m-tabbar { display:grid; grid-template-columns:1fr 1fr 86px 1fr 1fr; align-items:center; position:fixed; left:0; right:0; bottom:0; z-index:40; background:rgba(255,252,246,.96); border-top:1px solid var(--border-1); backdrop-filter:blur(20px); padding:6px 6px calc(8px + env(safe-area-inset-bottom)); }
   .kids-m-tabbar a { display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 4px; color:var(--fg-4); font-size:10.5px; font-weight:700; }
   .kids-m-tabbar a svg { width:22px; height:22px; stroke-width:2; }
   .kids-m-tabbar a.active { color:var(--green-700); }
   .kids-m-tabbar a.active svg { color:var(--green); }
   .kids-m-fab-wrap { display:flex; justify-content:center; align-items:center; height:100%; position:relative; }
-  .kids-m-fab { width:50px; height:50px; border-radius:50%; background:linear-gradient(180deg,var(--amber),#F09D00); color:#3A2A00; display:grid; place-items:center; box-shadow:0 4px 12px rgba(240,157,0,.32), 0 1px 3px rgba(13,20,18,.12); transform:translateY(-6px); transition:transform .15s; }
-  .kids-m-fab:active { transform:translateY(-6px) scale(.92); }
-  .kids-m-fab svg { width:22px; height:22px; stroke-width:2.2; }
+  /* FAB micro: grande, sobresalido como menus modernos (FAB Material style).
+     Lleva al chico DIRECTO a una clase random pendiente. */
+  .kids-m-fab { width:72px; height:72px; border-radius:50%; background:linear-gradient(180deg,#FFC833,#F09D00); color:#3A2A00; display:grid; place-items:center; box-shadow:0 12px 28px rgba(240,157,0,.45), 0 4px 10px rgba(13,20,18,.18), 0 0 0 5px rgba(255,252,246,.96); transform:translateY(-26px); transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s; border:0; padding:0; cursor:pointer; font-family:inherit; }
+  .kids-m-fab:hover { transform:translateY(-30px); box-shadow:0 16px 32px rgba(240,157,0,.55), 0 4px 10px rgba(13,20,18,.18), 0 0 0 5px rgba(255,252,246,.96); }
+  .kids-m-fab:active { transform:translateY(-26px) scale(.92); }
+  .kids-m-fab:disabled { opacity:.65; cursor:wait; transform:translateY(-26px); }
+  .kids-m-fab svg { width:30px; height:30px; stroke-width:2.2; }
+  .kids-m-fab .spin { width:24px; height:24px; border-radius:50%; border:3px solid #3A2A00; border-right-color:transparent; animation:kids-fab-spin .7s linear infinite; }
+  @keyframes kids-fab-spin { to { transform:rotate(360deg); } }
 }
 `
 
@@ -444,13 +451,7 @@ export function KidsMobileTabbar() {
         Colección
       </Link>
       <div className="kids-m-fab-wrap">
-        <Link to="/kids/topicos" className="kids-m-fab" aria-label="¡A hablar!">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" stroke="none" />
-            <path d="M5 11a7 7 0 0 0 14 0" />
-            <path d="M12 18v3M8 21h8" />
-          </svg>
-        </Link>
+        <KidsMicFab />
       </div>
       <Link to="/kids/aventuras" className={isActive('/kids/aventuras') ? 'active' : ''}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" /></svg>
@@ -461,6 +462,64 @@ export function KidsMobileTabbar() {
         Perfil
       </Link>
     </nav>
+  )
+}
+
+/**
+ * Boton FAB del microfono. Tap -> backend devuelve un topico random de los
+ * que el chico TODAVIA NO completo -> navega directo a la sesion.
+ *
+ * Si todos estan completos, igual devuelve uno (para que pueda repetir) y
+ * avisa al chico con un toast.
+ */
+function KidsMicFab() {
+  const nav = useNavigate()
+  const [loading, setLoading] = useState(false)
+
+  const handleClick = async (): Promise<void> => {
+    if (loading) return
+    setLoading(true)
+    try {
+      const tok = localStorage.getItem(KIDS_TOKEN_KEY)
+      if (!tok) {
+        toast.error('Entrá con tu perfil primero')
+        return
+      }
+      const res = await fetch('/api/kids/topics/next-random', {
+        headers: { Authorization: `Bearer ${tok}` },
+      })
+      if (!res.ok) throw new Error('No pude buscar un tema')
+      const data: { id: number; title: string; all_completed?: boolean } = await res.json()
+      if (data.all_completed) {
+        toast.success('¡Ya hiciste todos! Repetí este de nuevo')
+      }
+      nav(`/kids/sesion/${data.id}`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error de red'
+      toast.error(msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      className="kids-m-fab"
+      onClick={handleClick}
+      disabled={loading}
+      aria-label="¡A hablar!"
+    >
+      {loading ? (
+        <span className="spin" aria-hidden />
+      ) : (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" stroke="none" />
+          <path d="M5 11a7 7 0 0 0 14 0" />
+          <path d="M12 18v3M8 21h8" />
+        </svg>
+      )}
+    </button>
   )
 }
 

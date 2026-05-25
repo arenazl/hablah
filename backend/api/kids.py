@@ -24,7 +24,7 @@ from core.database import get_db
 from core.security import get_password_hash, create_access_token, get_current_user
 from core.config import settings
 from models.user import User, UserRole
-from models.template import Template, Topic
+from models.template import Template, Topic, TopicProgress
 from models.kids import AchievementCatalog, UserAchievement
 
 
@@ -270,6 +270,58 @@ async def list_kids_topics(
         )
         for t in topics
     ]
+
+
+@router.get("/topics/next-random")
+async def kids_next_random_topic(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Devuelve un topico random de los que el chico TODAVIA NO completo.
+
+    Criterio "no completado": sin entry en topic_progress O con pct < 100.
+    Filtra por age_group del kid. Si el chico ya completo TODOS los de su
+    grupo, devuelve uno random igual (para que pueda repetir).
+
+    Pensado para el boton FAB del microfono: tap -> directo a una clase
+    nueva sin que el nene tenga que elegir.
+    """
+    import random
+
+    age_group = getattr(user, "age_group", None)
+    if not age_group:
+        raise HTTPException(status_code=400, detail="Perfil sin age_group")
+
+    # Todos los topicos activos del grupo
+    all_topics = (await db.execute(
+        select(Topic).where(
+            Topic.category == "kids",
+            Topic.is_active == True,  # noqa: E712
+            Topic.kid_age_group == age_group,
+        )
+    )).scalars().all()
+
+    if not all_topics:
+        raise HTTPException(status_code=404, detail="Sin topicos disponibles para este grupo")
+
+    # Progreso del chico
+    progress = (await db.execute(
+        select(TopicProgress).where(TopicProgress.user_id == user.id)
+    )).scalars().all()
+    completed_ids = {p.topic_id for p in progress if (p.pct or 0) >= 100}
+
+    pending = [t for t in all_topics if t.id not in completed_ids]
+    pool = pending if pending else all_topics
+    chosen = random.choice(pool)
+
+    return {
+        "id": chosen.id,
+        "slug": chosen.slug,
+        "title": chosen.title,
+        "keywords": chosen.keywords or [],
+        "is_hot": bool(chosen.is_hot),
+        "all_completed": not pending,
+    }
 
 
 @router.get("/achievements", response_model=list[AchievementResponse])
