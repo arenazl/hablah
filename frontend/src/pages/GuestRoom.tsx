@@ -104,6 +104,7 @@ export function GuestRoom() {
   const audioCtxRef = useRef<AudioContext | null>(null)
   const playCtxRef = useRef<AudioContext | null>(null)
   const procRef = useRef<ScriptProcessorNode | null>(null)
+  const workletNodeRef = useRef<AudioWorkletNode | null>(null)
   const nextStartTimeRef = useRef(0)
   const [orbAudio, setOrbAudio] = useState(0.15)
 
@@ -128,6 +129,11 @@ export function GuestRoom() {
     wsRef.current = null
     try { procRef.current?.disconnect() } catch {}
     procRef.current = null
+    if (workletNodeRef.current) {
+      try { workletNodeRef.current.port.close() } catch {}
+      try { workletNodeRef.current.disconnect() } catch {}
+      workletNodeRef.current = null
+    }
     if (audioCtxRef.current) { try { audioCtxRef.current.close() } catch {} }
     audioCtxRef.current = null
     if (playCtxRef.current) { try { playCtxRef.current.close() } catch {} }
@@ -207,37 +213,63 @@ export function GuestRoom() {
     const ws = new WebSocket(buildRoomWsUrl(token!, myPid))
     wsRef.current = ws
 
-    ws.onopen = () => {
+    ws.onopen = async () => {
       setStatus('live')
-      // Audio capture loop
       const ctx = new AudioContext({ sampleRate: 16000 })
       audioCtxRef.current = ctx
       const source = ctx.createMediaStreamSource(stream)
-      const proc = ctx.createScriptProcessor(2048, 1, 1)
-      procRef.current = proc
-      proc.onaudioprocess = (e) => {
+
+      // Handler comun para enviar un buffer PCM int16 al WS
+      const sendPcm = (pcmBuf: ArrayBuffer, rms: number): void => {
         if (ws.readyState !== WebSocket.OPEN) return
-        const input = e.inputBuffer.getChannelData(0)
-        // RMS para audioLevel
-        let sum = 0
-        for (let i = 0; i < input.length; i++) sum += input[i] * input[i]
-        const rms = Math.sqrt(sum / input.length)
         setOrbAudio(Math.max(0.15, Math.min(1, rms * 4)))
-        // Convertir a int16 LE
-        const pcm = new Int16Array(input.length)
-        for (let i = 0; i < input.length; i++) {
-          const s = Math.max(-1, Math.min(1, input[i]))
-          pcm[i] = s < 0 ? s * 0x8000 : s * 0x7fff
-        }
-        // base64
-        const u8 = new Uint8Array(pcm.buffer)
+        const u8 = new Uint8Array(pcmBuf)
         let bin = ''
         for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i])
         const b64 = btoa(bin)
         ws.send(JSON.stringify({ type: 'audio', data: b64 }))
       }
-      source.connect(proc)
-      proc.connect(ctx.destination)
+
+      // Preferido: AudioWorkletNode (corre en thread aparte, libera UI).
+      let useWorklet = false
+      if (ctx.audioWorklet && typeof ctx.audioWorklet.addModule === 'function') {
+        try {
+          await ctx.audioWorklet.addModule('/audio-worklet/mic-processor.js')
+          const node = new AudioWorkletNode(ctx, 'mic-processor', {
+            processorOptions: { samples: 2048 },
+          })
+          workletNodeRef.current = node
+          node.port.onmessage = (ev: MessageEvent) => {
+            const { pcm, rms } = ev.data as { pcm: ArrayBuffer; rms: number }
+            if (pcm) sendPcm(pcm, rms || 0)
+          }
+          source.connect(node)
+          node.connect(ctx.destination)
+          useWorklet = true
+        } catch (e) {
+          console.warn('[GuestRoom] AudioWorklet no disponible, fallback:', e)
+        }
+      }
+
+      if (!useWorklet) {
+        const proc = ctx.createScriptProcessor(2048, 1, 1)
+        procRef.current = proc
+        proc.onaudioprocess = (e) => {
+          if (ws.readyState !== WebSocket.OPEN) return
+          const input = e.inputBuffer.getChannelData(0)
+          let sum = 0
+          for (let i = 0; i < input.length; i++) sum += input[i] * input[i]
+          const rms = Math.sqrt(sum / input.length)
+          const pcm = new Int16Array(input.length)
+          for (let i = 0; i < input.length; i++) {
+            const s = Math.max(-1, Math.min(1, input[i]))
+            pcm[i] = s < 0 ? s * 0x8000 : s * 0x7fff
+          }
+          sendPcm(pcm.buffer, rms)
+        }
+        source.connect(proc)
+        proc.connect(ctx.destination)
+      }
     }
 
     ws.onmessage = (ev) => {

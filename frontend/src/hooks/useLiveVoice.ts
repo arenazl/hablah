@@ -74,6 +74,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const pingIntervalRef = useRef<number | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
+  // AudioWorkletNode preferido (corre en thread separado, no traba la UI).
+  // Si el browser no soporta o falla addModule, caemos a procRef (ScriptProcessor).
+  const workletNodeRef = useRef<AudioWorkletNode | null>(null)
   const procRef = useRef<ScriptProcessorNode | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
 
@@ -115,6 +118,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       try { procRef.current.disconnect() } catch {}
       procRef.current = null
     }
+    if (workletNodeRef.current) {
+      try { workletNodeRef.current.port.close() } catch {}
+      try { workletNodeRef.current.disconnect() } catch {}
+      workletNodeRef.current = null
+    }
     if (sourceRef.current) {
       try { sourceRef.current.disconnect() } catch {}
       sourceRef.current = null
@@ -149,6 +157,20 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const playNextChunk = useCallback(() => {
     const ctx = playCtxRef.current
     if (!ctx) return
+    // Catch-up CONSERVADOR: solo si el delay acumulado supera 1.5s (problema
+    // real, no fluctuacion normal), cancelamos los buffers futuros y reseteamos
+    // el cursor. Sin esto, el delay puede crecer indefinidamente si el browser
+    // suspende el AudioContext o si llegan bursts. Con threshold 1.5s evitamos
+    // cortar audio bueno en uso normal pero recuperamos sincronia en colgues.
+    const HARD_RESET_AHEAD_S = 1.5
+    if (nextStartTimeRef.current > ctx.currentTime + HARD_RESET_AHEAD_S) {
+      for (const src of playSourcesRef.current) {
+        try { src.stop() } catch {}
+        try { src.disconnect() } catch {}
+      }
+      playSourcesRef.current = []
+      nextStartTimeRef.current = ctx.currentTime
+    }
     // Schedule TODOS los chunks pendientes ahora con tiempos exactos para evitar gaps
     while (playQueueRef.current.length > 0) {
       const item = playQueueRef.current.shift()!
@@ -289,7 +311,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       const ws = new WebSocket(url)
       wsRef.current = ws
 
-      ws.onopen = () => {
+      ws.onopen = async () => {
         setStatus('listening')
         // Keepalive ping cada 25s para evitar que Heroku/proxies maten el WS por idle
         if (pingIntervalRef.current) window.clearInterval(pingIntervalRef.current)
@@ -302,36 +324,67 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         audioCtxRef.current = ctx
         const source = ctx.createMediaStreamSource(stream)
         sourceRef.current = source
-        // ScriptProcessor (compat amplia; AudioWorklet sería ideal en v2)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const proc = (ctx as any).createScriptProcessor(4096, 1, 1) as ScriptProcessorNode
-        procRef.current = proc
-        proc.onaudioprocess = (e) => {
-          // Usamos wsRef.current en vez de la variable ws capturada para que
-          // sobreviva un upgradeToRoom() (cambia el WS subyacente sin romper
-          // la captura del mic).
+
+        // Handler comun: convierte ArrayBuffer PCM int16 a base64 y lo manda
+        // por WS. Se reusa entre AudioWorklet (preferido) y ScriptProcessor.
+        const sendPcm = (pcmBuf: ArrayBuffer, rms: number): void => {
           const liveWs = wsRef.current
           if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return
-          const input = e.inputBuffer.getChannelData(0)
-          // Float32 [-1,1] → PCM 16 LE
-          const pcm = new Int16Array(input.length)
-          let rms = 0
-          for (let i = 0; i < input.length; i++) {
-            const s = Math.max(-1, Math.min(1, input[i]))
-            pcm[i] = s < 0 ? s * 32768 : s * 32767
-            rms += s * s
-          }
-          rms = Math.sqrt(rms / input.length)
-          // Boost x4 para que matchee la escala del audio del tutor (que viene * 3)
+          // Boost x4 del RMS para matchear escala del audio del tutor (que viene * 3)
           optsRef.current.onAudioLevel?.(Math.min(1, rms * 4))
-          const bytes = new Uint8Array(pcm.buffer)
+          const bytes = new Uint8Array(pcmBuf)
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
           const b64 = btoa(bin)
           liveWs.send(JSON.stringify({ type: 'audio', data: b64 }))
         }
-        source.connect(proc)
-        proc.connect(ctx.destination)
+
+        // Preferido: AudioWorkletNode. Corre en thread de audio (no main),
+        // libera la UI y reduce glitches. Buffer interno 2048 samples = 128ms.
+        let useWorklet = false
+        if (ctx.audioWorklet && typeof ctx.audioWorklet.addModule === 'function') {
+          try {
+            await ctx.audioWorklet.addModule('/audio-worklet/mic-processor.js')
+            const node = new AudioWorkletNode(ctx, 'mic-processor', {
+              processorOptions: { samples: 2048 },
+            })
+            workletNodeRef.current = node
+            node.port.onmessage = (ev: MessageEvent) => {
+              const { pcm, rms } = ev.data as { pcm: ArrayBuffer; rms: number }
+              if (pcm) sendPcm(pcm, rms || 0)
+            }
+            source.connect(node)
+            // Conectar a destination silencioso para que el browser corra el worklet.
+            // Algunos browsers no procesan worklets sin downstream conectado.
+            node.connect(ctx.destination)
+            useWorklet = true
+          } catch (e) {
+            // Fallthrough a ScriptProcessor (Safari viejo, fallo de fetch, etc.)
+            console.warn('[useLiveVoice] AudioWorklet no disponible, fallback a ScriptProcessor:', e)
+          }
+        }
+
+        if (!useWorklet) {
+          // Fallback: ScriptProcessor (deprecado pero universal). Buffer 2048
+          // (era 4096 antes) = 128ms por callback, mas reactivo.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const proc = (ctx as any).createScriptProcessor(2048, 1, 1) as ScriptProcessorNode
+          procRef.current = proc
+          proc.onaudioprocess = (e) => {
+            const input = e.inputBuffer.getChannelData(0)
+            const pcm = new Int16Array(input.length)
+            let rms = 0
+            for (let i = 0; i < input.length; i++) {
+              const s = Math.max(-1, Math.min(1, input[i]))
+              pcm[i] = s < 0 ? s * 32768 : s * 32767
+              rms += s * s
+            }
+            rms = Math.sqrt(rms / input.length)
+            sendPcm(pcm.buffer, rms)
+          }
+          source.connect(proc)
+          proc.connect(ctx.destination)
+        }
       }
 
       attachWsHandlers(ws)

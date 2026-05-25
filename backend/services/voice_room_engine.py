@@ -263,6 +263,25 @@ class RoomAudioPump:
             raw = base64.b64decode(audio_b64)
         except Exception:
             return
+
+        # FAST PATH: si hay un solo participant humano (host antes de que entre
+        # el guest), bypasseamos el tick del mixer y mandamos al instante a
+        # Gemini. Sin esto, cada chunk tenia que esperar hasta 60ms en el
+        # buffer del tick aunque no hubiera nada que mezclar. Esto solo aplica
+        # cuando NO hay otros para broadcast inter-humanos.
+        if len(self.room.participants) <= 1 and self.room.google_ws and not self.room.closed:
+            try:
+                await self.room.google_ws.send(json.dumps({
+                    "realtimeInput": {
+                        "audio": {"mimeType": "audio/pcm;rate=16000", "data": audio_b64}
+                    }
+                }))
+                return
+            except websockets.ConnectionClosed:
+                return
+            except Exception as e:
+                log.warning("RoomAudioPump fast-path fallo, cae al tick: %s", e)
+
         async with self.lock:
             self.buffer[pid].append(raw)
 
