@@ -99,11 +99,23 @@ export function KidsSession() {
   )
   const [sessionId, setSessionId] = useState<number | null>(null)
   const [audioLevel, setAudioLevel] = useState(0.2)
+  const pendingLevelRef = useRef(0.2)
   const [renewBanner, setRenewBanner] = useState<{ kind: 'warn' | 'renewing' | 'renewed'; msg: string } | null>(null)
   const startedRef = useRef(false)
 
+  // Throttle audioLevel a 20fps (50ms): cada chunk del mic actualiza el ref,
+  // y el orbe se re-renderiza solo a 20fps en vez de a la frecuencia de los
+  // chunks. Reduce re-renders sin perdida visual perceptible.
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setAudioLevel((prev) => Math.max(prev * 0.7, pendingLevelRef.current))
+      pendingLevelRef.current *= 0.7  // decay del pending
+    }, 50)
+    return () => clearInterval(id)
+  }, [])
+
   const live = useLiveVoice({
-    onAudioLevel: (lvl) => setAudioLevel(lvl),
+    onAudioLevel: (lvl) => { pendingLevelRef.current = Math.max(pendingLevelRef.current, lvl) },
     onError: (e) => {
       console.error('[kids-voice]', e)
       alert('Hubo un problema con el micrófono. Asegurate de permitir el acceso.')
@@ -126,6 +138,15 @@ export function KidsSession() {
     },
     onRoomClosed: () => {
       toast('La sala se cerró')
+    },
+    onAudioGlitch: (info) => {
+      if (info.reason === 'audio_drift_reset') {
+        toast(`Ajustando audio… (${(info.delayMs / 1000).toFixed(1)}s)`, {
+          duration: 2000,
+        })
+      } else if (info.reason === 'slow_response') {
+        console.warn(`[kids-voice] Latencia alta: ${info.delayMs}ms`)
+      }
     },
   })
 

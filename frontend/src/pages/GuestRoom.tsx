@@ -240,7 +240,13 @@ export function GuestRoom() {
           })
           workletNodeRef.current = node
           node.port.onmessage = (ev: MessageEvent) => {
-            const { pcm, rms } = ev.data as { pcm: ArrayBuffer; rms: number }
+            const { pcm, rms, silent } = ev.data as {
+              pcm?: ArrayBuffer; rms: number; silent?: boolean
+            }
+            if (silent) {
+              setOrbAudio(Math.max(0.15, Math.min(1, (rms || 0) * 4)))
+              return
+            }
             if (pcm) sendPcm(pcm, rms || 0)
           }
           source.connect(node)

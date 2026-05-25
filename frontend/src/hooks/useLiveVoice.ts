@@ -46,6 +46,9 @@ export interface UseLiveVoiceOptions {
   onParticipantLeft?: (info: { pid: string; name: string }) => void
   /** Voice room: la sala se cerro (host termino la sesion). */
   onRoomClosed?: (reason: string) => void
+  /** Telemetria: el catch-up del audio playback se disparo (delay >1.5s).
+   * Indica problema sistematico - el indicador visual lo muestra al usuario. */
+  onAudioGlitch?: (info: { reason: string; delayMs: number }) => void
 }
 
 export type LiveStatus = 'idle' | 'connecting' | 'listening' | 'speaking' | 'error' | 'ended'
@@ -77,6 +80,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   // AudioWorkletNode preferido (corre en thread separado, no traba la UI).
   // Si el browser no soporta o falla addModule, caemos a procRef (ScriptProcessor).
   const workletNodeRef = useRef<AudioWorkletNode | null>(null)
+  // Telemetria: timestamp del ultimo turnComplete del USER. Cuando llega el
+  // primer chunk de audio del AI medimos latencia (T_response - T_user_done).
+  // Si > 2s, disparamos onAudioGlitch para que el caller pueda mostrar warning.
+  const lastUserTurnTsRef = useRef<number | null>(null)
+  const responseLatencyReportedRef = useRef<boolean>(false)
   const procRef = useRef<ScriptProcessorNode | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
 
@@ -163,13 +171,18 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     // suspende el AudioContext o si llegan bursts. Con threshold 1.5s evitamos
     // cortar audio bueno en uso normal pero recuperamos sincronia en colgues.
     const HARD_RESET_AHEAD_S = 1.5
-    if (nextStartTimeRef.current > ctx.currentTime + HARD_RESET_AHEAD_S) {
+    const ahead = nextStartTimeRef.current - ctx.currentTime
+    if (ahead > HARD_RESET_AHEAD_S) {
       for (const src of playSourcesRef.current) {
         try { src.stop() } catch {}
         try { src.disconnect() } catch {}
       }
       playSourcesRef.current = []
       nextStartTimeRef.current = ctx.currentTime
+      optsRef.current.onAudioGlitch?.({
+        reason: 'audio_drift_reset',
+        delayMs: Math.round(ahead * 1000),
+      })
     }
     // Schedule TODOS los chunks pendientes ahora con tiempos exactos para evitar gaps
     while (playQueueRef.current.length > 0) {
@@ -350,7 +363,14 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
             })
             workletNodeRef.current = node
             node.port.onmessage = (ev: MessageEvent) => {
-              const { pcm, rms } = ev.data as { pcm: ArrayBuffer; rms: number }
+              const { pcm, rms, silent } = ev.data as {
+                pcm?: ArrayBuffer; rms: number; silent?: boolean
+              }
+              if (silent) {
+                // VAD detecto silencio: solo actualizamos visualizer.
+                optsRef.current.onAudioLevel?.(Math.min(1, (rms || 0) * 4))
+                return
+              }
               if (pcm) sendPcm(pcm, rms || 0)
             }
             source.connect(node)
@@ -392,6 +412,16 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     [pushAudioFromTutor, cancelTutorPlayback],
   )
 
+  // Wrapper de setStatus que skipea cuando el valor ya es el deseado.
+  // Evita re-renders innecesarios cuando llegan muchos chunks de audio
+  // (cada uno disparaba setStatus('speaking') aunque ya estuviera asi).
+  const statusRef = useRef<LiveStatus>('idle')
+  const setStatusIfChanged = useCallback((s: LiveStatus) => {
+    if (statusRef.current === s) return
+    statusRef.current = s
+    setStatus(s)
+  }, [])
+
   // Handler de mensajes compartido entre /ws (sesion single) y /ws_room (grupal).
   // Se mantiene en un ref para que upgradeToRoom() pueda re-attachearlo al
   // nuevo WS sin redefinir start().
@@ -400,11 +430,24 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       const msg = JSON.parse(ev.data)
       if (msg.type === 'audio') {
         // Coach Gemini Live: PCM 24kHz
-        setStatus('speaking')
+        // Telemetria: medir latencia user-done -> first AI audio. Solo
+        // reportamos el PRIMER chunk del turno (despues lo resetea
+        // turn_complete o el siguiente turn_user).
+        if (lastUserTurnTsRef.current && !responseLatencyReportedRef.current) {
+          const lat = performance.now() - lastUserTurnTsRef.current
+          responseLatencyReportedRef.current = true
+          if (lat > 2000) {
+            optsRef.current.onAudioGlitch?.({
+              reason: 'slow_response',
+              delayMs: Math.round(lat),
+            })
+          }
+        }
+        setStatusIfChanged('speaking')
         pushAudioFromTutor(msg.data, 24000)
       } else if (msg.type === 'participant_audio') {
         // Otro participante humano en la voice room: PCM 16kHz (captura mic).
-        setStatus('speaking')
+        setStatusIfChanged('speaking')
         pushAudioFromTutor(msg.data, 16000)
       } else if (msg.type === 'transcript_chunk') {
         // Chunks en vivo tanto del AI como del USER. Acumulamos en el ultimo
@@ -424,7 +467,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         setTranscript((prev) => [...prev, line])
         optsRef.current.onTranscript?.(line)
       } else if (msg.type === 'turn_complete') {
-        setStatus('listening')
+        setStatusIfChanged('listening')
+        // Marcar timestamp para medir latencia hasta primera respuesta del AI.
+        // Sin distinguir quien fue el turno: si el user acaba de terminar,
+        // el siguiente audio que llegue del AI sera la respuesta.
+        lastUserTurnTsRef.current = performance.now()
+        responseLatencyReportedRef.current = false
         setTranscript((prev) => {
           const lastUser = [...prev].reverse().find((l) => l.who === 'user')
           if (lastUser) optsRef.current.onTranscript?.(lastUser)

@@ -976,23 +976,30 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const [keywords, setKeywords] = useState<string[]>([])
   const [audioLevel, setAudioLevel] = useState(0)
   const lastLevelTsRef = useRef(0)
-  const decayRafRef = useRef<number | null>(null)
-  // Decay suave: si no llega nuevo level en >150ms, baja exponencialmente a 0
+  const pendingLevelRef = useRef(0)
+  const flushIntervalRef = useRef<number | null>(null)
+  // Audio level update throttleado a 20fps (50ms). Cada chunk del mic actualiza
+  // el ref, y solo cada 50ms hacemos el setState del orbe. Reduce re-renders
+  // sin perder fluidez visual perceptible.
   useEffect(() => {
-    const tick = () => {
+    flushIntervalRef.current = window.setInterval(() => {
       const now = performance.now()
       const since = now - lastLevelTsRef.current
       if (since > 150) {
+        // Sin audio nuevo: decay
         setAudioLevel((prev) => (prev > 0.01 ? prev * 0.85 : 0))
+      } else {
+        // Audio reciente: aplicar el pending con smoothing (max nuevo o decay viejo)
+        const lvl = pendingLevelRef.current
+        setAudioLevel((prev) => Math.max(prev * 0.6, lvl))
       }
-      decayRafRef.current = requestAnimationFrame(tick)
-    }
-    decayRafRef.current = requestAnimationFrame(tick)
-    return () => { if (decayRafRef.current) cancelAnimationFrame(decayRafRef.current) }
+    }, 50)
+    return () => { if (flushIntervalRef.current) clearInterval(flushIntervalRef.current) }
   }, [])
   const onAudioLevelTick = useCallback((lvl: number) => {
     lastLevelTsRef.current = performance.now()
-    setAudioLevel((prev) => Math.max(prev * 0.6, lvl))  // smoothing: nuevo max o decay
+    // Solo guardamos el max del periodo: el interval flusheara a 20fps
+    pendingLevelRef.current = Math.max(pendingLevelRef.current * 0.7, lvl)
   }, [])
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
   const [extraTopics, setExtraTopics] = useState<Topic[]>([])
@@ -1047,6 +1054,18 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     },
     onRoomClosed: () => {
       toast('La sala se cerró')
+    },
+    onAudioGlitch: (info) => {
+      // Indicador discreto cuando el audio se desincronizo (>1.5s drift)
+      // o cuando la respuesta del coach tarda demasiado (>2s).
+      if (info.reason === 'audio_drift_reset') {
+        toast(`Ajustando audio… (${(info.delayMs / 1000).toFixed(1)}s drift)`, {
+          duration: 2000,
+        })
+      } else if (info.reason === 'slow_response') {
+        // Solo loguear, no molestar al user con toast cada vez
+        console.warn(`[useLiveVoice] Latencia alta: ${info.delayMs}ms`)
+      }
     },
   })
 

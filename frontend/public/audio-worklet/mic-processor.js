@@ -15,6 +15,17 @@
  * Configurable via processorOptions al instanciar el AudioWorkletNode:
  *   new AudioWorkletNode(ctx, 'mic-processor', {processorOptions: {samples: 2048}})
  */
+/**
+ * Umbral de silencio. RMS < SILENCE_THRESHOLD = silencio.
+ * Despues de speechToSilenceFrames frames de silencio consecutivos,
+ * dejamos de enviar al main thread (VAD client-side).
+ * Esto reduce bandwidth y carga del backend cuando estas callado.
+ * Gemini Live tiene su propio VAD server-side asi que igual detecta
+ * cuando arrancas a hablar de nuevo.
+ */
+const SILENCE_THRESHOLD = 0.005
+const TAIL_FRAMES = 2  // mandar 2 chunks despues de cortar para no truncar palabras
+
 class MicProcessor extends AudioWorkletProcessor {
   constructor(options) {
     super()
@@ -24,6 +35,8 @@ class MicProcessor extends AudioWorkletProcessor {
     this.pos = 0
     this.rmsAcc = 0
     this.rmsCount = 0
+    this.silentTail = 0  // cuantos frames silenciosos llevo enviados tras voz
+    this.lastWasVoice = false
   }
 
   process(inputs) {
@@ -39,11 +52,33 @@ class MicProcessor extends AudioWorkletProcessor {
       this.rmsCount++
 
       if (this.pos >= this.target) {
-        // Buffer lleno: enviar al main thread con transferable
-        const out = new ArrayBuffer(this.target * 2)
-        new Int16Array(out).set(this.acc)
         const rms = Math.sqrt(this.rmsAcc / Math.max(1, this.rmsCount))
-        this.port.postMessage({ pcm: out, rms: rms }, [out])
+        const isVoice = rms >= SILENCE_THRESHOLD
+        let shouldSend = false
+
+        if (isVoice) {
+          shouldSend = true
+          this.silentTail = 0
+          this.lastWasVoice = true
+        } else if (this.lastWasVoice && this.silentTail < TAIL_FRAMES) {
+          // Acabamos de pasar de voz a silencio: mandar unos frames mas
+          // para que Gemini tenga el "fin" claro y no corte palabras.
+          shouldSend = true
+          this.silentTail++
+          if (this.silentTail >= TAIL_FRAMES) {
+            this.lastWasVoice = false
+          }
+        }
+        // Si NO hay voz Y ya pasaron los tail frames: NO mandar nada.
+
+        if (shouldSend) {
+          const out = new ArrayBuffer(this.target * 2)
+          new Int16Array(out).set(this.acc)
+          this.port.postMessage({ pcm: out, rms: rms }, [out])
+        } else {
+          // Solo notificamos el level para el visualizer, sin enviar audio
+          this.port.postMessage({ rms: rms, silent: true })
+        }
         this.pos = 0
         this.rmsAcc = 0
         this.rmsCount = 0
