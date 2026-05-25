@@ -229,6 +229,9 @@ function presetOverrides(p: AudioPreset): string {
 }
 
 const FIXED_TOPIC = 'Vida cotidiana, alimentación y deporte'
+// Idioma fijo para charlas de /tune. El backend acepta override via query
+// param ?lang= para no tocar el target_language del user.
+const TUNE_LANG = 'es'
 
 export function AudioTuningPage() {
   const [settings, setSettings] = useState<AudioSettings>(() => loadAudioSettings())
@@ -292,7 +295,7 @@ export function AudioTuningPage() {
     // Pequeño delay para que el WS cierre limpio
     await new Promise((r) => setTimeout(r, 250))
     try {
-      await live.startInRoom(activeRoom.token, activeRoom.hostPid)
+      await live.startInRoom(activeRoom.token, activeRoom.hostPid, TUNE_LANG)
     } catch (e: unknown) {
       toast.error((e as Error).message)
     }
@@ -314,7 +317,7 @@ export function AudioTuningPage() {
       if (!res.ok) throw new Error('No pude crear la sala')
       const data = await res.json() as { token: string; host_pid: string }
       setActiveRoom({ token: data.token, hostPid: data.host_pid })
-      await live.startInRoom(data.token, data.host_pid)
+      await live.startInRoom(data.token, data.host_pid, TUNE_LANG)
       toast.success('Sala lista — copiá el link y mandalo a tu amigo')
     } catch (e: unknown) {
       toast.error((e as Error).message)

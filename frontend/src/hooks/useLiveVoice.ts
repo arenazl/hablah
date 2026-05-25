@@ -612,7 +612,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
    * su conexion.
    */
   const startInRoom = useCallback(
-    async (roomToken: string, hostPid: string) => {
+    async (roomToken: string, hostPid: string, lang?: string) => {
       setStatus('connecting')
       setTranscript([])
       const settings = loadAudioSettings()
@@ -634,7 +634,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       }
       streamRef.current = stream
 
-      const ws = new WebSocket(buildRoomWsUrl(roomToken, hostPid))
+      const ws = new WebSocket(buildRoomWsUrl(roomToken, hostPid, lang))
       wsRef.current = ws
 
       ws.onopen = async () => {

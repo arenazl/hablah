@@ -315,8 +315,10 @@ export function buildVoiceWsUrl(sessionId: number, explicitToken?: string): stri
 }
 
 /** URL del WebSocket de voice room. Va DIRECTO al backend (no via Netlify) para
- * que el WS upgrade funcione. */
-export function buildRoomWsUrl(roomToken: string, pid: string): string {
+ * que el WS upgrade funcione. lang opcional para override del target_language
+ * (usado por /tune para forzar idioma sin tocar el user). */
+export function buildRoomWsUrl(roomToken: string, pid: string, lang?: string): string {
   const wsBase = buildWsBase()
-  return `${wsBase}/voice/ws_room?room_token=${encodeURIComponent(roomToken)}&pid=${encodeURIComponent(pid)}`
+  const langParam = lang ? `&lang=${encodeURIComponent(lang)}` : ''
+  return `${wsBase}/voice/ws_room?room_token=${encodeURIComponent(roomToken)}&pid=${encodeURIComponent(pid)}${langParam}`
 }

@@ -40,6 +40,7 @@ async def voice_ws_room(
     websocket: WebSocket,
     room_token: str = Query(...),
     pid: str = Query(...),
+    lang: str = Query(None),
 ):
     """WebSocket de Voice Room: charla multi-participante con 1 sesion Gemini compartida.
 
@@ -47,6 +48,9 @@ async def voice_ws_room(
     El frontend debe pasar:
       - room_token: el token que devolvio POST /api/rooms
       - pid: el participant id (host_pid del host, o guest_pid devuelto por /join)
+      - lang: opcional - override del target_language para esta room.
+              Usado por /tune para forzar idioma sin tocar el user. Valores
+              validos: en, es, pt, it, fr, de.
     """
     await websocket.accept()
 
@@ -68,6 +72,11 @@ async def voice_ws_room(
 
         # Construir el ctx una sola vez (cuando se crea la room en memoria)
         host = (await db.execute(select(User).where(User.id == vroom.host_user_id))).scalar_one_or_none()
+        # Override de idioma si el query param lang esta presente. Modificamos
+        # el atributo en memoria (no se commitea a BD) para que build_super_prompt
+        # lo use al armar el prompt del coach.
+        if host and lang and lang in ("en", "es", "pt", "it", "fr", "de"):
+            host.target_language = lang
         topic = None
         if vroom.topic_id:
             topic = (await db.execute(select(Topic).where(Topic.id == vroom.topic_id))).scalar_one_or_none()
@@ -85,6 +94,7 @@ async def voice_ws_room(
         )
 
     is_kid_host = bool(getattr(host, "age_group", None)) or bool(getattr(host, "parent_user_id", None)) if host else False
+    effective_lang = (lang if (lang and lang in ("en", "es", "pt", "it", "fr", "de")) else (host.target_language if host else "en"))
     ctx = VoiceEngineContext(
         session_id=vroom.session_id or 0,
         user_id=vroom.host_user_id,
@@ -93,8 +103,8 @@ async def voice_ws_room(
         template_id=template.id if template else None,
         super_prompt=super_prompt,
         voice_id=template.voice_id if template else "",
-        language="en",
-        target_language=host.target_language if host else "en",
+        language=effective_lang,
+        target_language=effective_lang,
         silence_tolerance_ms=template.silence_tolerance_ms if template else 800,
         interruption_allowed=template.interruption_allowed if template else False,
     )
