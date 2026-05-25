@@ -268,7 +268,7 @@ class GeminiLiveEngine(VoiceEngine):
                         try:
                             await gws_holder["ws"].send(json.dumps({
                                 "realtimeInput": {
-                                    "audio": {"mimeType": "audio/pcm;rate=16000", "data": b64}
+                                    "audio": {"mimeType": "audio/pcm;rate=8000", "data": b64}
                                 }
                             }))
                         except websockets.ConnectionClosed:

@@ -190,7 +190,9 @@ export function GuestRoom() {
     let stream: MediaStream
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
+        // 8kHz (telefonico): mitad de bandwidth de la captura a 16kHz,
+        // suficiente para conversacion. Reduce latencia en voice room.
+        audio: { channelCount: 1, sampleRate: 8000, echoCancellation: true, noiseSuppression: true },
       })
     } catch {
       setError('Necesitamos acceso al microfono')
@@ -208,7 +210,7 @@ export function GuestRoom() {
     ws.onopen = () => {
       setStatus('live')
       // Audio capture loop
-      const ctx = new AudioContext({ sampleRate: 16000 })
+      const ctx = new AudioContext({ sampleRate: 8000 })
       audioCtxRef.current = ctx
       const source = ctx.createMediaStreamSource(stream)
       const proc = ctx.createScriptProcessor(2048, 1, 1)
@@ -244,7 +246,7 @@ export function GuestRoom() {
         if (msg.type === 'audio') {
           playPCMChunk(msg.data)
         } else if (msg.type === 'participant_audio') {
-          // Audio de otro participante (16kHz, NO 24kHz)
+          // Audio de otro participante humano (PCM 8kHz - captura del mic).
           try {
             const bytes = atob(msg.data)
             const buf = new ArrayBuffer(bytes.length)
@@ -253,15 +255,19 @@ export function GuestRoom() {
             const samples = new Int16Array(buf)
             const floats = new Float32Array(samples.length)
             for (let i = 0; i < samples.length; i++) floats[i] = samples[i] / 32768
-            // playback @ 16kHz
             if (!playCtxRef.current) playCtxRef.current = new AudioContext({ sampleRate: 24000 })
             const ctx = playCtxRef.current
-            const audioBuf = ctx.createBuffer(1, floats.length, 16000)
+            if (ctx.state === 'suspended') ctx.resume().catch(() => {})
+            // Catch-up: si scheduled > 250ms en el futuro, resync
+            if (nextStartTimeRef.current > ctx.currentTime + 0.25) {
+              nextStartTimeRef.current = ctx.currentTime
+            }
+            const audioBuf = ctx.createBuffer(1, floats.length, 8000)
             audioBuf.getChannelData(0).set(floats)
             const src = ctx.createBufferSource()
             src.buffer = audioBuf
             src.connect(ctx.destination)
-            const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + 0.02)
+            const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + 0.005)
             src.start(startAt)
             nextStartTimeRef.current = startAt + audioBuf.duration
           } catch (e) { console.error(e) }

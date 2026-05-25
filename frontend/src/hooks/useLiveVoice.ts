@@ -74,6 +74,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const pingIntervalRef = useRef<number | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
+  // Buffer del transcript del coach (AI) que acumula chunks y se commitea
+  // al state recien al turn_complete. Asi el texto del coach aparece
+  // sincronizado con el final del audio (Gemini Live manda el texto antes
+  // que el audio, sin esto el texto se veia ~500ms adelantado).
+  const aiBufferRef = useRef<string>('')
   const procRef = useRef<ScriptProcessorNode | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
 
@@ -149,6 +154,21 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const playNextChunk = useCallback(() => {
     const ctx = playCtxRef.current
     if (!ctx) return
+    // Catch-up: si el buffer scheduled esta MUY adelante del currentTime
+    // (>250ms), el playback se atraso vs lo que llega de la red. Reseteamos
+    // el cursor para volver a sync, sacrificando los chunks que estaban
+    // muy en el futuro. Evita el delay acumulado que se sentia como "Damian
+    // contestaba y recien despues se escuchaba la pregunta del coach".
+    const MAX_AHEAD_MS = 0.25
+    if (nextStartTimeRef.current > ctx.currentTime + MAX_AHEAD_MS) {
+      // Cancelar los buffers ya scheduled que estan en el futuro
+      for (const src of playSourcesRef.current) {
+        try { src.stop() } catch {}
+        try { src.disconnect() } catch {}
+      }
+      playSourcesRef.current = []
+      nextStartTimeRef.current = ctx.currentTime
+    }
     // Schedule TODOS los chunks pendientes ahora con tiempos exactos para evitar gaps
     while (playQueueRef.current.length > 0) {
       const item = playQueueRef.current.shift()!
@@ -159,8 +179,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       src.connect(ctx.destination)
       const analyser = analyserRef.current
       if (analyser) src.connect(analyser)
-      // Si el proximo start es pasado o muy cercano, agendamos en currentTime + 50ms safety
-      const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + 0.02)
+      // 5ms de cushion (no 20ms): minimiza latencia de inicio
+      const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + 0.005)
       src.start(startAt)
       nextStartTimeRef.current = startAt + buf.duration
       playSourcesRef.current.push(src)
@@ -271,8 +291,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
       let stream: MediaStream
       try {
+        // Captura a 8kHz (telefonico) en vez de 16kHz: mitad de bandwidth al
+        // backend y al broadcast inter-participants, sin perdida significativa
+        // de inteligibilidad para conversacion. Gemini Live soporta 8kHz input.
         stream = await navigator.mediaDevices.getUserMedia({
-          audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
+          audio: { channelCount: 1, sampleRate: 8000, echoCancellation: true, noiseSuppression: true },
         })
       } catch (e: any) {
         optsRef.current.onError?.(new Error('Permiso de micrófono denegado'))
@@ -294,7 +317,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
             try { ws.send(JSON.stringify({ type: 'ping' })) } catch {}
           }
         }, 25000)
-        const ctx = new AudioContext({ sampleRate: 16000 })
+        const ctx = new AudioContext({ sampleRate: 8000 })
         audioCtxRef.current = ctx
         const source = ctx.createMediaStreamSource(stream)
         sourceRef.current = source
@@ -346,31 +369,53 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         setStatus('speaking')
         pushAudioFromTutor(msg.data, 24000)
       } else if (msg.type === 'participant_audio') {
-        // Otro participante humano en la voice room: PCM 16kHz (lo que captura
-        // el mic via ScriptProcessor). Sin pasar el SR correcto sonaba a 1.5x
-        // (efecto Chipmunk).
+        // Otro participante humano en la voice room: PCM 8kHz (captura del mic
+        // ahora a 8kHz para reducir bandwidth y latencia).
         setStatus('speaking')
-        pushAudioFromTutor(msg.data, 16000)
+        pushAudioFromTutor(msg.data, 8000)
       } else if (msg.type === 'transcript_chunk') {
-        setTranscript((prev) => {
-          const last = prev[prev.length - 1]
-          if (last && last.who === msg.who) {
-            const updated = [...prev]
-            updated[updated.length - 1] = { who: last.who, text: last.text + msg.text }
-            return updated
-          }
-          return [...prev, { who: msg.who, text: msg.text }]
-        })
+        // Para el USER mostramos chunks en vivo: es lo que el alumno acaba de
+        // decir, queremos feedback inmediato.
+        // Para el AI acumulamos en buffer interno pero NO actualizamos el
+        // state hasta turn_complete - asi el texto aparece SINCRONIZADO con
+        // el audio (Gemini Live envia el texto antes que el audio, sin esto
+        // el transcript se adelantaba ~500ms y se sentia desincronizado).
+        if (msg.who === 'ai') {
+          aiBufferRef.current += msg.text
+        } else {
+          setTranscript((prev) => {
+            const last = prev[prev.length - 1]
+            if (last && last.who === msg.who) {
+              const updated = [...prev]
+              updated[updated.length - 1] = { who: last.who, text: last.text + msg.text }
+              return updated
+            }
+            return [...prev, { who: msg.who, text: msg.text }]
+          })
+        }
       } else if (msg.type === 'transcript') {
         const line: TranscriptLine = { who: msg.who, text: msg.text }
         setTranscript((prev) => [...prev, line])
         optsRef.current.onTranscript?.(line)
       } else if (msg.type === 'turn_complete') {
         setStatus('listening')
+        // Flush del buffer del AI al turn_complete: aca aparece el texto
+        // completo del turno (sincronizado con el final del audio).
+        const aiText = aiBufferRef.current.trim()
+        aiBufferRef.current = ''
         setTranscript((prev) => {
-          const lastUser = [...prev].reverse().find((l) => l.who === 'user')
+          let next = prev
+          if (aiText) {
+            const last = next[next.length - 1]
+            if (last && last.who === 'ai') {
+              next = [...next.slice(0, -1), { who: 'ai', text: aiText }]
+            } else {
+              next = [...next, { who: 'ai', text: aiText }]
+            }
+          }
+          const lastUser = [...next].reverse().find((l) => l.who === 'user')
           if (lastUser) optsRef.current.onTranscript?.(lastUser)
-          return prev
+          return next
         })
       } else if (msg.type === 'preference_applied') {
         optsRef.current.onPreferenceApplied?.(msg.changes, msg.confirmation)

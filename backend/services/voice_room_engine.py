@@ -309,7 +309,7 @@ class RoomAudioPump:
                         mixed_b64 = base64.b64encode(mixed).decode("ascii")
                         await self.room.google_ws.send(json.dumps({
                             "realtimeInput": {
-                                "audio": {"mimeType": "audio/pcm;rate=16000", "data": mixed_b64}
+                                "audio": {"mimeType": "audio/pcm;rate=8000", "data": mixed_b64}
                             }
                         }))
                     except websockets.ConnectionClosed:
