@@ -300,6 +300,47 @@ class RoomAudioPump:
             pass
 
 
+async def _notify_coach_guest_joined(room: Room, guest_name: str) -> None:
+    """Avisa al coach IA que entró un nuevo participante a la charla.
+
+    Inyecta un mensaje sistema-like como turno user sintético, asi el modelo
+    sabe que ahora la conversacion es grupal y arranca a repartir preguntas
+    entre los participantes nombrandolos. Sin esto, el coach sigue conversando
+    como si fuera 1:1 con el host.
+    """
+    if not room.google_ws or room.closed:
+        return
+    host_name = next(
+        (p.name for p in room.participants.values() if p.is_host),
+        "el alumno",
+    )
+    msg = (
+        f"[Sistema · MODO GRUPAL ACTIVADO] Acaba de entrar a la charla una "
+        f"persona nueva llamada {guest_name}. Ahora son {host_name} y {guest_name} "
+        f"hablando con vos. INSTRUCCIONES:\n"
+        f"1. Saludá a {guest_name} en UNA frase corta por nombre y contale en "
+        f"otra frase el tema que vienen charlando.\n"
+        f"2. De ahora en adelante REPARTÍ las preguntas alternando entre "
+        f"{host_name} y {guest_name}, NOMBRANDOLOS explícitamente cada vez "
+        f"('Bueno {guest_name}, decime...', 'Ahora vos {host_name}, ¿qué "
+        f"opinás?').\n"
+        f"3. Cuando uno responda, dirigite al OTRO para la próxima pregunta. "
+        f"Nunca hagas dos preguntas seguidas a la misma persona.\n"
+        f"4. Hacé la primera pregunta a {guest_name} para que arranque "
+        f"presentándose o contando algo sobre el tema."
+    )
+    try:
+        await room.google_ws.send(json.dumps({
+            "clientContent": {
+                "turns": [{"role": "user", "parts": [{"text": msg}]}],
+                "turnComplete": True,
+            }
+        }))
+        log.info("Room %s: notifique al coach que entro %s", room.token, guest_name)
+    except Exception as e:
+        log.warning("No pude notificar al coach del guest join: %s", e)
+
+
 async def handle_room_ws(ws: WebSocket, room: Room, participant: RoomParticipant) -> None:
     """Loop principal del WS de un participant."""
     # Agregar al room
@@ -330,6 +371,14 @@ async def handle_room_ws(ws: WebSocket, room: Room, participant: RoomParticipant
     # Si es el host y todavia no arrancamos Gemini, arrancar
     if participant.is_host and not room.started:
         await _start_gemini_for_room(room)
+
+    # Si NO es el host (guest se sumo), avisar al coach IA para que entre
+    # en modo grupal y arranque a repartir preguntas. Solo si Gemini ya
+    # esta corriendo (el host ya esta dentro).
+    if not participant.is_host and room.started:
+        # Pequeno delay para que el WS de Gemini este listo si recien arranco
+        await asyncio.sleep(0.3)
+        await _notify_coach_guest_joined(room, participant.name)
 
     pump = RoomAudioPump.get(room)
 
