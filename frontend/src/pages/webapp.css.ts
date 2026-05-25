@@ -262,6 +262,46 @@ export const WEBAPP_CSS = `
 }
 .webapp-root .convo-header .end { background: rgba(229,72,77,.15); color: #FF6B70; border: 1px solid rgba(229,72,77,.3); }
 
+/* ── HEADER UNA LINEA (compacto, horizontal) ─────────────────────────
+   Reemplaza el layout viejo de "titulo arriba + meta abajo + pickers
+   debajo + actions a la derecha". Todo en una sola fila horizontal
+   con texto truncado a la izquierda y picker/acciones a la derecha. */
+.webapp-root .convo-header.convo-header-onerow {
+  flex-direction: row; align-items: center; gap: 12px;
+  margin-bottom: 16px; min-height: 36px;
+}
+.webapp-root .convo-header-info {
+  display: flex; align-items: baseline; gap: 8px; min-width: 0; flex: 1;
+  overflow: hidden;
+}
+.webapp-root .convo-h-title {
+  font-size: 15px; font-weight: 700; color: var(--fg-1, #fff);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  letter-spacing: -.01em; flex-shrink: 1; min-width: 0;
+}
+.webapp-root .convo-h-sep { color: rgba(232,236,234,.35); font-weight: 700; flex-shrink: 0; }
+.webapp-root .convo-h-meta {
+  font-size: 12px; color: rgba(232,236,234,.55); font-weight: 500;
+  white-space: nowrap; flex-shrink: 0;
+}
+.webapp-root .convo-header-onerow .pedagogy-picker { flex-shrink: 0; }
+.webapp-root .convo-header-actions {
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto;
+}
+@media (max-width: 880px) {
+  .webapp-root .convo-header.convo-header-onerow {
+    margin-bottom: 8px; gap: 8px; padding-top: 0; padding-right: 0;
+  }
+  .webapp-root .convo-h-title { font-size: 13px; }
+  .webapp-root .convo-h-sep, .webapp-root .convo-h-meta { display: none; }
+  /* En mobile el boton terminar pasa a icono solo */
+  .webapp-root .convo-header-actions .end .end-label { display: none; }
+  .webapp-root .convo-header-actions .end {
+    width: 36px; height: 36px; padding: 0 !important; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+}
+
 .webapp-root .convo-orb-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 12px; min-height: 0; overflow: hidden; }
 .webapp-root .convo-orb-wrap {
   width: min(360px, 50vw, 42dvh);
@@ -570,25 +610,12 @@ export const WEBAPP_CSS = `
     height: calc(100dvh - 64px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   }
   .webapp-root .convo-stage { padding: 14px 16px 16px; gap: 8px; position: relative; }
-  /* En mobile el header es columna - el boton Terminar se va a position absolute
-     para que no compita por horizontal space con el titulo + pickers */
-  .webapp-root .convo-header { flex-direction: column; align-items: stretch; margin-bottom: 12px; padding-top: 48px; padding-right: 96px; gap: 6px; }
-  .webapp-root .convo-header-main { min-width: 0; }
-  .webapp-root .convo-header h2 { font-size: 16px; line-height: 1.2; padding-right: 0; }
-  .webapp-root .convo-header .meta { flex-wrap: wrap; gap: 6px !important; }
-  .webapp-root .convo-header .end {
-    position: absolute;
-    top: 12px; right: 12px;
-    z-index: 20;
-    padding: 7px 12px !important;
-    font-size: 12px !important;
-    font-weight: 700;
-    height: auto;
-    background: rgba(229,72,77,.18) !important;
-    color: #FF6B70 !important;
-    border: 1px solid rgba(229,72,77,.4) !important;
-    box-shadow: 0 4px 12px rgba(229,72,77,.15);
-  }
+  /* OBSOLETO: estas reglas mobile del header viejo (columna + Terminar absolute)
+     quedan inactivas porque ahora el header usa la clase .convo-header-onerow
+     que tiene su propio bloque mobile arriba. Las dejo silenciadas con .convo-header:not(.convo-header-onerow)
+     por si algun render legacy las precisa. */
+  .webapp-root .convo-header:not(.convo-header-onerow) { flex-direction: column; align-items: stretch; margin-bottom: 12px; padding-top: 48px; padding-right: 96px; gap: 6px; }
+  .webapp-root .convo-header:not(.convo-header-onerow) h2 { font-size: 16px; line-height: 1.2; padding-right: 0; }
   .webapp-root .convo-orb { width: 180px; height: 180px; }
   .webapp-root .convo-side { display: none; }
   .webapp-root .convo-turn { padding: 0 8px; max-height: min(35dvh, 220px); }

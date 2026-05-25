@@ -1180,21 +1180,23 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     {endedReport && <SessionReportOverlay report={endedReport} sessionId={sessionId!} onClose={() => nav('/app')} />}
     <div className={`convo-view bg-${convoBg}`}>
       <div className="convo-stage">
-        <div className="convo-header">
-          <div className="convo-header-main">
-            <h2>{topicTitle || 'Iniciando…'}</h2>
-            <div className="meta">
-              <span className="live">{profile?.active_template?.name || 'Habláh'}</span>
-              <span className="meta-level">{profile?.user?.cefr_level} · {profile?.user?.target_language}</span>
-            </div>
-            <PedagogyPicker value={pedagogy} onChange={(p, label) => {
-              setPedagogy(p)
-              const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
-              const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
-              toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
-            }} />
+        <div className="convo-header convo-header-onerow">
+          <div className="convo-header-info">
+            <span className="convo-h-title" title={topicTitle || 'Iniciando…'}>
+              {topicTitle || 'Iniciando…'}
+            </span>
+            <span className="convo-h-sep">·</span>
+            <span className="convo-h-meta">
+              {profile?.active_template?.name || 'Habláh'} · {profile?.user?.cefr_level} · {profile?.user?.target_language}
+            </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <PedagogyPicker value={pedagogy} onChange={(p, label) => {
+            setPedagogy(p)
+            const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
+            const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
+            toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
+          }} />
+          <div className="convo-header-actions">
             <InviteFriendButton
               topicId={selectedTopicId}
               freeTopic={freeTopicText || null}
@@ -1205,11 +1207,11 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
                 toast.success('Sala lista — mandá el link y esperá al amigo')
               }}
             />
-            <button className="btn btn-sm end" onClick={handleEnd}>
+            <button className="btn btn-sm end" onClick={handleEnd} aria-label="Terminar">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
               </svg>
-              Terminar
+              <span className="end-label">Terminar</span>
             </button>
           </div>
         </div>
