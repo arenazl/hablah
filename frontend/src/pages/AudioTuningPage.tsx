@@ -250,21 +250,53 @@ export function AudioTuningPage() {
 
   useEffect(() => { saveAudioSettings(settings) }, [settings])
 
+  const updateTimerRef = useRef<number | null>(null)
   const update = (key: keyof AudioSettings, value: number | boolean): void => {
     setSettings((s) => ({ ...s, [key]: value }))
     setActivePresetId('')
+    // Debounce: si hay sesion activa, reiniciar tras 600ms sin cambios mas
+    // (para que el user pueda mover varios sliders sin reiniciar a cada uno)
+    if (sessionId) {
+      if (updateTimerRef.current) window.clearTimeout(updateTimerRef.current)
+      updateTimerRef.current = window.setTimeout(() => {
+        void restartSession()
+      }, 600)
+    }
   }
 
-  const choosePreset = (preset: AudioPreset): void => {
+  const choosePreset = async (preset: AudioPreset): Promise<void> => {
     const merged = applyPreset(preset)
     setSettings(merged)
     setActivePresetId(preset.id)
+    toast.success(`Preset: ${preset.name}`)
+    // Si hay sesion activa, reiniciar automaticamente para aplicar
+    if (sessionId) {
+      await restartSession()
+    }
   }
 
-  const reset = (): void => {
+  const reset = async (): Promise<void> => {
     setSettings(resetAudioSettings())
     setActivePresetId('default')
-    toast('Default')
+    toast('Default aplicado')
+    if (sessionId) await restartSession()
+  }
+
+  const restartSession = async (): Promise<void> => {
+    if (sessionId) {
+      try { live.stop() } catch {}
+      try { await sessionsAPI.end(sessionId, []) } catch {}
+      setSessionId(null)
+    }
+    // Pequeño delay para que el WS cierre limpio
+    await new Promise((r) => setTimeout(r, 250))
+    try {
+      const start = await sessionsAPI.start(undefined, undefined, 'audio tuning test')
+      setSessionId(start.session_id)
+      await live.start(start.session_id)
+    } catch (e: unknown) {
+      toast.error((e as Error).message)
+    }
   }
 
   const playTestTone = async (): Promise<void> => {
@@ -312,7 +344,7 @@ export function AudioTuningPage() {
       const start = await sessionsAPI.start(undefined, undefined, 'audio tuning test')
       setSessionId(start.session_id)
       await live.start(start.session_id)
-      toast.success('Sesión iniciada')
+      toast.success('Hablale al mic — el coach responde')
     } catch (e: unknown) {
       toast.error((e as Error).message)
     }
@@ -368,14 +400,20 @@ export function AudioTuningPage() {
       <div className="tune-root">
         <div className="tune-header">
           <h1 className="tune-h1">Audio Tuning</h1>
-          <span className="tune-header-sub">{diffFromDefault(settings) || 'sin cambios vs default'}</span>
+          <span className="tune-header-sub">{diffFromDefault(settings) || 'default · sin cambios'}</span>
           <div className="tune-header-actions">
             <button className="tune-btn secondary" onClick={reset}>
-              <RotateCcw size={12} /> Reset
+              <RotateCcw size={12} /> Reset default
             </button>
-            <button className="tune-btn primary" onClick={() => { saveAudioSettings(settings); toast.success('Guardado') }}>
-              <Save size={12} /> Guardar
-            </button>
+            {!sessionId ? (
+              <button className="tune-btn primary" onClick={startTestSession}>
+                <Play size={12} /> Conversar con coach
+              </button>
+            ) : (
+              <button className="tune-btn danger" onClick={stopTestSession}>
+                <Square size={12} /> Terminar conversación
+              </button>
+            )}
           </div>
         </div>
 
@@ -416,10 +454,43 @@ export function AudioTuningPage() {
 
           {/* COL RIGHT — TESTING */}
           <div className="col col-right">
-            <div className="section-title">Probar audio</div>
+            <div className="section-title">Estado de la charla</div>
             <div className="test-card">
-              <h4>Sin sesión</h4>
-              <p>Probá el AudioContext de playback con los settings actuales.</p>
+              {!sessionId ? (
+                <>
+                  <p>
+                    Tocá <b>Conversar con coach</b> arriba para arrancar una sesión real.
+                    Hablale al mic, el coach responde con los settings actuales.
+                  </p>
+                  <p style={{ marginTop: 4 }}>
+                    Si cambiás un preset o un slider durante la charla, la sesión
+                    se reinicia automáticamente para aplicar los nuevos settings.
+                  </p>
+                </>
+              ) : (
+                <div className={`live-status ${live.status === 'error' ? 'error' : 'live'}`}>
+                  <div style={{ fontWeight: 700, fontSize: 11 }}>
+                    sid={sessionId} · {live.status}
+                  </div>
+                  {(() => {
+                    const lastAi = [...live.transcript].reverse().find((l) => l.who === 'ai')
+                    return lastAi ? (
+                      <div className="transcript-line">
+                        <b>Coach:</b> {lastAi.text}
+                      </div>
+                    ) : (
+                      <div className="transcript-line" style={{ opacity: 0.6 }}>
+                        Esperando respuesta del coach...
+                      </div>
+                    )
+                  })()}
+                </div>
+              )}
+            </div>
+
+            <div className="section-title">Probar playback (sin sesión)</div>
+            <div className="test-card">
+              <p>Solo testea el AudioContext de salida con tus settings.</p>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                 <button className="tune-btn secondary" onClick={playTestTone}>
                   <Music size={11} /> Tono 3s
@@ -428,31 +499,6 @@ export function AudioTuningPage() {
                   <Volume2 size={11} /> Voz local
                 </button>
               </div>
-            </div>
-
-            <div className="test-card">
-              <h4>Sesión Live real</h4>
-              <p>Arranca con tu user. Settings se aplican al iniciar.</p>
-              {!sessionId ? (
-                <button className="tune-btn primary" onClick={startTestSession}>
-                  <Play size={11} /> Iniciar
-                </button>
-              ) : (
-                <button className="tune-btn danger" onClick={stopTestSession}>
-                  <Square size={11} /> Terminar
-                </button>
-              )}
-              {sessionId && (
-                <div className={`live-status ${live.status === 'error' ? 'error' : 'live'}`}>
-                  sid={sessionId} · {live.status}
-                  {(() => {
-                    const lastAi = [...live.transcript].reverse().find((l) => l.who === 'ai')
-                    return lastAi ? (
-                      <div className="transcript-line">{lastAi.text}</div>
-                    ) : null
-                  })()}
-                </div>
-              )}
             </div>
           </div>
         </div>
