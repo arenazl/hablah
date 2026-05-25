@@ -1375,14 +1375,33 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               La transcripción aparece a medida que vos y el tutor hablan…
             </div>
           )}
-          {live.transcript.map((line, i) => (
-            <div key={i} className={`line ${line.who === 'ai' ? 'ai' : 'you'}`}>
-              <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.1em', opacity: 0.55, marginBottom: 3, textTransform: 'uppercase' }}>
-                {line.who === 'ai' ? 'Tutor' : 'Vos'}
-              </div>
-              {line.text}
-            </div>
-          ))}
+          {/* En vivo solo mostramos el ultimo turno de cada uno (tutor + vos),
+              sin scroll, sin historial acumulado. La transcripcion completa
+              se ve recien al cierre de la sesion en el reporte. */}
+          {live.transcript.length > 0 && (() => {
+            let lastAiIdx = -1
+            let lastUserIdx = -1
+            for (let i = live.transcript.length - 1; i >= 0; i--) {
+              const w = live.transcript[i].who
+              if (w === 'ai' && lastAiIdx === -1) lastAiIdx = i
+              if (w === 'user' && lastUserIdx === -1) lastUserIdx = i
+              if (lastAiIdx !== -1 && lastUserIdx !== -1) break
+            }
+            const order = [lastAiIdx, lastUserIdx]
+              .filter((i) => i >= 0)
+              .sort((a, b) => a - b)
+            return order.map((i) => {
+              const line = live.transcript[i]
+              return (
+                <div key={`${line.who}-${i}`} className={`line ${line.who === 'ai' ? 'ai' : 'you'}`}>
+                  <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.1em', opacity: 0.55, marginBottom: 3, textTransform: 'uppercase' }}>
+                    {line.who === 'ai' ? 'Tutor' : 'Vos'}
+                  </div>
+                  {line.text}
+                </div>
+              )
+            })
+          })()}
         </div>
       </aside>
     </div>

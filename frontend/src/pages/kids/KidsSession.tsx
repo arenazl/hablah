@@ -66,7 +66,7 @@ const CSS = `
 .kids-session-status .pulse { width:8px; height:8px; border-radius:50%; background:#22C55E; box-shadow:0 0 0 0 rgba(34,197,94,.6); animation:kids-pulse 1.5s ease-out infinite; }
 @keyframes kids-pulse { 0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)} 100%{box-shadow:0 0 0 12px rgba(34,197,94,0)} }
 
-.kids-transcript { width:100%; max-width:680px; max-height:200px; overflow-y:auto; padding:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; display:flex; flex-direction:column; gap:6px; }
+.kids-transcript { width:100%; max-width:680px; padding:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; display:flex; flex-direction:column; gap:6px; }
 .kids-transcript-line { font-size:14px; line-height:1.45; padding:6px 12px; border-radius:10px; max-width:90%; }
 .kids-transcript-line.ai { align-self:flex-start; background:rgba(0,179,126,.18); color:#9CFCD2; }
 .kids-transcript-line.user { align-self:flex-end; background:rgba(255,255,255,.08); color:#fff; }
@@ -333,17 +333,35 @@ export function KidsSession() {
               </div>
             )}
 
-            {/* Transcripción */}
-            {live.transcript.length > 0 && (
-              <div className="kids-transcript">
-                {live.transcript.map((line, i) => (
-                  <div key={i} className={`kids-transcript-line ${line.who}`}>
-                    <span className="who">{line.who === 'ai' ? 'Habi' : kid.name}</span>
-                    {line.text}
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Transcripción EN VIVO: solo el ultimo turno de cada uno (sin
+               historial acumulado, sin scroll). El historial completo se ve
+               recien al cierre de la clase. */}
+            {live.transcript.length > 0 && (() => {
+              let lastAiIdx = -1
+              let lastUserIdx = -1
+              for (let i = live.transcript.length - 1; i >= 0; i--) {
+                const w = live.transcript[i].who
+                if (w === 'ai' && lastAiIdx === -1) lastAiIdx = i
+                if (w === 'user' && lastUserIdx === -1) lastUserIdx = i
+                if (lastAiIdx !== -1 && lastUserIdx !== -1) break
+              }
+              const order = [lastAiIdx, lastUserIdx]
+                .filter((i) => i >= 0)
+                .sort((a, b) => a - b)
+              return (
+                <div className="kids-transcript">
+                  {order.map((i) => {
+                    const line = live.transcript[i]
+                    return (
+                      <div key={`${line.who}-${i}`} className={`kids-transcript-line ${line.who}`}>
+                        <span className="who">{line.who === 'ai' ? 'Habi' : kid.name}</span>
+                        {line.text}
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })()}
           </>
         )}
       </div>
