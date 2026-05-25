@@ -1190,6 +1190,16 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               {profile?.active_template?.name || 'Habláh'} · {profile?.user?.cefr_level} · {profile?.user?.target_language}
             </span>
           </div>
+          {live.participants.length > 0 && (
+            <div className="convo-h-participants" title="Conectados en la sala">
+              {live.participants.map((p) => (
+                <span key={p.pid} className={`convo-h-chip${p.isHost ? ' host' : ''}`} title={p.isHost ? 'Vos (host)' : p.name}>
+                  <span className="dot" aria-hidden />
+                  {p.name}
+                </span>
+              ))}
+            </div>
+          )}
           <PedagogyPicker value={pedagogy} onChange={(p, label) => {
             setPedagogy(p)
             const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''

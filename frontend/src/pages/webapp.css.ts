@@ -285,6 +285,20 @@ export const WEBAPP_CSS = `
   white-space: nowrap; flex-shrink: 0;
 }
 .webapp-root .convo-header-onerow .pedagogy-picker { flex-shrink: 0; }
+.webapp-root .convo-h-participants {
+  display: flex; gap: 6px; flex-shrink: 0; flex-wrap: nowrap; max-width: 280px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.webapp-root .convo-h-participants::-webkit-scrollbar { display: none; }
+.webapp-root .convo-h-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+  border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap;
+  background: rgba(0,179,126,0.14); color: #5EE0B0;
+  border: 1px solid rgba(0,179,126,0.28);
+}
+.webapp-root .convo-h-chip.host { background: rgba(232,236,234,0.10); color: #E8ECEA; border-color: rgba(232,236,234,0.20); }
+.webapp-root .convo-h-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: #5EE0B0; }
+.webapp-root .convo-h-chip.host .dot { background: #E8ECEA; }
 .webapp-root .convo-header-actions {
   display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto;
 }

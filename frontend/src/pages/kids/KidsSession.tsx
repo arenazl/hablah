@@ -304,6 +304,32 @@ export function KidsSession() {
               {live.status === 'idle' ? <>¡Hablemos de <em>{displayTitle.toLowerCase()}</em>!</> : displayTitle}
             </h1>
 
+            {live.participants.length > 0 && (
+              <div style={{
+                display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8,
+                justifyContent: 'center',
+              }}>
+                {live.participants.map((p) => (
+                  <span
+                    key={p.pid}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      padding: '4px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700,
+                      background: p.isHost ? 'rgba(255,255,255,.12)' : 'rgba(0,179,126,.18)',
+                      color: p.isHost ? '#E8ECEA' : '#5EE0B0',
+                      border: `1px solid ${p.isHost ? 'rgba(255,255,255,.18)' : 'rgba(0,179,126,.32)'}`,
+                    }}
+                  >
+                    <span style={{
+                      width: 6, height: 6, borderRadius: '50%',
+                      background: p.isHost ? '#E8ECEA' : '#5EE0B0',
+                    }} aria-hidden />
+                    {p.name}
+                  </span>
+                ))}
+              </div>
+            )}
+
             {live.status === 'idle' && (
               <p className="kids-session-sub">
                 Cuando estés <b>listo</b>, tocá el botón amarillo. Habi te va a escuchar y te responde en voz alta.

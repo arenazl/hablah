@@ -50,9 +50,19 @@ export interface UseLiveVoiceOptions {
 
 export type LiveStatus = 'idle' | 'connecting' | 'listening' | 'speaking' | 'error' | 'ended'
 
+export interface LiveParticipant {
+  pid: string
+  name: string
+  isHost: boolean
+}
+
 export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const [status, setStatus] = useState<LiveStatus>('idle')
   const [transcript, setTranscript] = useState<TranscriptLine[]>([])
+  /** Lista de humanos conectados a la voice room. Vacia si la sesion es 1:1
+   * con el coach (modo single /ws). Se popula al hacer upgradeToRoom() y se
+   * actualiza con eventos participant_joined / participant_left del backend. */
+  const [participants, setParticipants] = useState<LiveParticipant[]>([])
 
   // Estabilizamos opts en un ref: el caller pasa literales nuevos cada render
   // pero los callbacks adentro del hook usan optsRef.current para no
@@ -237,6 +247,14 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           // sampleRate del AudioBuffer correctamente.
           playCtxRef.current = new AudioContext({ sampleRate: 24000 })
         }
+        // Recovery: si el AudioContext quedo suspended (por autoplay policy,
+        // o porque el browser lo suspendio al cambiar de WS en upgradeToRoom)
+        // forzamos resume. Sin esto el audio se quedaba mudo despues del
+        // upgrade aunque siguieran llegando chunks - bug reportado: el host
+        // dejaba de escuchar al coach y al guest tras invitar a alguien.
+        if (playCtxRef.current.state === 'suspended') {
+          playCtxRef.current.resume().catch(() => {})
+        }
         ensureAnalyser()
         playNextChunk()
       } catch (e) {
@@ -373,17 +391,29 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       } else if (msg.type === 'coach_recovering') {
         optsRef.current.onCoachRecovering?.(msg.level ?? 1)
       } else if (msg.type === 'participant_joined') {
+        if (Array.isArray(msg.participants)) {
+          setParticipants(msg.participants.map((p: { pid: string; name: string; is_host?: boolean }) => ({
+            pid: p.pid, name: p.name, isHost: !!p.is_host,
+          })))
+        }
         optsRef.current.onParticipantJoined?.({
           pid: msg.pid,
           name: msg.name,
           isHost: !!msg.is_host,
         })
       } else if (msg.type === 'participant_left') {
+        setParticipants((prev) => prev.filter((p) => p.pid !== msg.pid))
         optsRef.current.onParticipantLeft?.({ pid: msg.pid, name: msg.name })
       } else if (msg.type === 'room_joined') {
-        // Ack del backend cuando entramos a la room. No necesita accion.
+        // Ack del backend cuando entramos a la room: trae la lista completa.
+        if (Array.isArray(msg.participants)) {
+          setParticipants(msg.participants.map((p: { pid: string; name: string; is_host?: boolean }) => ({
+            pid: p.pid, name: p.name, isHost: !!p.is_host,
+          })))
+        }
         setStatus('listening')
       } else if (msg.type === 'room_closed') {
+        setParticipants([])
         optsRef.current.onRoomClosed?.(msg.reason || 'closed')
         setStatus('ended')
       } else if (msg.type === 'error') {
@@ -460,5 +490,5 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     return false
   }, [])
 
-  return { start, stop, status, transcript, sendSystemUpdate, say, upgradeToRoom }
+  return { start, stop, status, transcript, sendSystemUpdate, say, upgradeToRoom, participants }
 }
