@@ -359,32 +359,26 @@ export function KidsSession() {
               </div>
             )}
 
-            {/* Transcripción EN VIVO: solo el ultimo turno de cada uno (sin
-               historial acumulado, sin scroll). El historial completo se ve
-               recien al cierre de la clase. */}
+            {/* Transcripción EN VIVO: solo lo que dice el COACH (Habi).
+               Lo que dice el chico se acumula en live.transcript pero NO
+               se muestra en pantalla durante la sesion - el chico ya escucha
+               su propia voz. Decision del usuario para reducir distraccion
+               y reforzar el aprendizaje leyendo lo que dice Habi. El
+               transcript completo (habi + chico) se manda al backend al
+               cerrar la clase para el reporte/analisis. */}
             {live.transcript.length > 0 && (() => {
               let lastAiIdx = -1
-              let lastUserIdx = -1
               for (let i = live.transcript.length - 1; i >= 0; i--) {
-                const w = live.transcript[i].who
-                if (w === 'ai' && lastAiIdx === -1) lastAiIdx = i
-                if (w === 'user' && lastUserIdx === -1) lastUserIdx = i
-                if (lastAiIdx !== -1 && lastUserIdx !== -1) break
+                if (live.transcript[i].who === 'ai') { lastAiIdx = i; break }
               }
-              const order = [lastAiIdx, lastUserIdx]
-                .filter((i) => i >= 0)
-                .sort((a, b) => a - b)
+              if (lastAiIdx < 0) return null
+              const line = live.transcript[lastAiIdx]
               return (
                 <div className="kids-transcript">
-                  {order.map((i) => {
-                    const line = live.transcript[i]
-                    return (
-                      <div key={`${line.who}-${i}`} className={`kids-transcript-line ${line.who}`}>
-                        <span className="who">{line.who === 'ai' ? 'Habi' : kid.name}</span>
-                        {line.text}
-                      </div>
-                    )
-                  })}
+                  <div className={`kids-transcript-line ai`}>
+                    <span className="who">Habi</span>
+                    {line.text}
+                  </div>
                 </div>
               )
             })()}
