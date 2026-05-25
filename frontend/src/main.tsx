@@ -29,11 +29,16 @@ const tree = (
   </React.StrictMode>
 )
 
-// Si el HTML viene prerenderizado (tiene contenido dentro de #root), hidratamos
-// para "tomar" ese HTML sin re-pintar ni parpadear. Si está vacío (rutas de la
-// app servidas por el fallback SPA), renderizamos normal.
+// Las rutas publicas (/, /tutores, /faq, ...) se prerenderean con Puppeteer
+// para SEO. Pero hydrateRoot fallaba con errores #425/#418/#423 porque el HTML
+// prerenderizado no matchea exactamente con lo que renderiza el cliente
+// (theme desde localStorage, auth state, fechas dinamicas, etc).
+//
+// Solucion: siempre createRoot. El HTML prerenderizado sigue ahi para los bots
+// de Google (SEO), pero un usuario humano hace un mount limpio sin riesgo de
+// mismatch. Si #root viene con contenido prerenderizado, lo vaciamos antes
+// para que React no intente reusar/hidratar nada.
 if (container.hasChildNodes()) {
-  ReactDOM.hydrateRoot(container, tree)
-} else {
-  ReactDOM.createRoot(container).render(tree)
+  container.innerHTML = ''
 }
+ReactDOM.createRoot(container).render(tree)
