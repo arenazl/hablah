@@ -117,8 +117,9 @@ RENEW_BEFORE_END_SECONDS = 30
 # Watchdog "el coach nunca se muere": si despues de un turnComplete del usuario
 # pasan COACH_SILENCE_TRIGGER_SECONDS sin que el coach diga nada, disparamos
 # rescate. Cascada: trigger sintetico -> renew forzado -> mensaje verbal.
-COACH_SILENCE_TRIGGER_SECONDS = 8
-COACH_SILENCE_HARD_RESCUE_SECONDS = 14
+# Para kids es mas corto porque 8s de silencio es eterno para un nene.
+COACH_SILENCE_TRIGGER_SECONDS = 4
+COACH_SILENCE_HARD_RESCUE_SECONDS = 10
 
 
 async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
@@ -532,14 +533,27 @@ class GeminiLiveEngine(VoiceEngine):
                         "Nivel 1: trigger sintetico.", silence,
                     )
                     timing["rescue_attempts"] = 1
+                    is_kid_ctx = bool(getattr(ctx, "is_kid", False))
+                    if is_kid_ctx:
+                        trigger_text = (
+                            "(Sistema: el alumno te dijo algo corto/ambiguo "
+                            "(quiza 'como?', 'que?', 'eh?', o un balbuceo) y "
+                            "te quedaste callado. NO te quedes mudo. Asumí que "
+                            "fue una interrupcion casual: pedile perdon corto y "
+                            "REPETI tu ULTIMA frase modelo entera entre comillas. "
+                            "Una sola oracion. Ej: 'Ay perdon, te repito: \"I love mom\". "
+                            "Ahora vos.')"
+                        )
+                    else:
+                        trigger_text = (
+                            "(Sistema: el alumno esta esperando tu respuesta. "
+                            "Continua la charla naturalmente desde donde quedaste. "
+                            "Una sola frase corta.)"
+                        )
                     try:
                         await gws_holder["ws"].send(json.dumps({
                             "clientContent": {
-                                "turns": [{"role": "user", "parts": [{"text": (
-                                    "(Sistema: el alumno esta esperando tu respuesta. "
-                                    "Continua la charla naturalmente desde donde quedaste. "
-                                    "Una sola frase corta.)"
-                                )}]}],
+                                "turns": [{"role": "user", "parts": [{"text": trigger_text}]}],
                                 "turnComplete": True,
                             }
                         }))
