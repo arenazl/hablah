@@ -165,25 +165,13 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const playNextChunk = useCallback(() => {
     const ctx = playCtxRef.current
     if (!ctx) return
-    // Catch-up CONSERVADOR: solo si el delay acumulado supera 1.5s (problema
-    // real, no fluctuacion normal), cancelamos los buffers futuros y reseteamos
-    // el cursor. Sin esto, el delay puede crecer indefinidamente si el browser
-    // suspende el AudioContext o si llegan bursts. Con threshold 1.5s evitamos
-    // cortar audio bueno en uso normal pero recuperamos sincronia en colgues.
-    const HARD_RESET_AHEAD_S = 1.5
-    const ahead = nextStartTimeRef.current - ctx.currentTime
-    if (ahead > HARD_RESET_AHEAD_S) {
-      for (const src of playSourcesRef.current) {
-        try { src.stop() } catch {}
-        try { src.disconnect() } catch {}
-      }
-      playSourcesRef.current = []
-      nextStartTimeRef.current = ctx.currentTime
-      optsRef.current.onAudioGlitch?.({
-        reason: 'audio_drift_reset',
-        delayMs: Math.round(ahead * 1000),
-      })
-    }
+    // NOTA: tuvimos catch-up con threshold 1.5s aca, pero rompia audio en
+    // cada palabra. Causa: Gemini Live envia chunks MAS RAPIDO que real-time
+    // (10s de audio en 3s wall-clock), entonces nextStartTimeRef se adelanta
+    // naturalmente y el catch-up disparaba cortando audio bueno.
+    // Sin catch-up el playback fluye natural. La acumulacion de delay es
+    // un caso raro (sesion muy larga + AudioContext suspendido). Si llega
+    // a pasar, el resume() de AudioContext en pushAudioFromTutor ayuda.
     // Schedule TODOS los chunks pendientes ahora con tiempos exactos para evitar gaps
     while (playQueueRef.current.length > 0) {
       const item = playQueueRef.current.shift()!

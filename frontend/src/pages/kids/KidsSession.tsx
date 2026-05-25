@@ -140,13 +140,9 @@ export function KidsSession() {
       toast('La sala se cerró')
     },
     onAudioGlitch: (info) => {
-      if (info.reason === 'audio_drift_reset') {
-        toast(`Ajustando audio… (${(info.delayMs / 1000).toFixed(1)}s)`, {
-          duration: 2000,
-        })
-      } else if (info.reason === 'slow_response') {
-        console.warn(`[kids-voice] Latencia alta: ${info.delayMs}ms`)
-      }
+      // Solo log, NUNCA toast (decision del usuario - el toast molestaba
+      // cuando se disparaba en uso normal de Gemini Live).
+      console.warn(`[kids-voice] glitch ${info.reason}: ${info.delayMs}ms`)
     },
   })
 

@@ -1056,16 +1056,10 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       toast('La sala se cerró')
     },
     onAudioGlitch: (info) => {
-      // Indicador discreto cuando el audio se desincronizo (>1.5s drift)
-      // o cuando la respuesta del coach tarda demasiado (>2s).
-      if (info.reason === 'audio_drift_reset') {
-        toast(`Ajustando audio… (${(info.delayMs / 1000).toFixed(1)}s drift)`, {
-          duration: 2000,
-        })
-      } else if (info.reason === 'slow_response') {
-        // Solo loguear, no molestar al user con toast cada vez
-        console.warn(`[useLiveVoice] Latencia alta: ${info.delayMs}ms`)
-      }
+      // Solo log para diagnostico, NO toast (el toast cada palabra
+      // confundia y disparaba en uso normal cuando Gemini manda chunks
+      // mas rapido que real-time).
+      console.warn(`[useLiveVoice] glitch ${info.reason}: ${info.delayMs}ms`)
     },
   })
 
