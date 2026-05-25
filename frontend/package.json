@@ -8,6 +8,7 @@
     "build:client": "tsc -b && vite build",
     "build": "tsc -b && vite build && node prerender.mjs",
     "prerender": "node prerender.mjs",
+    "smoke": "node smoke-test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
