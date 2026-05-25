@@ -404,7 +404,17 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
    * Idempotente: si ya estamos en una room, no hace nada.
    */
   const upgradeToRoom = useCallback((roomToken: string, hostPid: string) => {
-    if (!wsRef.current) return
+    // Guard: si no hay sesion Live activa, no podemos hacer el upgrade. El
+    // caller (InviteFriendButton) deberia haber esperado a tener sesion antes
+    // de crear la room. Si llegamos aca el flow esta roto - reportar al user
+    // claramente en vez de quedar en silencio (bug real reportado: el guest
+    // entraba a una room sin host conectado y se quedaba esperando).
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+      optsRef.current.onError?.(new Error(
+        'Tenés que empezar la charla con el coach antes de invitar a un amigo.'
+      ))
+      return
+    }
     if (wsRef.current.url.includes('/ws_room')) return  // ya en room
     const oldWs = wsRef.current
     const base = oldWs.url.replace(/\/ws(\?|$).*/, '')

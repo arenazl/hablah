@@ -45,6 +45,11 @@ interface InviteFriendButtonProps {
    * lo usa para hacer upgradeToRoom() y migrar de /ws single a /ws_room
    * compartido — asi cuando el invitado entre, el host lo escucha en vivo. */
   onRoomCreated?: (roomToken: string, hostPid: string) => void
+  /** Opcional: hook que se ejecuta ANTES del POST /api/rooms. Sirve para que
+   * el caller arranque la sesion Live primero (si todavia no esta activa) y
+   * recien despues se cree la room. Asi evitamos crear rooms huerfanas sin
+   * host conectado (bug real cuando el guest entraba y no escuchaba nada). */
+  onBeforeCreate?: () => Promise<void>
 }
 
 export function InviteFriendButton({
@@ -54,6 +59,7 @@ export function InviteFriendButton({
   label = 'Invitar amigo',
   authToken,
   onRoomCreated,
+  onBeforeCreate,
 }: InviteFriendButtonProps) {
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -64,6 +70,18 @@ export function InviteFriendButton({
     if (loading) return
     setLoading(true)
     try {
+      // Si el caller pasa onBeforeCreate, lo esperamos antes de crear la room.
+      // Patron tipico: iniciar la sesion Live primero, asi cuando se hace el
+      // upgradeToRoom hay un WS al cual atacharse.
+      if (onBeforeCreate) {
+        try {
+          await onBeforeCreate()
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : 'No se pudo preparar la sala'
+          toast.error(msg)
+          return
+        }
+      }
       const tok = authToken ?? localStorage.getItem('kids_token') ?? localStorage.getItem('token')
       if (!tok) {
         toast.error('Necesitás estar logueado para invitar')

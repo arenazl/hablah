@@ -383,6 +383,17 @@ export function KidsSession() {
                 variant="light"
                 label="Invitar amigo"
                 authToken={localStorage.getItem(KIDS_TOKEN_KEY) ?? undefined}
+                onBeforeCreate={async () => {
+                  // Antes de crear la room, arrancamos la sesion Live y esperamos
+                  // a que el WS este OPEN. Sin esto, upgradeToRoom no tiene a que
+                  // atacharse y el guest queda en limbo (bug real, sesion 14:14).
+                  await beginSession()
+                  for (let i = 0; i < 80; i++) {
+                    if (live.status === 'listening' || live.status === 'speaking') return
+                    await new Promise((r) => setTimeout(r, 100))
+                  }
+                  throw new Error('La clase no inició a tiempo, intentá de nuevo')
+                }}
                 onRoomCreated={(roomToken, hostPid) => {
                   live.upgradeToRoom(roomToken, hostPid)
                   toast.success('Sala lista — mandá el link y esperá al amigo')
@@ -392,10 +403,24 @@ export function KidsSession() {
           </>
         )}
         {hasKidsToken && isActive && (
-          <button className="kids-session-btn-primary" onClick={endSession} style={{ background: 'linear-gradient(180deg,#EF4444,#B91C1C)', color: '#fff' }}>
-            <Square size={20} strokeWidth={2.4} fill="white" />
-            Terminar charla
-          </button>
+          <>
+            {topic && (
+              <InviteFriendButton
+                topicId={topic.id}
+                variant="light"
+                label="Invitar amigo"
+                authToken={localStorage.getItem(KIDS_TOKEN_KEY) ?? undefined}
+                onRoomCreated={(roomToken, hostPid) => {
+                  live.upgradeToRoom(roomToken, hostPid)
+                  toast.success('Sala lista — mandá el link y esperá al amigo')
+                }}
+              />
+            )}
+            <button className="kids-session-btn-primary" onClick={endSession} style={{ background: 'linear-gradient(180deg,#EF4444,#B91C1C)', color: '#fff' }}>
+              <Square size={20} strokeWidth={2.4} fill="white" />
+              Terminar charla
+            </button>
+          </>
         )}
       </div>
     </div>
