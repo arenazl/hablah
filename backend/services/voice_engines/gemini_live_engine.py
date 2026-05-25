@@ -145,7 +145,13 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
             "realtimeInputConfig": {
                 "automaticActivityDetection": {
                     "disabled": False,
-                    "startOfSpeechSensitivity": "START_SENSITIVITY_HIGH",
+                    # Kids: START_SENSITIVITY_LOW para que solo voz CLARA y fuerte
+                    # interrumpa al coach. Antes con HIGH se disparaba con ruidito
+                    # de fondo o respiracion → el coach cortaba sin sentido y
+                    # despues respondia un turn vacio con "muy bien" generico.
+                    "startOfSpeechSensitivity": (
+                        "START_SENSITIVITY_LOW" if is_kid else "START_SENSITIVITY_HIGH"
+                    ),
                     "endOfSpeechSensitivity": (
                         "END_SENSITIVITY_LOW" if is_kid else "END_SENSITIVITY_HIGH"
                     ),
