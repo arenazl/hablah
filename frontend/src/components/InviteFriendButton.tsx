@@ -1,54 +1,38 @@
 /**
- * Boton "Invitar amigo" reutilizable. Crea una room via POST /api/rooms
- * y abre un modal con el link para copiar/compartir.
+ * Boton "Invitar amigo" reutilizable.
+ *
+ * Flow simple (sin modal):
+ *   1. Tap -> crea room via POST /api/rooms (loading state)
+ *   2. Si navigator.share esta disponible (mobile) -> abre el sheet
+ *      nativo (WhatsApp, Telegram, Mail, etc).
+ *   3. Si no (desktop) -> copia al portapapeles + toast "Copiado".
+ *
+ * Asi el usuario hace un solo tap y ya tiene el link listo para mandar.
  *
  * Uso:
  *   <InviteFriendButton topicId={topic.id} variant="dark" />
  *
- * El topicId es opcional. Si no se pasa, la sala se crea sin topico (tema libre).
+ * El topicId es opcional. Si no se pasa, la sala se crea sin topico
+ * (tema libre).
  */
-import { useEffect, useState } from 'react'
-import { UserPlus, X, Copy, Check, Share2 } from 'lucide-react'
+import { useState } from 'react'
+import { UserPlus, Check } from 'lucide-react'
+import { toast } from 'sonner'
 
 const CSS = `
-.inv-btn { display:inline-flex; align-items:center; gap:8px; padding:0 18px; height:44px; border-radius:99px; border:0; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; transition:transform .15s; }
+.inv-btn { display:inline-flex; align-items:center; gap:8px; padding:0 18px; height:44px; border-radius:99px; border:0; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; transition:transform .15s, background .15s; }
 .inv-btn:hover { transform:translateY(-1px); }
-.inv-btn:disabled { opacity:.5; cursor:wait; transform:none; }
+.inv-btn:disabled { opacity:.6; cursor:wait; transform:none; }
 .inv-btn.light { background:rgba(255,255,255,.10); color:#fff; border:1px solid rgba(255,255,255,.18); }
 .inv-btn.light:hover { background:rgba(255,255,255,.16); }
 .inv-btn.dark { background:#0D1412; color:#fff; }
 .inv-btn.dark:hover { background:#000; }
 .inv-btn.amber { background:#FFB800; color:#3A2A00; }
+.inv-btn.amber:hover { background:#FFC833; }
 .inv-btn.icon-only { width:36px; height:36px; padding:0; gap:0; border-radius:50%; justify-content:center; }
-.inv-btn.icon-only.light { background:rgba(255,255,255,.10); }
-.inv-btn.icon-only.light:hover { background:rgba(255,255,255,.16); }
-
-.inv-modal-backdrop { position:fixed; inset:0; background:rgba(13,20,18,.7); backdrop-filter:blur(8px); z-index:9000; display:grid; place-items:center; padding:16px; }
-.inv-modal { width:100%; max-width:480px; max-height:calc(100vh - 32px); overflow-y:auto; background:#fff; border-radius:24px; padding:24px 20px; position:relative; animation:inv-pop .25s cubic-bezier(.2,.8,.2,1); font-family:'Sora','Inter',ui-sans-serif,system-ui,sans-serif; color:#0D1412; -webkit-overflow-scrolling:touch; }
-@media (max-width: 480px) {
-  .inv-modal { padding:20px 16px; border-radius:20px; }
-  .inv-modal h2 { font-size:19px; }
-  .inv-modal p { font-size:13px; }
-  .inv-modal .ico { width:48px; height:48px; border-radius:14px; }
-  .inv-link { padding:10px 12px; }
-  .inv-link .url { font-size:11.5px; }
-}
-@keyframes inv-pop { from { transform:scale(.92); opacity:0; } to { transform:scale(1); opacity:1; } }
-.inv-modal .close { position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:50%; background:rgba(13,20,18,.06); color:#3A4441; display:grid; place-items:center; border:0; cursor:pointer; }
-.inv-modal .close:hover { background:rgba(13,20,18,.10); }
-.inv-modal .ico { width:56px; height:56px; border-radius:18px; background:#FFF7DD; color:#FFB800; display:grid; place-items:center; margin:0 0 12px; }
-.inv-modal h2 { font-weight:800; font-size:22px; letter-spacing:-0.02em; margin:0 0 6px; }
-.inv-modal p { font-size:14px; color:#3A4441; margin:0 0 16px; line-height:1.5; }
-.inv-link { display:flex; align-items:center; gap:8px; padding:12px 14px; background:#F2EAD9; border:1px solid #E8DFCA; border-radius:14px; margin-bottom:12px; }
-.inv-link .url { flex:1; font-family:'JetBrains Mono', ui-monospace, monospace; font-size:13px; color:#0D1412; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.inv-link .copy-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:10px; background:#0D1412; color:#fff; border:0; cursor:pointer; font-size:12px; font-weight:700; font-family:inherit; }
-.inv-link .copy-btn.copied { background:#22C55E; }
-.inv-meta { font-size:12px; color:#6B7672; line-height:1.5; }
-.inv-meta b { color:#0D1412; }
-.inv-actions { display:flex; gap:8px; margin-top:16px; }
-.inv-actions button { flex:1; padding:0 16px; height:44px; border-radius:12px; border:0; cursor:pointer; font-weight:700; font-size:13px; font-family:inherit; }
-.inv-actions .primary { background:#00B37E; color:#fff; }
-.inv-actions .secondary { background:transparent; color:#3A4441; border:1px solid #E8DFCA; }
+.inv-btn .spinner { width:14px; height:14px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:inv-spin .6s linear infinite; }
+@keyframes inv-spin { to { transform:rotate(360deg); } }
+.inv-btn.copied { background:#22C55E !important; color:#fff !important; border-color:#22C55E !important; }
 `
 
 interface InviteFriendButtonProps {
@@ -56,7 +40,7 @@ interface InviteFriendButtonProps {
   freeTopic?: string | null
   variant?: 'light' | 'dark' | 'amber'
   label?: string
-  authToken?: string  // si no se pasa, usa el token global del adulto
+  authToken?: string
 }
 
 export function InviteFriendButton({
@@ -66,20 +50,18 @@ export function InviteFriendButton({
   label = 'Invitar amigo',
   authToken,
 }: InviteFriendButtonProps) {
-  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [link, setLink] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
-  const createRoom = async () => {
+  const iconOnly = !label
+
+  const handleClick = async (): Promise<void> => {
+    if (loading) return
     setLoading(true)
-    setError(null)
     try {
       const tok = authToken ?? localStorage.getItem('kids_token') ?? localStorage.getItem('token')
       if (!tok) {
-        setError('Necesitás estar logueado para invitar a un amigo')
-        setLoading(false)
+        toast.error('Necesitás estar logueado para invitar')
         return
       }
       const res = await fetch('/api/rooms', {
@@ -90,118 +72,83 @@ export function InviteFriendButton({
           free_topic: freeTopic ?? null,
         }),
       })
-      if (!res.ok) {
-        const txt = await res.text()
-        throw new Error(txt || 'No pudimos crear la sala')
-      }
+      if (!res.ok) throw new Error('No pudimos crear la sala')
       const data = await res.json()
-      const url = `${window.location.origin}/charla/${data.token}`
-      setLink(url)
-    } catch (e: any) {
-      setError(e?.message || 'Error de red')
+      const link = `${window.location.origin}/charla/${data.token}`
+
+      // En mobile (iOS/Android): abre el share sheet nativo - WhatsApp,
+      // Telegram, Mail, copy, etc. UX ideal.
+      // navigator.share solo funciona en contextos seguros (https).
+      const canShare =
+        typeof navigator !== 'undefined' &&
+        typeof navigator.share === 'function' &&
+        window.isSecureContext
+
+      if (canShare) {
+        try {
+          await navigator.share({
+            title: 'Te invito a una charla en hablah',
+            text: 'Sumate a esta charla en hablah',
+            url: link,
+          })
+          toast.success('Link compartido')
+          return
+        } catch (err: unknown) {
+          // Usuario cancelo el sheet - copiamos como fallback
+          if (err instanceof Error && err.name === 'AbortError') {
+            await copyToClipboard(link)
+            return
+          }
+          // Otro error -> seguir a clipboard fallback
+        }
+      }
+      await copyToClipboard(link)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error de red'
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => {
-    if (open && !link && !loading && !error) {
-      createRoom()
-    }
-    if (!open) {
-      setCopied(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
-
-  const copy = async () => {
-    if (!link) return
+  const copyToClipboard = async (link: string): Promise<void> => {
     try {
       await navigator.clipboard.writeText(link)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Fallback
       const ta = document.createElement('textarea')
       ta.value = link
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
       document.body.appendChild(ta)
       ta.select()
       try { document.execCommand('copy') } catch {}
       ta.remove()
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
     }
+    setCopied(true)
+    toast.success('Link copiado — pegalo en WhatsApp y mandalo')
+    setTimeout(() => setCopied(false), 2500)
   }
 
-  const share = async () => {
-    if (!link) return
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Te invito a una charla en hablah',
-          text: 'Vení a hablar conmigo y con el tutor de IA',
-          url: link,
-        })
-      } catch {}
-    } else {
-      copy()
-    }
-  }
-
-  const iconOnly = !label
   return (
     <>
       <style>{CSS}</style>
       <button
-        className={`inv-btn ${variant}${iconOnly ? ' icon-only' : ''}`}
-        onClick={() => setOpen(true)}
+        className={`inv-btn ${variant}${iconOnly ? ' icon-only' : ''}${copied ? ' copied' : ''}`}
+        onClick={handleClick}
         type="button"
+        disabled={loading}
         aria-label={iconOnly ? 'Invitar amigo' : undefined}
         title={iconOnly ? 'Invitar amigo' : undefined}
       >
-        <UserPlus size={iconOnly ? 18 : 16} strokeWidth={2.2} />
-        {!iconOnly && label}
+        {loading ? (
+          <span className="spinner" aria-hidden />
+        ) : copied ? (
+          <Check size={iconOnly ? 18 : 16} strokeWidth={2.4} />
+        ) : (
+          <UserPlus size={iconOnly ? 18 : 16} strokeWidth={2.2} />
+        )}
+        {!iconOnly && (loading ? 'Creando…' : copied ? 'Copiado' : label)}
       </button>
-
-      {open && (
-        <div className="inv-modal-backdrop" onClick={() => setOpen(false)}>
-          <div className="inv-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="close" onClick={() => setOpen(false)} aria-label="Cerrar"><X size={18} /></button>
-            <div className="ico"><UserPlus size={26} strokeWidth={2.2} /></div>
-            <h2>Invitar a un amigo</h2>
-            <p>Compartí este link. Tu amigo lo abre, escribe su nombre y entra a la charla — no necesita usuario.</p>
-
-            {loading && <p style={{ color: '#6B7672', textAlign: 'center' }}>Creando sala…</p>}
-            {error && <p style={{ color: '#B42127' }}>{error}</p>}
-
-            {link && (
-              <>
-                <div className="inv-link">
-                  <span className="url">{link}</span>
-                  <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={copy}>
-                    {copied ? <Check size={14} /> : <Copy size={14} />}
-                    {copied ? 'Copiado' : 'Copiar'}
-                  </button>
-                </div>
-
-                <div className="inv-meta">
-                  <b>Importante:</b> el link queda activo mientras tu charla esté abierta. Si termina la sesión, el link deja de funcionar.
-                </div>
-
-                <div className="inv-actions">
-                  <button className="primary" onClick={share}>
-                    <Share2 size={14} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />
-                    Compartir
-                  </button>
-                  <button className="secondary" onClick={() => setOpen(false)}>
-                    Cerrar
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </>
   )
 }
