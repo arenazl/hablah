@@ -300,11 +300,23 @@ export const ttsAPI = {
 }
 
 /* ────────────── VOICE WS ────────────── */
-export function buildVoiceWsUrl(sessionId: number, explicitToken?: string): string {
+/** Base de WS apuntando al backend real (no via proxy de Netlify, que rompe
+ * el WebSocket upgrade y devuelve 404). Ej: wss://hablah-api-XXX.herokuapp.com/api */
+export function buildWsBase(): string {
   const httpBase = API_URL.replace(/\/$/, '')
-  // Si el API_URL es relativo (/api), arma URL absoluto desde el origin actual.
   const fullBase = httpBase.startsWith('/') ? `${window.location.origin}${httpBase}` : httpBase
-  const wsBase = fullBase.replace(/^http/, 'ws')
+  return fullBase.replace(/^http/, 'ws')
+}
+
+export function buildVoiceWsUrl(sessionId: number, explicitToken?: string): string {
+  const wsBase = buildWsBase()
   const token = explicitToken ?? localStorage.getItem('token') ?? ''
   return `${wsBase}/voice/ws?session_id=${sessionId}&token=${encodeURIComponent(token)}`
+}
+
+/** URL del WebSocket de voice room. Va DIRECTO al backend (no via Netlify) para
+ * que el WS upgrade funcione. */
+export function buildRoomWsUrl(roomToken: string, pid: string): string {
+  const wsBase = buildWsBase()
+  return `${wsBase}/voice/ws_room?room_token=${encodeURIComponent(roomToken)}&pid=${encodeURIComponent(pid)}`
 }

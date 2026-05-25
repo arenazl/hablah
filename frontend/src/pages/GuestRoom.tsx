@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Mic, Square, Users, AlertTriangle } from 'lucide-react'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
+import { buildRoomWsUrl } from '../services/api'
 
 interface RoomParticipant {
   pid: string
@@ -198,9 +199,10 @@ export function GuestRoom() {
     }
     streamRef.current = stream
 
-    // WS
-    const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
-    const ws = new WebSocket(`${proto}://${window.location.host}/api/voice/ws_room?room_token=${token}&pid=${myPid}`)
+    // WS: buildRoomWsUrl va DIRECTO al backend (no via Netlify proxy que
+    // rompe el WS upgrade y devuelve 404 - bug reportado por usuarios cuando
+    // el guest intentaba entrar a la sala desde hablah.com.ar).
+    const ws = new WebSocket(buildRoomWsUrl(token!, myPid))
     wsRef.current = ws
 
     ws.onopen = () => {
