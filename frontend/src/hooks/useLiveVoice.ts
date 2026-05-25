@@ -67,9 +67,13 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const procRef = useRef<ScriptProcessorNode | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
 
-  // Cola de reproducción del audio del tutor (scheduling continuo sin gaps)
+  // Cola de reproducción del audio (coach o otros participantes).
+  // Cada item lleva el sampleRate del chunk para reproducirlo correcto:
+  // - Coach Gemini Live: 24000 Hz
+  // - Otro participante humano (voice room mixer): 16000 Hz
+  // Sin esto, audio del humano a 16k se reproducia a 24k -> efecto Chipmunk.
   const playCtxRef = useRef<AudioContext | null>(null)
-  const playQueueRef = useRef<Float32Array[]>([])
+  const playQueueRef = useRef<Array<{ floats: Float32Array; sampleRate: number }>>([])
   const playingRef = useRef(false)
   const nextStartTimeRef = useRef<number>(0)
   // Trackeamos las BufferSource agendadas para poder cancelarlas si el usuario
@@ -137,9 +141,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     if (!ctx) return
     // Schedule TODOS los chunks pendientes ahora con tiempos exactos para evitar gaps
     while (playQueueRef.current.length > 0) {
-      const chunk = playQueueRef.current.shift()!
-      const buf = ctx.createBuffer(1, chunk.length, 24000)
-      buf.getChannelData(0).set(chunk)
+      const item = playQueueRef.current.shift()!
+      const buf = ctx.createBuffer(1, item.floats.length, item.sampleRate)
+      buf.getChannelData(0).set(item.floats)
       const src = ctx.createBufferSource()
       src.buffer = buf
       src.connect(ctx.destination)
@@ -218,7 +222,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   }, [])
 
   const pushAudioFromTutor = useCallback(
-    (b64: string) => {
+    (b64: string, sampleRate: number = 24000) => {
       try {
         const bin = atob(b64)
         const bytes = new Uint8Array(bin.length)
@@ -226,8 +230,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         const samples = new Int16Array(bytes.buffer, bytes.byteOffset, Math.floor(bytes.byteLength / 2))
         const float = new Float32Array(samples.length)
         for (let i = 0; i < samples.length; i++) float[i] = samples[i] / 32768
-        playQueueRef.current.push(float)
+        playQueueRef.current.push({ floats: float, sampleRate })
         if (!playCtxRef.current) {
+          // AudioContext a 24kHz (el mayor de los SR que recibimos). Los chunks
+          // a 16kHz se resamplean automaticamente por el browser al asignar
+          // sampleRate del AudioBuffer correctamente.
           playCtxRef.current = new AudioContext({ sampleRate: 24000 })
         }
         ensureAnalyser()
@@ -316,11 +323,16 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const handleWsMessage = useCallback((ev: MessageEvent) => {
     try {
       const msg = JSON.parse(ev.data)
-      if (msg.type === 'audio' || msg.type === 'participant_audio') {
-        // audio: del coach. participant_audio: de OTRO humano en la room.
-        // Los reproducimos por el mismo canal para que se escuche todo.
+      if (msg.type === 'audio') {
+        // Coach Gemini Live: PCM 24kHz
         setStatus('speaking')
-        pushAudioFromTutor(msg.data)
+        pushAudioFromTutor(msg.data, 24000)
+      } else if (msg.type === 'participant_audio') {
+        // Otro participante humano en la voice room: PCM 16kHz (lo que captura
+        // el mic via ScriptProcessor). Sin pasar el SR correcto sonaba a 1.5x
+        // (efecto Chipmunk).
+        setStatus('speaking')
+        pushAudioFromTutor(msg.data, 16000)
       } else if (msg.type === 'transcript_chunk') {
         setTranscript((prev) => {
           const last = prev[prev.length - 1]
