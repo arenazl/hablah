@@ -19,6 +19,9 @@ const CSS = `
 .inv-btn.dark { background:#0D1412; color:#fff; }
 .inv-btn.dark:hover { background:#000; }
 .inv-btn.amber { background:#FFB800; color:#3A2A00; }
+.inv-btn.icon-only { width:36px; height:36px; padding:0; gap:0; border-radius:50%; justify-content:center; }
+.inv-btn.icon-only.light { background:rgba(255,255,255,.10); }
+.inv-btn.icon-only.light:hover { background:rgba(255,255,255,.16); }
 
 .inv-modal-backdrop { position:fixed; inset:0; background:rgba(13,20,18,.7); backdrop-filter:blur(8px); z-index:9000; display:grid; place-items:center; padding:24px; }
 .inv-modal { width:100%; max-width:480px; background:#fff; border-radius:24px; padding:28px 24px; position:relative; animation:inv-pop .25s cubic-bezier(.2,.8,.2,1); font-family:'Sora','Inter',ui-sans-serif,system-ui,sans-serif; color:#0D1412; }
@@ -137,12 +140,19 @@ export function InviteFriendButton({
     }
   }
 
+  const iconOnly = !label
   return (
     <>
       <style>{CSS}</style>
-      <button className={`inv-btn ${variant}`} onClick={() => setOpen(true)} type="button">
-        <UserPlus size={16} strokeWidth={2.2} />
-        {label}
+      <button
+        className={`inv-btn ${variant}${iconOnly ? ' icon-only' : ''}`}
+        onClick={() => setOpen(true)}
+        type="button"
+        aria-label={iconOnly ? 'Invitar amigo' : undefined}
+        title={iconOnly ? 'Invitar amigo' : undefined}
+      >
+        <UserPlus size={iconOnly ? 18 : 16} strokeWidth={2.2} />
+        {!iconOnly && label}
       </button>
 
       {open && (

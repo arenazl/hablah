@@ -14,6 +14,7 @@ import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-vi
 import { OnboardingBubbles } from '../components/OnboardingBubbles'
 import { PracticarGalaxy } from '../components/PracticarGalaxy'
 import { KidsParentSwitch } from './kids/KidsParentSwitch'
+import { InviteFriendButton } from '../components/InviteFriendButton'
 
 function KidsParentSwitchLazy() {
   return <KidsParentSwitch />
@@ -999,13 +1000,10 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const [freeTopicText, setFreeTopicText] = useState('')
   const [interestQuery, setInterestQuery] = useState('')
   const [interestCategory, setInterestCategory] = useState<string>('all')
-  const [convoBg, setConvoBg] = useState<number>(() => {
-    const stored = localStorage.getItem('convo_bg')
-    if (stored === null) return 3  // Grid default
-    const v = parseInt(stored, 10)
-    return Number.isFinite(v) && v >= 0 && v <= 5 ? v : 3
-  })
-  useEffect(() => { localStorage.setItem('convo_bg', String(convoBg)) }, [convoBg])
+  // Fondo fijo: bg-3 (verde con grilla). El selector de fondo se removio
+  // a pedido del usuario para mantener la UI limpia. Si quisieramos volver
+  // a poner el selector, devolver useState + BgPicker.
+  const convoBg = 3
   const [pedagogy, setPedagogy] = useState<string>('balanced')
   const [templates, setTemplates] = useState<Template[]>([])
   const [switching, setSwitching] = useState(false)
@@ -1172,22 +1170,12 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     <>
     {endedReport && <SessionReportOverlay report={endedReport} sessionId={sessionId!} onClose={() => nav('/app')} />}
     <div className={`convo-view bg-${convoBg}`}>
-      <BgPicker value={convoBg} onChange={setConvoBg} />
       <div className="convo-stage">
         <div className="convo-header">
           <div className="convo-header-main">
             <h2>{topicTitle || 'Iniciando…'}</h2>
             <div className="meta">
-              {templates.length > 0 ? (
-                <CoachPicker
-                  templates={templates}
-                  activeId={profile?.active_template?.id}
-                  disabled={switching}
-                  onSelect={handleSwitchTutor}
-                />
-              ) : (
-                <span className="live">{profile?.active_template?.name || 'Habláh'}</span>
-              )}
+              <span className="live">{profile?.active_template?.name || 'Habláh'}</span>
               <span className="meta-level">{profile?.user?.cefr_level} · {profile?.user?.target_language}</span>
             </div>
             <PedagogyPicker value={pedagogy} onChange={(p, label) => {
@@ -1197,12 +1185,20 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
             }} />
           </div>
-          <button className="btn btn-sm end" onClick={handleEnd}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-            Terminar
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <InviteFriendButton
+              topicId={selectedTopicId}
+              freeTopic={freeTopicText || null}
+              variant="light"
+              label=""
+            />
+            <button className="btn btn-sm end" onClick={handleEnd}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+              Terminar
+            </button>
+          </div>
         </div>
 
         <div className="convo-orb-area">

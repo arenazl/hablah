@@ -138,15 +138,15 @@ export const KIDS_CSS = `
   body.kids-drawer-open .kids-m-drawer-backdrop { display:block; opacity:1; }
   body.kids-drawer-open .kids-m-drawer { transform:translateX(0); }
 
-  .kids-m-tabbar { display:grid; grid-template-columns:1fr 1fr 86px 1fr 1fr; align-items:center; position:fixed; left:0; right:0; bottom:0; z-index:40; background:rgba(255,252,246,.94); border-top:1px solid var(--border-1); backdrop-filter:blur(16px); padding:8px 6px calc(10px + env(safe-area-inset-bottom)); }
-  .kids-m-tabbar a { display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 4px; color:var(--fg-4); font-size:11px; font-weight:700; }
-  .kids-m-tabbar a svg { width:24px; height:24px; stroke-width:2; }
+  .kids-m-tabbar { display:grid; grid-template-columns:1fr 1fr 64px 1fr 1fr; align-items:center; position:fixed; left:0; right:0; bottom:0; z-index:40; background:rgba(255,252,246,.96); border-top:1px solid var(--border-1); backdrop-filter:blur(20px); padding:6px 6px calc(8px + env(safe-area-inset-bottom)); }
+  .kids-m-tabbar a { display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 4px; color:var(--fg-4); font-size:10.5px; font-weight:700; }
+  .kids-m-tabbar a svg { width:22px; height:22px; stroke-width:2; }
   .kids-m-tabbar a.active { color:var(--green-700); }
   .kids-m-tabbar a.active svg { color:var(--green); }
-  .kids-m-fab-wrap { display:flex; justify-content:center; align-items:flex-end; height:100%; position:relative; }
-  .kids-m-fab { width:68px; height:68px; border-radius:50%; background:linear-gradient(180deg,var(--amber),#F09D00); color:#3A2A00; display:grid; place-items:center; box-shadow:0 10px 28px rgba(240,157,0,.45), 0 4px 8px rgba(13,20,18,.2); transform:translateY(-22px); transition:transform .15s; }
-  .kids-m-fab:active { transform:translateY(-22px) scale(.95); }
-  .kids-m-fab svg { width:30px; height:30px; stroke-width:2.2; }
+  .kids-m-fab-wrap { display:flex; justify-content:center; align-items:center; height:100%; position:relative; }
+  .kids-m-fab { width:50px; height:50px; border-radius:50%; background:linear-gradient(180deg,var(--amber),#F09D00); color:#3A2A00; display:grid; place-items:center; box-shadow:0 4px 12px rgba(240,157,0,.32), 0 1px 3px rgba(13,20,18,.12); transform:translateY(-6px); transition:transform .15s; }
+  .kids-m-fab:active { transform:translateY(-6px) scale(.92); }
+  .kids-m-fab svg { width:22px; height:22px; stroke-width:2.2; }
 }
 `
 
