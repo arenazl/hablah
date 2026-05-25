@@ -114,6 +114,12 @@ WARN_BEFORE_END_SECONDS = 90
 # A los 9:30 forzamos renovación preventiva para no chocar con el GoAway.
 RENEW_BEFORE_END_SECONDS = 30
 
+# Watchdog "el coach nunca se muere": si despues de un turnComplete del usuario
+# pasan COACH_SILENCE_TRIGGER_SECONDS sin que el coach diga nada, disparamos
+# rescate. Cascada: trigger sintetico -> renew forzado -> mensaje verbal.
+COACH_SILENCE_TRIGGER_SECONDS = 8
+COACH_SILENCE_HARD_RESCUE_SECONDS = 14
+
 
 async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
     """Abre una conexion a Gemini Live + manda el setup + trigger inicial.
@@ -124,6 +130,9 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
     url = f"{LIVE_API_URL}?key={settings.GEMINI_API_KEY}"
     google_ws = await websockets.connect(url, max_size=2**24)
 
+    # Kids: VAD mas sensible al inicio (queremos interrumpir rapido al coach)
+    # y mas tolerante al final (chico se queda pensando o trabado).
+    is_kid = bool(getattr(ctx, "is_kid", False))
     setup = {
         "setup": {
             "model": LIVE_MODEL,
@@ -137,9 +146,13 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                 "automaticActivityDetection": {
                     "disabled": False,
                     "startOfSpeechSensitivity": "START_SENSITIVITY_HIGH",
-                    "endOfSpeechSensitivity": "END_SENSITIVITY_HIGH",
+                    "endOfSpeechSensitivity": (
+                        "END_SENSITIVITY_LOW" if is_kid else "END_SENSITIVITY_HIGH"
+                    ),
                     "prefixPaddingMs": 200,
-                    "silenceDurationMs": ctx.silence_tolerance_ms,
+                    "silenceDurationMs": (
+                        max(ctx.silence_tolerance_ms, 1200) if is_kid else ctx.silence_tolerance_ms
+                    ),
                 },
                 "activityHandling": (
                     "START_OF_ACTIVITY_INTERRUPTS" if ctx.interruption_allowed else "NO_INTERRUPTION"
@@ -223,6 +236,15 @@ class GeminiLiveEngine(VoiceEngine):
         stop_event = asyncio.Event()
         # Evento que dispara la renovacion preventiva
         renew_event = asyncio.Event()
+        # Timestamps para el coach_watchdog ("el coach nunca se muere")
+        # last_user_turn_at: cuando termino el ultimo turno del usuario.
+        # last_ai_output_at: cuando recibimos el ultimo audio/texto del coach.
+        # rescue_attempts: cuantos rescates ya intentamos para esta "racha" de silencio.
+        timing = {
+            "last_user_turn_at": None,  # type: ignore
+            "last_ai_output_at": asyncio.get_event_loop().time(),
+            "rescue_attempts": 0,
+        }
 
         async def client_to_google() -> None:
             try:
@@ -300,18 +322,32 @@ class GeminiLiveEngine(VoiceEngine):
                         sc = data.get("serverContent")
                         if not sc:
                             continue
+
+                        # Barge-in: Gemini detecto que el usuario empezo a hablar
+                        # mientras el coach soltaba audio. Avisamos al cliente para
+                        # que CANCELE INMEDIATAMENTE la cola de audio que esta
+                        # reproduciendo del coach.
+                        if sc.get("interrupted"):
+                            try:
+                                await ws.send_json({"type": "interrupted"})
+                            except Exception:
+                                pass
+
                         model_turn = sc.get("modelTurn") or {}
                         for part in model_turn.get("parts", []):
                             inline = part.get("inlineData")
                             if inline and inline.get("mimeType", "").startswith("audio"):
+                                timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                 await ws.send_json({"type": "audio", "data": inline["data"]})
                             text = part.get("text")
                             if text:
+                                timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                 ai_buf.append(text)
                                 await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": text})
 
                         out_tr = sc.get("outputTranscription")
                         if out_tr and out_tr.get("text"):
+                            timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                             ai_buf.append(out_tr["text"])
                             await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
 
@@ -323,6 +359,12 @@ class GeminiLiveEngine(VoiceEngine):
                         if sc.get("turnComplete"):
                             last_user_text = "".join(user_buf).strip()
                             _flush_buffers()
+                            # Si el ultimo turno completado fue del USER, anotamos
+                            # el timestamp para que el coach_watchdog empiece a
+                            # contar el silencio del coach.
+                            if last_user_text:
+                                timing["last_user_turn_at"] = asyncio.get_event_loop().time()
+                                timing["rescue_attempts"] = 0
                             await ws.send_json({"type": "turn_complete"})
                             if last_user_text and len(last_user_text) >= 6:
                                 # Modo evolutivo: check admin trigger ANTES del preference
@@ -443,12 +485,131 @@ class GeminiLiveEngine(VoiceEngine):
                     pass
                 log.info("Sesion Gemini renovada exitosamente. Turnos en historial: %d", len(transcript))
 
+        async def coach_watchdog() -> None:
+            """El coach NUNCA se muere. Cada ~1s monitorea silencio del coach
+            despues de un turno del usuario. Cascada de rescate:
+
+            - >8s silencio: trigger sintetico al modelo (suave, "seguis ahi?")
+            - >14s silencio: rescate verbal explicito + force-renew si falla.
+
+            Solo cuenta el silencio si hubo un turno del usuario reciente que
+            todavia no fue contestado. Si el usuario no dijo nada, el silencio
+            es normal.
+            """
+            while not stop_event.is_set():
+                try:
+                    await asyncio.wait_for(stop_event.wait(), timeout=1.0)
+                    return
+                except asyncio.TimeoutError:
+                    pass
+
+                last_user_at = timing.get("last_user_turn_at")
+                if last_user_at is None:
+                    continue
+
+                last_ai_at = timing.get("last_ai_output_at") or 0
+                # Si el coach hablo despues del ultimo turno del usuario, todo OK.
+                if last_ai_at >= last_user_at:
+                    continue
+
+                now = asyncio.get_event_loop().time()
+                silence = now - last_user_at
+                attempts = timing.get("rescue_attempts", 0)
+
+                if silence < COACH_SILENCE_TRIGGER_SECONDS:
+                    continue
+
+                # Nivel 1: trigger sintetico suave
+                if attempts == 0:
+                    log.warning(
+                        "coach_watchdog: silencio %.1fs tras turno user. "
+                        "Nivel 1: trigger sintetico.", silence,
+                    )
+                    timing["rescue_attempts"] = 1
+                    try:
+                        await gws_holder["ws"].send(json.dumps({
+                            "clientContent": {
+                                "turns": [{"role": "user", "parts": [{"text": (
+                                    "(Sistema: el alumno esta esperando tu respuesta. "
+                                    "Continua la charla naturalmente desde donde quedaste. "
+                                    "Una sola frase corta.)"
+                                )}]}],
+                                "turnComplete": True,
+                            }
+                        }))
+                    except Exception as e:
+                        log.warning("coach_watchdog nivel 1 fallo: %s", e)
+                    try:
+                        await ws.send_json({"type": "coach_recovering", "level": 1})
+                    except Exception:
+                        pass
+                    continue
+
+                # Nivel 2 (hard rescue): force-renew + saludo de rescate
+                if silence >= COACH_SILENCE_HARD_RESCUE_SECONDS and attempts == 1:
+                    log.error(
+                        "coach_watchdog: silencio %.1fs tras nivel 1. "
+                        "Nivel 2: force-renew + rescate verbal.", silence,
+                    )
+                    timing["rescue_attempts"] = 2
+                    try:
+                        await ws.send_json({"type": "coach_recovering", "level": 2})
+                    except Exception:
+                        pass
+                    # Force-renew: cerrar el WS actual y abrir uno nuevo
+                    # con un mensaje de rescate como primer turno.
+                    old_ws = gws_holder["ws"]
+                    name = getattr(ctx, "user_name", "") or ""
+                    is_kid_ctx = bool(getattr(ctx, "is_kid", False))
+                    if is_kid_ctx:
+                        rescue_msg = (
+                            f"(Sistema: hubo un problema tecnico y la conexion se reinicio. "
+                            f"Saludá a {name} en castellano de forma natural y calida "
+                            f"diciendo algo como 'Ey {name}, perdón, me trabe un toque, "
+                            f"¿seguimos?'. UNA sola frase corta. Despues volve al tópico "
+                            f"que estaban trabajando.)"
+                        )
+                    else:
+                        rescue_msg = (
+                            f"(System: there was a tech glitch and we reconnected. "
+                            f"Greet {name} casually like 'Hey {name}, sorry, lost you for "
+                            f"a sec — where were we?'. ONE short sentence. Then pick up "
+                            f"the topic we were on.)"
+                        )
+                    try:
+                        new_ws = await _open_gemini_session(ctx, transcript_so_far=transcript[:])
+                        gws_holder["ws"] = new_ws
+                        try:
+                            await new_ws.send(json.dumps({
+                                "clientContent": {
+                                    "turns": [{"role": "user", "parts": [{"text": rescue_msg}]}],
+                                    "turnComplete": True,
+                                }
+                            }))
+                        except Exception:
+                            pass
+                        try:
+                            await old_ws.close()
+                        except Exception:
+                            pass
+                        # Reset timing para que el watchdog le de tiempo al rescate
+                        timing["last_user_turn_at"] = asyncio.get_event_loop().time()
+                        timing["last_ai_output_at"] = asyncio.get_event_loop().time()
+                        log.info("coach_watchdog: nivel 2 OK - sesion reabierta con rescate")
+                    except Exception as e:
+                        log.exception("coach_watchdog nivel 2 fallo: %s", e)
+                        try:
+                            await ws.send_json({"type": "error", "error": "coach_unrecoverable"})
+                        except Exception:
+                            pass
+
         try:
             await asyncio.gather(
                 client_to_google(),
                 google_to_client(),
                 session_watchdog(),
                 renew_watchdog(),
+                coach_watchdog(),
                 return_exceptions=True,
             )
         finally:

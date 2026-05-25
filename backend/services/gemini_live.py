@@ -48,9 +48,12 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         if template:
             from services.admin_feedback import load_active_directives
             admin_directives = await load_active_directives(template.id, db)
+        is_kid = bool(getattr(user, "age_group", None)) or bool(getattr(user, "parent_user_id", None))
         return {
             "session_id": s.id,
             "user_id": user.id,
+            "user_name": user.nombre,
+            "is_kid": is_kid,
             "template_id": template.id if template else None,
             "super_prompt": build_super_prompt(
                 user=user, template=template, topic=topic,
@@ -81,6 +84,8 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str) -> None:
     ctx = VoiceEngineContext(
         session_id=ctx_dict["session_id"],
         user_id=ctx_dict["user_id"],
+        user_name=ctx_dict.get("user_name"),
+        is_kid=ctx_dict.get("is_kid", False),
         template_id=ctx_dict.get("template_id"),
         super_prompt=ctx_dict["super_prompt"],
         voice_id=ctx_dict["voice_id"],

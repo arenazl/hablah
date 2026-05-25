@@ -84,9 +84,12 @@ async def voice_ws_room(
             admin_directives=admin_directives,
         )
 
+    is_kid_host = bool(getattr(host, "age_group", None)) or bool(getattr(host, "parent_user_id", None)) if host else False
     ctx = VoiceEngineContext(
         session_id=vroom.session_id or 0,
         user_id=vroom.host_user_id,
+        user_name=host.nombre if host else None,
+        is_kid=is_kid_host,
         template_id=template.id if template else None,
         super_prompt=super_prompt,
         voice_id=template.voice_id if template else "",

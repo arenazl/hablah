@@ -47,16 +47,21 @@ class VoiceEngineContext:
         silence_tolerance_ms: int = 800,
         interruption_allowed: bool = False,
         template_id: Optional[int] = None,
+        is_kid: bool = False,
+        user_name: Optional[str] = None,
     ) -> None:
         self.session_id = session_id
         self.user_id = user_id
         self.template_id = template_id  # para detector admin (modo evolutivo)
+        self.is_kid = is_kid  # kids siempre tienen barge-in + watchdog mas agresivo
+        self.user_name = user_name or ""
         self.super_prompt = super_prompt
         self.voice_id = voice_id  # ElevenLabs voice_id (para engines que lo soporten)
         self.language = language
         self.target_language = target_language
         self.silence_tolerance_ms = silence_tolerance_ms
-        self.interruption_allowed = interruption_allowed
+        # Kids: ALWAYS interruptible. Adults: respetar config del template.
+        self.interruption_allowed = True if is_kid else interruption_allowed
 
 
 class VoiceEngine(abc.ABC):

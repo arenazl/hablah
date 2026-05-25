@@ -37,6 +37,9 @@ export interface UseLiveVoiceOptions {
   onSessionRenewing?: () => void
   /** La sesión se renovó exitosamente, podés seguir hablando. */
   onSessionRenewed?: (message: string) => void
+  /** El coach se quedo mudo y el watchdog server esta intentando rescatarlo.
+   * level=1: trigger sintetico suave. level=2: force-renew + saludo de rescate. */
+  onCoachRecovering?: (level: number) => void
 }
 
 export type LiveStatus = 'idle' | 'connecting' | 'listening' | 'speaking' | 'error' | 'ended'
@@ -63,6 +66,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const playQueueRef = useRef<Float32Array[]>([])
   const playingRef = useRef(false)
   const nextStartTimeRef = useRef<number>(0)
+  // Trackeamos las BufferSource agendadas para poder cancelarlas si el usuario
+  // interrumpe al coach (barge-in).
+  const playSourcesRef = useRef<AudioBufferSourceNode[]>([])
   const analyserRef = useRef<AnalyserNode | null>(null)
   const analyserRafRef = useRef<number | null>(null)
 
@@ -137,7 +143,30 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + 0.02)
       src.start(startAt)
       nextStartTimeRef.current = startAt + buf.duration
+      playSourcesRef.current.push(src)
+      src.onended = () => {
+        const arr = playSourcesRef.current
+        const idx = arr.indexOf(src)
+        if (idx >= 0) arr.splice(idx, 1)
+      }
     }
+  }, [])
+
+  // Barge-in: el usuario empezo a hablar mientras el coach todavia soltaba audio.
+  // Gemini ya cancelo el output server-side; aca cancelamos los chunks que ya
+  // estaban scheduled en AudioContext (sino seguirian sonando hasta agotarse).
+  const cancelTutorPlayback = useCallback(() => {
+    // Vaciar cola de chunks no agendados
+    playQueueRef.current = []
+    // Stoppear todas las BufferSources agendadas
+    for (const src of playSourcesRef.current) {
+      try { src.stop() } catch {}
+      try { src.disconnect() } catch {}
+    }
+    playSourcesRef.current = []
+    // Resetear el cursor de scheduling
+    const ctx = playCtxRef.current
+    nextStartTimeRef.current = ctx ? ctx.currentTime : 0
   }, [])
 
   const ensureAnalyser = useCallback(() => {
@@ -313,6 +342,16 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           } else if (msg.type === 'session_renewed') {
             setStatus('listening')
             optsRef.current.onSessionRenewed?.(msg.message ?? 'Sesión renovada')
+          } else if (msg.type === 'interrupted') {
+            // Barge-in: el chico/alumno empezo a hablar mientras el coach todavia
+            // soltaba audio. Gemini ya corto el output server-side; aca matamos
+            // los chunks scheduled en AudioContext para que el coach SE CALLE YA.
+            cancelTutorPlayback()
+            setStatus('listening')
+          } else if (msg.type === 'coach_recovering') {
+            // Watchdog server detecto que el coach se quedo mudo y esta
+            // intentando rescatar la conversacion.
+            optsRef.current.onCoachRecovering?.(msg.level ?? 1)
           } else if (msg.type === 'error') {
             optsRef.current.onError?.(new Error(msg.error || 'live error'))
             setStatus('error')
@@ -328,7 +367,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         setStatus((prev) => (prev !== 'ended' ? 'ended' : prev))
       }
     },
-    [pushAudioFromTutor],
+    [pushAudioFromTutor, cancelTutorPlayback],
   )
 
   const sendSystemUpdate = useCallback((text: string) => {
