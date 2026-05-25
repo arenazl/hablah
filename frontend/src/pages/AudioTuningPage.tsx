@@ -7,7 +7,7 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { Volume2, Mic, Music, Settings as SettingsIcon, Play, Square, RotateCcw, Save } from 'lucide-react'
+import { Volume2, Mic, Music, Settings as SettingsIcon, Play, Square, RotateCcw, Copy, Check } from 'lucide-react'
 
 import {
   AudioSettings,
@@ -20,7 +20,6 @@ import {
   resetAudioSettings,
 } from '../lib/audioSettings'
 import { useLiveVoice } from '../hooks/useLiveVoice'
-import { sessionsAPI } from '../services/api'
 
 const CSS = `
 .tune-root {
@@ -229,10 +228,11 @@ function presetOverrides(p: AudioPreset): string {
   return items.slice(0, 4).join(' · ') + (items.length > 4 ? ` · +${items.length - 4}` : '')
 }
 
+const FIXED_TOPIC = 'Vida cotidiana, alimentación y deporte'
+
 export function AudioTuningPage() {
   const [settings, setSettings] = useState<AudioSettings>(() => loadAudioSettings())
   const [activePresetId, setActivePresetId] = useState<string>(() => {
-    // Detectar si los settings actuales matchean algun preset
     const cur = loadAudioSettings()
     const match = PRESETS.find((p) => {
       const merged = { ...DEFAULT_SETTINGS, ...p.settings }
@@ -240,7 +240,11 @@ export function AudioTuningPage() {
     })
     return match?.id ?? ''
   })
-  const [sessionId, setSessionId] = useState<number | null>(null)
+  // Sesion activa: si es null no hay charla. Si tiene valor, es una room
+  // compartida con su token + host_pid para reconectar al mismo room al
+  // cambiar settings (asi el guest no pierde su conexion).
+  const [activeRoom, setActiveRoom] = useState<{ token: string; hostPid: string } | null>(null)
+  const [linkCopied, setLinkCopied] = useState(false)
   const testAudioRef = useRef<{ ctx: AudioContext | null; osc: OscillatorNode | null }>({ ctx: null, osc: null })
 
   const live = useLiveVoice({
@@ -254,12 +258,11 @@ export function AudioTuningPage() {
   const update = (key: keyof AudioSettings, value: number | boolean): void => {
     setSettings((s) => ({ ...s, [key]: value }))
     setActivePresetId('')
-    // Debounce: si hay sesion activa, reiniciar tras 600ms sin cambios mas
-    // (para que el user pueda mover varios sliders sin reiniciar a cada uno)
-    if (sessionId) {
+    // Debounce: si hay charla activa, reconectar al mismo room tras 600ms
+    if (activeRoom) {
       if (updateTimerRef.current) window.clearTimeout(updateTimerRef.current)
       updateTimerRef.current = window.setTimeout(() => {
-        void restartSession()
+        void reconnectToRoom()
       }, 600)
     }
   }
@@ -269,9 +272,9 @@ export function AudioTuningPage() {
     setSettings(merged)
     setActivePresetId(preset.id)
     toast.success(`Preset: ${preset.name}`)
-    // Si hay sesion activa, reiniciar automaticamente para aplicar
-    if (sessionId) {
-      await restartSession()
+    // Si hay sesion activa, reconectar al MISMO room con los nuevos settings
+    if (activeRoom) {
+      await reconnectToRoom()
     }
   }
 
@@ -279,24 +282,66 @@ export function AudioTuningPage() {
     setSettings(resetAudioSettings())
     setActivePresetId('default')
     toast('Default aplicado')
-    if (sessionId) await restartSession()
+    if (activeRoom) await reconnectToRoom()
   }
 
-  const restartSession = async (): Promise<void> => {
-    if (sessionId) {
-      try { live.stop() } catch {}
-      try { await sessionsAPI.end(sessionId, []) } catch {}
-      setSessionId(null)
-    }
+  /** Reconecta al mismo room sin destruirlo. El guest mantiene su conexion. */
+  const reconnectToRoom = async (): Promise<void> => {
+    if (!activeRoom) return
+    try { live.stop() } catch {}
     // Pequeño delay para que el WS cierre limpio
     await new Promise((r) => setTimeout(r, 250))
     try {
-      const start = await sessionsAPI.start(undefined, undefined, 'audio tuning test')
-      setSessionId(start.session_id)
-      await live.start(start.session_id)
+      await live.startInRoom(activeRoom.token, activeRoom.hostPid)
     } catch (e: unknown) {
       toast.error((e as Error).message)
     }
+  }
+
+  /** Crea una room NUEVA y conecta como host. */
+  const startRoom = async (): Promise<void> => {
+    try {
+      const tok = localStorage.getItem('token')
+      if (!tok) {
+        toast.error('Necesitás estar logueado')
+        return
+      }
+      const res = await fetch('/api/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` },
+        body: JSON.stringify({ free_topic: FIXED_TOPIC }),
+      })
+      if (!res.ok) throw new Error('No pude crear la sala')
+      const data = await res.json() as { token: string; host_pid: string }
+      setActiveRoom({ token: data.token, hostPid: data.host_pid })
+      await live.startInRoom(data.token, data.host_pid)
+      toast.success('Sala lista — copiá el link y mandalo a tu amigo')
+    } catch (e: unknown) {
+      toast.error((e as Error).message)
+    }
+  }
+
+  const stopRoom = async (): Promise<void> => {
+    try { live.stop() } catch {}
+    setActiveRoom(null)
+  }
+
+  const copyRoomLink = async (): Promise<void> => {
+    if (!activeRoom) return
+    const link = `${window.location.origin}/charla/${activeRoom.token}`
+    try {
+      await navigator.clipboard.writeText(link)
+    } catch {
+      const ta = document.createElement('textarea')
+      ta.value = link
+      document.body.appendChild(ta)
+      ta.select()
+      try { document.execCommand('copy') } catch {}
+      ta.remove()
+    }
+    setLinkCopied(true)
+    toast.success('Link copiado')
+    setTimeout(() => setLinkCopied(false), 2500)
   }
 
   const playTestTone = async (): Promise<void> => {
@@ -337,25 +382,6 @@ export function AudioTuningPage() {
     u.volume = Math.min(1, settings.coachVolume)
     speechSynthesis.cancel()
     speechSynthesis.speak(u)
-  }
-
-  const startTestSession = async (): Promise<void> => {
-    try {
-      const start = await sessionsAPI.start(undefined, undefined, 'audio tuning test')
-      setSessionId(start.session_id)
-      await live.start(start.session_id)
-      toast.success('Hablale al mic — el coach responde')
-    } catch (e: unknown) {
-      toast.error((e as Error).message)
-    }
-  }
-
-  const stopTestSession = async (): Promise<void> => {
-    try { live.stop() } catch {}
-    if (sessionId) {
-      try { await sessionsAPI.end(sessionId, []) } catch {}
-    }
-    setSessionId(null)
   }
 
   const renderRow = (row: Row) => {
@@ -405,14 +431,23 @@ export function AudioTuningPage() {
             <button className="tune-btn secondary" onClick={reset}>
               <RotateCcw size={12} /> Reset default
             </button>
-            {!sessionId ? (
-              <button className="tune-btn primary" onClick={startTestSession}>
-                <Play size={12} /> Conversar con coach
+            {!activeRoom ? (
+              <button className="tune-btn primary" onClick={startRoom}>
+                <Play size={12} /> Iniciar charla compartida
               </button>
             ) : (
-              <button className="tune-btn danger" onClick={stopTestSession}>
-                <Square size={12} /> Terminar conversación
-              </button>
+              <>
+                <button
+                  className={`tune-btn ${linkCopied ? 'primary' : 'secondary'}`}
+                  onClick={copyRoomLink}
+                >
+                  {linkCopied ? <Check size={12} /> : <Copy size={12} />}
+                  {linkCopied ? 'Copiado' : 'Copiar link'}
+                </button>
+                <button className="tune-btn danger" onClick={stopRoom}>
+                  <Square size={12} /> Terminar
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -452,39 +487,59 @@ export function AudioTuningPage() {
             ))}
           </div>
 
-          {/* COL RIGHT — TESTING */}
+          {/* COL RIGHT — CHARLA COMPARTIDA */}
           <div className="col col-right">
-            <div className="section-title">Estado de la charla</div>
+            <div className="section-title">Charla compartida</div>
             <div className="test-card">
-              {!sessionId ? (
+              {!activeRoom ? (
                 <>
                   <p>
-                    Tocá <b>Conversar con coach</b> arriba para arrancar una sesión real.
-                    Hablale al mic, el coach responde con los settings actuales.
+                    <b>Tópico fijo:</b> {FIXED_TOPIC}
                   </p>
-                  <p style={{ marginTop: 4 }}>
-                    Si cambiás un preset o un slider durante la charla, la sesión
-                    se reinicia automáticamente para aplicar los nuevos settings.
+                  <p style={{ marginTop: 6 }}>
+                    Tocá <b>Iniciar charla compartida</b>. Te genera un link
+                    para mandar a un amigo. Cuando entren, son <b>3 voces</b>
+                    (vos + amigo + coach IA).
+                  </p>
+                  <p style={{ marginTop: 6 }}>
+                    Cambiás cualquier setting o preset durante la charla y
+                    <b> tu sesión se reconecta</b> automáticamente. Tu amigo
+                    sigue en la misma sala, no tiene que volver a entrar.
                   </p>
                 </>
               ) : (
-                <div className={`live-status ${live.status === 'error' ? 'error' : 'live'}`}>
-                  <div style={{ fontWeight: 700, fontSize: 11 }}>
-                    sid={sessionId} · {live.status}
+                <>
+                  <div style={{
+                    padding: '8px 10px', background: 'rgba(0,179,126,.08)',
+                    border: '1px solid rgba(0,179,126,.25)', borderRadius: 8,
+                    fontFamily: '"JetBrains Mono", monospace', fontSize: 10.5,
+                    wordBreak: 'break-all', marginBottom: 8,
+                  }}>
+                    {window.location.origin}/charla/{activeRoom.token}
                   </div>
-                  {(() => {
-                    const lastAi = [...live.transcript].reverse().find((l) => l.who === 'ai')
-                    return lastAi ? (
-                      <div className="transcript-line">
-                        <b>Coach:</b> {lastAi.text}
+                  <div className={`live-status ${live.status === 'error' ? 'error' : 'live'}`}>
+                    <div style={{ fontWeight: 700, fontSize: 11 }}>
+                      {live.status} · {live.participants.length} participante{live.participants.length === 1 ? '' : 's'}
+                    </div>
+                    {live.participants.length > 0 && (
+                      <div style={{ marginTop: 4, fontSize: 10.5, color: 'rgba(232,236,234,.7)' }}>
+                        {live.participants.map((p) => `${p.isHost ? '👤' : '👋'} ${p.name}`).join(' · ')}
                       </div>
-                    ) : (
-                      <div className="transcript-line" style={{ opacity: 0.6 }}>
-                        Esperando respuesta del coach...
-                      </div>
-                    )
-                  })()}
-                </div>
+                    )}
+                    {(() => {
+                      const lastAi = [...live.transcript].reverse().find((l) => l.who === 'ai')
+                      return lastAi ? (
+                        <div className="transcript-line">
+                          <b>Coach:</b> {lastAi.text}
+                        </div>
+                      ) : (
+                        <div className="transcript-line" style={{ opacity: 0.5 }}>
+                          Esperando al coach...
+                        </div>
+                      )
+                    })()}
+                  </div>
+                </>
               )}
             </div>
 

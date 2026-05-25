@@ -10,7 +10,7 @@
 */
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { buildVoiceWsUrl } from '../services/api'
+import { buildVoiceWsUrl, buildRoomWsUrl } from '../services/api'
 import { loadAudioSettings } from '../lib/audioSettings'
 
 export interface TranscriptLine {
@@ -605,5 +605,118 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     return false
   }, [])
 
-  return { start, stop, status, transcript, sendSystemUpdate, say, upgradeToRoom, participants }
+  /**
+   * Inicia DIRECTAMENTE en una voice room (sin pasar por /ws single + upgrade).
+   * Util en /tune para crear room compartida desde el principio y poder
+   * reabrir el mismo room_token con nuevos settings sin que el guest pierda
+   * su conexion.
+   */
+  const startInRoom = useCallback(
+    async (roomToken: string, hostPid: string) => {
+      setStatus('connecting')
+      setTranscript([])
+      const settings = loadAudioSettings()
+      let stream: MediaStream
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            sampleRate: settings.captureSampleRate,
+            echoCancellation: settings.echoCancellation,
+            noiseSuppression: settings.noiseSuppression,
+            autoGainControl: settings.autoGainControl,
+          },
+        })
+      } catch {
+        optsRef.current.onError?.(new Error('Permiso de micrófono denegado'))
+        setStatus('error')
+        return
+      }
+      streamRef.current = stream
+
+      const ws = new WebSocket(buildRoomWsUrl(roomToken, hostPid))
+      wsRef.current = ws
+
+      ws.onopen = async () => {
+        setStatus('listening')
+        if (pingIntervalRef.current) window.clearInterval(pingIntervalRef.current)
+        pingIntervalRef.current = window.setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            try { ws.send(JSON.stringify({ type: 'ping' })) } catch {}
+          }
+        }, settings.wsPingIntervalMs)
+        const ctx = new AudioContext({ sampleRate: settings.captureSampleRate })
+        audioCtxRef.current = ctx
+        const source = ctx.createMediaStreamSource(stream)
+        sourceRef.current = source
+
+        const sendPcm = (pcmBuf: ArrayBuffer, rms: number): void => {
+          const liveWs = wsRef.current
+          if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return
+          optsRef.current.onAudioLevel?.(Math.min(1, rms * 4))
+          const bytes = new Uint8Array(pcmBuf)
+          let bin = ''
+          for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
+          const b64 = btoa(bin)
+          liveWs.send(JSON.stringify({ type: 'audio', data: b64 }))
+        }
+
+        let useWorklet = false
+        if (settings.useAudioWorklet && ctx.audioWorklet && typeof ctx.audioWorklet.addModule === 'function') {
+          try {
+            await ctx.audioWorklet.addModule('/audio-worklet/mic-processor.js')
+            const node = new AudioWorkletNode(ctx, 'mic-processor', {
+              processorOptions: {
+                samples: settings.workletBufferSamples,
+                vadEnabled: settings.vadEnabled,
+                vadThreshold: settings.vadThreshold,
+                vadTailFrames: settings.vadTailFrames,
+              },
+            })
+            workletNodeRef.current = node
+            node.port.onmessage = (ev: MessageEvent) => {
+              const { pcm, rms, silent } = ev.data as {
+                pcm?: ArrayBuffer; rms: number; silent?: boolean
+              }
+              if (silent) {
+                optsRef.current.onAudioLevel?.(Math.min(1, (rms || 0) * 4))
+                return
+              }
+              if (pcm) sendPcm(pcm, rms || 0)
+            }
+            source.connect(node)
+            node.connect(ctx.destination)
+            useWorklet = true
+          } catch (e) {
+            console.warn('[startInRoom] AudioWorklet no disponible:', e)
+          }
+        }
+
+        if (!useWorklet) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const proc = (ctx as any).createScriptProcessor(settings.workletBufferSamples, 1, 1) as ScriptProcessorNode
+          procRef.current = proc
+          proc.onaudioprocess = (e) => {
+            const input = e.inputBuffer.getChannelData(0)
+            const pcm = new Int16Array(input.length)
+            let rms = 0
+            for (let i = 0; i < input.length; i++) {
+              const s = Math.max(-1, Math.min(1, input[i]))
+              pcm[i] = s < 0 ? s * 32768 : s * 32767
+              rms += s * s
+            }
+            rms = Math.sqrt(rms / input.length)
+            sendPcm(pcm.buffer, rms)
+          }
+          source.connect(proc)
+          proc.connect(ctx.destination)
+        }
+      }
+
+      attachWsHandlers(ws)
+    },
+    [attachWsHandlers],
+  )
+
+  return { start, stop, status, transcript, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants }
 }
