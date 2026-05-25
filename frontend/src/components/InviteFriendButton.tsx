@@ -23,8 +23,16 @@ const CSS = `
 .inv-btn.icon-only.light { background:rgba(255,255,255,.10); }
 .inv-btn.icon-only.light:hover { background:rgba(255,255,255,.16); }
 
-.inv-modal-backdrop { position:fixed; inset:0; background:rgba(13,20,18,.7); backdrop-filter:blur(8px); z-index:9000; display:grid; place-items:center; padding:24px; }
-.inv-modal { width:100%; max-width:480px; background:#fff; border-radius:24px; padding:28px 24px; position:relative; animation:inv-pop .25s cubic-bezier(.2,.8,.2,1); font-family:'Sora','Inter',ui-sans-serif,system-ui,sans-serif; color:#0D1412; }
+.inv-modal-backdrop { position:fixed; inset:0; background:rgba(13,20,18,.7); backdrop-filter:blur(8px); z-index:9000; display:grid; place-items:center; padding:16px; }
+.inv-modal { width:100%; max-width:480px; max-height:calc(100vh - 32px); overflow-y:auto; background:#fff; border-radius:24px; padding:24px 20px; position:relative; animation:inv-pop .25s cubic-bezier(.2,.8,.2,1); font-family:'Sora','Inter',ui-sans-serif,system-ui,sans-serif; color:#0D1412; -webkit-overflow-scrolling:touch; }
+@media (max-width: 480px) {
+  .inv-modal { padding:20px 16px; border-radius:20px; }
+  .inv-modal h2 { font-size:19px; }
+  .inv-modal p { font-size:13px; }
+  .inv-modal .ico { width:48px; height:48px; border-radius:14px; }
+  .inv-link { padding:10px 12px; }
+  .inv-link .url { font-size:11.5px; }
+}
 @keyframes inv-pop { from { transform:scale(.92); opacity:0; } to { transform:scale(1); opacity:1; } }
 .inv-modal .close { position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:50%; background:rgba(13,20,18,.06); color:#3A4441; display:grid; place-items:center; border:0; cursor:pointer; }
 .inv-modal .close:hover { background:rgba(13,20,18,.10); }
