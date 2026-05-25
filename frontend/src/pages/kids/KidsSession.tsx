@@ -13,6 +13,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { ArrowLeft, Mic, RefreshCw, Square, Lock } from 'lucide-react'
+import { toast } from 'sonner'
 import { AgentAudioVisualizerAura } from '../../components/agents-ui/agent-audio-visualizer-aura'
 import { useLiveVoice } from '../../hooks/useLiveVoice'
 import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
@@ -116,6 +117,15 @@ export function KidsSession() {
     onSessionRenewed: (message) => {
       setRenewBanner({ kind: 'renewed', msg: message })
       setTimeout(() => setRenewBanner(null), 3500)
+    },
+    onParticipantJoined: (info) => {
+      if (!info.isHost) toast.success(`${info.name} se sumó a la charla`)
+    },
+    onParticipantLeft: (info) => {
+      toast(`${info.name} salió`)
+    },
+    onRoomClosed: () => {
+      toast('La sala se cerró')
     },
   })
 
@@ -355,6 +365,10 @@ export function KidsSession() {
                 variant="light"
                 label="Invitar amigo"
                 authToken={localStorage.getItem(KIDS_TOKEN_KEY) ?? undefined}
+                onRoomCreated={(roomToken, hostPid) => {
+                  live.upgradeToRoom(roomToken, hostPid)
+                  toast.success('Sala lista — mandá el link y esperá al amigo')
+                }}
               />
             )}
           </>

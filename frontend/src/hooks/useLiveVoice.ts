@@ -40,6 +40,12 @@ export interface UseLiveVoiceOptions {
   /** El coach se quedo mudo y el watchdog server esta intentando rescatarlo.
    * level=1: trigger sintetico suave. level=2: force-renew + saludo de rescate. */
   onCoachRecovering?: (level: number) => void
+  /** Voice room: alguien se unio a la charla grupal. */
+  onParticipantJoined?: (info: { pid: string; name: string; isHost: boolean }) => void
+  /** Voice room: alguien dejo la charla grupal. */
+  onParticipantLeft?: (info: { pid: string; name: string }) => void
+  /** Voice room: la sala se cerro (host termino la sesion). */
+  onRoomClosed?: (reason: string) => void
 }
 
 export type LiveStatus = 'idle' | 'connecting' | 'listening' | 'speaking' | 'error' | 'ended'
@@ -272,7 +278,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         const proc = (ctx as any).createScriptProcessor(4096, 1, 1) as ScriptProcessorNode
         procRef.current = proc
         proc.onaudioprocess = (e) => {
-          if (ws.readyState !== WebSocket.OPEN) return
+          // Usamos wsRef.current en vez de la variable ws capturada para que
+          // sobreviva un upgradeToRoom() (cambia el WS subyacente sin romper
+          // la captura del mic).
+          const liveWs = wsRef.current
+          if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return
           const input = e.inputBuffer.getChannelData(0)
           // Float32 [-1,1] → PCM 16 LE
           const pcm = new Int16Array(input.length)
@@ -289,86 +299,134 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
           const b64 = btoa(bin)
-          ws.send(JSON.stringify({ type: 'audio', data: b64 }))
+          liveWs.send(JSON.stringify({ type: 'audio', data: b64 }))
         }
         source.connect(proc)
         proc.connect(ctx.destination)
       }
 
-      ws.onmessage = (ev) => {
-        try {
-          const msg = JSON.parse(ev.data)
-          if (msg.type === 'audio') {
-            setStatus('speaking')
-            pushAudioFromTutor(msg.data)
-          } else if (msg.type === 'transcript_chunk') {
-            // El backend manda chunks (palabra-por-palabra). Acumulamos en el
-            // ÚLTIMO mensaje del mismo 'who'; si el último es de otro hablante
-            // o no hay ninguno, creamos uno nuevo.
-            setTranscript((prev) => {
-              const last = prev[prev.length - 1]
-              if (last && last.who === msg.who) {
-                const updated = [...prev]
-                updated[updated.length - 1] = { who: last.who, text: last.text + msg.text }
-                return updated
-              }
-              return [...prev, { who: msg.who, text: msg.text }]
-            })
-          } else if (msg.type === 'transcript') {
-            // Compatibilidad legacy: mensaje completo de una sola vez
-            const line: TranscriptLine = { who: msg.who, text: msg.text }
-            setTranscript((prev) => [...prev, line])
-            optsRef.current.onTranscript?.(line)
-          } else if (msg.type === 'turn_complete') {
-            setStatus('listening')
-            // Notificar al consumidor con el último mensaje consolidado del USER (si hay)
-            setTranscript((prev) => {
-              const lastUser = [...prev].reverse().find((l) => l.who === 'user')
-              if (lastUser) optsRef.current.onTranscript?.(lastUser)
-              return prev
-            })
-          } else if (msg.type === 'preference_applied') {
-            // El detector detectó que el alumno expresó una preferencia
-            // (corrige menos / más corto / etc) y ya la aplicó al backend.
-            optsRef.current.onPreferenceApplied?.(msg.changes, msg.confirmation)
-          } else if (msg.type === 'session_ending_soon') {
-            optsRef.current.onSessionEndingSoon?.({
-              secondsLeft: msg.seconds_left ?? 60,
-              message: msg.message ?? 'La sesión se va a renovar pronto',
-            })
-          } else if (msg.type === 'session_renewing') {
-            setStatus('connecting')
-            optsRef.current.onSessionRenewing?.()
-          } else if (msg.type === 'session_renewed') {
-            setStatus('listening')
-            optsRef.current.onSessionRenewed?.(msg.message ?? 'Sesión renovada')
-          } else if (msg.type === 'interrupted') {
-            // Barge-in: el chico/alumno empezo a hablar mientras el coach todavia
-            // soltaba audio. Gemini ya corto el output server-side; aca matamos
-            // los chunks scheduled en AudioContext para que el coach SE CALLE YA.
-            cancelTutorPlayback()
-            setStatus('listening')
-          } else if (msg.type === 'coach_recovering') {
-            // Watchdog server detecto que el coach se quedo mudo y esta
-            // intentando rescatar la conversacion.
-            optsRef.current.onCoachRecovering?.(msg.level ?? 1)
-          } else if (msg.type === 'error') {
-            optsRef.current.onError?.(new Error(msg.error || 'live error'))
-            setStatus('error')
-          }
-        } catch {}
-      }
-
-      ws.onerror = () => {
-        optsRef.current.onError?.(new Error('WebSocket error'))
-        setStatus('error')
-      }
-      ws.onclose = () => {
-        setStatus((prev) => (prev !== 'ended' ? 'ended' : prev))
-      }
+      attachWsHandlers(ws)
     },
     [pushAudioFromTutor, cancelTutorPlayback],
   )
+
+  // Handler de mensajes compartido entre /ws (sesion single) y /ws_room (grupal).
+  // Se mantiene en un ref para que upgradeToRoom() pueda re-attachearlo al
+  // nuevo WS sin redefinir start().
+  const handleWsMessage = useCallback((ev: MessageEvent) => {
+    try {
+      const msg = JSON.parse(ev.data)
+      if (msg.type === 'audio' || msg.type === 'participant_audio') {
+        // audio: del coach. participant_audio: de OTRO humano en la room.
+        // Los reproducimos por el mismo canal para que se escuche todo.
+        setStatus('speaking')
+        pushAudioFromTutor(msg.data)
+      } else if (msg.type === 'transcript_chunk') {
+        setTranscript((prev) => {
+          const last = prev[prev.length - 1]
+          if (last && last.who === msg.who) {
+            const updated = [...prev]
+            updated[updated.length - 1] = { who: last.who, text: last.text + msg.text }
+            return updated
+          }
+          return [...prev, { who: msg.who, text: msg.text }]
+        })
+      } else if (msg.type === 'transcript') {
+        const line: TranscriptLine = { who: msg.who, text: msg.text }
+        setTranscript((prev) => [...prev, line])
+        optsRef.current.onTranscript?.(line)
+      } else if (msg.type === 'turn_complete') {
+        setStatus('listening')
+        setTranscript((prev) => {
+          const lastUser = [...prev].reverse().find((l) => l.who === 'user')
+          if (lastUser) optsRef.current.onTranscript?.(lastUser)
+          return prev
+        })
+      } else if (msg.type === 'preference_applied') {
+        optsRef.current.onPreferenceApplied?.(msg.changes, msg.confirmation)
+      } else if (msg.type === 'session_ending_soon') {
+        optsRef.current.onSessionEndingSoon?.({
+          secondsLeft: msg.seconds_left ?? 60,
+          message: msg.message ?? 'La sesión se va a renovar pronto',
+        })
+      } else if (msg.type === 'session_renewing') {
+        setStatus('connecting')
+        optsRef.current.onSessionRenewing?.()
+      } else if (msg.type === 'session_renewed') {
+        setStatus('listening')
+        optsRef.current.onSessionRenewed?.(msg.message ?? 'Sesión renovada')
+      } else if (msg.type === 'interrupted') {
+        cancelTutorPlayback()
+        setStatus('listening')
+      } else if (msg.type === 'coach_recovering') {
+        optsRef.current.onCoachRecovering?.(msg.level ?? 1)
+      } else if (msg.type === 'participant_joined') {
+        optsRef.current.onParticipantJoined?.({
+          pid: msg.pid,
+          name: msg.name,
+          isHost: !!msg.is_host,
+        })
+      } else if (msg.type === 'participant_left') {
+        optsRef.current.onParticipantLeft?.({ pid: msg.pid, name: msg.name })
+      } else if (msg.type === 'room_joined') {
+        // Ack del backend cuando entramos a la room. No necesita accion.
+        setStatus('listening')
+      } else if (msg.type === 'room_closed') {
+        optsRef.current.onRoomClosed?.(msg.reason || 'closed')
+        setStatus('ended')
+      } else if (msg.type === 'error') {
+        optsRef.current.onError?.(new Error(msg.error || 'live error'))
+        setStatus('error')
+      }
+    } catch {}
+  }, [pushAudioFromTutor, cancelTutorPlayback])
+
+  const attachWsHandlers = useCallback((ws: WebSocket) => {
+    ws.onmessage = handleWsMessage
+    ws.onerror = () => {
+      optsRef.current.onError?.(new Error('WebSocket error'))
+      setStatus('error')
+    }
+    ws.onclose = () => {
+      setStatus((prev) => (prev !== 'ended' ? 'ended' : prev))
+    }
+  }, [handleWsMessage])
+
+  /**
+   * Upgrade de sesion single (/ws) a voice room (/ws_room).
+   *
+   * Cuando el host hace tap en "invitar amigo", el backend crea una room y
+   * devuelve { token, host_pid }. Esta funcion cierra el WS actual y abre
+   * uno nuevo a la room manteniendo el AudioContext, el mic y todo el state
+   * de la UI. Cuando el guest entre a la room, el host lo escucha en tiempo
+   * real porque ambos comparten la misma sesion Gemini compartida.
+   *
+   * Idempotente: si ya estamos en una room, no hace nada.
+   */
+  const upgradeToRoom = useCallback((roomToken: string, hostPid: string) => {
+    if (!wsRef.current) return
+    if (wsRef.current.url.includes('/ws_room')) return  // ya en room
+    const oldWs = wsRef.current
+    const base = oldWs.url.replace(/\/ws(\?|$).*/, '')
+    const url = `${base}/ws_room?room_token=${encodeURIComponent(roomToken)}&pid=${encodeURIComponent(hostPid)}`
+    const newWs = new WebSocket(url)
+    wsRef.current = newWs
+    setStatus('connecting')
+    newWs.onopen = () => {
+      setStatus('listening')
+      // Reiniciamos el keepalive
+      if (pingIntervalRef.current) window.clearInterval(pingIntervalRef.current)
+      pingIntervalRef.current = window.setInterval(() => {
+        if (newWs.readyState === WebSocket.OPEN) {
+          try { newWs.send(JSON.stringify({ type: 'ping' })) } catch {}
+        }
+      }, 25000)
+      // Cerrar el WS viejo SOLO cuando el nuevo este abierto, asi no perdemos
+      // audio en el switch.
+      try { oldWs.close() } catch {}
+    }
+    attachWsHandlers(newWs)
+  }, [attachWsHandlers])
 
   const sendSystemUpdate = useCallback((text: string) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
@@ -380,5 +438,5 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     return false
   }, [])
 
-  return { start, stop, status, transcript, sendSystemUpdate, say }
+  return { start, stop, status, transcript, sendSystemUpdate, say, upgradeToRoom }
 }

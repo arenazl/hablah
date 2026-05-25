@@ -41,6 +41,10 @@ interface InviteFriendButtonProps {
   variant?: 'light' | 'dark' | 'amber'
   label?: string
   authToken?: string
+  /** Callback que se ejecuta apenas se crea la room exitosamente. El padre
+   * lo usa para hacer upgradeToRoom() y migrar de /ws single a /ws_room
+   * compartido — asi cuando el invitado entre, el host lo escucha en vivo. */
+  onRoomCreated?: (roomToken: string, hostPid: string) => void
 }
 
 export function InviteFriendButton({
@@ -49,6 +53,7 @@ export function InviteFriendButton({
   variant = 'light',
   label = 'Invitar amigo',
   authToken,
+  onRoomCreated,
 }: InviteFriendButtonProps) {
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -75,6 +80,13 @@ export function InviteFriendButton({
       if (!res.ok) throw new Error('No pudimos crear la sala')
       const data = await res.json()
       const link = `${window.location.origin}/charla/${data.token}`
+
+      // Migrar al host a la voice room ANTES de copiar el link, asi cuando
+      // el guest entre ambos comparten la misma sesion Gemini y el host
+      // escucha en vivo al coach saludar al invitado.
+      if (data.host_pid && onRoomCreated) {
+        onRoomCreated(data.token, data.host_pid)
+      }
 
       // En mobile (iOS/Android): abre el share sheet nativo - WhatsApp,
       // Telegram, Mail, copy, etc. UX ideal.

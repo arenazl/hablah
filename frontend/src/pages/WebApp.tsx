@@ -1039,6 +1039,15 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       if (changes.warmth_level) parts.push(`calidez: ${changes.warmth_level}/5`)
       toast.success(confirmation || `Preferencia guardada (${parts.join(' · ')})`)
     },
+    onParticipantJoined: (info) => {
+      if (!info.isHost) toast.success(`${info.name} se unió a la charla`)
+    },
+    onParticipantLeft: (info) => {
+      toast(`${info.name} salió de la charla`)
+    },
+    onRoomClosed: () => {
+      toast('La sala se cerró')
+    },
   })
 
   const beginSession = useCallback(async (topicId: number | null, freeTopic?: string) => {
@@ -1191,6 +1200,10 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               freeTopic={freeTopicText || null}
               variant="light"
               label=""
+              onRoomCreated={(roomToken, hostPid) => {
+                live.upgradeToRoom(roomToken, hostPid)
+                toast.success('Sala lista — mandá el link y esperá al amigo')
+              }}
             />
             <button className="btn btn-sm end" onClick={handleEnd}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
