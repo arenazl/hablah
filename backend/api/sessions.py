@@ -86,6 +86,45 @@ async def start_session(
         from services.admin_feedback import load_active_directives
         admin_directives = await load_active_directives(template.id, db)
 
+    # Historial del topico para ESTE alumno: cuantas veces lo hizo + frases
+    # que el coach YA le enseno (entre comillas en el transcript). Asi el
+    # coach EVITA repetir las mismas palabras la proxima vez y trae nuevas
+    # del mismo mini-mundo.
+    topic_visits = 0
+    previous_phrases: list[str] = []
+    if topic:
+        prev_sessions = (await db.execute(
+            select(SessionModel)
+            .where(SessionModel.user_id == current.id)
+            .where(SessionModel.topic_id == topic.id)
+            .where(SessionModel.id != s.id)  # excluir la sesion actual
+            .order_by(desc(SessionModel.started_at))
+            .limit(5)
+        )).scalars().all()
+        topic_visits = len(prev_sessions)
+        if topic_visits > 0:
+            import re
+            seen: set[str] = set()
+            phrases: list[str] = []
+            for ps in prev_sessions:
+                for turn in (ps.transcript or []):
+                    if turn.get("who") != "ai":
+                        continue
+                    text = (turn.get("text") or "")
+                    # Frases modelo entre comillas (rectas o tipograficas)
+                    for m in re.findall(r'["“]([^"”]+)["”]', text):
+                        m = m.strip()
+                        if 2 <= len(m) <= 40 and m.lower() not in seen:
+                            seen.add(m.lower())
+                            phrases.append(m)
+                            if len(phrases) >= 12:
+                                break
+                    if len(phrases) >= 12:
+                        break
+                if len(phrases) >= 12:
+                    break
+            previous_phrases = phrases
+
     super_prompt = build_super_prompt(
         user=current,
         template=template,
@@ -93,6 +132,8 @@ async def start_session(
         free_topic=payload.free_topic,
         topic_brief=topic_brief,
         admin_directives=admin_directives,
+        topic_visits=topic_visits,
+        previous_phrases=previous_phrases,
     )
     voice_id = template_voice_for_lang(template, current.target_language, user=current)
 

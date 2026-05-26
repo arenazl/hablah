@@ -483,6 +483,8 @@ def build_super_prompt(
     free_topic: Optional[str] = None,
     topic_brief: Optional[dict] = None,
     admin_directives: Optional[list[str]] = None,
+    topic_visits: int = 0,
+    previous_phrases: Optional[list[str]] = None,
 ) -> str:
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
@@ -509,6 +511,22 @@ def build_super_prompt(
         user_block += f"\n- IMPORTANTE: es un CHICO/A · grupo etario {age_label}."
 
     include_intro = getattr(template, "opening_includes_topic_intro", True) if template else True
+
+    # Bloque historial: si el alumno YA hizo este topic antes, le pasamos las
+    # frases que el coach ya le enseno en sesiones anteriores. El coach las
+    # debe EVITAR esta vez y traer cosas nuevas del mismo mini-mundo.
+    history_block = ""
+    if topic_visits > 0 and previous_phrases:
+        phrases_txt = "\n".join(f'  · "{p}"' for p in previous_phrases[:10])
+        history_block = (
+            f"\nHISTORIAL DE ESTE TOPICO PARA ESTE ALUMNO\n"
+            f"- Ya hiciste esta clase {topic_visits} vez/veces antes con el.\n"
+            f"- Frases que YA le ensenaste (NO las repitas esta vez):\n"
+            f"{phrases_txt}\n"
+            f"- ESTA VEZ: trae palabras/frases NUEVAS del mismo mini-mundo del topico.\n"
+            f"  Variá el angulo, usá vocabulario distinto al de las clases previas.\n"
+            f"  Por ej si en familia ya viste mom/dad/brother, esta vez probá grandma/uncle/cousin.\n"
+        )
 
     if topic:
         # Para topicos kids el seed se elige por age_group (mini/junior/tween).
@@ -592,7 +610,7 @@ un nombre nuevo, significa que entro otra persona. A partir de ese momento:
             f"IDIOMA DE INSTRUCCIÓN: hablás al chico en **{base_lang_name}** (su idioma materno).\n"
             f"IDIOMA OBJETIVO: las frases modelo entre comillas son SIEMPRE en {target_lang_name}.\n\n"
             f"{KIDS_A0_OVERRIDE_RULES}\n\n"
-            f"{topic_block}\n\n"
+            f"{topic_block}{history_block}\n\n"
             f"ARRANQUE: saludá a {user.nombre} por nombre EN {base_lang_name.upper()}, decí en español algo\n"
             f"corto y entusiasta sobre el tópico ('Vamos a aprender palabras de tu familia en inglés'),\n"
             f"y dale la primera frase modelo en {target_lang_name} entre comillas (2-4 palabras max).\n"
@@ -605,7 +623,7 @@ un nombre nuevo, significa que entro otra persona. A partir de ese momento:
             f"[INSTRUCCIÓN DE SISTEMA — TUTOR HABLÁH · MODO KIDS]\n\n"
             f"{user_block}\n\n"
             f"{KIDS_OVERRIDE_RULES}\n\n"
-            f"{topic_block}\n\n"
+            f"{topic_block}{history_block}\n\n"
             f"IDIOMA: hablás SIEMPRE en {target_lang_name}. Frases cortas, simples, claras.\n"
             f"Si el chico se traba o no entiende, NO traduzcas — reformulá MÁS SIMPLE en {target_lang_name}.\n"
             f"ARRANQUE: saludá a {user.nombre} por nombre, decí UNA cosa corta y entusiasta sobre el tema,\n"
@@ -625,7 +643,7 @@ un nombre nuevo, significa que entro otra persona. A partir de ese momento:
             f"IDIOMA DE INSTRUCCIÓN: hablás al alumno en **{base_lang_name}** (su idioma materno).\n"
             f"IDIOMA OBJETIVO: las frases modelo entre comillas son SIEMPRE en {target_lang_name}.\n\n"
             f"{A0_OVERRIDE_RULES}\n\n"
-            f"{topic_block}\n\n"
+            f"{topic_block}{history_block}\n\n"
             f"ARRANQUE: saludá al alumno en {base_lang_name} (una frase corta), presentá UN micro-contexto\n"
             f"en {base_lang_name} DERIVADO DEL TÓPICO DE HOY (ver bloque arriba — NO uses café/oficina si el\n"
             f"tópico es otra cosa), y dale la primera frase modelo en {target_lang_name} entre comillas,\n"
@@ -637,7 +655,7 @@ un nombre nuevo, significa que entro otra persona. A partir de ese momento:
         f"[INSTRUCCIÓN DE SISTEMA — TUTOR HABLÁH]\n\n"
         f"{template_block}\n\n"
         f"{user_block}\n\n"
-        f"{topic_block}"
+        f"{topic_block}{history_block}"
         f"{errors_block}\n\n"
         f"{rules}\n\n"
         f"IDIOMA: hablás SIEMPRE en {target_lang_name}. Nunca en español, salvo que el alumno se trabe completamente.\n\n"
