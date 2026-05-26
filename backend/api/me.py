@@ -134,6 +134,26 @@ async def update_settings(
         setattr(current, k, v)
     await db.commit()
     await db.refresh(current)
+
+    # Si el adulto cambio target_language o base_language, propagar a sus hijos
+    # (kids con parent_user_id = current.id). Los kids heredan el idioma del
+    # padre - asi cuando el padre cambia a portugues, Timo / Mateo / etc.
+    # tambien quedan en portugues sin tener que tocar cada perfil.
+    if "target_language" in data or "base_language" in data:
+        from models.user import User as UserModel
+        from sqlalchemy import update
+        propagate: dict = {}
+        if "target_language" in data:
+            propagate["target_language"] = data["target_language"]
+        if "base_language" in data:
+            propagate["base_language"] = data["base_language"]
+        await db.execute(
+            update(UserModel)
+            .where(UserModel.parent_user_id == current.id)
+            .values(**propagate)
+        )
+        await db.commit()
+
     return {"ok": True}
 
 

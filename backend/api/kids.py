@@ -141,8 +141,11 @@ async def create_kid_profile(
         apellido="",
         role=UserRole.student,
         cefr_level="A0",
-        target_language="en",
-        base_language="es",
+        # Hereda idioma del padre. Si el padre tiene en, el kid arranca en en;
+        # si despues el padre cambia a pt, el endpoint /api/me/settings propaga
+        # al kid automaticamente.
+        target_language=parent.target_language or "en",
+        base_language=parent.base_language or "es",
         accent_preference="us_f",
         active_template_id=friend_id,
         target_minutes_per_session=5,
