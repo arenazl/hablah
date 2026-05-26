@@ -29,7 +29,11 @@ const CSS = `
   display: flex; flex-direction: column;
 }
 .tune-header {
-  flex-shrink: 0; padding: 10px 16px;
+  flex-shrink: 0;
+  /* safe-area-inset-top respeta el notch / Dynamic Island del iPhone para
+     que el header no quede tapado. Fallback a 10px en browsers que no
+     soportan env() (todos los modernos sí lo soportan). */
+  padding: max(10px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left));
   border-bottom: 1px solid rgba(255,255,255,.08);
   display: flex; align-items: center; gap: 16px;
 }
