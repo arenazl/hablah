@@ -46,15 +46,16 @@ export interface AudioSettings {
   participantVolume: number
 }
 
+// DEFAULT = preset "Voice room": balanceado para sesiones 1:1 y grupales.
 export const DEFAULT_SETTINGS: AudioSettings = {
   captureSampleRate: 16000,
   workletBufferSamples: 2048,
   useAudioWorklet: true,
   vadEnabled: true,
-  vadThreshold: 0.005,
-  vadTailFrames: 2,
+  vadThreshold: 0.008,
+  vadTailFrames: 3,
   playbackSampleRate: 24000,
-  playbackCushionSeconds: 0.02,
+  playbackCushionSeconds: 0.03,
   catchUpEnabled: false,
   catchUpThresholdSeconds: 3.0,
   echoCancellation: true,
@@ -64,7 +65,7 @@ export const DEFAULT_SETTINGS: AudioSettings = {
   orbUpdateFps: 20,
   skipRedundantStatus: true,
   wsPingIntervalMs: 25000,
-  participantVolume: 1.0,
+  participantVolume: 1.2,
 }
 
 export interface AudioPreset {
@@ -76,29 +77,9 @@ export interface AudioPreset {
 
 export const PRESETS: AudioPreset[] = [
   {
-    id: 'default',
-    name: 'Default actual',
-    description: 'La config que está en producción ahora (con AudioWorklet, VAD y buffer 2048).',
-    settings: { ...DEFAULT_SETTINGS },
-  },
-  {
-    id: 'ayer',
-    name: 'Setting de ayer (sin worklet, sin VAD)',
-    description: 'La config previa al worklet y VAD - andaba estable en sesión single. Buena base de comparación.',
-    settings: {
-      useAudioWorklet: false,
-      workletBufferSamples: 4096,
-      vadEnabled: false,
-      playbackCushionSeconds: 0.02,
-      catchUpEnabled: false,
-      orbUpdateFps: 60,
-      skipRedundantStatus: false,
-    },
-  },
-  {
     id: 'voice-room',
     name: 'Voice room (charlas grupales)',
-    description: 'Optimizado para conversaciones de 2-3 personas. Buffer mediano, VAD para no saturar el mixer.',
+    description: 'Optimizado para conversaciones de 2-3 personas. Buffer mediano, VAD para no saturar el mixer. ES EL DEFAULT.',
     settings: {
       useAudioWorklet: true,
       workletBufferSamples: 2048,
@@ -120,34 +101,6 @@ export const PRESETS: AudioPreset[] = [
       vadThreshold: 0.003,
       vadTailFrames: 1,
       playbackCushionSeconds: 0.01,
-    },
-  },
-  {
-    id: 'estabilidad',
-    name: 'Máxima estabilidad (conexión inestable)',
-    description: 'Buffers grandes, cushion alto, VAD permisivo. Si la conexión se traba, este preset aguanta mejor.',
-    settings: {
-      useAudioWorklet: true,
-      workletBufferSamples: 4096,
-      vadEnabled: true,
-      vadThreshold: 0.005,
-      vadTailFrames: 4,
-      playbackCushionSeconds: 0.08,
-    },
-  },
-  {
-    id: 'mobile',
-    name: 'Mobile (4G / WiFi pública)',
-    description: 'Captura 16kHz, buffer grande, VAD estricto para ahorrar bandwidth en redes móviles.',
-    settings: {
-      captureSampleRate: 16000,
-      useAudioWorklet: true,
-      workletBufferSamples: 4096,
-      vadEnabled: true,
-      vadThreshold: 0.01,
-      vadTailFrames: 2,
-      playbackCushionSeconds: 0.05,
-      orbUpdateFps: 15,
     },
   },
 ]
