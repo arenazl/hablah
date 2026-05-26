@@ -46,16 +46,17 @@ export interface AudioSettings {
   participantVolume: number
 }
 
-// DEFAULT = preset "Voice room": balanceado para sesiones 1:1 y grupales.
+// DEFAULT optimizado para latencia rapida en sesion 1:1.
+// VAD OFF para no retener chunks - antes (sin VAD) andaba mas rapido.
 export const DEFAULT_SETTINGS: AudioSettings = {
   captureSampleRate: 16000,
   workletBufferSamples: 2048,
   useAudioWorklet: true,
-  vadEnabled: true,
+  vadEnabled: false,
   vadThreshold: 0.008,
   vadTailFrames: 3,
   playbackSampleRate: 24000,
-  playbackCushionSeconds: 0.03,
+  playbackCushionSeconds: 0.02,
   catchUpEnabled: false,
   catchUpThresholdSeconds: 3.0,
   echoCancellation: true,
@@ -65,7 +66,7 @@ export const DEFAULT_SETTINGS: AudioSettings = {
   orbUpdateFps: 20,
   skipRedundantStatus: true,
   wsPingIntervalMs: 25000,
-  participantVolume: 1.2,
+  participantVolume: 1.0,
 }
 
 export interface AudioPreset {
@@ -105,7 +106,10 @@ export const PRESETS: AudioPreset[] = [
   },
 ]
 
-const STORAGE_KEY = 'hablah_audio_settings_v1'
+// v2: forzar reset porque cambiamos defaults (VAD OFF, antes era ON).
+// Los users con v1 en localStorage van a perder su override custom pero
+// les aplican los nuevos defaults que andan mas rapidos.
+const STORAGE_KEY = 'hablah_audio_settings_v2'
 
 export function loadAudioSettings(): AudioSettings {
   try {
