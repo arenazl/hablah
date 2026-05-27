@@ -13,6 +13,9 @@ import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
 import { OnboardingBubbles } from '../components/OnboardingBubbles'
 import { PracticarGalaxy } from '../components/PracticarGalaxy'
+import { CoachPhrasePanels } from '../components/CoachPhrasePanels'
+import { PRESETS, applyPreset, loadAudioSettings, type AudioPreset } from '../lib/audioSettings'
+import confetti from 'canvas-confetti'
 import { KidsParentSwitch } from './kids/KidsParentSwitch'
 import { InviteFriendButton } from '../components/InviteFriendButton'
 
@@ -70,6 +73,33 @@ const VIEW_TITLES: Record<string, string> = {
   '/app/mapa': 'Mapa de progreso', '/app/historial': 'Historial', '/app/perfil': 'Perfil',
 }
 
+/**
+ * Skeleton de pantalla mientras carga data. Aparece dentro del .main del AppShell
+ * (la TopBar y Sidebar ya están renderizadas) → cero pantallazo blanco.
+ */
+function PageSkel({ variant = 'default' }: { variant?: 'default' | 'hero' | 'list' | 'grid' }) {
+  return (
+    <div className="skel-page">
+      {variant !== 'list' && <div className="skel skel-hero" />}
+      <div className="skel skel-line-lg" />
+      {variant === 'grid' ? (
+        <div className="skel-row">
+          <div className="skel skel-card" /><div className="skel skel-card" /><div className="skel skel-card" />
+        </div>
+      ) : (
+        <>
+          <div className="skel skel-line" style={{ width: '92%' }} />
+          <div className="skel skel-line" style={{ width: '78%' }} />
+          <div className="skel skel-line" style={{ width: '65%' }} />
+          <div className="skel-row" style={{ marginTop: 8 }}>
+            <div className="skel skel-card" /><div className="skel skel-card" />
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 /* ──────── ROOT ──────── */
 export function WebApp() {
   const [profile, setProfile] = useState<MeProfile | null>(null)
@@ -77,8 +107,8 @@ export function WebApp() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [onboardingSkipped, setOnboardingSkipped] = useState(false)
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'light'
-    return (localStorage.getItem('hablah-theme') as 'light' | 'dark') || 'light'
+    if (typeof window === 'undefined') return 'dark'
+    return (localStorage.getItem('hablah-theme') as 'light' | 'dark') || 'dark'
   })
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', themeMode)
@@ -482,6 +512,12 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   const [levelProg, setLevelProg] = useState<LevelProgress | null>(null)
   const [today, setToday] = useState<TodayPayload | null>(null)
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({})
+  // Indice del tema sugerido. Si el user da dislike, avanzamos a la siguiente
+  // sugerencia. Se persiste por dia en localStorage para no resetear en refresh.
+  const todayKey = `hoy_topic_idx_${new Date().toISOString().slice(0, 10)}`
+  const [topicIdx, setTopicIdx] = useState<number>(() => {
+    try { return parseInt(localStorage.getItem(todayKey) || '0', 10) || 0 } catch { return 0 }
+  })
   useEffect(() => {
     sessionsAPI.list().then(setRecent).catch(() => {})
     meAPI.streakHeatmap(28).then(setHeatmap).catch(() => {})
@@ -489,16 +525,31 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
     meAPI.today().then(setToday).catch(() => {})
   }, [])
 
-  if (loading) return <div className="view"><div style={{ color: 'var(--fg-3)' }}>Cargando...</div></div>
+  if (loading) return <PageSkel variant="hero" />
   if (!profile) return <div className="view"><div style={{ color: 'var(--danger)' }}>Error cargando perfil</div></div>
 
   const u = profile.user
   const tpl = profile.active_template
-  const firstInterest = profile.interests[0]
+  const safeIdx = profile.interests.length > 0 ? topicIdx % profile.interests.length : 0
+  const firstInterest = profile.interests[safeIdx]
   const greeting = `Buen día, ${u.nombre}`
   const minutes = u.target_minutes_per_session
   const topicTitle = firstInterest?.title || 'Tema libre'
   const topicCategory = firstInterest?.category || ''
+
+  const handleDislike = () => {
+    if (profile.interests.length <= 1) {
+      toast('No hay otros temas disponibles')
+      return
+    }
+    const next = (safeIdx + 1) % profile.interests.length
+    setTopicIdx(next)
+    try { localStorage.setItem(todayKey, String(next)) } catch {}
+    toast.success(`Probemos: ${profile.interests[next]?.title}`)
+  }
+  const handleLike = () => {
+    toast.success('¡Dale!')
+  }
   const tutorName = tpl?.name || 'Habláh'
   const tutorRigor = (tpl as any)?.rigor ?? 3
   const tutorWarmth = (tpl as any)?.warmth_level ?? 3
@@ -548,6 +599,15 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
                   {minutes} min sugeridos
                 </span>
+                {/* Like / Dislike — dislike rota al siguiente interest del user */}
+                <span className="hp-feedback" role="group" aria-label="Te gusta este tema?">
+                  <button className="hp-fb hp-fb-like" onClick={handleLike} aria-label="Me gusta este tema" title="Me gusta">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7V10l4.34-8.66A1.5 1.5 0 0 1 13 2c.7 0 1.4.4 1.7 1.06.16.39.4 1.2.3 2.82z"/></svg>
+                  </button>
+                  <button className="hp-fb hp-fb-dislike" onClick={handleDislike} aria-label="Otro tema, por favor" title="Otro tema">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H17v12l-4.34 8.66A1.5 1.5 0 0 1 11 22c-.7 0-1.4-.4-1.7-1.06-.16-.39-.4-1.2-.3-2.82z"/></svg>
+                  </button>
+                </span>
               </div>
 
               <h2>
@@ -577,7 +637,15 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
                   Empezar charla
                 </button>
-                <button className="hp-btn hp-btn-ghost" onClick={() => nav('/app/practicar')}>Cambiar tópico</button>
+                <button className="hp-btn hp-btn-secondary hp-btn-lg" onClick={() => nav('/app/practicar')}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                  </svg>
+                  Más temas
+                </button>
               </div>
             </div>
 
@@ -1168,10 +1236,20 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
 
   // Si todavía no eligió tópico, NO arranco automático. Pantalla inmersiva de galaxia.
   if (!sessionId) {
-    if (!profile) return <div className="view">Cargando…</div>
+    if (!profile) return <PageSkel variant="grid" />
     const interests = profile.interests
     const interestIds = new Set(interests.map(i => i.id))
-    const others = extraTopics.filter(t => !interestIds.has(t.id))
+    const userCefr = profile.user.cefr_level
+    const others = extraTopics.filter(t => {
+      if (interestIds.has(t.id)) return false
+      // Excluir topics de kids para usuarios adultos
+      if ((t.category || '').toLowerCase() === 'kids') return false
+      // Si el topic tiene niveles, mantener solo los que matchean el CEFR del user
+      if (Array.isArray(t.levels) && t.levels.length > 0 && userCefr) {
+        if (!t.levels.includes(userCefr)) return false
+      }
+      return true
+    })
     const userName = profile.user.nombre
     const surprisePool = interests.length > 5 ? interests.slice(3) : others
     const surprise = surprisePool[Math.floor(Math.random() * surprisePool.length)] || others[0] || interests[0]
@@ -1180,7 +1258,18 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
       <PracticarGalaxy
         userName={userName}
         interests={interests.map(i => ({ id: i.id, title: i.title, category: i.category }))}
-        onPick={(topicId) => beginSession(topicId)}
+        recommended={others.slice(0, 8).map(t => ({ id: t.id, title: t.title, category: t.category }))}
+        onPick={(topicId) => {
+          // Si el topico clickeado NO estaba en los intereses del user (vino del
+          // panel "Sugeridos"), lo agregamos a sus intereses. addInterest es
+          // idempotente: si ya estaba, devuelve { ok, already: true }.
+          if (!interestIds.has(topicId)) {
+            topicsAPI.addInterest(topicId)
+              .then(() => toast.success('Agregado a tus temas'))
+              .catch(() => {})
+          }
+          beginSession(topicId)
+        }}
         onSurprise={() => { if (surprise) beginSession(surprise.id); else beginSession(null) }}
         onFreeTopic={(text) => beginSession(null, text)}
       />
@@ -1194,52 +1283,104 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     <div className={`convo-view bg-${convoBg}`}>
       <div className="convo-stage">
         <div className="convo-header convo-header-onerow">
-          <div className="convo-header-info">
-            <span className="convo-h-title" title={topicTitle || 'Iniciando…'}>
-              {topicTitle || 'Iniciando…'}
-            </span>
-            <span className="convo-h-sep">·</span>
-            <span className="convo-h-meta">
-              {profile?.active_template?.name || 'Habláh'} · {profile?.user?.cefr_level} · {profile?.user?.target_language}
-            </span>
-          </div>
-          {live.participants.length > 0 && (
-            <div className="convo-h-participants" title="Conectados en la sala">
-              {live.participants.map((p) => (
-                <span key={p.pid} className={`convo-h-chip${p.isHost ? ' host' : ''}`} title={p.isHost ? 'Vos (host)' : p.name}>
-                  <span className="dot" aria-hidden />
-                  {p.name}
-                </span>
-              ))}
+          <div className="convo-h-row1">
+            <div className="convo-header-info">
+              <span className="convo-h-title" title={topicTitle || 'Iniciando…'}>
+                {topicTitle || 'Iniciando…'}
+              </span>
+              <span className="convo-h-sep">·</span>
+              <span className="convo-h-meta">
+                {profile?.active_template?.name || 'Habláh'} · {profile?.user?.cefr_level} · {profile?.user?.target_language}
+              </span>
             </div>
-          )}
-          <PedagogyPicker value={pedagogy} onChange={(p, label) => {
-            setPedagogy(p)
-            const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
-            const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
-            toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
-          }} />
-          <div className="convo-header-actions">
-            <InviteFriendButton
-              topicId={selectedTopicId}
-              freeTopic={freeTopicText || null}
-              variant="light"
-              label=""
-              onRoomCreated={(roomToken, hostPid) => {
-                live.upgradeToRoom(roomToken, hostPid)
-                toast.success('Sala lista — mandá el link y esperá al amigo')
+            {live.participants.length > 0 && (
+              <div className="convo-h-participants" title="Conectados en la sala">
+                {live.participants.map((p) => (
+                  <span key={p.pid} className={`convo-h-chip${p.isHost ? ' host' : ''}`} title={p.isHost ? 'Vos (host)' : p.name}>
+                    <span className="dot" aria-hidden />
+                    {p.name}
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="convo-header-actions">
+              <InviteFriendButton
+                topicId={selectedTopicId}
+                freeTopic={freeTopicText || null}
+                variant="light"
+                label=""
+                onRoomCreated={(roomToken, hostPid) => {
+                  live.upgradeToRoom(roomToken, hostPid)
+                  toast.success('Sala lista — mandá el link y esperá al amigo')
+                }}
+              />
+              <button className="btn btn-sm end" onClick={handleEnd} aria-label="Terminar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+                <span className="end-label">Terminar</span>
+              </button>
+            </div>
+          </div>
+          <div className="convo-h-row2">
+            <PedagogyPicker value={pedagogy} onChange={(p, label) => {
+              setPedagogy(p)
+              const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
+              const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
+              toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
+            }} />
+            <VoicePresetsBar
+              onPick={(preset) => {
+                applyPreset(preset)
+                // No reiniciamos la sesion en vivo: el preset cambia el audio
+                // pipeline (worklet buffer, sample rate, etc.) y aplicar en
+                // vivo requiere reconnect que tarda ~20s y reinicia el saludo.
+                // Lo dejamos guardado en localStorage y se aplica en la
+                // proxima sesion. Aviso al user.
+                toast.success(`Audio: ${preset.name} (aplica en la próxima sesión)`)
               }}
             />
-            <button className="btn btn-sm end" onClick={handleEnd} aria-label="Terminar">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-              <span className="end-label">Terminar</span>
-            </button>
           </div>
         </div>
 
         <div className="convo-orb-area">
+          {/* Flechas para "swipear" de topico durante la sesion. No cortan la
+              sesion en vivo: solo mandan SILENT_SYSTEM_UPDATE al coach pidiendo
+              pivot al siguiente/anterior interes del user. La sesion sigue
+              activa, el coach naturalmente trae el nuevo tema. */}
+            {profile && profile.interests.length > 1 && (() => {
+              const interests = profile.interests
+              const cur = interests.findIndex(i => i.id === selectedTopicId)
+              const idx = cur >= 0 ? cur : 0
+              const switchTo = (delta: -1 | 1) => {
+                const next = (idx + delta + interests.length) % interests.length
+                const t = interests[next]
+                if (!t) return
+                setSelectedTopicId(t.id)
+                setTopicTitle(t.title)
+                const targetLang = profile.user.target_language || 'en'
+                const langName = ({ en: 'English', es: 'Spanish', pt: 'Portuguese', it: 'Italian' } as Record<string, string>)[targetLang] || targetLang
+                const ok = live.sendSystemUpdate(
+                  `[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. ` +
+                  `The student swiped to a NEW topic mid-session. ` +
+                  `From now on the conversation is about: "${t.title}" (category: ${t.category}). ` +
+                  `On your next turn, naturally bridge from whatever was just said into this new topic in ${langName}, ` +
+                  `with one short pivoting sentence + a fresh question/observation about "${t.title}". ` +
+                  `Do not say "let's change the subject" or announce it — make it feel organic.`
+                )
+                if (ok) toast.success(`Tema: ${t.title}`)
+              }
+              return (
+                <>
+                  <button className="convo-orb-arrow left" onClick={() => switchTo(-1)} aria-label="Tema anterior" title="Tema anterior">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <button className="convo-orb-arrow right" onClick={() => switchTo(1)} aria-label="Próximo tema" title="Próximo tema">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </>
+              )
+            })()}
           <div className="convo-orb-wrap">
             <AgentAudioVisualizerAura
               status={live.status}
@@ -1360,33 +1501,82 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
           <div className="side-tab active">Transcripción</div>
         </div>
 
-        {/* Keywords con check-marks — los que ya dijiste en verde ✓, los pendientes en gris ○ */}
+        {/* Keywords filtradas por target_language + clickables como "disparadores"
+            que mandan al coach un SILENT_SYSTEM_UPDATE para pivotear la charla
+            hacia esa palabra/frase. */}
         {keywords.length > 0 && (() => {
           const userText = live.transcript.filter(l => l.who === 'user').map(l => l.text.toLowerCase()).join(' ')
-          const usedCount = keywords.filter(k => userText.includes(k.toLowerCase())).length
+          const target = profile?.user?.target_language || 'en'
+          // Heurística de idioma por keyword. Para EN somos AGRESIVOS:
+          // - Excluir cualquier char no ASCII
+          // - Excluir tokens con terminaciones típicas de ES/PT (idad, encia,
+          //   amento, miento, cion, etc.) que no llevan acento pero NO son EN
+          const ES_PT_PATTERNS = /(idad|encia|encias|amento|amientos|amiento|miento|cion|ciones|sores|sora|ista|istas|tario|taria|miento|dores|dora|izar|aciones|imento|imentos|ência|ãoes?|imos\b|ado\b|ido\b|ables?$|íbles?$)/i
+          const matchesLang = (k: string): boolean => {
+            const s = k.toLowerCase()
+            const hasPt = /[ãõç]|ção|ões/i.test(s)
+            const hasEs = /[ñ]|ción\b|ciones\b|miento\b/.test(s)
+            const hasAccent = /[áéíóú]/i.test(s)
+            if (target === 'pt') return hasPt || (!hasEs && hasAccent)
+            if (target === 'es') return hasEs || (!hasPt && hasAccent) || (/^[a-záéíóúñ\s'-]+$/i.test(s) && ES_PT_PATTERNS.test(s))
+            if (target === 'en') {
+              // Solo ASCII básico + sin patrones ES/PT
+              if (/[áéíóúñãõç]/i.test(s)) return false
+              if (ES_PT_PATTERNS.test(s)) return false
+              return true
+            }
+            return true
+          }
+          const filtered = keywords.filter(matchesLang)
+          if (filtered.length === 0) return null
+          const usedCount = filtered.filter(k => userText.includes(k.toLowerCase())).length
+
+          const handleKeywordClick = (k: string) => {
+            const langName = ({ en: 'English', es: 'Spanish', pt: 'Portuguese', it: 'Italian' } as Record<string, string>)[target] || target
+            const ok = live.sendSystemUpdate(
+              `[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. ` +
+              `The student tapped a target keyword to pivot the conversation. ` +
+              `On your next turn, naturally steer the discussion toward the concept "${k}" in ${langName}, ` +
+              `building on whatever was just said. Use the word "${k}" in context within your next 1-2 sentences. ` +
+              `Do not announce the change; make it feel organic.`
+            )
+            if (ok) toast.success(`Pivoteando a "${k}"`)
+            else toast('Conectá primero')
+          }
+
           return (
             <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,.06)' }}>
-              <div style={{ fontSize: 11, color: 'rgba(232,236,234,.55)', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
-                <span>Keywords objetivo</span>
-                <span className="tnum">{usedCount}/{keywords.length}</span>
+              <div style={{ fontSize: 11, color: 'rgba(232,236,234,.55)', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 4, display: 'flex', justifyContent: 'space-between' }}>
+                <span>Disparadores ({target.toUpperCase()})</span>
+                <span className="tnum">{usedCount}/{filtered.length}</span>
+              </div>
+              <div style={{ fontSize: 10, color: 'rgba(232,236,234,.4)', marginBottom: 8 }}>
+                Tocá uno para que el tutor pivotee la charla hacia ese concepto.
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                {keywords.map((k) => {
+                {filtered.map((k) => {
                   const used = userText.includes(k.toLowerCase())
                   return (
-                    <span
+                    <button
                       key={k}
+                      type="button"
+                      onClick={() => handleKeywordClick(k)}
+                      title={`Pivotear conversación hacia "${k}"`}
                       style={{
                         fontSize: 11,
                         padding: '3px 8px',
                         borderRadius: 999,
                         background: used ? 'rgba(0,179,126,.2)' : 'rgba(255,255,255,.05)',
-                        color: used ? 'var(--primary)' : 'rgba(232,236,234,.6)',
-                        border: `1px solid ${used ? 'rgba(0,179,126,.4)' : 'rgba(255,255,255,.08)'}`,
+                        color: used ? 'var(--primary)' : 'rgba(232,236,234,.75)',
+                        border: `1px solid ${used ? 'rgba(0,179,126,.4)' : 'rgba(255,255,255,.10)'}`,
+                        cursor: 'pointer',
+                        transition: 'transform .12s, background .2s, border-color .2s',
                       }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.borderColor = 'rgba(0,179,126,.45)' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = used ? 'rgba(0,179,126,.4)' : 'rgba(255,255,255,.10)' }}
                     >
                       {used ? '✓ ' : ''}{k}
-                    </span>
+                    </button>
                   )
                 })}
               </div>
@@ -1414,10 +1604,12 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
             const line = live.transcript[lastAiIdx]
             return (
               <div className={`line ai`}>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.1em', opacity: 0.55, marginBottom: 3, textTransform: 'uppercase' }}>
-                  Tutor
-                </div>
-                {line.text}
+                <CoachPhrasePanels
+                  text={line.text}
+                  targetLang={profile?.user?.target_language || 'en'}
+                  baseLang={profile?.user?.base_language || 'es'}
+                  cefr={profile?.user?.cefr_level || 'B1'}
+                />
               </div>
             )
           })()}
@@ -1438,6 +1630,21 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const acRef = useRef<AudioContext | null>(null)
   const rafRef = useRef<number | null>(null)
+
+  // Confetti al montar — celebracion por terminar la clase con exito.
+  // 3 bursts escalonados desde los costados + 1 desde el centro.
+  useEffect(() => {
+    const colors = ['#00B37E', '#FFB800', '#22D3EE', '#7C5CFF', '#FF5E7E']
+    const fire = (origin: { x: number; y: number }, particles: number) => {
+      confetti({
+        particleCount: particles, spread: 70, startVelocity: 45,
+        origin, colors, ticks: 280, gravity: 0.9, scalar: 1.05,
+      })
+    }
+    fire({ x: 0.2, y: 0.7 }, 60)
+    setTimeout(() => fire({ x: 0.8, y: 0.7 }, 60), 180)
+    setTimeout(() => fire({ x: 0.5, y: 0.4 }, 80), 360)
+  }, [])
 
   const stopAudio = useCallback(() => {
     if (audioRef.current) {
@@ -1543,6 +1750,34 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
     <div className="report-overlay">
       {/* Izquierda: reporte */}
       <div className="report-pane-left">
+        {/* Header de exito — celebracion al cierre de la clase */}
+        <div style={{
+          marginBottom: 20, padding: '16px 20px',
+          background: 'linear-gradient(135deg, rgba(0,179,126,.14) 0%, rgba(0,179,126,.05) 100%)',
+          border: '1px solid rgba(0,179,126,.35)',
+          borderRadius: 16,
+          display: 'flex', alignItems: 'center', gap: 14,
+          animation: 'pg-fade-in .5s ease-out',
+        }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 12,
+            background: 'linear-gradient(135deg, #00B37E 0%, #008F63 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0, boxShadow: '0 6px 16px rgba(0,179,126,.4)',
+          }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--fg-1)', lineHeight: 1.2 }}>
+              ¡Clase terminada con éxito!
+            </div>
+            <div style={{ fontSize: 13, color: 'var(--fg-3)', marginTop: 2 }}>
+              Sumás progreso en tu camino — mirá lo que aprendiste abajo.
+            </div>
+          </div>
+        </div>
         <SessionReport
           sessionId={sessionId}
           initial={report}
@@ -1972,7 +2207,7 @@ function MapaView({ profile }: { profile: MeProfile | null }) {
     topicsAPI.list().then(setAllTopics).catch(() => {})
   }, [])
 
-  if (!profile) return <div className="mapa-page"><div style={{ color: 'var(--mp-fg-3)' }}>Cargando…</div></div>
+  if (!profile) return <PageSkel variant="grid" />
 
   const interests = profile.interests
   const progByTopic: Record<number, typeof profile.progress[number]> = {}
@@ -2381,7 +2616,7 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
   useEffect(() => {
     templatesAPI.list().then(setTemplates).catch(() => {})
   }, [])
-  if (!profile) return <div className="view">Cargando…</div>
+  if (!profile) return <PageSkel variant="hero" />
   const u = profile.user
   const initial = u.nombre[0]?.toUpperCase() || 'U'
 
@@ -3194,6 +3429,48 @@ const PEDAGOGY_INSTRUCTIONS = {
   provocador: 'Discrepá, contradecí, pedí al alumno que defienda sus ideas con datos. Tono exigente pero respetuoso.',
   ludico: 'Usá juegos verbales, micro-roleplays, humor liviano. Cero rigidez.',
 } as const
+
+/* ── Toolbar de presets de audio: 4 iconos abajo del estilo del tutor ─────── */
+const VOICE_PRESET_META: Record<string, { icon: JSX.Element; short: string; color: string }> = {
+  'voice-room':   { short: 'Grupal',  color: '#22D67A', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+  'min-latency':  { short: '1:1',     color: '#FFB800', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> },
+  'noisy-env':    { short: 'Ruido',   color: '#7C5CFF', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="2" x2="22" y2="22"/></svg> },
+  'studio-hifi':  { short: 'Hi-Fi',   color: '#22D3EE', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg> },
+}
+function VoicePresetsBar({ onPick }: { onPick: (preset: AudioPreset) => void | Promise<void> }) {
+  const [active, setActive] = useState<string>(() => {
+    const s = loadAudioSettings()
+    const match = PRESETS.find((p) =>
+      Object.keys(p.settings).every((k) => (s as never)[k] === (p.settings as never)[k]),
+    )
+    return match?.id || ''
+  })
+  return (
+    <div className="voice-presets" role="toolbar" aria-label="Presets de audio">
+      <span className="voice-presets-label">Audio</span>
+      {PRESETS.map((p) => {
+        const meta = VOICE_PRESET_META[p.id]
+        if (!meta) return null
+        const isActive = active === p.id
+        return (
+          <button
+            key={p.id}
+            type="button"
+            className={`vp-chip${isActive ? ' active' : ''}`}
+            onClick={() => { setActive(p.id); onPick(p) }}
+            title={`${p.name} — ${p.description}`}
+            aria-label={`Preset de audio: ${p.name}`}
+            aria-pressed={isActive}
+            style={{ ['--c' as string]: meta.color }}
+          >
+            {meta.icon}
+            <span className="vp-chip-txt">{meta.short}</span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
 
 function PedagogyPicker({ value, onChange }: { value: string; onChange: (id: string, label: string) => void }) {
   return (

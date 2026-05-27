@@ -76,7 +76,7 @@ QUICK_USERS = [
     {
         "email": "look@hablah.app",
         "password": "123",
-        "nombre": "Look",
+        "nombre": "Lucas",
         "apellido": "",
         "role": UserRole.student,
         "cefr_level": "A0",

@@ -15,19 +15,36 @@ extra. NO lo ve el alumno — es munición pedagógica para el tutor.
 """
 from __future__ import annotations
 
+import asyncio
+import time
 import httpx
 import json
+import logging
 from typing import Optional
 
 from core.config import settings
 
+log = logging.getLogger("topic_brief")
 
-# Modelo Flash explícito (no depender del GEMINI_MODEL default por si lo cambian
-# a uno más caro). Flash es rápido y barato — ideal para este pre-call.
+# Modelos: arrancamos con Flash (rapido + barato). Si Flash devuelve 429
+# (rate-limit), fallback a Pro que tiene cuota separada. Si Pro tambien
+# falla, devolvemos None y la sesion arranca sin brief.
 _FLASH_MODEL = "gemini-2.5-flash"
+_PRO_FALLBACK = "gemini-2.5-pro"
 
-# Timeout: máximo aceptable de espera antes de arrancar la sesión Live.
+# Timeout: maximo aceptable de espera antes de arrancar la sesion Live.
 _TIMEOUT_SECONDS = 8.0
+
+# Cache en memoria por (free_topic, target_lang, cefr, is_kid). TTL 1h.
+# Evita regenerar el mismo brief cuando el alumno entra varias veces al
+# mismo topico y baja la presion sobre el rate-limit de Gemini.
+_CACHE: dict[tuple, tuple[float, dict]] = {}
+_CACHE_TTL_SECONDS = 3600
+_CACHE_MAX_ENTRIES = 200
+_CACHE_LOCK = asyncio.Lock()
+
+def _cache_key(free_topic: str, target_lang: str, base_lang: str, cefr: str, is_kid: bool) -> tuple:
+    return (free_topic.strip().lower(), (target_lang or "en").lower(), (base_lang or "es").lower(), (cefr or "B1").upper(), bool(is_kid))
 
 
 def _lang_name(code: str) -> str:
@@ -125,10 +142,15 @@ async def build_topic_brief(
     if not free_topic or not free_topic.strip():
         return None
 
-    url = (
-        f"https://generativelanguage.googleapis.com/v1beta/models/"
-        f"{_FLASH_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
-    )
+    # 1) Cache lookup
+    key = _cache_key(free_topic, target_lang, base_lang, cefr, is_kid)
+    now = time.time()
+    async with _CACHE_LOCK:
+        hit = _CACHE.get(key)
+        if hit and (now - hit[0]) < _CACHE_TTL_SECONDS:
+            log.info("topic_brief: cache hit for %r", key)
+            return hit[1]
+
     prompt = _build_prompt(
         free_topic=free_topic.strip(),
         cefr=cefr or "B1",
@@ -144,19 +166,47 @@ async def build_topic_brief(
             "responseMimeType": "application/json",
         },
     }
-    try:
-        async with httpx.AsyncClient(timeout=_TIMEOUT_SECONDS) as client:
-            r = await client.post(url, json=payload)
-            r.raise_for_status()
-            data = r.json()
-            text = data["candidates"][0]["content"]["parts"][0]["text"]
-            brief = json.loads(text)
-    except Exception as e:
-        print(f"[topic_brief] error: {e}")
+
+    async def _try_model(model: str) -> Optional[dict]:
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{model}:generateContent?key={settings.GEMINI_API_KEY}"
+        )
+        try:
+            async with httpx.AsyncClient(timeout=_TIMEOUT_SECONDS) as client:
+                r = await client.post(url, json=payload)
+                if r.status_code == 429:
+                    log.warning("topic_brief: 429 rate-limit on %s for topic %r", model, free_topic[:60])
+                    return None
+                r.raise_for_status()
+                data = r.json()
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                parsed = json.loads(text)
+                if isinstance(parsed, dict):
+                    return parsed
+        except httpx.TimeoutException:
+            log.warning("topic_brief: timeout on %s for topic %r", model, free_topic[:60])
+        except Exception as e:
+            log.exception("topic_brief: error on %s: %s", model, e)
         return None
+
+    # 2) Flash first, Pro fallback si Flash falla (429 / timeout / network)
+    brief = await _try_model(_FLASH_MODEL)
+    if brief is None:
+        log.info("topic_brief: trying Pro fallback for topic %r", free_topic[:60])
+        brief = await _try_model(_PRO_FALLBACK)
 
     if not isinstance(brief, dict):
         return None
+
+    # 3) Cache write (con cap simple para evitar leak)
+    async with _CACHE_LOCK:
+        if len(_CACHE) >= _CACHE_MAX_ENTRIES:
+            # Drop oldest entry
+            oldest = min(_CACHE.items(), key=lambda kv: kv[1][0])[0]
+            _CACHE.pop(oldest, None)
+        _CACHE[key] = (now, brief)
+
     return brief
 
 

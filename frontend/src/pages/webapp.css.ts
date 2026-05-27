@@ -1,4 +1,26 @@
 export const WEBAPP_CSS = `
+/* ─── SKELETONS ──────────────────────────────────────────── */
+@keyframes pg-skel-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.skel {
+  display: block;
+  background: linear-gradient(90deg, var(--bg-2) 0%, var(--bg-3) 50%, var(--bg-2) 100%);
+  background-size: 200% 100%;
+  animation: pg-skel-shimmer 1.4s ease-in-out infinite;
+  border-radius: 10px;
+}
+.skel-page {
+  padding: 24px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+  animation: pg-skel-fade .25s ease-out;
+}
+@keyframes pg-skel-fade { from { opacity: 0; } to { opacity: 1; } }
+.skel-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.skel-hero { height: 88px; border-radius: 16px; }
+.skel-card { flex: 1 1 200px; height: 120px; border-radius: 14px; }
+.skel-line { height: 14px; border-radius: 6px; }
+.skel-line-lg { height: 22px; width: 40%; border-radius: 8px; }
+@media (max-width: 720px) { .skel-page { padding: 16px; } }
+
 .webapp-root {
   --primary: #00B37E; --primary-dark: #008F63;
   --primary-tint: #E6F7F1; --primary-soft: #C5EDDF;
@@ -252,6 +274,9 @@ export const WEBAPP_CSS = `
   grid-template-columns: 1fr 380px;
   overflow: hidden;
 }
+/* El main padre toma el bg dark mientras hay un convo-view adentro — evita
+   que se cuele blanco bajo el contenido al hacer scroll/bounce. */
+.webapp-root main.main:has(.convo-view) { background: #000; }
 .webapp-root .convo-stage { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 16px 24px; overflow: hidden; }
 .webapp-root .convo-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
 .webapp-root .convo-header h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; margin: 0; }
@@ -267,21 +292,33 @@ export const WEBAPP_CSS = `
    debajo + actions a la derecha". Todo en una sola fila horizontal
    con texto truncado a la izquierda y picker/acciones a la derecha. */
 .webapp-root .convo-header.convo-header-onerow {
-  flex-direction: row; align-items: center; gap: 12px;
-  margin-bottom: 16px; min-height: 36px;
+  flex-direction: column; align-items: stretch; gap: 8px;
+  margin-bottom: 14px;
+}
+.webapp-root .convo-h-row1 {
+  display: flex; align-items: center; gap: 12px; min-height: 36px;
+}
+.webapp-root .convo-h-row2 {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+@media (max-width: 720px) {
+  .webapp-root .convo-h-row2 { gap: 8px; border-top: none; padding-top: 0; }
 }
 .webapp-root .convo-header-info {
   display: flex; align-items: baseline; gap: 8px; min-width: 0; flex: 1;
   overflow: hidden;
 }
 .webapp-root .convo-h-title {
-  font-size: 15px; font-weight: 700; color: var(--fg-1, #fff);
+  /* convo-view siempre tiene bg dark; forzamos texto claro independiente del theme global */
+  font-size: 15px; font-weight: 700; color: #F4F6F5;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   letter-spacing: -.01em; flex-shrink: 1; min-width: 0;
 }
-.webapp-root .convo-h-sep { color: rgba(232,236,234,.35); font-weight: 700; flex-shrink: 0; }
+.webapp-root .convo-h-sep { color: rgba(244,246,245,.4); font-weight: 700; flex-shrink: 0; }
 .webapp-root .convo-h-meta {
-  font-size: 12px; color: rgba(232,236,234,.55); font-weight: 500;
+  font-size: 12px; color: rgba(244,246,245,.68); font-weight: 500;
   white-space: nowrap; flex-shrink: 0;
 }
 .webapp-root .convo-header-onerow .pedagogy-picker { flex-shrink: 0; }
@@ -317,6 +354,28 @@ export const WEBAPP_CSS = `
 }
 
 .webapp-root .convo-orb-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 12px; min-height: 0; overflow: hidden; }
+.webapp-root .convo-orb-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+  color: rgba(232,236,234,.7); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .18s ease, background .2s ease, border-color .2s ease, color .2s ease, box-shadow .25s ease;
+  z-index: 4; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.webapp-root .convo-orb-arrow.left { left: 16px; }
+.webapp-root .convo-orb-arrow.right { right: 16px; }
+.webapp-root .convo-orb-arrow:hover {
+  background: rgba(0,179,126,.18); border-color: rgba(0,179,126,.5);
+  color: #fff; transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 0 18px rgba(0,179,126,.35);
+}
+.webapp-root .convo-orb-arrow:active { transform: translateY(-50%) scale(.92); }
+@media (max-width: 880px) {
+  .webapp-root .convo-orb-arrow { width: 40px; height: 40px; }
+  .webapp-root .convo-orb-arrow.left { left: 8px; }
+  .webapp-root .convo-orb-arrow.right { right: 8px; }
+}
 .webapp-root .convo-orb-wrap {
   width: min(360px, 50vw, 42dvh);
   height: min(360px, 50vw, 42dvh);
@@ -324,16 +383,20 @@ export const WEBAPP_CSS = `
   flex-shrink: 0;
 }
 
-/* ============== REPORT OVERLAY (split-screen al cerrar charla) ============== */
+/* ============== REPORT OVERLAY (split-screen al cerrar charla)
+   Va DENTRO del AppShell (.main), nunca tapa el topbar/sidebar. */
 .webapp-root .report-overlay {
-  position: fixed; inset: 0; z-index: 9999;
+  position: relative;
+  width: 100%;
+  min-height: calc(100dvh - 56px);
   background: #000; color: white;
   display: grid; grid-template-columns: 1fr 1fr;
   overflow: hidden;
+  border-radius: 16px;
 }
 .webapp-root .report-pane-left {
   overflow-y: auto;
-  padding: 40px 32px 40px 48px;
+  padding: 32px 28px 32px 36px;
   background: var(--bg-1, #FAFBFA);
   color: var(--fg-1, #0D1412);
 }
@@ -341,21 +404,22 @@ export const WEBAPP_CSS = `
   position: relative; background: #000;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 40px 32px;
+  padding: 32px 28px;
 }
 @media (max-width: 880px) {
   .webapp-root .report-overlay {
-    /* En mobile: stack vertical, derecha arriba (orb), izquierda abajo (reporte scrolleable) */
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
+    border-radius: 0;
+    min-height: calc(100dvh - 110px);
   }
   .webapp-root .report-pane-right {
-    order: -1;  /* el orb arriba */
-    padding: calc(24px + env(safe-area-inset-top, 0px)) 20px 20px;
-    min-height: 38dvh; max-height: 45dvh;
+    order: -1;
+    padding: 24px 20px 20px;
+    min-height: 32dvh; max-height: 42dvh;
   }
   .webapp-root .report-pane-left {
-    padding: 22px 18px calc(100px + env(safe-area-inset-bottom, 0px));
+    padding: 22px 18px calc(80px + env(safe-area-inset-bottom, 0px));
   }
 }
 @media (max-width: 880px) {
@@ -621,9 +685,18 @@ export const WEBAPP_CSS = `
   .webapp-root .recent-row .when .day-l { font-size: 13px; }
   .webapp-root .convo-view {
     grid-template-columns: 1fr;
-    height: calc(100dvh - 64px - 64px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    /* Cubre TODA la altura disponible bajo el topbar. La mobile-bar (position:
+       fixed) flota por encima — agregamos padding-bottom para que el contenido
+       no quede tapado por ella. Asi el bg dark llega hasta el final, sin
+       franja blanca al hacer scroll. */
+    min-height: calc(100dvh - 64px - env(safe-area-inset-top, 0px));
+    height: auto;
+    overflow: visible;
   }
-  .webapp-root .convo-stage { padding: 14px 16px 16px; gap: 8px; position: relative; }
+  .webapp-root .convo-stage {
+    padding: 14px 16px calc(96px + env(safe-area-inset-bottom, 0px));
+    gap: 8px; position: relative;
+  }
   /* OBSOLETO: estas reglas mobile del header viejo (columna + Terminar absolute)
      quedan inactivas porque ahora el header usa la clase .convo-header-onerow
      que tiene su propio bloque mobile arriba. Las dejo silenciadas con .convo-header:not(.convo-header-onerow)
@@ -631,7 +704,18 @@ export const WEBAPP_CSS = `
   .webapp-root .convo-header:not(.convo-header-onerow) { flex-direction: column; align-items: stretch; margin-bottom: 12px; padding-top: 48px; padding-right: 96px; gap: 6px; }
   .webapp-root .convo-header:not(.convo-header-onerow) h2 { font-size: 16px; line-height: 1.2; padding-right: 0; }
   .webapp-root .convo-orb { width: 180px; height: 180px; }
-  .webapp-root .convo-side { display: none; }
+  /* En mobile mostramos el panel lateral como una seccion FULL-WIDTH debajo
+     del orbe (en vez de hidden). Asi siguen visibles los disparadores y el
+     transcript del coach con paneles por frase. */
+  .webapp-root .convo-side {
+    display: flex;
+    border-left: 0;
+    border-top: 1px solid rgba(255,255,255,.06);
+    background: rgba(10,16,14,.92);
+    min-height: 40dvh;
+  }
+  .webapp-root .convo-side .side-tabs { padding: 8px 14px; }
+  .webapp-root .convo-side .side-body { padding: 12px 14px; }
   .webapp-root .convo-turn { padding: 0 8px; max-height: min(35dvh, 220px); }
   .webapp-root .convo-turn .l { font-size: 10px; margin-bottom: 4px; }
   .webapp-root .convo-turn .q { font-size: 14.5px; line-height: 1.45; }
@@ -643,24 +727,29 @@ export const WEBAPP_CSS = `
   .webapp-root .history-row > button { display: none; }
   .webapp-root .history-row .h-topic span:nth-child(n+3) { display: none; }
   .webapp-root .profile-grid { grid-template-columns: 1fr; }
+  /* MobileBar compacta — hereda el bg/borde del tema actual via vars.
+     Antes tenia bg blanco hardcoded => no pegaba en dark mode. Ahora usa
+     var(--surface) y var(--border-1) que cambian con data-theme. */
   .webapp-root .mobile-bar {
     display: flex;
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(255,255,255,.95);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    background: color-mix(in oklab, var(--surface) 92%, transparent);
+    backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
     border-top: 1px solid var(--border-1);
-    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    padding: 4px 12px calc(4px + env(safe-area-inset-bottom));
     z-index: 50; justify-content: space-around;
   }
   .webapp-root .mobile-bar .mb-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-    font-size: 10px; font-weight: 600; color: var(--fg-3); padding: 6px;
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    font-size: 9.5px; font-weight: 600; color: var(--fg-3); padding: 4px 6px;
+    line-height: 1.1;
   }
+  .webapp-root .mobile-bar .mb-item svg { width: 20px; height: 20px; }
   .webapp-root .mobile-bar .mb-item.active { color: var(--primary); }
   .webapp-root .mobile-bar .mb-item.cta {
     background: linear-gradient(160deg, #00B37E 0%, #008F63 100%); color: white; border-radius: 999px;
-    width: 58px; height: 58px; flex: 0 0 58px; margin-top: -22px;
-    box-shadow: 0 8px 20px rgba(0,179,126,.45), 0 0 0 4px var(--bg-1);
+    width: 48px; height: 48px; flex: 0 0 48px; margin-top: -14px;
+    box-shadow: 0 6px 16px rgba(0,179,126,.4), 0 0 0 3px var(--surface);
     justify-content: center; gap: 0;
   }
   .webapp-root .mobile-bar .mb-item.cta:active { transform: scale(.94); }

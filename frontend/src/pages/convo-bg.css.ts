@@ -124,46 +124,67 @@ export const CONVO_BG_CSS = `
 .bg-picker .bgp-4 { background: #000; box-shadow: inset 2px 3px 0 #5EE0B0, inset -3px -2px 0 #00B37E, inset 5px -4px 0 #7CE7BD; }
 .bg-picker .bgp-5 { background: radial-gradient(circle, transparent 30%, #00B37E66 31%, transparent 33%, transparent 60%, #00B37E33 61%, transparent 63%); }
 
-/* ============== PEDAGOGY PICKER (estilo del tutor — chips con icono+label) ============== */
-.ped-picker { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-.ped-picker-label {
-  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-  color: rgba(232,236,234,.45);
+/* ============== TOOLBARS SIMÉTRICOS (Estilo + Audio) ──────────────────
+   Ambos picker tienen exactamente la misma anatomía:
+   - Label de 56px de ancho (mismo padding, mismo case, misma opacidad)
+   - Chips circulares 32x32, icon-only SIEMPRE (sin texto, label por title=)
+   - Mismo gap (8px), mismo border-radius, mismas transiciones
+   Así las dos filas se ven simétricas y "encajan" visualmente. */
+.ped-picker, .voice-presets {
+  display: inline-flex; align-items: center; gap: 8px;
+  flex-wrap: nowrap;
 }
-.ped-picker-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.ped-chip {
+.ped-picker-label, .voice-presets-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(232,236,234,.42);
+  width: 56px;  /* MISMO ancho para alinear chips entre filas */
+  flex-shrink: 0;
+}
+.ped-picker-chips {
+  display: inline-flex; align-items: center; gap: 8px; flex-wrap: nowrap;
+}
+.ped-chip, .vp-chip {
   --c: #00B37E;
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 11px; height: 30px;
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0;
   border-radius: 999px;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.10);
-  color: rgba(232,236,234,.72);
-  font-size: 12px; font-weight: 600; letter-spacing: .01em;
-  cursor: pointer; transition: transform .15s var(--ease), background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease), box-shadow .25s var(--ease);
+  color: rgba(232,236,234,.7);
+  cursor: pointer; flex-shrink: 0;
+  transition: transform .15s var(--ease), color .2s var(--ease),
+              border-color .2s var(--ease), background .2s var(--ease),
+              box-shadow .25s var(--ease);
 }
-.ped-chip:hover { transform: translateY(-1px); color: #fff; border-color: color-mix(in oklab, var(--c) 60%, transparent); }
-.ped-chip-ico { display: inline-flex; color: var(--c); }
-.ped-chip.active {
+.ped-chip svg, .vp-chip svg { color: var(--c); transition: color .2s var(--ease), filter .2s var(--ease); }
+.ped-chip:hover, .vp-chip:hover {
+  transform: translateY(-1px);
   color: #fff;
-  background: radial-gradient(120% 180% at 0% 50%, color-mix(in oklab, var(--c) 55%, transparent), color-mix(in oklab, var(--c) 22%, transparent) 60%, rgba(0,0,0,.4));
-  border-color: color-mix(in oklab, var(--c) 75%, transparent);
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 40%, transparent),
-              0 0 16px color-mix(in oklab, var(--c) 45%, transparent),
-              0 6px 22px color-mix(in oklab, var(--c) 30%, transparent);
+  border-color: color-mix(in oklab, var(--c) 55%, transparent);
 }
-.ped-chip.active .ped-chip-ico { color: #fff; filter: drop-shadow(0 0 4px color-mix(in oklab, var(--c) 80%, transparent)); }
-/* En tablet y mobile mostramos solo iconos en los chips de pedagogía
-   para que no rompan el layout en 2 renglones. El texto sigue accesible
-   por hover (title=) y aria-label. */
-@media (max-width: 1100px) {
-  .ped-picker-label { display: none; }
-  .ped-chip { padding: 5px 9px; height: 32px; font-size: 11px; width: 32px; justify-content: center; gap: 0; }
-  .ped-chip-txt { display: none; }
+.ped-chip.active, .vp-chip.active {
+  color: #fff;
+  background: color-mix(in oklab, var(--c) 18%, transparent);
+  border-color: color-mix(in oklab, var(--c) 65%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 35%, transparent),
+              0 0 16px color-mix(in oklab, var(--c) 40%, transparent);
 }
+.ped-chip.active svg, .vp-chip.active svg {
+  color: #fff;
+  filter: drop-shadow(0 0 4px color-mix(in oklab, var(--c) 80%, transparent));
+}
+.ped-chip-txt, .vp-chip-txt { display: none; }  /* SIEMPRE icon-only */
+
 @media (max-width: 720px) {
-  .ped-chip { height: 28px; width: 28px; }
+  .ped-picker-label, .voice-presets-label { width: 44px; font-size: 9px; }
+  .ped-chip, .vp-chip { width: 30px; height: 30px; }
 }
+@media (max-width: 480px) {
+  .ped-picker-label, .voice-presets-label { display: none; }
+}
+.ped-chip-ico { display: inline-flex; align-items: center; justify-content: center; }
+.ped-chip.active .ped-chip-ico { color: #fff; }
 
 /* ============== COACH PICKER (dropdown custom para tutor activo) ============== */
 .coach-picker { position: relative; display: inline-block; }

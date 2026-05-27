@@ -185,6 +185,10 @@ export const MAPA_CSS = `
 .mapa-page .ach.amber .at{color:#3A2A00}
 .mapa-page .ach.locked{opacity:.6}
 .mapa-page .ach.locked .ai{background:var(--mp-bg-3);color:var(--mp-fg-4)}
+[data-theme="dark"] .mapa-page .ach.unlocked{background:linear-gradient(160deg,#062B25,#0A4A37);border-color:rgba(0,179,126,.28)}
+[data-theme="dark"] .mapa-page .ach.unlocked .at{color:#7CE7BD}
+[data-theme="dark"] .mapa-page .ach.amber{background:linear-gradient(160deg,#2A1F00,#3D2C00);border-color:rgba(255,184,0,.32)}
+[data-theme="dark"] .mapa-page .ach.amber .at{color:#FFD86B}
 
 /* Next routes grid */
 .mapa-page .mp-next-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}

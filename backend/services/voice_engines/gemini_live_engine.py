@@ -146,7 +146,10 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
             "generationConfig": {
                 "responseModalities": ["AUDIO"],
                 "speechConfig": {
-                    "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Aoede"}},
+                    # Voz Kore: tonalidad calida, mejor resolucion percibida que
+                    # Aoede (la default). Si el template define su propia voz,
+                    # podemos override aca, pero la default es Kore.
+                    "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": getattr(ctx, "voice_name", None) or "Kore"}},
                 },
             },
             "realtimeInputConfig": {
@@ -177,6 +180,30 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
         }
     }
     await google_ws.send(json.dumps(setup))
+
+    # Esperamos la respuesta de "setupComplete" de Gemini. Si en vez de eso
+    # llega un error (ej 429 rate-limit, 400 invalid prompt), lo capturamos y
+    # logueamos en vez de tragarlo silenciosamente. Antes el WS quedaba abierto
+    # pero sin audio → cliente cerraba en 4-5s pensando que nada andaba.
+    try:
+        first_msg = await asyncio.wait_for(google_ws.recv(), timeout=10.0)
+        try:
+            parsed = json.loads(first_msg)
+        except Exception:
+            parsed = {"raw": first_msg[:300]}
+        if "setupComplete" in parsed:
+            log.info("gemini_live: setup OK (model=%s, free_topic=%s, is_kid=%s)", LIVE_MODEL, getattr(ctx, "free_topic", None), is_kid)
+        else:
+            log.error("gemini_live: setup did NOT return setupComplete. First message: %s", str(parsed)[:600])
+            # Igualmente reenviamos: el WS podria todavia procesar; pero al menos quedo en el log.
+    except asyncio.TimeoutError:
+        log.error("gemini_live: timeout esperando setupComplete (10s) — sesion seguramente caida")
+        try: await google_ws.close()
+        except Exception: pass
+        raise RuntimeError("gemini_live_setup_timeout")
+    except Exception as e:
+        log.exception("gemini_live: error leyendo setupComplete: %s", e)
+        raise
 
     if transcript_so_far:
         # Renovacion: reinyectamos el historial reciente como contexto al nuevo modelo
@@ -291,10 +318,15 @@ class GeminiLiveEngine(VoiceEngine):
                         text = (msg.get("text") or "").strip()
                         if text:
                             try:
+                                # turnComplete=False: inyectamos la instruccion en el contexto
+                                # del modelo pero NO disparamos un turno de respuesta. El modelo
+                                # incorporara la regla cuando el alumno hable luego con audio.
+                                # Asi al cambiar estilo / pivotear keyword NO arranca a hablar
+                                # solo como si el user hubiera dicho algo.
                                 await gws_holder["ws"].send(json.dumps({
                                     "clientContent": {
                                         "turns": [{"role": "user", "parts": [{"text": text}]}],
-                                        "turnComplete": True,
+                                        "turnComplete": False,
                                     }
                                 }))
                             except websockets.ConnectionClosed:

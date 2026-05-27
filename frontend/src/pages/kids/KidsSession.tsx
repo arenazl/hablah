@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { ArrowLeft, Mic, RefreshCw, Square, Lock } from 'lucide-react'
 import { toast } from 'sonner'
+import confetti from 'canvas-confetti'
 import { AgentAudioVisualizerAura } from '../../components/agents-ui/agent-audio-visualizer-aura'
 import { useLiveVoice } from '../../hooks/useLiveVoice'
 import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
@@ -206,6 +207,7 @@ export function KidsSession() {
     }
   }
 
+  const [showSuccess, setShowSuccess] = useState(false)
   const endSession = async () => {
     live.stop()
     const kidsToken = localStorage.getItem(KIDS_TOKEN_KEY)
@@ -218,7 +220,18 @@ export function KidsSession() {
         })
       } catch {}
     }
-    navigate('/kids')
+    // Mostramos overlay de exito con confetti kid-style antes de volver.
+    setShowSuccess(true)
+    const colors = ['#FF5E7E', '#FFC83D', '#22D67A', '#22D3EE', '#7C5CFF', '#FF8A4C']
+    const burst = (origin: { x: number; y: number }) => confetti({
+      particleCount: 90, spread: 90, startVelocity: 50,
+      origin, colors, ticks: 320, gravity: 0.85, scalar: 1.3,
+      shapes: ['circle', 'square'],
+    })
+    burst({ x: 0.5, y: 0.55 })
+    setTimeout(() => burst({ x: 0.2, y: 0.6 }), 220)
+    setTimeout(() => burst({ x: 0.8, y: 0.6 }), 380)
+    setTimeout(() => navigate('/kids'), 3200)
   }
 
   // Status visual del orb: 'speaking' siempre que haya audio activo
@@ -241,6 +254,51 @@ export function KidsSession() {
   return (
     <div className="kids-session-root">
       <style>{CSS}</style>
+
+      {showSuccess && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'radial-gradient(circle at 50% 40%, rgba(124,92,255,.35) 0%, rgba(10,12,28,.96) 60%, rgba(5,7,16,1) 100%)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: 24, animation: 'kidsuccess-in .35s cubic-bezier(.2,.8,.2,1)',
+        }}>
+          <style>{`
+            @keyframes kidsuccess-in { from { opacity:0; transform: scale(.85); } to { opacity:1; transform: scale(1); } }
+            @keyframes kidsuccess-pop { 0%{transform:scale(0) rotate(-12deg);opacity:0} 60%{transform:scale(1.1) rotate(6deg);opacity:1} 100%{transform:scale(1) rotate(0);opacity:1} }
+            @keyframes kidsuccess-wobble { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+          `}</style>
+          <div style={{
+            width: 140, height: 140, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #FFC83D 0%, #FF8A4C 60%, #FF5E7E 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 20px 60px rgba(255,138,76,.5), inset 0 4px 0 rgba(255,255,255,.35)',
+            animation: 'kidsuccess-pop .8s cubic-bezier(.34,1.56,.64,1)',
+            marginBottom: 24,
+          }}>
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 12l2 2 4-4"/>
+              <circle cx="12" cy="12" r="9"/>
+            </svg>
+          </div>
+          <div style={{
+            fontSize: 'clamp(28px, 6vw, 44px)', fontWeight: 900, color: 'white',
+            textAlign: 'center', letterSpacing: '-.02em', lineHeight: 1.1,
+            animation: 'kidsuccess-wobble 1.4s ease-in-out infinite',
+            textShadow: '0 4px 24px rgba(0,0,0,.5)', marginBottom: 8,
+          }}>
+            ¡Bien hecho, {kid.name}!
+          </div>
+          <div style={{
+            fontSize: 18, color: 'rgba(255,255,255,.85)', textAlign: 'center',
+            fontWeight: 600, maxWidth: 360, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center',
+          }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFC83D" stroke="none" aria-hidden>
+              <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/>
+            </svg>
+            Terminaste la clase. ¡Sos un crack!
+          </div>
+        </div>
+      )}
 
       {renewBanner && (
         <div className={`kids-renew-banner ${renewBanner.kind}`}>

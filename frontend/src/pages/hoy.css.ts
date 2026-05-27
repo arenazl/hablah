@@ -72,6 +72,12 @@ export const HOY_CSS = `
 .hoy-page .hp-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--hp-r-pill);font-size:11.5px;font-weight:600;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);color:#fff;backdrop-filter:blur(4px)}
 .hoy-page .hp-chip.solid{background:rgba(255,255,255,.96);color:var(--hp-green-900);border-color:transparent}
 .hoy-page .hp-chip.amber{background:rgba(255,184,0,.18);border-color:rgba(255,184,0,.4);color:#FFE9A6}
+.hoy-page .hp-feedback{display:inline-flex;align-items:center;gap:4px;margin-left:4px}
+.hoy-page .hp-fb{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;cursor:pointer;transition:transform .15s ease,background .2s ease,border-color .2s ease,box-shadow .25s ease;padding:0}
+.hoy-page .hp-fb:hover{transform:translateY(-1px) scale(1.05)}
+.hoy-page .hp-fb-like:hover{background:rgba(34,214,122,.22);border-color:rgba(34,214,122,.55);color:#fff;box-shadow:0 0 14px rgba(34,214,122,.35)}
+.hoy-page .hp-fb-dislike:hover{background:rgba(229,72,77,.22);border-color:rgba(229,72,77,.55);color:#fff;box-shadow:0 0 14px rgba(229,72,77,.35)}
+.hoy-page .hp-fb:active{transform:translateY(0) scale(.94)}
 .hoy-page .hp-chip svg{width:13px;height:13px}
 .hoy-page .hp-hero h2{font-family:var(--hp-font-display);font-weight:700;letter-spacing:-0.025em;font-size:46px;line-height:1.02;margin:6px 0 4px}
 .hoy-page .hp-hero h2 small{display:block;font-weight:500;font-size:18px;color:rgba(255,255,255,.7);letter-spacing:-0.01em;margin-top:8px;max-width:480px;line-height:1.4}
@@ -86,6 +92,10 @@ export const HOY_CSS = `
 .hoy-page .hp-btn-primary:hover{background:#F2FBF7}
 .hoy-page .hp-btn-ghost{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff}
 .hoy-page .hp-btn-ghost:hover{background:rgba(255,255,255,.16)}
+.hoy-page .hp-btn-secondary{background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.32);color:#fff;font-weight:700}
+.hoy-page .hp-btn-secondary:hover{background:rgba(255,255,255,.24);border-color:rgba(255,255,255,.5);transform:translateY(-1px)}
+.hoy-page .hp-btn-secondary:active{transform:translateY(0) scale(.98)}
+.hoy-page .hp-btn-lg{height:56px;padding:0 28px;font-size:16px;border-radius:14px}
 .hoy-page .hp-mic-dot{width:10px;height:10px;border-radius:50%;background:var(--hp-green);box-shadow:0 0 0 4px rgba(0,179,126,.25);animation:hp-pulse 1.8s ease-out infinite}
 @keyframes hp-pulse{0%{box-shadow:0 0 0 0 rgba(0,179,126,.45)}80%{box-shadow:0 0 0 10px rgba(0,179,126,0)}100%{box-shadow:0 0 0 0 rgba(0,179,126,0)}}
 

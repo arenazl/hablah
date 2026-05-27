@@ -471,6 +471,12 @@ export interface ReactShaderToyProps {
    * reducing CPU/GPU usage when the shader is off-screen.
    */
   animateWhenNotVisible?: boolean;
+
+  /**
+   * Cap the render frame rate. Default 60 (one frame per rAF tick).
+   * Lower to ~30 for big savings in CPU/GPU usage with negligible visual loss.
+   */
+  targetFps?: number;
 }
 
 export function ReactShaderToy({
@@ -488,8 +494,12 @@ export function ReactShaderToy({
   onError = console.error,
   onWarning = console.warn,
   animateWhenNotVisible = false,
+  targetFps = 60,
   ...canvasProps
 }: ReactShaderToyProps & ComponentPropsWithoutRef<'canvas'>) {
+  const frameIntervalRef = useRef<number>(1000 / Math.max(1, targetFps));
+  const lastFrameTsRef = useRef<number>(0);
+  useEffect(() => { frameIntervalRef.current = 1000 / Math.max(1, targetFps); }, [targetFps]);
   // Refs for WebGL state
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const glRef = useRef<WebGLRenderingContext | null>(null);
@@ -848,6 +858,15 @@ export function ReactShaderToy({
   const drawScene = (timestamp: number) => {
     const gl = glRef.current;
     if (!gl) return;
+    // FPS throttle: skip frame if not enough time elapsed since last render
+    const elapsed = timestamp - lastFrameTsRef.current;
+    if (elapsed < frameIntervalRef.current - 0.5) {
+      if (animateWhenNotVisibleRef.current || isVisibleRef.current) {
+        animFrameIdRef.current = requestAnimationFrame(drawScene);
+      }
+      return;
+    }
+    lastFrameTsRef.current = timestamp;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBufferRef.current);

@@ -516,16 +516,29 @@ def build_super_prompt(
     # frases que el coach ya le enseno en sesiones anteriores. El coach las
     # debe EVITAR esta vez y traer cosas nuevas del mismo mini-mundo.
     history_block = ""
-    if topic_visits > 0 and previous_phrases:
-        phrases_txt = "\n".join(f'  · "{p}"' for p in previous_phrases[:10])
+    if topic_visits > 0:
+        phrases_txt = "\n".join(f'  · "{p}"' for p in previous_phrases[:10]) if previous_phrases else "  (sin frases registradas)"
+        # Sub-escenarios sugeridos por visita: rotan para forzar nueva narrativa.
+        SUB_ANGLES = [
+            "una historia personal o recuerdo del alumno",
+            "un escenario hipotético o ficción ('imaginá que...')",
+            "una comparación entre épocas/países/culturas",
+            "un debate de opiniones (pros vs contras)",
+            "un caso concreto del mundo real (noticia, dato curioso, anécdota)",
+            "un rol-play (alumno y tutor asumen personajes en la situación)",
+        ]
+        angle = SUB_ANGLES[(topic_visits - 1) % len(SUB_ANGLES)]
         history_block = (
             f"\nHISTORIAL DE ESTE TOPICO PARA ESTE ALUMNO\n"
             f"- Ya hiciste esta clase {topic_visits} vez/veces antes con el.\n"
             f"- Frases que YA le ensenaste (NO las repitas esta vez):\n"
             f"{phrases_txt}\n"
-            f"- ESTA VEZ: trae palabras/frases NUEVAS del mismo mini-mundo del topico.\n"
-            f"  Variá el angulo, usá vocabulario distinto al de las clases previas.\n"
-            f"  Por ej si en familia ya viste mom/dad/brother, esta vez probá grandma/uncle/cousin.\n"
+            f"- ESTA VEZ: cambiá la NARRATIVA, no solo las frases.\n"
+            f"  Ángulo sugerido para esta sesión: **{angle}**.\n"
+            f"  Aún dentro del mismo topic, abordá el tema desde ese ángulo —\n"
+            f"  arrancá con un hook/pregunta acorde, traé vocabulario que no usaste antes,\n"
+            f"  y construí la conversación alrededor de ese sub-escenario.\n"
+            f"  NO repitas la apertura ni los ejemplos de visitas previas.\n"
         )
 
     if topic:
@@ -564,7 +577,18 @@ def build_super_prompt(
             from services.topic_brief import format_brief_for_prompt
             topic_block += "\n\n" + format_brief_for_prompt(topic_brief, free_topic.strip())
     else:
-        topic_block = "TÓPICO DE HOY\n- Libre. Preguntale al alumno qué le interesa charlar."
+        topic_block = (
+            "TÓPICO DE HOY (modo TEMA LIBRE — el alumno todavia no eligio)\n"
+            "- Tu PRIMER turno debe ser EXACTAMENTE este patron:\n"
+            "    1) Saludo corto por nombre.\n"
+            "    2) Pregunta abierta: '¿De qué te gustaría que hablemos hoy? Contame lo que se te ocurra — "
+            "cualquier tema, un hobby, algo que te pasó, lo que sea.'\n"
+            "    3) Esperá la respuesta del alumno. NO propongas temas, NO des opciones.\n"
+            "- Cuando el alumno responda (ej: 'dinosaurios', 'mi perro', 'el ultimo libro que lei'),\n"
+            "  CONFIRMÁ el tema con entusiasmo en una frase y arrancá la charla real con los 3 pasos\n"
+            "  del ARRANQUE normal (intro al tema con dato concreto + experiencia personal tuya + pregunta).\n"
+            "- Si el alumno dice un tema muy ambiguo, repreguntá UNA vez para acotarlo."
+        )
 
     errors_block = ""
     if recent_errors:
@@ -659,7 +683,18 @@ un nombre nuevo, significa que entro otra persona. A partir de ese momento:
         f"{errors_block}\n\n"
         f"{rules}\n\n"
         f"IDIOMA: hablás SIEMPRE en {target_lang_name}. Nunca en español, salvo que el alumno se trabe completamente.\n\n"
-        f"ARRANQUE: empezá YA con un saludo + una pregunta concreta. Tu primer turno es CORTO. "
-        f"Ejemplo: 'Hey {user.nombre}! Pulp Fiction, huh — solid pick. What scene grabbed you the first time you watched it?'\n"
+        f"ARRANQUE — TRES PASOS OBLIGATORIOS (en este orden, en {target_lang_name}, todo en TU primer turno):\n"
+        f"  1) SALUDO + INTRO breve al tema (1 oración, no genérica — un dato concreto, observación o ángulo específico del tópico).\n"
+        f"  2) EXPERIENCIA PERSONAL TUYA o anécdota corta relacionada al tema (1 oración — 'I remember when…' / 'A friend of mine…' / 'Last week I read…').\n"
+        f"  3) RECIÉN AHÍ una pregunta abierta y concreta al alumno (1 oración).\n"
+        f"NO ARRANQUES nunca con la pregunta de una. NUNCA con 'Have you ever…' como apertura sin el setup previo.\n"
+        f"Total del primer turno: 3-5 oraciones máximo. Tono cálido, conversacional, como un amigo que sabe del tema.\n"
+        f"EJEMPLO BUENO (tema = Pulp Fiction):\n"
+        f"  'Hey {user.nombre}! Pulp Fiction is one of those movies that completely rewrote how dialogue works in cinema — "
+        f"all those long, weird conversations between hitmen feel like real life. "
+        f"I rewatched it last month and the Royale with Cheese scene still cracks me up every time. "
+        f"What scene stuck with you the most?'\n"
+        f"EJEMPLO MALO (lo que NO querés hacer):\n"
+        f"  'Hey {user.nombre}! Have you ever watched Pulp Fiction?'  ← ESTO ES MALO: pregunta directa sin intro ni experiencia.\n"
         f"{admin_block}"
     )

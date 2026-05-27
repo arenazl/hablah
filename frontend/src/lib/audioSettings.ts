@@ -104,6 +104,40 @@ export const PRESETS: AudioPreset[] = [
       playbackCushionSeconds: 0.01,
     },
   },
+  {
+    id: 'noisy-env',
+    name: 'Entorno ruidoso (cafe, calle, auto)',
+    description: 'Filtros agresivos (NS/AGC/AEC) + VAD con umbral alto y cola larga. Recomendado cuando hay ruido de fondo o conexion 4G.',
+    settings: {
+      useAudioWorklet: true,
+      workletBufferSamples: 2048,
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+      vadEnabled: true,
+      vadThreshold: 0.015,
+      vadTailFrames: 5,
+      playbackCushionSeconds: 0.06,
+      catchUpEnabled: true,
+      catchUpThresholdSeconds: 2.0,
+    },
+  },
+  {
+    id: 'studio-hifi',
+    name: 'Estudio / auriculares hi-fi',
+    description: 'Sin AEC/NS/AGC para conservar timbre natural de la voz. Buffer chico, sample rate alto. Solo si usas auriculares cerrados y entorno silencioso.',
+    settings: {
+      useAudioWorklet: true,
+      workletBufferSamples: 1024,
+      captureSampleRate: 48000,
+      playbackSampleRate: 48000,
+      echoCancellation: false,
+      noiseSuppression: false,
+      autoGainControl: false,
+      vadEnabled: false,
+      playbackCushionSeconds: 0.015,
+    },
+  },
 ]
 
 // v2: forzar reset porque cambiamos defaults (VAD OFF, antes era ON).

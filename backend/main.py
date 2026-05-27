@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
-from api import auth, users, push, templates, topics, sessions, me, alumnos, dashboard, tts, voice, onboarding, kids, rooms, admin_directives, frontend_errors
+from api import auth, users, push, templates, topics, sessions, me, alumnos, dashboard, tts, voice, onboarding, kids, rooms, admin_directives, frontend_errors, grammar
 
 
 @asynccontextmanager
@@ -50,3 +50,4 @@ app.include_router(kids.router, prefix="/api/kids", tags=["kids"])
 app.include_router(rooms.router, prefix="/api/rooms", tags=["rooms"])
 app.include_router(admin_directives.router, prefix="/api/admin", tags=["admin"])
 app.include_router(frontend_errors.router, prefix="/api/errors", tags=["errors"])
+app.include_router(grammar.router, prefix="/api/grammar", tags=["grammar"])

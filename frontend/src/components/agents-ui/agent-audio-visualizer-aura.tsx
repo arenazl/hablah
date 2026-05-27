@@ -180,6 +180,7 @@ interface AuraShaderProps {
   colorShift?: number
   brightness?: number
   themeMode?: 'dark' | 'light'
+  targetFps?: number
 }
 
 function AuraShader({
@@ -193,6 +194,7 @@ function AuraShader({
   colorShift = 1.0,
   brightness = 1.0,
   themeMode = 'dark',
+  targetFps = 60,
   className,
   ...props
 }: AuraShaderProps & ComponentProps<'div'>) {
@@ -202,7 +204,8 @@ function AuraShader({
     <div className={className} {...props}>
       <ReactShaderToy
         fs={shaderSource}
-        devicePixelRatio={globalThis.devicePixelRatio ?? 1}
+        targetFps={targetFps}
+        devicePixelRatio={Math.min(globalThis.devicePixelRatio ?? 1, 1.5)}
         uniforms={{
           uSpeed:      { type: '1f',  value: speed },
           uBlur:       { type: '1f',  value: blur },
@@ -247,6 +250,8 @@ export interface AgentAudioVisualizerAuraProps {
   colorShift?: number
   themeMode?: 'dark' | 'light'
   size?: 'icon' | 'sm' | 'md' | 'lg' | 'xl'
+  /** FPS objetivo. Default 30 para ahorrar CPU/GPU; bajar a 24 en mobile si sigue pesado. */
+  targetFps?: number
 }
 
 /**
@@ -264,6 +269,7 @@ export function AgentAudioVisualizerAura({
   color = DEFAULT_COLOR,
   colorShift = 0.1,
   themeMode = 'dark',
+  targetFps = 30,
   className,
   ...props
 }: AgentAudioVisualizerAuraProps &
@@ -286,6 +292,7 @@ export function AgentAudioVisualizerAura({
       amplitude={amplitude}
       frequency={frequency}
       brightness={brightness}
+      targetFps={targetFps}
       className={cn(AgentAudioVisualizerAuraVariants({ size }), className)}
       {...props}
     />
