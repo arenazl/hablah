@@ -251,7 +251,10 @@ class CascadeEngine(VoiceEngine):
 
         target_lang = getattr(ctx, "target_language", "en")
         whisper_lang = _normalize_lang(target_lang)
-        voice = getattr(ctx, "voice_id", None) or TTS_VOICE
+        # ctx.voice_id viene del template (ElevenLabs voice_id). Gemini TTS
+        # solo acepta nombres como aoede/puck/kore. Ignoramos ctx.voice_id y
+        # usamos siempre el default de Gemini hasta tener un mapeo template→gem.
+        voice = TTS_VOICE
         sys_prompt = getattr(ctx, "super_prompt", "") or ""
 
         trace.event("cascade.session.start", session_id=session_id,
