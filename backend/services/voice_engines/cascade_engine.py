@@ -152,31 +152,29 @@ def _rms_of_pcm_chunk(pcm_bytes: bytes) -> float:
 _SENTENCE_BOUNDARY_RE = re.compile(r"(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÑ¿¡])")
 
 
-def _split_into_sentences(text: str, max_sentences: int = 30) -> list[str]:
-    """Divide texto en oraciones para TTS chunked (latencia perceptual).
+def _split_into_chunks_2(text: str) -> list[str]:
+    """Divide texto en MAX 2 chunks: primera oración + resto.
 
-    El TTS de Gemini tarda ~5s por respuesta completa de 300 chars. Si en vez de
-    pedir todo el audio de una, lo pedimos oración por oración, el primer audio
-    le llega al cliente en ~1.5s (1ra oración) en vez de 5s.
+    Por qué 2 y no N: el streaming por oración (5+ chunks/turno) reventó el
+    rate limit RPM del TTS (logs sesiones 325-329 = HTTP 429 masivos). Con 2
+    chunks ganamos casi toda la mejora de latencia perceptual (la 1ra
+    oración llega en ~1.5s) sin multiplicar las llamadas.
     """
     text = text.strip()
     if not text:
         return []
     parts = _SENTENCE_BOUNDARY_RE.split(text)
-    out = [p.strip() for p in parts if p.strip()]
-    # Coalescer oraciones muy cortas (<25 chars) con la siguiente para no hacer
-    # demasiadas llamadas TTS para frases tipo "Right." "Yes.".
-    merged: list[str] = []
-    buf = ""
-    for p in out:
-        if len(buf) < 25:
-            buf = (buf + " " + p).strip() if buf else p
-        else:
-            merged.append(buf)
-            buf = p
-    if buf:
-        merged.append(buf)
-    return merged[:max_sentences]
+    parts = [p.strip() for p in parts if p.strip()]
+    if len(parts) <= 1:
+        return [text]
+    # Si la 1ra oración es muy corta (<25 chars), juntar con la 2da.
+    first = parts[0]
+    rest_start = 1
+    if len(first) < 25 and len(parts) > 1:
+        first = (first + " " + parts[1]).strip()
+        rest_start = 2
+    rest = " ".join(parts[rest_start:]).strip()
+    return [first, rest] if rest else [first]
 
 
 # ─── API calls ────────────────────────────────────────────────────────
@@ -233,7 +231,7 @@ async def _llm_flash_text(
         "generationConfig": {
             "temperature": 0.85,
             "topP": 0.95,
-            "maxOutputTokens": 400,
+            "maxOutputTokens": 220,
             "thinkingConfig": {"thinkingBudget": 0},
         },
     }
@@ -286,6 +284,11 @@ async def _tts_gemini(
     try:
         async with httpx.AsyncClient(timeout=20.0) as cli:
             r = await cli.post(url, json=payload)
+            # Retry-once en 429 con backoff corto. El TTS chunked dispara N calls
+            # por turno y eventualmente roza el RPM del free tier.
+            if r.status_code == 429:
+                await asyncio.sleep(1.5)
+                r = await cli.post(url, json=payload)
             if r.status_code != 200:
                 trace.warn("cascade.tts.failed",
                            session_id=session_id, status=r.status_code,
@@ -363,7 +366,7 @@ class CascadeEngine(VoiceEngine):
 
         async def _speak_streamed(text: str) -> bool:
             """TTS por oracion → stream incremental. Devuelve True si se completo."""
-            sentences = _split_into_sentences(text)
+            sentences = _split_into_chunks_2(text)
             if not sentences:
                 return False
             coach_speaking.set()
