@@ -90,8 +90,12 @@ def get_engine(name: Optional[str] = None) -> VoiceEngine:
         from services.voice_engines.elevenlabs_pipeline_engine import ElevenLabsPipelineEngine
         return ElevenLabsPipelineEngine()
 
+    if engine_name == "cascade":
+        from services.voice_engines.cascade_engine import CascadeEngine
+        return CascadeEngine()
+
     raise ValueError(f"VoiceEngine desconocido: {engine_name}")
 
 
 def available_engines() -> list[str]:
-    return ["gemini_live", "elevenlabs_pipeline"]
+    return ["gemini_live", "elevenlabs_pipeline", "cascade"]
