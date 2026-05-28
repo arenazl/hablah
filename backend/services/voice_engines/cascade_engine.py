@@ -23,9 +23,11 @@ import asyncio
 import base64
 import io
 import logging
+import re
 import struct
 import time
 import wave
+from datetime import datetime, timezone
 from typing import AsyncIterator, Optional
 
 import httpx
@@ -58,8 +60,52 @@ TTS_VOICE = "Aoede"
 
 # VAD basado en energía RMS.
 VAD_SILENCE_RMS_THRESHOLD = 0.005
-VAD_END_OF_SPEECH_SECONDS = 1.2
+VAD_END_OF_SPEECH_SECONDS = 2.0  # subido desde 1.2: cadencia natural tiene pausas
 VAD_MIN_SPEECH_SECONDS = 0.3
+# Si el user habla durante el TTS del coach, cancelamos el resto del audio.
+VAD_BARGE_IN_RMS_THRESHOLD = 0.02  # más alto que silencio: solo cuenta si claramente habla
+
+
+def _runtime_addon_block(target_language: str) -> str:
+    """Bloque prepended al system_instruction. Cubre fallas observadas en
+    session 324 (audit del 2026-05-28):
+      - Coach no sabia la fecha actual ("World Cup is in 2026" siendo 2026)
+      - Coach usaba markdown (*so* overrated) que el TTS lee literal
+      - Filler words repetidos ("Oh, that's a big one!", "Right?", "Nice!")
+      - Loops cuando el alumno repetia ("Sure but isn't that reductionist?")
+    """
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    year = today[:4]
+    return f"""[RUNTIME RULES — non-negotiable, applied BEFORE the system prompt below]
+
+CURRENT DATE: {today}. We are in {year}.
+You exist in this point in time. Any year before {year} is the PAST.
+The next World Cup is in 2026. If the student mentions current events,
+trust their timing reference. Never claim "X is in {year}" as if it were future.
+
+OUTPUT FORMAT (you are speaking out loud through TTS):
+- NEVER use markdown. No *asterisks*, no **bold**, no _underscores_, no `backticks`.
+- TTS reads asterisks and backticks LITERALLY. Plain text only.
+- No bullet points, no numbered lists. Just sentences.
+
+BANNED OPENINGS (do NOT start a turn with any of these):
+- "Oh, that's..." / "Oh, definitely!" / "Oh, interesting!"
+- "Nice!" / "Great!" / "Wow!" / "Awesome!"
+- "Right?" / "Absolutely!" / "Totally!"
+- "That's a fair point" / "That's a big one" / "That's interesting"
+- "Hey [name]!" as a turn opener after the first turn
+- ANY exclamation-as-acknowledgement before answering
+
+If your draft starts with any of these, rewrite the first sentence.
+Start directly with content: a fact, a question, a reframe, a counter-point.
+
+NO-LOOP RULE:
+If the student repeats the same phrase twice (e.g. "isn't that reductionist?"),
+you have ALREADY heard them. Do NOT ask for clarification again.
+Take a position: agree, disagree, or admit you don't know — then move forward.
+
+LANGUAGE: respond in {target_language} only, unless the system prompt overrides.
+"""
 
 # Mapeo CEFR/idioma → código ISO Whisper
 _LANG_MAP = {
@@ -101,6 +147,36 @@ def _rms_of_pcm_chunk(pcm_bytes: bytes) -> float:
     samples = struct.unpack(f"<{n_samples}h", pcm_bytes)
     sq = sum(s * s for s in samples) / n_samples
     return (sq ** 0.5) / 32768.0
+
+
+_SENTENCE_BOUNDARY_RE = re.compile(r"(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÑ¿¡])")
+
+
+def _split_into_sentences(text: str, max_sentences: int = 30) -> list[str]:
+    """Divide texto en oraciones para TTS chunked (latencia perceptual).
+
+    El TTS de Gemini tarda ~5s por respuesta completa de 300 chars. Si en vez de
+    pedir todo el audio de una, lo pedimos oración por oración, el primer audio
+    le llega al cliente en ~1.5s (1ra oración) en vez de 5s.
+    """
+    text = text.strip()
+    if not text:
+        return []
+    parts = _SENTENCE_BOUNDARY_RE.split(text)
+    out = [p.strip() for p in parts if p.strip()]
+    # Coalescer oraciones muy cortas (<25 chars) con la siguiente para no hacer
+    # demasiadas llamadas TTS para frases tipo "Right." "Yes.".
+    merged: list[str] = []
+    buf = ""
+    for p in out:
+        if len(buf) < 25:
+            buf = (buf + " " + p).strip() if buf else p
+        else:
+            merged.append(buf)
+            buf = p
+    if buf:
+        merged.append(buf)
+    return merged[:max_sentences]
 
 
 # ─── API calls ────────────────────────────────────────────────────────
@@ -255,7 +331,9 @@ class CascadeEngine(VoiceEngine):
         # solo acepta nombres como aoede/puck/kore. Ignoramos ctx.voice_id y
         # usamos siempre el default de Gemini hasta tener un mapeo template→gem.
         voice = TTS_VOICE
-        sys_prompt = getattr(ctx, "super_prompt", "") or ""
+        base_sys_prompt = getattr(ctx, "super_prompt", "") or ""
+        # Prepend runtime addon (current date + no markdown + anti-filler + no loop)
+        sys_prompt = _runtime_addon_block(target_lang) + "\n\n" + base_sys_prompt
 
         trace.event("cascade.session.start", session_id=session_id,
                     model=FLASH_MODEL, voice=voice,
@@ -269,15 +347,44 @@ class CascadeEngine(VoiceEngine):
         stop_event = asyncio.Event()
         turn_lock = asyncio.Lock()  # serializa turnos
         bg_tasks: list[asyncio.Task] = []
+        coach_speaking = asyncio.Event()   # True mientras streameamos audio del coach
+        barge_in = asyncio.Event()         # User interrumpio → cortar TTS en curso
 
-        async def _stream_audio(audio_bytes: bytes) -> None:
+        async def _stream_audio_bytes(audio_bytes: bytes) -> None:
             chunk_size = 24000
             for i in range(0, len(audio_bytes), chunk_size):
+                if barge_in.is_set():
+                    return
                 chunk = audio_bytes[i:i + chunk_size]
                 b64 = base64.b64encode(chunk).decode("ascii")
                 await ws.send_json({
                     "type": "audio", "data": b64, "sample_rate": 24000
                 })
+
+        async def _speak_streamed(text: str) -> bool:
+            """TTS por oracion → stream incremental. Devuelve True si se completo."""
+            sentences = _split_into_sentences(text)
+            if not sentences:
+                return False
+            coach_speaking.set()
+            barge_in.clear()
+            try:
+                for i, sentence in enumerate(sentences):
+                    if barge_in.is_set():
+                        trace.event("cascade.tts.interrupted",
+                                    session_id=session_id,
+                                    after_sentence=i, total=len(sentences))
+                        await ws.send_json({"type": "interrupted"})
+                        return False
+                    audio_bytes = await _tts_gemini(
+                        sentence, voice=voice, session_id=session_id,
+                    )
+                    if not audio_bytes:
+                        continue  # skip esa oracion, seguir con la proxima
+                    await _stream_audio_bytes(audio_bytes)
+                return True
+            finally:
+                coach_speaking.clear()
 
         async def _coach_turn(user_text: str) -> None:
             """Procesa un turno del coach desde user_text → audio en cliente."""
@@ -306,14 +413,7 @@ class CascadeEngine(VoiceEngine):
                 history.append({"role": "model",
                                 "parts": [{"text": coach_text}]})
 
-                audio_bytes = await _tts_gemini(
-                    coach_text, voice=voice, session_id=session_id,
-                )
-                if not audio_bytes:
-                    await ws.send_json({"type": "error",
-                                        "error": "tts_failed"})
-                    return
-                await _stream_audio(audio_bytes)
+                await _speak_streamed(coach_text)
                 await ws.send_json({"type": "turn_complete"})
 
         async def _stt_then_turn(audio_pcm: bytes) -> None:
@@ -343,12 +443,7 @@ class CascadeEngine(VoiceEngine):
                 transcript.append({"who": "ai", "text": greeting})
                 history.append({"role": "model",
                                 "parts": [{"text": greeting}]})
-                audio_bytes = await _tts_gemini(
-                    greeting, voice=voice, session_id=session_id,
-                )
-                if not audio_bytes:
-                    return
-                await _stream_audio(audio_bytes)
+                await _speak_streamed(greeting)
                 await ws.send_json({"type": "turn_complete"})
 
         # Saludo inicial async (el turn_lock evita que se mezcle con user input)
@@ -375,6 +470,12 @@ class CascadeEngine(VoiceEngine):
                         continue
                     rms = _rms_of_pcm_chunk(chunk_pcm)
                     now = time.time()
+                    # Barge-in: user habla mientras coach esta speaking → cortar TTS.
+                    if coach_speaking.is_set() and rms > VAD_BARGE_IN_RMS_THRESHOLD:
+                        if not barge_in.is_set():
+                            barge_in.set()
+                            trace.event("cascade.barge_in.detected",
+                                        session_id=session_id, rms=round(rms, 4))
                     if rms > VAD_SILENCE_RMS_THRESHOLD:
                         if speech_started_at is None:
                             speech_started_at = now
