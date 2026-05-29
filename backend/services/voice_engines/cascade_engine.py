@@ -51,12 +51,30 @@ FLASH_URL = (
     f"{FLASH_MODEL}:generateContent"
 )
 
-TTS_MODEL = "gemini-2.5-flash-preview-tts"
-TTS_URL = (
-    f"https://generativelanguage.googleapis.com/v1beta/models/"
-    f"{TTS_MODEL}:generateContent"
+# Google Cloud Text-to-Speech (NO Gemini TTS preview). El preview tenia rate
+# limit ~10 RPM en free tier -> reventaba con cualquier sesion real (logs
+# sesiones 325-334 -> HTTP 429 masivo). El TTS standard tiene 1000 req/min
+# y 4M chars/mes free, voces Neural2/Chirp3-HD estables.
+TTS_URL = "https://texttospeech.googleapis.com/v1/text:synthesize"
+
+# Mapeo target_language -> (languageCode, voiceName). Neural2 es el balance
+# calidad/costo. Chirp3-HD es mejor pero ~3x mas caro.
+_TTS_VOICE_BY_LANG: dict[str, tuple[str, str]] = {
+    "en": ("en-US", "en-US-Neural2-F"),
+    "es": ("es-US", "es-US-Neural2-A"),
+    "pt": ("pt-BR", "pt-BR-Neural2-A"),
+    "it": ("it-IT", "it-IT-Neural2-A"),
+    "fr": ("fr-FR", "fr-FR-Neural2-A"),
+    "de": ("de-DE", "de-DE-Neural2-A"),
+}
+TTS_DEFAULT_VOICE = ("en-US", "en-US-Neural2-F")
+
+# Token del metadata server (Cloud Run SA). TTL ~1h, cacheamos.
+_GCP_METADATA_URL = (
+    "http://metadata.google.internal/computeMetadata/v1/"
+    "instance/service-accounts/default/token"
 )
-TTS_VOICE = "Aoede"
+_gcp_token_cache: dict[str, float | str] = {"token": "", "expires_at": 0.0}
 
 # VAD basado en energía RMS.
 VAD_SILENCE_RMS_THRESHOLD = 0.005
@@ -261,51 +279,82 @@ async def _llm_flash_text(
         return None
 
 
-async def _tts_gemini(
-    text: str, *, voice: str = TTS_VOICE,
+async def _get_gcp_token() -> Optional[str]:
+    """Token de la default Cloud Run SA via metadata server. Cacheado 50min."""
+    now = time.time()
+    cached_token = _gcp_token_cache.get("token") or ""
+    expires_at = float(_gcp_token_cache.get("expires_at") or 0)
+    if cached_token and now < expires_at:
+        return str(cached_token)
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as cli:
+            r = await cli.get(_GCP_METADATA_URL,
+                              headers={"Metadata-Flavor": "Google"})
+            if r.status_code != 200:
+                log.warning("gcp_token: metadata server %s", r.status_code)
+                return None
+            data = r.json()
+            tok = data.get("access_token") or ""
+            ttl = int(data.get("expires_in") or 3600)
+            _gcp_token_cache["token"] = tok
+            _gcp_token_cache["expires_at"] = now + max(60, ttl - 600)  # refresh 10min antes
+            return tok
+    except Exception as e:
+        log.warning("gcp_token: %s", e)
+        return None
+
+
+async def _tts_gcp(
+    text: str, *, target_language: str = "en",
     session_id: Optional[int] = None,
 ) -> Optional[bytes]:
-    """Sintetiza audio PCM 24kHz desde texto via Gemini Flash TTS."""
-    if not text.strip() or not settings.GEMINI_API_KEY:
+    """Sintetiza PCM 24kHz LINEAR16 via Google Cloud Text-to-Speech."""
+    if not text.strip():
         return None
+    token = await _get_gcp_token()
+    if not token:
+        trace.warn("cascade.tts.no_token", session_id=session_id)
+        return None
+    lang_code, voice_name = _TTS_VOICE_BY_LANG.get(
+        target_language[:2].lower(), TTS_DEFAULT_VOICE
+    )
     t0 = time.time()
     payload = {
-        "contents": [{"parts": [{"text": text}]}],
-        "generationConfig": {
-            "responseModalities": ["AUDIO"],
-            "speechConfig": {
-                "voiceConfig": {
-                    "prebuiltVoiceConfig": {"voiceName": voice}
-                }
-            },
-        },
+        "input": {"text": text},
+        "voice": {"languageCode": lang_code, "name": voice_name},
+        "audioConfig": {"audioEncoding": "LINEAR16", "sampleRateHertz": 24000},
     }
-    url = f"{TTS_URL}?key={settings.GEMINI_API_KEY}"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "X-Goog-User-Project": "hablah-prod",
+    }
     try:
-        async with httpx.AsyncClient(timeout=20.0) as cli:
-            r = await cli.post(url, json=payload)
-            # Retry-once en 429 con backoff corto. El TTS chunked dispara N calls
-            # por turno y eventualmente roza el RPM del free tier.
-            if r.status_code == 429:
-                await asyncio.sleep(1.5)
-                r = await cli.post(url, json=payload)
+        async with httpx.AsyncClient(timeout=15.0) as cli:
+            r = await cli.post(TTS_URL, json=payload, headers=headers)
+            if r.status_code == 401:
+                # token vencido o invalido -> limpiar cache y reintentar 1 vez
+                _gcp_token_cache["token"] = ""
+                _gcp_token_cache["expires_at"] = 0.0
+                token = await _get_gcp_token()
+                if token:
+                    headers["Authorization"] = f"Bearer {token}"
+                    r = await cli.post(TTS_URL, json=payload, headers=headers)
             if r.status_code != 200:
                 trace.warn("cascade.tts.failed",
                            session_id=session_id, status=r.status_code,
                            body=r.text[:300], latency_ms=trace_duration_ms(t0))
                 return None
             data = r.json()
-            try:
-                inline = data["candidates"][0]["content"]["parts"][0]["inlineData"]
-                audio_bytes = base64.b64decode(inline["data"])
-                trace.event("cascade.tts.ok", session_id=session_id,
-                            bytes=len(audio_bytes),
-                            latency_ms=trace_duration_ms(t0))
-                return audio_bytes
-            except (KeyError, IndexError):
+            b64 = data.get("audioContent") or ""
+            if not b64:
                 trace.warn("cascade.tts.bad_response",
                            session_id=session_id, body=str(data)[:300])
                 return None
+            audio_bytes = base64.b64decode(b64)
+            trace.event("cascade.tts.ok", session_id=session_id,
+                        bytes=len(audio_bytes), voice=voice_name,
+                        latency_ms=trace_duration_ms(t0))
+            return audio_bytes
     except Exception as e:
         trace.error("cascade.tts.error", session_id=session_id,
                     error=str(e), latency_ms=trace_duration_ms(t0))
@@ -330,16 +379,17 @@ class CascadeEngine(VoiceEngine):
 
         target_lang = getattr(ctx, "target_language", "en")
         whisper_lang = _normalize_lang(target_lang)
-        # ctx.voice_id viene del template (ElevenLabs voice_id). Gemini TTS
-        # solo acepta nombres como aoede/puck/kore. Ignoramos ctx.voice_id y
-        # usamos siempre el default de Gemini hasta tener un mapeo template→gem.
-        voice = TTS_VOICE
+        # ctx.voice_id viene del template (ElevenLabs voice_id) y no aplica
+        # al TTS de Google Cloud. La voz se elige por target_language en _tts_gcp.
         base_sys_prompt = getattr(ctx, "super_prompt", "") or ""
         # Prepend runtime addon (current date + no markdown + anti-filler + no loop)
         sys_prompt = _runtime_addon_block(target_lang) + "\n\n" + base_sys_prompt
 
+        _, voice_name_for_log = _TTS_VOICE_BY_LANG.get(
+            target_lang[:2].lower(), TTS_DEFAULT_VOICE
+        )
         trace.event("cascade.session.start", session_id=session_id,
-                    model=FLASH_MODEL, voice=voice,
+                    model=FLASH_MODEL, voice=voice_name_for_log,
                     whisper_lang=whisper_lang)
 
         history: list[dict] = []
@@ -379,8 +429,9 @@ class CascadeEngine(VoiceEngine):
                                     after_sentence=i, total=len(sentences))
                         await ws.send_json({"type": "interrupted"})
                         return False
-                    audio_bytes = await _tts_gemini(
-                        sentence, voice=voice, session_id=session_id,
+                    audio_bytes = await _tts_gcp(
+                        sentence, target_language=target_lang,
+                        session_id=session_id,
                     )
                     if not audio_bytes:
                         continue  # skip esa oracion, seguir con la proxima
