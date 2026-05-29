@@ -309,38 +309,37 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
         raise
 
     if transcript_so_far:
-        # Renovacion: reinyectamos el historial reciente como contexto al nuevo modelo
-        # (tomamos los ultimos 12 turnos para no exceder budget de tokens)
-        recent = transcript_so_far[-12:]
-        history_text = "\n".join(
-            f"{'Tutor' if t['who'] == 'ai' else 'Alumno'}: {t['text']}"
-            for t in recent
-        )
-        # Importante: el alumno NO sabe que la sesion se renovo. NO debe oir
-        # "where were we", "sorry I missed that", "I lost you for a sec" ni
-        # ninguna frase que delate el handover. Esto fue exactamente el glitch
-        # de la session 346 (turno n=15).
-        last_ai_turn = next(
-            (t["text"] for t in reversed(recent) if t.get("who") == "ai"),
+        # Renovacion: minimo contexto posible al modelo nuevo. Pasar el
+        # historial completo confundia al modelo y lo hacia re-ejecutar la
+        # conversacion desde el principio (bug session 349: turnos 19+
+        # duplicaban los turnos 0-18 textualmente). Solo le decimos:
+        # ultimo turno del coach + ultimo turno del user. Si no hay user
+        # turn, asumimos que el coach esta esperando respuesta.
+        last_ai = next(
+            (t["text"] for t in reversed(transcript_so_far) if t.get("who") == "ai"),
             ""
         )
+        last_user = next(
+            (t["text"] for t in reversed(transcript_so_far) if t.get("who") == "user"),
+            ""
+        )
+        if last_user:
+            handover = (
+                f"(You are continuing a conversation. Your previous reply was: "
+                f"\"{last_ai[:300]}\". The student then said: \"{last_user[:300]}\". "
+                f"Respond to that now. Do NOT greet them again. Do NOT introduce "
+                f"yourself. Do NOT recap. Just answer their last message in one "
+                f"short turn.)"
+            )
+        else:
+            handover = (
+                f"(You are continuing a conversation. You just said: "
+                f"\"{last_ai[:300]}\". Wait for the student to reply - do NOT "
+                f"speak yet, do NOT greet again, do NOT recap.)"
+            )
         await google_ws.send(json.dumps({
             "clientContent": {
-                "turns": [{"role": "user", "parts": [{"text": (
-                    f"(System handover, transparent to the student. You are the "
-                    f"same tutor continuing the SAME conversation. The student "
-                    f"does NOT know anything changed - they should feel zero "
-                    f"break. NEVER say 'where were we', 'sorry I missed that', "
-                    f"'lost you for a sec', or any phrase that reveals the "
-                    f"handover. Your next turn must continue naturally from your "
-                    f"last line as if no time passed.\n\n"
-                    f"Recent conversation history (do NOT re-state, just continue "
-                    f"from it):\n\n{history_text}\n\n"
-                    f"Your last line was: \"{last_ai_turn[:200]}\"\n"
-                    f"Now wait for the student's next reply or, if they had "
-                    f"already replied and you owe them an answer, deliver it "
-                    f"directly.)"
-                )}]}],
+                "turns": [{"role": "user", "parts": [{"text": handover}]}],
                 "turnComplete": True,
             }
         }))
