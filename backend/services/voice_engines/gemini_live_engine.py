@@ -425,18 +425,34 @@ class GeminiLiveEngine(VoiceEngine):
                     msg = await ws.receive_json()
                     if msg.get("type") == "audio":
                         b64 = msg.get("data", "")
+                        # sample_rate REAL del cliente (mobile Safari suele ser
+                        # 48000 aunque pidamos 16000). Si no viene, asumimos 16000
+                        # por compat con clientes viejos.
+                        client_sr = int(msg.get("sample_rate") or 16000)
+                        # Si el cliente manda fuera del rango aceptado por Gemini,
+                        # lo clavamos a 16000 (es mejor mandar a 16k aunque sea
+                        # ligeramente off que no mandar nada).
+                        if client_sr not in (8000, 16000, 22050, 24000, 32000, 44100, 48000):
+                            client_sr = 16000
                         counters["user_audio_chunks"] += 1
                         counters["user_audio_bytes"] += len(b64) * 3 // 4  # base64 → bytes aprox
-                        # Logueamos solo cada 50 chunks para no saturar (50 chunks ~= 1 seg de audio)
+                        # Log el sample rate la primera vez
+                        if counters["user_audio_chunks"] == 1:
+                            trace.event("client.audio.first_chunk",
+                                        session_id=session_id_log,
+                                        sample_rate=client_sr,
+                                        bytes_approx=counters["user_audio_bytes"])
+                        # Logueamos cada 50 chunks
                         if counters["user_audio_chunks"] % 50 == 0:
                             trace.debug("client.audio.streaming",
                                         session_id=session_id_log,
                                         chunks=counters["user_audio_chunks"],
-                                        approx_bytes=counters["user_audio_bytes"])
+                                        approx_bytes=counters["user_audio_bytes"],
+                                        sample_rate=client_sr)
                         try:
                             await gws_holder["ws"].send(json.dumps({
                                 "realtimeInput": {
-                                    "audio": {"mimeType": "audio/pcm;rate=16000", "data": b64}
+                                    "audio": {"mimeType": f"audio/pcm;rate={client_sr}", "data": b64}
                                 }
                             }))
                         except websockets.ConnectionClosed:

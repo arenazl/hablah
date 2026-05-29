@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { buildVoiceWsUrl, buildRoomWsUrl } from '../services/api'
 import { loadAudioSettings } from '../lib/audioSettings'
+import { trace } from '../lib/trace'
 
 export interface TranscriptLine {
   who: 'ai' | 'user'
@@ -75,6 +76,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   useEffect(() => { optsRef.current = opts })
 
   const wsRef = useRef<WebSocket | null>(null)
+  const activeSessionIdRef = useRef<number | null>(null)
   const pingIntervalRef = useRef<number | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
@@ -303,6 +305,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
   const start = useCallback(
     async (sessionId: number, explicitToken?: string) => {
+      activeSessionIdRef.current = sessionId
+      trace('session.client.start', sessionId)
       setStatus('connecting')
       setTranscript([])
 
@@ -326,10 +330,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       streamRef.current = stream
 
       const url = buildVoiceWsUrl(sessionId, explicitToken)
+      trace('ws.client.connecting', sessionId, { url: url.replace(/token=[^&]+/, 'token=…') })
       const ws = new WebSocket(url)
       wsRef.current = ws
 
       ws.onopen = async () => {
+        trace('ws.client.opened', sessionId)
         setStatus('listening')
         // Keepalive ping cada 25s para evitar que Heroku/proxies maten el WS por idle
         if (pingIntervalRef.current) window.clearInterval(pingIntervalRef.current)
@@ -342,6 +348,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         audioCtxRef.current = ctx
         const source = ctx.createMediaStreamSource(stream)
         sourceRef.current = source
+        // Log del sampleRate REAL (mobile Safari suele ignorar el pedido)
+        trace('audio.context.real_sample_rate', sessionId, {
+          requested: settings.captureSampleRate,
+          actual: ctx.sampleRate,
+          user_agent: navigator.userAgent.substring(0, 200),
+        })
 
         // Handler comun: convierte ArrayBuffer PCM int16 a base64 y lo manda
         // por WS. Se reusa entre AudioWorklet (preferido) y ScriptProcessor.
@@ -354,7 +366,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
           const b64 = btoa(bin)
-          liveWs.send(JSON.stringify({ type: 'audio', data: b64 }))
+          // Pasamos el sample_rate REAL del AudioContext al backend, asi
+          // este puede armar el mimeType correcto para Gemini. Antes era
+          // hardcoded a 16000 y los moviles que captan a 48000 mandaban
+          // basura indecible (bug session 348).
+          const realSr = audioCtxRef.current?.sampleRate ?? 16000
+          liveWs.send(JSON.stringify({ type: 'audio', data: b64, sample_rate: realSr }))
         }
 
         // Preferido: AudioWorkletNode. Corre en thread de audio (no main).
@@ -540,11 +557,15 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
   const attachWsHandlers = useCallback((ws: WebSocket) => {
     ws.onmessage = handleWsMessage
-    ws.onerror = () => {
+    ws.onerror = (e) => {
+      const sid = activeSessionIdRef.current
+      trace('ws.client.error', sid)
       optsRef.current.onError?.(new Error('WebSocket error'))
       setStatus('error')
     }
-    ws.onclose = () => {
+    ws.onclose = (e) => {
+      const sid = activeSessionIdRef.current
+      trace('ws.client.closed', sid, { code: e.code, reason: e.reason })
       setStatus((prev) => (prev !== 'ended' ? 'ended' : prev))
     }
   }, [handleWsMessage])
@@ -649,6 +670,15 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         audioCtxRef.current = ctx
         const source = ctx.createMediaStreamSource(stream)
         sourceRef.current = source
+        // Log del sampleRate REAL (mobile Safari suele ignorar el pedido).
+        // En modo room no hay session_id todavia; usamos null y el room_token va en el contexto.
+        trace('audio.context.real_sample_rate', null, {
+          mode: 'room',
+          room_token: roomToken,
+          requested: settings.captureSampleRate,
+          actual: ctx.sampleRate,
+          user_agent: navigator.userAgent.substring(0, 200),
+        })
 
         const sendPcm = (pcmBuf: ArrayBuffer, rms: number): void => {
           const liveWs = wsRef.current
@@ -658,7 +688,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
           const b64 = btoa(bin)
-          liveWs.send(JSON.stringify({ type: 'audio', data: b64 }))
+          // Pasamos el sample_rate REAL del AudioContext al backend, asi
+          // este puede armar el mimeType correcto para Gemini. Antes era
+          // hardcoded a 16000 y los moviles que captan a 48000 mandaban
+          // basura indecible (bug session 348).
+          const realSr = audioCtxRef.current?.sampleRate ?? 16000
+          liveWs.send(JSON.stringify({ type: 'audio', data: b64, sample_rate: realSr }))
         }
 
         let useWorklet = false
