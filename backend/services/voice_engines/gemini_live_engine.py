@@ -248,12 +248,17 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                     ),
                     "prefixPaddingMs": 200,
                     "silenceDurationMs": (
-                        max(ctx.silence_tolerance_ms, 1200) if is_kid else ctx.silence_tolerance_ms
+                        # Kids: minimo 1500ms (cadencia mas lenta).
+                        # Adultos: minimo 1500ms tambien — antes 800ms era muy
+                        # corto, el coach asumia turn-end en cualquier pausa
+                        # natural y arrancaba a responder cortando al alumno.
+                        max(ctx.silence_tolerance_ms, 1500)
                     ),
                 },
-                "activityHandling": (
-                    "START_OF_ACTIVITY_INTERRUPTS" if ctx.interruption_allowed else "NO_INTERRUPTION"
-                ),
+                # Permitimos siempre que el alumno interrumpa al coach. Si el
+                # VAD se equivoca y el coach arranca antes de tiempo, el
+                # alumno puede cortarlo apenas habla — recupera el control.
+                "activityHandling": "START_OF_ACTIVITY_INTERRUPTS",
             },
             "inputAudioTranscription": {},
             "outputAudioTranscription": {},
