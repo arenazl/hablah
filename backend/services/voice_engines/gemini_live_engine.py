@@ -7,12 +7,14 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import time
 from typing import AsyncIterator
 
 import websockets
 from fastapi import WebSocket, WebSocketDisconnect
 
 from core.config import settings
+from core.trace import trace, trace_duration_ms
 from services.voice_engine import VoiceEngine, VoiceEngineContext
 
 log = logging.getLogger(__name__)
@@ -100,11 +102,31 @@ async def _maybe_detect_preference(*, user_id, user_text, target_lang, google_ws
         log.exception("preference detector failed: %s", e)
 
 
-LIVE_API_URL = (
-    "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent"
-)
-# Modelo más nuevo habilitado en la API key actual (Gemini 3.1 Live preview)
-LIVE_MODEL = "models/gemini-3.1-flash-live-preview"
+# Provider selection: 'ai_studio' (free tier, API key, native-audio) or 'vertex'
+# (paid, service account, half-cascade gemini-live-2.5-flash que sigue prompts).
+# Toggle via env VOICE_PROVIDER. Default ai_studio para no romper.
+import os as _os
+VOICE_PROVIDER = _os.getenv("VOICE_PROVIDER", "ai_studio").lower()
+VERTEX_REGION = _os.getenv("VERTEX_REGION", "us-central1")
+VERTEX_PROJECT = _os.getenv("VERTEX_PROJECT", "hablah-prod")
+
+if VOICE_PROVIDER == "vertex":
+    LIVE_API_URL = (
+        f"wss://{VERTEX_REGION}-aiplatform.googleapis.com/ws/"
+        "google.cloud.aiplatform.v1beta1.LlmBidiService/BidiGenerateContent"
+    )
+    # Half-cascade model (separate STT + LLM + TTS) — sigue prompts mucho mejor
+    # que native-audio. Vertex format: projects/.../locations/.../publishers/google/models/...
+    LIVE_MODEL = (
+        f"projects/{VERTEX_PROJECT}/locations/{VERTEX_REGION}"
+        "/publishers/google/models/gemini-live-2.5-flash-native-audio"
+    )
+else:
+    LIVE_API_URL = (
+        "wss://generativelanguage.googleapis.com/ws/"
+        "google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent"
+    )
+    LIVE_MODEL = "models/gemini-2.5-flash-native-audio-preview-09-2025"
 
 # Gemini Live tiene un límite duro de ~10 minutos por sesión.
 # Antes de ese límite renovamos transparentemente la sesión.
@@ -128,14 +150,69 @@ COACH_SILENCE_TRIGGER_SECONDS = 12
 COACH_SILENCE_HARD_RESCUE_SECONDS = 22
 
 
+async def _get_vertex_token() -> str:
+    """Obtiene un access token del metadata server de Cloud Run.
+
+    En Cloud Run el service account default es compute@... — necesita rol
+    'roles/aiplatform.user' para llamar Vertex. Si no estamos en Cloud Run,
+    devuelve None y cae a auth alternativa.
+    """
+    import httpx
+    metadata_url = (
+        "http://metadata.google.internal/computeMetadata/v1/"
+        "instance/service-accounts/default/token"
+    )
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as cli:
+            r = await cli.get(metadata_url, headers={"Metadata-Flavor": "Google"})
+            r.raise_for_status()
+            return r.json()["access_token"]
+    except Exception as e:
+        log.error("vertex_token_fetch_failed: %s", e)
+        raise
+
+
 async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
     """Abre una conexion a Gemini Live + manda el setup + trigger inicial.
 
     Si transcript_so_far tiene contenido, lo inyectamos como historial para
     que la sesion renovada continue la conversacion (no arranca de cero).
     """
-    url = f"{LIVE_API_URL}?key={settings.GEMINI_API_KEY}"
-    google_ws = await websockets.connect(url, max_size=2**24)
+    import time as _time
+    session_id = getattr(ctx, "session_id", None)
+    t0 = _time.time()
+    is_kid = bool(getattr(ctx, "is_kid", False))
+    free_topic = getattr(ctx, "free_topic", None)
+    super_prompt_size = len(getattr(ctx, "super_prompt", "") or "")
+    trace.event("gemini.setup.start",
+                session_id=session_id, model=LIVE_MODEL, is_kid=is_kid,
+                provider=VOICE_PROVIDER,
+                free_topic=free_topic, super_prompt_size=super_prompt_size,
+                is_renewal=bool(transcript_so_far))
+
+    if VOICE_PROVIDER == "vertex":
+        # Vertex: bearer token + URL sin API key
+        token = await _get_vertex_token()
+        try:
+            google_ws = await websockets.connect(
+                LIVE_API_URL,
+                max_size=2**24,
+                extra_headers={"Authorization": f"Bearer {token}"},
+            )
+        except Exception as e:
+            trace.error("gemini.setup.connect_failed",
+                        session_id=session_id, provider="vertex",
+                        error=str(e), latency_ms=trace_duration_ms(t0))
+            raise
+    else:
+        url = f"{LIVE_API_URL}?key={settings.GEMINI_API_KEY}"
+        try:
+            google_ws = await websockets.connect(url, max_size=2**24)
+        except Exception as e:
+            trace.error("gemini.setup.connect_failed",
+                        session_id=session_id, provider="ai_studio",
+                        error=str(e), latency_ms=trace_duration_ms(t0))
+            raise
 
     # Kids: VAD mas sensible al inicio (queremos interrumpir rapido al coach)
     # y mas tolerante al final (chico se queda pensando o trabado).
@@ -145,10 +222,14 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
             "model": LIVE_MODEL,
             "generationConfig": {
                 "responseModalities": ["AUDIO"],
+                # thinkingBudget=0 = desactiva el modo "thinking" del modelo.
+                # Sin esto, gemini-2.5-flash-native-audio-* puede VERBALIZAR su
+                # cadena de razonamiento en voz alta ("I'm now implementing the
+                # first turn...") en vez de ejecutar la instruccion directamente.
+                "thinkingConfig": {"thinkingBudget": 0},
                 "speechConfig": {
                     # Voz Kore: tonalidad calida, mejor resolucion percibida que
-                    # Aoede (la default). Si el template define su propia voz,
-                    # podemos override aca, pero la default es Kore.
+                    # Aoede. Si el template define su propia voz, override aca.
                     "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": getattr(ctx, "voice_name", None) or "Kore"}},
                 },
             },
@@ -180,11 +261,10 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
         }
     }
     await google_ws.send(json.dumps(setup))
+    trace.event("gemini.setup.sent", session_id=session_id, latency_ms=trace_duration_ms(t0))
 
-    # Esperamos la respuesta de "setupComplete" de Gemini. Si en vez de eso
-    # llega un error (ej 429 rate-limit, 400 invalid prompt), lo capturamos y
-    # logueamos en vez de tragarlo silenciosamente. Antes el WS quedaba abierto
-    # pero sin audio → cliente cerraba en 4-5s pensando que nada andaba.
+    # Esperamos setupComplete de Gemini. Si en vez llega error (429/400/etc),
+    # lo capturamos en vez de tragarlo silenciosamente.
     try:
         first_msg = await asyncio.wait_for(google_ws.recv(), timeout=10.0)
         try:
@@ -192,17 +272,35 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
         except Exception:
             parsed = {"raw": first_msg[:300]}
         if "setupComplete" in parsed:
-            log.info("gemini_live: setup OK (model=%s, free_topic=%s, is_kid=%s)", LIVE_MODEL, getattr(ctx, "free_topic", None), is_kid)
+            trace.event("gemini.setup.complete",
+                        session_id=session_id, model=LIVE_MODEL,
+                        latency_ms=trace_duration_ms(t0))
         else:
-            log.error("gemini_live: setup did NOT return setupComplete. First message: %s", str(parsed)[:600])
-            # Igualmente reenviamos: el WS podria todavia procesar; pero al menos quedo en el log.
+            trace.error("gemini.setup.unexpected_first_msg",
+                        session_id=session_id, first_msg=str(parsed)[:600],
+                        latency_ms=trace_duration_ms(t0))
+    except websockets.ConnectionClosed as e:
+        # Vertex / AI Studio cerro la conexion antes de enviar setupComplete.
+        # Es nuestro mejor diagnostico de "el setup no es valido". Capturamos
+        # code y reason que dice Google.
+        trace.error("gemini.setup.ws_closed_before_complete",
+                    session_id=session_id, provider=VOICE_PROVIDER,
+                    close_code=e.code, close_reason=str(e.reason)[:300],
+                    model=LIVE_MODEL,
+                    latency_ms=trace_duration_ms(t0))
+        try: await google_ws.close()
+        except Exception: pass
+        raise RuntimeError(f"gemini_live_ws_closed: {e.code} {e.reason}")
     except asyncio.TimeoutError:
-        log.error("gemini_live: timeout esperando setupComplete (10s) — sesion seguramente caida")
+        trace.error("gemini.setup.timeout",
+                    session_id=session_id, timeout_seconds=10,
+                    latency_ms=trace_duration_ms(t0))
         try: await google_ws.close()
         except Exception: pass
         raise RuntimeError("gemini_live_setup_timeout")
     except Exception as e:
-        log.exception("gemini_live: error leyendo setupComplete: %s", e)
+        trace.error("gemini.setup.read_error", session_id=session_id, error=str(e),
+                    latency_ms=trace_duration_ms(t0))
         raise
 
     if transcript_so_far:
@@ -213,12 +311,30 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
             f"{'Tutor' if t['who'] == 'ai' else 'Alumno'}: {t['text']}"
             for t in recent
         )
+        # Importante: el alumno NO sabe que la sesion se renovo. NO debe oir
+        # "where were we", "sorry I missed that", "I lost you for a sec" ni
+        # ninguna frase que delate el handover. Esto fue exactamente el glitch
+        # de la session 346 (turno n=15).
+        last_ai_turn = next(
+            (t["text"] for t in reversed(recent) if t.get("who") == "ai"),
+            ""
+        )
         await google_ws.send(json.dumps({
             "clientContent": {
                 "turns": [{"role": "user", "parts": [{"text": (
-                    f"(Continuando la conversacion. Esto es lo que se hablo antes, "
-                    f"no lo repitas - solo seguila naturalmente):\n\n{history_text}\n\n"
-                    f"(continua desde donde quedamos)"
+                    f"(System handover, transparent to the student. You are the "
+                    f"same tutor continuing the SAME conversation. The student "
+                    f"does NOT know anything changed - they should feel zero "
+                    f"break. NEVER say 'where were we', 'sorry I missed that', "
+                    f"'lost you for a sec', or any phrase that reveals the "
+                    f"handover. Your next turn must continue naturally from your "
+                    f"last line as if no time passed.\n\n"
+                    f"Recent conversation history (do NOT re-state, just continue "
+                    f"from it):\n\n{history_text}\n\n"
+                    f"Your last line was: \"{last_ai_turn[:200]}\"\n"
+                    f"Now wait for the student's next reply or, if they had "
+                    f"already replied and you owe them an answer, deliver it "
+                    f"directly.)"
                 )}]}],
                 "turnComplete": True,
             }
@@ -230,6 +346,7 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                 "turnComplete": True,
             }
         }))
+        trace.event("gemini.start_trigger.sent", session_id=session_id)
 
     return google_ws
 
@@ -286,12 +403,31 @@ class GeminiLiveEngine(VoiceEngine):
             "rescue_attempts": 0,
         }
 
+        # Contadores para trazas — agregamos al final de la sesion en un summary
+        counters = {"user_audio_chunks": 0, "user_audio_bytes": 0,
+                    "ai_audio_chunks": 0, "ai_audio_bytes": 0,
+                    "ai_text_chunks": 0, "user_text_chunks": 0,
+                    "turn_completes_seen": 0, "first_ai_audio_at": None}
+
+        session_id_log = getattr(ctx, "session_id", None)
+        is_kid_log = bool(getattr(ctx, "is_kid", False))
+        trace.event("session.engine.start", session_id=session_id_log, model=LIVE_MODEL,
+                    is_kid=is_kid_log)
+
         async def client_to_google() -> None:
             try:
                 while not stop_event.is_set():
                     msg = await ws.receive_json()
                     if msg.get("type") == "audio":
                         b64 = msg.get("data", "")
+                        counters["user_audio_chunks"] += 1
+                        counters["user_audio_bytes"] += len(b64) * 3 // 4  # base64 → bytes aprox
+                        # Logueamos solo cada 50 chunks para no saturar (50 chunks ~= 1 seg de audio)
+                        if counters["user_audio_chunks"] % 50 == 0:
+                            trace.debug("client.audio.streaming",
+                                        session_id=session_id_log,
+                                        chunks=counters["user_audio_chunks"],
+                                        approx_bytes=counters["user_audio_bytes"])
                         try:
                             await gws_holder["ws"].send(json.dumps({
                                 "realtimeInput": {
@@ -299,6 +435,9 @@ class GeminiLiveEngine(VoiceEngine):
                                 }
                             }))
                         except websockets.ConnectionClosed:
+                            trace.warn("gemini.audio.send_failed_ws_closed",
+                                       session_id=session_id_log,
+                                       user_chunks=counters["user_audio_chunks"])
                             # Si Gemini cerro a mitad de envio, esperamos a la renovacion
                             await asyncio.sleep(0.5)
                             continue
@@ -383,25 +522,62 @@ class GeminiLiveEngine(VoiceEngine):
                             inline = part.get("inlineData")
                             if inline and inline.get("mimeType", "").startswith("audio"):
                                 timing["last_ai_output_at"] = asyncio.get_event_loop().time()
+                                counters["ai_audio_chunks"] += 1
+                                audio_bytes = len(inline.get("data", "")) * 3 // 4
+                                counters["ai_audio_bytes"] += audio_bytes
+                                if counters["first_ai_audio_at"] is None:
+                                    counters["first_ai_audio_at"] = time.time()
+                                    trace.event("gemini.audio.first_chunk",
+                                                session_id=session_id_log,
+                                                bytes=audio_bytes)
                                 await ws.send_json({"type": "audio", "data": inline["data"]})
                             text = part.get("text")
                             if text:
-                                timing["last_ai_output_at"] = asyncio.get_event_loop().time()
-                                ai_buf.append(text)
-                                await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": text})
+                                stripped = text.strip()
+                                looks_like_thinking = (
+                                    stripped.startswith("**") or
+                                    "I'm now implementing" in stripped or
+                                    "Initiating Conversation Protocol" in stripped or
+                                    stripped.startswith("Okay, I've got it") or
+                                    stripped.startswith("Following instructions")
+                                )
+                                if looks_like_thinking:
+                                    trace.warn("gemini.text.thinking_dropped",
+                                               session_id=session_id_log,
+                                               text_preview=stripped[:200])
+                                else:
+                                    timing["last_ai_output_at"] = asyncio.get_event_loop().time()
+                                    counters["ai_text_chunks"] += 1
+                                    ai_buf.append(text)
+                                    await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": text})
 
                         out_tr = sc.get("outputTranscription")
                         if out_tr and out_tr.get("text"):
                             timing["last_ai_output_at"] = asyncio.get_event_loop().time()
+                            counters["ai_text_chunks"] += 1
                             ai_buf.append(out_tr["text"])
                             await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
 
                         input_tr = sc.get("inputTranscription")
                         if input_tr and input_tr.get("text"):
+                            counters["user_text_chunks"] += 1
                             user_buf.append(input_tr["text"])
+                            # Logueamos CADA chunk de input transcription para audit.
+                            # Antes solo el primero -> sesion 346 quedo ciega sobre lo
+                            # que el alumno dijo entre turnos 11 y 12.
+                            trace.event("gemini.input_transcription",
+                                        session_id=session_id_log,
+                                        chunk_n=counters["user_text_chunks"],
+                                        text_preview=input_tr["text"][:200])
                             await ws.send_json({"type": "transcript_chunk", "who": "user", "text": input_tr["text"]})
 
                         if sc.get("turnComplete"):
+                            counters["turn_completes_seen"] += 1
+                            trace.event("gemini.turn.complete",
+                                        session_id=session_id_log,
+                                        n=counters["turn_completes_seen"],
+                                        user_text="".join(user_buf).strip()[:200],
+                                        ai_text="".join(ai_buf).strip()[:200])
                             last_user_text = "".join(user_buf).strip()
                             _flush_buffers()
                             # Si el ultimo turno completado fue del USER, anotamos
@@ -670,6 +846,21 @@ class GeminiLiveEngine(VoiceEngine):
                 await gws_holder["ws"].close()
             except Exception:
                 pass
+
+            # Summary final de la sesion para diagnostico post-mortem
+            first_ai_ts = counters.get("first_ai_audio_at")
+            trace.event("session.engine.end",
+                        session_id=session_id_log,
+                        user_audio_chunks=counters["user_audio_chunks"],
+                        user_audio_bytes_approx=counters["user_audio_bytes"],
+                        ai_audio_chunks=counters["ai_audio_chunks"],
+                        ai_audio_bytes_approx=counters["ai_audio_bytes"],
+                        ai_text_chunks=counters["ai_text_chunks"],
+                        user_text_chunks=counters["user_text_chunks"],
+                        turn_completes=counters["turn_completes_seen"],
+                        coach_spoke=bool(counters["ai_audio_chunks"] > 0),
+                        user_was_transcribed=bool(counters["user_text_chunks"] > 0),
+                        transcript_lines=len(transcript))
 
         for line in transcript:
             yield line
