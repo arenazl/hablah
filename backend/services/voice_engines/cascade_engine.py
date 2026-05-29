@@ -381,9 +381,9 @@ class CascadeEngine(VoiceEngine):
         whisper_lang = _normalize_lang(target_lang)
         # ctx.voice_id viene del template (ElevenLabs voice_id) y no aplica
         # al TTS de Google Cloud. La voz se elige por target_language en _tts_gcp.
-        base_sys_prompt = getattr(ctx, "super_prompt", "") or ""
-        # Prepend runtime addon (current date + no markdown + anti-filler + no loop)
-        sys_prompt = _runtime_addon_block(target_lang) + "\n\n" + base_sys_prompt
+        # El runtime addon (fecha actual + no markdown + anti-filler + no-loop)
+        # ya viene prepended desde services/super_prompt.py para TODOS los engines.
+        sys_prompt = getattr(ctx, "super_prompt", "") or ""
 
         _, voice_name_for_log = _TTS_VOICE_BY_LANG.get(
             target_lang[:2].lower(), TTS_DEFAULT_VOICE

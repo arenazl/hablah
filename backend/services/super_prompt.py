@@ -12,6 +12,7 @@ from typing import Optional
 
 from models.user import User
 from models.template import Template, Topic
+from services.runtime_prompt import runtime_addon_block
 
 
 CEFR_GUIDANCE = {
@@ -474,7 +475,7 @@ def _admin_directives_block(directives: Optional[list[str]]) -> str:
     )
 
 
-def build_super_prompt(
+def _build_super_prompt_body(
     *,
     user: User,
     template: Optional[Template],
@@ -489,7 +490,10 @@ def build_super_prompt(
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
     target = user.target_language or "en"
-    target_lang_name = {"en": "English", "pt": "Portuguese", "it": "Italian"}.get(target, target)
+    base = (user.base_language or "es")
+    _LANG_NAMES = {"en": "English", "pt": "Portuguese", "it": "Italian", "es": "Spanish", "fr": "French", "de": "German"}
+    target_lang_name = _LANG_NAMES.get(target, target)
+    base_lang_name = _LANG_NAMES.get(base, base)
 
     # Detección de modo KIDS: el alumno tiene age_group seteado (mini/junior/tween)
     # o es un perfil hijo (parent_user_id != null).
@@ -562,12 +566,14 @@ def build_super_prompt(
             topic_block += "\n- NO presentes el tema. Andá directo a una pregunta abierta sobre el tema."
     elif free_topic and free_topic.strip():
         topic_block = (
-            f"TÓPICO DE HOY (texto libre del alumno)\n"
-            f"- El alumno escribió: \"{free_topic.strip()}\".\n"
-            f"- Arrancá la charla EXACTAMENTE sobre eso. NO arranques con preguntas vacías\n"
-            f"  tipo 'tell me about X' o 'what do you think about X' o 'what does it feel like'.\n"
-            f"  Tu primer turno debe incluir UN ángulo concreto, dato u observación específica\n"
-            f"  ANTES de preguntar."
+            f"████████ TOPIC OF THIS SESSION ████████\n"
+            f">>> THE TOPIC IS: \"{free_topic.strip()}\" <<<\n"
+            f"You MUST talk about this exact topic. Do NOT change it.\n"
+            f"DO NOT substitute it with 'hobbies', 'how was your day', 'what do you like to do',\n"
+            f"or any other generic topic. The student CHOSE this topic — respect it.\n"
+            f"Your first sentence must reference \"{free_topic.strip()}\" directly\n"
+            f"(by name or by clear allusion).\n"
+            f"Language: speak in {target_lang_name} the whole conversation.\n"
         )
         # Brief narrativo opcional (capa de "creatividad conversacional") generado
         # por Gemini Flash antes de iniciar la sesión. Si está, da ángulos no
@@ -578,16 +584,18 @@ def build_super_prompt(
             topic_block += "\n\n" + format_brief_for_prompt(topic_brief, free_topic.strip())
     else:
         topic_block = (
-            "TÓPICO DE HOY (modo TEMA LIBRE — el alumno todavia no eligio)\n"
-            "- Tu PRIMER turno debe ser EXACTAMENTE este patron:\n"
-            "    1) Saludo corto por nombre.\n"
-            "    2) Pregunta abierta: '¿De qué te gustaría que hablemos hoy? Contame lo que se te ocurra — "
-            "cualquier tema, un hobby, algo que te pasó, lo que sea.'\n"
-            "    3) Esperá la respuesta del alumno. NO propongas temas, NO des opciones.\n"
-            "- Cuando el alumno responda (ej: 'dinosaurios', 'mi perro', 'el ultimo libro que lei'),\n"
-            "  CONFIRMÁ el tema con entusiasmo en una frase y arrancá la charla real con los 3 pasos\n"
-            "  del ARRANQUE normal (intro al tema con dato concreto + experiencia personal tuya + pregunta).\n"
-            "- Si el alumno dice un tema muy ambiguo, repreguntá UNA vez para acotarlo."
+            f"TÓPICO DE HOY (modo TEMA LIBRE — el alumno todavia no eligio)\n"
+            f"- IDIOMA: hablás SIEMPRE en {target_lang_name}. NUNCA en {base_lang_name}.\n"
+            f"  Aun cuando el alumno responda en {base_lang_name}, vos respondés en {target_lang_name}.\n"
+            f"- Tu PRIMER turno debe ser EXACTAMENTE este patron, EN {target_lang_name.upper()}:\n"
+            f"    1) Saludo corto por nombre.\n"
+            f"    2) Pregunta abierta del estilo 'What would you like to talk about today? Anything goes — "
+            f"a hobby, something that happened to you, anything you want.' (traducí al {target_lang_name} si target_lang no es ingles)\n"
+            f"    3) Esperá la respuesta del alumno. NO propongas temas, NO des opciones.\n"
+            f"- Cuando el alumno responda (ej: 'dinosaurs', 'my dog', 'the last book I read'),\n"
+            f"  CONFIRMÁ el tema con entusiasmo en una frase y arrancá la charla real con los 3 pasos\n"
+            f"  del ARRANQUE normal (intro al tema con dato concreto + experiencia personal tuya + pregunta).\n"
+            f"- Si el alumno dice un tema muy ambiguo, repreguntá UNA vez para acotarlo."
         )
 
     errors_block = ""
@@ -675,6 +683,26 @@ un nombre nuevo, significa que entro otra persona. A partir de ese momento:
             f"{admin_block}"
         )
 
+    # Style block simple (iter 10 baseline, daba 7/10 en open_chat).
+    import random
+    OPENING_STYLES = [
+        ("playful", "Open with humor or a light playful comment about the topic."),
+        ("provocative", "Open with a contrarian or provocative claim about the topic that invites pushback."),
+        ("storyteller", "Open with a brief specific micro-anecdote (1 sentence)."),
+        ("curious", "Open with genuine curiosity — a rare observation or surprising fact."),
+        ("direct", "Open direct, no greeting formalities — drop a sharp question or claim."),
+        ("scene", "Open by painting a sensory scene in 1 sentence."),
+        ("opinion", "Open with your own strong opinion on the topic, then invite the student to push back."),
+    ]
+    style_key, style_instruction = random.choice(OPENING_STYLES)
+    persona_block = (
+        f"OPENING STYLE for THIS session: **{style_key}**.\n"
+        f"{style_instruction}\n"
+        f"Vary your opening — don't always start with 'Hey {user.nombre}!'.\n"
+        f"Keep turns short (1-3 sentences). Avoid 'great!', 'wow!', 'that's interesting!'.\n"
+        f"Stay on the topic — don't substitute it with a generic one.\n"
+    )
+
     return (
         f"[INSTRUCCIÓN DE SISTEMA — TUTOR HABLÁH]\n\n"
         f"{template_block}\n\n"
@@ -682,19 +710,28 @@ un nombre nuevo, significa que entro otra persona. A partir de ese momento:
         f"{topic_block}{history_block}"
         f"{errors_block}\n\n"
         f"{rules}\n\n"
-        f"IDIOMA: hablás SIEMPRE en {target_lang_name}. Nunca en español, salvo que el alumno se trabe completamente.\n\n"
-        f"ARRANQUE — TRES PASOS OBLIGATORIOS (en este orden, en {target_lang_name}, todo en TU primer turno):\n"
-        f"  1) SALUDO + INTRO breve al tema (1 oración, no genérica — un dato concreto, observación o ángulo específico del tópico).\n"
-        f"  2) EXPERIENCIA PERSONAL TUYA o anécdota corta relacionada al tema (1 oración — 'I remember when…' / 'A friend of mine…' / 'Last week I read…').\n"
-        f"  3) RECIÉN AHÍ una pregunta abierta y concreta al alumno (1 oración).\n"
-        f"NO ARRANQUES nunca con la pregunta de una. NUNCA con 'Have you ever…' como apertura sin el setup previo.\n"
-        f"Total del primer turno: 3-5 oraciones máximo. Tono cálido, conversacional, como un amigo que sabe del tema.\n"
-        f"EJEMPLO BUENO (tema = Pulp Fiction):\n"
-        f"  'Hey {user.nombre}! Pulp Fiction is one of those movies that completely rewrote how dialogue works in cinema — "
-        f"all those long, weird conversations between hitmen feel like real life. "
-        f"I rewatched it last month and the Royale with Cheese scene still cracks me up every time. "
-        f"What scene stuck with you the most?'\n"
-        f"EJEMPLO MALO (lo que NO querés hacer):\n"
-        f"  'Hey {user.nombre}! Have you ever watched Pulp Fiction?'  ← ESTO ES MALO: pregunta directa sin intro ni experiencia.\n"
+        f"LANGUAGE: speak in {target_lang_name} only. Don't switch unless the\n"
+        f"student is fully stuck.\n\n"
+        f"{persona_block}\n"
         f"{admin_block}"
     )
+
+
+_LANG_NAMES_FOR_ADDON = {
+    "en": "English", "pt": "Portuguese", "it": "Italian",
+    "es": "Spanish", "fr": "French", "de": "German",
+}
+
+
+def build_super_prompt(**kwargs) -> str:
+    """Wrapper publico que prepende el runtime addon al body.
+
+    El addon (fecha actual, no-markdown, anti-filler, no-loop) se aplica
+    universal: para gemini_live, cascade y cualquier futuro engine que
+    use ctx.super_prompt.
+    """
+    body = _build_super_prompt_body(**kwargs)
+    user = kwargs.get("user")
+    target = (getattr(user, "target_language", None) or "en")
+    target_lang_name = _LANG_NAMES_FOR_ADDON.get(target, target)
+    return runtime_addon_block(target_lang_name) + "\n\n" + body
