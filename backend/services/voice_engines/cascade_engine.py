@@ -79,7 +79,10 @@ _gcp_token_cache: dict[str, float | str] = {"token": "", "expires_at": 0.0}
 
 # VAD basado en energía RMS.
 VAD_SILENCE_RMS_THRESHOLD = 0.005
-VAD_END_OF_SPEECH_SECONDS = 2.0  # subido desde 1.2: cadencia natural tiene pausas
+# Bajado de 2.0 -> 0.8: tradeoff entre cortar a veces a mitad de pausa pero
+# bajar latencia perceptual. El alumno prefiere que a veces lo corte el coach
+# antes que esperar 2 segundos para que reaccione.
+VAD_END_OF_SPEECH_SECONDS = 0.8
 VAD_MIN_SPEECH_SECONDS = 0.3
 # Si el user habla durante el TTS del coach, cancelamos el resto del audio.
 VAD_BARGE_IN_RMS_THRESHOLD = 0.02  # más alto que silencio: solo cuenta si claramente habla
