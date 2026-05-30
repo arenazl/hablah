@@ -45,7 +45,7 @@ log = logging.getLogger(__name__)
 WHISPER_MODEL = "whisper-large-v3-turbo"  # Groq, $0.04/hr, muy rápido
 WHISPER_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
 
-FLASH_MODEL = "gemini-2.5-flash"
+FLASH_MODEL = "gemini-2.5-pro"
 FLASH_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"{FLASH_MODEL}:generateContent"
