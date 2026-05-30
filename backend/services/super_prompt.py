@@ -560,10 +560,16 @@ def _build_super_prompt_body(
             f"- Dirección sugerida: {seed}\n"
             f"- Frases-pivote naturales (OPCIONALES, NO obligues): {keywords}."
         )
-        if include_intro:
-            topic_block += "\n- Al abrir, presentá brevemente el tema antes de preguntar."
-        else:
-            topic_block += "\n- NO presentes el tema. Andá directo a una pregunta abierta sobre el tema."
+        # NO le pidas al modelo "presentá el tema" en el opening — eso fuerza
+        # "Let's talk about X" que el scorer marca como generic (opening_creativity
+        # cae a 2-4/10). El opening se controla con OPENING_STYLES mas abajo:
+        # debe entrar al tema con un dato/opinion/anecdota concreta, no
+        # introducir el topic explicitamente.
+        topic_block += (
+            "\n- En el opening NO digas 'let's talk about X' ni 'today we'll discuss X'.\n"
+            "  ENTRA al tema con algo concreto: un nombre, ano, opinion fuerte,\n"
+            "  micro-anecdota. El alumno YA sabe de que tema es, no necesita presentacion."
+        )
     elif free_topic and free_topic.strip():
         topic_block = (
             f"████████ TOPIC OF THIS SESSION ████████\n"
