@@ -233,11 +233,64 @@ async def _stt_groq_whisper(
         return None
 
 
+async def _llm_claude_cli(
+    *, system_instruction: str, history: list[dict], user_text: str,
+    session_id: Optional[int] = None,
+) -> Optional[str]:
+    """Llama a Claude Code CLI headless via subprocess. Usa la sub Max del user
+    montada via CLAUDE_CREDENTIALS_JSON env var. No consume API tokens."""
+    t0 = time.time()
+    # Armamos el prompt: system + conversation history + user turn
+    conversation = ""
+    for h in history:
+        who = "Student" if h["role"] == "user" else "You (tutor)"
+        text = h["parts"][0]["text"] if isinstance(h.get("parts"), list) else h.get("text", "")
+        conversation += f"\n\n{who}: {text}"
+    conversation += f"\n\nStudent: {user_text}\n\nYou (tutor):"
+    full_prompt = system_instruction + "\n\n--- CONVERSATION SO FAR ---" + conversation
+
+    clean_env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "claude", "-p", "--model", "claude-sonnet-4-6", full_prompt,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            env=clean_env,
+        )
+        out, err = await asyncio.wait_for(proc.communicate(), timeout=60.0)
+        text = out.decode("utf-8", errors="replace").strip()
+        if not text:
+            trace.warn("cascade.llm.claude_empty",
+                       session_id=session_id,
+                       stderr=err.decode("utf-8", errors="replace")[:300],
+                       latency_ms=trace_duration_ms(t0))
+            return None
+        trace.event("cascade.llm.ok", session_id=session_id,
+                    text_preview=text[:120], provider="claude_cli",
+                    latency_ms=trace_duration_ms(t0))
+        return text
+    except asyncio.TimeoutError:
+        trace.error("cascade.llm.claude_timeout", session_id=session_id,
+                    latency_ms=trace_duration_ms(t0))
+        return None
+    except Exception as e:
+        trace.error("cascade.llm.claude_error", session_id=session_id,
+                    error=str(e), latency_ms=trace_duration_ms(t0))
+        return None
+
+
 async def _llm_flash_text(
     *, system_instruction: str, history: list[dict], user_text: str,
     session_id: Optional[int] = None,
 ) -> Optional[str]:
-    """Llama a gemini-2.5-flash en modo texto. Devuelve respuesta del coach."""
+    """Toggle via env LLM_PROVIDER. Default = gemini Pro. claude_cli usa la
+    sub del user via subprocess. Misma firma, mismo return."""
+    if os.getenv("LLM_PROVIDER", "gemini").lower() == "claude_cli":
+        return await _llm_claude_cli(
+            system_instruction=system_instruction,
+            history=history, user_text=user_text,
+            session_id=session_id,
+        )
     if not settings.GEMINI_API_KEY:
         return None
     t0 = time.time()

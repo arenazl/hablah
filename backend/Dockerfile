@@ -17,6 +17,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Dependencias del sistema minimas (build tools removidos para imagen mas chica)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    ca-certificates \
+    gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g @anthropic-ai/claude-code \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -33,4 +38,9 @@ COPY . .
 # uvicorn worker es async = maneja muchas conexiones concurrentes con 1 worker.
 ENV PORT=8080
 EXPOSE 8080
-CMD exec gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 1800 --graceful-timeout 30
+
+# Entrypoint: si CLAUDE_CREDENTIALS_JSON viene como env (via Secret Manager),
+# lo escribimos a ~/.claude/.credentials.json antes de arrancar gunicorn. Eso
+# autentica claude -p para que el cascade engine pueda invocarlo headless.
+RUN echo '#!/bin/bash\nif [ -n "$CLAUDE_CREDENTIALS_JSON" ]; then mkdir -p /root/.claude && echo "$CLAUDE_CREDENTIALS_JSON" > /root/.claude/.credentials.json && chmod 600 /root/.claude/.credentials.json; fi\nexec gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 1800 --graceful-timeout 30' > /entrypoint.sh && chmod +x /entrypoint.sh
+CMD ["/entrypoint.sh"]
