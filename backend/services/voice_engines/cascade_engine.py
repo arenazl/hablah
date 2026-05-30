@@ -247,10 +247,8 @@ async def _llm_flash_text(
         "systemInstruction": {"parts": [{"text": system_instruction}]},
         "contents": contents,
         "generationConfig": {
-            # Bajamos temp de 0.85 -> 0.6 para reducir variance entre corridas.
-            # Pro + thinking ya es creativo; mas temp solo agrega ruido.
-            "temperature": 0.6,
-            "topP": 0.9,
+            "temperature": 0.85,
+            "topP": 0.95,
             # Pro con thinking gasta tokens en pensar. Le damos 2048 para que
             # tenga ~250 visibles despues del thinking budget.
             "maxOutputTokens": 2048,
