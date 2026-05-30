@@ -1,0 +1,89 @@
+﻿[
+  {
+    "insertId": "6a18dd000007f2105e5d02ab",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 938,
+      "message": "cascade.llm.ok",
+      "session_id": 335,
+      "text_preview": "Hey Lucas, I'm right here! I was just wondering if you think a really deep story would even fit into a classic arcade ga",
+      "timestamp_iso": "2026-05-29T00:25:36.521176+00:00",
+      "ts_unix": 1780014336.5211918
+    },
+    "labels": {
+      "instanceId": "0007b734d9587aeafd2df0b1e3c95d526e3952da68a815dda575858065c4696188c35c4c5dc5d4381d81fad7aef2941fb94aebf0bff17460b2440e1270d0cdc45ea791804cfcb705275161cd"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:36.794664118Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00047-n6h",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:36.520720Z"
+  },
+  {
+    "insertId": "6a18dcf2000b5b28cf8b6d82",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1697,
+      "message": "cascade.llm.ok",
+      "session_id": 335,
+      "text_preview": "You got it! So, thinking about those classic arcade vibes, like Pac-Man, do you think a deep story would even fit in a g",
+      "timestamp_iso": "2026-05-29T00:25:22.745216+00:00",
+      "ts_unix": 1780014322.7452366
+    },
+    "labels": {
+      "instanceId": "0007b734d9587aeafd2df0b1e3c95d526e3952da68a815dda575858065c4696188c35c4c5dc5d4381d81fad7aef2941fb94aebf0bff17460b2440e1270d0cdc45ea791804cfcb705275161cd"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:22.810705109Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00047-n6h",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:22.744232Z"
+  },
+  {
+    "insertId": "6a18dce400048ae4624403f6",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 2117,
+      "message": "cascade.llm.ok",
+      "session_id": 335,
+      "text_preview": "Oh, that's a clever catch, Lucas! The Last of Us is definitely not an arcade game. When I think arcade, I picture someth",
+      "timestamp_iso": "2026-05-29T00:25:08.298071+00:00",
+      "ts_unix": 1780014308.2980864
+    },
+    "labels": {
+      "instanceId": "0007b734d9587aeafd2df0b1e3c95d526e3952da68a815dda575858065c4696188c35c4c5dc5d4381d81fad7aef2941fb94aebf0bff17460b2440e1270d0cdc45ea791804cfcb705275161cd"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:08.486788693Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00047-n6h",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:08.297700Z"
+  }
+]

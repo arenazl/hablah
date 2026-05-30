@@ -33,4 +33,4 @@ COPY . .
 # uvicorn worker es async = maneja muchas conexiones concurrentes con 1 worker.
 ENV PORT=8080
 EXPOSE 8080
-CMD exec gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 120
+CMD exec gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 1800 --graceful-timeout 30

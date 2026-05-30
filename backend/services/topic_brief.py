@@ -23,6 +23,7 @@ import logging
 from typing import Optional
 
 from core.config import settings
+from core.trace import trace, trace_duration_ms
 
 log = logging.getLogger("topic_brief")
 
@@ -142,13 +143,15 @@ async def build_topic_brief(
     if not free_topic or not free_topic.strip():
         return None
 
+    t0 = time.time()
     # 1) Cache lookup
     key = _cache_key(free_topic, target_lang, base_lang, cefr, is_kid)
     now = time.time()
     async with _CACHE_LOCK:
         hit = _CACHE.get(key)
         if hit and (now - hit[0]) < _CACHE_TTL_SECONDS:
-            log.info("topic_brief: cache hit for %r", key)
+            trace.event("topic_brief.cache_hit", free_topic=free_topic[:60],
+                        target_lang=target_lang, latency_ms=trace_duration_ms(t0))
             return hit[1]
 
     prompt = _build_prompt(
@@ -168,6 +171,7 @@ async def build_topic_brief(
     }
 
     async def _try_model(model: str) -> Optional[dict]:
+        t_call = time.time()
         url = (
             f"https://generativelanguage.googleapis.com/v1beta/models/"
             f"{model}:generateContent?key={settings.GEMINI_API_KEY}"
@@ -176,27 +180,37 @@ async def build_topic_brief(
             async with httpx.AsyncClient(timeout=_TIMEOUT_SECONDS) as client:
                 r = await client.post(url, json=payload)
                 if r.status_code == 429:
-                    log.warning("topic_brief: 429 rate-limit on %s for topic %r", model, free_topic[:60])
+                    trace.warn("topic_brief.rate_limited",
+                               model=model, free_topic=free_topic[:60],
+                               latency_ms=trace_duration_ms(t_call))
                     return None
                 r.raise_for_status()
                 data = r.json()
                 text = data["candidates"][0]["content"]["parts"][0]["text"]
                 parsed = json.loads(text)
                 if isinstance(parsed, dict):
+                    trace.event("topic_brief.ok",
+                                model=model, free_topic=free_topic[:60],
+                                latency_ms=trace_duration_ms(t_call))
                     return parsed
         except httpx.TimeoutException:
-            log.warning("topic_brief: timeout on %s for topic %r", model, free_topic[:60])
+            trace.warn("topic_brief.timeout",
+                       model=model, free_topic=free_topic[:60],
+                       latency_ms=trace_duration_ms(t_call))
         except Exception as e:
-            log.exception("topic_brief: error on %s: %s", model, e)
+            trace.error("topic_brief.error",
+                        model=model, free_topic=free_topic[:60], error=str(e),
+                        latency_ms=trace_duration_ms(t_call))
         return None
 
     # 2) Flash first, Pro fallback si Flash falla (429 / timeout / network)
     brief = await _try_model(_FLASH_MODEL)
     if brief is None:
-        log.info("topic_brief: trying Pro fallback for topic %r", free_topic[:60])
         brief = await _try_model(_PRO_FALLBACK)
 
     if not isinstance(brief, dict):
+        trace.warn("topic_brief.all_failed", free_topic=free_topic[:60],
+                   total_latency_ms=trace_duration_ms(t0))
         return None
 
     # 3) Cache write (con cap simple para evitar leak)

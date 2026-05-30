@@ -8,9 +8,12 @@ Sin BD por ahora — solo logging. Si queremos agregarlo, sumamos modelo y tabla
 mas adelante.
 """
 import logging
+from typing import Any, Optional
+
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
-from typing import Optional
+
+from core.trace import trace
 
 log = logging.getLogger(__name__)
 
@@ -42,4 +45,28 @@ async def report_frontend_error(payload: FrontendErrorPayload, request: Request)
         (payload.stack or "")[:2000],
         (payload.component_stack or "")[:1500],
     )
+    return {"ok": True}
+
+
+class FrontendTraceEvent(BaseModel):
+    """Evento del frontend que se loguea con el mismo formato structured que
+    el backend, asi /api/diag/session-trace los une cronologicamente."""
+    event: str
+    session_id: Optional[int] = None
+    data: Optional[dict[str, Any]] = None
+
+
+@router.post("/trace")
+async def report_frontend_trace(payload: FrontendTraceEvent) -> dict:
+    """Recibe trace events del frontend (WS lifecycle, audio playback,
+    transcripts) y los reemite via structured logging para que aparezcan en
+    Cloud Logging junto con los del backend, correlacionados por session_id."""
+    fields = {"source": "frontend"}
+    if payload.session_id is not None:
+        fields["session_id"] = payload.session_id
+    if payload.data:
+        for k, v in payload.data.items():
+            if k not in fields:
+                fields[k] = v
+    trace.event(payload.event, **fields)
     return {"ok": True}

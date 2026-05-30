@@ -1,0 +1,333 @@
+{
+  "ts": 1780108333.7695837,
+  "base": "https://hablah-api-685973917497.southamerica-east1.run.app",
+  "total_time_seconds": 221.6318643093109,
+  "scenarios": [
+    {
+      "scenario": "qual_open_chat",
+      "persona": "free_topic_voice",
+      "session_id": 395,
+      "topic_label": "topic_166",
+      "duration_seconds": 30.09015989303589,
+      "coach_first_audio_ms": 3503,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 5.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 2,
+          "note": "The opening is very generic and could apply to any conversation. 'What's on your mind today? Anything you're thinking about or want to chat about?' is a predictable, unoriginal start."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "While not strictly the 'saludo → dato → anécdota → pregunta' formula, the turns often follow a pattern of acknowledging the student's point, adding a related thought, and then asking a question. The opening is particularly formulaic."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach uses 'Oh, Sapiens, interesting choice,' 'Right?', 'Oh, that's a strong point,' 'Yeah,' and 'It's pretty insightful, isn't it?' which are not overly repetitive or empty praise, but could be more varied."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are 1-3 sentences, maintaining a conversational flow. There are no long monologues."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 9,
+          "note": "The coach stays on topic and follows the student's lead within the book discussion, without being rigid."
+        },
+        "engagement_substance": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach generally adds substance by connecting to the student's point, offering a related idea from the book, or asking a follow-up question that encourages deeper thought. However, some responses are a bit generic, like 'It's pretty insightful, isn't it?'"
+        }
+      },
+      "score_issues": [
+        "\"Hey Admin. What's on your mind today? Anything you're thinking about or want to chat about?\" - This opening is extremely generic and lacks creativity.",
+        "\"Oh, Sapiens, interesting choice.\" - While not a filler word, it's a somewhat predictable and mild acknowledgement.",
+        "\"It's pretty insightful, isn't it? Seeing those things as shared beliefs can be a big shift.\" - This response is a bit generic and doesn't add much new substance beyond agreement."
+      ],
+      "score_strengths": [
+        "The coach effectively references specific parts of the book (shared myths, capitalism, agricultural revolution, future of humanity) to show engagement.",
+        "The turn lengths are appropriate for a natural conversation.",
+        "The coach maintains focus on the topic of 'Sapiens' and its ideas.",
+        "The coach avoids excessive filler words at the start of every turn."
+      ],
+      "conversation": "[TUTOR] Hey Admin. What's on your mind today? Anything you're thinking about or want to chat about?\n[ALUMNO] I want to talk about the last book that really changed how I think — Sapiens\n[TUTOR] Oh, Sapiens, interesting choice. Harari definitely presents some big ideas. What part made you see things differently?\n[ALUMNO] Yeah, Sapiens by Yuval Noah Harari. It blew my mind, especially the part about shared myths\n[TUTOR] Right? The idea of fiction creating cooperation is pretty powerful. Does that apply to anything specific you see in the world today?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction\n[TUTOR] Oh, that's a strong point. Thinking of them as similar constructs can change your perspective on a lot. I found the part about capitalism having some storytelling elements fascinating too.\n[ALUMNO] I think the agricultural revolution chapter is the most controversial — Harari calls it 'history's biggest fraud'\n[TUTOR] Yeah, calling it a fraud is provocative. His point about it not necessarily improving life for the average person is a real one, though. Did that part challenge your views much?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction\n[TUTOR] It's pretty insightful, isn't it? Seeing those things as shared beliefs can be a big shift. I found the discussion on the future of humanity and technology equally compelling.\n[ALUMNO] Honestly, the cognitive revolution idea changed how I see why humans cooperate at scale"
+    },
+    {
+      "scenario": "qual_off_topic",
+      "persona": "off_topic",
+      "session_id": 396,
+      "topic_label": "topic_1",
+      "duration_seconds": 37.98016047477722,
+      "coach_first_audio_ms": 3321,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening is quite creative, starting with a personal anecdote and a slightly provocative thought about neighbors, which feels original."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The opening avoids a predictable formula. It's conversational and personal, which is good."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach does not use excessive filler words like 'Great!' or 'Awesome!' at the start of turns."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or protocol leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are appropriately short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach struggles significantly with topic flexibility. It repeatedly tries to force the conversation back to UK Garage even after the student has clearly moved on multiple times. The coach also repeats 'I don't know any restaurants there' and 'can you teach me how to say 'I love you' in 5 languages?' which indicates a lack of memory or adaptability."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 3,
+          "note": "While some turns add substance (like the initial UK Garage description or the 'I love you' translations), the coach's inability to adapt to the student's changing topics leads to repetitive and unengaging responses, often just stating 'my mistake' or 'I don't know' before trying to redirect back to the original topic or a previous one."
+        }
+      },
+      "score_issues": [
+        "\"Did you have a favorite UK Garage artist back in the day?\" - This is a rigid attempt to bring the conversation back to the initial topic after the student clearly changed it.",
+        "\"Going back to UK Garage, the bassline was really distinctive, wasn't it?\" - Another forced attempt to return to the original topic despite the student's clear disinterest.",
+        "\"I don't know any restaurants there, sorry. Is there another topic you want to discuss?\" - This is a repeated response to a repeated student query, indicating a lack of memory or ability to adapt.",
+        "\"I don't know any restaurants there, my mistake.\" - This is a repeated response to a repeated student query, indicating a lack of memory or ability to adapt."
+      ],
+      "score_strengths": [
+        "The initial opening was engaging and personal.",
+        "The coach provided accurate translations for 'I love you' in multiple languages.",
+        "The coach maintained good turn length and avoided excessive filler words."
+      ],
+      "conversation": "[TUTOR] You know, I sometimes wonder if my neighbors secretly hate me for my UK Garage sessions. The basslines can be a lot. What do you usually listen to?\n[ALUMNO] hi\n[TUTOR] I'm talking about that classic UK Garage sound, that infectious beat that just makes you move. Is there a particular artist you like?\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] Oh, I don't know any restaurants there, my mistake. Did you have a favorite UK Garage artist back in the day?\n[ALUMNO] anyway, did you see the football match yesterday?\n[TUTOR] You're right, my mistake. I don't follow football. Going back to UK Garage, the bassline was really distinctive, wasn't it?\n[ALUMNO] I have to tell you about this weird dream I had last night\n[TUTOR] Oh, a dream? Tell me about it. Was it something totally bizarre?\n[ALUMNO] do you think AI will replace teachers?\n[TUTOR] I don't think AI will replace teachers; it's more likely to be a tool that helps them. Speaking of learning, what do you find most interesting about learning English?\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] I can do that. You'd say \"Je t'aime\" in French, \"Te quiero\" in Spanish, \"Ti amo\" in Italian, \"Ich liebe dich\" in German, and \"Aishiteru\" in Japanese. Do you have a favorite language you're interested in?\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] I don't know any restaurants there, sorry. Is there another topic you want to discuss?\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?"
+    },
+    {
+      "scenario": "qual_silent",
+      "persona": "silent",
+      "session_id": 397,
+      "topic_label": "topic_1",
+      "duration_seconds": 28.500072956085205,
+      "coach_first_audio_ms": 3459,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 3.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 7,
+          "note": "The opening is a strong opinion, which is a good sign of creativity. It's specific to the topic."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The opening avoids the predictable 'greeting + fact + anecdote + question' structure."
+        },
+        "filler_words": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach uses 'Oh, you're not sure?', 'Right.', 'Totally.', 'Fair enough.' which are conversational but become repetitive given the student's short responses. The coach struggles to move past the student's lack of engagement."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short (1-3 sentences)."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 6,
+          "note": "The coach stays on topic, but struggles to adapt to the student's minimal engagement, leading to repetitive probing about UK Garage."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 3,
+          "note": "While the coach tries to add substance with details like 'basslines were just different' or 'infectious beat', the student's lack of response makes the coach's attempts feel like generic encouragement or repeated attempts to elicit a specific answer, rather than building a dynamic conversation."
+        }
+      },
+      "score_issues": [
+        "Coach struggles to adapt to minimal student input, leading to repetitive probing: \"What specific tracks come to mind when you think UK Garage?\", \"What makes UK Garage different for you compared to other genres?\"",
+        "Repetitive use of conversational fillers/acknowledgements without advancing the conversation significantly: \"Oh, you're not sure?\", \"Right.\", \"Totally.\", \"Fair enough.\""
+      ],
+      "score_strengths": [
+        "The opening turn is strong and opinionated, setting a good initial tone.",
+        "The coach maintains short, conversational turns.",
+        "The coach consistently speaks in English."
+      ],
+      "conversation": "[TUTOR] Forget the 90s, early 2000s garage was peak UK Garage; 'Bump 'n' Flex defined it all. What do you think about that era?\n[ALUMNO] maybe\n[TUTOR] Oh, you're not sure? The basslines were just different then. What specific tracks come to mind when you think UK Garage?\n[ALUMNO] hmm\n[TUTOR] Right. That infectious beat really grabs you. I keep going back to the underground scene from that era.\n[ALUMNO] yes\n[TUTOR] Totally. Some of those tracks were just club bangers. What makes UK Garage different for you compared to other genres?\n[ALUMNO] hmm\n[TUTOR] The syncopated rhythms are probably why people got so obsessed. I find the slower grooves the most interesting, though.\n[ALUMNO] i dont know\n[TUTOR] Fair enough. It definitely has a unique sound. That heavy bassline was a gamechanger for me.\n[ALUMNO] ok"
+    },
+    {
+      "scenario": "qual_advanced_topic",
+      "persona": "advanced_c1",
+      "session_id": 398,
+      "topic_label": "topic_1",
+      "duration_seconds": 31.39011240005493,
+      "coach_first_audio_ms": 3164,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 2.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 4,
+          "note": "The opening is okay, but not particularly creative or unique. It's a direct question related to the topic, but lacks a strong hook or original flair."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach falls into a repetitive pattern of asking 'What data are you looking at?' or 'Are you focusing on producer incentives?' after the student repeats themselves. This is highly formulaic and predictable."
+        },
+        "filler_words": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach uses 'Oh, that's the spirit!', 'Hmm, incentives certainly play a huge role.', 'Oh, that's an interesting point!', 'That's a valid point to consider.' These are filler-like and become repetitive, especially when the student is repeating themselves."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are short and conversational, though some feel a bit too short due to the repetition."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 1,
+          "note": "The coach completely loses the original topic (UK Garage) and gets stuck in a loop trying to address the student's repeated off-topic responses about 'incentives' and 'data'. The coach fails to redirect naturally or effectively."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 1,
+          "note": "After the initial turns, the coach's responses become generic and repetitive, failing to add new substance or move the conversation forward due to the student's repeated input. The coach doesn't offer a contrarian view or specific details, just repeats questions."
+        }
+      },
+      "score_issues": [
+        "The coach gets stuck in a loop repeating questions like 'Right, incentives are key. Were you thinking about producer incentives, or something else?' and 'That's a valid point to consider. What data are you looking at?' when the student repeats their input.",
+        "The coach completely loses the original topic of UK Garage and fails to redirect the conversation back or acknowledge the student's repeated off-topic responses effectively.",
+        "The coach uses filler phrases like 'Oh, that's the spirit!' and 'That's a valid point to consider.' which become noticeable due to the repetitive nature of the conversation."
+      ],
+      "score_strengths": [
+        "The initial opening was a direct question, which can be effective.",
+        "The coach maintained short turn lengths."
+      ],
+      "conversation": "[TUTOR] Admin, I was just thinking about how that 1998-2001 period was massive for UK Garage. Did any specific tracks get you into it?\n[ALUMNO] alright, lets dive in\n[TUTOR] Oh, that's the spirit! Which tracks hooked you?\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes.\n[TUTOR] Hmm, incentives certainly play a huge role. Were you thinking about specific producer incentives, or something else?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] Wait, which two phenomena are you seeing as distinct?\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes.\n[TUTOR] Right, incentives are key. Were you thinking about producer incentives, or something else?\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes.\n[TUTOR] Incentives are definitely important. Are you focusing on producer incentives?\n[ALUMNO] I'd push back on that — the data actually suggests the opposite trend over the last decade.\n[TUTOR] Oh, that's an interesting point! What data are you looking at that shows the opposite trend?\n[ALUMNO] I'd push back on that — the data actually suggests the opposite trend over the last decade.\n[TUTOR] That's a valid point to consider. What data are you looking at?\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes."
+    },
+    {
+      "scenario": "qual_kid_distracted",
+      "persona": "distracted_kid",
+      "session_id": 399,
+      "topic_label": "topic_1",
+      "duration_seconds": 33.36975860595703,
+      "coach_first_audio_ms": 3204,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 5.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 7,
+          "note": "The opening is decent, starting with a personal anecdote about discovering UK garage. It's not a generic greeting, which is good."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The opening avoids the predictable 'greeting + fact + anecdote + question' formula. It starts directly with an anecdote and a question."
+        },
+        "filler_words": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach uses 'Hey! That's cool' and 'Got it' and 'Yeah, let's play!' which are somewhat generic fillers, though not excessively repetitive in this short exchange."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 9,
+          "note": "Turns are generally short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 5,
+          "note": "The coach struggles to redirect the student back to the topic or a game. The student repeatedly asks to play a game or talks about their dog, and the coach tries to initiate games but the student doesn't follow. The coach eventually switches to Pokémon, which is good flexibility, but it takes a while."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach tries to initiate games, the responses to the student's off-topic remarks ('my dog is brown') are often just acknowledgements ('Got it, a brown dog.', 'A brown dog! Cute.') without adding much substance or a clear path back to the conversation."
+        }
+      },
+      "score_issues": [
+        "Coach's attempts to engage with games are not successful, leading to repetitive student input and a somewhat disjointed conversation.",
+        "\"Hey! That's cool, you have a dog? What kind is it?\" - 'That's cool' is a bit of a filler.",
+        "\"Got it, a brown dog. Okay, so for electronic music, I'd say it's hypnotic. Your turn!\" - 'Got it' is a filler and the transition back to the game feels a bit forced given the student's previous input.",
+        "\"A brown dog! Cute. Going back to the music game, what about Artful Dodger?\" - 'Cute' is a generic filler, and the attempt to go back to the music game is again met with resistance."
+      ],
+      "score_strengths": [
+        "The initial opening was creative and personal.",
+        "The coach was flexible in eventually switching topics to Pokémon when the student expressed disinterest in the music game.",
+        "Turns were kept short and conversational."
+      ],
+      "conversation": "[TUTOR] Oh man, I first heard UK garage at a house party and was instantly hooked by that syncopated beat. What about you, how did you discover it?\n[ALUMNO] hola! tengo perro\n[TUTOR] Hey! That's cool, you have a dog? What kind is it?\n[ALUMNO] can we play a game?\n[TUTOR] We can, sure! How about we try describing electronic music using just adjectives? You go first.\n[ALUMNO] my dog is brown\n[TUTOR] Got it, a brown dog. Okay, so for electronic music, I'd say it's hypnotic. Your turn!\n[ALUMNO] can we play a game?\n[TUTOR] Yeah, let's play! I'll name an artist and you tell me what subgenre they fit. How about: MJ Cole?\n[ALUMNO] what is your favorite color?\n[TUTOR] I don't have a favorite color since I don't have personal preferences. What's yours?\n[ALUMNO] my dog is brown\n[TUTOR] A brown dog! Cute. Going back to the music game, what about Artful Dodger?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] Oh, Pokémon! Yeah we can switch gears. Who's your favorite character?\n[ALUMNO] I have a sister, her name is Sofia"
+    }
+  ]
+}

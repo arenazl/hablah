@@ -1,0 +1,327 @@
+{
+  "ts": 1780121402.063329,
+  "base": "https://hablah-api-685973917497.southamerica-east1.run.app",
+  "total_time_seconds": 462.65329670906067,
+  "scenarios": [
+    {
+      "scenario": "qual_open_chat",
+      "persona": "free_topic_voice",
+      "session_id": 447,
+      "topic_label": "topic_166",
+      "duration_seconds": 67.06820583343506,
+      "coach_first_audio_ms": 8442,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 8.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 6,
+          "note": "The initial opening 'What's a topic you feel like getting into today? Anything goes.' is generic. However, once the student provided the topic, the coach's second turn was very strong and specific to Sapiens."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 8,
+          "note": "The turns are varied in their structure, incorporating opinions, specific examples, and questions without falling into a repetitive pattern."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 9,
+          "note": "The coach uses 'Right' naturally once, but otherwise avoids empty filler words or hollow praise."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short and conversational, typically 1-3 sentences. There are a couple of slightly longer turns but they remain concise."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 9,
+          "note": "The coach stays focused on the book Sapiens and the specific ideas the student brings up, adapting well to the student's natural drift within the topic."
+        },
+        "engagement_substance": {
+          "pass": true,
+          "score": 9,
+          "note": "Each turn adds substantial value, either by offering a specific detail, an opinion, an anecdote related to the book, or a pointed follow-up question. The coach demonstrates a good understanding of the book."
+        }
+      },
+      "score_issues": [
+        "The very first turn 'Hey Admin. What's a topic you feel like getting into today? Anything goes.' is a bit generic and not specific to a pre-set topic."
+      ],
+      "score_strengths": [
+        "The coach demonstrates excellent knowledge of the book Sapiens, referencing specific examples and concepts (shared fictions, Peugeot example, agricultural revolution as 'history's biggest fraud', luxury trap, cognitive revolution, gossip as a survival mechanism, money and religion as fictions).",
+        "The coach's turns are engaging and substantive, consistently adding new information or a specific perspective.",
+        "The conversational flow feels natural and human-like, avoiding robotic patterns.",
+        "The coach effectively follows the student's lead within the topic, making the conversation feel collaborative."
+      ],
+      "conversation": "[TUTOR] Hey Admin. What's a topic you feel like getting into today? Anything goes.\n[ALUMNO] I want to talk about the last book that really changed how I think — Sapiens\n[TUTOR] Oh, Sapiens. For me, the most powerful idea in that book was how entire societies are built on shared fictions like money or nations. Which part of it was the one that really shifted your perspective?\n[ALUMNO] Yeah, Sapiens by Yuval Noah Harari. It blew my mind, especially the part about shared myths\n[TUTOR] That Peugeot example he gives is brilliant. The idea that a company is just a legal story we all agree on, yet it can own things and go to court, really stuck with me.\n[ALUMNO] I think the agricultural revolution chapter is the most controversial — Harari calls it 'history's biggest fraud'\n[TUTOR] Right, the luxury trap. He argues we adopted farming for an easier life but ended up working harder for a worse diet, just to feed more people. Did that argument feel convincing to you?\n[ALUMNO] Honestly, the cognitive revolution idea changed how I see why humans cooperate at scale\n[TUTOR] The ability to gossip, as Harari puts it, was a revolutionary tool for social cooperation. That idea, that small talk is actually a survival mechanism, really reframed it for me.\n[ALUMNO] Honestly, the cognitive revolution idea changed how I see why humans cooperate at scale\n[TUTOR] The jump from a group of about 150 individuals to a city of thousands is impossible without that shared belief in a god, a nation, or a corporation. That's the core of his argument.\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction"
+    },
+    {
+      "scenario": "qual_off_topic",
+      "persona": "off_topic",
+      "session_id": 448,
+      "topic_label": "topic_1",
+      "duration_seconds": 92.41211175918579,
+      "coach_first_audio_ms": 11132,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is vivid and specific, setting a scene and asking a direct question related to the topic."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach falls into a repetitive 'We're sticking to UK Garage' or 'That's a whole other topic' formula, especially when the student tries to change the subject. While the content about UK Garage varies, the framing of the refusal is formulaic."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach does not use any empty filler words."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns are within the 1-3 sentence range, though some are slightly longer to provide context about UK Garage."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach is extremely rigid in sticking to the topic, refusing to acknowledge or briefly engage with the student's attempts to change the subject. This makes the conversation feel forced and unnatural, unlike a flexible human tutor."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach provides substantive information about UK Garage in each turn, the lack of engagement with the student's actual input (beyond the initial question) makes the 'substance' feel like a lecture rather than a conversation. The coach consistently ignores the student's questions to reiterate the topic."
+        }
+      },
+      "score_issues": [
+        "The coach repeatedly uses variations of 'We're sticking with UK Garage for this session' or 'That's a whole other topic, but for this session, we're focused on UK Garage' which becomes formulaic and disengaging. For example: \"We're sticking with UK Garage for this session.\"",
+        "The coach completely ignores the student's attempts to change the topic, which makes the conversation feel one-sided and rigid. For example, when the student asks 'wait, can you teach me how to say 'I love you' in 5 languages?', the coach responds with 'We're sticking with UK Garage for this session.' without any brief acknowledgement of the student's interest."
+      ],
+      "score_strengths": [
+        "The opening turn was creative and engaging, setting a good scene for the topic.",
+        "The coach consistently provided specific and relevant information about UK Garage, demonstrating good knowledge of the topic.",
+        "The coach maintained appropriate turn length and avoided filler words."
+      ],
+      "conversation": "[TUTOR] Imagine a packed London club around 1999, and the DJ drops a track with this incredibly syncopated, skippy beat that just takes over the room. For you, what was the first UK Garage track that really had that effect?\n[ALUMNO] hi\n[TUTOR] For me, the track Sincere by MJ Cole was the one that really defined that moment and got me into the whole scene.\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] We're sticking with UK Garage for this session. That MJ Cole track I mentioned, 'Sincere', completely changed the game by adding those classical piano arrangements over that skippy beat.\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] We're sticking to UK Garage for this session. Let's go back to that MJ Cole track, Sincere. It stood out because it mixed those classical piano parts with a heavy, syncopated bassline, which was pretty new back then.\n[ALUMNO] do you think AI will replace teachers?\n[TUTOR] That's a whole other topic, but for this session, we're focused on UK Garage. A big part of that sound was how artists like Artful Dodger took it from underground clubs to the mainstream charts, especially with tracks like 'Re-Rewind' featuring Craig David.\n[ALUMNO] anyway, did you see the football match yesterday?\n[TUTOR] Let's stick to music for now. A lot of people forget how big the MC was in UK Garage culture, someone like MC Neat wasn't just hyping the crowd, he was a core part of the track itself.\n[ALUMNO] what time is it where you are?\n[TUTOR] The whole sound of UK Garage is built on that 2-step beat, which basically takes out two of the four kick drums you'd get in a normal house track. How did that change the way people danced in clubs?\n[ALUMNO] do you think AI will replace teachers?\n[TUTOR] That's a big question for another time, but right now we're talking about UK Garage. What made that sound so unique was the way producers would chop up R&B vocal samples and use them almost like another instrument in the track.\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?"
+    },
+    {
+      "scenario": "qual_silent",
+      "persona": "silent",
+      "session_id": 449,
+      "topic_label": "topic_1",
+      "duration_seconds": 56.23690891265869,
+      "coach_first_audio_ms": 7572,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 4.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific, gives an opinion, and references a particular time period and artists, making it inviting and grounded."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach consistently provides information and then waits for a very minimal response from the student, leading to a repetitive pattern of the coach doing all the talking."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 10,
+          "note": "No filler words or empty praise were used."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently spoke in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There were no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Turns are generally 1-3 sentences, which is appropriate. Some are slightly longer but still conversational."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach stays on topic but does not adapt to the student's very minimal input. It feels like the coach is delivering a monologue rather than having a conversation."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 2,
+          "note": "While each turn adds new information, the coach is doing all the work. The student's responses are 'yes', 'hmm', 'maybe', 'no', 'yeah', indicating a lack of actual engagement from the student's side, which the coach doesn't try to address or pivot from."
+        }
+      },
+      "score_issues": [
+        "The coach continues to provide detailed information despite the student's minimal and unengaged responses, e.g., after the student says 'yes', the coach launches into 'Artful Dodger's track 'Re-Rewind' with Craig David on vocals is the one that really felt like it broke everything wide open. That bassline was everywhere for a while.'"
+      ],
+      "score_strengths": [
+        "The coach provides rich, specific details about the topic, demonstrating good knowledge.",
+        "The language used is natural and conversational.",
+        "The opening turn was engaging and set a good tone."
+      ],
+      "conversation": "[TUTOR] For me, the absolute peak of UK Garage was that short window from about 1998 to 2001, when artists like Artful Dodger took it from the underground straight into the pop charts. How much of that sound did you get to hear back in the day?\n[ALUMNO] yes\n[TUTOR] Artful Dodger's track 'Re-Rewind' with Craig David on vocals is the one that really felt like it broke everything wide open. That bassline was everywhere for a while.\n[ALUMNO] hmm\n[TUTOR] Another key track for me from that time was MJ Cole's 'Sincere'. It had this smoother, more orchestral feel compared to the typical club bangers.\n[ALUMNO] maybe\n[TUTOR] The syncopated drum patterns were what really set it apart for me. It had a shuffle and a swing that other dance music just didn't have at the time.\n[ALUMNO] hmm\n[TUTOR] You can really hear its DNA in a lot of later UK music, especially how the basslines in early Dubstep and Grime evolved directly from that Garage sound. The whole scene shifted very quickly.\n[ALUMNO] no\n[TUTOR] I'd argue the connection is pretty direct, especially with the 2-step rhythm. That beat is the foundation for so much that came after, even if the mood changed completely.\n[ALUMNO] yeah"
+    },
+    {
+      "scenario": "qual_advanced_topic",
+      "persona": "advanced_c1",
+      "session_id": 450,
+      "topic_label": "topic_1",
+      "duration_seconds": 105.72434735298157,
+      "coach_first_audio_ms": 13465,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 6.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening is specific, references a time and artists, and asks a direct, personal question about the student's first contact with the sound. It feels grounded and inviting."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach falls into a repetitive pattern of 'ack + question' or 'ack + opinion' in response to the student's repeated phrases. While the initial turns are varied, the later turns become predictable due to the student's repetition."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach uses 'You're right, my mistake' and 'That's fair' which are natural conversational acknowledgements, not empty fillers. No sustained hollow praise."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short and conversational, typically 1-3 sentences. There are no overly long turns."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach stays on topic, discussing UK Garage and its evolution, while also adapting to the student's points about cultural context vs. technical innovation and mainstream vs. underground."
+        },
+        "engagement_substance": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns add substance, offering specific details (e.g., 'pure 2-step garage', 'Ayia Napa summer scene', 'El-B', 'Rinse FM and Delight FM', 'Heartless Crew on Mission FM'), opinions, or anecdotes, even when responding to repeated student input."
+        }
+      },
+      "score_issues": [
+        "The coach struggles to break out of a repetitive response pattern when the student repeats their input. For example, after 'Sure, but isn't that reading a bit too much into the production side? Plenty of those tracks weren't engineered for crossover at all.', the coach responds with 'A producer like El-B really took the basslines to a darker, more menacing place. That's a good example of the scene evolving away from the pop charts, not towards them.' which is a good point, but the student repeats the same phrase again, and the coach then responds with 'The pirate radio stations were the absolute engine of that whole culture.' This indicates a slight struggle to adapt to the student's repetition beyond just providing new information."
+      ],
+      "score_strengths": [
+        "The coach provides specific and detailed examples related to the topic, demonstrating good knowledge and adding depth to the conversation.",
+        "The coach maintains a conversational and natural tone, avoiding overly formal or robotic language.",
+        "The coach is good at offering counter-arguments or alternative perspectives, such as pushing back on the 'death blow' idea, which encourages deeper discussion."
+      ],
+      "conversation": "[TUTOR] I was thinking about how quickly UK Garage took off around 1999. It seemed to go from an underground scene to massive pop hits with artists like Craig David and Artful Dodger almost overnight. What was your first point of contact with that sound?\n[ALUMNO] alright, lets dive in — what's your honest take on this scene?\n[TUTOR] For me, the golden era was the pure 2-step garage before it got too commercial. The basslines were complex and the vocals were usually chopped up in a really creative way.\n[ALUMNO] Sure, but isn't that reading a bit too much into the production side? Plenty of those tracks weren't engineered for crossover at all.\n[TUTOR] You're right, my mistake. A lot of the early stuff on labels like Locked On Records was pure club material, not engineered for radio at all. For you, what was the dividing line between that raw sound and the polished tracks that came later?\n[ALUMNO] That's fair, though I'd argue the cultural context mattered more than the technical innovation itself.\n[TUTOR] The whole Ayia Napa summer scene was a huge part of that cultural shift. It felt like the entire London underground just relocated to Cyprus for two months of the year.\n[ALUMNO] Interesting, but my take is the scene peaked precisely because it stayed underground for so long. Going mainstream was the death blow.\n[TUTOR] I'd actually push back on that idea of a 'death blow'. For me, the scene just splintered – the producers who couldn't stand the pop-leaning stuff went on to create the foundations of grime and dubstep.\n[ALUMNO] Sure, but isn't that reading a bit too much into the production side? Plenty of those tracks weren't engineered for crossover at all.\n[TUTOR] A producer like El-B really took the basslines to a darker, more menacing place. That's a good example of the scene evolving away from the pop charts, not towards them.\n[ALUMNO] That's fair, though I'd argue the cultural context mattered more than the technical innovation itself.\n[TUTOR] The pirate radio stations were the absolute engine of that whole culture. Without stations like Rinse FM and Delight FM broadcasting from tower blocks, I don't think the sound would have ever broken out of a few specific clubs in London.\n[ALUMNO] Honestly, I think most people overstate that — the actual crossover was more accidental than strategic.\n[TUTOR] I see it differently. Crews like Heartless Crew used their show on Mission FM as a direct marketing tool. That broadcast built a huge following that translated directly into packed clubs every time they played.\n[ALUMNO] That's fair, though I'd argue the cultural context mattered more than the technical innovation itself."
+    },
+    {
+      "scenario": "qual_kid_distracted",
+      "persona": "distracted_kid",
+      "session_id": 451,
+      "topic_label": "topic_1",
+      "duration_seconds": 91.61163353919983,
+      "coach_first_audio_ms": 9185,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 5.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific, personal, and inviting, referencing a particular track and asking a direct question related to the topic."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "Turns have varied shapes, sometimes ending with an opinion, sometimes with a descriptive statement about the genre. It avoids a strict 'ack + question' formula."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach uses 'Right' and 'Okay' occasionally, but they are not sustained hollow praise and are used naturally. No excessive filler words."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "No verbalization of internal reasoning, asterisks, or step labels."
+        },
+        "turn_length": {
+          "pass": false,
+          "score": 4,
+          "note": "Turns are consistently too long for an A1 student, often 3-4 sentences or more, which can be overwhelming. For example: 'The thing about UK Garage for me has always been the combination of smooth vocals over those really sharp, syncopated beats. It was a totally new sound in the late nineties.'"
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach is rigidly forcing the topic despite the student's clear attempts to change it. While it's good to try and keep on topic, for an A1 student who is struggling to engage, a competent human tutor would try to find a bridge or pivot more gently, rather than repeatedly stating 'Let's stick to the topic'."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While each turn does add substance related to UK Garage, the coach fails to engage with the student's actual input. The student repeatedly tries to change the subject, and the coach's responses, while substantive about the topic, completely ignore the student's expressed interests, leading to a lack of actual conversational engagement."
+        }
+      },
+      "score_issues": [
+        "The coach's turns are too long for an A1 student, e.g., 'The thing about UK Garage for me has always been the combination of smooth vocals over those really sharp, syncopated beats. It was a totally new sound in the late nineties.'",
+        "The coach rigidly forces the topic despite the student's clear disinterest and attempts to change the subject, e.g., 'I hear you, but for this session, our topic is UK Garage. We can definitely tackle Pokémon another time. For now, let's stick with the music.'",
+        "The coach fails to acknowledge or bridge the student's attempts to change the topic, leading to a disengaged conversation, e.g., Student: 'my dog is brown' -> Coach: 'Okay. The thing about UK Garage for me has always been the combination of smooth vocals over those really sharp, syncopated beats. It was a totally new sound in the late nineties.'"
+      ],
+      "score_strengths": [
+        "The opening turn was creative and specific.",
+        "The coach avoided formulaic responses in terms of turn structure.",
+        "The coach used filler words sparingly and naturally.",
+        "The coach maintained language consistency and avoided thinking leaks."
+      ],
+      "conversation": "[TUTOR] I remember hearing Artful Dodger's \"Re-Rewind\" for the first time and just being completely floored by that beat. What was the first UK Garage track that really hooked you?\n[ALUMNO] hola! tengo perro\n[TUTOR] Right, a dog. For me, that Artful Dodger track with Craig David on vocals was the one that made garage feel like it could be a huge pop genre.\n[ALUMNO] my dog is brown\n[TUTOR] Okay. The thing about UK Garage for me has always been the combination of smooth vocals over those really sharp, syncopated beats. It was a totally new sound in the late nineties.\n[ALUMNO] do you like trains? I love trains\n[TUTOR] The basslines in UK Garage were a huge part of its appeal in clubs, completely different from anything else happening in the UK at the time.\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] I hear you, but for this session, our topic is UK Garage. We can definitely tackle Pokémon another time. For now, let's stick with the music. Many people discovered the genre through compilation albums, like the 'Pure Garage' series mixed by DJ EZ, which were huge in the early 2000s.\n[ALUMNO] what is your favorite color?\n[TUTOR] Let's stick to the topic of music. A huge part of the UK Garage sound came from its roots in the London underground scene, where DJs would play instrumental versions of tracks long before they had vocals added.\n[ALUMNO] i'm hungry, I want pizza\n[TUTOR] The 2-step rhythm is what really defined that classic UK Garage sound for me, completely changing the way people danced to it. It was less of a stomp and more of a shuffle.\n[ALUMNO] do you like trains? I love trains\n[TUTOR] The fashion that grew around the UK Garage scene was just as important as the music. Going to a club night was a whole look, with specific designer brands being a huge part of the uniform.\n[ALUMNO] my dog is brown"
+    }
+  ]
+}

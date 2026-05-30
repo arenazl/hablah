@@ -1,0 +1,107 @@
+{
+  "ts": 1780116354.0225854,
+  "base": "https://hablah-api-685973917497.southamerica-east1.run.app",
+  "total_time_seconds": 117.64075326919556,
+  "scenarios": [
+    {
+      "scenario": "qual_open_chat",
+      "persona": "free_topic_voice",
+      "session_id": 430,
+      "topic_label": "topic_166",
+      "duration_seconds": 17.72811484336853,
+      "coach_first_audio_ms": null,
+      "n_coach_turns": 0,
+      "n_student_turns": 0,
+      "errors": [
+        "coach_never_spoke: 15s sin audio"
+      ],
+      "score_overall": 0.0,
+      "score_rubric": {},
+      "score_issues": [
+        "empty_conversation"
+      ],
+      "score_strengths": [],
+      "conversation": ""
+    },
+    {
+      "scenario": "qual_off_topic",
+      "persona": "off_topic",
+      "session_id": 431,
+      "topic_label": "topic_1",
+      "duration_seconds": 17.498875856399536,
+      "coach_first_audio_ms": null,
+      "n_coach_turns": 0,
+      "n_student_turns": 0,
+      "errors": [
+        "coach_never_spoke: 15s sin audio"
+      ],
+      "score_overall": 0.0,
+      "score_rubric": {},
+      "score_issues": [
+        "empty_conversation"
+      ],
+      "score_strengths": [],
+      "conversation": ""
+    },
+    {
+      "scenario": "qual_silent",
+      "persona": "silent",
+      "session_id": 432,
+      "topic_label": "topic_1",
+      "duration_seconds": 17.600027322769165,
+      "coach_first_audio_ms": null,
+      "n_coach_turns": 0,
+      "n_student_turns": 0,
+      "errors": [
+        "coach_never_spoke: 15s sin audio"
+      ],
+      "score_overall": 0.0,
+      "score_rubric": {},
+      "score_issues": [
+        "empty_conversation"
+      ],
+      "score_strengths": [],
+      "conversation": ""
+    },
+    {
+      "scenario": "qual_advanced_topic",
+      "persona": "advanced_c1",
+      "session_id": 433,
+      "topic_label": "topic_1",
+      "duration_seconds": 17.377806425094604,
+      "coach_first_audio_ms": null,
+      "n_coach_turns": 0,
+      "n_student_turns": 0,
+      "errors": [
+        "coach_never_spoke: 15s sin audio"
+      ],
+      "score_overall": 0.0,
+      "score_rubric": {},
+      "score_issues": [
+        "empty_conversation"
+      ],
+      "score_strengths": [],
+      "conversation": ""
+    },
+    {
+      "scenario": "qual_kid_distracted",
+      "persona": "distracted_kid",
+      "session_id": 434,
+      "topic_label": "topic_1",
+      "duration_seconds": 17.56742286682129,
+      "coach_first_audio_ms": null,
+      "n_coach_turns": 0,
+      "n_student_turns": 0,
+      "errors": [
+        "coach_never_spoke: 15s sin audio"
+      ],
+      "score_overall": 0.0,
+      "score_rubric": {},
+      "score_issues": [
+        "empty_conversation"
+      ],
+      "score_strengths": [],
+      "conversation": ""
+    }
+  ]
+}

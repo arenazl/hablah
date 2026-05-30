@@ -1,0 +1,3525 @@
+﻿[
+  {
+    "insertId": "6a18ddb1000eea402967d6be",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 15,
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:33.979021+00:00",
+      "ts_unix": 1780014513.97904
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:34.169054251Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:33.977472Z"
+  },
+  {
+    "insertId": "6a18ddb1000eaa4148568d54",
+    "jsonPayload": {
+      "bytes": 254230,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1488,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:33.962643+00:00",
+      "ts_unix": 1780014513.9626572,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:34.169054251Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:33.961089Z"
+  },
+  {
+    "insertId": "6a18ddb0000719c7c75a53b9",
+    "jsonPayload": {
+      "bytes": 114396,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1137,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:32.466428+00:00",
+      "ts_unix": 1780014512.4664416,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:32.502187943Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:32.465351Z"
+  },
+  {
+    "insertId": "6a18ddaf000501c8e3271fc7",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 982,
+      "message": "cascade.llm.ok",
+      "session_id": 340,
+      "text_preview": "Oh, a sister named Sofia! That's lovely. Is she into music at all, or perhaps even UK Garage?",
+      "timestamp_iso": "2026-05-29T00:28:31.328287+00:00",
+      "ts_unix": 1780014511.3283029
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:31.506615917Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:31.328136Z"
+  },
+  {
+    "insertId": "6a18ddae00052b8ef92b3bc5",
+    "jsonPayload": {
+      "bytes": 93700,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1099,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:30.339299+00:00",
+      "ts_unix": 1780014510.3393126,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:30.510922428Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:30.338830Z"
+  },
+  {
+    "insertId": "6a18ddad000374c65de6f8f7",
+    "jsonPayload": {
+      "bytes": 183528,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1050,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:29.227210+00:00",
+      "ts_unix": 1780014509.2272282,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:29.510273335Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:29.226502Z"
+  },
+  {
+    "insertId": "6a18ddac0002ab2c23089973",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 832,
+      "message": "cascade.llm.ok",
+      "session_id": 340,
+      "text_preview": "We talked about this earlier, so I'm happy to play a game! What game did you have in mind?",
+      "timestamp_iso": "2026-05-29T00:28:28.175858+00:00",
+      "ts_unix": 1780014508.1758723
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:28.505710050Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:28.174892Z"
+  },
+  {
+    "insertId": "6a18ddab000517c914848e2a",
+    "jsonPayload": {
+      "bytes": 128712,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1283,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:27.334689+00:00",
+      "ts_unix": 1780014507.334705,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:27.507093434Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:27.333769Z"
+  },
+  {
+    "insertId": "6a18ddaa00008e452f030f2c",
+    "jsonPayload": {
+      "bytes": 195908,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1613,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:26.037045+00:00",
+      "ts_unix": 1780014506.0370638,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:26.176336032Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:26.036421Z"
+  },
+  {
+    "insertId": "6a18dda80006707aa4271733",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1542,
+      "message": "cascade.llm.ok",
+      "session_id": 340,
+      "text_preview": "That's a fun question! I'm a big fan of a deep, rich blue. How about you, what's your favorite color?",
+      "timestamp_iso": "2026-05-29T00:28:24.423191+00:00",
+      "ts_unix": 1780014504.423208
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:24.511518446Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:24.422010Z"
+  },
+  {
+    "insertId": "6a18dda6000b97e054671cbc",
+    "jsonPayload": {
+      "bytes": 118536,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1136,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:22.761374+00:00",
+      "ts_unix": 1780014502.7613885,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:22.847409702Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:22.759776Z"
+  },
+  {
+    "insertId": "6a18dda5000962a4508d0fe3",
+    "jsonPayload": {
+      "bytes": 102262,
+      "event": "cascade.tts.ok",
+      "latency_ms": 574,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:21.615899+00:00",
+      "ts_unix": 1780014501.6159132,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:21.845752296Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:21.615076Z"
+  },
+  {
+    "insertId": "6a18dda500009b23e794272d",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 889,
+      "message": "cascade.llm.ok",
+      "session_id": 340,
+      "text_preview": "Pizza sounds amazing right now. What kind of toppings are we talking about?",
+      "timestamp_iso": "2026-05-29T00:28:21.040837+00:00",
+      "ts_unix": 1780014501.0408509
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:21.181678694Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:21.039715Z"
+  },
+  {
+    "insertId": "6a18dda4000229fbe02b2cb6",
+    "jsonPayload": {
+      "bytes": 108610,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1148,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:20.143223+00:00",
+      "ts_unix": 1780014500.1432376,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:20.182379256Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:20.141819Z"
+  },
+  {
+    "insertId": "6a18dda2000f13ac10e80156",
+    "jsonPayload": {
+      "bytes": 84790,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1214,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:18.988703+00:00",
+      "ts_unix": 1780014498.988717,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:19.181833483Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:18.988076Z"
+  },
+  {
+    "insertId": "6a18dda1000bcac92bc34743",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1543,
+      "message": "cascade.llm.ok",
+      "session_id": 340,
+      "text_preview": "We can definitely do that! What kind of game did you have in mind?",
+      "timestamp_iso": "2026-05-29T00:28:17.773565+00:00",
+      "ts_unix": 1780014497.7735777
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:17.854638888Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:17.772809Z"
+  },
+  {
+    "insertId": "6a18dda000031423714b7404",
+    "jsonPayload": {
+      "bytes": 378798,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1612,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:16.202407+00:00",
+      "ts_unix": 1780014496.2024248,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:16.517656851Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:16.201763Z"
+  },
+  {
+    "insertId": "6a18dd9e0008da176e78055f",
+    "jsonPayload": {
+      "bytes": 131936,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1257,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:14.580550+00:00",
+      "ts_unix": 1780014494.5805686,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:14.852551914Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:14.580119Z"
+  },
+  {
+    "insertId": "6a18dd9d0004ea4a0c167f05",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 834,
+      "message": "cascade.llm.ok",
+      "session_id": 340,
+      "text_preview": "Ah, a brown dog! Nice. Shifting gears back to music for a moment, do you think it's fair to say that many genres borrow ",
+      "timestamp_iso": "2026-05-29T00:28:13.322828+00:00",
+      "ts_unix": 1780014493.32285
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:13.520126440Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:13.322122Z"
+  },
+  {
+    "insertId": "6a18dd9c00072184b77c6cf5",
+    "jsonPayload": {
+      "bytes": 285072,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1462,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:12.467919+00:00",
+      "ts_unix": 1780014492.467936,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:12.522210208Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:12.467332Z"
+  },
+  {
+    "insertId": "6a18dd9a000f352a7c433e5a",
+    "jsonPayload": {
+      "bytes": 137570,
+      "event": "cascade.tts.ok",
+      "latency_ms": 903,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:10.997340+00:00",
+      "ts_unix": 1780014490.9973547,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:11.190972961Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:10.996650Z"
+  },
+  {
+    "insertId": "6a18dd9a000166cf9af9e24f",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1630,
+      "message": "cascade.llm.ok",
+      "session_id": 340,
+      "text_preview": "Oh, you have a dog! That's cool.  So, thinking about the music, do you believe musical genres often mix and influence ea",
+      "timestamp_iso": "2026-05-29T00:28:10.093141+00:00",
+      "ts_unix": 1780014490.0931528
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:10.189737573Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:10.091855Z"
+  },
+  {
+    "insertId": "6a18dd980006838b6431a0f6",
+    "jsonPayload": {
+      "bytes": 489214,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1132,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:08.428054+00:00",
+      "ts_unix": 1780014488.4280696,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:08.525728298Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:08.426891Z"
+  },
+  {
+    "insertId": "6a18dd97000423020f6dc036",
+    "jsonPayload": {
+      "bytes": 358824,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1087,
+      "message": "cascade.tts.ok",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:07.272018+00:00",
+      "ts_unix": 1780014487.2720337,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:07.527588471Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:07.271106Z"
+  },
+  {
+    "insertId": "6a18dd960002caf8b324cce8",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 991,
+      "message": "cascade.llm.ok",
+      "session_id": 340,
+      "text_preview": "Oh, hey Admin! We're diving into UK Garage today, which always makes me think of those infectious beats. What are your t",
+      "timestamp_iso": "2026-05-29T00:28:06.183676+00:00",
+      "ts_unix": 1780014486.1836884
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:06.194897201Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:06.183032Z"
+  },
+  {
+    "insertId": "6a18dd950002ebd1dedadadf",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 340,
+      "timestamp_iso": "2026-05-29T00:28:05.192290+00:00",
+      "ts_unix": 1780014485.192299,
+      "voice": "en-US-Neural2-F",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:28:05.195621600Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:28:05.191441Z"
+  },
+  {
+    "insertId": "6a18dd8700059dbb6ffdc5da",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 17,
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:51.368358+00:00",
+      "ts_unix": 1780014471.3683684
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:51.375609979Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:51.368059Z"
+  },
+  {
+    "insertId": "6a18dd8700059bf38eeab905",
+    "jsonPayload": {
+      "bytes": 119996,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1331,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:51.367854+00:00",
+      "ts_unix": 1780014471.3678665,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:51.375609979Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:51.367603Z"
+  },
+  {
+    "insertId": "6a18dd86000087eb6144f1d7",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1301,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "You're right to challenge that, Admin. I understand your concern about conflating distinct phenomena.\n\nTo clarify, when ",
+      "timestamp_iso": "2026-05-29T00:27:50.035561+00:00",
+      "ts_unix": 1780014470.0355744
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:50.043487323Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:50.034795Z"
+  },
+  {
+    "insertId": "6a18dd840007661b23aa3930",
+    "jsonPayload": {
+      "bytes": 666560,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1534,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:48.485493+00:00",
+      "ts_unix": 1780014468.4855123,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:48.709978172Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:48.484891Z"
+  },
+  {
+    "insertId": "6a18dd82000e5cb2acceb5c6",
+    "jsonPayload": {
+      "bytes": 130978,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1278,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:46.942118+00:00",
+      "ts_unix": 1780014466.9421322,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:47.045149682Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:46.941234Z"
+  },
+  {
+    "insertId": "6a18dd81000a1a9eb6f2ca76",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1768,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "Oh, that's a strong counter-argument. You're saying that recent data indicates a different trend regarding genre blendin",
+      "timestamp_iso": "2026-05-29T00:27:45.663070+00:00",
+      "ts_unix": 1780014465.6630843
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:45.715809073Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:45.662174Z"
+  },
+  {
+    "insertId": "6a18dd7f000d173b524c3551",
+    "jsonPayload": {
+      "bytes": 498656,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1566,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:43.859028+00:00",
+      "ts_unix": 1780014463.859042,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:44.048147262Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:43.857915Z"
+  },
+  {
+    "insertId": "6a18dd7e0003f1b8699df33a",
+    "jsonPayload": {
+      "bytes": 463068,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1781,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:42.259258+00:00",
+      "ts_unix": 1780014462.2592733,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:42.382846466Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:42.258488Z"
+  },
+  {
+    "insertId": "6a18dd7c000746ebbcb466f6",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1467,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "I hear you, Admin. It sounds like you're concerned about oversimplifying the complexities of cultural exchange and music",
+      "timestamp_iso": "2026-05-29T00:27:40.477408+00:00",
+      "ts_unix": 1780014460.4774225
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:40.719296064Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:40.476907Z"
+  },
+  {
+    "insertId": "6a18dd7a000e7a5b9193e6b2",
+    "jsonPayload": {
+      "bytes": 836036,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1995,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:38.949209+00:00",
+      "ts_unix": 1780014458.9492273,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:39.052711339Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:38.948827Z"
+  },
+  {
+    "insertId": "6a18dd78000e3b130c9d55aa",
+    "jsonPayload": {
+      "bytes": 287316,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1434,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:36.933064+00:00",
+      "ts_unix": 1780014456.9330795,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:37.055552061Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:36.932627Z"
+  },
+  {
+    "insertId": "6a18dd770007959361d92603",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1808,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "I completely agree that context is huge, and what resonates in one region might not in another. That's a really importan",
+      "timestamp_iso": "2026-05-29T00:27:35.497954+00:00",
+      "ts_unix": 1780014455.4979687
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:35.724018738Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:35.497043Z"
+  },
+  {
+    "insertId": "6a18dd75000a2e7e30efe0f4",
+    "jsonPayload": {
+      "bytes": 311366,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1519,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:33.667940+00:00",
+      "ts_unix": 1780014453.6679544,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:33.724953633Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:33.667262Z"
+  },
+  {
+    "insertId": "6a18dd740001b18b147306be",
+    "jsonPayload": {
+      "bytes": 460926,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1785,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:32.112274+00:00",
+      "ts_unix": 1780014452.1122942,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:32.393906370Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:32.110987Z"
+  },
+  {
+    "insertId": "6a18dd720004f80961b3f7b1",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 956,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "Oh, that's interesting. You're saying the data points to a different trend regarding genre blending in the last decade, ",
+      "timestamp_iso": "2026-05-29T00:27:30.326419+00:00",
+      "ts_unix": 1780014450.3264349
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:30.394665936Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:30.325641Z"
+  },
+  {
+    "insertId": "6a18dd710004b071a12aaac0",
+    "jsonPayload": {
+      "bytes": 874084,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1964,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:29.307795+00:00",
+      "ts_unix": 1780014449.3078182,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:29.396436096Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:29.307313Z"
+  },
+  {
+    "insertId": "6a18dd6f000507a9a90dec3f",
+    "jsonPayload": {
+      "bytes": 153918,
+      "event": "cascade.tts.ok",
+      "latency_ms": 771,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:27.330024+00:00",
+      "ts_unix": 1780014447.3300397,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:27.400784865Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:27.329641Z"
+  },
+  {
+    "insertId": "6a18dd6e00087fa4e5477b7c",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1121,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "I understand your concern about oversimplification. My apologies if my previous question came across that way.\n\nLet's re",
+      "timestamp_iso": "2026-05-29T00:27:26.557560+00:00",
+      "ts_unix": 1780014446.557574
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:26.735300990Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:26.556964Z"
+  },
+  {
+    "insertId": "6a18dd6d0005d1e97a7c28a1",
+    "jsonPayload": {
+      "bytes": 722400,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1413,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:25.382405+00:00",
+      "ts_unix": 1780014445.3824217,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:25.399694467Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:25.381417Z"
+  },
+  {
+    "insertId": "6a18dd6b000e703bc74156b4",
+    "jsonPayload": {
+      "bytes": 316948,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1649,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:23.946804+00:00",
+      "ts_unix": 1780014443.9468205,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:24.068880425Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:23.946235Z"
+  },
+  {
+    "insertId": "6a18dd6a000486eddac89239",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1901,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "That's a fair point. I can see how focusing just on a \"key element\" might oversimplify things.\n\nPerhaps it's more about ",
+      "timestamp_iso": "2026-05-29T00:27:22.297303+00:00",
+      "ts_unix": 1780014442.2973187
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:22.403319424Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:22.296685Z"
+  },
+  {
+    "insertId": "6a18dd6800056acfc130d9c2",
+    "jsonPayload": {
+      "bytes": 470326,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1744,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:20.355968+00:00",
+      "ts_unix": 1780014440.3559854,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:20.407178279Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:20.355023Z"
+  },
+  {
+    "insertId": "6a18dd6600094b0f548eb70a",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1032,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "Nice! So, thinking about that UK Garage sound, what do you believe was the key element that made it so appealing and eas",
+      "timestamp_iso": "2026-05-29T00:27:18.610638+00:00",
+      "ts_unix": 1780014438.6106503
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:18.737526579Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:18.609039Z"
+  },
+  {
+    "insertId": "6a18dd65000887b90d3c2ba7",
+    "jsonPayload": {
+      "bytes": 246026,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1390,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:17.560242+00:00",
+      "ts_unix": 1780014437.560259,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:17.739393879Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:17.559033Z"
+  },
+  {
+    "insertId": "6a18dd6400020d47c9eeefb2",
+    "jsonPayload": {
+      "bytes": 419456,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1964,
+      "message": "cascade.tts.ok",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:16.135363+00:00",
+      "ts_unix": 1780014436.1353822,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:16.407901004Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:16.134471Z"
+  },
+  {
+    "insertId": "6a18dd62000298c2ee90400a",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1096,
+      "message": "cascade.llm.ok",
+      "session_id": 339,
+      "text_preview": "Hey there, Admin! I was just thinking about how much UK Garage influenced British pop music in the late 90s and early 20",
+      "timestamp_iso": "2026-05-29T00:27:14.170831+00:00",
+      "ts_unix": 1780014434.1708536
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:14.409875801Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:14.170178Z"
+  },
+  {
+    "insertId": "6a18dd61000120b3ada8de68",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 339,
+      "timestamp_iso": "2026-05-29T00:27:13.074321+00:00",
+      "ts_unix": 1780014433.074332,
+      "voice": "en-US-Neural2-F",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:13.081605957Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:27:13.073907Z"
+  },
+  {
+    "insertId": "6a18dd53000a602da8aa95c0",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 11,
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:59.680760+00:00",
+      "ts_unix": 1780014419.6807783
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:27:00.000307258Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:59.679981Z"
+  },
+  {
+    "insertId": "6a18dd530009dd099606a152",
+    "jsonPayload": {
+      "bytes": 472102,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1841,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:59.647170+00:00",
+      "ts_unix": 1780014419.647194,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:59.667897767Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:59.646409Z"
+  },
+  {
+    "insertId": "6a18dd51000c1c26e00d496c",
+    "jsonPayload": {
+      "bytes": 156402,
+      "event": "cascade.tts.ok",
+      "latency_ms": 822,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:57.794390+00:00",
+      "ts_unix": 1780014417.7944062,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:58.002049570Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:57.793638Z"
+  },
+  {
+    "insertId": "6a18dd50000ecc7a6cc918ab",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1133,
+      "message": "cascade.llm.ok",
+      "session_id": 338,
+      "text_preview": "Right? It's like a musical puzzle sometimes. For me, I always hear a bit of reggae or dancehall influence in a lot of po",
+      "timestamp_iso": "2026-05-29T00:26:56.971077+00:00",
+      "ts_unix": 1780014416.9710927
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:57.004690225Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:56.969850Z"
+  },
+  {
+    "insertId": "6a18dd4f000c884e781b5ab5",
+    "jsonPayload": {
+      "bytes": 216876,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1342,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:55.822092+00:00",
+      "ts_unix": 1780014415.8221076,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:56.005432159Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:55.821326Z"
+  },
+  {
+    "insertId": "6a18dd4e0006e4fe208aaa88",
+    "jsonPayload": {
+      "bytes": 370496,
+      "event": "cascade.tts.ok",
+      "latency_ms": 2465,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:54.453072+00:00",
+      "ts_unix": 1780014414.4530902,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:54.669781856Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:54.451838Z"
+  },
+  {
+    "insertId": "6a18dd4b000f0c1f0b3acc2b",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1731,
+      "message": "cascade.llm.ok",
+      "session_id": 338,
+      "text_preview": "I get that. Sometimes it's hard to pinpoint exactly what makes a song feel unique, but often it's those subtle fusions. ",
+      "timestamp_iso": "2026-05-29T00:26:51.986912+00:00",
+      "ts_unix": 1780014411.9869266
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:52.008000174Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:51.986143Z"
+  },
+  {
+    "insertId": "6a18dd4a0003af3c9259693d",
+    "jsonPayload": {
+      "bytes": 197424,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1385,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:50.241953+00:00",
+      "ts_unix": 1780014410.2419689,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:50.341057018Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:50.241468Z"
+  },
+  {
+    "insertId": "6a18dd48000c8e44fd3f2b02",
+    "jsonPayload": {
+      "bytes": 452118,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1773,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:48.823730+00:00",
+      "ts_unix": 1780014408.823749,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:49.011225170Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:48.822852Z"
+  },
+  {
+    "insertId": "6a18dd470000bc39c9bbbff5",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1184,
+      "message": "cascade.llm.ok",
+      "session_id": 338,
+      "text_preview": "That's a fair point. I think it's fascinating how a specific drum pattern or bassline can jump from one style of music t",
+      "timestamp_iso": "2026-05-29T00:26:47.049202+00:00",
+      "ts_unix": 1780014407.0492187
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:47.345865596Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:47.048185Z"
+  },
+  {
+    "insertId": "6a18dd45000cfe84affd14f3",
+    "jsonPayload": {
+      "bytes": 155192,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1268,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:45.852531+00:00",
+      "ts_unix": 1780014405.8525465,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:46.011857549Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:45.851588Z"
+  },
+  {
+    "insertId": "6a18dd4400087a29b48c732f",
+    "jsonPayload": {
+      "bytes": 386548,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1905,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:44.556769+00:00",
+      "ts_unix": 1780014404.5567875,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:44.680124045Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:44.555561Z"
+  },
+  {
+    "insertId": "6a18dd420009e7cbf037e927",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1129,
+      "message": "cascade.llm.ok",
+      "session_id": 338,
+      "text_preview": "No problem. Well, I think they absolutely do mix and influence each other constantly, like a big melting pot of sounds. ",
+      "timestamp_iso": "2026-05-29T00:26:42.650670+00:00",
+      "ts_unix": 1780014402.6506839
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:42.682266544Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:42.649163Z"
+  },
+  {
+    "insertId": "6a18dd4100079f3047455840",
+    "jsonPayload": {
+      "bytes": 309352,
+      "event": "cascade.tts.ok",
+      "latency_ms": 902,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:41.500505+00:00",
+      "ts_unix": 1780014401.5005217,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:41.687408318Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:41.499504Z"
+  },
+  {
+    "insertId": "6a18dd400008c422dcfcbe7c",
+    "jsonPayload": {
+      "bytes": 344254,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1102,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:40.575385+00:00",
+      "ts_unix": 1780014400.5753994,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:40.685851415Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:40.574498Z"
+  },
+  {
+    "insertId": "6a18dd3f00073498152a45fc",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1774,
+      "message": "cascade.llm.ok",
+      "session_id": 338,
+      "text_preview": "Oh, no worries at all! Sometimes these genres can be a bit niche if you weren't around when they first took off. Do you ",
+      "timestamp_iso": "2026-05-29T00:26:39.472485+00:00",
+      "ts_unix": 1780014399.4725003
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:39.688205323Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:39.472216Z"
+  },
+  {
+    "insertId": "6a18dd3d000a68c730501c8b",
+    "jsonPayload": {
+      "bytes": 193708,
+      "event": "cascade.tts.ok",
+      "latency_ms": 770,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:37.682768+00:00",
+      "ts_unix": 1780014397.6827846,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:37.686577167Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:37.682183Z"
+  },
+  {
+    "insertId": "6a18dd3c000d2e30401f52ca",
+    "jsonPayload": {
+      "bytes": 643010,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1925,
+      "message": "cascade.tts.ok",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:36.864804+00:00",
+      "ts_unix": 1780014396.8648236,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:37.021870305Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:36.863792Z"
+  },
+  {
+    "insertId": "6a18dd3a000e4ede373de5a8",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1917,
+      "message": "cascade.llm.ok",
+      "session_id": 338,
+      "text_preview": "Hey Admin! You know, I've always thought UK Garage was one of the most exciting genres to come out of Britain, especiall",
+      "timestamp_iso": "2026-05-29T00:26:34.938894+00:00",
+      "ts_unix": 1780014394.9389071
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:35.024503960Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:34.937694Z"
+  },
+  {
+    "insertId": "6a18dd390000513cb22a130c",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 338,
+      "timestamp_iso": "2026-05-29T00:26:33.021483+00:00",
+      "ts_unix": 1780014393.0214922,
+      "voice": "en-US-Neural2-F",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:33.025253018Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:33.020796Z"
+  },
+  {
+    "insertId": "6a18dd2a000e15390157e496",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 15,
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:18.924197+00:00",
+      "ts_unix": 1780014378.9242167
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:19.131019639Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:18.922937Z"
+  },
+  {
+    "insertId": "6a18dd2a000d3fee945b4ca1",
+    "jsonPayload": {
+      "bytes": 767456,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1389,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:18.869569+00:00",
+      "ts_unix": 1780014378.869591,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:19.131019639Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:18.868334Z"
+  },
+  {
+    "insertId": "6a18dd2900072788e90d88bc",
+    "jsonPayload": {
+      "bytes": 142220,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1327,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:17.469788+00:00",
+      "ts_unix": 1780014377.4698048,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:17.801689780Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:17.468872Z"
+  },
+  {
+    "insertId": "6a18dd280002254fb09ec2e9",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1140,
+      "message": "cascade.llm.ok",
+      "session_id": 337,
+      "text_preview": "That's a really interesting question, Admin. I think AI, like myself, can be a powerful tool to support teachers and enh",
+      "timestamp_iso": "2026-05-29T00:26:16.141648+00:00",
+      "ts_unix": 1780014376.1416612
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:16.468739176Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:16.140623Z"
+  },
+  {
+    "insertId": "6a18dd26000eb96e47bc4dd6",
+    "jsonPayload": {
+      "bytes": 484646,
+      "event": "cascade.tts.ok",
+      "latency_ms": 2018,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:14.965590+00:00",
+      "ts_unix": 1780014374.9656057,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:15.134569498Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:14.964974Z"
+  },
+  {
+    "insertId": "6a18dd24000e3bf35f5cc78d",
+    "jsonPayload": {
+      "bytes": 199596,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1355,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:12.933007+00:00",
+      "ts_unix": 1780014372.9331217,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:13.141449324Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:12.932851Z"
+  },
+  {
+    "insertId": "6a18dd230008cd8bdc32b042",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1838,
+      "message": "cascade.llm.ok",
+      "session_id": 337,
+      "text_preview": "I didn't get a chance to see the football match yesterday, Admin. We were discussing how different languages influence e",
+      "timestamp_iso": "2026-05-29T00:26:11.577405+00:00",
+      "ts_unix": 1780014371.5774202
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:11.807382542Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:11.576907Z"
+  },
+  {
+    "insertId": "6a18dd21000b157dc4a0f0cf",
+    "jsonPayload": {
+      "bytes": 163798,
+      "event": "cascade.tts.ok",
+      "latency_ms": 741,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:09.726872+00:00",
+      "ts_unix": 1780014369.7268877,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:09.807377853Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:09.726397Z"
+  },
+  {
+    "insertId": "6a18dd20000e99c77a4b7ad9",
+    "jsonPayload": {
+      "bytes": 393552,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1522,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:08.957944+00:00",
+      "ts_unix": 1780014368.9579625,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:09.142073659Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:08.956871Z"
+  },
+  {
+    "insertId": "6a18dd1f00069e22452e90e2",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 965,
+      "message": "cascade.llm.ok",
+      "session_id": 337,
+      "text_preview": "I can't directly teach you phrases in other languages, but we can talk about how English has been influenced by many oth",
+      "timestamp_iso": "2026-05-29T00:26:07.434925+00:00",
+      "ts_unix": 1780014367.4349394
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:07.475771500Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:07.433698Z"
+  },
+  {
+    "insertId": "6a18dd1e00068ce49efe1186",
+    "jsonPayload": {
+      "bytes": 524864,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1762,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:06.430263+00:00",
+      "ts_unix": 1780014366.4302807,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:06.475833970Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:06.429284Z"
+  },
+  {
+    "insertId": "6a18dd1c0009d156d495852c",
+    "jsonPayload": {
+      "bytes": 318324,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1521,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:04.644230+00:00",
+      "ts_unix": 1780014364.6442487,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:04.812403418Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:04.643414Z"
+  },
+  {
+    "insertId": "6a18dd1b0001d5b12d08288d",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1645,
+      "message": "cascade.llm.ok",
+      "session_id": 337,
+      "text_preview": "I'm not able to teach specific phrases in multiple languages, as my purpose is to help you practice English. However, we",
+      "timestamp_iso": "2026-05-29T00:26:03.121792+00:00",
+      "ts_unix": 1780014363.1218078
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:03.145849975Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:03.120241Z"
+  },
+  {
+    "insertId": "6a18dd190006ce1bacf626a3",
+    "jsonPayload": {
+      "bytes": 414876,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1685,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:26:01.446709+00:00",
+      "ts_unix": 1780014361.4467275,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:26:01.484215174Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:26:01.445979Z"
+  },
+  {
+    "insertId": "6a18dd17000b75c7d9724a7b",
+    "jsonPayload": {
+      "bytes": 123316,
+      "event": "cascade.tts.ok",
+      "latency_ms": 700,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:25:59.751762+00:00",
+      "ts_unix": 1780014359.7517767,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:59.817581611Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:59.751047Z"
+  },
+  {
+    "insertId": "6a18dd170000c2ed32e83d10",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1024,
+      "message": "cascade.llm.ok",
+      "session_id": 337,
+      "text_preview": "It's currently 11:30 AM here. Getting back to music, I was curious if you think musical genres often mix and influence e",
+      "timestamp_iso": "2026-05-29T00:25:59.050420+00:00",
+      "ts_unix": 1780014359.050435
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:59.149645731Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:59.049901Z"
+  },
+  {
+    "insertId": "6a18dd15000f386595357be6",
+    "jsonPayload": {
+      "bytes": 383692,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1172,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:25:57.998091+00:00",
+      "ts_unix": 1780014357.99811,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:58.151676144Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:57.997477Z"
+  },
+  {
+    "insertId": "6a18dd14000c55956ae1633f",
+    "jsonPayload": {
+      "bytes": 251586,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1387,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:25:56.809522+00:00",
+      "ts_unix": 1780014356.8095384,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:56.818719985Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:56.808341Z"
+  },
+  {
+    "insertId": "6a18dd1300066d2c99b3e47e",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1603,
+      "message": "cascade.llm.ok",
+      "session_id": 337,
+      "text_preview": "Oh, I didn't catch the match yesterday, but I did see some highlights this morning. We were just talking about how UK Ga",
+      "timestamp_iso": "2026-05-29T00:25:55.422009+00:00",
+      "ts_unix": 1780014355.422024
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:55.486693129Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:55.421164Z"
+  },
+  {
+    "insertId": "6a18dd11000c4a7a9390ef49",
+    "jsonPayload": {
+      "bytes": 187388,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1381,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:25:53.806269+00:00",
+      "ts_unix": 1780014353.806284,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:53.822652098Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:53.805498Z"
+  },
+  {
+    "insertId": "6a18dd1000062a682c2d16a7",
+    "jsonPayload": {
+      "bytes": 284808,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1607,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:25:52.405302+00:00",
+      "ts_unix": 1780014352.40532,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:52.490569782Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:52.404072Z"
+  },
+  {
+    "insertId": "6a18dd0e000c262fe0b707e8",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1032,
+      "message": "cascade.llm.ok",
+      "session_id": 337,
+      "text_preview": "Hey Admin. I just think that infectious beat really changed the game for pop music back then. Do you think there are oth",
+      "timestamp_iso": "2026-05-29T00:25:50.797250+00:00",
+      "ts_unix": 1780014350.7972643
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:50.825620049Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:50.796207Z"
+  },
+  {
+    "insertId": "6a18dd0d000b9483c5bd2e80",
+    "jsonPayload": {
+      "bytes": 75576,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1011,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:25:49.759308+00:00",
+      "ts_unix": 1780014349.7593217,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:49.826157605Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:49.758915Z"
+  },
+  {
+    "insertId": "6a18dd0c000ad6da24cc44e1",
+    "jsonPayload": {
+      "bytes": 518636,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1069,
+      "message": "cascade.tts.ok",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:25:48.710358+00:00",
+      "ts_unix": 1780014348.7103763,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:48.826704692Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:48.710362Z"
+  },
+  {
+    "insertId": "6a18dd0b0009c1e678045082",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 963,
+      "message": "cascade.llm.ok",
+      "session_id": 337,
+      "text_preview": "Some people dismiss UK Garage as just a fleeting trend, but I think its influence on mainstream British pop was actually",
+      "timestamp_iso": "2026-05-29T00:25:47.640077+00:00",
+      "ts_unix": 1780014347.640092
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:47.829334340Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:47.639462Z"
+  },
+  {
+    "insertId": "6a18dd0a000a4f606337a941",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 337,
+      "timestamp_iso": "2026-05-29T00:25:46.676266+00:00",
+      "ts_unix": 1780014346.6762745,
+      "voice": "en-US-Neural2-F",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:46.828982810Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:46.675680Z"
+  },
+  {
+    "insertId": "6a18dcfb0001d4e7e6df677d",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 11,
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:31.121207+00:00",
+      "ts_unix": 1780014331.1212194
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:31.177977181Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:31.120039Z"
+  },
+  {
+    "insertId": "6a18dcfb00014e4591d8df15",
+    "jsonPayload": {
+      "bytes": 422672,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1323,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:31.086712+00:00",
+      "ts_unix": 1780014331.0867312,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:31.177977181Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:31.085573Z"
+  },
+  {
+    "insertId": "6a18dcf9000b139bba3d24d6",
+    "jsonPayload": {
+      "bytes": 507564,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1925,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:29.727027+00:00",
+      "ts_unix": 1780014329.7270448,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:29.846829848Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:29.725915Z"
+  },
+  {
+    "insertId": "6a18dcf7000c31c46d794263",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1229,
+      "message": "cascade.llm.ok",
+      "session_id": 336,
+      "text_preview": "Oh, absolutely. Calling the Agricultural Revolution \"history's biggest fraud\" is quite a provocative statement, and it d",
+      "timestamp_iso": "2026-05-29T00:25:27.800604+00:00",
+      "ts_unix": 1780014327.8006203
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:27.848483557Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:27.799172Z"
+  },
+  {
+    "insertId": "6a18dcf60007f29821017e17",
+    "jsonPayload": {
+      "bytes": 682290,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1943,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:26.522374+00:00",
+      "ts_unix": 1780014326.522393,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:26.846647634Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:26.520856Z"
+  },
+  {
+    "insertId": "6a18dcf40008ba527d2f16da",
+    "jsonPayload": {
+      "bytes": 95966,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1336,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:24.572367+00:00",
+      "ts_unix": 1780014324.5723836,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:24.849216610Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:24.571986Z"
+  },
+  {
+    "insertId": "6a18dcf30003932a3d66b388",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1153,
+      "message": "cascade.llm.ok",
+      "session_id": 336,
+      "text_preview": "That's a very fair critique. Harari does cover vast swaths of history and complex ideas, so some simplification is almos",
+      "timestamp_iso": "2026-05-29T00:25:23.234904+00:00",
+      "ts_unix": 1780014323.2349174
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:23.516451696Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:23.234282Z"
+  },
+  {
+    "insertId": "6a18dcf200004d8b90aca72e",
+    "jsonPayload": {
+      "bytes": 731444,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1505,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:22.020819+00:00",
+      "ts_unix": 1780014322.0208418,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:22.184498836Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:22.019851Z"
+  },
+  {
+    "insertId": "6a18dcf00007b2382258f710",
+    "jsonPayload": {
+      "bytes": 121398,
+      "event": "cascade.tts.ok",
+      "latency_ms": 618,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:20.505429+00:00",
+      "ts_unix": 1780014320.5054462,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:20.520151209Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:20.504376Z"
+  },
+  {
+    "insertId": "6a18dcef000d8344d5e9ab90",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1767,
+      "message": "cascade.llm.ok",
+      "session_id": 336,
+      "text_preview": "It's a powerful concept, isn't it? The cognitive revolution really highlights how our unique language abilities, particu",
+      "timestamp_iso": "2026-05-29T00:25:19.886710+00:00",
+      "ts_unix": 1780014319.8867252
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:20.186532497Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:19.885572Z"
+  },
+  {
+    "insertId": "6a18dcee000136e5aabea1c5",
+    "jsonPayload": {
+      "bytes": 489354,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1163,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:18.080820+00:00",
+      "ts_unix": 1780014318.080838,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:18.189657920Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:18.079589Z"
+  },
+  {
+    "insertId": "6a18dcec000d9116c72818a4",
+    "jsonPayload": {
+      "bytes": 371828,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1536,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:16.890371+00:00",
+      "ts_unix": 1780014316.890389,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:17.189866808Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:16.889110Z"
+  },
+  {
+    "insertId": "6a18dceb00055d2534bf6f43",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1336,
+      "message": "cascade.llm.ok",
+      "session_id": 336,
+      "text_preview": "Right, the idea that our ability to believe in shared fictions like money or nations is what allowed us to cooperate on ",
+      "timestamp_iso": "2026-05-29T00:25:15.353063+00:00",
+      "ts_unix": 1780014315.3530805
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:15.526707363Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:15.351525Z"
+  },
+  {
+    "insertId": "6a18dce9000ef6085f7b7629",
+    "jsonPayload": {
+      "bytes": 498758,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1842,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:13.981478+00:00",
+      "ts_unix": 1780014313.9814963,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:14.193610978Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:13.980488Z"
+  },
+  {
+    "insertId": "6a18dce8000200e636a3316d",
+    "jsonPayload": {
+      "bytes": 92648,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1205,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:12.131910+00:00",
+      "ts_unix": 1780014312.131925,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:12.197999277Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:12.131302Z"
+  },
+  {
+    "insertId": "6a18dce6000e1fbc0f4c689c",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1667,
+      "message": "cascade.llm.ok",
+      "session_id": 336,
+      "text_preview": "That's a fantastic choice. Sapiens definitely has a way of reframing our entire understanding of human history and our p",
+      "timestamp_iso": "2026-05-29T00:25:10.926009+00:00",
+      "ts_unix": 1780014310.9260235
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:11.197399083Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:10.925628Z"
+  },
+  {
+    "insertId": "6a18dce50003b3de496639c2",
+    "jsonPayload": {
+      "bytes": 207716,
+      "event": "cascade.tts.ok",
+      "latency_ms": 861,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:09.243332+00:00",
+      "ts_unix": 1780014309.2433586,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:09.532722983Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:09.242654Z"
+  },
+  {
+    "insertId": "6a18dce40005856fdd8e9cf5",
+    "jsonPayload": {
+      "bytes": 271904,
+      "event": "cascade.tts.ok",
+      "latency_ms": 1524,
+      "message": "cascade.tts.ok",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:08.362578+00:00",
+      "ts_unix": 1780014308.3625958,
+      "voice": "en-US-Neural2-F"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:08.534934327Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:08.361839Z"
+  },
+  {
+    "insertId": "6a18dce2000c4c4b521b9b66",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1710,
+      "message": "cascade.llm.ok",
+      "session_id": 336,
+      "text_preview": "As the sound of the ocean fills the room, I'm curious what's on your mind today, Admin. What's a topic you've been think",
+      "timestamp_iso": "2026-05-29T00:25:06.806856+00:00",
+      "ts_unix": 1780014306.8068726
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:06.866732740Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:06.805963Z"
+  },
+  {
+    "insertId": "6a18dce1000173a77873548b",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 336,
+      "timestamp_iso": "2026-05-29T00:25:05.096047+00:00",
+      "ts_unix": 1780014305.096057,
+      "voice": "en-US-Neural2-F",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d947d6f7e6014482d5ca52c3a5ecfebb2843401a781594e489cf5ec603788f3cf062d5e1a317c34de7e1cab582fe1996ba589ea63ac021a4c651931c71580d39cdb1ec7c086c47a9"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T00:25:05.203464501Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00048-5vl",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T00:25:05.095143Z"
+  }
+]

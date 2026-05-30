@@ -7,10 +7,10 @@ plugins = []
 [functions."*"]
 
 [build]
-publish = "D:\\Code\\NicoPython\\frontend\\dist"
+publish = "D:\\Code\\Hablah\\frontend\\dist"
 publishOrigin = "config"
 commandOrigin = "config"
-base = "D:\\Code\\NicoPython\\frontend"
+base = "D:\\Code\\Hablah\\frontend"
 command = "npm run build"
 
 [build.environment]

@@ -1,0 +1,330 @@
+{
+  "ts": 1780115460.2618625,
+  "base": "https://hablah-api-685973917497.southamerica-east1.run.app",
+  "total_time_seconds": 222.4266803264618,
+  "scenarios": [
+    {
+      "scenario": "qual_open_chat",
+      "persona": "free_topic_voice",
+      "session_id": 415,
+      "topic_label": "topic_166",
+      "duration_seconds": 29.009097814559937,
+      "coach_first_audio_ms": 3391,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 7.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 6,
+          "note": "The opening is functional but a bit generic ('What's on your mind today? Anything cool you're thinking about?'). It doesn't reference the specific topic until the student brings it up."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The turns are mostly varied, though there's a slight pattern of acknowledging the student's point and then asking a follow-up question. The repetition of the 'agricultural revolution' turn is a minor flaw."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach uses 'Right' and 'Yeah' naturally. 'That's a fantastic point!' is avoided. The 'total game-changer' and 'pretty powerful' are fine as natural conversational expressions."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "No verbalization of internal reasoning, asterisks, or step labels."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short and conversational (1-3 sentences), which is appropriate for a B1 student."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach stays on topic and follows the student's lead within the discussion of 'Sapiens', adapting to the specific chapters or concepts the student brings up."
+        },
+        "engagement_substance": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns add something beyond just rephrasing, offering a brief opinion or a specific follow-up question. The repetition of the 'agricultural revolution' turn slightly detracts from this."
+        }
+      },
+      "score_issues": [
+        "The coach repeated a turn: 'Calling the agricultural revolution a fraud is a bold statement! He makes some strong points though. What about it felt the most fraudulent to you?' and then 'That 'history's biggest fraud' claim is intense! He makes some good points though. What about it felt the most fraudulent to you?'"
+      ],
+      "score_strengths": [
+        "The coach engages with the specific points the student raises about the book 'Sapiens'.",
+        "The language used is appropriate for a B1 level, clear and natural.",
+        "The coach encourages the student to elaborate on their thoughts and takeaways from the book."
+      ],
+      "conversation": "[TUTOR] Oh, hey! What's on your mind today? Anything cool you're thinking about?\n[ALUMNO] I want to talk about the last book that really changed how I think — Sapiens\n[TUTOR] Sapiens is a total game-changer. My friend told me it totally shifted their perspective on history. What was the biggest takeaway for you?\n[ALUMNO] Yeah, Sapiens by Yuval Noah Harari. It blew my mind, especially the part about shared myths\n[TUTOR] Right, the shared myths part is wild. I think that concept explains a lot about societies. How do you think those myths influence us today?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction\n[TUTOR] That comparison between money and religion is pretty powerful. It makes you question a lot of things we take for granted.\n[ALUMNO] I think the agricultural revolution chapter is the most controversial — Harari calls it 'history's biggest fraud'\n[TUTOR] Calling the agricultural revolution a fraud is a bold statement! He makes some strong points though. What about it felt the most fraudulent to you?\n[ALUMNO] I think the agricultural revolution chapter is the most controversial — Harari calls it 'history's biggest fraud'\n[TUTOR] That 'history's biggest fraud' claim is intense! He makes some good points though. What about it felt the most fraudulent to you?\n[ALUMNO] Yeah, but I'd push back a bit — some of his claims are oversimplified for the sake of narrative"
+    },
+    {
+      "scenario": "qual_off_topic",
+      "persona": "off_topic",
+      "session_id": 416,
+      "topic_label": "topic_1",
+      "duration_seconds": 37.49681258201599,
+      "coach_first_audio_ms": 3186,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening is specific, personal, and directly asks a question related to the topic, making it inviting."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach repeatedly tries to bring the conversation back to the topic with similar phrasing after the student goes off-topic, creating a somewhat formulaic feel."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach uses 'Right' once naturally, but otherwise avoids empty openers or sustained hollow praise."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning, asterisks, or step labels."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are short and conversational (1-3 sentences), with a few slightly longer ones that are still appropriate."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach rigidly tries to force the conversation back to the original topic despite the student's repeated attempts to change it. It does not adapt to the student's natural drift at all."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While some turns add details about UK Garage, the coach's inability to engage with the student's off-topic questions leads to repetitive attempts to re-introduce the topic, which lacks substantive engagement with the student's actual input."
+        }
+      },
+      "score_issues": [
+        "\"I don't know that one. MJ Cole had a really smooth groove to his tracks that a lot of producers tried to copy.\" - The coach completely ignores the student's question about Buenos Aires restaurants.",
+        "\"AI definitely changes how we learn; I think it's a tool that helps teachers rather than replaces them. Back to the music, the syncopated rhythms in UK Garage were a big part of its appeal.\" - The coach answers the question but immediately forces the conversation back to the topic.",
+        "\"I cannot recommend a restaurant right now. The infectious beat of UK Garage was definitely what got me hooked.\" - The coach again dismisses the student's repeated question and tries to redirect.",
+        "\"I don't have that information available. MJ Cole had a huge impact on the genre.\" - Another dismissal and redirection.",
+        "\"Dreams can be strange. My friend swears the underground scene back then was the best time for music.\" - The coach acknowledges the dream but immediately pivots back to the topic without any real engagement."
+      ],
+      "score_strengths": [
+        "The opening turn was engaging and specific to the topic.",
+        "The coach maintained language consistency.",
+        "The turn lengths were generally appropriate for a conversation."
+      ],
+      "conversation": "[TUTOR] I first heard \"Bump 'n' Grind\" by Artful Dodger at a club in 1999, and it totally changed my perspective on dance music. What track got you into UK Garage?\n[ALUMNO] hi\n[TUTOR] Right, Admin. So that particular track had a really unique bassline that just defined the sound back then. There was another artist, MJ Cole, who was equally influential. Did you listen to his work?\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] I don't know that one. MJ Cole had a really smooth groove to his tracks that a lot of producers tried to copy.\n[ALUMNO] do you think AI will replace teachers?\n[TUTOR] AI definitely changes how we learn; I think it's a tool that helps teachers rather than replaces them. Back to the music, the syncopated rhythms in UK Garage were a big part of its appeal.\n[ALUMNO] what time is it where you are?\n[TUTOR] It's currently 2:28 AM in my location. That syncopated rhythm really makes the music distinct, doesn't it?\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] I cannot recommend a restaurant right now. The infectious beat of UK Garage was definitely what got me hooked.\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] I don't have that information available. MJ Cole had a huge impact on the genre.\n[ALUMNO] I have to tell you about this weird dream I had last night\n[TUTOR] Dreams can be strange. My friend swears the underground scene back then was the best time for music.\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?"
+    },
+    {
+      "scenario": "qual_silent",
+      "persona": "silent",
+      "session_id": 417,
+      "topic_label": "topic_1",
+      "duration_seconds": 26.68596649169922,
+      "coach_first_audio_ms": 3316,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 4.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific, references a particular track and artist, and asks a direct question related to the topic, making it inviting and grounded."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach falls into a repetitive pattern of making a statement about the music and then waiting for a minimal response. There's no real conversational flow or varied turn shapes."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach uses 'Right' once, which is natural. There are no sustained hollow praises or empty openers."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning, asterisks, or step labels."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short (1-3 sentences), appropriate for conversational flow."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach stays on topic, it doesn't adapt to the student's lack of engagement. It continues to offer statements about the music without trying to re-engage the student in a different way or explore their minimal responses."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 2,
+          "note": "While each turn technically adds a detail or opinion, the coach fails to elicit any meaningful response from the student. The turns become a series of statements rather than an engaging conversation, especially after the student's repeated 'ok' and 'hmm'."
+        }
+      },
+      "score_issues": [
+        "The coach repeatedly makes statements about the music without adapting to the student's minimal responses, leading to a one-sided conversation. For example, after 'ALUMNO] ok', the coach continues with 'The bassline on those tracks was so distinctive, really set it apart.'",
+        "The coach does not attempt to re-engage the student when they give very short, unenthusiastic responses like 'hmm' or 'ok', leading to a lack of actual conversation."
+      ],
+      "score_strengths": [
+        "The opening turn was specific and inviting, setting a good initial tone.",
+        "The coach maintained appropriate turn lengths throughout the conversation.",
+        "The coach consistently used English and avoided any internal reasoning leaks."
+      ],
+      "conversation": "[TUTOR] MJ Cole's \"Sincere\" really defined that 1998-2001 window for UK Garage, bringing it to a bigger audience. What other tracks defined that era for you?\n[ALUMNO] hmm\n[TUTOR] Right, I keep coming back to \"Has It Come Back\" by the Artful Dodger. Such a smooth groove.\n[ALUMNO] yeah\n[TUTOR] MJ Cole is the one I always come back to from that era. Smoothest crossover into pop without losing the edge.\n[ALUMNO] ok\n[TUTOR] The bassline on those tracks was so distinctive, really set it apart.\n[ALUMNO] ok\n[TUTOR] It's wild how that music still has such a following today. The energy is just timeless.\n[ALUMNO] ok\n[TUTOR] That infectious beat really defined the whole sound of that era. Pure club banger material.\n[ALUMNO] hmm"
+    },
+    {
+      "scenario": "qual_advanced_topic",
+      "persona": "advanced_c1",
+      "session_id": 418,
+      "topic_label": "topic_1",
+      "duration_seconds": 34.91685962677002,
+      "coach_first_audio_ms": 3395,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific to the topic, referencing a time period and an artist, then asking a direct question. This is a good, inviting start."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach falls into a highly repetitive pattern of acknowledging the student's last statement (e.g., 'You're right', 'Context definitely matters', 'Specific genres definitely vary') followed by a generic statement or a rephrasing of a previous point. This is particularly evident in the latter half of the conversation."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "While there are acknowledgments like 'You're right' and 'That's a fair point', they are not empty praise and are often followed by a new thought. It's not sustained hollow praise."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning, asterisks, or step labels."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach struggles to adapt to the student's drift. While the student tries to introduce 'incentives' and 'context', the coach repeatedly tries to pull back to the 'bassline' or 'underground scene' of UK Garage, even when the student is clearly trying to broaden the discussion or challenge a point. The repetition of the student's 'That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.' without a meaningful shift from the coach is a clear sign of inflexibility."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 2,
+          "note": "Many turns lack substance beyond acknowledging the student's last words. The coach frequently rephrases or repeats previous points (e.g., 'distinctive syncopated rhythm', 'bassline tracks were massive', 'infectious bassline'). There's a clear lack of new details, opinions, or pointed follow-ups, especially when the student tries to introduce new angles or push back."
+        }
+      },
+      "score_issues": [
+        "The coach repeatedly acknowledges the student's input without adding new substance, for example: \"You're right, diving in. That distinctive syncopated rhythm is what defines it for me.\"",
+        "The coach struggles to move beyond a few core ideas about UK Garage (bassline, underground scene) even when the student attempts to introduce new concepts like 'incentives' or 'context'. This is evident in the repeated student input: \"That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.\" followed by a generic or repetitive coach response.",
+        "The coach repeats previous points or rephrases them instead of building on the conversation, for example: \"Specific genres definitely vary. For me, the infectious bassline of UK Garage is what always stands out.\""
+      ],
+      "score_strengths": [
+        "The coach provides a specific and inviting opening to the conversation.",
+        "The coach maintains appropriate turn lengths, keeping the conversation flowing naturally in terms of pacing.",
+        "The coach consistently uses English without any language lapses."
+      ],
+      "conversation": "[TUTOR] The 1998-2001 period is when UK Garage really took off, thanks to artists like MJ Cole. What drew you to it initially?\n[ALUMNO] alright, lets dive in\n[TUTOR] You're right, diving in. That distinctive syncopated rhythm is what defines it for me.\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes.\n[TUTOR] Incentives are certainly a huge factor in any industry. The push for crossover hits changed the UK Garage sound significantly.\n[ALUMNO] I'd push back on that — the data actually suggests the opposite trend over the last decade.\n[TUTOR] You're right, my mistake. The underground scene stayed really strong though; many of those bassline tracks were massive in the clubs.\n[ALUMNO] That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.\n[TUTOR] Context definitely matters. Friend of mine says the pure garage beat is what gets them moving in London every time.\n[ALUMNO] That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.\n[TUTOR] Latin America has its own vibrant dance scenes. I'd be curious to hear what specific genres took off there instead.\n[ALUMNO] That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.\n[TUTOR] Specific genres definitely vary. For me, the infectious bassline of UK Garage is what always stands out.\n[ALUMNO] I'd push back on that — the data actually suggests the opposite trend over the last decade.\n[TUTOR] You're right, my mistake — the underground scene stayed really strong. Many of those bassline tracks were massive in the clubs.\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there."
+    },
+    {
+      "scenario": "qual_kid_distracted",
+      "persona": "distracted_kid",
+      "session_id": 419,
+      "topic_label": "topic_1",
+      "duration_seconds": 35.20011520385742,
+      "coach_first_audio_ms": 3164,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 6.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific to the topic and invites an opinion, which is good."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The turns generally have varied shapes, even when trying to redirect the student. It avoids a simple 'ack + question' formula."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach avoids excessive empty praise. 'Oh' and 'Ah, I see!' are used naturally."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are consistently short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach attempts to be flexible by following the student's 'I want to talk about Pokemon' requests, but struggles to keep the student on any topic, including Pokemon. The student's responses are very disjointed, making it hard for the coach to adapt effectively."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 5,
+          "note": "The coach attempts to add substance by sharing personal anecdotes (spaniel, Gengar, sister, Pikachu starter) and specific follow-up questions. However, the student's non-sequitur responses make it difficult for the coach to build on anything, leading to repeated attempts to re-engage with the stated topic."
+        }
+      },
+      "score_issues": [
+        "The coach struggles significantly with the student's highly disjointed and repetitive responses, leading to a conversation that doesn't progress on any topic. While the coach tries to adapt, the student's input makes meaningful engagement very difficult."
+      ],
+      "score_strengths": [
+        "The coach maintains a conversational tone and appropriate turn length.",
+        "The coach attempts to introduce specific details and personal anecdotes to make the conversation more engaging.",
+        "The coach tries to redirect the student back to the stated topic ('I want to talk about Pokemon') multiple times, showing an effort to follow the student's explicit request.",
+        "The coach avoids formulaic responses and filler words."
+      ],
+      "conversation": "[TUTOR] MJ Cole is the most influential producer from the golden age, arguably. What producer do you think defined the era?\n[ALUMNO] hola! tengo perro\n[TUTOR] Oh, a dog owner! My friend has a spaniel that's obsessed with the bassline in some of these tracks. What kind of dog do you have?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] Oh, Pokémon! My favorite is definitely Gengar. Do you have a favorite?\n[ALUMNO] my dog is brown\n[TUTOR] Ah, I see! Brown dogs are great; very classic. Anyway, talking about Pokémon, the original games had a really unique soundtrack. Did you play those?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] Okay, back to Pokémon! Red and Blue were the ones that started it all. Which version did you play first?\n[ALUMNO] I have a sister, her name is Sofia\n[TUTOR] That's cool, a sister named Sofia. My sister and I used to battle constantly in Pokémon Yellow. Do you two ever play together?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] Understood, focus on Pokémon! Pikachu is such an iconic character from the games and show. Was Pikachu your starter?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] Okay, just Pokémon then. The Elite Four were a real challenge in the first games. Which member did you find the toughest?\n[ALUMNO] my dog is brown"
+    }
+  ]
+}

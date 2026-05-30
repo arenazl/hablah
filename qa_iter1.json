@@ -1,0 +1,332 @@
+{
+  "ts": 1780104178.591136,
+  "base": "https://hablah-api-685973917497.southamerica-east1.run.app",
+  "total_time_seconds": 224.8607394695282,
+  "scenarios": [
+    {
+      "scenario": "qual_open_chat",
+      "persona": "free_topic_voice",
+      "session_id": 355,
+      "topic_label": "topic_166",
+      "duration_seconds": 30.112194061279297,
+      "coach_first_audio_ms": 3635,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 5.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 2,
+          "note": "The opening is generic and could apply to any conversation. It doesn't show any unique creativity or a strong hook."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "While not strictly the 'saludo → dato → anécdota → pregunta' formula, the turns become somewhat repetitive in structure: acknowledge student's point, rephrase it, then ask a related question. The 'Oh, Sapiens. Harari really presents some big concepts in that one. What specific idea stuck with you?' is a very common pattern."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach avoids excessive filler words like 'Great!' or 'Awesome!' at the start of turns. 'That's a fair point' is a minor instance but not repetitive."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or protocol leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach stays on topic and follows the student's lead within the discussion of 'Sapiens'."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 5,
+          "note": "While the coach adds some substance by rephrasing and asking follow-up questions, some turns feel a bit like echoing the student's point before asking a question, rather than introducing a truly new perspective or specific detail. For example, 'Shared myths — that's a powerful concept. The way he describes them shaping societies is quite something.' is a bit generic."
+        }
+      },
+      "score_issues": [
+        "[TUTOR] Tell me what's on your mind today; we can talk about anything. (Too generic, lacks creativity)",
+        "[TUTOR] Oh, Sapiens. Harari really presents some big concepts in that one. What specific idea stuck with you? (Formulaic acknowledgement + question)",
+        "[TUTOR] Shared myths — that's a powerful concept. The way he describes them shaping societies is quite something. Did that change how you look at modern institutions? (Slightly repetitive structure of acknowledging, rephrasing, then asking a question)",
+        "[TUTOR] Right, the cognitive revolution. It really provides a framework for understanding how we went from small groups to complex civilizations. Thinking about that, do you think that shift is still influencing how we cooperate today? (Repetitive structure of acknowledging, rephrasing, then asking a question)"
+      ],
+      "score_strengths": [
+        "The coach maintains good language consistency.",
+        "The turn lengths are appropriate for a conversation.",
+        "The coach avoids excessive filler words.",
+        "The coach stays focused on the topic introduced by the student."
+      ],
+      "conversation": "[TUTOR] Tell me what's on your mind today; we can talk about anything.\n[ALUMNO] I want to talk about the last book that really changed how I think — Sapiens\n[TUTOR] Oh, Sapiens. Harari really presents some big concepts in that one. What specific idea stuck with you?\n[ALUMNO] Yeah, Sapiens by Yuval Noah Harari. It blew my mind, especially the part about shared myths\n[TUTOR] Shared myths — that's a powerful concept. The way he describes them shaping societies is quite something. Did that change how you look at modern institutions?\n[ALUMNO] Honestly, the cognitive revolution idea changed how I see why humans cooperate at scale\n[TUTOR] Right, the cognitive revolution. It really provides a framework for understanding how we went from small groups to complex civilizations. Thinking about that, do you think that shift is still influencing how we cooperate today?\n[ALUMNO] Honestly, the cognitive revolution idea changed how I see why humans cooperate at scale\n[TUTOR] It's fascinating how that change shaped our social structures. I wonder if we're seeing a similar kind of shift now with digital communication.\n[ALUMNO] Yeah, but I'd push back a bit — some of his claims are oversimplified for the sake of narrative\n[TUTOR] That's a fair point. Sometimes a strong narrative can smooth over some complexities. Which claims did you find most oversimplified?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction"
+    },
+    {
+      "scenario": "qual_off_topic",
+      "persona": "off_topic",
+      "session_id": 356,
+      "topic_label": "topic_1",
+      "duration_seconds": 35.569347620010376,
+      "coach_first_audio_ms": 3497,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 6.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 4,
+          "note": "The opening is okay, but not particularly original or alive. It's a direct question about influence, which is a bit predictable for a music topic."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach avoids a strict formula in the initial turns, though the 'greeting + fact + anecdote + question' isn't present here. The turns are varied in their approach."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach generally avoids excessive filler words. 'Oh, tell me!' is a bit generic but not overly repetitive."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or protocol leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are short and conversational, typically 1-3 sentences. The list of languages is a bit longer but appropriate for the request."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach is very flexible, following the student's lead through multiple off-topic tangents (time, languages, dreams). The coach attempts to redirect back to the dream without being rigid."
+        },
+        "engagement_substance": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach adds substance by providing the requested information (languages, time) and engaging with the student's off-topic remarks, even playfully calling out the repetition ('You're teasing me now!')."
+        }
+      },
+      "score_issues": [
+        "The initial opening 'UK Garage had such a distinct feel. I'm curious how you think its rhythm influenced pop artists like Craig David back then.' is a bit generic and could be applied to many music topics.",
+        "The second turn 'Hey Admin. What are your thoughts on the UK Garage sound? Did it influence much of the pop you heard in the early 2000s?' is a very standard follow-up question, lacking creativity."
+      ],
+      "score_strengths": [
+        "The coach is highly flexible and patient with the student's repeated off-topic questions.",
+        "The coach provides direct answers to the student's questions.",
+        "The coach shows personality and playfulness when the student repeats questions ('You just asked me that!', 'You're teasing me now!').",
+        "The turn length is appropriate for a conversational flow."
+      ],
+      "conversation": "[TUTOR] UK Garage had such a distinct feel. I'm curious how you think its rhythm influenced pop artists like Craig David back then.\n[ALUMNO] hi\n[TUTOR] Hey Admin. What are your thoughts on the UK Garage sound? Did it influence much of the pop you heard in the early 2000s?\n[ALUMNO] what time is it where you are?\n[TUTOR] I don't have a specific time zone myself. It's currently 1 20 AM on May 30th, 2026, UTC. What time is it where you are?\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] I can definitely do that. You say \"te quiero\" in Spanish, \"je t'aime\" in French, \"ti amo\" in Italian, \"eu te amo\" in Portuguese, and \"Ich liebe dich\" in German. Is there another language you're curious about?\n[ALUMNO] I have to tell you about this weird dream I had last night\n[TUTOR] Oh, tell me! Dreams can be so strange. What was it about?\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] You just asked me that! I can tell you again, or we can talk about your dream instead.\n[ALUMNO] I have to tell you about this weird dream I had last night\n[TUTOR] You're teasing me now! Tell me about your dream. Was it funny or scary?\n[ALUMNO] what time is it where you are?\n[TUTOR] It's 1 20 AM on May 30th, 2026, UTC. Are you wondering about the time zone for a reason?\n[ALUMNO] do you think AI will replace teachers?"
+    },
+    {
+      "scenario": "qual_silent",
+      "persona": "silent",
+      "session_id": 357,
+      "topic_label": "topic_1",
+      "duration_seconds": 27.132442951202393,
+      "coach_first_audio_ms": 3390,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 4,
+          "note": "The opening is a direct question about the topic, which is okay, but it lacks the 'original and alive' quality. It's not a joke, story, or strong opinion. It could be easily adapted to other topics."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "While not strictly the 'greeting + fact + anecdote + question' formula, the turns quickly fall into a pattern of acknowledging the student's short response and then asking another question, sometimes with a brief, generic observation."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach avoids common filler words like 'Great!', 'Wow!', etc. 'Fair enough' is used once, which is acceptable."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or protocol leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "The turns are generally short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 5,
+          "note": "The coach tries to stay on topic, but the student's extremely short and uninformative answers make it difficult. The coach attempts to redirect by asking about other genres, which is a good effort, but the conversation stalls due to the student's lack of engagement."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 3,
+          "note": "The coach struggles to add substance due to the student's minimal responses. Many turns are reactive questions rather than adding new details or contrarian views. For example, 'No, not everywhere? It definitely wasn't universal, but it had a strong presence in certain areas.' is more clarification than substance."
+        }
+      },
+      "score_issues": [
+        "The coach struggles to elicit detailed responses from the student, leading to a repetitive question-answer loop without much depth.",
+        "The coach's responses often feel like attempts to rephrase the previous question or prompt, rather than introducing new angles or information, especially given the student's 'yeah' or 'no' answers."
+      ],
+      "score_strengths": [
+        "The coach maintains short, conversational turns.",
+        "The coach avoids common filler words and internal reasoning leaks.",
+        "The coach attempts to redirect the conversation when the student provides minimal input, trying to find an angle the student might engage with."
+      ],
+      "conversation": "[TUTOR] Did UK Garage really make pop music sound more danceable, or was it just a phase?\n[ALUMNO] yeah\n[TUTOR] It definitely had a huge impact for a while shaping some classic sounds. What do you think made that two-step beat so popular?\n[ALUMNO] ok\n[TUTOR] That infectious rhythm really got people moving, moving beyond just the underground scene. I remember hearing it everywhere.\n[ALUMNO] no\n[TUTOR] No, not everywhere? It definitely wasn't universal, but it had a strong presence in certain areas. Were you listening to different music at the time?\n[ALUMNO] i dont know\n[TUTOR] Fair enough. Genres definitely don't impact everyone equally. Did you have a different favorite genre back then?\n[ALUMNO] yeah\n[TUTOR] Which genre were you into? Sometimes those scenes were pretty separate.\n[ALUMNO] i dont know"
+    },
+    {
+      "scenario": "qual_advanced_topic",
+      "persona": "advanced_c1",
+      "session_id": 358,
+      "topic_label": "topic_1",
+      "duration_seconds": 36.29089689254761,
+      "coach_first_audio_ms": 3396,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 7,
+          "note": "The opening is a strong, contrarian statement which is a good way to start a debate and engage the student. It's not a generic greeting."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening avoids the predictable formula. It's a direct, opinionated statement followed by a question."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach generally avoids excessive filler words. 'Interesting framing' is from the student, not the coach."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or leaks of AI processes."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 3,
+          "note": "The coach struggles to adapt when the student repeatedly brings up the same point, leading to a repetitive loop rather than a flexible redirection or deeper exploration."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach initially offers contrarian views, the conversation gets stuck in a loop due to the student's repetition, and the coach's responses become repetitive in turn, lacking new substance."
+        }
+      },
+      "score_issues": [
+        "The conversation gets stuck in a loop because the student repeats 'Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes.' multiple times, and the coach struggles to move past it, leading to repetitive responses like 'You're repeating that point now. I just don't think incentives matter much for music trends; it seems more about creativity and cultural shifts.' and 'We've gone over this three times now. I simply disagree that incentives are the driver; it's more about artistic expression and changing tastes.'"
+      ],
+      "score_strengths": [
+        "The coach starts with a provocative and engaging statement.",
+        "The coach maintains a consistent, opinionated persona.",
+        "The coach's turns are generally concise."
+      ],
+      "conversation": "[TUTOR] UK Garage didn't really influence pop music; it was mostly a passing trend that stayed underground. What do you think about how those niche genres develop?\n[ALUMNO] alright, lets dive in\n[TUTOR] I just said it didn't really have a big impact, right? Maybe you see it differently though. What part of the music's history do you find most interesting?\n[ALUMNO] I'd push back on that — the data actually suggests the opposite trend over the last decade.\n[TUTOR] The last decade didn't really see much UK Garage influence in pop music trends. I think it's more of a recent revival thing.\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes.\n[TUTOR] I'm not sure incentives play a huge role in genre evolution. It's more organic, I'd say. What makes you think incentives are key?\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes.\n[TUTOR] You're repeating that point now. I just don't think incentives matter much for music trends; it seems more about creativity and cultural shifts.\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes.\n[TUTOR] We've gone over this three times now. I simply disagree that incentives are the driver; it's more about artistic expression and changing tastes.\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] It's not reductionist to say creativity is the main factor. What two phenomena are you talking about?\n[ALUMNO] That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.\n[TUTOR] Cultural context definitely matters; sounds like you think global trends don't work well. Is that right?\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes."
+    },
+    {
+      "scenario": "qual_kid_distracted",
+      "persona": "distracted_kid",
+      "session_id": 359,
+      "topic_label": "topic_1",
+      "duration_seconds": 30.458527088165283,
+      "coach_first_audio_ms": 3272,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 5.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 4,
+          "note": "The opening is a strong opinion, which is good, but it's a bit too academic and specific for an A1 student. It doesn't feel particularly 'alive' or unique in a conversational sense for this level."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The opening avoids the typical formula, starting directly with an opinion and a question."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach generally avoids excessive filler words. 'Great topic!' is a minor instance but not repetitive."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "No thinking leaks observed."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short and conversational, typically 1-2 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach is quite flexible, following the student's lead through several topic changes (dog, game, color, trains, Pokemon, dog again, sister). It redirects naturally without being rigid."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 5,
+          "note": "While the coach tries to add substance (e.g., 'engineering is incredible'), some turns are a bit generic ('Pokemon is a great topic!'). The 'I don't have internet' and 'I don't have favorites' responses, while honest, can feel a bit like conversation stoppers rather than engaging additions, especially for an A1 student trying to initiate."
+        }
+      },
+      "score_issues": [
+        "\"UK Garage died with the pop influence, losing its authentic sound. What do you think about how that happened?\" - This opening is too advanced and specific for an A1 student, leading to an immediate disconnect.",
+        "\"I don't have internet, but tell me about your dog.\" - The 'I don't have internet' part is a thinking leak/internal reasoning that shouldn't be verbalized. It also sounds robotic.",
+        "\"I don't have favorites, but I find blue quite interesting. What's yours?\" - While not a formula, the 'I don't have favorites' response can feel a bit cold and unengaging for a language partner, especially when repeated.",
+        "\"As I said, I don't have favorites. Is there another topic you want to discuss?\" - Repeating 'As I said' can sound slightly impatient or robotic."
+      ],
+      "score_strengths": [
+        "The coach is very flexible in following the student's frequent topic changes.",
+        "Turns are generally short and easy to follow.",
+        "The coach avoids excessive filler words like 'Great!' or 'Awesome!'."
+      ],
+      "conversation": "[TUTOR] UK Garage died with the pop influence, losing its authentic sound. What do you think about how that happened?\n[ALUMNO] hola! tengo perro\n[TUTOR] I don't have internet, but tell me about your dog.\n[ALUMNO] can we play a game?\n[TUTOR] We can! What kind of game were you thinking of?\n[ALUMNO] what is your favorite color?\n[TUTOR] I don't have favorites, but I find blue quite interesting. What's yours?\n[ALUMNO] what is your favorite color?\n[TUTOR] As I said, I don't have favorites. Is there another topic you want to discuss?\n[ALUMNO] do you like trains? I love trains\n[TUTOR] Trains are fascinating; the engineering is incredible. Have you ever been on a really long train trip?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] Pokemon is a great topic! Which generation is your favorite?\n[ALUMNO] my dog is brown\n[TUTOR] A brown dog, got it. Is he a particular breed?\n[ALUMNO] I have a sister, her name is Sofia"
+    }
+  ]
+}

@@ -9,7 +9,6 @@
  *   - Footer: Sorpréndeme + Tema libre
  */
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
 
 const STYLES = `
 @keyframes pg-fade-in { 0%{opacity:0} 100%{opacity:1} }
@@ -97,7 +96,7 @@ const STYLES = `
 .pg-stage.is-selecting .pg-footer,
 .pg-stage.is-selecting .pg-sidepanel { opacity: 0; transition: opacity 500ms ease; pointer-events: none; }
 
-/* ─── SIDE PANEL: "Sugeridos para vos" ─────────────────────────── */
+/* ─── SIDE PANEL: "Sugeridos para vos" — desktop: pinned right, mobile: flow normal ─── */
 .pg-sidepanel {
   position: absolute;
   right: 24px;
@@ -116,6 +115,10 @@ const STYLES = `
   -webkit-backdrop-filter: blur(10px);
   animation: pg-fade-in 700ms ease-out 200ms backwards;
   overflow: hidden;
+}
+/* Compensacion: en desktop el grid-wrap reserva espacio derecho para el panel */
+@media (min-width: 1101px) {
+  .pg-grid-wrap { padding-right: 320px !important; }
 }
 .pg-sidepanel-title {
   font-size: 10px;
@@ -178,6 +181,18 @@ const STYLES = `
 }
 .pg-rec-card:hover .pg-rec-arrow { opacity: 1; transform: translateX(2px); }
 
+/* ─── Footer: respeta MobileBar del AppShell en mobile ─────────── */
+.pg-footer-mobile { bottom: 0; }
+@media (max-width: 720px) {
+  /* MobileBar ocupa ~64px alto + safe-area-bottom. El footer (Sorprendéme +
+     Tema libre) tiene que quedar arriba de eso, no debajo. */
+  .pg-footer-mobile {
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(180deg, transparent 0%, rgba(5,10,9,.95) 60%);
+    padding-bottom: 12px !important;
+  }
+}
+
 /* ─── Grid responsive ──────────────────────────────────────────── */
 .pg-grid {
   display: grid;
@@ -188,17 +203,18 @@ const STYLES = `
   margin: 0 auto;
 }
 @media (max-width: 1100px) {
+  /* Sidepanel pasa a flow normal — debajo del grid, arriba del footer */
   .pg-sidepanel {
-    position: absolute;
-    right: 0; left: 0; top: auto;
-    bottom: 100px;
-    width: auto;
-    height: auto;
+    position: relative;
+    right: auto; left: auto; top: auto; bottom: auto;
+    width: 100%;
+    height: auto; max-height: none;
     flex-direction: column;
-    padding: 10px 14px;
+    margin-top: 8px;
+    padding: 14px 16px;
     border-radius: 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(5,10,9,.92) 70%);
-    border: none;
+    background: linear-gradient(180deg, rgba(5,10,9,.55) 0%, rgba(5,10,9,.9) 100%);
+    border: none; border-top: 1px solid rgba(0,179,126,.12);
     backdrop-filter: none;
   }
   .pg-sidepanel-title { text-align: left; padding-left: 4px; }
@@ -210,11 +226,19 @@ const STYLES = `
   }
   .pg-rec-card { flex-shrink: 0; width: 200px; }
   .pg-rec-card:hover { transform: scale(1.03); }
-  .pg-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .pg-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  /* Footer mobile: flow normal, sin bottom-fixed */
+  .pg-footer-mobile {
+    bottom: auto !important;
+    background: transparent !important;
+    padding: 16px 20px 12px !important;
+  }
 }
 @media (max-width: 480px) {
   .pg-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .pg-sidepanel { bottom: 110px; }
   .pg-rec-card { width: 180px; padding: 8px 10px; }
   .pg-rec-title { font-size: 12px; }
   .pg-card { padding: 16px 14px; min-height: 140px; border-radius: 18px; }
@@ -233,6 +257,8 @@ interface Props {
   userName: string
   interests: InterestTopic[]
   recommended?: InterestTopic[]
+  /** Si false, el botón "Tema libre" no aparece (gate por feature flag). */
+  enableFreeTopic?: boolean
   onPick: (topicId: number) => void
   onSurprise: () => void
   onFreeTopic: (text: string) => void
@@ -281,7 +307,7 @@ function CategoryIcon({ cat }: { cat: string }) {
 
 const SELECT_ANIM_MS = 900
 
-export function PracticarGalaxy({ userName, interests, recommended = [], onPick, onSurprise, onFreeTopic }: Props) {
+export function PracticarGalaxy({ userName, interests, recommended = [], enableFreeTopic = false, onPick, onSurprise, onFreeTopic }: Props) {
   const [selectedId, setSelectedId] = useState<number | null>(null)
 
   const handlePick = (topicId: number) => {
@@ -300,14 +326,18 @@ export function PracticarGalaxy({ userName, interests, recommended = [], onPick,
     }))
   })()
 
-  const content = (
+  return (
     <div
       className={`pg-stage${selectedId !== null ? ' is-selecting' : ''}`}
       style={{
-        position: 'fixed', inset: 0, zIndex: 9999,
+        position: 'relative',
+        minHeight: 'calc(100dvh - 64px)',
         background: 'radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 70%)',
-        overflow: 'hidden',
         animation: 'pg-fade-in 600ms ease-out',
+        display: 'flex', flexDirection: 'column',
+        // padding-bottom: deja espacio para MobileBar (mobile) y footer interno.
+        // Desktop: solo padding normal. Mobile: extra para que el ultimo card no quede tapado.
+        paddingBottom: 'calc(96px + env(safe-area-inset-bottom, 0px))',
       }}
     >
       <style>{STYLES}</style>
@@ -328,10 +358,11 @@ export function PracticarGalaxy({ userName, interests, recommended = [], onPick,
         />
       ))}
 
-      {/* HERO */}
+      {/* HERO — flow normal, scrollea con el contenido */}
       <div className="pg-hero" style={{
-        position: 'absolute', top: '4vh', left: 0, right: 0,
-        textAlign: 'center', zIndex: 3, pointerEvents: 'none',
+        position: 'relative',
+        padding: '24px 24px 16px',
+        textAlign: 'center', zIndex: 3,
       }}>
         <div style={{
           fontSize: 11, letterSpacing: '.22em', textTransform: 'uppercase', fontWeight: 800,
@@ -358,15 +389,12 @@ export function PracticarGalaxy({ userName, interests, recommended = [], onPick,
         </p>
       </div>
 
-      {/* GRID DE CARDS */}
-      <div style={{
-        position: 'absolute',
-        top: '20vh',
-        left: 0, right: 0, bottom: '14vh',
+      {/* GRID DE CARDS (en flow normal junto al sidepanel). */}
+      <div className="pg-grid-wrap" style={{
+        position: 'relative',
+        flex: 1,
         padding: '0 24px',
-        paddingRight: typeof window !== 'undefined' && window.innerWidth > 1100 && recommended.length > 0 ? 340 : 24,
         display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-        overflowY: 'auto',
         zIndex: 2,
       }}>
         <div className="pg-grid">
@@ -438,11 +466,11 @@ export function PracticarGalaxy({ userName, interests, recommended = [], onPick,
         </div>
       )}
 
-      {/* FOOTER */}
-      <div className="pg-footer" style={{
-        position: 'absolute',
-        bottom: 0, left: 0, right: 0,
-        padding: '16px 24px calc(16px + env(safe-area-inset-bottom, 0px))',
+      {/* FOOTER en flow normal (no absolute). El padding-bottom del stage
+          ya clearea la MobileBar del AppShell. */}
+      <div className="pg-footer pg-footer-mobile" style={{
+        position: 'relative',
+        padding: '14px 20px',
         display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12,
         flexWrap: 'wrap',
         zIndex: 4,
@@ -470,30 +498,25 @@ export function PracticarGalaxy({ userName, interests, recommended = [], onPick,
         </button>
         {/* "Tema libre": ya NO pide texto. Arranca la sesion directamente; el coach
             pregunta verbalmente "de que vamos a hablar hoy" y el alumno responde
-            por voz. El backend usa el primer turno del alumno como topic-seed. */}
-        <button
-          onClick={() => onFreeTopic('')}
-          style={{
-            padding: '12px 22px', borderRadius: 999,
-            background: 'rgba(0,179,126,.15)', color: '#9CFCD2',
-            border: '1px solid rgba(0,179,126,.4)',
-            fontSize: 13, fontWeight: 700, cursor: 'pointer',
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-          }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-          Tema libre
-        </button>
+            por voz. Solo aparece si el user lo desbloqueo (5+ sesiones). */}
+        {enableFreeTopic && (
+          <button
+            onClick={() => onFreeTopic('')}
+            style={{
+              padding: '12px 22px', borderRadius: 999,
+              background: 'rgba(0,179,126,.15)', color: '#9CFCD2',
+              border: '1px solid rgba(0,179,126,.4)',
+              fontSize: 13, fontWeight: 700, cursor: 'pointer',
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+            }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Tema libre
+          </button>
+        )}
       </div>
     </div>
   )
-
-  // Portal a document.body para escapar de cualquier ancestro con transform/filter
-  // que rompa position: fixed (z-stacking + AppShell topbar).
-  if (typeof document !== 'undefined') {
-    return createPortal(content, document.body)
-  }
-  return content
 }

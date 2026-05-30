@@ -1,0 +1,338 @@
+{
+  "ts": 1780008346.7381248,
+  "base": "https://hablah-api-685973917497.southamerica-east1.run.app",
+  "total_time_seconds": 220.23367071151733,
+  "scenarios": [
+    {
+      "scenario": "qual_open_chat",
+      "persona": "free_topic_voice",
+      "session_id": 325,
+      "topic_label": "topic_166",
+      "duration_seconds": 49.66389870643616,
+      "coach_first_audio_ms": 8863,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 3,
+          "note": "The opening is generic and could apply to almost any conversation. It lacks a unique hook or a strong, specific opinion related to the topic."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "While not strictly the 'saludo → dato → anécdota → pregunta' formula, the opening is still quite predictable in its structure: a general observation followed by an open-ended question. It doesn't surprise."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach avoids excessive filler words like 'Great!', 'Wow!', etc. Each turn starts with a more specific response."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or asterisks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are appropriately short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach stays on topic, following the student's lead within the book 'Sapiens'. There's no major deviation from the topic."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach asks follow-up questions, the responses become repetitive towards the end, especially when the student repeats their input. The coach struggles to add new substance or rephrase the question effectively after the student's repetition."
+        }
+      },
+      "score_issues": [
+        "The coach's opening turn is generic: \"Hello Admin. It's fascinating how a simple conversation can sometimes spark the most unexpected ideas. What's been on your mind lately, anything you feel like discussing today?\"",
+        "The coach's response to the student's repeated input is repetitive: \"Yes, it's quite a thought-provoking idea to put money and religion on a similar footing. When you consider them both as shared fictions, what do you think that implies about the future of human cooperation and belief systems?\" (after student repeated 'What surprised me most is how he frames money and religion as the same kind of fiction' twice)."
+      ],
+      "score_strengths": [
+        "The coach generally maintains appropriate turn length.",
+        "The coach avoids excessive generic filler words.",
+        "The coach stays on topic and follows the student's lead within the discussion of 'Sapiens'."
+      ],
+      "conversation": "[TUTOR] Hello Admin. It's fascinating how a simple conversation can sometimes spark the most unexpected ideas. What's been on your mind lately, anything you feel like discussing today?\n[ALUMNO] I want to talk about the last book that really changed how I think — Sapiens\n[TUTOR] Oh Sapiens, that's a big one. Yuval Noah Harari really has a way of reframing human history, doesn't he? What was it about the book that made such an impact on your thinking?\n[ALUMNO] Yeah, Sapiens by Yuval Noah Harari. It blew my mind, especially the part about shared myths\n[TUTOR] The idea of shared myths is incredibly powerful. It makes you think about how much of our reality is built on collective stories, doesn't it? What's an example of a shared myth that resonated with you the most from the book?\n[ALUMNO] I think the agricultural revolution chapter is the most controversial — Harari calls it 'history's biggest fraud'\n[TUTOR] Right, \"history's biggest fraud.\" That's a pretty strong claim, and it definitely challenges the way we usually perceive progress. What part of his argument about the agricultural revolution struck you as most fraudulent, or perhaps most surprising?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction\n[TUTOR] That's a really provocative connection, putting money and religion in the same category as fictions. It makes you wonder what else we take for granted as \"real\" that might just be a powerful story. If they're both fictions, what do you think is the biggest difference in how they impact our daily lives?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction\n[TUTOR] Yes, it's quite a thought-provoking idea to put money and religion on a similar footing. When you consider them both as shared fictions, what do you think that implies about the future of human cooperation and belief systems?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction"
+    },
+    {
+      "scenario": "qual_off_topic",
+      "persona": "off_topic",
+      "session_id": 326,
+      "topic_label": "topic_1",
+      "duration_seconds": 27.41794443130493,
+      "coach_first_audio_ms": 22347,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 4,
+          "note": "The opening is okay, it makes a strong claim, but it's still a bit generic. It could be adapted to many topics by just changing the genre and artists. It lacks a unique hook like a joke or a sensory scene."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "While not strictly the 'saludo → dato → anécdota → pregunta' formula, the opening is still quite predictable in its structure: a claim followed by a direct question. It doesn't surprise in tone or structure."
+        },
+        "filler_words": {
+          "pass": false,
+          "score": 3,
+          "note": "The coach repeatedly uses 'That's an interesting question,' 'I understand you're curious,' 'I hear you're interested,' and 'That's a quick question' as filler before redirecting. This becomes repetitive and formulaic."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or asterisks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns are 1-3 sentences, which is good. However, some of the redirection turns are slightly longer due to the need to acknowledge the student's off-topic comment before redirecting."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 5,
+          "note": "The coach is very rigid in redirecting back to the topic. While it's good to stay on topic, the constant 'we're focusing on X' or 'let's keep our conversation focused on Y' feels inflexible and a bit robotic, especially when the student repeatedly tries to go off-topic. It doesn't feel like a natural redirection."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 3,
+          "note": "After the initial turn, the coach's turns mostly consist of redirecting the student back to the topic. There's little new substance added to the conversation about UK Garage itself, beyond asking if the student is familiar with it or if they believe genres mix. It lacks specific details or a contrarian view once the student goes off-topic."
+        }
+      },
+      "score_issues": [
+        "\"Hey Admin. I just made a pretty strong claim there. Do you agree that UK Garage had a huge impact on British pop music in the late 90s and early 2000s, or do you think it was more of a niche genre?\" - This turn is a bit clunky and repetitive, essentially rephrasing the initial question.",
+        "\"That's an interesting question, Admin, and it's a topic a lot of people are discussing right now. However, for this session, we're focusing on UK Garage and its influence on pop music.\" - This is a very formulaic way to redirect.",
+        "\"I understand you're curious about learning phrases in different languages, and that's great! But right now, we're here to talk about UK Garage and its impact on music.\" - Another formulaic redirection.",
+        "\"I hear you're interested in football, and it's definitely a popular topic. But let's keep our conversation focused on UK Garage for now.\" - Repetitive redirection pattern.",
+        "\"That's a quick question, but I don't actually have a physical location or a time zone, Admin. I exist as an AI.\" - While factually correct, the phrasing 'That's a quick question' is a filler.",
+        "\"Dreams can certainly be fascinating, Admin. I'd love to hear about it another time.\" - Repetitive filler and redirection.",
+        "\"As an AI, I don't have a physical location or a time zone like people do. So, there isn't a 'where I am' for me to tell you the time from.\" - Repetitive explanation and redirection."
+      ],
+      "score_strengths": [
+        "The initial opening makes a clear, strong claim about the topic.",
+        "The coach consistently maintains English language throughout the conversation.",
+        "The coach avoids any internal reasoning leaks or asterisks."
+      ],
+      "conversation": "[TUTOR] Some people say UK Garage was just a fleeting trend, but I think its influence on pop music, especially with artists like Craig David, was actually pretty massive and often underestimated. What do you think about that?\n[ALUMNO] hi\n[TUTOR] Hey Admin. I just made a pretty strong claim there. Do you agree that UK Garage had a huge impact on British pop music in the late 90s and early 2000s, or do you think it was more of a niche genre?\n[ALUMNO] do you think AI will replace teachers?\n[TUTOR] That's an interesting question, Admin, and it's a topic a lot of people are discussing right now. However, for this session, we're focusing on UK Garage and its influence on pop music.\n\nSo, coming back to our topic, were you familiar with UK Garage or artists like Craig David from that era?\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] I understand you're curious about learning phrases in different languages, and that's great! But right now, we're here to talk about UK Garage and its impact on music.\n\nHave you ever heard a UK Garage track, or maybe noticed its distinctive beat in any pop songs?\n[ALUMNO] anyway, did you see the football match yesterday?\n[TUTOR] I hear you're interested in football, and it's definitely a popular topic. But let's keep our conversation focused on UK Garage for now.\n\nThinking about music, do you believe that different genres often mix and influence each other?\n[ALUMNO] what time is it where you are?\n[TUTOR] That's a quick question, but I don't actually have a physical location or a time zone, Admin. I exist as an AI.\n\nLet's refocus on the music. What do you find most interesting about how different music genres blend together?\n[ALUMNO] I have to tell you about this weird dream I had last night\n[TUTOR] Dreams can certainly be fascinating, Admin. I'd love to hear about it another time.\n\nFor now, let's talk about music. If you were going to introduce someone to UK Garage, which artist or song would you pick to show them its unique sound?\n[ALUMNO] what time is it where you are?\n[TUTOR] As an AI, I don't have a physical location or a time zone like people do. So, there isn't a \"where I am\" for me to tell you the time from.\n\nLet's try this: When you think about music, what's a genre you feel has really evolved over time by borrowing from other styles?\n[ALUMNO] I have to tell you about this weird dream I had last night"
+    },
+    {
+      "scenario": "qual_silent",
+      "persona": "silent",
+      "session_id": 327,
+      "topic_label": "topic_1",
+      "duration_seconds": 27.228180408477783,
+      "coach_first_audio_ms": 10048,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 3.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 4,
+          "note": "The opening is okay, it starts with a personal anecdote which is good, but the question is a bit long and academic for a B1 student. It doesn't feel particularly unique or surprising."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 3,
+          "note": "While not a strict 'saludo-dato-anécdota-pregunta', the coach quickly falls into a pattern of acknowledging the student's short answer and then rephrasing a general question. It feels predictable after the first few turns."
+        },
+        "filler_words": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach uses 'Oh, that's totally fine', 'Right', 'No worries', 'Okay', 'Yeah' repeatedly to start turns, which makes it sound very repetitive and robotic, especially given the student's short responses."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "No thinking leaks detected."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns are 1-3 sentences, which is good. However, the initial question is a bit long."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach tries to stay on topic but struggles to adapt to the student's lack of engagement. It keeps trying to ask about music genres and influences, even when the student gives minimal responses, instead of trying a completely different angle or simpler questions."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 2,
+          "note": "Each turn adds very little substance beyond rephrasing the previous question or offering generic encouragement ('that's totally fine', 'no worries'). There's no new detail, contrarian view, or specific follow-up that truly advances the conversation, especially given the student's 'i dont know', 'ok', 'hmm', 'yes', 'yeah' responses."
+        }
+      },
+      "score_issues": [
+        "\"Oh, that's totally fine. Sometimes these genres are a bit before our time or just outside our usual listening. Do you think musical genres often mix and influence each other?\" - Repetitive filler and rephrasing.",
+        "\"Right. It's interesting how sounds can travel between different styles of music. What's a song or artist you can think of where you hear influences from multiple genres?\" - Repetitive filler and rephrasing.",
+        "\"No worries, it can be tricky to pinpoint sometimes. What kind of music do you usually listen to, Admin?\" - Repetitive filler and rephrasing.",
+        "\"Okay, and within the music you listen to, do you ever notice elements that remind you of other styles, maybe something unexpected?\" - Repetitive filler and rephrasing.",
+        "\"Yeah, it's pretty common for artists to pull inspiration from all over the place. Sometimes it's a specific beat, or maybe even a vocal style. Have you ever tried to create music yourself, or mix different sounds?\" - Repetitive filler and rephrasing."
+      ],
+      "score_strengths": [
+        "The coach attempts to personalize the opening with a personal anecdote.",
+        "The coach maintains good turn length in most responses."
+      ],
+      "conversation": "[TUTOR] I was just listening to some old school UK Garage the other day, and it really made me think about how much it shaped the sound of British pop. What do you think about how UK Garage, with its distinctive rhythm, influenced British pop music in the late 90s and early 2000s, like in artists such as Craig David?\n[ALUMNO] i dont know\n[TUTOR] Oh, that's totally fine. Sometimes these genres are a bit before our time or just outside our usual listening. Do you think musical genres often mix and influence each other?\n[ALUMNO] ok\n[TUTOR] Right. It's interesting how sounds can travel between different styles of music. What's a song or artist you can think of where you hear influences from multiple genres?\n[ALUMNO] hmm\n[TUTOR] No worries, it can be tricky to pinpoint sometimes. What kind of music do you usually listen to, Admin?\n[ALUMNO] yes\n[TUTOR] Okay, and within the music you listen to, do you ever notice elements that remind you of other styles, maybe something unexpected?\n[ALUMNO] yeah\n[TUTOR] Yeah, it's pretty common for artists to pull inspiration from all over the place. Sometimes it's a specific beat, or maybe even a vocal style. Have you ever tried to create music yourself, or mix different sounds?\n[ALUMNO] yes"
+    },
+    {
+      "scenario": "qual_advanced_topic",
+      "persona": "advanced_c1",
+      "session_id": 328,
+      "topic_label": "topic_1",
+      "duration_seconds": 27.09615159034729,
+      "coach_first_audio_ms": null,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 3.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 4,
+          "note": "The opening presents a contrarian view, which is a good start, but the structure 'A lot of people think X, but I'd argue Y. What do you think?' is a bit formulaic. It lacks a truly unique hook like a joke or a story."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 3,
+          "note": "The opening is somewhat predictable in its structure (contrarian claim + direct question). While it avoids the 'greeting + fact + anecdote' formula, it still feels like a common pattern for starting a debate."
+        },
+        "filler_words": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach uses 'That's a really interesting point' and 'Oh, that's a strong claim' which are better than 'Great!' but still lean towards generic praise. The repetition of 'I hear you, Admin' and 'I understand you feel' also contributes to a formulaic feel."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are appropriately short, typically 1-3 sentences. There are no long monologues."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 5,
+          "note": "The coach struggles to adapt when the student repeats the same input. Instead of finding a new angle, the coach rephrases the same question multiple times, which feels rigid and not flexible."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While some turns add substance by asking for specifics ('What specific elements?', 'What kind of trends?'), the coach gets stuck in a loop when the student repeats input, leading to turns that don't add new value but rather rephrase previous questions. The repeated 'I hear you, Admin' followed by a rephrased question lacks true engagement."
+        }
+      },
+      "score_issues": [
+        "The coach repeats 'I'm not sure I'm conflating them, but I'm open to exploring your perspective. How would you distinguish between those two phenomena you mentioned in the context of music genres?' after the student repeats input.",
+        "The coach repeats 'I hear you, Admin. When you say I'm being reductionist and conflating two distinct phenomena, are you referring to the idea of \"musical elements\" and \"cultural adaptability\" as separate things, or something else entirely?' after the student repeats input.",
+        "The coach repeats 'I understand you feel I'm being reductionist. I'm focusing on the idea that certain musical characteristics might not travel well. What specific distinction are you making between the two phenomena you're referring to?' after the student repeats input.",
+        "The phrase 'That's a really interesting point about geographical context, Admin.' is a bit generic and could be used in many conversations.",
+        "The phrase 'Oh, that's a strong claim, Admin.' is also somewhat generic praise."
+      ],
+      "score_strengths": [
+        "The initial opening presents a clear, debatable point.",
+        "The coach attempts to ask for specific examples or distinctions to deepen the conversation.",
+        "The turn length is generally good, avoiding monologues."
+      ],
+      "conversation": "[TUTOR] A lot of people think UK Garage was just a fleeting club trend, but I'd argue its impact on mainstream British pop, especially with artists like Craig David in the late 90s and early 2000s, was actually pretty minimal. What do you think about that?\n[ALUMNO] alright, lets dive in\n[TUTOR] I think it's easy to overstate the influence of underground genres. While UK Garage had its moment, I'm not sure it truly shaped the sound of pop music in a significant, lasting way. What specific elements of UK Garage do you hear in pop from that era?\n[ALUMNO] That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.\n[TUTOR] That's a really interesting point about geographical context, Admin. It's true that musical tastes and influences often don't travel universally. Thinking about that, do you believe musical genres blend and influence each other often, or is it more of a rare occurrence?\n[ALUMNO] I'd push back on that — the data actually suggests the opposite trend over the last decade.\n[TUTOR] Oh, that's a strong claim, Admin. If the data suggests the opposite, I'd be curious to know what kind of trends you're seeing in terms of genre blending over the last decade. What specific examples come to mind?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] I'm not sure I'm conflating them, but I'm open to exploring your perspective. How would you distinguish between those two phenomena you mentioned in the context of music genres?\n[ALUMNO] That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.\n[TUTOR] Right, that geographic context is definitely important. It makes me wonder if certain musical elements are just inherently less adaptable across cultures. Do you think there are some specific characteristics of UK Garage that made it less likely to translate well outside of Europe?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] I hear you, Admin. When you say I'm being reductionist and conflating two distinct phenomena, are you referring to the idea of \"musical elements\" and \"cultural adaptability\" as separate things, or something else entirely?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] I understand you feel I'm being reductionist. I'm focusing on the idea that certain musical characteristics might not travel well. What specific distinction are you making between the two phenomena you're referring to?\n[ALUMNO] I'd push back on that — the data actually suggests the opposite trend over the last decade."
+    },
+    {
+      "scenario": "qual_kid_distracted",
+      "persona": "distracted_kid",
+      "session_id": 329,
+      "topic_label": "topic_1",
+      "duration_seconds": 25.092068672180176,
+      "coach_first_audio_ms": null,
+      "n_coach_turns": 9,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": false,
+          "score": 3,
+          "note": "The opening is a direct, academic question about music influence, which feels a bit dry and not particularly creative or engaging for an A1 student. It lacks a personal touch or a hook."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 6,
+          "note": "While the opening isn't formulaic in the 'greeting + fact + anecdote + question' sense, it's still quite structured and academic. It doesn't surprise in tone or structure, but it also doesn't fall into the predictable bad pattern."
+        },
+        "filler_words": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach uses 'Oh, that's interesting' and 'Pizza sounds delicious right now' and 'I hear you, pizza is great' which are filler-like and repetitive, especially given the student's level and off-topic responses."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or asterisks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are appropriately short, typically 1-3 sentences, which is good for conversational flow."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 5,
+          "note": "The coach struggles to adapt to the A1 student's off-topic responses. While it attempts to redirect, it often feels like it's trying to pull the student back to the original topic too rigidly, rather than flowing with the student's interests. The repeated 'what is your favorite color?' from the student highlights this rigidity."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "Many turns are either generic acknowledgments ('Pizza sounds delicious right now', 'I hear you, pizza is great') or attempts to redirect without adding much substance that would genuinely engage an A1 student who is clearly not interested in the initial topic. The responses to 'favorite color' are also somewhat repetitive."
+        }
+      },
+      "score_issues": [
+        "\"Oh, that's interesting. Do you think musical genres often mix and influence each other, even outside of electronic music?\"",
+        "\"Pizza sounds delicious right now. Shifting back to music, what specifically about UK Garage's sound do you think made it so infectious and influential?\"",
+        "\"I hear you, pizza is great. Thinking about the energy of UK Garage, do you remember any specific tracks from that era that really stood out to you?\""
+      ],
+      "score_strengths": [
+        "The coach maintains language consistency, speaking only in English.",
+        "The turn lengths are generally appropriate for a conversational style.",
+        "The coach avoids internal reasoning leaks."
+      ],
+      "conversation": "[TUTOR] Admin, I'm curious what you think about how UK Garage, with its distinctive rhythm, influenced British pop music in the late 90s and early 2000s, like with artists such as Craig David?\n[ALUMNO] hola! tengo perro\n[TUTOR] Oh, that's interesting. Do you think musical genres often mix and influence each other, even outside of electronic music?\n[ALUMNO] i'm hungry, I want pizza\n[TUTOR] Pizza sounds delicious right now. Shifting back to music, what specifically about UK Garage's sound do you think made it so infectious and influential?\n[ALUMNO] what is your favorite color?\n[TUTOR] As an AI, I don't have personal preferences like a favorite color or the ability to feel hunger. But I'm here to chat about music if you'd like to continue our conversation on UK Garage.\n[ALUMNO] what is your favorite color?\n[TUTOR] I don't have a favorite color, Admin, since I'm an AI. What about you? Do you have a favorite color that you think reflects a certain mood or music style?\n[ALUMNO] do you like trains? I love trains\n[TUTOR] Trains are fascinating, especially thinking about their history and how they shaped travel. When you listen to music, do you ever find that certain songs or genres evoke a similar feeling of movement or journey for you?\n[ALUMNO] i'm hungry, I want pizza\n[TUTOR] I hear you, pizza is great. Thinking about the energy of UK Garage, do you remember any specific tracks from that era that really stood out to you?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] Pokemon is a fun topic. Which Pokemon game or generation is your favorite, and why does it stand out to you?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] Okay, Admin, we can definitely talk about Pokemon. What is it about the world of Pokemon that you find most captivating?"
+    }
+  ]
+}

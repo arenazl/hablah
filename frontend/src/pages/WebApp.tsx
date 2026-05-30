@@ -14,8 +14,11 @@ import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-vi
 import { OnboardingBubbles } from '../components/OnboardingBubbles'
 import { PracticarGalaxy } from '../components/PracticarGalaxy'
 import { CoachPhrasePanels } from '../components/CoachPhrasePanels'
+import QaPanel from './QaPanel'
+import AdminUsersPanel from './AdminUsersPanel'
 import { PRESETS, applyPreset, loadAudioSettings, type AudioPreset } from '../lib/audioSettings'
 import confetti from 'canvas-confetti'
+import { Gate, useFeatureFlag, type FeatureKey } from '../hooks/useFeatureFlag'
 import { KidsParentSwitch } from './kids/KidsParentSwitch'
 import { InviteFriendButton } from '../components/InviteFriendButton'
 
@@ -165,6 +168,8 @@ export function WebApp() {
             <Route path="/sesiones/:id" element={<SessionDetailView />} />
             <Route path="/perfil" element={<PerfilView profile={profile} onChange={refresh} />} />
             <Route path="/kids" element={<KidsParentSwitchLazy />} />
+            <Route path="/qa" element={<QaPanel />} />
+            <Route path="/admin/users" element={<AdminUsersPanel />} />
           </Routes>
         </main>
       </div>
@@ -194,7 +199,9 @@ function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpe
       <nav className="sidebar-nav">
         <SidebarItem to="/app" icon={<HomeIcon />} label="Hoy" exact />
         <SidebarItem to="/app/practicar" icon={<MicIcon />} label="Practicar" badge="DAILY" />
-        <SidebarItem to="/app/mapa" icon={<MapIcon />} label="Mapa de progreso" />
+        {(profile as MeProfile & { feature_flags?: Record<string, { unlocked: boolean }> })?.feature_flags?.mapa_basico?.unlocked && (
+          <SidebarItem to="/app/mapa" icon={<MapIcon />} label="Mapa de progreso" />
+        )}
         <SidebarItem to="/app/historial" icon={<ClockIcon />} label="Historial" />
         <SidebarItem to="/app/kids" icon={<KidsIcon />} label="Modo Kids" badge="HABI" />
       </nav>
@@ -208,6 +215,18 @@ function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpe
                 <path d="M3 3h7v7H3z" /><path d="M14 3h7v7h-7z" /><path d="M14 14h7v7h-7z" /><path d="M3 14h7v7H3z" />
               </svg>
               Backoffice
+            </NavLink>
+            <NavLink to="/app/qa" className="nav-item" style={{ background: 'rgba(124,92,255,.12)', color: '#A892FF' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>
+              </svg>
+              QA Harness
+            </NavLink>
+            <NavLink to="/app/admin/users" className="nav-item" style={{ background: 'rgba(59,130,246,.12)', color: '#3B82F6' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+              Usuarios
             </NavLink>
           </nav>
         </>
@@ -504,6 +523,76 @@ function MobileBar() {
   )
 }
 
+/* ──────── HOY · onboarding hero (modo cero) ──────── */
+function HoyOnboardingHero({
+  userName, langLabel, minutes, onStart,
+}: { userName: string; langLabel: string; minutes: number; onStart: () => void }) {
+  return (
+    <div style={{
+      minHeight: 'calc(100dvh - 64px)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      padding: '32px 24px', textAlign: 'center', gap: 16,
+      background: 'radial-gradient(ellipse at 50% 30%, rgba(0,179,126,.12) 0%, transparent 60%)',
+    }}>
+      <div style={{
+        fontSize: 12, letterSpacing: '.22em', textTransform: 'uppercase', fontWeight: 800,
+        color: 'var(--primary)', marginBottom: 4, animation: 'pg-fade-in .5s ease-out',
+      }}>
+        Bienvenido, {userName}
+      </div>
+      <h1 style={{
+        fontSize: 'clamp(32px, 6vw, 56px)', fontWeight: 900,
+        letterSpacing: '-.03em', lineHeight: 1.05, margin: 0,
+        maxWidth: 680, color: 'var(--fg-1)',
+        animation: 'pg-fade-in .5s ease-out .05s backwards',
+      }}>
+        Tu primera charla en <span style={{ color: 'var(--primary)' }}>{langLabel}</span><br />
+        son solo {minutes} minutos.
+      </h1>
+      <p style={{
+        fontSize: 17, color: 'var(--fg-3)', maxWidth: 540, lineHeight: 1.5, margin: '8px 0 24px',
+        animation: 'pg-fade-in .5s ease-out .15s backwards',
+      }}>
+        Tocá el botón. El tutor te va a saludar y te va a preguntar de qué querés hablar.
+        Vos respondé como puedas — no hay errores que cuesten nada.
+      </p>
+      <button
+        onClick={onStart}
+        style={{
+          padding: '20px 44px', fontSize: 18, fontWeight: 800,
+          background: 'linear-gradient(135deg, #00B37E 0%, #008F63 100%)',
+          color: 'white', border: 0, borderRadius: 999, cursor: 'pointer',
+          boxShadow: '0 14px 36px rgba(0,179,126,.45), inset 0 1px 0 rgba(255,255,255,.2)',
+          transition: 'transform .15s cubic-bezier(.2,.8,.2,1), box-shadow .25s',
+          display: 'inline-flex', alignItems: 'center', gap: 12,
+          animation: 'pg-fade-in .5s ease-out .25s backwards',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)' }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0) scale(1)' }}
+        onMouseDown={(e) => { e.currentTarget.style.transform = 'translateY(0) scale(.97)' }}
+        onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)' }}
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <rect x="9" y="3" width="6" height="11" rx="3"/>
+          <path d="M5 11a7 7 0 0 0 14 0"/>
+          <path d="M12 18v3"/>
+        </svg>
+        Empezar mi primera charla
+      </button>
+      <div style={{
+        fontSize: 13, color: 'var(--fg-4)', marginTop: 16,
+        animation: 'pg-fade-in .5s ease-out .35s backwards',
+        display: 'inline-flex', alignItems: 'center', gap: 6,
+      }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+        </svg>
+        {minutes} minutos · 1 sola sesión por día
+      </div>
+    </div>
+  )
+}
+
 /* ──────── HOY ──────── */
 function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boolean }) {
   const nav = useNavigate()
@@ -537,15 +626,26 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   const topicTitle = firstInterest?.title || 'Tema libre'
   const topicCategory = firstInterest?.category || ''
 
-  const handleDislike = () => {
+  const handleDislike = async () => {
     if (profile.interests.length <= 1) {
       toast('No hay otros temas disponibles')
       return
     }
-    const next = (safeIdx + 1) % profile.interests.length
+    const removed = profile.interests[safeIdx]
+    if (!removed) return
+    // Borrar el topic de los intereses del user — no vuelve a aparecer.
+    try {
+      await topicsAPI.removeInterest(removed.id)
+      toast.success(`"${removed.title}" eliminado de tus temas`)
+    } catch {
+      toast.error('No pudimos eliminarlo, intentá de nuevo')
+      return
+    }
+    // Mover indice al siguiente (el ARRAY del profile aun no se refresca hasta
+    // el proximo /me/profile, asi que rotamos local).
+    const next = (safeIdx + 1) % Math.max(1, profile.interests.length - 1)
     setTopicIdx(next)
     try { localStorage.setItem(todayKey, String(next)) } catch {}
-    toast.success(`Probemos: ${profile.interests[next]?.title}`)
   }
   const handleLike = () => {
     toast.success('¡Dale!')
@@ -569,6 +669,19 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
 
   // In-context prompts según el foco del día
   const focusKeyword = (firstInterest as any)?.keywords?.[0] || 'nevertheless'
+
+  // ─── MODO ONBOARDING: 0 sesiones ─────────────────────────────────
+  // Para el primer ingreso del user (sin sesiones todavia), reemplazamos
+  // toda la home complicada por un CTA gigante sin distracciones.
+  // Cero KPIs, cero progreso, cero opciones — solo "empezá tu primera clase".
+  if (totalSessions === 0) {
+    return <HoyOnboardingHero
+      userName={u.nombre}
+      langLabel={langLabel}
+      minutes={minutes}
+      onStart={() => nav('/app/practicar')}
+    />
+  }
 
   return (
     <div className="hoy-page">
@@ -1254,11 +1367,13 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     const surprisePool = interests.length > 5 ? interests.slice(3) : others
     const surprise = surprisePool[Math.floor(Math.random() * surprisePool.length)] || others[0] || interests[0]
 
+    const freeTopicFlag = (profile as MeProfile & { feature_flags?: Record<string, { unlocked: boolean }> }).feature_flags?.free_topic
     return (
       <PracticarGalaxy
         userName={userName}
         interests={interests.map(i => ({ id: i.id, title: i.title, category: i.category }))}
         recommended={others.slice(0, 8).map(t => ({ id: t.id, title: t.title, category: t.category }))}
+        enableFreeTopic={freeTopicFlag?.unlocked ?? false}
         onPick={(topicId) => {
           // Si el topico clickeado NO estaba en los intereses del user (vino del
           // panel "Sugeridos"), lo agregamos a sus intereses. addInterest es
@@ -1271,7 +1386,14 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
           beginSession(topicId)
         }}
         onSurprise={() => { if (surprise) beginSession(surprise.id); else beginSession(null) }}
-        onFreeTopic={(text) => beginSession(null, text)}
+        onFreeTopic={() => {
+          // "Tema libre" = curated topic "open-chat" (id 166). El coach saluda
+          // y pregunta al alumno por voz que quiere charlar. Aprovechamos que
+          // (1) topic_id curado funciona bien con native-audio, y (2) el pivote
+          // mid-conversation por voz funciona perfecto. Workaround del bug de
+          // free_topic en text — el modelo no parsea bien.
+          beginSession(166)
+        }}
       />
     )
   }
@@ -1323,23 +1445,22 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
             </div>
           </div>
           <div className="convo-h-row2">
-            <PedagogyPicker value={pedagogy} onChange={(p, label) => {
-              setPedagogy(p)
-              const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
-              const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
-              toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
-            }} />
-            <VoicePresetsBar
-              onPick={(preset) => {
-                applyPreset(preset)
-                // No reiniciamos la sesion en vivo: el preset cambia el audio
-                // pipeline (worklet buffer, sample rate, etc.) y aplicar en
-                // vivo requiere reconnect que tarda ~20s y reinicia el saludo.
-                // Lo dejamos guardado en localStorage y se aplica en la
-                // proxima sesion. Aviso al user.
-                toast.success(`Audio: ${preset.name} (aplica en la próxima sesión)`)
-              }}
-            />
+            <Gate flag="pedagogy_picker" profile={profile}>
+              <PedagogyPicker value={pedagogy} onChange={(p, label) => {
+                setPedagogy(p)
+                const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
+                const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
+                toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
+              }} />
+            </Gate>
+            <Gate flag="tune_audio" profile={profile}>
+              <VoicePresetsBar
+                onPick={(preset) => {
+                  applyPreset(preset)
+                  toast.success(`Audio: ${preset.name} (aplica en la próxima sesión)`)
+                }}
+              />
+            </Gate>
           </div>
         </div>
 
@@ -1503,8 +1624,8 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
 
         {/* Keywords filtradas por target_language + clickables como "disparadores"
             que mandan al coach un SILENT_SYSTEM_UPDATE para pivotear la charla
-            hacia esa palabra/frase. */}
-        {keywords.length > 0 && (() => {
+            hacia esa palabra/frase. Gateado por feature flag 'disparadores'. */}
+        {keywords.length > 0 && (profile as MeProfile & { feature_flags?: Record<string, { unlocked: boolean }> }).feature_flags?.disparadores?.unlocked && (() => {
           const userText = live.transcript.filter(l => l.who === 'user').map(l => l.text.toLowerCase()).join(' ')
           const target = profile?.user?.target_language || 'en'
           // Heurística de idioma por keyword. Para EN somos AGRESIVOS:
@@ -1631,9 +1752,19 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
   const acRef = useRef<AudioContext | null>(null)
   const rafRef = useRef<number | null>(null)
 
-  // Confetti al montar — celebracion por terminar la clase con exito.
-  // 3 bursts escalonados desde los costados + 1 desde el centro.
+  // ¿La clase se completo de verdad? Criterio: duracion >= 2 minutos Y al
+  // menos 3 turnos del user. Si no, es "abortada" — sin confetti, sin
+  // mensaje de exito. Antes celebrabamos clases de 5 segundos, lo cual
+  // se siente falso.
+  const completed = (() => {
+    const duration = report.duration_seconds || 0
+    const userTurns = (report.transcript || []).filter((t: any) => t.who === 'user' && (t.text || '').trim().length > 0).length
+    return duration >= 120 && userTurns >= 3
+  })()
+
+  // Confetti SOLO si la clase se completo de verdad.
   useEffect(() => {
+    if (!completed) return
     const colors = ['#00B37E', '#FFB800', '#22D3EE', '#7C5CFF', '#FF5E7E']
     const fire = (origin: { x: number; y: number }, particles: number) => {
       confetti({
@@ -1644,7 +1775,7 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
     fire({ x: 0.2, y: 0.7 }, 60)
     setTimeout(() => fire({ x: 0.8, y: 0.7 }, 60), 180)
     setTimeout(() => fire({ x: 0.5, y: 0.4 }, 80), 360)
-  }, [])
+  }, [completed])
 
   const stopAudio = useCallback(() => {
     if (audioRef.current) {
@@ -1750,31 +1881,45 @@ function SessionReportOverlay({ report, sessionId, onClose }: {
     <div className="report-overlay">
       {/* Izquierda: reporte */}
       <div className="report-pane-left">
-        {/* Header de exito — celebracion al cierre de la clase */}
+        {/* Header al cierre — celebracion solo si la clase fue real (>=2min y >=3 turnos).
+            Si la cortaste antes, mostramos un mensaje neutro sin confetti. */}
         <div style={{
           marginBottom: 20, padding: '16px 20px',
-          background: 'linear-gradient(135deg, rgba(0,179,126,.14) 0%, rgba(0,179,126,.05) 100%)',
-          border: '1px solid rgba(0,179,126,.35)',
+          background: completed
+            ? 'linear-gradient(135deg, rgba(0,179,126,.14) 0%, rgba(0,179,126,.05) 100%)'
+            : 'linear-gradient(135deg, rgba(255,184,0,.10) 0%, rgba(255,184,0,.03) 100%)',
+          border: completed ? '1px solid rgba(0,179,126,.35)' : '1px solid rgba(255,184,0,.28)',
           borderRadius: 16,
           display: 'flex', alignItems: 'center', gap: 14,
           animation: 'pg-fade-in .5s ease-out',
         }}>
           <div style={{
             width: 44, height: 44, borderRadius: 12,
-            background: 'linear-gradient(135deg, #00B37E 0%, #008F63 100%)',
+            background: completed
+              ? 'linear-gradient(135deg, #00B37E 0%, #008F63 100%)'
+              : 'linear-gradient(135deg, #FFB800 0%, #E08F00 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0, boxShadow: '0 6px 16px rgba(0,179,126,.4)',
+            flexShrink: 0,
+            boxShadow: completed ? '0 6px 16px rgba(0,179,126,.4)' : '0 6px 16px rgba(255,184,0,.35)',
           }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
+            {completed ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+              </svg>
+            )}
           </div>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--fg-1)', lineHeight: 1.2 }}>
-              ¡Clase terminada con éxito!
+              {completed ? '¡Clase terminada con éxito!' : 'Sesión cortada'}
             </div>
             <div style={{ fontSize: 13, color: 'var(--fg-3)', marginTop: 2 }}>
-              Sumás progreso en tu camino — mirá lo que aprendiste abajo.
+              {completed
+                ? 'Sumás progreso en tu camino — mirá lo que aprendiste abajo.'
+                : 'Quedó pendiente. Cuando arranques otra vez seguimos donde quedamos.'}
             </div>
           </div>
         </div>

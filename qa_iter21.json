@@ -1,0 +1,331 @@
+{
+  "ts": 1780122650.3856225,
+  "base": "https://hablah-api-685973917497.southamerica-east1.run.app",
+  "total_time_seconds": 480.49854040145874,
+  "scenarios": [
+    {
+      "scenario": "qual_open_chat",
+      "persona": "free_topic_voice",
+      "session_id": 457,
+      "topic_label": "topic_166",
+      "duration_seconds": 68.97219347953796,
+      "coach_first_audio_ms": 17056,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 7.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 6,
+          "note": "The opening is functional but a bit generic. It doesn't reference the topic directly, but rather asks what the student wants to talk about."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 8,
+          "note": "The turns are varied in their structure, incorporating opinions, follow-up questions, and agreements without falling into a repetitive pattern."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 9,
+          "note": "The coach uses 'Alright' and 'Yeah' naturally, but avoids excessive or hollow praise. The 'Yeah's are used as natural conversational affirmations."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are short and conversational (1-3 sentences). There are a couple of slightly longer turns, but they remain concise."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach stays on topic (Sapiens) and follows the student's lead, whether discussing shared fictions, money/religion, or the agricultural revolution."
+        },
+        "engagement_substance": {
+          "pass": true,
+          "score": 8,
+          "note": "Each turn adds substance, either by offering a specific opinion, a related anecdote, or a pointed follow-up question that builds on the student's input."
+        }
+      },
+      "score_issues": [
+        "The opening turn 'Alright, the screen is on and the day is officially starting. What's on your mind to talk about today?' is a bit generic and doesn't directly engage with the pre-selected topic."
+      ],
+      "score_strengths": [
+        "The coach demonstrates strong engagement by sharing personal opinions and specific references related to the book 'Sapiens'.",
+        "The coach effectively uses follow-up questions to deepen the conversation and prompt the student for more detailed responses.",
+        "The turns are varied and avoid formulaic responses, making the conversation feel natural and human-like.",
+        "The coach maintains good turn length, keeping the conversation flowing without overwhelming the student."
+      ],
+      "conversation": "[TUTOR] Alright, the screen is on and the day is officially starting. What's on your mind to talk about today?\n[ALUMNO] I want to talk about the last book that really changed how I think — Sapiens\n[TUTOR] Harari's idea about shared fictions, like money and nations, is the one that really gets me. It completely reframes how you see everyday life.\n[ALUMNO] Yeah, Sapiens by Yuval Noah Harari. It blew my mind, especially the part about shared myths\n[TUTOR] For me, the idea that human rights are just a shared story we tell ourselves was a tough one to swallow at first. How did reading about these myths change the way you look at something concrete, like money or a national border?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction\n[TUTOR] Yeah, he basically says they're both just systems of trust. One relies on trusting a divine power, the other on trusting the financial system. Which one do you think has been more successful at uniting large groups of people?\n[ALUMNO] I think the agricultural revolution chapter is the most controversial — Harari calls it 'history's biggest fraud'\n[TUTOR] That chapter is brilliant, arguing that we didn't domesticate wheat, it domesticated us. It makes you question the whole idea of progress.\n[ALUMNO] Yeah, but I'd push back a bit — some of his claims are oversimplified for the sake of narrative\n[TUTOR] I'd actually agree with that. He paints with a very broad brush, which is great for a big picture but sometimes loses the details. Which specific claim felt like the biggest oversimplification to you?\n[ALUMNO] Yeah, but I'd push back a bit — some of his claims are oversimplified for the sake of narrative"
+    },
+    {
+      "scenario": "qual_off_topic",
+      "persona": "off_topic",
+      "session_id": 458,
+      "topic_label": "topic_1",
+      "duration_seconds": 93.60967111587524,
+      "coach_first_audio_ms": 8160,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 6.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 9,
+          "note": "The opening turn is very creative, setting a vivid scene and asking a specific question related to the topic. It feels like a human tutor trying to engage."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach avoids a strict 'ack + question' formula. While it consistently redirects to the topic, the phrasing and additional information provided in each turn vary."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach does not use any empty filler words or hollow praise."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning, asterisks, or step labels."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short (1-3 sentences), conversational, and appropriate for a B1 student. Some turns are slightly longer due to the need to redirect and provide context, but they remain concise."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach is extremely rigid in topic focus, repeatedly redirecting the student back to UK Garage despite multiple attempts by the student to change the subject. While staying on topic is good, a human tutor would likely acknowledge the student's attempts more gracefully or find a way to briefly connect before redirecting, rather than simply stating 'My focus is on UK Garage for our session' multiple times."
+        },
+        "engagement_substance": {
+          "pass": true,
+          "score": 8,
+          "note": "Each turn adds substance by providing specific details, opinions, or historical context about UK Garage, even when redirecting the student. It doesn't just rephrase or give generic responses."
+        }
+      },
+      "score_issues": [
+        "The coach is overly rigid in topic redirection, which could feel dismissive to a student. For example: \"My focus is on UK Garage for our session.\"",
+        "The repeated phrase 'I can't give you a specific restaurant recommendation, as my information isn't current' or 'I can't give you restaurant advice' feels a bit robotic after multiple similar requests from the student."
+      ],
+      "score_strengths": [
+        "The opening turn is highly engaging and creative.",
+        "The coach consistently provides substantive information and details about UK Garage in each turn.",
+        "The language is natural and free of filler words or robotic phrasing (except for the repeated redirection).",
+        "Turn lengths are appropriate for a conversational tutor."
+      ],
+      "conversation": "[TUTOR] It's a packed club in London around 1999, and the DJ drops a track with a heavy, syncopated bassline and a chopped-up vocal. For you, what sound or artist defines that specific UK Garage era?\n[ALUMNO] hi\n[TUTOR] For me, the track that totally captures that moment is 'Re-Rewind' by Artful Dodger featuring Craig David. It has that perfect mix of a smooth groove for the radio but it was still a massive club banger.\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] I can't give you a specific restaurant recommendation, as my information isn't current. But back to the music, what do you think happened to the UK Garage sound after that initial explosion around 2000?\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] My focus is on UK Garage for our session. After that initial explosion around the year 2000, the scene really fractured. For a lot of people, grime was the next logical step, taking the energy in a much darker direction.\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] I can't give you restaurant advice. The way UK Garage splintered is fascinating, though. You had the super commercial sound of So Solid Crew on one side, and on the other, this darker, more instrumental sound that eventually became grime.\n[ALUMNO] anyway, did you see the football match yesterday?\n[TUTOR] I didn't catch the game. For me, a producer like MJ Cole stood out because he brought this really polished, almost classical piano sound to garage with tracks like 'Sincere'.\n[ALUMNO] I have to tell you about this weird dream I had last night\n[TUTOR] We're here to focus on UK Garage today. It's interesting how that specific syncopated rhythm, the two-step beat, has shown up again in recent years in pop and house music. Do you notice that influence in any artists you listen to now?\n[ALUMNO] do you think AI will replace teachers?\n[TUTOR] That's a big topic for another time; my focus here is to talk about UK Garage. The influence of that scene is huge, especially how it paved the way for genres like grime and dubstep to come through later on.\n[ALUMNO] what time is it where you are?"
+    },
+    {
+      "scenario": "qual_silent",
+      "persona": "silent",
+      "session_id": 459,
+      "topic_label": "topic_1",
+      "duration_seconds": 65.98620796203613,
+      "coach_first_audio_ms": 10117,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 6.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific, gives an opinion, and asks a direct question related to the topic. It feels grounded and inviting."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach consistently provides information/opinion and then waits for a very minimal student response. There's a lack of varied turn shapes or attempts to draw out more from the student."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 9,
+          "note": "The coach avoids empty openers and hollow praise. 'Oh, fair enough' is a natural, appropriate response."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are generally short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach stays on topic, introducing different aspects of UK Garage. While the student's responses are minimal, the coach continues to explore the topic rather than rigidly forcing a specific line of questioning."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 5,
+          "note": "Each turn does add new information, details, or opinions, but the coach struggles to elicit more than minimal responses from the student, leading to a somewhat one-sided conversation. The coach adds substance, but the engagement is low due to the student's lack of participation, which the coach doesn't effectively address."
+        }
+      },
+      "score_issues": [
+        "The coach struggles to engage the student beyond minimal 'ok' or 'no' responses, leading to a monologue-like interaction. For example, after 'ALUMNO] ok', the coach continues with 'Artful Dodger's track 'Re-Rewind' with Craig David is probably the perfect example for me. That syncopated beat just completely took over the charts back then.' without trying to probe what 'ok' meant or if the student was familiar.",
+        "The coach doesn't adapt strategy when faced with repeated minimal student input. After 'ALUMNO] no', the coach simply introduces another example: 'Oh, fair enough. For me, the other side of the coin was someone like Wookie with the track 'Battle'. A bit tougher, less pop-focused.' without trying to understand why the student said 'no' or what they might prefer."
+      ],
+      "score_strengths": [
+        "The coach provides specific and knowledgeable details about the topic (UK Garage artists, tracks, and characteristics like basslines).",
+        "The coach maintains a natural, conversational tone without using filler words or robotic phrasing.",
+        "The opening turn is strong, setting a good tone for the conversation."
+      ],
+      "conversation": "[TUTOR] For me, UK Garage never got better than the stuff Artful Dodger and MJ Cole were putting out right around the year 2000. What was your entry point into that sound?\n[ALUMNO] ok\n[TUTOR] Artful Dodger's track 'Re-Rewind' with Craig David is probably the perfect example for me. That syncopated beat just completely took over the charts back then.\n[ALUMNO] no\n[TUTOR] Oh, fair enough. For me, the other side of the coin was someone like Wookie with the track 'Battle'. A bit tougher, less pop-focused.\n[ALUMNO] no\n[TUTOR] What always set UK Garage apart for me were the basslines. They were so much more complex and melodic than what was happening in house music at the time.\n[ALUMNO] yeah\n[TUTOR] MJ Cole's basslines, in particular, always felt really sophisticated, almost like they had a bit of jazz influence in them. That's what got me into his stuff.\n[ALUMNO] maybe\n[TUTOR] Yeah, a lot of people trace the origins of Grime and even Dubstep directly back to the darker, more bass-heavy side of UK Garage. The group So Solid Crew is probably the most famous bridge between those worlds.\n[ALUMNO] ok"
+    },
+    {
+      "scenario": "qual_advanced_topic",
+      "persona": "advanced_c1",
+      "session_id": 460,
+      "topic_label": "topic_1",
+      "duration_seconds": 100.79081726074219,
+      "coach_first_audio_ms": 13319,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 6.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening is specific, opinionated, and directly asks a question related to the topic, setting a good conversational tone."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach falls into a repetitive pattern of 'ack + question' or 'ack + counter-argument' without much variation in turn structure. There are also direct repetitions of previous student turns and coach responses."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach uses 'Right' and 'Whether it was strategic or not' naturally. There's no sustained use of hollow praise."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Most turns are 1-3 sentences, maintaining a conversational flow."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach generally stays on topic, engaging with the student's points, though the repetition of student input makes it feel less flexible than it could be."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While some turns add specific details or opinions, there's a significant issue with the coach repeating previous student inputs and then giving a response that was already given. This reduces the substantive engagement."
+        }
+      },
+      "score_issues": [
+        "The coach repeats a previous student turn: '[ALUMNO] Interesting, but my take is the scene peaked precisely because it stayed underground for so long. Going mainstream was the death blow.' This turn appears twice.",
+        "The coach repeats a previous student turn: '[ALUMNO] Honestly, I think most people overstate that — the actual crossover was more accidental than strategic.' This turn appears twice.",
+        "The coach repeats a previous student turn: '[ALUMNO] Sure, but isn't that reading a bit too much into the production side? Plenty of those tracks weren't engineered for crossover at all.' This turn appears twice.",
+        "The coach's response to a repeated student turn is also a near-repeat of a previous response, e.g., after the student says 'Honestly, I think most people overstate that — the actual crossover was more accidental than strategic.', the coach responds with 'Accidental or not, it completely changed the sound of the clubs for a few years. What makes you say it was an accident?' and later with 'Whether it was strategic or not, the result was the same. A track like 'Re-Rewind' by Artful Dodger just sounded like an R&B pop song with a garage beat underneath it.' This indicates a lack of dynamic response generation."
+      ],
+      "score_strengths": [
+        "The coach initiates the conversation with a strong, opinionated, and specific opening.",
+        "The coach maintains good turn length, keeping the conversation flowing naturally.",
+        "The coach avoids excessive filler words and maintains language consistency."
+      ],
+      "conversation": "[TUTOR] For me, the whole UK Garage scene peaked and died between 1999 and 2002. What was your first contact with that sound?\n[ALUMNO] alright, lets dive in — what's your honest take on this scene?\n[TUTOR] The moment Artful Dodger and Craig David crossed over into the pop charts, the original underground scene was basically over. It became too smooth and polished for my taste.\n[ALUMNO] Honestly, I think most people overstate that — the actual crossover was more accidental than strategic.\n[TUTOR] Accidental or not, it completely changed the sound of the clubs for a few years. What makes you say it was an accident?\n[ALUMNO] Interesting, but my take is the scene peaked precisely because it stayed underground for so long. Going mainstream was the death blow.\n[TUTOR] I'd push back on that — the underground scene was already losing steam by the time the pop acts took over. The producers who were really innovating, like Burial, had already moved on to create dubstep.\n[ALUMNO] Sure, but isn't that reading a bit too much into the production side? Plenty of those tracks weren't engineered for crossover at all.\n[TUTOR] Maybe not engineered, but those big R&B vocal hooks were practically begging for mainstream radio play. It felt like a completely different sound compared to the darker, instrumental tracks from just a year or two before.\n[ALUMNO] Interesting, but my take is the scene peaked precisely because it stayed underground for so long. Going mainstream was the death blow.\n[TUTOR] Right, but for me, the magic of that underground sound was specifically the 2-step beat. That syncopated rhythm felt like a total break from the steady four-on-the-floor of house music.\n[ALUMNO] That's fair, though I'd argue the cultural context mattered more than the technical innovation itself.\n[TUTOR] The whole scene felt incredibly tied to London, especially the pirate radio stations broadcasting from tower blocks. In what way do you think that specific environment shaped the music more than the beat itself?\n[ALUMNO] Honestly, I think most people overstate that — the actual crossover was more accidental than strategic.\n[TUTOR] Whether it was strategic or not, the result was the same. A track like 'Re-Rewind' by Artful Dodger just sounded like an R&B pop song with a garage beat underneath it.\n[ALUMNO] Sure, but isn't that reading a bit too much into the production side? Plenty of those tracks weren't engineered for crossover at all."
+    },
+    {
+      "scenario": "qual_kid_distracted",
+      "persona": "distracted_kid",
+      "session_id": 461,
+      "topic_label": "topic_1",
+      "duration_seconds": 99.39401936531067,
+      "coach_first_audio_ms": 13611,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 5.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific, references a niche topic (UK Garage), and sets a vivid scene, which is good for engagement."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach tries to vary its responses, the repeated attempts to link student's off-topic questions back to the topic, especially the 'favorite color' question, become formulaic and predictable."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach avoids empty openers and filler words. 'Oh, cool' is a natural conversational interjection."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns are 1-3 sentences, with a few slightly longer ones that are still conversational."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach rigidly tries to pull the student back to the topic, even when the student repeatedly asks off-topic questions like 'what is your favorite color?' It doesn't adapt to the student's clear disinterest in the topic or desire to play a different game."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach attempts to add substance by linking off-topic questions to the main topic, the repeated attempts to do so for the 'favorite color' question become forced and less engaging, bordering on rephrasing the topic in different ways rather than truly engaging with the student's input."
+        }
+      },
+      "score_issues": [
+        "The coach repeatedly tries to link 'favorite color' to UK Garage, which feels forced: \"The artwork for a lot of those early UK Garage records from labels like Locked On had really stark, graphic designs, often just black, white, and one other bright color. That whole minimalist look really defined the scene for me.\"",
+        "The coach continues to force the topic when the student clearly wants to change it: \"I find the 'color' of the music itself more interesting. The early, soulful UK Garage has a really warm, bright feel, while the later stuff that morphed into grime and dubstep feels much darker and more intense.\"",
+        "The coach ignores the student's repeated 'can we play a game?' requests or interprets them in a way that keeps the conversation strictly on UK Garage, rather than adapting to the student's desire for a different interaction."
+      ],
+      "score_strengths": [
+        "The opening turn was creative and specific, setting a good initial tone.",
+        "The coach avoids filler words and maintains a natural conversational tone.",
+        "The coach consistently speaks in English."
+      ],
+      "conversation": "[TUTOR] It's funny how a sound so specific to London clubs in the late nineties, UK Garage, ended up influencing pop music all over the world. How did you first get into that scene?\n[ALUMNO] hola! tengo perro\n[TUTOR] Oh, cool. For me, the track that really opened the door to UK Garage was 'Re-Rewind' by Artful Dodger. That bassline was just everywhere for a while back then.\n[ALUMNO] can we play a game?\n[TUTOR] Alright, let's make it a game. I'll name a classic UKG artist, and you tell me the first track of theirs that comes to mind. What about MJ Cole?\n[ALUMNO] do you like trains? I love trains\n[TUTOR] I'm more of a music person myself. Speaking of which, the beat in a lot of UK Garage tracks, like anything by So Solid Crew, has a kind of syncopated, chugging rhythm, a bit like a train on the tracks.\n[ALUMNO] what is your favorite color?\n[TUTOR] The artwork for a lot of those early UK Garage records from labels like Locked On had really stark, graphic designs, often just black, white, and one other bright color. That whole minimalist look really defined the scene for me.\n[ALUMNO] can we play a game?\n[TUTOR] Sure, let's play. A classic UK Garage track is built on two main things: a heavy bassline or a catchy, chopped-up vocal. If you could only have one in a song, which one would you choose?\n[ALUMNO] what is your favorite color?\n[TUTOR] I find the 'color' of the music itself more interesting. The early, soulful UK Garage has a really warm, bright feel, while the later stuff that morphed into grime and dubstep feels much darker and more intense.\n[ALUMNO] what is your favorite color?\n[TUTOR] The sound of UK Garage, for me, is the sound of pirate radio in the late nineties. That's how the whole underground scene took off before it ever hit the mainstream charts.\n[ALUMNO] what is your favorite color?"
+    }
+  ]
+}

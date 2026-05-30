@@ -1,0 +1,152 @@
+﻿[
+  {
+    "insertId": "6a1a6a5a00025f09157faafb",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Budget 0 is invalid. This model only works in thinking mode.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n",
+      "event": "cascade.llm.failed",
+      "latency_ms": 1073,
+      "message": "cascade.llm.failed",
+      "session_id": 429,
+      "status": 400,
+      "timestamp_iso": "2026-05-30T04:40:58.155780+00:00",
+      "ts_unix": 1780116058.1557934
+    },
+    "labels": {
+      "instanceId": "0007b734d9645485c26c76311f68b242a60b271b0d3c5f99c3d991240d85edf8e6bbed130c00c863f5574c6efe7677373be0a78e8c66208ef2178a43e1ac8edd2acc420a34f606bb634b2a281e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-30T04:40:58.306409651Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00069-546",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-30T04:40:58.155401Z"
+  },
+  {
+    "insertId": "6a1a6a42000781a968b429ea",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Budget 0 is invalid. This model only works in thinking mode.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n",
+      "event": "cascade.llm.failed",
+      "latency_ms": 1076,
+      "message": "cascade.llm.failed",
+      "session_id": 428,
+      "status": 400,
+      "timestamp_iso": "2026-05-30T04:40:34.492943+00:00",
+      "ts_unix": 1780116034.4929557
+    },
+    "labels": {
+      "instanceId": "0007b734d9645485c26c76311f68b242a60b271b0d3c5f99c3d991240d85edf8e6bbed130c00c863f5574c6efe7677373be0a78e8c66208ef2178a43e1ac8edd2acc420a34f606bb634b2a281e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-30T04:40:34.674098982Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00069-546",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-30T04:40:34.491945Z"
+  },
+  {
+    "insertId": "6a1a6a2a000b9496515993ba",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Budget 0 is invalid. This model only works in thinking mode.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n",
+      "event": "cascade.llm.failed",
+      "latency_ms": 1064,
+      "message": "cascade.llm.failed",
+      "session_id": 427,
+      "status": 400,
+      "timestamp_iso": "2026-05-30T04:40:10.760189+00:00",
+      "ts_unix": 1780116010.760202
+    },
+    "labels": {
+      "instanceId": "0007b734d9645485c26c76311f68b242a60b271b0d3c5f99c3d991240d85edf8e6bbed130c00c863f5574c6efe7677373be0a78e8c66208ef2178a43e1ac8edd2acc420a34f606bb634b2a281e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-30T04:40:11.029936327Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00069-546",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-30T04:40:10.758934Z"
+  },
+  {
+    "insertId": "6a1a6a10000afdb3627acf11",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Budget 0 is invalid. This model only works in thinking mode.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n",
+      "event": "cascade.llm.failed",
+      "latency_ms": 1053,
+      "message": "cascade.llm.failed",
+      "session_id": 426,
+      "status": 400,
+      "timestamp_iso": "2026-05-30T04:39:44.720789+00:00",
+      "ts_unix": 1780115984.7208014
+    },
+    "labels": {
+      "instanceId": "0007b734d9645485c26c76311f68b242a60b271b0d3c5f99c3d991240d85edf8e6bbed130c00c863f5574c6efe7677373be0a78e8c66208ef2178a43e1ac8edd2acc420a34f606bb634b2a281e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-30T04:39:45.003269840Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00069-546",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-30T04:39:44.720307Z"
+  },
+  {
+    "insertId": "6a1a69f3000c195acf041607",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Budget 0 is invalid. This model only works in thinking mode.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n",
+      "event": "cascade.llm.failed",
+      "latency_ms": 1149,
+      "message": "cascade.llm.failed",
+      "session_id": 425,
+      "status": 400,
+      "timestamp_iso": "2026-05-30T04:39:15.793660+00:00",
+      "ts_unix": 1780115955.7936718
+    },
+    "labels": {
+      "instanceId": "0007b734d9645485c26c76311f68b242a60b271b0d3c5f99c3d991240d85edf8e6bbed130c00c863f5574c6efe7677373be0a78e8c66208ef2178a43e1ac8edd2acc420a34f606bb634b2a281e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-30T04:39:15.979712098Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00069-546",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-30T04:39:15.792922Z"
+  }
+]

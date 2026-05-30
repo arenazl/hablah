@@ -1,0 +1,4169 @@
+﻿[
+  {
+    "insertId": "6a18c593000b42458ffe45b6",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 17,
+      "session_id": 329,
+      "timestamp_iso": "2026-05-28T22:45:39.738755+00:00",
+      "ts_unix": 1780008339.7387674
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:39.846229768Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:39.737861Z"
+  },
+  {
+    "insertId": "6a18c593000b3ff9558fea58",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 266,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:39.738120+00:00",
+      "ts_unix": 1780008339.7381337
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:39.846229768Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:39.737273Z"
+  },
+  {
+    "insertId": "6a18c59300072d9dd64e86f8",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 266,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:39.471168+00:00",
+      "ts_unix": 1780008339.4712594
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:39.512777325Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:39.470429Z"
+  },
+  {
+    "insertId": "6a18c593000317cde200c3b6",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 936,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "Okay, Admin, we can definitely talk about Pokemon. What is it about the world of Pokemon that you find most captivating?",
+      "timestamp_iso": "2026-05-28T22:45:39.203649+00:00",
+      "ts_unix": 1780008339.2036664
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:39.512777325Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:39.202701Z"
+  },
+  {
+    "insertId": "6a18c590000b3f6a64e3283e",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 273,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:36.737219+00:00",
+      "ts_unix": 1780008336.7372568
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:36.848003270Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:36.737130Z"
+  },
+  {
+    "insertId": "6a18c59000071085f696fa75",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 904,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "Pokemon is a fun topic. Which Pokemon game or generation is your favorite, and why does it stand out to you?",
+      "timestamp_iso": "2026-05-28T22:45:36.463223+00:00",
+      "ts_unix": 1780008336.4632397
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:36.515121169Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:36.462981Z"
+  },
+  {
+    "insertId": "6a18c58e0004fcca9645b1d5",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 260,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:34.327472+00:00",
+      "ts_unix": 1780008334.3274863
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:34.516458761Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:34.326858Z"
+  },
+  {
+    "insertId": "6a18c58e00010382edc56c3f",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 277,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:34.066886+00:00",
+      "ts_unix": 1780008334.0668986
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:34.184495262Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:34.066434Z"
+  },
+  {
+    "insertId": "6a18c58d000c093b2bed4fef",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 924,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "I hear you, pizza is great. Thinking about the energy of UK Garage, do you remember any specific tracks from that era th",
+      "timestamp_iso": "2026-05-28T22:45:33.789299+00:00",
+      "ts_unix": 1780008333.7893138
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:33.851808111Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:33.788795Z"
+  },
+  {
+    "insertId": "6a18c58b000b61015a214aba",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 266,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:31.746398+00:00",
+      "ts_unix": 1780008331.7464094
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:31.854734283Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:31.745729Z"
+  },
+  {
+    "insertId": "6a18c58b00074e576a2f3f22",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 270,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:31.479614+00:00",
+      "ts_unix": 1780008331.4796262
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:31.520609099Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:31.478807Z"
+  },
+  {
+    "insertId": "6a18c58b00032bcce235fcfc",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1060,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "Trains are fascinating, especially thinking about their history and how they shaped travel. When you listen to music, do",
+      "timestamp_iso": "2026-05-28T22:45:31.208721+00:00",
+      "ts_unix": 1780008331.2087364
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:31.520609099Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:31.207820Z"
+  },
+  {
+    "insertId": "6a18c588000ec277bd8b9ae8",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 264,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:28.968138+00:00",
+      "ts_unix": 1780008328.9681506
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:29.192177546Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:28.967287Z"
+  },
+  {
+    "insertId": "6a18c588000ab64deb06b04b",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 259,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:28.702952+00:00",
+      "ts_unix": 1780008328.7029648
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:28.857284450Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:28.702029Z"
+  },
+  {
+    "insertId": "6a18c5880006c096f49c2131",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1009,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "I don't have a favorite color, Admin, since I'm an AI. What about you? Do you have a favorite color that you think refle",
+      "timestamp_iso": "2026-05-28T22:45:28.443494+00:00",
+      "ts_unix": 1780008328.4435084
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:28.526138890Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:28.442518Z"
+  },
+  {
+    "insertId": "6a18c5860003a624987100c3",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 268,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:26.240323+00:00",
+      "ts_unix": 1780008326.2403355
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:26.524700072Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:26.239140Z"
+  },
+  {
+    "insertId": "6a18c585000ed002c9a03589",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 261,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:25.971873+00:00",
+      "ts_unix": 1780008325.9718857
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:26.193378685Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:25.970754Z"
+  },
+  {
+    "insertId": "6a18c585000ad2590936842b",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 990,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "As an AI, I don't have personal preferences like a favorite color or the ability to feel hunger. But I'm here to chat ab",
+      "timestamp_iso": "2026-05-28T22:45:25.710201+00:00",
+      "ts_unix": 1780008325.7102256
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:25.858405505Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:25.709209Z"
+  },
+  {
+    "insertId": "6a18c58300078a0208f97abb",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 272,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:23.494280+00:00",
+      "ts_unix": 1780008323.4942932
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:23.528024189Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:23.494082Z"
+  },
+  {
+    "insertId": "6a18c58300035f3abd1b5a37",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 270,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:23.221141+00:00",
+      "ts_unix": 1780008323.221154
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:23.528024189Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:23.220986Z"
+  },
+  {
+    "insertId": "6a18c582000e80ccc8f4eb4f",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 978,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "Pizza sounds delicious right now. Shifting back to music, what specifically about UK Garage's sound do you think made it",
+      "timestamp_iso": "2026-05-28T22:45:22.950577+00:00",
+      "ts_unix": 1780008322.950593
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:23.196145155Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:22.950476Z"
+  },
+  {
+    "insertId": "6a18c58000074748ccdd364c",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 285,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:20.477900+00:00",
+      "ts_unix": 1780008320.477913
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:20.530569724Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:20.477Z"
+  },
+  {
+    "insertId": "6a18c5800002eb217df7d6b6",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 879,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "Oh, that's interesting. Do you think musical genres often mix and influence each other, even outside of electronic music",
+      "timestamp_iso": "2026-05-28T22:45:20.191961+00:00",
+      "ts_unix": 1780008320.1919785
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:20.197289104Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:20.191265Z"
+  },
+  {
+    "insertId": "6a18c57d000edd6d1db6742e",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 284,
+      "message": "cascade.tts.failed",
+      "session_id": 329,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:17.974723+00:00",
+      "ts_unix": 1780008317.9747355
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:18.199422264Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:17.974189Z"
+  },
+  {
+    "insertId": "6a18c57d000a8412f4a56da3",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1055,
+      "message": "cascade.llm.ok",
+      "session_id": 329,
+      "text_preview": "Admin, I'm curious what you think about how UK Garage, with its distinctive rhythm, influenced British pop music in the ",
+      "timestamp_iso": "2026-05-28T22:45:17.689733+00:00",
+      "ts_unix": 1780008317.6897495
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:17.865194937Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:17.689170Z"
+  },
+  {
+    "insertId": "6a18c57c0009a89c05e3a20a",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 329,
+      "timestamp_iso": "2026-05-28T22:45:16.633763+00:00",
+      "ts_unix": 1780008316.6337729,
+      "voice": "Aoede",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:16.871753961Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:16.632988Z"
+  },
+  {
+    "insertId": "6a18c56f000872ef827a106e",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 17,
+      "session_id": 328,
+      "timestamp_iso": "2026-05-28T22:45:03.554965+00:00",
+      "ts_unix": 1780008303.5549755
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:03.882594628Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:03.553711Z"
+  },
+  {
+    "insertId": "6a18c56f00087127f1dafd99",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 260,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:03.554455+00:00",
+      "ts_unix": 1780008303.554467
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:03.882594628Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:03.553255Z"
+  },
+  {
+    "insertId": "6a18c56f0004753f17249f66",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 260,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:03.293304+00:00",
+      "ts_unix": 1780008303.2933161
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:03.547338200Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:03.292159Z"
+  },
+  {
+    "insertId": "6a18c56f00007b6e4f98646a",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 282,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:03.032710+00:00",
+      "ts_unix": 1780008303.0327241
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:03.214398834Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:03.031598Z"
+  },
+  {
+    "insertId": "6a18c56e000b6af8e0ea1e0a",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1180,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "Okay, so you're seeing data that suggests genres are actually blending more, not less, across different regions over the",
+      "timestamp_iso": "2026-05-28T22:45:02.749353+00:00",
+      "ts_unix": 1780008302.7493677
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:02.879000622Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:45:02.748280Z"
+  },
+  {
+    "insertId": "6a18c56c000a1208bd7e3008",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 263,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:00.661272+00:00",
+      "ts_unix": 1780008300.6612852
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:00.882654925Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:00.659976Z"
+  },
+  {
+    "insertId": "6a18c56c00060c99c4499415",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 262,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:00.397791+00:00",
+      "ts_unix": 1780008300.3978038
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:00.550717751Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:00.396441Z"
+  },
+  {
+    "insertId": "6a18c56c000208f04d695d60",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 260,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:45:00.134729+00:00",
+      "ts_unix": 1780008300.134746
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:45:00.218347133Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:45:00.133360Z"
+  },
+  {
+    "insertId": "6a18c56b000d5054a700fa7e",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1034,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "I understand you feel I'm being reductionist. I'm focusing on the idea that certain musical characteristics might not tr",
+      "timestamp_iso": "2026-05-28T22:44:59.873974+00:00",
+      "ts_unix": 1780008299.8739896
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:59.883610187Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:59.872532Z"
+  },
+  {
+    "insertId": "6a18c569000512f238a91d2a",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 265,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:57.332964+00:00",
+      "ts_unix": 1780008297.3329763
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:57.552339967Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:57.332530Z"
+  },
+  {
+    "insertId": "6a18c5690001038811ef0da0",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1129,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "I hear you, Admin. When you say I'm being reductionist and conflating two distinct phenomena, are you referring to the i",
+      "timestamp_iso": "2026-05-28T22:44:57.066789+00:00",
+      "ts_unix": 1780008297.0668027
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:57.220525511Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:57.066440Z"
+  },
+  {
+    "insertId": "6a18c5670000f30724835aa1",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 261,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:55.062883+00:00",
+      "ts_unix": 1780008295.062895
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:55.223666460Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:55.062215Z"
+  },
+  {
+    "insertId": "6a18c566000c36f3885d9537",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 277,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:54.801374+00:00",
+      "ts_unix": 1780008294.8013866
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:54.891316737Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:54.800499Z"
+  },
+  {
+    "insertId": "6a18c5660007faf24c9e8cb4",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 267,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:54.523708+00:00",
+      "ts_unix": 1780008294.5237226
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:54.556715650Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:54.522994Z"
+  },
+  {
+    "insertId": "6a18c5660003e4a52d1199c2",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1641,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "Right, that geographic context is definitely important. It makes me wonder if certain musical elements are just inherent",
+      "timestamp_iso": "2026-05-28T22:44:54.255691+00:00",
+      "ts_unix": 1780008294.2557087
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:54.556715650Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:54.255141Z"
+  },
+  {
+    "insertId": "6a18c56300063977b1eee9da",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 275,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:51.408755+00:00",
+      "ts_unix": 1780008291.4087672
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:51.556804607Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:51.407927Z"
+  },
+  {
+    "insertId": "6a18c5630002055afd1012a5",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 268,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:51.133143+00:00",
+      "ts_unix": 1780008291.1331553
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:51.224244457Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:51.132442Z"
+  },
+  {
+    "insertId": "6a18c562000d2eccac6cf4df",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1166,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "I'm not sure I'm conflating them, but I'm open to exploring your perspective. How would you distinguish between those tw",
+      "timestamp_iso": "2026-05-28T22:44:50.864531+00:00",
+      "ts_unix": 1780008290.8645422
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:50.893569070Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:50.863948Z"
+  },
+  {
+    "insertId": "6a18c560000cf0291a6823da",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 264,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:48.849060+00:00",
+      "ts_unix": 1780008288.849072
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:48.893934353Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:48.847913Z"
+  },
+  {
+    "insertId": "6a18c5600008e60521834a7d",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 262,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:48.584328+00:00",
+      "ts_unix": 1780008288.5843403
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:48.893934353Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:48.583173Z"
+  },
+  {
+    "insertId": "6a18c5600004e56b242cec38",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 267,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:48.322025+00:00",
+      "ts_unix": 1780008288.3220372
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:48.561479066Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:48.320875Z"
+  },
+  {
+    "insertId": "6a18c5600000cf5c5de195a8",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1057,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "Oh, that's a strong claim, Admin. If the data suggests the opposite, I'd be curious to know what kind of trends you're s",
+      "timestamp_iso": "2026-05-28T22:44:48.054233+00:00",
+      "ts_unix": 1780008288.0542479
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:48.227920119Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:48.053084Z"
+  },
+  {
+    "insertId": "6a18c55e000127fa076cc67d",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 267,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:46.077132+00:00",
+      "ts_unix": 1780008286.0771446
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:46.229815454Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:46.075770Z"
+  },
+  {
+    "insertId": "6a18c55d000c54a65a280bde",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 260,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:45.809242+00:00",
+      "ts_unix": 1780008285.8092546
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:45.896287714Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:45.808102Z"
+  },
+  {
+    "insertId": "6a18c55d00085c375cfe112b",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 278,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:45.548773+00:00",
+      "ts_unix": 1780008285.5487838
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:45.562755293Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:45.547895Z"
+  },
+  {
+    "insertId": "6a18c55d00041d77dcbf836f",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1775,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "That's a really interesting point about geographical context, Admin. It's true that musical tastes and influences often ",
+      "timestamp_iso": "2026-05-28T22:44:45.270157+00:00",
+      "ts_unix": 1780008285.270178
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:45.562755293Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:45.269687Z"
+  },
+  {
+    "insertId": "6a18c55a000a9a6813b25146",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 264,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:42.695271+00:00",
+      "ts_unix": 1780008282.6952894
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:42.898731307Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:42.694888Z"
+  },
+  {
+    "insertId": "6a18c55a00068e51c7e37b58",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 267,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:42.430147+00:00",
+      "ts_unix": 1780008282.4301648
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:42.570318823Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:42.429649Z"
+  },
+  {
+    "insertId": "6a18c55a000277b1dc508b68",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 266,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:42.162261+00:00",
+      "ts_unix": 1780008282.1622744
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:42.233377448Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:42.161713Z"
+  },
+  {
+    "insertId": "6a18c559000da7146ba2cd9d",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1121,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "I think it's easy to overstate the influence of underground genres. While UK Garage had its moment, I'm not sure it trul",
+      "timestamp_iso": "2026-05-28T22:44:41.895467+00:00",
+      "ts_unix": 1780008281.8954835
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:41.899898117Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:41.894740Z"
+  },
+  {
+    "insertId": "6a18c5570008d29848484d05",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 274,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:39.578406+00:00",
+      "ts_unix": 1780008279.578418
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:39.901520284Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:39.578200Z"
+  },
+  {
+    "insertId": "6a18c5570004a1c37357fb1c",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 264,
+      "message": "cascade.tts.failed",
+      "session_id": 328,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:39.303935+00:00",
+      "ts_unix": 1780008279.3039472
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:39.568737188Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:39.303555Z"
+  },
+  {
+    "insertId": "6a18c5570000959d126d9378",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1137,
+      "message": "cascade.llm.ok",
+      "session_id": 328,
+      "text_preview": "A lot of people think UK Garage was just a fleeting club trend, but I'd argue its impact on mainstream British pop, espe",
+      "timestamp_iso": "2026-05-28T22:44:39.038641+00:00",
+      "ts_unix": 1780008279.0386648
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:39.236099142Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:39.038301Z"
+  },
+  {
+    "insertId": "6a18c555000dbc4fe8ba5460",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 328,
+      "timestamp_iso": "2026-05-28T22:44:37.901398+00:00",
+      "ts_unix": 1780008277.901414,
+      "voice": "Aoede",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:37.904318328Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:37.900175Z"
+  },
+  {
+    "insertId": "6a18c54a0002fc4bf36074ec",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 11,
+      "session_id": 327,
+      "timestamp_iso": "2026-05-28T22:44:26.196591+00:00",
+      "ts_unix": 1780008266.1966033
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:26.442027158Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:26.195659Z"
+  },
+  {
+    "insertId": "6a18c54a0002fa081b445380",
+    "jsonPayload": {
+      "bytes": 225166,
+      "event": "cascade.tts.ok",
+      "latency_ms": 4453,
+      "message": "cascade.tts.ok",
+      "session_id": 327,
+      "timestamp_iso": "2026-05-28T22:44:26.195965+00:00",
+      "ts_unix": 1780008266.1959808
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:26.442027158Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:26.195080Z"
+  },
+  {
+    "insertId": "6a18c545000b4f87b96a18d2",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 264,
+      "message": "cascade.tts.failed",
+      "session_id": 327,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:21.742234+00:00",
+      "ts_unix": 1780008261.7422469
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:21.779919886Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:21.741255Z"
+  },
+  {
+    "insertId": "6a18c5450007452dcf07d057",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 948,
+      "message": "cascade.llm.ok",
+      "session_id": 327,
+      "text_preview": "Yeah, it's pretty common for artists to pull inspiration from all over the place. Sometimes it's a specific beat, or may",
+      "timestamp_iso": "2026-05-28T22:44:21.477562+00:00",
+      "ts_unix": 1780008261.4775784
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:21.779919886Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:21.476461Z"
+  },
+  {
+    "insertId": "6a18c5430002258f5a645b11",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 265,
+      "message": "cascade.tts.failed",
+      "session_id": 327,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:19.142217+00:00",
+      "ts_unix": 1780008259.1422293
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:19.448656392Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:19.140687Z"
+  },
+  {
+    "insertId": "6a18c542000d58bf881ed9ed",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1034,
+      "message": "cascade.llm.ok",
+      "session_id": 327,
+      "text_preview": "Okay, and within the music you listen to, do you ever notice elements that remind you of other styles, maybe something u",
+      "timestamp_iso": "2026-05-28T22:44:18.876443+00:00",
+      "ts_unix": 1780008258.8764567
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:19.113858851Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:18.874687Z"
+  },
+  {
+    "insertId": "6a18c541000ca58f5bb69986",
+    "jsonPayload": {
+      "bytes": 144526,
+      "event": "cascade.tts.ok",
+      "latency_ms": 3218,
+      "message": "cascade.tts.ok",
+      "session_id": 327,
+      "timestamp_iso": "2026-05-28T22:44:17.829471+00:00",
+      "ts_unix": 1780008257.8294868
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:18.116356551Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:17.828815Z"
+  },
+  {
+    "insertId": "6a18c53e00094d06ee18b81e",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 273,
+      "message": "cascade.tts.failed",
+      "session_id": 327,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:14.610436+00:00",
+      "ts_unix": 1780008254.6104484
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:14.784739083Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:14.609542Z"
+  },
+  {
+    "insertId": "6a18c53e00051a8680611481",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1039,
+      "message": "cascade.llm.ok",
+      "session_id": 327,
+      "text_preview": "No worries, it can be tricky to pinpoint sometimes. What kind of music do you usually listen to, Admin?",
+      "timestamp_iso": "2026-05-28T22:44:14.335309+00:00",
+      "ts_unix": 1780008254.3353267
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:14.453436514Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:14.334470Z"
+  },
+  {
+    "insertId": "6a18c53c0002ef20173049dc",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 273,
+      "message": "cascade.tts.failed",
+      "session_id": 327,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:12.193315+00:00",
+      "ts_unix": 1780008252.1933274
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:12.458279776Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:12.192288Z"
+  },
+  {
+    "insertId": "6a18c53b000e021cd0117b7c",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 265,
+      "message": "cascade.tts.failed",
+      "session_id": 327,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:11.919311+00:00",
+      "ts_unix": 1780008251.9193232
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:12.119344938Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:11.918044Z"
+  },
+  {
+    "insertId": "6a18c53b0009f348bdc55510",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1019,
+      "message": "cascade.llm.ok",
+      "session_id": 327,
+      "text_preview": "Right. It's interesting how sounds can travel between different styles of music. What's a song or artist you can think o",
+      "timestamp_iso": "2026-05-28T22:44:11.653385+00:00",
+      "ts_unix": 1780008251.6533997
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:11.786096884Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:11.652104Z"
+  },
+  {
+    "insertId": "6a18c5390006a4e8db4369c8",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 261,
+      "message": "cascade.tts.failed",
+      "session_id": 327,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:09.436462+00:00",
+      "ts_unix": 1780008249.4364753
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:09.459029189Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:09.435432Z"
+  },
+  {
+    "insertId": "6a18c5390002a72bb65aeb36",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 263,
+      "message": "cascade.tts.failed",
+      "session_id": 327,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:09.174867+00:00",
+      "ts_unix": 1780008249.1748788
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:09.459029189Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:09.173867Z"
+  },
+  {
+    "insertId": "6a18c538000de1ba5c93befb",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 929,
+      "message": "cascade.llm.ok",
+      "session_id": 327,
+      "text_preview": "Oh, that's totally fine. Sometimes these genres are a bit before our time or just outside our usual listening. Do you th",
+      "timestamp_iso": "2026-05-28T22:44:08.910688+00:00",
+      "ts_unix": 1780008248.910702
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:09.123399479Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:08.909754Z"
+  },
+  {
+    "insertId": "6a18c537000e5c3207b0e5cf",
+    "jsonPayload": {
+      "bytes": 480526,
+      "event": "cascade.tts.ok",
+      "latency_ms": 7070,
+      "message": "cascade.tts.ok",
+      "session_id": 327,
+      "timestamp_iso": "2026-05-28T22:44:07.942722+00:00",
+      "ts_unix": 1780008247.9427433
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:08.129044420Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:07.941106Z"
+  },
+  {
+    "insertId": "6a18c530000d4bdf779a5032",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 260,
+      "message": "cascade.tts.failed",
+      "session_id": 327,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:44:00.872324+00:00",
+      "ts_unix": 1780008240.8723361
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:01.130339844Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:44:00.871391Z"
+  },
+  {
+    "insertId": "6a18c530000951f8c36ddcc7",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1149,
+      "message": "cascade.llm.ok",
+      "session_id": 327,
+      "text_preview": "I was just listening to some old school UK Garage the other day, and it really made me think about how much it shaped th",
+      "timestamp_iso": "2026-05-28T22:44:00.611692+00:00",
+      "ts_unix": 1780008240.6117055
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:44:00.801448833Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:44:00.610808Z"
+  },
+  {
+    "insertId": "6a18c52f00070c26f8483867",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 327,
+      "timestamp_iso": "2026-05-28T22:43:59.462472+00:00",
+      "ts_unix": 1780008239.4624813,
+      "voice": "Aoede",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:59.465776515Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:59.461862Z"
+  },
+  {
+    "insertId": "6a18c523000586eb52cc4bdf",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 17,
+      "session_id": 326,
+      "timestamp_iso": "2026-05-28T22:43:47.363332+00:00",
+      "ts_unix": 1780008227.3633444
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:47.370095244Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:47.362219Z"
+  },
+  {
+    "insertId": "6a18c523000584e3d3909827",
+    "jsonPayload": {
+      "bytes": 98446,
+      "event": "cascade.tts.ok",
+      "latency_ms": 2665,
+      "message": "cascade.tts.ok",
+      "session_id": 326,
+      "timestamp_iso": "2026-05-28T22:43:47.362756+00:00",
+      "ts_unix": 1780008227.3627715
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:47.370095244Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:47.361699Z"
+  },
+  {
+    "insertId": "6a18c520000a9d1cec768cbb",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1013,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "That sounds intriguing, Admin. Dreams can be really wild sometimes.\n\nLet's pivot back to music for a moment. Do you thin",
+      "timestamp_iso": "2026-05-28T22:43:44.696864+00:00",
+      "ts_unix": 1780008224.69688
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:44.704454100Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:44.695580Z"
+  },
+  {
+    "insertId": "6a18c51f00099948ce65836b",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 405,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:43.629709+00:00",
+      "ts_unix": 1780008223.6297216
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:43.707425888Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:43.629064Z"
+  },
+  {
+    "insertId": "6a18c51f000366ee437996b3",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 267,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:43.223680+00:00",
+      "ts_unix": 1780008223.223693
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:43.372441413Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:43.222958Z"
+  },
+  {
+    "insertId": "6a18c51e000e911aa9547df3",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 951,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:42.955462+00:00",
+      "ts_unix": 1780008222.955498
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:43.042021390Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:42.954650Z"
+  },
+  {
+    "insertId": "6a18c51e00000952fa423edb",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1201,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "As an AI, I don't have a physical location or a time zone like people do. So, there isn't a \"where I am\" for me to tell ",
+      "timestamp_iso": "2026-05-28T22:43:42.003816+00:00",
+      "ts_unix": 1780008222.0038333
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:42.042781706Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:42.002386Z"
+  },
+  {
+    "insertId": "6a18c51c000c34d67c210933",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 272,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:40.801565+00:00",
+      "ts_unix": 1780008220.8015783
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:41.045307961Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:40.799958Z"
+  },
+  {
+    "insertId": "6a18c51c0007e568a720b9ba",
+    "jsonPayload": {
+      "bytes": 129166,
+      "event": "cascade.tts.ok",
+      "latency_ms": 2866,
+      "message": "cascade.tts.ok",
+      "session_id": 326,
+      "timestamp_iso": "2026-05-28T22:43:40.518967+00:00",
+      "ts_unix": 1780008220.5189812
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:40.708298361Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:40.517480Z"
+  },
+  {
+    "insertId": "6a18c5190009f13fbdbd487d",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 266,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:37.651842+00:00",
+      "ts_unix": 1780008217.6518538
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:37.711683451Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:37.651583Z"
+  },
+  {
+    "insertId": "6a18c5190005e01ddbd6abe7",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 264,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:37.385347+00:00",
+      "ts_unix": 1780008217.3853595
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:37.711683451Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:37.385053Z"
+  },
+  {
+    "insertId": "6a18c5190001d65a9501f364",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1090,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "Dreams can certainly be fascinating, Admin. I'd love to hear about it another time.\n\nFor now, let's talk about music. If",
+      "timestamp_iso": "2026-05-28T22:43:37.120730+00:00",
+      "ts_unix": 1780008217.120746
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:37.379347332Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:37.120410Z"
+  },
+  {
+    "insertId": "6a18c5170003359961193fab",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 272,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:35.211228+00:00",
+      "ts_unix": 1780008215.211242
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:35.380410682Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:35.210329Z"
+  },
+  {
+    "insertId": "6a18c516000e4dd8bdd2892e",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 266,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:34.938294+00:00",
+      "ts_unix": 1780008214.9383066
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:35.046922816Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:34.937432Z"
+  },
+  {
+    "insertId": "6a18c516000a3a6046fe64ca",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 264,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:34.671174+00:00",
+      "ts_unix": 1780008214.6711874
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:34.720672062Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:34.670304Z"
+  },
+  {
+    "insertId": "6a18c516000630a6f1550592",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1070,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "That's a quick question, but I don't actually have a physical location or a time zone, Admin. I exist as an AI.\n\nLet's r",
+      "timestamp_iso": "2026-05-28T22:43:34.406559+00:00",
+      "ts_unix": 1780008214.4065742
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:34.720672062Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:34.405670Z"
+  },
+  {
+    "insertId": "6a18c51400078cf4b150e685",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 274,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:32.496078+00:00",
+      "ts_unix": 1780008212.4960887
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:32.717622232Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:32.494836Z"
+  },
+  {
+    "insertId": "6a18c51400035a738ee9a1b6",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 271,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:32.220970+00:00",
+      "ts_unix": 1780008212.2209828
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:32.386070406Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:32.219763Z"
+  },
+  {
+    "insertId": "6a18c513000e78007579eb15",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 283,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:31.949387+00:00",
+      "ts_unix": 1780008211.9494016
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:32.051327472Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:31.948224Z"
+  },
+  {
+    "insertId": "6a18c513000a239dde100fca",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1024,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "I hear you're interested in football, and it's definitely a popular topic. But let's keep our conversation focused on UK",
+      "timestamp_iso": "2026-05-28T22:43:31.665640+00:00",
+      "ts_unix": 1780008211.6656559
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:31.719863005Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:31.664477Z"
+  },
+  {
+    "insertId": "6a18c511000c4a59cc21b01e",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 266,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:29.806364+00:00",
+      "ts_unix": 1780008209.8063767
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:30.051642671Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:29.805465Z"
+  },
+  {
+    "insertId": "6a18c51100083892f461d4fd",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 261,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:29.539768+00:00",
+      "ts_unix": 1780008209.53978
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:29.720819374Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:29.538770Z"
+  },
+  {
+    "insertId": "6a18c511000438f29cdf40d2",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 262,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:29.277812+00:00",
+      "ts_unix": 1780008209.2778265
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:29.386299630Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:29.276722Z"
+  },
+  {
+    "insertId": "6a18c511000035caa81f7bf8",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1031,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "I understand you're curious about learning phrases in different languages, and that's great! But right now, we're here t",
+      "timestamp_iso": "2026-05-28T22:43:29.014935+00:00",
+      "ts_unix": 1780008209.0149498
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:29.053751402Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:29.013770Z"
+  },
+  {
+    "insertId": "6a18c50f000180b2174d4b90",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 278,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:27.100008+00:00",
+      "ts_unix": 1780008207.1000218
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:27.388740322Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:27.098482Z"
+  },
+  {
+    "insertId": "6a18c50e000c808a22b2943d",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 269,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:26.820810+00:00",
+      "ts_unix": 1780008206.8208225
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:27.059292239Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:26.819338Z"
+  },
+  {
+    "insertId": "6a18c50e00086214893dccef",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 286,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:26.550554+00:00",
+      "ts_unix": 1780008206.5505664
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:26.722733634Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:26.549396Z"
+  },
+  {
+    "insertId": "6a18c50e000402f9287071cf",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1123,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "That's an interesting question, Admin, and it's a topic a lot of people are discussing right now. However, for this sess",
+      "timestamp_iso": "2026-05-28T22:43:26.263727+00:00",
+      "ts_unix": 1780008206.2637424
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:26.389096919Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:26.262905Z"
+  },
+  {
+    "insertId": "6a18c50c0000dbac7c79d4c0",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 271,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:24.056472+00:00",
+      "ts_unix": 1780008204.0564854
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:24.391691076Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:24.056236Z"
+  },
+  {
+    "insertId": "6a18c50b000bf74c3420570b",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 405,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:23.784316+00:00",
+      "ts_unix": 1780008203.7843282
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:24.058177841Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:23.784204Z"
+  },
+  {
+    "insertId": "6a18c50b0005c428bfc6345c",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1085,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "Hey Admin. I just made a pretty strong claim there. Do you agree that UK Garage had a huge impact on British pop music i",
+      "timestamp_iso": "2026-05-28T22:43:23.378209+00:00",
+      "ts_unix": 1780008203.3782258
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:23.391996266Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:23.377896Z"
+  },
+  {
+    "insertId": "6a18c5090003679cf8a289ea",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 284,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:21.223455+00:00",
+      "ts_unix": 1780008201.223485
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:21.394834271Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:21.223132Z"
+  },
+  {
+    "insertId": "6a18c508000e52c040322640",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 279,
+      "message": "cascade.tts.failed",
+      "session_id": 326,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:20.938978+00:00",
+      "ts_unix": 1780008200.93899
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:21.060908082Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:20.938688Z"
+  },
+  {
+    "insertId": "6a18c508000a0cbac3f048eb",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 932,
+      "message": "cascade.llm.ok",
+      "session_id": 326,
+      "text_preview": "Some people say UK Garage was just a fleeting trend, but I think its influence on pop music, especially with artists lik",
+      "timestamp_iso": "2026-05-28T22:43:20.659031+00:00",
+      "ts_unix": 1780008200.6590455
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:20.728360744Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:20.658618Z"
+  },
+  {
+    "insertId": "6a18c507000b10db50c57ca4",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 326,
+      "timestamp_iso": "2026-05-28T22:43:19.726103+00:00",
+      "ts_unix": 1780008199.7262304,
+      "voice": "Aoede",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:19.729989655Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:19.725211Z"
+  },
+  {
+    "insertId": "6a18c4fa00026b3285269d97",
+    "jsonPayload": {
+      "event": "cascade.session.end",
+      "message": "cascade.session.end",
+      "n_turns": 13,
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:43:06.159637+00:00",
+      "ts_unix": 1780008186.1596467
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:06.201123556Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:06.158514Z"
+  },
+  {
+    "insertId": "6a18c4fa00026980c511d563",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 261,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:06.159147+00:00",
+      "ts_unix": 1780008186.1591582
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:06.201123556Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:06.158080Z"
+  },
+  {
+    "insertId": "6a18c4f9000dab51e2cbf8ef",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 273,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:05.897063+00:00",
+      "ts_unix": 1780008185.8970757
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:06.201123556Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:05.895825Z"
+  },
+  {
+    "insertId": "6a18c4f900097e91d995a9d5",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 266,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:05.623369+00:00",
+      "ts_unix": 1780008185.6233811
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:05.867403556Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:05.622225Z"
+  },
+  {
+    "insertId": "6a18c4f900056c148a125d1f",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1098,
+      "message": "cascade.llm.ok",
+      "session_id": 325,
+      "text_preview": "It is striking how he connects those two concepts. That perspective really makes you question the foundations of our soc",
+      "timestamp_iso": "2026-05-28T22:43:05.356384+00:00",
+      "ts_unix": 1780008185.3563995
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:05.532615977Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:05.355348Z"
+  },
+  {
+    "insertId": "6a18c4f7000301cc0a5ba32e",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 273,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:03.198458+00:00",
+      "ts_unix": 1780008183.1984692
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:03.205057213Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:03.197068Z"
+  },
+  {
+    "insertId": "6a18c4f6000e14ca24cf73d4",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 279,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:02.924243+00:00",
+      "ts_unix": 1780008182.924256
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:03.205057213Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:02.922826Z"
+  },
+  {
+    "insertId": "6a18c4f60009d0f4fcf9369b",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1088,
+      "message": "cascade.llm.ok",
+      "session_id": 325,
+      "text_preview": "Yes, it's quite a thought-provoking idea to put money and religion on a similar footing. When you consider them both as ",
+      "timestamp_iso": "2026-05-28T22:43:02.644662+00:00",
+      "ts_unix": 1780008182.6446767
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:02.868239134Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:43:02.643316Z"
+  },
+  {
+    "insertId": "6a18c4f40009f687b8c13a54",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 279,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:00.654095+00:00",
+      "ts_unix": 1780008180.6541066
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:00.869025264Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:00.652935Z"
+  },
+  {
+    "insertId": "6a18c4f40005b27063652920",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 275,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:00.374320+00:00",
+      "ts_unix": 1780008180.3743324
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:00.539182641Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:00.373360Z"
+  },
+  {
+    "insertId": "6a18c4f400017c11840b54ee",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 258,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:43:00.098069+00:00",
+      "ts_unix": 1780008180.0980828
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:43:00.205640995Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:43:00.097297Z"
+  },
+  {
+    "insertId": "6a18c4f3000ccb89fd2644d9",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1188,
+      "message": "cascade.llm.ok",
+      "session_id": 325,
+      "text_preview": "That's a really provocative connection, putting money and religion in the same category as fictions. It makes you wonder",
+      "timestamp_iso": "2026-05-28T22:42:59.839136+00:00",
+      "ts_unix": 1780008179.8391514
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:59.872115491Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:59.838537Z"
+  },
+  {
+    "insertId": "6a18c4f100077a1c41b56688",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 275,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:42:57.490742+00:00",
+      "ts_unix": 1780008177.4907548
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:57.541045206Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:42:57.490012Z"
+  },
+  {
+    "insertId": "6a18c4f1000344dfb315967c",
+    "jsonPayload": {
+      "body": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota ex",
+      "event": "cascade.tts.failed",
+      "latency_ms": 270,
+      "message": "cascade.tts.failed",
+      "session_id": 325,
+      "status": 429,
+      "timestamp_iso": "2026-05-28T22:42:57.214893+00:00",
+      "ts_unix": 1780008177.21493
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:57.541045206Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "timestamp": "2026-05-28T22:42:57.214239Z"
+  },
+  {
+    "insertId": "6a18c4f0000e63ff156c04e5",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1006,
+      "message": "cascade.llm.ok",
+      "session_id": 325,
+      "text_preview": "Right, \"history's biggest fraud.\" That's a pretty strong claim, and it definitely challenges the way we usually perceive",
+      "timestamp_iso": "2026-05-28T22:42:56.943727+00:00",
+      "ts_unix": 1780008176.943741
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:57.207182686Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:56.943103Z"
+  },
+  {
+    "insertId": "6a18c4ef000e06aef0b268e1",
+    "jsonPayload": {
+      "bytes": 211726,
+      "event": "cascade.tts.ok",
+      "latency_ms": 3787,
+      "message": "cascade.tts.ok",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:55.919799+00:00",
+      "ts_unix": 1780008175.9198184
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:56.208847129Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:55.919214Z"
+  },
+  {
+    "insertId": "6a18c4ec0001ae54a2f7a0ff",
+    "jsonPayload": {
+      "bytes": 255886,
+      "event": "cascade.tts.ok",
+      "latency_ms": 4785,
+      "message": "cascade.tts.ok",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:52.111372+00:00",
+      "ts_unix": 1780008172.1113882
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:52.214426212Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:52.110164Z"
+  },
+  {
+    "insertId": "6a18c4e70004b316c1d69c4c",
+    "jsonPayload": {
+      "bytes": 192526,
+      "event": "cascade.tts.ok",
+      "latency_ms": 4043,
+      "message": "cascade.tts.ok",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:47.309505+00:00",
+      "ts_unix": 1780008167.3095198
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:47.551607829Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:47.307990Z"
+  },
+  {
+    "insertId": "6a18c4e3000408d32c7c3342",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 995,
+      "message": "cascade.llm.ok",
+      "session_id": 325,
+      "text_preview": "The idea of shared myths is incredibly powerful. It makes you think about how much of our reality is built on collective",
+      "timestamp_iso": "2026-05-28T22:42:43.265122+00:00",
+      "ts_unix": 1780008163.2651374
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:43.553506637Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:43.264403Z"
+  },
+  {
+    "insertId": "6a18c4e20003d89aa5d6804f",
+    "jsonPayload": {
+      "bytes": 184846,
+      "event": "cascade.tts.ok",
+      "latency_ms": 4221,
+      "message": "cascade.tts.ok",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:42.252544+00:00",
+      "ts_unix": 1780008162.2525594
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:42.555609397Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:42.252058Z"
+  },
+  {
+    "insertId": "6a18c4de00002d7048120ffe",
+    "jsonPayload": {
+      "bytes": 232846,
+      "event": "cascade.tts.ok",
+      "latency_ms": 4200,
+      "message": "cascade.tts.ok",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:38.012676+00:00",
+      "ts_unix": 1780008158.012692
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:38.226508502Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:38.011632Z"
+  },
+  {
+    "insertId": "6a18c4d9000c208bf29b3693",
+    "jsonPayload": {
+      "bytes": 165646,
+      "event": "cascade.tts.ok",
+      "latency_ms": 3381,
+      "message": "cascade.tts.ok",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:33.796195+00:00",
+      "ts_unix": 1780008153.7962117
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:33.898382834Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:33.794763Z"
+  },
+  {
+    "insertId": "6a18c4d600064ced4bdaa5fb",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1002,
+      "message": "cascade.llm.ok",
+      "session_id": 325,
+      "text_preview": "Oh Sapiens, that's a big one. Yuval Noah Harari really has a way of reframing human history, doesn't he? What was it abo",
+      "timestamp_iso": "2026-05-28T22:42:30.413882+00:00",
+      "ts_unix": 1780008150.413899
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:30.567954527Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:30.412909Z"
+  },
+  {
+    "insertId": "6a18c4d50006021914a9a844",
+    "jsonPayload": {
+      "bytes": 192526,
+      "event": "cascade.tts.ok",
+      "latency_ms": 4398,
+      "message": "cascade.tts.ok",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:29.394501+00:00",
+      "ts_unix": 1780008149.3945193
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:29.565909780Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:29.393753Z"
+  },
+  {
+    "insertId": "6a18c4d0000ecf1c3cbe3477",
+    "jsonPayload": {
+      "bytes": 328846,
+      "event": "cascade.tts.ok",
+      "latency_ms": 5593,
+      "message": "cascade.tts.ok",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:24.971565+00:00",
+      "ts_unix": 1780008144.971585
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:25.238850239Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:24.970524Z"
+  },
+  {
+    "insertId": "6a18c4cb0005c0734c7f79cd",
+    "jsonPayload": {
+      "event": "cascade.llm.ok",
+      "latency_ms": 1136,
+      "message": "cascade.llm.ok",
+      "session_id": 325,
+      "text_preview": "Hello Admin. It's fascinating how a simple conversation can sometimes spark the most unexpected ideas. What's been on yo",
+      "timestamp_iso": "2026-05-28T22:42:19.377385+00:00",
+      "ts_unix": 1780008139.3774006
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:19.577843246Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:19.376947Z"
+  },
+  {
+    "insertId": "6a18c4ca0003ab5c983e27e1",
+    "jsonPayload": {
+      "event": "cascade.session.start",
+      "message": "cascade.session.start",
+      "model": "gemini-2.5-flash",
+      "session_id": 325,
+      "timestamp_iso": "2026-05-28T22:42:18.240793+00:00",
+      "ts_unix": 1780008138.2408032,
+      "voice": "Aoede",
+      "whisper_lang": "en"
+    },
+    "labels": {
+      "instanceId": "0007b734d921762ff0bab4cd1dec71c3e846688f179db24a8e4e62b3c3295cec43c9b0ff8e1537be5007517d39e0d9e74f1de24030fd331dfa71089f9958e576616b7ce920409b606bd9f8944e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-28T22:42:18.243622909Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00046-752",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-28T22:42:18.240476Z"
+  }
+]

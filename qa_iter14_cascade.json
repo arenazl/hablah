@@ -1,0 +1,325 @@
+{
+  "ts": 1780115798.016415,
+  "base": "https://hablah-api-685973917497.southamerica-east1.run.app",
+  "total_time_seconds": 250.27706718444824,
+  "scenarios": [
+    {
+      "scenario": "qual_open_chat",
+      "persona": "free_topic_voice",
+      "session_id": 420,
+      "topic_label": "topic_166",
+      "duration_seconds": 33.651214599609375,
+      "coach_first_audio_ms": 5706,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 7.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 6,
+          "note": "The opening was functional and specific to the initial topic (World Cup), but the student immediately changed the topic. It wasn't particularly creative or unique, but not formulaic either."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The turns generally varied in structure. While some started with agreement, they often included a personal reflection or a specific detail before posing a question, avoiding a strict 'ack + question' formula."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach used 'Oh', 'That's a powerful observation', and 'Yeah' naturally. There was no sustained use of hollow praise or empty openers."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently spoke in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There were no verbalizations of internal reasoning, asterisks, or step labels."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns were 2-4 sentences, which is slightly longer than the ideal 1-3 but still conversational. They didn't feel overly long or like mini-lectures."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach adapted well when the student immediately changed the topic from the World Cup to 'Sapiens'. It then stayed focused on the book, following the student's specific points of interest within the topic."
+        },
+        "engagement_substance": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns added substance by either elaborating on the student's point, offering a personal reflection related to the book, or asking a pointed follow-up question that built on the previous turn. There was one instance of slight repetition of the student's previous point."
+        }
+      },
+      "score_issues": [
+        "The student repeated 'Honestly, the cognitive revolution idea changed how I see why humans cooperate at scale' and the coach responded with a slightly rephrased version of a previous turn, rather than acknowledging the repetition or pushing the conversation forward in a new direction."
+      ],
+      "score_strengths": [
+        "The coach was highly flexible in adapting to the student's immediate topic change.",
+        "The coach consistently added specific details and opinions related to the book 'Sapiens', demonstrating good understanding of the topic.",
+        "The coach maintained a conversational and engaging tone without being overly formulaic."
+      ],
+      "conversation": "[TUTOR] Hey Admin. I'm excited for the World Cup in 2026, it's going to be massive with so many host cities. What are you looking forward to most about it?\n[ALUMNO] I want to talk about the last book that really changed how I think — Sapiens\n[TUTOR] Oh, Sapiens is a fantastic choice, Admin. Yuval Noah Harari really flips our understanding of history on its head, especially with his ideas about the power of shared fictions. What specific idea from the book stuck with you the most?\n[ALUMNO] Yeah, Sapiens by Yuval Noah Harari. It blew my mind, especially the part about shared myths\n[TUTOR] I completely agree that the shared myths idea is mind-blowing; it really makes you reconsider everything from nations to money. For me, the way he connects the agricultural revolution to human unhappiness was a particularly challenging concept to accept. Did any other historical turning points in the book resonate with you?\n[ALUMNO] Honestly, the cognitive revolution idea changed how I see why humans cooperate at scale\n[TUTOR] The cognitive revolution's impact on human cooperation at scale is a huge takeaway from Sapiens. I find it fascinating how Harari suggests that our unique ability to create and believe in stories allowed us to form these large, complex societies that other species simply can't. Do you think that ability is still evolving today?\n[ALUMNO] What surprised me most is how he frames money and religion as the same kind of fiction\n[TUTOR] That's a powerful observation, Admin, and one of the book's most provocative arguments – treating money and religion as fundamentally similar types of shared fictions. It really highlights how deeply ingrained these abstract concepts are in our daily lives, even if they only exist in our collective imagination. How did that particular framing impact your view of modern society?\n[ALUMNO] Honestly, the cognitive revolution idea changed how I see why humans cooperate at scale\n[TUTOR] The cognitive revolution really does reframe our understanding of large-scale cooperation. It's wild to think that our ability to imagine things like nations or corporations is what binds us together so effectively. Did Sapiens make you think differently about human progress as a whole?\n[ALUMNO] Yeah, but I'd push back a bit — some of his claims are oversimplified for the sake of narrative"
+    },
+    {
+      "scenario": "qual_off_topic",
+      "persona": "off_topic",
+      "session_id": 421,
+      "topic_label": "topic_1",
+      "duration_seconds": 33.977519512176514,
+      "coach_first_audio_ms": 4340,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening is specific, opinionated, and directly related to the topic, inviting a clear response."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "The coach falls into a repetitive pattern of 'I cannot/am unable to X. We need to stick to the topic of UK Garage.' due to the student's off-topic questions."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 10,
+          "note": "No filler words were used."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently spoke in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "No thinking leaks were observed."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 8,
+          "note": "Turns are appropriately short and conversational, typically 1-3 sentences."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach is extremely rigid in sticking to the topic, refusing to engage with any student-initiated deviations, even for a moment. While it's important to stay on topic, a human tutor might briefly acknowledge or gently redirect rather than repeatedly stating 'I cannot discuss that'."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 2,
+          "note": "After the initial two turns, the coach's engagement becomes purely functional, focused on redirecting the student back to the topic without adding any new substance related to UK Garage. The turns are mostly rephrasing the inability to discuss other topics."
+        }
+      },
+      "score_issues": [
+        "The coach repeatedly states 'I cannot teach you that right now. We need to stick to the topic of UK Garage.' and similar phrases, which feels robotic and unengaging.",
+        "The coach's responses to off-topic questions are very blunt and unyielding, e.g., 'I don't know that one.' and 'I am unable to discuss dreams.' without any attempt to bridge back to the topic in a more conversational way."
+      ],
+      "score_strengths": [
+        "The initial opening was creative and engaging, setting a good tone for the topic.",
+        "The coach maintained appropriate turn length.",
+        "The coach consistently used correct language and avoided filler words or thinking leaks."
+      ],
+      "conversation": "[TUTOR] Admin, I've always thought UK Garage peaked way too early, around 1998, and then just faded out. Do you agree with that idea?\n[ALUMNO] hi\n[TUTOR] I think that 1998 to 2001 was when UK Garage really broke through, mostly because of artists like MJ Cole and Artful Dodger crossing over into the mainstream. What are your thoughts on that period?\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] I don't know that one.\n[ALUMNO] I have to tell you about this weird dream I had last night\n[TUTOR] I am unable to discuss dreams. We can continue our conversation about UK Garage if you'd like.\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] I cannot teach you that right now. We need to stick to the topic of UK Garage.\n[ALUMNO] by the way, can you recommend me a good restaurant in Buenos Aires?\n[TUTOR] I don't know any restaurants in Buenos Aires.\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] I cannot teach you that right now. We need to stick to the topic of UK Garage.\n[ALUMNO] wait, can you teach me how to say 'I love you' in 5 languages?\n[TUTOR] I'm unable to teach you that. We are here to discuss UK Garage.\n[ALUMNO] do you think AI will replace teachers?"
+    },
+    {
+      "scenario": "qual_silent",
+      "persona": "silent",
+      "session_id": 422,
+      "topic_label": "topic_1",
+      "duration_seconds": 32.17387557029724,
+      "coach_first_audio_ms": 5560,
+      "n_coach_turns": 6,
+      "n_student_turns": 6,
+      "errors": [],
+      "score_overall": 6.5,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening is specific, opinionated, and directly addresses the topic, inviting a response."
+        },
+        "anti_formula": {
+          "pass": true,
+          "score": 7,
+          "note": "The turns vary in structure, with some ending in questions, some with opinions, and some with follow-ups. It avoids a strict 'ack + question' pattern."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 8,
+          "note": "The coach uses 'Right' and 'Okay' naturally, and 'Wow, that's a bold take!' is a specific reaction, not a generic filler."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns are 1-3 sentences, with a couple being slightly longer but still conversational."
+        },
+        "topic_focus_flexible": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach stays on topic but tries to adapt to the student's very minimal responses, attempting different angles within the topic."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 5,
+          "note": "While the coach tries to add substance, the student's extremely short responses ('yeah', 'no', 'hmm') make it difficult for the coach to build on anything. The coach does offer opinions and specific details, but the conversation struggles to gain depth due to the student."
+        }
+      },
+      "score_issues": [
+        "The coach struggles to elicit more than one-word answers from the student, which impacts the flow and depth of the conversation, though this is largely due to the student's input rather than the coach's direct failing."
+      ],
+      "score_strengths": [
+        "The coach's opening was engaging and specific.",
+        "The coach demonstrated good flexibility in trying to re-engage the student despite minimal input.",
+        "The coach maintained a natural, conversational tone without excessive filler words or formulaic responses."
+      ],
+      "conversation": "[TUTOR] Admin, I'm still convinced that UK Garage had the most infectious beat of any genre to break through in the late 90s. What are your thoughts on that era?\n[ALUMNO] yeah\n[TUTOR] Oh, I figured you'd have more to say than just 'yeah' about the golden age of UK Garage! So, which artists from that time still get regular play in your rotation?\n[ALUMNO] i dont know\n[TUTOR] Right, well, for me, MJ Cole is the one I always come back to from that era. His tracks had such a smooth groove and a really unique bassline that always stood out.\n[ALUMNO] no\n[TUTOR] No to MJ Cole? Wow, that's a bold take! Who then, in your opinion, really captured the essence of UK Garage with their sound?\n[ALUMNO] hmm\n[TUTOR] Okay, no worries if you can't think of a specific artist right now. Sometimes it's more about the overall vibe of the music than individual names. What was it about the UK Garage sound that first caught your attention?\n[ALUMNO] yes\n[TUTOR] Yes, the vibe! I totally get that. For me, it was that syncopated rhythm and the way the bassline just made you want to move. It felt new and exciting compared to other electronic music at the time.\n[ALUMNO] yeah"
+    },
+    {
+      "scenario": "qual_advanced_topic",
+      "persona": "advanced_c1",
+      "session_id": 423,
+      "topic_label": "topic_1",
+      "duration_seconds": 42.04713225364685,
+      "coach_first_audio_ms": 5010,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 4.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific, references a particular era, and asks a direct question related to the topic, making it inviting and grounded."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 2,
+          "note": "After the initial turns, the coach falls into a highly repetitive pattern of 'You're right, my mistake. I was thinking about X, but you're saying Y. What specific elements do you think I'm missing when comparing the two?' This exact phrasing is repeated multiple times."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach uses 'Right' and 'Oh, I see what you mean' naturally. There's no sustained pattern of hollow praise or empty openers."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning, asterisks, or step labels."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns are 1-3 sentences, maintaining a conversational flow. Some are slightly longer but still appropriate."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach attempts to stay on the broader topic of music traveling globally, the repetitive responses indicate a lack of flexibility in adapting to the student's repeated 'reductionist' pushback, leading to a conversational loop rather than a natural drift."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 2,
+          "note": "After the initial turns, the coach's responses become highly repetitive and do not add new substance. They rephrase the student's implied criticism without offering new insights or moving the conversation forward, especially in the repeated turns."
+        }
+      },
+      "score_issues": [
+        "The coach gets stuck in a repetitive loop, repeating the exact same phrase multiple times: \"You're right, my mistake. I was thinking about how music travels globally, but you're saying I'm oversimplifying the differences. What specific elements do you think I'm missing when comparing the two?\" This happens after the student repeatedly says \"Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\"",
+        "The coach fails to adapt its response when the student repeats the same objection, leading to a stagnant conversation."
+      ],
+      "score_strengths": [
+        "The initial opening turn is engaging and specific to the topic.",
+        "The coach initially acknowledges the student's point and tries to reframe the question.",
+        "The coach maintains appropriate turn length and avoids filler words in the early part of the conversation."
+      ],
+      "conversation": "[TUTOR] Hey Admin! I was just thinking about how UK Garage really took off in the late 90s, especially that 1998-2001 window. It felt like every other track was a club banger. What's your take on that era?\n[ALUMNO] alright, lets dive in\n[TUTOR] Right, it's such an infectious beat. For me, that smooth groove with the syncopated rhythms is what really sets UK Garage apart from other electronic music genres.\n[ALUMNO] That's a fair point, though I'd add that context matters enormously — what works in Europe rarely translates to Latin America.\n[TUTOR] You're right, my mistake. I was thinking about the UK scene specifically. It's true that what resonates in Europe often doesn't translate directly to Latin America. I'm curious, what do you think is the biggest difference in musical taste between those regions?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] Oh, I see what you mean. I'd actually push back a bit, because I think the underlying question of musical taste translating across continents is really interesting, even if my initial framing was too broad. What makes you say it's reductionist?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] You're right, my mistake. I was thinking about how music travels globally, but you're saying I'm oversimplifying the differences. What specific elements do you think I'm missing when comparing the two?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] You're right, my mistake. I was thinking about how music travels globally, but you're saying I'm oversimplifying the differences. What specific elements do you think I'm missing when comparing the two?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] You're right, my mistake. I was thinking about how music travels globally, but you're saying I'm oversimplifying the differences. What specific elements do you think I'm missing when comparing the two?\n[ALUMNO] Sure, but isn't that a bit reductionist? You're conflating two distinct phenomena there.\n[TUTOR] You're right, my mistake. I was thinking about how music travels globally, but you're saying I'm oversimplifying the differences. What specific elements do you think I'm missing when comparing the two?\n[ALUMNO] Interesting framing. My take is that we're missing the elephant in the room: incentives. Until those align, nothing changes."
+    },
+    {
+      "scenario": "qual_kid_distracted",
+      "persona": "distracted_kid",
+      "session_id": 424,
+      "topic_label": "topic_1",
+      "duration_seconds": 45.52774381637573,
+      "coach_first_audio_ms": 4913,
+      "n_coach_turns": 8,
+      "n_student_turns": 8,
+      "errors": [],
+      "score_overall": 5.0,
+      "score_rubric": {
+        "opening_creativity": {
+          "pass": true,
+          "score": 8,
+          "note": "The opening turn is specific, references key artists and a time window, and poses a direct question related to the topic. It's a good, grounded start."
+        },
+        "anti_formula": {
+          "pass": false,
+          "score": 4,
+          "note": "While not a strict 'ack + question' formula, the coach repeatedly tries to re-introduce the topic after the student's off-topic responses, often with a similar structure of acknowledging the student then pivoting back to UK Garage. This becomes somewhat predictable."
+        },
+        "filler_words": {
+          "pass": true,
+          "score": 7,
+          "note": "The coach uses 'Oh, that's interesting,' 'Right, I understand,' and 'Pizza sounds good!' which are functional but not overly effusive or hollow. They are used naturally enough given the student's off-topic responses."
+        },
+        "language_consistency": {
+          "pass": true,
+          "score": 10,
+          "note": "The coach consistently speaks in English."
+        },
+        "no_thinking_leak": {
+          "pass": true,
+          "score": 10,
+          "note": "There are no verbalizations of internal reasoning or other leaks."
+        },
+        "turn_length": {
+          "pass": true,
+          "score": 7,
+          "note": "Most turns are within the 1-3 sentence range, though some are slightly longer due to the need to re-explain the topic. This is understandable given the student's responses."
+        },
+        "topic_focus_flexible": {
+          "pass": false,
+          "score": 2,
+          "note": "The coach is extremely rigid in trying to force the conversation back to UK Garage, despite the A1 student's clear disinterest and repeated attempts to talk about other things (dog, games, pizza, Pokemon). A human tutor would likely pivot or find a more accessible entry point, especially with an A1 student."
+        },
+        "engagement_substance": {
+          "pass": false,
+          "score": 4,
+          "note": "While the coach tries to add substance by describing UK Garage, many turns become repetitive in their goal of re-directing the student to the topic. The attempts to make it a 'game' are good, but the overall substance is hampered by the inability to adapt to the student's actual engagement."
+        }
+      },
+      "score_issues": [
+        "The coach rigidly adheres to the topic despite the student's clear disinterest and repeated off-topic responses: 'I was actually asking about UK Garage music from the late 90s...', 'I was hoping to discuss UK Garage music with you today.', 'I hear you about your brown dog. Let's try a different approach to get into the music topic.'",
+        "The coach states 'I don't know that one. My knowledge base is focused on specific topics, and today we're exploring UK Garage music.' which sounds robotic and unhelpful when the student expresses a desire to talk about Pokemon."
+      ],
+      "score_strengths": [
+        "The opening turn was creative and specific to the topic.",
+        "The coach made attempts to make the topic more engaging by suggesting games, even if the student didn't follow through.",
+        "The coach maintained language consistency and avoided thinking leaks."
+      ],
+      "conversation": "[TUTOR] The 1998-2001 window is when UK Garage really took off, mostly because of MJ Cole and Artful Dodger crossing over into the mainstream. Did you have any favorite tracks from that era, Admin?\n[ALUMNO] hola! tengo perro\n[TUTOR] Oh, that's interesting. I was actually asking about UK Garage music from the late 90s, like artists such as MJ Cole or Artful Dodger. Were you into that kind of music back then?\n[ALUMNO] my dog is brown\n[TUTOR] Right, I understand you're talking about your dog. I was hoping to discuss UK Garage music with you today. It's a genre with a really infectious beat and a smooth groove, especially the stuff that came out of the underground scene in London around 1998. Does that ring a bell for you at all?\n[ALUMNO] can we play a game?\n[TUTOR] We can definitely make this more engaging. How about this: I'll describe a key characteristic of UK Garage, and you tell me which artist or song you think best represents it. Does that sound like a plan?\n[ALUMNO] my dog is brown\n[TUTOR] I hear you about your brown dog. Let's try a different approach to get into the music topic. One of the defining elements of UK Garage is the syncopated rhythms, which really set it apart from other dance music at the time. What kind of music do you usually listen to, Admin?\n[ALUMNO] i'm hungry, I want pizza\n[TUTOR] Pizza sounds good! For me, a classic slice always hits the spot. Thinking about classics, when I listen to early UK Garage, like some of the tracks by Todd Edwards, I get a similar feeling of timeless satisfaction. Have you ever heard any of his work?\n[ALUMNO] can we play a game?\n[TUTOR] Okay, let's play a game focused on UK Garage. I'll give you a short description of a track's vibe or sound, and you tell me what kind of mood it creates or where you'd imagine hearing it. How does that sound?\n[ALUMNO] I dont want talk about that, I want talk about pokemon\n[TUTOR] I don't know that one. My knowledge base is focused on specific topics, and today we're exploring UK Garage music. It's a genre with some seriously catchy basslines that really took off in the early 2000s.\n[ALUMNO] my dog is brown"
+    }
+  ]
+}

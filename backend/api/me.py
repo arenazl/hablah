@@ -62,6 +62,14 @@ async def get_my_profile(
         select(func.count(SessionModel.id)).where(SessionModel.user_id == current.id)
     )).scalar() or 0
 
+    # Feature gating: desbloqueamos features gradualmente por sessions_total.
+    # Kids tiene su propia progresion (achievements) — no aplica este sistema.
+    from services.feature_flags import get_feature_flags
+    is_kid = bool(getattr(current, "age_group", None)) or bool(getattr(current, "parent_user_id", None))
+    feature_flags = await get_feature_flags(
+        db, user_id=current.id, sessions_total=total_sessions, is_kid=is_kid,
+    )
+
     return {
         "user": {
             "id": current.id,
@@ -98,7 +106,20 @@ async def get_my_profile(
             "score": last_session.score,
         } if last_session else None,
         "total_sessions": total_sessions,
+        "feature_flags": feature_flags,
     }
+
+
+@router.post("/feature-flags/{feature_key}/seen")
+async def mark_feature_intro_seen(
+    feature_key: str,
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    """Marca que el user ya vio el bubble intro de un feature recien desbloqueado."""
+    from services.feature_flags import mark_intro_seen
+    ok = await mark_intro_seen(db, current.id, feature_key)
+    return {"ok": ok}
 
 
 # ─── Settings ───────────────────────────────────────────────────────────────

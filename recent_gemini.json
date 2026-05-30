@@ -1,0 +1,142 @@
+﻿[
+  {
+    "insertId": "6a18f937000db2ff6b8d6c15",
+    "jsonPayload": {
+      "event": "gemini.input_transcription.first",
+      "message": "gemini.input_transcription.first",
+      "session_id": 345,
+      "text_preview": "Hey, how are you?",
+      "timestamp_iso": "2026-05-29T02:25:59.899183+00:00",
+      "ts_unix": 1780021559.8991973
+    },
+    "labels": {
+      "instanceId": "0007b734d971eec21bfb2bdf10400f0e0cbd89910c475134093a034c16f34b8e84b02a4049ae7aca7b03700e5c9e2ab012ad76f4d6c38843cc8bf074cdbcfa2de520c6fe4f1c33f212e8c76e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T02:25:59.972917261Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00049-blp",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T02:25:59.897791Z"
+  },
+  {
+    "insertId": "6a18f8e7000b2208fb285251",
+    "jsonPayload": {
+      "event": "gemini.input_transcription.first",
+      "message": "gemini.input_transcription.first",
+      "session_id": 344,
+      "text_preview": "Hey, how are you?",
+      "timestamp_iso": "2026-05-29T02:24:39.730772+00:00",
+      "ts_unix": 1780021479.7307875
+    },
+    "labels": {
+      "instanceId": "0007b734d971eec21bfb2bdf10400f0e0cbd89910c475134093a034c16f34b8e84b02a4049ae7aca7b03700e5c9e2ab012ad76f4d6c38843cc8bf074cdbcfa2de520c6fe4f1c33f212e8c76e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T02:24:40.030258352Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00049-blp",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T02:24:39.729608Z"
+  },
+  {
+    "insertId": "6a18f8af0006225fd4886720",
+    "jsonPayload": {
+      "event": "gemini.input_transcription.first",
+      "message": "gemini.input_transcription.first",
+      "session_id": 343,
+      "text_preview": "Hey, how are you? What's up?",
+      "timestamp_iso": "2026-05-29T02:23:43.402768+00:00",
+      "ts_unix": 1780021423.4027848
+    },
+    "labels": {
+      "instanceId": "0007b734d971eec21bfb2bdf10400f0e0cbd89910c475134093a034c16f34b8e84b02a4049ae7aca7b03700e5c9e2ab012ad76f4d6c38843cc8bf074cdbcfa2de520c6fe4f1c33f212e8c76e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T02:23:43.692628499Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00049-blp",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T02:23:43.402015Z"
+  },
+  {
+    "insertId": "6a18f86a000ec58462f24b30",
+    "jsonPayload": {
+      "event": "gemini.input_transcription.first",
+      "message": "gemini.input_transcription.first",
+      "session_id": 342,
+      "text_preview": "Hey, how are you teacher? Are you okay?",
+      "timestamp_iso": "2026-05-29T02:22:34.968343+00:00",
+      "ts_unix": 1780021354.9683607
+    },
+    "labels": {
+      "instanceId": "0007b734d971eec21bfb2bdf10400f0e0cbd89910c475134093a034c16f34b8e84b02a4049ae7aca7b03700e5c9e2ab012ad76f4d6c38843cc8bf074cdbcfa2de520c6fe4f1c33f212e8c76e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T02:22:35.053046167Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00049-blp",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T02:22:34.968068Z"
+  },
+  {
+    "insertId": "6a18f84e00031233b0dbc6ca",
+    "jsonPayload": {
+      "event": "gemini.input_transcription.first",
+      "message": "gemini.input_transcription.first",
+      "session_id": 341,
+      "text_preview": "Yep.",
+      "timestamp_iso": "2026-05-29T02:22:06.201989+00:00",
+      "ts_unix": 1780021326.202022
+    },
+    "labels": {
+      "instanceId": "0007b734d971eec21bfb2bdf10400f0e0cbd89910c475134093a034c16f34b8e84b02a4049ae7aca7b03700e5c9e2ab012ad76f4d6c38843cc8bf074cdbcfa2de520c6fe4f1c33f212e8c76e"
+    },
+    "logName": "projects/hablah-prod/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2026-05-29T02:22:06.410069008Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "hablah-api",
+        "location": "southamerica-east1",
+        "project_id": "hablah-prod",
+        "revision_name": "hablah-api-00049-blp",
+        "service_name": "hablah-api"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "timestamp": "2026-05-29T02:22:06.201267Z"
+  }
+]
