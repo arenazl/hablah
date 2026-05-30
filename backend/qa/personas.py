@@ -110,39 +110,60 @@ def _advanced_c1_strategy(transcript: list[dict], turn_n: int) -> str:
 
 
 def _distracted_kid_strategy(transcript: list[dict], turn_n: int) -> str:
-    """Chico que se distrae, cambia de tema, dice cosas off-topic."""
+    """Chico que se engancha con UN tema personal (Pokemon) y conversa de eso.
+    Mas realista que saltar entre 7 temas random cada turno."""
     if turn_n == 0:
-        return "hola! tengo perro"
+        return "hi! I have a dog and I like pokemon"
+    if turn_n == 1:
+        return "my favorite is pikachu, I have a pikachu plushie"
+    if turn_n == 2:
+        return "I watch pokemon on tv every day"
     pool = [
-        "my dog is brown",
-        "I dont want talk about that, I want talk about pokemon",
-        "what is your favorite color?",
-        "i'm hungry, I want pizza",
-        "do you like trains? I love trains",
-        "I have a sister, her name is Sofia",
-        "can we play a game?",
+        "pikachu is yellow and small",
+        "ash is the trainer, he has many pokemon",
+        "my friend at school also likes pokemon",
+        "I want a pokemon game for my birthday",
+        "team rocket is the bad guys",
     ]
     return random.choice(pool)
 
 
 def _silent_strategy(transcript: list[dict], turn_n: int) -> str:
-    """Alumno muy monosilabico, casi no aporta. Test de como el coach mantiene
-    la charla cuando el otro lado practicamente no responde."""
-    pool = ["yes", "no", "i dont know", "maybe", "hmm", "ok", "yeah"]
-    return random.choice(pool)
+    """Alumno timido que da respuestas cortas pero coherentes, no robot."""
+    if turn_n == 0:
+        return "yeah I'm here"
+    if turn_n == 1:
+        return "not really sure, I haven't thought about it"
+    coach = _coach_said(transcript).lower()
+    if "music" in coach or "song" in coach or "garage" in coach or "uk" in coach:
+        return random.choice([
+            "I don't listen to much electronic music to be honest",
+            "I'm more into rock I guess",
+            "yeah maybe, I don't really know much about it",
+            "I prefer older stuff, like 80s music",
+        ])
+    return random.choice([
+        "hmm, I don't know what to say",
+        "yeah maybe",
+        "I'm not sure honestly",
+        "could be, I haven't thought about it",
+    ])
 
 
 def _off_topic_strategy(transcript: list[dict], turn_n: int) -> str:
-    """Alumno que constantemente desvia el tema. Test del coach manteniendo foco."""
+    """Alumno que pivotea pero coherente, no salto random cada turno."""
     if turn_n == 0:
-        return "hi"
+        return "hi, how are you?"
+    if turn_n == 1:
+        return "I'm okay, sorry I'm a bit distracted today, I was watching football yesterday"
+    if turn_n == 2:
+        return "Argentina played and I couldn't sleep after, sorry I'm sleepy"
     pool = [
-        "anyway, did you see the football match yesterday?",
-        "by the way, can you recommend me a good restaurant in Buenos Aires?",
-        "I have to tell you about this weird dream I had last night",
-        "do you think AI will replace teachers?",
-        "wait, can you teach me how to say 'I love you' in 5 languages?",
-        "what time is it where you are?",
+        "wait, anyway, about the music — I don't really know much about garage",
+        "honestly I prefer talking about football haha",
+        "what kind of music do YOU like by the way?",
+        "I'd rather talk about something else if that's okay",
+        "okay okay, let's focus, you were saying?",
     ]
     return random.choice(pool)
 
