@@ -1711,27 +1711,47 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               La transcripción aparece a medida que vos y el tutor hablan…
             </div>
           )}
-          {/* En vivo solo mostramos el ULTIMO turno del TUTOR (no del user).
-              El usuario lo pidio asi: leer + escuchar el coach = doble canal
-              de aprendizaje. Su propio audio ya lo escucha al hablar. El
-              transcript completo (tutor + user) se acumula en live.transcript
-              y se manda al backend al cerrar la sesion para el analisis. */}
+          {/* Mostramos los ultimos turnos del user Y del coach en vivo. */}
           {live.transcript.length > 0 && (() => {
+            let lastUserIdx = -1
             let lastAiIdx = -1
             for (let i = live.transcript.length - 1; i >= 0; i--) {
-              if (live.transcript[i].who === 'ai') { lastAiIdx = i; break }
+              if (lastAiIdx < 0 && live.transcript[i].who === 'ai') lastAiIdx = i
+              if (lastUserIdx < 0 && live.transcript[i].who === 'user') lastUserIdx = i
+              if (lastAiIdx >= 0 && lastUserIdx >= 0) break
             }
-            if (lastAiIdx < 0) return null
-            const line = live.transcript[lastAiIdx]
+            const userLine = lastUserIdx >= 0 ? live.transcript[lastUserIdx] : null
+            const aiLine = lastAiIdx >= 0 ? live.transcript[lastAiIdx] : null
             return (
-              <div className={`line ai`}>
-                <CoachPhrasePanels
-                  text={line.text}
-                  targetLang={profile?.user?.target_language || 'en'}
-                  baseLang={profile?.user?.base_language || 'es'}
-                  cefr={profile?.user?.cefr_level || 'B1'}
-                />
-              </div>
+              <>
+                {userLine && (
+                  <div style={{
+                    marginBottom: 12,
+                    padding: '8px 12px',
+                    background: 'rgba(120,200,255,0.06)',
+                    borderLeft: '3px solid rgba(120,200,255,0.5)',
+                    borderRadius: 6,
+                    fontSize: 13,
+                    color: 'rgba(232,236,234,0.85)',
+                  }}>
+                    <div style={{
+                      fontSize: 10, letterSpacing: 1, textTransform: 'uppercase',
+                      opacity: 0.6, marginBottom: 4,
+                    }}>VOS</div>
+                    {userLine.text}
+                  </div>
+                )}
+                {aiLine && (
+                  <div className={`line ai`}>
+                    <CoachPhrasePanels
+                      text={aiLine.text}
+                      targetLang={profile?.user?.target_language || 'en'}
+                      baseLang={profile?.user?.base_language || 'es'}
+                      cefr={profile?.user?.cefr_level || 'B1'}
+                    />
+                  </div>
+                )}
+              </>
             )
           })()}
         </div>
