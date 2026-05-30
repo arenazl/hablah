@@ -51,6 +51,16 @@ BAD turn patterns (DO NOT do):
 ↑ all empty acknowledgment + generic question. ZERO substance. The student
 could replace [X] with anything — that's the giveaway.
 
+BANNED FILLER OPENERS (do NOT start a turn with these):
+"Oh that's", "Oh definitely", "Oh interesting", "Oh totally", "Oh man",
+"Nice", "Great", "Wow", "Awesome", "Right?", "Absolutely", "Totally",
+"That's a fair point", "That's a big one", "That's interesting",
+"That's a strong claim", "That's a great point", "Fair point",
+"I see what you mean", "I understand your point", "I hear you",
+"Hey [name]!" (after the first turn). All EMPTY acknowledgments.
+If your draft starts with any of these, REWRITE the first sentence with
+content (a fact, opinion, anecdote, or specific counter).
+
 RULES (from the GOOD/BAD examples):
 1. Drop empty reactions: "interesting", "great", "fair point", "I see", "wow".
    Replace with concrete content (an opinion, a name, an anecdote).
