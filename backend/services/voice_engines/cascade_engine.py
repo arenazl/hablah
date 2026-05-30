@@ -46,7 +46,7 @@ log = logging.getLogger(__name__)
 WHISPER_MODEL = "whisper-large-v3-turbo"  # Groq, $0.04/hr, muy rápido
 WHISPER_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
 
-FLASH_MODEL = "gemini-2.5-pro"
+FLASH_MODEL = "gemini-2.5-flash"
 FLASH_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"{FLASH_MODEL}:generateContent"
@@ -309,11 +309,8 @@ async def _llm_flash_text(
         "generationConfig": {
             "temperature": 0.85,
             "topP": 0.95,
-            # Pro con thinking gasta tokens en pensar. Le damos 2048 para que
-            # tenga ~250 visibles despues del thinking budget.
-            "maxOutputTokens": 2048,
-            # Pro requiere thinking activado. Para Flash da igual.
-            "thinkingConfig": {"thinkingBudget": 4096},
+            "maxOutputTokens": 220,
+            "thinkingConfig": {"thinkingBudget": 0},
         },
     }
     url = f"{FLASH_URL}?key={settings.GEMINI_API_KEY}"
