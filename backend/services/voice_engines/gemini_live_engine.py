@@ -126,9 +126,7 @@ else:
         "wss://generativelanguage.googleapis.com/ws/"
         "google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent"
     )
-    # 12-2025 es mas reciente que 09-2025 y sigue prompts un poco mejor segun
-    # release notes. Iter 13 prueba si el modelo nuevo levanta el techo plateau.
-    LIVE_MODEL = "models/gemini-2.5-flash-native-audio-preview-12-2025"
+    LIVE_MODEL = "models/gemini-2.5-flash-native-audio-preview-09-2025"
 
 # Gemini Live tiene un límite duro de ~10 minutos por sesión.
 # Antes de ese límite renovamos transparentemente la sesión.
