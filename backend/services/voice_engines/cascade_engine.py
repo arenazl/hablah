@@ -250,7 +250,8 @@ async def _llm_flash_text(
             "temperature": 0.85,
             "topP": 0.95,
             "maxOutputTokens": 220,
-            "thinkingConfig": {"thinkingBudget": 0},
+            # Pro requiere thinking activado. Para Flash da igual.
+            "thinkingConfig": {"thinkingBudget": 4096},
         },
     }
     url = f"{FLASH_URL}?key={settings.GEMINI_API_KEY}"
