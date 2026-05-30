@@ -553,12 +553,21 @@ def _build_super_prompt_body(
             seed = sp.get(age_group) or sp.get("junior") or sp.get("mini") or sp.get(cefr) or topic.title
         else:
             seed = sp.get(f"{cefr}_{target}") or sp.get(cefr) or sp.get(f"B2_{target}") or sp.get("B2") or topic.title
-        keywords = ", ".join((topic.keywords or [])[:8])
+        # Separamos keywords entre nombres-propios (Craig David, MJ Cole, Artful
+        # Dodger) que son DATOS CONCRETOS, y vocabulary (infectious beat,
+        # underground scene) que son frases. Los datos concretos son lo que el
+        # modelo necesita para SALIR del 'what do you think?' generico cuando
+        # se traba con el alumno.
+        kw_list = (topic.keywords or [])[:12]
         topic_block = (
             f"TÓPICO DE HOY\n"
             f"- Tema: {topic.title}.\n"
             f"- Dirección sugerida: {seed}\n"
-            f"- Frases-pivote naturales (OPCIONALES, NO obligues): {keywords}."
+            f"- DATOS CONCRETOS DEL TÓPICO (úsalos cuando el alumno se traba o\n"
+            f"  para aportar sustancia en vez de preguntar): {', '.join(kw_list)}.\n"
+            f"  Cuando no sepas qué decir, mencioná UNO de estos datos con tu\n"
+            f"  opinión sobre él. No los listes — usalos uno por turno como\n"
+            f"  hook concreto."
         )
         # NO le pidas al modelo "presentá el tema" en el opening — eso fuerza
         # "Let's talk about X" que el scorer marca como generic (opening_creativity
