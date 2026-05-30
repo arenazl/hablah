@@ -256,7 +256,7 @@ async def _llm_claude_cli(
     clean_env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
     try:
         proc = await asyncio.create_subprocess_exec(
-            "claude", "-p", "--model", "claude-sonnet-4-6", full_prompt,
+            "claude", "-p", "--model", "claude-haiku-4-5", full_prompt,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             env=clean_env,
