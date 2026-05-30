@@ -33,6 +33,16 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el resto del backend
 COPY . .
 
+# Smoke import-check: si algun modulo tiene NameError / import faltante, el
+# build FALLA aca, antes de deployar. Esto agarra el bug del 'import os'
+# faltante que rompio la sesion 472. Listamos los modulos criticos del coach.
+RUN python -c "import services.voice_engines.cascade_engine; \
+import services.voice_engines.gemini_live_engine; \
+import services.voice_engine; \
+import services.super_prompt; \
+import services.runtime_prompt; \
+print('[import-check] critical voice modules OK')"
+
 # Cloud Run inyecta PORT en runtime (default 8080).
 # 1 worker porque rooms_registry esta en memoria del proceso.
 # uvicorn worker es async = maneja muchas conexiones concurrentes con 1 worker.

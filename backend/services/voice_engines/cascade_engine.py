@@ -229,8 +229,11 @@ async def _stt_groq_whisper(
                         latency_ms=trace_duration_ms(t0))
             return text or None
     except Exception as e:
+        import traceback as _tb
         trace.error("cascade.stt.error", session_id=session_id,
-                    error=str(e), latency_ms=trace_duration_ms(t0))
+                    error=str(e), error_type=type(e).__name__,
+                    traceback=_tb.format_exc()[:1500],
+                    latency_ms=trace_duration_ms(t0))
         return None
 
 
@@ -275,8 +278,11 @@ async def _llm_claude_cli(
                     latency_ms=trace_duration_ms(t0))
         return None
     except Exception as e:
+        import traceback as _tb
         trace.error("cascade.llm.claude_error", session_id=session_id,
-                    error=str(e), latency_ms=trace_duration_ms(t0))
+                    error=str(e), error_type=type(e).__name__,
+                    traceback=_tb.format_exc()[:1500],
+                    latency_ms=trace_duration_ms(t0))
         return None
 
 
@@ -331,8 +337,11 @@ async def _llm_flash_text(
                         latency_ms=trace_duration_ms(t0))
             return text
     except Exception as e:
+        import traceback as _tb
         trace.error("cascade.llm.error", session_id=session_id,
-                    error=str(e), latency_ms=trace_duration_ms(t0))
+                    error=str(e), error_type=type(e).__name__,
+                    traceback=_tb.format_exc()[:1500],
+                    latency_ms=trace_duration_ms(t0))
         return None
 
 
@@ -413,8 +422,11 @@ async def _tts_gcp(
                         latency_ms=trace_duration_ms(t0))
             return audio_bytes
     except Exception as e:
+        import traceback as _tb
         trace.error("cascade.tts.error", session_id=session_id,
-                    error=str(e), latency_ms=trace_duration_ms(t0))
+                    error=str(e), error_type=type(e).__name__,
+                    traceback=_tb.format_exc()[:1500],
+                    latency_ms=trace_duration_ms(t0))
         return None
 
 
