@@ -249,7 +249,9 @@ async def _llm_flash_text(
         "generationConfig": {
             "temperature": 0.85,
             "topP": 0.95,
-            "maxOutputTokens": 220,
+            # Pro con thinking gasta tokens en pensar. Le damos 2048 para que
+            # tenga ~250 visibles despues del thinking budget.
+            "maxOutputTokens": 2048,
             # Pro requiere thinking activado. Para Flash da igual.
             "thinkingConfig": {"thinkingBudget": 4096},
         },
