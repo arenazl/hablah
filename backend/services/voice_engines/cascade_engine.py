@@ -445,11 +445,43 @@ class CascadeEngine(VoiceEngine):
 
         target_lang = getattr(ctx, "target_language", "en")
         whisper_lang = _normalize_lang(target_lang)
-        # ctx.voice_id viene del template (ElevenLabs voice_id) y no aplica
-        # al TTS de Google Cloud. La voz se elige por target_language en _tts_gcp.
-        # El runtime addon (fecha actual + no markdown + anti-filler + no-loop)
-        # ya viene prepended desde services/super_prompt.py para TODOS los engines.
-        sys_prompt = getattr(ctx, "super_prompt", "") or ""
+        # Cuando usamos claude_cli usamos un prompt GENERICO simple. El
+        # super_prompt complejo con keywords y reglas verbose hizo que Claude
+        # ignorara al alumno y tirara datos del topic (bug S473).
+        if os.getenv("LLM_PROVIDER", "gemini").lower() == "claude_cli":
+            user_name = getattr(ctx, "user_name", "") or "the student"
+            cefr = getattr(ctx, "cefr_level", None) or "B1"
+            # Extraemos SOLO el nombre del topic del super_prompt (sin keywords
+            # ni reglas). El super_prompt tiene "- Tema: {title}." dentro del
+            # bloque TÓPICO DE HOY.
+            sp = getattr(ctx, "super_prompt", "") or ""
+            topic_name = ""
+            for line in sp.splitlines():
+                line = line.strip()
+                if line.startswith("- Tema:"):
+                    topic_name = line.replace("- Tema:", "").strip().rstrip(".")
+                    break
+            topic_line = (
+                f"Today's topic suggestion: {topic_name}. Use it as a starting "
+                f"point but follow the student wherever they want to take it."
+            ) if topic_name else (
+                "No specific topic today — ask the student what they want to talk about."
+            )
+            sys_prompt = (
+                f"You are a friendly English conversation tutor talking with "
+                f"{user_name}, a CEFR {cefr} student learning {target_lang}.\n\n"
+                f"{topic_line}\n\n"
+                f"Be a real conversation partner, not a tutor giving a class:\n"
+                f"- Respond to what {user_name} just said. If they ask you something, answer it.\n"
+                f"- Keep turns short (1-2 sentences usually).\n"
+                f"- Don't always end with a question. Sometimes just react.\n"
+                f"- Don't pile on facts or names unless they're actually engaging "
+                f"with a topic and want depth.\n"
+                f"- Follow their lead. If they change subject, go with them.\n"
+                f"- Respond only in {target_lang}, no markdown, plain text only.\n"
+            )
+        else:
+            sys_prompt = getattr(ctx, "super_prompt", "") or ""
 
         _, voice_name_for_log = _TTS_VOICE_BY_LANG.get(
             target_lang[:2].lower(), TTS_DEFAULT_VOICE
