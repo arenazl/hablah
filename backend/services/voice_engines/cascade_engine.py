@@ -269,6 +269,23 @@ async def _llm_claude_cli(
                        stderr=err.decode("utf-8", errors="replace")[:300],
                        latency_ms=trace_duration_ms(t0))
             return None
+        # VALIDACION: si el subprocess devolvio un mensaje de error de la API,
+        # NO lo pasamos como respuesta del coach. Devolver None para que el
+        # caller decida fallback (o silencio). Antes pasamos literal
+        # "Failed to authenticate. API Error: 401..." al TTS y el alumno
+        # oyo eso como respuesta del coach.
+        _err_patterns = (
+            "Failed to authenticate", "API Error:", "401", "403",
+            "invalid_request_error", "authentication_error",
+            "rate_limit_error", "Invalid authentication credentials",
+            "Internal Server Error",
+        )
+        _lt = text.lower()
+        if any(p.lower() in _lt for p in _err_patterns) and len(text) < 400:
+            trace.error("cascade.llm.claude_api_error",
+                        session_id=session_id, response=text[:300],
+                        latency_ms=trace_duration_ms(t0))
+            return None
         trace.event("cascade.llm.ok", session_id=session_id,
                     text_preview=text[:120], provider="claude_cli",
                     latency_ms=trace_duration_ms(t0))
@@ -286,14 +303,60 @@ async def _llm_claude_cli(
         return None
 
 
+async def _llm_gemini_flash(
+    *, system_instruction: str, history: list[dict], user_text: str,
+    session_id: Optional[int] = None,
+) -> Optional[str]:
+    """Llamada Gemini Flash (la implementacion vieja extraida). Usado como
+    fallback si claude_cli falla."""
+    if not settings.GEMINI_API_KEY:
+        return None
+    t0 = time.time()
+    contents = list(history)
+    contents.append({"role": "user", "parts": [{"text": user_text}]})
+    payload = {
+        "systemInstruction": {"parts": [{"text": system_instruction}]},
+        "contents": contents,
+        "generationConfig": {
+            "temperature": 0.85,
+            "topP": 0.95,
+            "maxOutputTokens": 220,
+            "thinkingConfig": {"thinkingBudget": 0},
+        },
+    }
+    url = f"{FLASH_URL}?key={settings.GEMINI_API_KEY}"
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as cli:
+            r = await cli.post(url, json=payload)
+            if r.status_code != 200:
+                return None
+            data = r.json()
+            try:
+                return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            except (KeyError, IndexError):
+                return None
+    except Exception:
+        return None
+
+
 async def _llm_flash_text(
     *, system_instruction: str, history: list[dict], user_text: str,
     session_id: Optional[int] = None,
 ) -> Optional[str]:
-    """Toggle via env LLM_PROVIDER. Default = gemini Pro. claude_cli usa la
-    sub del user via subprocess. Misma firma, mismo return."""
+    """Toggle via env LLM_PROVIDER. claude_cli con fallback a Gemini Flash.
+    Si Claude falla por cualquier razon (auth, timeout, error), se intenta
+    Gemini Flash para que el alumno NO quede sin respuesta."""
     if os.getenv("LLM_PROVIDER", "gemini").lower() == "claude_cli":
-        return await _llm_claude_cli(
+        result = await _llm_claude_cli(
+            system_instruction=system_instruction,
+            history=history, user_text=user_text,
+            session_id=session_id,
+        )
+        if result:
+            return result
+        # Claude fallo (None) - fallback a Gemini Flash.
+        trace.warn("cascade.llm.fallback_to_gemini", session_id=session_id)
+        return await _llm_gemini_flash(
             system_instruction=system_instruction,
             history=history, user_text=user_text,
             session_id=session_id,
