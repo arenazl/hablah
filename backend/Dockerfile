@@ -36,7 +36,9 @@ COPY . .
 # Smoke import-check: si algun modulo tiene NameError / import faltante, el
 # build FALLA aca, antes de deployar. Esto agarra el bug del 'import os'
 # faltante que rompio la sesion 472. Listamos los modulos criticos del coach.
-RUN python -c "import services.voice_engines.cascade_engine; \
+# Damos env vars dummy porque core.config valida required al import time.
+RUN DB_HOST=x DB_PORT=1 DB_USER=x DB_PASSWORD=x DB_NAME=x SECRET_KEY=x \
+    python -c "import services.voice_engines.cascade_engine; \
 import services.voice_engines.gemini_live_engine; \
 import services.voice_engine; \
 import services.super_prompt; \
