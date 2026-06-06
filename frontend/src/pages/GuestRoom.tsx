@@ -227,7 +227,9 @@ export function GuestRoom() {
         let bin = ''
         for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i])
         const b64 = btoa(bin)
-        ws.send(JSON.stringify({ type: 'audio', data: b64 }))
+        // sample_rate REAL del ctx (mobile Safari ignora 16000 y captura a 48k)
+        const realSr = audioCtxRef.current?.sampleRate ?? 16000
+        ws.send(JSON.stringify({ type: 'audio', data: b64, sample_rate: realSr }))
       }
 
       // Preferido: AudioWorkletNode (corre en thread aparte, libera UI).
@@ -243,10 +245,9 @@ export function GuestRoom() {
             const { pcm, rms, silent } = ev.data as {
               pcm?: ArrayBuffer; rms: number; silent?: boolean
             }
-            if (silent) {
-              setOrbAudio(Math.max(0.15, Math.min(1, (rms || 0) * 4)))
-              return
-            }
+            // SIEMPRE mandar PCM. Sin chunks de silencio, el VAD de Gemini Live
+            // no cierra turno -> coach mudo (bug S489/S490).
+            if (silent) setOrbAudio(Math.max(0.15, Math.min(1, (rms || 0) * 4)))
             if (pcm) sendPcm(pcm, rms || 0)
           }
           source.connect(node)

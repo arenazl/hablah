@@ -362,7 +362,9 @@ class GeminiLiveEngine(VoiceEngine):
     name = "gemini_live"
 
     async def run(self, ws: WebSocket, ctx: VoiceEngineContext) -> AsyncIterator[dict]:
-        if not settings.GEMINI_API_KEY:
+        # Vertex usa bearer token del metadata server, no GEMINI_API_KEY.
+        # Solo ai_studio necesita la API key.
+        if VOICE_PROVIDER != "vertex" and not settings.GEMINI_API_KEY:
             await ws.send_json({"type": "error", "error": "GEMINI_API_KEY missing"})
             return
 
