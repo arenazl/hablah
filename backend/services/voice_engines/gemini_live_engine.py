@@ -250,12 +250,10 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                     "endOfSpeechSensitivity": "END_SENSITIVITY_HIGH",
                     "prefixPaddingMs": 200,
                     "silenceDurationMs": (
-                        # Adultos: 1200ms — balance entre velocidad de respuesta y no
-                        # cortar pausas naturales. Antes 2000ms generaba delay molesto
-                        # entre que el user paraba y el coach empezaba.
-                        # Kids: 1500ms (cadencia mas lenta).
+                        # Adultos: piso 800ms (templates: 1000ms = ~1s perceptual).
+                        # Kids: piso 1500ms (cadencia mas lenta).
                         # Cap a 2000ms (Gemini Live API rechaza valores mayores con 1007).
-                        int(min(max(ctx.silence_tolerance_ms, 1500 if is_kid else 1200), 2000))
+                        int(min(max(ctx.silence_tolerance_ms, 1500 if is_kid else 800), 2000))
                     ),
                 },
                 # Permitimos siempre que el alumno interrumpa al coach. Si el
