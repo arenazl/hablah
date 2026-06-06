@@ -48,23 +48,20 @@ class MicProcessor extends AudioWorkletProcessor {
     this.silentTail = 0
     this.lastWasVoice = false
 
-    // Flag: el coach esta hablando? Si si, bloqueamos envio de PCM con rms
-    // bajo (= echo del speaker captado por mic). Si el rms es alto (= user
-    // hablando fuerte / interrumpiendo) lo dejamos pasar para barge-in.
-    this.coachSpeaking = false
-    this.coachEchoThreshold = 0.04  // mas alto que vadThreshold para barge-in real
+    // NOTA: removimos el flag coachSpeaking + threshold 0.04 que metimos en
+    // la iteracion anterior. La cola rezagada post-turnComplete (spec oficial
+    // Vertex Live) re-encendia el flag sin un nuevo turn_complete que lo
+    // apagara -> flag pegado en true -> chicos con voz baja (rms<0.04) eran
+    // filtrados -> Gemini nunca cerraba turno -> WS muere por idle (S499 Timi).
+    // Echo cancellation del browser ya esta activo, alcanza.
 
     // Permitir reconfigurar en runtime
     this.port.onmessage = (ev) => {
       const d = ev.data
-      if (!d) return
-      if (d.type === 'config') {
-        if (typeof d.vadEnabled === 'boolean') this.vadEnabled = d.vadEnabled
-        if (typeof d.vadThreshold === 'number') this.vadThreshold = d.vadThreshold
-        if (typeof d.vadTailFrames === 'number') this.vadTailFrames = d.vadTailFrames
-      } else if (d.type === 'coach_speaking') {
-        this.coachSpeaking = !!d.value
-      }
+      if (!d || d.type !== 'config') return
+      if (typeof d.vadEnabled === 'boolean') this.vadEnabled = d.vadEnabled
+      if (typeof d.vadThreshold === 'number') this.vadThreshold = d.vadThreshold
+      if (typeof d.vadTailFrames === 'number') this.vadTailFrames = d.vadTailFrames
     }
   }
 
@@ -97,12 +94,8 @@ class MicProcessor extends AudioWorkletProcessor {
             this.lastWasVoice = false
           }
         }
-        // Si el coach esta hablando, bloquear envio EXCEPTO si el user
-        // realmente habla fuerte (barge-in). Esto evita que el audio del
-        // coach captado por el mic (echo coupling) interrumpa al coach.
-        if (this.coachSpeaking && rms < this.coachEchoThreshold) {
-          shouldSend = false
-        }
+        // (removido el gate coachSpeaking - causaba que chicos hablando bajito
+        //  quedaran filtrados y Gemini Live no recibiera input)
         if (shouldSend) {
           const out = new ArrayBuffer(this.target * 2)
           new Int16Array(out).set(this.acc)
