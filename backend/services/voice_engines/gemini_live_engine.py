@@ -445,10 +445,13 @@ class GeminiLiveEngine(VoiceEngine):
             "last_coach_turn_complete_at": None,  # timestamp del ultimo turn.complete del coach
             "current_turn_is_ghost": False,       # turno actual marcado como ghost -> dropear audio/transcript
         }
-        GHOST_MIN_GAP_SECONDS = 5.0  # gap minimo desde el ultimo coach turn para considerar ghost
-        # umbral de chunks audio del user para considerar "hubo input real":
-        # ~20 chunks @ 128ms = ~2.5s de voz / silencio capturado del mic.
-        GHOST_MIN_USER_AUDIO_CHUNKS = 20
+        # DESACTIVADA - la defensa estaba dropeando turnos LEGITIMOS del coach
+        # (S495 perdio multiples turnos -> silencios). El bug raiz del ghost
+        # (preference_detector inyectando turnComplete=True) ya esta fixeado en
+        # super_prompt.py + engine setup. La defensa quedaba como segunda red
+        # pero el costo (turnos legitimos descartados) supero el beneficio.
+        GHOST_MIN_GAP_SECONDS = 99999.0  # efectivamente desactivada
+        GHOST_MIN_USER_AUDIO_CHUNKS = 0
 
         async def client_to_google() -> None:
             try:
