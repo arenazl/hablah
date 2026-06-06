@@ -230,16 +230,23 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
             "generationConfig": {
                 "responseModalities": ["AUDIO"],
                 # thinkingBudget=0 = desactiva el modo "thinking" del modelo.
-                # Sin esto, gemini-2.5-flash-native-audio-* puede VERBALIZAR su
-                # cadena de razonamiento en voz alta ("I'm now implementing the
-                # first turn...") en vez de ejecutar la instruccion directamente.
                 "thinkingConfig": {"thinkingBudget": 0},
                 "speechConfig": {
-                    # Voz Kore: tonalidad calida, mejor resolucion percibida que
-                    # Aoede. Si el template define su propia voz, override aca.
                     "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": getattr(ctx, "voice_name", None) or "Kore"}},
                 },
             },
+            # SafetySettings BLOCK_NONE: es una app de aprendizaje de idiomas, los
+            # alumnos hablan de todo (incluso temas crudos, malas palabras). Sin
+            # esto, Gemini Live BLOQUEA SILENCIOSAMENTE turnos enteros del coach
+            # cuando el input contiene palabras que su filtro considera sensibles
+            # (S498 Jona: el coach quedo MUDO en 2 turnos por el filtro de safety).
+            "safetySettings": [
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_CIVIC_INTEGRITY", "threshold": "BLOCK_NONE"},
+            ],
             "realtimeInputConfig": {
                 "automaticActivityDetection": {
                     "disabled": False,
@@ -763,13 +770,26 @@ class GeminiLiveEngine(VoiceEngine):
                                 if ms_since_user < 1500 and not "".join(user_buf).strip():
                                     possible_cut = True
                                     counters["possible_cuts"] = counters.get("possible_cuts", 0) + 1
+                            ai_text_final = "".join(ai_buf).strip()
                             trace.event("gemini.turn.complete",
                                         session_id=session_id_log,
                                         n=counters["turn_completes_seen"],
                                         user_text="".join(user_buf).strip()[:200],
-                                        ai_text="".join(ai_buf).strip()[:200],
+                                        ai_text=ai_text_final[:200],
                                         ms_since_user_input=ms_since_user,
                                         possible_coach_cut=possible_cut)
+                            # Empty turn: coach cerro turno sin generar audio ni texto.
+                            # Causas tipicas: safety filter bloqueo silenciosamente, o
+                            # el modelo decidio no responder. Loguear como WARNING para
+                            # detectar mute silencioso (S498 Jona: 2 empty turns por safety).
+                            had_user = bool("".join(user_buf).strip()) or counters.get("user_audio_chunks_in_turn", 0) > 0
+                            if not ai_text_final and counters.get("ai_audio_chunks", 0) == counters.get("_ai_audio_at_last_tc", 0) and had_user:
+                                trace.warn("gemini.coach.empty_turn",
+                                           session_id=session_id_log,
+                                           turn_n=counters["turn_completes_seen"],
+                                           user_text_preview="".join(user_buf).strip()[:200],
+                                           hint="probable safety filter block or no-response decision")
+                            counters["_ai_audio_at_last_tc"] = counters.get("ai_audio_chunks", 0)
                             if possible_cut:
                                 trace.warn("gemini.coach.possible_cut",
                                            session_id=session_id_log,
