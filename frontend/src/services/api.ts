@@ -278,6 +278,102 @@ export const dashboardAPI = {
   summary: () => api.get('/dashboard/summary').then((r) => r.data),
 }
 
+/* ────────────── AUDITORÍA (admin) ────────────── */
+export interface AuditSessionRow {
+  id: number
+  user_id: number
+  user_name: string
+  user_email: string | null
+  status: string
+  started_at: string | null
+  ended_at: string | null
+  duration_seconds: number | null
+  template_name: string | null
+  topic_title: string | null
+  cefr_at_start: string
+  score: number | null
+  is_rescue: boolean
+  has_audio: boolean
+  has_report: boolean
+  has_metrics: boolean
+  turns: number
+  user_turns: number
+  ai_turns: number
+}
+
+export interface AuditSessionsResponse {
+  total: number
+  limit: number
+  offset: number
+  sessions: AuditSessionRow[]
+}
+
+export interface AuditTurn { who: string; text?: string; ts?: string | number; [k: string]: any }
+
+export interface AuditSessionDetail {
+  id: number
+  user: { id: number; name: string; email: string | null; cefr_level: string | null; target_language: string | null }
+  status: string
+  started_at: string | null
+  ended_at: string | null
+  duration_seconds: number | null
+  cefr_at_start: string
+  score: number | null
+  is_rescue: boolean
+  audio_url: string | null
+  template: { id: number; name: string; slug: string } | null
+  topic: { id: number; title: string; slug: string } | null
+  transcript: AuditTurn[]
+  metrics: Record<string, any>
+  report: Record<string, any>
+  errors: AuditErrorRow[]
+  turns: number
+  user_turns: number
+  ai_turns: number
+}
+
+export interface AuditErrorRow {
+  id: number
+  user_id?: number
+  user_name?: string
+  session_id: number
+  kind: string
+  error_key: string
+  label: string
+  snippet_wrong: string | null
+  snippet_correct: string | null
+  resolved: boolean
+  detected_at: string | null
+}
+
+export interface AuditStats {
+  sessions_today: number
+  sessions_week: number
+  active_now: number
+  open_errors: number
+}
+
+export interface AuditSessionFilters {
+  q?: string
+  user_id?: number
+  status?: string
+  template_id?: number
+  from_date?: string
+  to_date?: string
+  limit?: number
+  offset?: number
+}
+
+export const auditAPI = {
+  stats: () => api.get<AuditStats>('/audit/stats').then((r) => r.data),
+  sessions: (filters: AuditSessionFilters = {}) =>
+    api.get<AuditSessionsResponse>('/audit/sessions', { params: filters }).then((r) => r.data),
+  session: (id: number) =>
+    api.get<AuditSessionDetail>(`/audit/sessions/${id}`).then((r) => r.data),
+  errors: (filters: { q?: string; user_id?: number; kind?: string; resolved?: boolean; limit?: number; offset?: number } = {}) =>
+    api.get<{ total: number; errors: AuditErrorRow[] }>('/audit/errors', { params: filters }).then((r) => r.data),
+}
+
 /* ────────────── TTS ────────────── */
 export const ttsAPI = {
   voices: () => api.get('/tts/voices').then((r) => r.data),

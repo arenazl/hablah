@@ -4,8 +4,9 @@ import { toast } from 'sonner'
 
 import { BACKOFFICE_CSS } from './backoffice.css'
 import {
-  templatesAPI, topicsAPI, alumnosAPI, dashboardAPI, ttsAPI,
+  templatesAPI, topicsAPI, alumnosAPI, dashboardAPI, ttsAPI, auditAPI,
   Template, Topic, Alumno,
+  AuditSessionRow, AuditSessionDetail, AuditSessionFilters, AuditStats,
 } from '../services/api'
 import { EvolutionView } from './BackofficeEvolution'
 
@@ -43,6 +44,8 @@ export function Backoffice() {
             <Route path="/topicos" element={<TopicosView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/topicos/:id" element={<TopicEditView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/alumnos" element={<AlumnosView onMenu={() => setMenuOpen(true)} />} />
+            <Route path="/auditoria" element={<AuditoriaView onMenu={() => setMenuOpen(true)} />} />
+            <Route path="/auditoria/:id" element={<AuditoriaDetailView onMenu={() => setMenuOpen(true)} />} />
           </Routes>
         </main>
       </div>
@@ -87,6 +90,10 @@ function BoSidebar({ open }: { open: boolean }) {
       <div className="sidebar-section">Comunidad</div>
       <nav className="sidebar-nav">
         <SidebarItem to="/admin/alumnos" label="Alumnos" />
+      </nav>
+      <div className="sidebar-section">Diagnóstico</div>
+      <nav className="sidebar-nav">
+        <SidebarItem to="/admin/auditoria" label="Auditoría" />
       </nav>
       <div className="sidebar-foot">
         <div className="user-card">
@@ -822,6 +829,280 @@ function AlumnosView({ onMenu }: { onMenu: () => void }) {
         </div>
       </div>
     </>
+  )
+}
+
+/* ──────── AUDITORÍA ──────── */
+const SvgRefresh = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" /></svg>
+
+const STATUS_COLOR: Record<string, { bg: string; fg: string }> = {
+  active: { bg: 'rgba(0,179,126,.14)', fg: '#00875f' },
+  ended: { bg: 'rgba(100,116,139,.16)', fg: '#475569' },
+  analyzed: { bg: 'rgba(99,102,241,.16)', fg: '#4f46e5' },
+}
+
+function fmtDateTime(iso: string | null): string {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  return d.toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })
+}
+function fmtDuration(secs: number | null): string {
+  if (secs == null) return '—'
+  const m = Math.floor(secs / 60)
+  const s = secs % 60
+  return m > 0 ? `${m}m ${s}s` : `${s}s`
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const c = STATUS_COLOR[status] || { bg: 'var(--bg-2)', fg: 'var(--fg-2)' }
+  return (
+    <span style={{ padding: '2px 9px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: c.bg, color: c.fg }}>
+      {status}
+    </span>
+  )
+}
+
+const AUDIT_PAGE = 50
+
+function AuditoriaView({ onMenu }: { onMenu: () => void }) {
+  const nav = useNavigate()
+  const [stats, setStats] = useState<AuditStats | null>(null)
+  const [rows, setRows] = useState<AuditSessionRow[]>([])
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(0)
+
+  // filtros
+  const [q, setQ] = useState('')
+  const [status, setStatus] = useState('')
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
+
+  const load = () => {
+    setLoading(true)
+    const filters: AuditSessionFilters = {
+      q: q.trim() || undefined,
+      status: status || undefined,
+      from_date: fromDate || undefined,
+      to_date: toDate || undefined,
+      limit: AUDIT_PAGE,
+      offset: page * AUDIT_PAGE,
+    }
+    auditAPI.sessions(filters)
+      .then((d) => { setRows(d.sessions); setTotal(d.total); setLoading(false) })
+      .catch(() => { setLoading(false); toast.error('No se pudieron cargar las charlas (¿sos admin?)') })
+  }
+
+  useEffect(() => { auditAPI.stats().then(setStats).catch(() => {}) }, [])
+  // recargar al cambiar filtros (con debounce sobre q) o página
+  useEffect(() => {
+    const t = setTimeout(load, 250)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, status, fromDate, toDate, page])
+
+  const clearFilters = () => { setQ(''); setStatus(''); setFromDate(''); setToDate(''); setPage(0) }
+  const hasFilters = q || status || fromDate || toDate
+
+  return (
+    <>
+      <PageHead eyebrow="Diagnóstico" title="Auditoría de la app" onMenu={onMenu}
+        sub="Todo lo que persiste: charlas, horarios, transcripts, métricas, reportes y errores."
+        actions={<button className="btn btn-ghost btn-sm" onClick={() => { setPage(0); load() }}><SvgRefresh /> Refrescar</button>} />
+      <div className="view">
+        <div className="kpi-row">
+          <Kpi label="Charlas hoy" value={stats?.sessions_today ?? '—'} />
+          <Kpi label="Charlas (7 días)" value={stats?.sessions_week ?? '—'} />
+          <Kpi label="Activas ahora" value={stats?.active_now ?? '—'} />
+          <Kpi label="Errores abiertos" value={stats?.open_errors ?? '—'} />
+        </div>
+
+        {/* Filtros */}
+        <div className="card card-elev" style={{ padding: 14, marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' }}>
+          <div style={{ flex: '1 1 240px', minWidth: 200 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', display: 'block', marginBottom: 4 }}>Usuario</label>
+            <div className="search" style={{ margin: 0 }}>
+              <SvgSearch />
+              <input className="input" placeholder="Nombre o email" value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} />
+            </div>
+          </div>
+          <div>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', display: 'block', marginBottom: 4 }}>Estado</label>
+            <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(0) }}
+              style={{ height: 38, padding: '0 10px', borderRadius: 8, border: '1px solid var(--border-2)', background: 'white', fontSize: 13, fontFamily: 'inherit' }}>
+              <option value="">Todos</option>
+              <option value="active">active</option>
+              <option value="ended">ended</option>
+              <option value="analyzed">analyzed</option>
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', display: 'block', marginBottom: 4 }}>Desde</label>
+            <input type="date" value={fromDate} onChange={(e) => { setFromDate(e.target.value); setPage(0) }}
+              style={{ height: 38, padding: '0 10px', borderRadius: 8, border: '1px solid var(--border-2)', background: 'white', fontSize: 13, fontFamily: 'inherit' }} />
+          </div>
+          <div>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', display: 'block', marginBottom: 4 }}>Hasta</label>
+            <input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setPage(0) }}
+              style={{ height: 38, padding: '0 10px', borderRadius: 8, border: '1px solid var(--border-2)', background: 'white', fontSize: 13, fontFamily: 'inherit' }} />
+          </div>
+          {hasFilters && (
+            <button className="btn btn-ghost btn-sm" onClick={clearFilters} style={{ height: 38 }}>Limpiar</button>
+          )}
+        </div>
+
+        {/* Tabla */}
+        <div className="card card-elev" style={{ marginTop: 14, overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.2fr 0.8fr 1.4fr 0.9fr 0.7fr 0.6fr', gap: 10, padding: '12px 16px', fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', borderBottom: '1px solid var(--border-1)' }}>
+            <span>Usuario</span><span>Inicio</span><span>Duración</span><span>Tutor · Tópico</span><span>Estado</span><span>Turnos</span><span>Score</span>
+          </div>
+          {loading && <div style={{ padding: 30, textAlign: 'center', color: 'var(--fg-3)' }}>Cargando…</div>}
+          {!loading && rows.length === 0 && (
+            <div style={{ padding: 40, textAlign: 'center', color: 'var(--fg-3)' }}>
+              No hay charlas que coincidan con los filtros.
+            </div>
+          )}
+          {!loading && rows.map((s) => (
+            <div key={s.id} onClick={() => nav(`/admin/auditoria/${s.id}`)}
+              style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.2fr 0.8fr 1.4fr 0.9fr 0.7fr 0.6fr', gap: 10, padding: '12px 16px', fontSize: 13, alignItems: 'center', borderBottom: '1px solid var(--border-1)', cursor: 'pointer' }}
+              className="audit-row">
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 600, color: 'var(--fg-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.user_name}</div>
+                <div style={{ fontSize: 11, color: 'var(--fg-3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.user_email || `#${s.user_id}`}</div>
+              </div>
+              <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--fg-2)' }}>{fmtDateTime(s.started_at)}</span>
+              <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--fg-2)' }}>{fmtDuration(s.duration_seconds)}</span>
+              <div style={{ minWidth: 0, fontSize: 12, color: 'var(--fg-2)' }}>
+                <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.template_name || '—'}</div>
+                <div style={{ fontSize: 11, color: 'var(--fg-3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.topic_title || 'tema libre'}</div>
+              </div>
+              <span><StatusBadge status={s.status} /></span>
+              <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--fg-3)' }}>{s.turns} <span style={{ fontSize: 10 }}>({s.user_turns}/{s.ai_turns})</span></span>
+              <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: s.score != null ? 'var(--primary-dark)' : 'var(--fg-3)' }}>{s.score ?? '—'}</span>
+            </div>
+          ))}
+          <Pagination total={total} page={page} pageSize={AUDIT_PAGE} onPageChange={setPage} />
+        </div>
+      </div>
+    </>
+  )
+}
+
+function JsonBlock({ data }: { data: Record<string, any> }) {
+  const isEmpty = !data || Object.keys(data).length === 0
+  if (isEmpty) return <div style={{ fontSize: 13, color: 'var(--fg-3)', padding: 8 }}>Sin datos.</div>
+  return (
+    <pre style={{
+      margin: 0, padding: 14, background: 'var(--bg-2)', borderRadius: 10,
+      fontSize: 12, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1.5,
+      overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'var(--fg-1)',
+    }}>
+      {JSON.stringify(data, null, 2)}
+    </pre>
+  )
+}
+
+function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
+  const { id } = useParams()
+  const nav = useNavigate()
+  const [d, setD] = useState<AuditSessionDetail | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!id) return
+    setLoading(true)
+    auditAPI.session(Number(id))
+      .then((data) => { setD(data); setLoading(false) })
+      .catch(() => { setLoading(false); toast.error('No se pudo cargar la sesión') })
+  }, [id])
+
+  if (loading) return <><PageHead eyebrow="Auditoría · Charla" title="Cargando…" onMenu={onMenu} /></>
+  if (!d) return <><PageHead eyebrow="Auditoría · Charla" title="No encontrada" onMenu={onMenu}
+    actions={<button className="btn btn-ghost btn-sm" onClick={() => nav('/admin/auditoria')}>← Volver</button>} /></>
+
+  return (
+    <>
+      <PageHead eyebrow={`Charla #${d.id}`} title={`${d.user.name}`} onMenu={onMenu}
+        sub={`${d.template?.name || 'sin tutor'} · ${d.topic?.title || 'tema libre'} · ${d.user.email || ''}`}
+        actions={<button className="btn btn-ghost btn-sm" onClick={() => nav('/admin/auditoria')}>← Volver</button>} />
+      <div className="view">
+        {/* Metadata */}
+        <div className="card card-elev" style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 14 }}>
+          <Meta label="Estado" value={<StatusBadge status={d.status} />} />
+          <Meta label="Inicio" value={fmtDateTime(d.started_at)} />
+          <Meta label="Fin" value={fmtDateTime(d.ended_at)} />
+          <Meta label="Duración" value={fmtDuration(d.duration_seconds)} />
+          <Meta label="Turnos" value={`${d.turns} (alumno ${d.user_turns} / coach ${d.ai_turns})`} />
+          <Meta label="Nivel inicio" value={d.cefr_at_start} />
+          <Meta label="Score" value={d.score != null ? String(d.score) : '—'} />
+          <Meta label="Audio" value={d.audio_url ? <a href={d.audio_url} target="_blank" rel="noreferrer" style={{ color: 'var(--primary)' }}>escuchar</a> : '—'} />
+        </div>
+
+        {/* Transcript timeline */}
+        <div className="card card-elev" style={{ padding: 16, marginTop: 14 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Transcript ({d.transcript.length} turnos)</div>
+          {d.transcript.length === 0 && <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Sin transcript registrado.</div>}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {d.transcript.map((turn, i) => {
+              const isAi = turn.who === 'ai'
+              return (
+                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                  <span style={{
+                    flexShrink: 0, marginTop: 2, padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700,
+                    background: isAi ? 'rgba(99,102,241,.14)' : 'rgba(0,179,126,.14)',
+                    color: isAi ? '#4f46e5' : '#00875f', minWidth: 56, textAlign: 'center',
+                  }}>
+                    {isAi ? 'COACH' : 'ALUMNO'}
+                  </span>
+                  <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-1)', flex: 1 }}>
+                    {(turn.text || '').trim() || <span style={{ color: 'var(--fg-3)', fontStyle: 'italic' }}>(vacío)</span>}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
+          {/* Métricas */}
+          <div className="card card-elev" style={{ padding: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Métricas</div>
+            <JsonBlock data={d.metrics} />
+          </div>
+          {/* Reporte */}
+          <div className="card card-elev" style={{ padding: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Reporte final</div>
+            <JsonBlock data={d.report} />
+          </div>
+        </div>
+
+        {/* Errores */}
+        <div className="card card-elev" style={{ padding: 16, marginTop: 14 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Errores detectados ({d.errors.length})</div>
+          {d.errors.length === 0 && <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Sin errores registrados en esta charla.</div>}
+          {d.errors.map((e) => (
+            <div key={e.id} style={{ padding: '10px 0', borderTop: '1px dashed var(--border-1)', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <span className="pill pill-outline" style={{ textTransform: 'capitalize', flexShrink: 0 }}>{e.kind}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>{e.label}</div>
+                {e.snippet_wrong && <div style={{ fontSize: 12, color: '#b91c1c', marginTop: 2 }}>✗ {e.snippet_wrong}</div>}
+                {e.snippet_correct && <div style={{ fontSize: 12, color: '#15803d', marginTop: 2 }}>✓ {e.snippet_correct}</div>}
+              </div>
+              <span style={{ fontSize: 11, color: 'var(--fg-3)' }}>{e.resolved ? 'resuelto' : 'abierto'}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  )
+}
+
+function Meta({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div>
+      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', marginBottom: 3 }}>{label}</div>
+      <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-1)' }}>{value}</div>
+    </div>
   )
 }
 
