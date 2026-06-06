@@ -393,11 +393,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
               const { pcm, rms, silent } = ev.data as {
                 pcm?: ArrayBuffer; rms: number; silent?: boolean
               }
-              if (silent) {
-                // VAD detecto silencio: solo actualizamos visualizer.
-                optsRef.current.onAudioLevel?.(Math.min(1, (rms || 0) * 4))
-                return
-              }
+              // SIEMPRE mandar el PCM. Bloquear chunks de silencio impide que
+              // el VAD de Gemini Live cierre el turno y el coach no responde.
+              // El flag `silent` queda solo para el visualizer.
+              if (silent) optsRef.current.onAudioLevel?.(Math.min(1, (rms || 0) * 4))
               if (pcm) sendPcm(pcm, rms || 0)
             }
             source.connect(node)
@@ -412,7 +411,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         }
 
         if (!useWorklet) {
-          // Fallback: ScriptProcessor (deprecado pero universal).
+          // Fallback: ScriptProcessor (deprecado pero universal). SIEMPRE manda PCM
+          // — el VAD lo hace Gemini Live, no el cliente (ver fix worklet arriba).
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const proc = (ctx as any).createScriptProcessor(settings.workletBufferSamples, 1, 1) as ScriptProcessorNode
           procRef.current = proc
@@ -713,10 +713,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
               const { pcm, rms, silent } = ev.data as {
                 pcm?: ArrayBuffer; rms: number; silent?: boolean
               }
-              if (silent) {
-                optsRef.current.onAudioLevel?.(Math.min(1, (rms || 0) * 4))
-                return
-              }
+              // SIEMPRE mandar PCM (incluso silencio). Ver fix worklet/sendPcm
+              // arriba — sin silencio entrante, el VAD de Gemini Live no cierra
+              // turno y el coach no responde.
+              if (silent) optsRef.current.onAudioLevel?.(Math.min(1, (rms || 0) * 4))
               if (pcm) sendPcm(pcm, rms || 0)
             }
             source.connect(node)

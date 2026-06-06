@@ -67,32 +67,14 @@ class MicProcessor extends AudioWorkletProcessor {
 
       if (this.pos >= this.target) {
         const rms = Math.sqrt(this.rmsAcc / Math.max(1, this.rmsCount))
-        let shouldSend = true
-
-        if (this.vadEnabled) {
-          const isVoice = rms >= this.vadThreshold
-          shouldSend = false
-          if (isVoice) {
-            shouldSend = true
-            this.silentTail = 0
-            this.lastWasVoice = true
-          } else if (this.lastWasVoice && this.silentTail < this.vadTailFrames) {
-            shouldSend = true
-            this.silentTail++
-            if (this.silentTail >= this.vadTailFrames) {
-              this.lastWasVoice = false
-            }
-          }
-        }
-
-        if (shouldSend) {
-          const out = new ArrayBuffer(this.target * 2)
-          new Int16Array(out).set(this.acc)
-          this.port.postMessage({ pcm: out, rms: rms }, [out])
-        } else {
-          // Solo notificamos el level para el visualizer, sin enviar audio
-          this.port.postMessage({ rms: rms, silent: true })
-        }
+        // SIEMPRE mandamos PCM. El VAD lo hace Gemini Live (silenceDurationMs).
+        // Cortar localmente cuando rms<threshold rompe el turn-end del Live API:
+        // sin chunks de silencio entrantes, Live nunca dispara fin de turno y
+        // el coach no contesta (bug S489-S490, dic 2026).
+        const out = new ArrayBuffer(this.target * 2)
+        new Int16Array(out).set(this.acc)
+        const isVoice = rms >= this.vadThreshold
+        this.port.postMessage({ pcm: out, rms: rms, silent: !isVoice }, [out])
         this.pos = 0
         this.rmsAcc = 0
         this.rmsCount = 0
