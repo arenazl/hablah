@@ -164,6 +164,22 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str) -> None:
         async with AsyncSessionLocal() as db:
             s = (await db.execute(select(SessionModel).where(SessionModel.id == session_id))).scalar_one_or_none()
             if s:
+                # Mergear con existente sin duplicar (caso reconnect del WS):
+                # si el primer turn del nuevo transcript es identico a algun turn
+                # ya persistido del coach (saludo de re-arranque), el nuevo es
+                # una corrida nueva del engine sobre la misma session_id ->
+                # PISAR el existente. Sino, append normal.
                 existing = s.transcript or []
-                s.transcript = existing + transcript
+                if existing and transcript:
+                    first_new = (transcript[0].get("text") or "").strip()
+                    is_reconnect = any(
+                        (line.get("who") == "ai" and (line.get("text") or "").strip() == first_new)
+                        for line in existing
+                    )
+                    if is_reconnect:
+                        s.transcript = transcript
+                    else:
+                        s.transcript = existing + transcript
+                else:
+                    s.transcript = existing + transcript
                 await db.commit()
