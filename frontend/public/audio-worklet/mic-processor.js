@@ -67,14 +67,33 @@ class MicProcessor extends AudioWorkletProcessor {
 
       if (this.pos >= this.target) {
         const rms = Math.sqrt(this.rmsAcc / Math.max(1, this.rmsCount))
-        // SIEMPRE mandamos PCM. El VAD lo hace Gemini Live (silenceDurationMs).
-        // Cortar localmente cuando rms<threshold rompe el turn-end del Live API:
-        // sin chunks de silencio entrantes, Live nunca dispara fin de turno y
-        // el coach no contesta (bug S489-S490, dic 2026).
-        const out = new ArrayBuffer(this.target * 2)
-        new Int16Array(out).set(this.acc)
         const isVoice = rms >= this.vadThreshold
-        this.port.postMessage({ pcm: out, rms: rms, silent: !isVoice }, [out])
+        // Mandar PCM si: hay voz, O estamos en la cola post-voz (suficiente
+        // silencio para que el VAD de Gemini Live cierre el turno, ~1.5s).
+        // Despues parar de mandar - silencio continuo confunde al modelo y
+        // dispara turn-ends fantasma que sueltan la cola del turno anterior
+        // (bug S493).
+        // Cada buffer = this.target samples / 16000 = ~128ms a 16kHz.
+        // 12 frames de cola ~= 1.5s. Suficiente para silenceDurationMs<=2000ms.
+        const TAIL_FRAMES = 12
+        let shouldSend = isVoice
+        if (isVoice) {
+          this.silentTail = 0
+          this.lastWasVoice = true
+        } else if (this.lastWasVoice && this.silentTail < TAIL_FRAMES) {
+          shouldSend = true
+          this.silentTail++
+          if (this.silentTail >= TAIL_FRAMES) {
+            this.lastWasVoice = false
+          }
+        }
+        if (shouldSend) {
+          const out = new ArrayBuffer(this.target * 2)
+          new Int16Array(out).set(this.acc)
+          this.port.postMessage({ pcm: out, rms: rms, silent: !isVoice }, [out])
+        } else {
+          this.port.postMessage({ rms: rms, silent: true })
+        }
         this.pos = 0
         this.rmsAcc = 0
         this.rmsCount = 0
