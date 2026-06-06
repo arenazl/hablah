@@ -253,7 +253,7 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                         # corto, el coach asumia turn-end en cualquier pausa
                         # natural y arrancaba a responder cortando al alumno.
                         # NOTA: Capped a 2000ms ya que Gemini Live API rechaza valores mayores con error 1007.
-                        min(ctx.silence_tolerance_ms, 2000)
+                        int(min(max(ctx.silence_tolerance_ms, 1500), 2000))
                     ),
                 },
                 # Permitimos siempre que el alumno interrumpa al coach. Si el
