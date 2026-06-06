@@ -243,9 +243,10 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                     "startOfSpeechSensitivity": (
                         "START_SENSITIVITY_LOW" if is_kid else "START_SENSITIVITY_HIGH"
                     ),
-                    "endOfSpeechSensitivity": (
-                        "END_SENSITIVITY_LOW" if is_kid else "END_SENSITIVITY_HIGH"
-                    ),
+                    # END_SENSITIVITY_LOW = el modelo es MAS CONSERVADOR para
+                    # detectar fin de turno. HIGH te pisaba cuando hacias una
+                    # pequena pausa o entonacion bajando. LOW espera mas.
+                    "endOfSpeechSensitivity": "END_SENSITIVITY_LOW",
                     "prefixPaddingMs": 200,
                     "silenceDurationMs": (
                         # Kids: minimo 1500ms (cadencia mas lenta).
@@ -543,6 +544,11 @@ class GeminiLiveEngine(VoiceEngine):
                             inline = part.get("inlineData")
                             if inline and inline.get("mimeType", "").startswith("audio"):
                                 timing["last_ai_output_at"] = asyncio.get_event_loop().time()
+                                # Track inicio del turno actual del coach para
+                                # detectar overlap si llega input_transcription
+                                # DESPUES de este timestamp.
+                                if timing.get("current_turn_ai_started_at") is None:
+                                    timing["current_turn_ai_started_at"] = asyncio.get_event_loop().time()
                                 counters["ai_audio_chunks"] += 1
                                 audio_bytes = len(inline.get("data", "")) * 3 // 4
                                 counters["ai_audio_bytes"] += audio_bytes
@@ -583,13 +589,24 @@ class GeminiLiveEngine(VoiceEngine):
                         if input_tr and input_tr.get("text"):
                             counters["user_text_chunks"] += 1
                             user_buf.append(input_tr["text"])
-                            # Trackeo timing del ultimo input para detectar cortes
-                            # del coach (cuando responde apenas el alumno paro).
-                            timing["last_user_input_at"] = asyncio.get_event_loop().time()
+                            now_ts = asyncio.get_event_loop().time()
+                            timing["last_user_input_at"] = now_ts
+                            # OVERLAP REAL: input del user llegando DESPUES de
+                            # que el coach ya empezo a hablar = el coach lo piso.
+                            overlap_ms = None
+                            coach_started = timing.get("current_turn_ai_started_at")
+                            if coach_started is not None and now_ts > coach_started:
+                                overlap_ms = int((now_ts - coach_started) * 1000)
+                                counters["overlaps"] = counters.get("overlaps", 0) + 1
+                                trace.warn("gemini.coach.overlap_user",
+                                           session_id=session_id_log,
+                                           overlap_ms=overlap_ms,
+                                           input_text=input_tr["text"][:200])
                             trace.event("gemini.input_transcription",
                                         session_id=session_id_log,
                                         chunk_n=counters["user_text_chunks"],
-                                        text_preview=input_tr["text"][:200])
+                                        text_preview=input_tr["text"][:200],
+                                        overlap_ms=overlap_ms)
                             await ws.send_json({"type": "transcript_chunk", "who": "user", "text": input_tr["text"]})
 
                         if sc.get("turnComplete"):
@@ -629,6 +646,8 @@ class GeminiLiveEngine(VoiceEngine):
                             if last_user_text:
                                 timing["last_user_turn_at"] = asyncio.get_event_loop().time()
                                 timing["rescue_attempts"] = 0
+                            # Reset para detectar overlap del proximo turno del coach.
+                            timing["current_turn_ai_started_at"] = None
                             await ws.send_json({"type": "turn_complete"})
                             if last_user_text and len(last_user_text) >= 6:
                                 # Modo evolutivo: check admin trigger ANTES del preference
