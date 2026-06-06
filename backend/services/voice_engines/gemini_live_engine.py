@@ -243,10 +243,11 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                     "startOfSpeechSensitivity": (
                         "START_SENSITIVITY_LOW" if is_kid else "START_SENSITIVITY_HIGH"
                     ),
-                    # END_SENSITIVITY_LOW = el modelo es MAS CONSERVADOR para
-                    # detectar fin de turno. HIGH te pisaba cuando hacias una
-                    # pequena pausa o entonacion bajando. LOW espera mas.
-                    "endOfSpeechSensitivity": "END_SENSITIVITY_LOW",
+                    # HIGH: VAD interno mas sensible para detectar voz Y turn-end.
+                    # Con LOW no transcribia inputs cortos (S489 tuvo 0 input_transcription
+                    # con 60 chunks de audio). El silenceDurationMs=2000 capped evita
+                    # que pise al alumno cuando hace pausa corta.
+                    "endOfSpeechSensitivity": "END_SENSITIVITY_HIGH",
                     "prefixPaddingMs": 200,
                     "silenceDurationMs": (
                         # Kids: minimo 1500ms (cadencia mas lenta).
