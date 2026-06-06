@@ -421,6 +421,18 @@ class GeminiLiveEngine(VoiceEngine):
         trace.event("session.engine.start", session_id=session_id_log, model=LIVE_MODEL,
                     is_kid=is_kid_log)
 
+        # Defensa contra "ghost turns": el modelo a veces emite un turno extra
+        # con la cola del turno anterior 13-15s despues, sin que el user haya
+        # hablado. Sintoma: coach repite algo, se frena, retoma otra cosa
+        # (bug S493). Detectamos y descartamos esos turnos.
+        ghost_state = {
+            "coach_turns_completed": 0,           # cuantos turnos del coach cerraron OK
+            "user_input_since_last_coach": False, # llego input_transcription desde el ultimo turn.complete del coach?
+            "last_coach_turn_complete_at": None,  # timestamp del ultimo turn.complete del coach
+            "current_turn_is_ghost": False,       # turno actual marcado como ghost -> dropear audio/transcript
+        }
+        GHOST_MIN_GAP_SECONDS = 5.0  # gap minimo desde el ultimo coach turn para considerar ghost
+
         async def client_to_google() -> None:
             try:
                 while not stop_event.is_set():
@@ -563,12 +575,32 @@ class GeminiLiveEngine(VoiceEngine):
                         for part in model_turn.get("parts", []):
                             inline = part.get("inlineData")
                             if inline and inline.get("mimeType", "").startswith("audio"):
-                                timing["last_ai_output_at"] = asyncio.get_event_loop().time()
-                                # Track inicio del turno actual del coach para
-                                # detectar overlap si llega input_transcription
-                                # DESPUES de este timestamp.
+                                # Deteccion de ghost turn: SOLO al inicio del turno.
+                                # Si es primer audio chunk del turno, evaluar si es ghost.
                                 if timing.get("current_turn_ai_started_at") is None:
+                                    now_t = time.time()
+                                    last_close = ghost_state["last_coach_turn_complete_at"]
+                                    if (
+                                        ghost_state["coach_turns_completed"] >= 1
+                                        and not ghost_state["user_input_since_last_coach"]
+                                        and last_close is not None
+                                        and (now_t - last_close) > GHOST_MIN_GAP_SECONDS
+                                    ):
+                                        ghost_state["current_turn_is_ghost"] = True
+                                        counters["ghost_turns_blocked"] = counters.get("ghost_turns_blocked", 0) + 1
+                                        trace.warn(
+                                            "gemini.coach.ghost_turn_dropped",
+                                            session_id=session_id_log,
+                                            gap_since_last_coach_s=round(now_t - last_close, 2),
+                                            coach_turns_so_far=ghost_state["coach_turns_completed"],
+                                            reason="no_user_input_since_last_turn",
+                                        )
                                     timing["current_turn_ai_started_at"] = asyncio.get_event_loop().time()
+
+                                timing["last_ai_output_at"] = asyncio.get_event_loop().time()
+                                # Si es ghost, NO mandar audio al cliente.
+                                if ghost_state["current_turn_is_ghost"]:
+                                    continue
                                 counters["ai_audio_chunks"] += 1
                                 audio_bytes = len(inline.get("data", "")) * 3 // 4
                                 counters["ai_audio_bytes"] += audio_bytes
@@ -592,6 +624,9 @@ class GeminiLiveEngine(VoiceEngine):
                                     trace.warn("gemini.text.thinking_dropped",
                                                session_id=session_id_log,
                                                text_preview=stripped[:200])
+                                elif ghost_state["current_turn_is_ghost"]:
+                                    # Ghost turn: descartar texto tambien
+                                    pass
                                 else:
                                     timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                     counters["ai_text_chunks"] += 1
@@ -600,15 +635,21 @@ class GeminiLiveEngine(VoiceEngine):
 
                         out_tr = sc.get("outputTranscription")
                         if out_tr and out_tr.get("text"):
-                            timing["last_ai_output_at"] = asyncio.get_event_loop().time()
-                            counters["ai_text_chunks"] += 1
-                            ai_buf.append(out_tr["text"])
-                            await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
+                            if ghost_state["current_turn_is_ghost"]:
+                                pass  # ghost: no propagar transcripcion
+                            else:
+                                timing["last_ai_output_at"] = asyncio.get_event_loop().time()
+                                counters["ai_text_chunks"] += 1
+                                ai_buf.append(out_tr["text"])
+                                await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
 
                         input_tr = sc.get("inputTranscription")
                         if input_tr and input_tr.get("text"):
                             counters["user_text_chunks"] += 1
                             user_buf.append(input_tr["text"])
+                            # Marcar que llego input del user desde el ultimo coach turn:
+                            # el proximo turno del coach NO se considera ghost.
+                            ghost_state["user_input_since_last_coach"] = True
                             now_ts = asyncio.get_event_loop().time()
                             timing["last_user_input_at"] = now_ts
                             # OVERLAP REAL: input del user llegando DESPUES de
@@ -659,15 +700,30 @@ class GeminiLiveEngine(VoiceEngine):
                                            ms_since_user_input=ms_since_user,
                                            ai_text_preview="".join(ai_buf).strip()[:200])
                             last_user_text = "".join(user_buf).strip()
-                            _flush_buffers()
+                            # Si era ghost turn, FLUSH SILENCIOSO: no escribir al
+                            # transcript ni emitir turn_complete al cliente.
+                            was_ghost = ghost_state["current_turn_is_ghost"]
+                            if was_ghost:
+                                user_buf.clear()
+                                ai_buf.clear()
+                            else:
+                                _flush_buffers()
                             # Si el ultimo turno completado fue del USER, anotamos
                             # el timestamp para que el coach_watchdog empiece a
                             # contar el silencio del coach.
-                            if last_user_text:
+                            if last_user_text and not was_ghost:
                                 timing["last_user_turn_at"] = asyncio.get_event_loop().time()
                                 timing["rescue_attempts"] = 0
                             # Reset para detectar overlap del proximo turno del coach.
                             timing["current_turn_ai_started_at"] = None
+                            # Actualizar ghost state: este turno del coach cerro.
+                            ghost_state["coach_turns_completed"] += 1
+                            ghost_state["last_coach_turn_complete_at"] = time.time()
+                            ghost_state["user_input_since_last_coach"] = False
+                            ghost_state["current_turn_is_ghost"] = False
+                            if was_ghost:
+                                # No notificamos al cliente — el ghost no existio.
+                                continue
                             await ws.send_json({"type": "turn_complete"})
                             if last_user_text and len(last_user_text) >= 6:
                                 # Modo evolutivo: check admin trigger ANTES del preference
