@@ -36,6 +36,11 @@ class MicProcessor extends AudioWorkletProcessor {
     this.vadEnabled = opts.vadEnabled !== false
     this.vadThreshold = opts.vadThreshold ?? 0.005
     this.vadTailFrames = opts.vadTailFrames ?? 2
+    // tail dinamico: 1.5s reales segun sampleRate del AudioContext.
+    // En mobile Safari sampleRate=48000, no 16000 - hardcodear 12 frames daba
+    // 0.5s, insuficiente para silenceDurationMs del Live API.
+    // sampleRate es global en AudioWorkletGlobalScope.
+    this.tailFrames = Math.max(4, Math.ceil(1.5 * sampleRate / this.target))
     this.acc = new Int16Array(this.target)
     this.pos = 0
     this.rmsAcc = 0
@@ -70,20 +75,16 @@ class MicProcessor extends AudioWorkletProcessor {
         const isVoice = rms >= this.vadThreshold
         // Mandar PCM si: hay voz, O estamos en la cola post-voz (suficiente
         // silencio para que el VAD de Gemini Live cierre el turno, ~1.5s).
-        // Despues parar de mandar - silencio continuo confunde al modelo y
-        // dispara turn-ends fantasma que sueltan la cola del turno anterior
-        // (bug S493).
-        // Cada buffer = this.target samples / 16000 = ~128ms a 16kHz.
-        // 12 frames de cola ~= 1.5s. Suficiente para silenceDurationMs<=2000ms.
-        const TAIL_FRAMES = 12
+        // Despues parar de mandar - silencio continuo confunde al modelo.
+        // this.tailFrames se calcula dinamico en el constructor segun sampleRate.
         let shouldSend = isVoice
         if (isVoice) {
           this.silentTail = 0
           this.lastWasVoice = true
-        } else if (this.lastWasVoice && this.silentTail < TAIL_FRAMES) {
+        } else if (this.lastWasVoice && this.silentTail < this.tailFrames) {
           shouldSend = true
           this.silentTail++
-          if (this.silentTail >= TAIL_FRAMES) {
+          if (this.silentTail >= this.tailFrames) {
             this.lastWasVoice = false
           }
         }

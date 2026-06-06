@@ -44,12 +44,16 @@ async def _handle_admin_directive(*, raw_text: str, feedback_body: str, ctx, goo
         if not result:
             return
 
-        # Inyectar mensaje sintetico al modelo para que confirme en voz
+        # Inyectar mensaje sintetico al modelo para que confirme en voz.
+        # turnComplete=False: contexto sin disparar respuesta, asi evitamos
+        # ghost turn por gap timeout. La confirmacion verbal se pierde pero
+        # el toast frontend muestra que se aplico (mejor que coach repitiendo
+        # cola del turno anterior 15s tarde - bug S493).
         try:
             await google_ws.send(json.dumps({
                 "clientContent": {
                     "turns": [{"role": "user", "parts": [{"text": result["confirmation_text"]}]}],
-                    "turnComplete": True,
+                    "turnComplete": False,
                 }
             }))
         except Exception as e:
@@ -73,11 +77,14 @@ async def _maybe_detect_preference(*, user_id, user_text, target_lang, google_ws
     from services.preference_detector import detect_and_apply
 
     async def send_system_update(text: str) -> None:
-        # Inyectamos un mensaje system al Gemini Live para que el tutor adapte el próximo turno
+        # Inyectamos un mensaje system al Gemini Live para que el tutor adapte el próximo turno.
+        # turnComplete=False: el modelo absorbe la instruccion como contexto pero NO dispara
+        # un turno de respuesta. Sino el coach soltaba un turno fantasma 15s despues
+        # (timeout del Flash request) con la cola del turno anterior (bug S493).
         await google_ws.send(json.dumps({
             "clientContent": {
                 "turns": [{"role": "user", "parts": [{"text": text}]}],
-                "turnComplete": True,
+                "turnComplete": False,
             }
         }))
 
