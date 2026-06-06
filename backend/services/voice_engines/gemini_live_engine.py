@@ -528,7 +528,26 @@ class GeminiLiveEngine(VoiceEngine):
                             continue
                         sc = data.get("serverContent")
                         if not sc:
+                            # DIAG: que mas viene fuera de serverContent?
+                            top_keys = list(data.keys())
+                            if top_keys and top_keys != ["setupComplete"]:
+                                trace.event("gemini.raw.no_serverContent",
+                                            session_id=session_id_log,
+                                            top_keys=top_keys,
+                                            preview=str(data)[:300])
                             continue
+
+                        # DIAG: logear las keys que llegan dentro de serverContent
+                        # para detectar si Vertex usa otro nombre para transcripcion
+                        sc_keys = sorted(sc.keys())
+                        if sc_keys not in (counters.get("_seen_sc_keys") or []):
+                            seen = counters.get("_seen_sc_keys") or []
+                            seen.append(sc_keys)
+                            counters["_seen_sc_keys"] = seen
+                            trace.event("gemini.raw.sc_keys",
+                                        session_id=session_id_log,
+                                        keys=sc_keys,
+                                        sample=str({k: (str(sc.get(k))[:120] if not isinstance(sc.get(k), (dict, list)) else type(sc.get(k)).__name__) for k in sc_keys})[:600])
 
                         # Barge-in: Gemini detecto que el usuario empezo a hablar
                         # mientras el coach soltaba audio. Avisamos al cliente para
