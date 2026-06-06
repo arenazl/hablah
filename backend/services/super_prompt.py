@@ -558,7 +558,12 @@ def _build_super_prompt_body(
         # underground scene) que son frases. Los datos concretos son lo que el
         # modelo necesita para SALIR del 'what do you think?' generico cuando
         # se traba con el alumno.
-        kw_list = (topic.keywords or [])[:12]
+        import random as _random
+        kw_all = (topic.keywords or [])
+        # Shuffle por sesion: evita que el modelo SIEMPRE elija el primer
+        # keyword (ej. "Last of Us") como opener. El primer item de la lista
+        # tiene sesgo de recencia/saliencia para el modelo.
+        kw_list = _random.sample(kw_all, min(12, len(kw_all))) if kw_all else []
         topic_block = (
             f"TÓPICO DE HOY\n"
             f"- Tema: {topic.title}.\n"
@@ -567,7 +572,11 @@ def _build_super_prompt_body(
             f"  para aportar sustancia en vez de preguntar): {', '.join(kw_list)}.\n"
             f"  Cuando no sepas qué decir, mencioná UNO de estos datos con tu\n"
             f"  opinión sobre él. No los listes — usalos uno por turno como\n"
-            f"  hook concreto."
+            f"  hook concreto.\n"
+            f"- VARIACIÓN: en el primer turno NO elijas siempre el dato más obvio\n"
+            f"  (ej. el más famoso de la lista). Pickeá uno menos predecible para\n"
+            f"  abrir — el alumno puede tener varias sesiones del mismo tema y\n"
+            f"  notar si siempre arrancás igual."
         )
         # NO le pidas al modelo "presentá el tema" en el opening — eso fuerza
         # "Let's talk about X" que el scorer marca como generic (opening_creativity

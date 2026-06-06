@@ -470,6 +470,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           }
         }
         setStatusIfChanged('speaking')
+        // Avisar al worklet que el coach esta hablando -> bloquea echo del mic
+        workletNodeRef.current?.port.postMessage({ type: 'coach_speaking', value: true })
         pushAudioFromTutor(msg.data, 24000)
       } else if (msg.type === 'participant_audio') {
         // Otro participante humano en la voice room: PCM 16kHz (captura mic).
@@ -494,6 +496,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         optsRef.current.onTranscript?.(line)
       } else if (msg.type === 'turn_complete') {
         setStatusIfChanged('listening')
+        // Coach termino de hablar - reabilitar envio normal de mic.
+        // 300ms de delay para que termine de drenarse el buffer de audio
+        // y no quede echo residual.
+        setTimeout(() => {
+          workletNodeRef.current?.port.postMessage({ type: 'coach_speaking', value: false })
+        }, 300)
         // Marcar timestamp para medir latencia hasta primera respuesta del AI.
         // Sin distinguir quien fue el turno: si el user acaba de terminar,
         // el siguiente audio que llegue del AI sera la respuesta.
@@ -520,6 +528,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       } else if (msg.type === 'interrupted') {
         cancelTutorPlayback()
         setStatus('listening')
+        // Coach interrumpido por el user -> reabilitar envio normal de mic
+        workletNodeRef.current?.port.postMessage({ type: 'coach_speaking', value: false })
       } else if (msg.type === 'coach_recovering') {
         optsRef.current.onCoachRecovering?.(msg.level ?? 1)
       } else if (msg.type === 'participant_joined') {
