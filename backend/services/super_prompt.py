@@ -487,6 +487,7 @@ def _build_super_prompt_body(
     topic_visits: int = 0,
     previous_phrases: Optional[list[str]] = None,
     recently_used_keywords: Optional[set] = None,
+    learning_objective: Optional[dict] = None,
 ) -> str:
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
@@ -645,6 +646,13 @@ def _build_super_prompt_body(
             f"Si surge naturalmente, creá contextos para que practique esas estructuras — SIN señalárselo."
         )
 
+    # Bloque de objetivo pedagogico: la meta gramatical/vocab de ESTA sesion.
+    # Invisible al alumno. El coach tiene que entretejerlo en la charla del topic.
+    objective_block = ""
+    if learning_objective:
+        from services.learning_objectives import format_objective_for_prompt
+        objective_block = "\n" + format_objective_for_prompt(learning_objective, target_lang_name)
+
     rules = """CÓMO TENÉS QUE CONVERSAR (no negociable):
 
 1. EMPATÍA REAL, NO FÓRMULA. Reaccioná a lo que dijo PERO SIN abrir con "Good", "Nice", "Right", "That's interesting", "Oh totally". Si vas a reaccionar, hacelo con CONTENIDO, no con muletilla.
@@ -653,6 +661,8 @@ def _build_super_prompt_body(
 4. SOS UN HUMANO CON OPINIÓN. Tomá POSICIÓN. Decí lo que pensás antes de preguntarle. "For me, X" abre más que "What do you think about X?".
 5. SI EL ALUMNO REPITE casi LO MISMO que su turno anterior (o da una respuesta vaga): NO le hagas otra pregunta. En vez de eso, dropéale UN HECHO O DATO que él NO mencionó (un nombre, un año, una opinión tuya fuerte) y QUEDATE AHÍ — sin pregunta, sin "right?". El silencio lo va a hacer hablar él. Pivotear a OTRO sub-tema del mismo tópico.
 6. SI EL ALUMNO TE PREGUNTA, RESPONDÉ PRIMERO. Después podés sumar una pregunta tuya — pero su pregunta nunca se ignora.
+7. SOS UN PROFESOR, NO UN AMIGO QUE ASIENTE. Si el alumno dijo algo gramaticalmente mal (especialmente en el FOCO DEL DÍA), NO lo dejes pasar para 'no interrumpir el flow'. Modelá la versión correcta en TU PROXIMA frase — naturalmente, sin explicar reglas, sin decir 'actually...'. Repetí la idea del alumno bien construida y seguí la conversación.
+8. SI NO HUBO ERRORES GRUESOS EN EL ULTIMO TURNO, NO interrumpas con correcciones. La correccion solo entra cuando hay algo real para modelar.
 
 POSIBLE MODO GRUPAL: esta charla puede ser 1:1 O grupal (varios participantes).
 Si en algun momento te llega un mensaje [Sistema · MODO GRUPAL ACTIVADO] con
@@ -748,7 +758,8 @@ un nombre nuevo, significa que entro otra persona. A partir de ese momento:
         f"{template_block}\n\n"
         f"{user_block}\n\n"
         f"{topic_block}{history_block}"
-        f"{errors_block}\n\n"
+        f"{errors_block}"
+        f"{objective_block}\n\n"
         f"{rules}\n\n"
         f"LANGUAGE: speak in {target_lang_name} only. Don't switch unless the\n"
         f"student is fully stuck.\n\n"

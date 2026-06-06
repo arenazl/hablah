@@ -75,6 +75,34 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     if kl in ai_text:
                         recently_used_keywords.add(kw)
 
+        # Objetivo pedagogico de ESTA sesion (invisible al alumno).
+        # Pickeamos UN objetivo del catalogo del nivel del alumno, excluyendo
+        # los que se trabajaron en las ultimas 5 sesiones (cualquier topic).
+        from services.learning_objectives import pick_objective
+        from sqlalchemy import update
+        recent_objective_codes: set[str] = set()
+        if s.user_id:
+            recent_codes_rows = (await db.execute(
+                select(SessionModel.learning_objective_code)
+                .where(SessionModel.user_id == s.user_id)
+                .where(SessionModel.id != s.id)
+                .where(SessionModel.learning_objective_code.isnot(None))
+                .order_by(SessionModel.id.desc())
+                .limit(5)
+            )).all()
+            recent_objective_codes = {r[0] for r in recent_codes_rows if r[0]}
+        learning_objective = pick_objective(
+            user.cefr_level or "B1",
+            recently_used_codes=recent_objective_codes,
+        )
+        if learning_objective:
+            await db.execute(
+                update(SessionModel)
+                .where(SessionModel.id == s.id)
+                .values(learning_objective_code=learning_objective["code"])
+            )
+            await db.commit()
+
         return {
             "session_id": s.id,
             "user_id": user.id,
@@ -85,6 +113,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                 user=user, template=template, topic=topic,
                 admin_directives=admin_directives,
                 recently_used_keywords=recently_used_keywords,
+                learning_objective=learning_objective,
             ),
             "voice_id": template_voice_for_lang(template, user.target_language, user=user) if template else None,
             "language": user.target_language or "en",

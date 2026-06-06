@@ -162,6 +162,10 @@ class Session(Base):
 
     is_rescue = Column(Boolean, nullable=False, default=False)
     audio_url = Column(String(500), nullable=True)  # Cloudinary del audio grabado
+    # Objetivo pedagogico de la sesion (past_simple_irregular, conditional_type_1...)
+    # Lo elige el backend al armar el super_prompt y queda para tracking
+    # (no repetir objetivos en las ultimas N sesiones del alumno).
+    learning_objective_code = Column(String(64), nullable=True)
 
 
 class ErrorLog(Base):
