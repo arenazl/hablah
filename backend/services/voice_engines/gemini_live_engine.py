@@ -153,8 +153,8 @@ RENEW_BEFORE_END_SECONDS = 30
 # El trigger sintetico se metia en el medio del turno coach causando frases
 # concatenadas tipo "...Decila vos!¡Ay perdon no te escuche!". Subido a 12s
 # real (tras evidencia en logs de Timo session 181).
-COACH_SILENCE_TRIGGER_SECONDS = 25
-COACH_SILENCE_HARD_RESCUE_SECONDS = 45
+COACH_SILENCE_TRIGGER_SECONDS = 60
+COACH_SILENCE_HARD_RESCUE_SECONDS = 120
 
 
 async def _get_vertex_token() -> str:
@@ -929,10 +929,13 @@ class GeminiLiveEngine(VoiceEngine):
                         "ONE short sentence. If not, stay silent.)"
                     )
                     try:
+                        # turnComplete=False: inyectamos como contexto, NO forzamos
+                        # respuesta. Asi el modelo absorbe la pista pero NO dispara
+                        # un turno verbalizando 'lost you for a sec' (S495 turno 34).
                         await gws_holder["ws"].send(json.dumps({
                             "clientContent": {
                                 "turns": [{"role": "user", "parts": [{"text": trigger_text}]}],
-                                "turnComplete": True,
+                                "turnComplete": False,
                             }
                         }))
                     except Exception as e:
