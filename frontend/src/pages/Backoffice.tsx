@@ -6,7 +6,7 @@ import { BACKOFFICE_CSS } from './backoffice.css'
 import {
   templatesAPI, topicsAPI, alumnosAPI, dashboardAPI, ttsAPI, auditAPI,
   Template, Topic, Alumno,
-  AuditSessionRow, AuditSessionDetail, AuditSessionFilters, AuditStats,
+  AuditSessionRow, AuditSessionDetail, AuditSessionFilters, AuditStats, AuditLogEvent,
 } from '../services/api'
 import { EvolutionView } from './BackofficeEvolution'
 
@@ -1038,30 +1038,8 @@ function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
           <Meta label="Audio" value={d.audio_url ? <a href={d.audio_url} target="_blank" rel="noreferrer" style={{ color: 'var(--primary)' }}>escuchar</a> : '—'} />
         </div>
 
-        {/* Transcript timeline */}
-        <div className="card card-elev" style={{ padding: 16, marginTop: 14 }}>
-          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Transcript ({d.transcript.length} turnos)</div>
-          {d.transcript.length === 0 && <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Sin transcript registrado.</div>}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {d.transcript.map((turn, i) => {
-              const isAi = turn.who === 'ai'
-              return (
-                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                  <span style={{
-                    flexShrink: 0, marginTop: 2, padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700,
-                    background: isAi ? 'rgba(99,102,241,.14)' : 'rgba(0,179,126,.14)',
-                    color: isAi ? '#4f46e5' : '#00875f', minWidth: 56, textAlign: 'center',
-                  }}>
-                    {isAi ? 'COACH' : 'ALUMNO'}
-                  </span>
-                  <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-1)', flex: 1 }}>
-                    {(turn.text || '').trim() || <span style={{ color: 'var(--fg-3)', fontStyle: 'italic' }}>(vacío)</span>}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
+        {/* Timeline unificado: conversación + eventos (desde Cloud Logging) */}
+        <UnifiedTimeline d={d} />
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
           {/* Métricas */}
@@ -1102,6 +1080,180 @@ function Meta({ label, value }: { label: string; value: React.ReactNode }) {
     <div>
       <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', marginBottom: 3 }}>{label}</div>
       <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-1)' }}>{value}</div>
+    </div>
+  )
+}
+
+/* ──────── TIMELINE UNIFICADO (conversación + eventos en vivo) ──────── */
+const SvgBolt = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 11 14 9 22 21 10 13 10 13 2" /></svg>
+const SvgGear = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+
+function fmtClock(iso: string): string {
+  try { return new Date(iso).toLocaleTimeString('es-AR', { hour12: false }) } catch { return '' }
+}
+
+interface TimelineItem {
+  ts: string; order: number
+  kind: 'speech' | 'interruption' | 'system'
+  who?: 'user' | 'ai'; text?: string; latencyMs?: number; cut?: boolean
+  label?: string; gap?: number; severity?: string; raw?: any
+}
+
+function UnifiedTimeline({ d }: { d: AuditSessionDetail }) {
+  const [events, setEvents] = useState<AuditLogEvent[] | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [failed, setFailed] = useState(false)
+  const [showSystem, setShowSystem] = useState(false)
+
+  useEffect(() => {
+    setLoading(true); setFailed(false)
+    // ventana que cubre desde el inicio de la charla hasta ahora (+10 min de colchón),
+    // capeada a 30 días (retención de Cloud Logging).
+    let minutes = 1440
+    if (d.started_at) {
+      const elapsedMin = Math.ceil((Date.now() - new Date(d.started_at).getTime()) / 60000) + 10
+      minutes = Math.min(Math.max(elapsedMin, 60), 43200)
+    }
+    auditAPI.timeline(d.id, minutes)
+      .then((r) => { setEvents(r.timeline || []); setLoading(false) })
+      .catch(() => { setFailed(true); setLoading(false) })
+  }, [d.id, d.started_at])
+
+  const items = useMemo<TimelineItem[]>(() => {
+    if (!events) return []
+    const out: TimelineItem[] = []
+    let order = 0
+    for (const e of events) {
+      const ev = e.event || ''
+      const dt = e.data || {}
+      if (ev === 'gemini.turn.complete') {
+        const u = (dt.user_text || '').trim()
+        const a = (dt.ai_text || '').trim()
+        if (u) out.push({ ts: e.ts, order: order++, kind: 'speech', who: 'user', text: u })
+        if (a) out.push({ ts: e.ts, order: order++, kind: 'speech', who: 'ai', text: a, latencyMs: dt.ms_since_user_input, cut: !!dt.possible_coach_cut })
+      } else if (ev === 'gemini.coach.ghost_turn_dropped') {
+        out.push({ ts: e.ts, order: order++, kind: 'interruption', label: dt.reason, gap: dt.gap_since_last_coach_s })
+      } else if (showSystem) {
+        const sev = e.severity || 'INFO'
+        const interesting = sev === 'ERROR' || sev === 'WARNING'
+          || ev.startsWith('gemini.setup') || ev.startsWith('ws.') || ev.startsWith('session.')
+          || ev === 'gemini.audio.first_chunk' || ev === 'audio.context.real_sample_rate'
+        if (interesting) out.push({ ts: e.ts, order: order++, kind: 'system', label: ev, severity: sev, raw: dt })
+      }
+    }
+    out.sort((x, y) => (x.ts === y.ts ? x.order - y.order : (x.ts < y.ts ? -1 : 1)))
+    return out
+  }, [events, showSystem])
+
+  const nSpeech = items.filter((i) => i.kind === 'speech').length
+  const nInterrupt = items.filter((i) => i.kind === 'interruption').length
+  const noLogs = !loading && (failed || (events !== null && events.length === 0))
+
+  return (
+    <div className="card card-elev" style={{ padding: 16, marginTop: 14 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ fontWeight: 700, fontSize: 15 }}>
+          Conversación + eventos
+          {!noLogs && !loading && (
+            <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--fg-3)', marginLeft: 8 }}>
+              {nSpeech} turnos · {nInterrupt} interrupciones
+            </span>
+          )}
+        </div>
+        {!noLogs && !loading && (
+          <button className="btn btn-ghost btn-sm" onClick={() => setShowSystem((v) => !v)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <SvgGear /> {showSystem ? 'Ocultar' : 'Mostrar'} eventos de sistema
+          </button>
+        )}
+      </div>
+
+      {loading && <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Cargando timeline en vivo…</div>}
+
+      {/* Fallback: charla vieja / sin logs en vivo → transcript persistido de la DB */}
+      {noLogs && (
+        <div>
+          <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 12, padding: '8px 12px', background: 'var(--bg-2)', borderRadius: 8 }}>
+            Sin eventos en vivo en Cloud Logging (charla anterior a la retención de ~30 días o sin instrumentar). Mostrando el transcript persistido en la DB.
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {d.transcript.length === 0 && <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Tampoco hay transcript en la DB.</div>}
+            {d.transcript.map((turn, i) => {
+              const isAi = turn.who === 'ai'
+              return (
+                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                  <span style={{ flexShrink: 0, marginTop: 2, padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700, background: isAi ? 'rgba(99,102,241,.14)' : 'rgba(0,179,126,.14)', color: isAi ? '#4f46e5' : '#00875f', minWidth: 56, textAlign: 'center' }}>
+                    {isAi ? 'COACH' : 'ALUMNO'}
+                  </span>
+                  <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-1)', flex: 1 }}>
+                    {(turn.text || '').trim() || <span style={{ color: 'var(--fg-3)', fontStyle: 'italic' }}>(vacío)</span>}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Timeline unificado */}
+      {!loading && !noLogs && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {items.map((it, i) => <TimelineRow key={i} it={it} />)}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TimelineRow({ it }: { it: TimelineItem }) {
+  const clock = fmtClock(it.ts)
+
+  if (it.kind === 'interruption') {
+    return (
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '7px 12px', borderRadius: 8, background: 'rgba(234,88,12,.10)', border: '1px solid rgba(234,88,12,.25)' }}>
+        <span style={{ color: '#ea580c', display: 'flex' }}><SvgBolt /></span>
+        <span style={{ fontSize: 12, color: '#9a3412', fontWeight: 600 }}>
+          Interrupción · el coach iba a hablar sin input del alumno
+          {it.gap != null && <span style={{ fontWeight: 400 }}> · gap {Number(it.gap).toFixed(1)}s</span>}
+          {it.label && <span style={{ fontWeight: 400, color: '#c2410c' }}> ({it.label})</span>}
+        </span>
+        <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--fg-3)', fontFamily: 'JetBrains Mono, monospace' }}>{clock}</span>
+      </div>
+    )
+  }
+
+  if (it.kind === 'system') {
+    const sevColor = it.severity === 'ERROR' ? '#dc2626' : it.severity === 'WARNING' ? '#d97706' : 'var(--fg-3)'
+    return (
+      <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', padding: '3px 12px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'var(--fg-3)' }}>
+        <span style={{ color: sevColor, display: 'flex', alignSelf: 'center' }}><SvgGear /></span>
+        <span style={{ color: sevColor, fontWeight: 600 }}>{it.label}</span>
+        <span style={{ color: 'var(--fg-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+          {it.raw ? JSON.stringify(it.raw) : ''}
+        </span>
+        <span style={{ fontSize: 10 }}>{clock}</span>
+      </div>
+    )
+  }
+
+  // speech
+  const isAi = it.who === 'ai'
+  return (
+    <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+      <span style={{ flexShrink: 0, marginTop: 2, padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700, background: isAi ? 'rgba(99,102,241,.14)' : 'rgba(0,179,126,.14)', color: isAi ? '#4f46e5' : '#00875f', minWidth: 56, textAlign: 'center' }}>
+        {isAi ? 'COACH' : 'ALUMNO'}
+      </span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-1)' }}>{it.text}</div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 2, flexWrap: 'wrap' }}>
+          {isAi && it.latencyMs != null && (
+            <span style={{ fontSize: 10, color: 'var(--fg-3)' }}>respondió en {(it.latencyMs / 1000).toFixed(1)}s</span>
+          )}
+          {isAi && it.cut && (
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', background: 'rgba(220,38,38,.10)', padding: '1px 6px', borderRadius: 4 }}>posible corte al alumno</span>
+          )}
+          <span style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'JetBrains Mono, monospace' }}>{clock}</span>
+        </div>
+      </div>
     </div>
   )
 }

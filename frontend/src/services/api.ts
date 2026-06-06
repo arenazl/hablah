@@ -364,6 +364,20 @@ export interface AuditSessionFilters {
   offset?: number
 }
 
+/** Evento crudo del structured-log (Cloud Logging) para una sesión. */
+export interface AuditLogEvent {
+  ts: string
+  severity: string
+  event: string
+  data: Record<string, any>
+}
+export interface AuditTimelineResponse {
+  session_id: number
+  window_minutes: number
+  n_events: number
+  timeline: AuditLogEvent[]
+}
+
 export const auditAPI = {
   stats: () => api.get<AuditStats>('/audit/stats').then((r) => r.data),
   sessions: (filters: AuditSessionFilters = {}) =>
@@ -372,6 +386,10 @@ export const auditAPI = {
     api.get<AuditSessionDetail>(`/audit/sessions/${id}`).then((r) => r.data),
   errors: (filters: { q?: string; user_id?: number; kind?: string; resolved?: boolean; limit?: number; offset?: number } = {}) =>
     api.get<{ total: number; errors: AuditErrorRow[] }>('/audit/errors', { params: filters }).then((r) => r.data),
+  /** Timeline en vivo desde Cloud Logging (turnos con texto + interrupciones + timing).
+   * `minutes` = ventana hacia atrás que cubre el inicio de la charla. */
+  timeline: (id: number, minutes: number) =>
+    api.get<AuditTimelineResponse>(`/diag/session-trace/${id}`, { params: { minutes } }).then((r) => r.data),
 }
 
 /* ────────────── TTS ────────────── */
