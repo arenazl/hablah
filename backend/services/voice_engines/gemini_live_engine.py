@@ -153,8 +153,8 @@ RENEW_BEFORE_END_SECONDS = 30
 # El trigger sintetico se metia en el medio del turno coach causando frases
 # concatenadas tipo "...Decila vos!¡Ay perdon no te escuche!". Subido a 12s
 # real (tras evidencia en logs de Timo session 181).
-COACH_SILENCE_TRIGGER_SECONDS = 12
-COACH_SILENCE_HARD_RESCUE_SECONDS = 22
+COACH_SILENCE_TRIGGER_SECONDS = 25
+COACH_SILENCE_HARD_RESCUE_SECONDS = 45
 
 
 async def _get_vertex_token() -> str:
@@ -433,13 +433,22 @@ class GeminiLiveEngine(VoiceEngine):
         # con la cola del turno anterior 13-15s despues, sin que el user haya
         # hablado. Sintoma: coach repite algo, se frena, retoma otra cosa
         # (bug S493). Detectamos y descartamos esos turnos.
+        # IMPORTANTE: chequeamos user_audio_chunks_since_last_coach Y NO solo
+        # inputTranscription, porque el VAD a veces no transcribe en tiempo real
+        # (especialmente turnos largos) y la transcripcion llega despues del
+        # primer audio del coach. Sin este check, dropeabamos turnos legitimos
+        # del coach (S495: 7 turnos descartados por error).
         ghost_state = {
             "coach_turns_completed": 0,           # cuantos turnos del coach cerraron OK
-            "user_input_since_last_coach": False, # llego input_transcription desde el ultimo turn.complete del coach?
+            "user_input_since_last_coach": False, # llego input_transcription desde el ultimo turn.complete?
+            "user_audio_chunks_since_last_coach": 0,  # chunks de audio del user desde el ultimo coach close
             "last_coach_turn_complete_at": None,  # timestamp del ultimo turn.complete del coach
             "current_turn_is_ghost": False,       # turno actual marcado como ghost -> dropear audio/transcript
         }
         GHOST_MIN_GAP_SECONDS = 5.0  # gap minimo desde el ultimo coach turn para considerar ghost
+        # umbral de chunks audio del user para considerar "hubo input real":
+        # ~20 chunks @ 128ms = ~2.5s de voz / silencio capturado del mic.
+        GHOST_MIN_USER_AUDIO_CHUNKS = 20
 
         async def client_to_google() -> None:
             try:
@@ -458,6 +467,9 @@ class GeminiLiveEngine(VoiceEngine):
                             client_sr = 16000
                         counters["user_audio_chunks"] += 1
                         counters["user_audio_bytes"] += len(b64) * 3 // 4  # base64 → bytes aprox
+                        # Tracking para defensa anti-ghost: este chunk cuenta
+                        # como "user mando audio desde el ultimo coach close".
+                        ghost_state["user_audio_chunks_since_last_coach"] += 1
                         # Log el sample rate la primera vez
                         if counters["user_audio_chunks"] == 1:
                             trace.event("client.audio.first_chunk",
@@ -584,13 +596,21 @@ class GeminiLiveEngine(VoiceEngine):
                             inline = part.get("inlineData")
                             if inline and inline.get("mimeType", "").startswith("audio"):
                                 # Deteccion de ghost turn: SOLO al inicio del turno.
-                                # Si es primer audio chunk del turno, evaluar si es ghost.
+                                # Es ghost si: no es saludo + sin input_transcription +
+                                # sin audio chunks del user recientes + gap > 5s.
+                                # El check de audio chunks es CLAVE: la transcripcion del
+                                # input a veces llega DESPUES del primer audio del coach
+                                # (S495 perdimos 7 turnos legitimos por solo mirar transcription).
                                 if timing.get("current_turn_ai_started_at") is None:
                                     now_t = time.time()
                                     last_close = ghost_state["last_coach_turn_complete_at"]
+                                    has_user_input = (
+                                        ghost_state["user_input_since_last_coach"]
+                                        or ghost_state["user_audio_chunks_since_last_coach"] >= GHOST_MIN_USER_AUDIO_CHUNKS
+                                    )
                                     if (
                                         ghost_state["coach_turns_completed"] >= 1
-                                        and not ghost_state["user_input_since_last_coach"]
+                                        and not has_user_input
                                         and last_close is not None
                                         and (now_t - last_close) > GHOST_MIN_GAP_SECONDS
                                     ):
@@ -601,7 +621,8 @@ class GeminiLiveEngine(VoiceEngine):
                                             session_id=session_id_log,
                                             gap_since_last_coach_s=round(now_t - last_close, 2),
                                             coach_turns_so_far=ghost_state["coach_turns_completed"],
-                                            reason="no_user_input_since_last_turn",
+                                            user_audio_chunks_in_window=ghost_state["user_audio_chunks_since_last_coach"],
+                                            reason="no_user_input_or_audio_since_last_turn",
                                         )
                                     timing["current_turn_ai_started_at"] = asyncio.get_event_loop().time()
 
@@ -728,6 +749,7 @@ class GeminiLiveEngine(VoiceEngine):
                             ghost_state["coach_turns_completed"] += 1
                             ghost_state["last_coach_turn_complete_at"] = time.time()
                             ghost_state["user_input_since_last_coach"] = False
+                            ghost_state["user_audio_chunks_since_last_coach"] = 0
                             ghost_state["current_turn_is_ghost"] = False
                             if was_ghost:
                                 # No notificamos al cliente — el ghost no existio.
