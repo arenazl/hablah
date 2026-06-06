@@ -253,7 +253,7 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                         # corto, el coach asumia turn-end en cualquier pausa
                         # natural y arrancaba a responder cortando al alumno.
                         # NOTA: Capped a 2000ms ya que Gemini Live API rechaza valores mayores con error 1007.
-                        int(min(max(ctx.silence_tolerance_ms, 1200), 2000))
+                        int(min(max(ctx.silence_tolerance_ms, 1500), 2000))
                     ),
                 },
                 # Permitimos siempre que el alumno interrumpa al coach. Si el
@@ -583,9 +583,9 @@ class GeminiLiveEngine(VoiceEngine):
                         if input_tr and input_tr.get("text"):
                             counters["user_text_chunks"] += 1
                             user_buf.append(input_tr["text"])
-                            # Logueamos CADA chunk de input transcription para audit.
-                            # Antes solo el primero -> sesion 346 quedo ciega sobre lo
-                            # que el alumno dijo entre turnos 11 y 12.
+                            # Trackeo timing del ultimo input para detectar cortes
+                            # del coach (cuando responde apenas el alumno paro).
+                            timing["last_user_input_at"] = asyncio.get_event_loop().time()
                             trace.event("gemini.input_transcription",
                                         session_id=session_id_log,
                                         chunk_n=counters["user_text_chunks"],
@@ -594,11 +594,33 @@ class GeminiLiveEngine(VoiceEngine):
 
                         if sc.get("turnComplete"):
                             counters["turn_completes_seen"] += 1
+                            # Timing: cuanto paso desde el ultimo input del user
+                            # hasta este turn.complete. Si fue corto y el turno es
+                            # del COACH (no del user), el coach probablemente le
+                            # corto al alumno.
+                            ms_since_user = None
+                            possible_cut = False
+                            last_in = timing.get("last_user_input_at")
+                            if last_in is not None:
+                                ms_since_user = int((asyncio.get_event_loop().time() - last_in) * 1000)
+                                # Si el coach respondio rapido (<1500ms) y este turno
+                                # es del coach (user_buf vacio), es un probable corte.
+                                if ms_since_user < 1500 and not "".join(user_buf).strip():
+                                    possible_cut = True
+                                    counters["possible_cuts"] = counters.get("possible_cuts", 0) + 1
                             trace.event("gemini.turn.complete",
                                         session_id=session_id_log,
                                         n=counters["turn_completes_seen"],
                                         user_text="".join(user_buf).strip()[:200],
-                                        ai_text="".join(ai_buf).strip()[:200])
+                                        ai_text="".join(ai_buf).strip()[:200],
+                                        ms_since_user_input=ms_since_user,
+                                        possible_coach_cut=possible_cut)
+                            if possible_cut:
+                                trace.warn("gemini.coach.possible_cut",
+                                           session_id=session_id_log,
+                                           turn_n=counters["turn_completes_seen"],
+                                           ms_since_user_input=ms_since_user,
+                                           ai_text_preview="".join(ai_buf).strip()[:200])
                             last_user_text = "".join(user_buf).strip()
                             _flush_buffers()
                             # Si el ultimo turno completado fue del USER, anotamos
