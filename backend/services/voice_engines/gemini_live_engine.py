@@ -388,6 +388,16 @@ class GeminiLiveEngine(VoiceEngine):
         ai_buf: list[str] = []
         user_buf: list[str] = []
 
+        # State machine de la cola post-turnComplete (spec oficial Live API):
+        # "outputTranscription is sent INDEPENDENTLY of other server messages
+        # and there is NO GUARANTEED ORDERING". Es decir, puede llegar texto
+        # del coach DESPUES del turnComplete del mismo turno. Si lo appendeamos
+        # a ai_buf nuevo, se pega al PROXIMO turno como fragmento.
+        # Lo correcto: mientras hay turno cerrado esperando cola, mergear text
+        # al ULTIMO transcript[-1] del ai. El nuevo turno arranca solo cuando
+        # llega un audio chunk nuevo del modelo.
+        coach_turn_closed_awaiting_tail = [False]  # mutable container para closure
+
         def _flush_buffers():
             if ai_buf:
                 full = "".join(ai_buf).strip()
@@ -399,6 +409,17 @@ class GeminiLiveEngine(VoiceEngine):
                 if full:
                     transcript.append({"who": "user", "text": full})
                 user_buf.clear()
+
+        def _merge_tail_into_last_ai(text: str) -> bool:
+            """Mergea text rezagado al ultimo turno del coach en transcript.
+            Devuelve True si lo mergeo, False si no habia turno previo."""
+            if not text or not text.strip():
+                return True
+            for i in range(len(transcript) - 1, -1, -1):
+                if transcript[i].get("who") == "ai":
+                    transcript[i]["text"] = (transcript[i]["text"] or "") + text
+                    return True
+            return False
 
         # Holder mutable de la conexion a Gemini.
         # Al renovar, reemplazamos gws_holder["ws"] sin tocar el WS del cliente.
@@ -595,6 +616,17 @@ class GeminiLiveEngine(VoiceEngine):
                                 pass
 
                         model_turn = sc.get("modelTurn") or {}
+                        # Si llega audio del modelo y estabamos esperando cola
+                        # del turno previo, ese turno previo se cierra de verdad:
+                        # arranca el nuevo turno. Cualquier text que venga ahora
+                        # va al nuevo ai_buf, no como cola del anterior.
+                        has_audio_now = any(
+                            (p.get("inlineData") or {}).get("mimeType", "").startswith("audio")
+                            for p in model_turn.get("parts", [])
+                        )
+                        if has_audio_now and coach_turn_closed_awaiting_tail[0]:
+                            coach_turn_closed_awaiting_tail[0] = False
+
                         for part in model_turn.get("parts", []):
                             inline = part.get("inlineData")
                             if inline and inline.get("mimeType", "").startswith("audio"):
@@ -659,6 +691,12 @@ class GeminiLiveEngine(VoiceEngine):
                                 elif ghost_state["current_turn_is_ghost"]:
                                     # Ghost turn: descartar texto tambien
                                     pass
+                                elif coach_turn_closed_awaiting_tail[0]:
+                                    # Cola del turno previo (spec: outputTranscription
+                                    # llega independientemente, sin ordering garantizado).
+                                    # Mergear al transcript previo en lugar de appendear a
+                                    # ai_buf nuevo.
+                                    _merge_tail_into_last_ai(text)
                                 else:
                                     timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                     counters["ai_text_chunks"] += 1
@@ -669,6 +707,10 @@ class GeminiLiveEngine(VoiceEngine):
                         if out_tr and out_tr.get("text"):
                             if ghost_state["current_turn_is_ghost"]:
                                 pass  # ghost: no propagar transcripcion
+                            elif coach_turn_closed_awaiting_tail[0]:
+                                # Cola rezagada de outputTranscription post-turnComplete.
+                                # Mergear al transcript previo, no al ai_buf nuevo.
+                                _merge_tail_into_last_ai(out_tr["text"])
                             else:
                                 timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                 counters["ai_text_chunks"] += 1
@@ -682,6 +724,9 @@ class GeminiLiveEngine(VoiceEngine):
                             # Marcar que llego input del user desde el ultimo coach turn:
                             # el proximo turno del coach NO se considera ghost.
                             ghost_state["user_input_since_last_coach"] = True
+                            # User empezo a hablar -> ya no estamos esperando cola del
+                            # coach previo, el proximo audio del coach sera nuevo turno.
+                            coach_turn_closed_awaiting_tail[0] = False
                             now_ts = asyncio.get_event_loop().time()
                             timing["last_user_input_at"] = now_ts
                             # OVERLAP REAL: input del user llegando DESPUES de
@@ -735,11 +780,18 @@ class GeminiLiveEngine(VoiceEngine):
                             # Si era ghost turn, FLUSH SILENCIOSO: no escribir al
                             # transcript ni emitir turn_complete al cliente.
                             was_ghost = ghost_state["current_turn_is_ghost"]
+                            # Si el turno cerrado fue del COACH (ai_buf tenia texto),
+                            # marcamos que esperamos cola post-turnComplete - cualquier
+                            # text/outputTranscription que llegue antes del proximo audio
+                            # del coach se mergea al transcript previo, no al nuevo.
+                            had_ai_content = bool("".join(ai_buf).strip())
                             if was_ghost:
                                 user_buf.clear()
                                 ai_buf.clear()
                             else:
                                 _flush_buffers()
+                                if had_ai_content:
+                                    coach_turn_closed_awaiting_tail[0] = True
                             # Si el ultimo turno completado fue del USER, anotamos
                             # el timestamp para que el coach_watchdog empiece a
                             # contar el silencio del coach.
