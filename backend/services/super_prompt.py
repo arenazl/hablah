@@ -486,6 +486,7 @@ def _build_super_prompt_body(
     admin_directives: Optional[list[str]] = None,
     topic_visits: int = 0,
     previous_phrases: Optional[list[str]] = None,
+    recently_used_keywords: Optional[set] = None,
 ) -> str:
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
@@ -559,25 +560,39 @@ def _build_super_prompt_body(
         # modelo necesita para SALIR del 'what do you think?' generico cuando
         # se traba con el alumno.
         import random as _random
-        kw_all = (topic.keywords or [])
-        # Shuffle por sesion: evita que el modelo SIEMPRE elija el primer
-        # keyword (ej. "Last of Us") como opener. El primer item de la lista
-        # tiene sesgo de recencia/saliencia para el modelo.
-        kw_list = _random.sample(kw_all, min(12, len(kw_all))) if kw_all else []
+        kw_all = list(topic.keywords or [])
+        # Excluir keywords ya usadas en sesiones recientes del mismo topic.
+        # Si el alumno entro 10 veces al topic y siempre arranco con "Last of Us",
+        # esta sesion vamos a pickear OTRA del pool.
+        used_set = {k.lower() for k in (recently_used_keywords or set())}
+        fresh = [k for k in kw_all if k.lower() not in used_set]
+        if not fresh:
+            # Si ya las usamos todas, reset: mejor repetir alguna que dejar sin hook.
+            fresh = kw_all[:]
+        # Backend pickea UNO especifico: el modelo NO elige, asi no se sesga al
+        # mas saliente (Last of Us). El resto va como contexto secundario.
+        chosen_hook = _random.choice(fresh) if fresh else None
+        secondary = [k for k in kw_all if k != chosen_hook][:8]
+        _random.shuffle(secondary)
+
         topic_block = (
             f"TÓPICO DE HOY\n"
             f"- Tema: {topic.title}.\n"
             f"- Dirección sugerida: {seed}\n"
-            f"- DATOS CONCRETOS DEL TÓPICO (úsalos cuando el alumno se traba o\n"
-            f"  para aportar sustancia en vez de preguntar): {', '.join(kw_list)}.\n"
-            f"  Cuando no sepas qué decir, mencioná UNO de estos datos con tu\n"
-            f"  opinión sobre él. No los listes — usalos uno por turno como\n"
-            f"  hook concreto.\n"
-            f"- VARIACIÓN: en el primer turno NO elijas siempre el dato más obvio\n"
-            f"  (ej. el más famoso de la lista). Pickeá uno menos predecible para\n"
-            f"  abrir — el alumno puede tener varias sesiones del mismo tema y\n"
-            f"  notar si siempre arrancás igual."
         )
+        if chosen_hook:
+            topic_block += (
+                f"- HOOK CONCRETO ELEGIDO PARA ESTA SESIÓN: **{chosen_hook}**.\n"
+                f"  ARRANCÁ TU PRIMER TURNO con una opinión/dato/anécdota sobre '{chosen_hook}'.\n"
+                f"  NO MENCIONES otros nombres famosos antes que '{chosen_hook}'.\n"
+                f"  Si el alumno ya conoce el tema, podés profundizar en '{chosen_hook}'\n"
+                f"  o pivotear a los datos secundarios DESPUÉS, nunca al revés.\n"
+            )
+        if secondary:
+            topic_block += (
+                f"- DATOS SECUNDARIOS (usá DESPUÉS del hook elegido, no antes): "
+                f"{', '.join(secondary)}.\n"
+            )
         # NO le pidas al modelo "presentá el tema" en el opening — eso fuerza
         # "Let's talk about X" que el scorer marca como generic (opening_creativity
         # cae a 2-4/10). El opening se controla con OPENING_STYLES mas abajo:

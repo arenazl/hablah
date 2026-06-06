@@ -49,6 +49,32 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             from services.admin_feedback import load_active_directives
             admin_directives = await load_active_directives(template.id, db)
         is_kid = bool(getattr(user, "age_group", None)) or bool(getattr(user, "parent_user_id", None))
+
+        # Calcular qué keywords del topic ya se usaron en las ultimas 5 sesiones
+        # del MISMO user+topic. Esto evita que el coach siempre arranque con el
+        # mismo dato (ej. "Last of Us" en topic videojuegos).
+        recently_used_keywords: set[str] = set()
+        if topic and topic.keywords and s.user_id and s.topic_id:
+            recent_sessions = (await db.execute(
+                select(SessionModel.transcript)
+                .where(SessionModel.user_id == s.user_id)
+                .where(SessionModel.topic_id == s.topic_id)
+                .where(SessionModel.id != s.id)
+                .order_by(SessionModel.id.desc())
+                .limit(5)
+            )).all()
+            kw_lower = {k.lower(): k for k in topic.keywords}
+            for (tr,) in recent_sessions:
+                if not tr:
+                    continue
+                ai_text = " ".join(
+                    (line.get("text") or "") for line in tr
+                    if isinstance(line, dict) and line.get("who") == "ai"
+                ).lower()
+                for kl, kw in kw_lower.items():
+                    if kl in ai_text:
+                        recently_used_keywords.add(kw)
+
         return {
             "session_id": s.id,
             "user_id": user.id,
@@ -58,6 +84,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             "super_prompt": build_super_prompt(
                 user=user, template=template, topic=topic,
                 admin_directives=admin_directives,
+                recently_used_keywords=recently_used_keywords,
             ),
             "voice_id": template_voice_for_lang(template, user.target_language, user=user) if template else None,
             "language": user.target_language or "en",
