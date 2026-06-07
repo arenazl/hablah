@@ -5,10 +5,16 @@ Latencia ~500ms. Es el default para conversación en vivo.
 from __future__ import annotations
 
 import asyncio
+import base64
 import json
 import logging
 import time
 from typing import AsyncIterator
+
+try:
+    import audioop  # stdlib; removido en Python 3.13 (PEP 594)
+except ImportError:  # pragma: no cover
+    audioop = None
 
 import websockets
 from fastapi import WebSocket, WebSocketDisconnect
@@ -18,6 +24,42 @@ from core.trace import trace, trace_duration_ms
 from services.voice_engine import VoiceEngine, VoiceEngineContext
 
 log = logging.getLogger(__name__)
+
+
+def _pcm16_to_16k(pcm: bytes, in_rate: int, state):
+    """Resamplea PCM int16 LE mono de in_rate -> 16000 Hz.
+
+    Gemini Live native-audio SOLO transcribe input a 16kHz. iOS Safari suele
+    abrir el AudioContext a 48000 e ignorar el sampleRate pedido; mandar ese
+    audio declarado rate=48000 hacia que Vertex NO transcribiera el input
+    (user_text_chunks=0 -> coach mudo -> corte; S502/S503).
+
+    Mantener el `state` entre chunks evita clicks en los bordes
+    (audioop.ratecv lo gestiona). Devuelve (pcm_16k_bytes, new_state).
+    """
+    if in_rate == 16000 or not pcm:
+        return pcm, state
+    if audioop is not None:
+        return audioop.ratecv(pcm, 2, 1, in_rate, 16000, state)
+    # Fallback sin audioop (py3.13+): interpolacion lineal, sin filtro
+    # anti-alias. Suficiente para no romper; en py3.11 nunca se usa.
+    import array
+    samples = array.array("h")
+    samples.frombytes(pcm)
+    n_in = len(samples)
+    if n_in == 0:
+        return pcm, state
+    n_out = max(1, int(n_in * 16000 / in_rate))
+    out = array.array("h", bytes(2 * n_out))
+    step = n_in / n_out
+    for i in range(n_out):
+        pos = i * step
+        idx = int(pos)
+        frac = pos - idx
+        s0 = samples[idx]
+        s1 = samples[idx + 1] if idx + 1 < n_in else s0
+        out[i] = int(s0 + (s1 - s0) * frac)
+    return out.tobytes(), state
 
 
 async def _handle_admin_directive(*, raw_text: str, feedback_body: str, ctx, google_ws, client_ws):
@@ -133,7 +175,11 @@ else:
         "wss://generativelanguage.googleapis.com/ws/"
         "google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent"
     )
-    LIVE_MODEL = "models/gemini-2.5-flash-native-audio-preview-09-2025"
+    # Modelo configurable por env var. Default native-audio 2.5; en Heroku usamos
+    # gemini-3.1-flash-live-preview (set via GEMINI_LIVE_MODEL).
+    LIVE_MODEL = _os.getenv(
+        "GEMINI_LIVE_MODEL", "models/gemini-2.5-flash-native-audio-preview-09-2025"
+    )
 
 # Gemini Live tiene un límite duro de ~10 minutos por sesión.
 # Antes de ese límite renovamos transparentemente la sesión.
@@ -481,6 +527,11 @@ class GeminiLiveEngine(VoiceEngine):
         GHOST_MIN_GAP_SECONDS = 99999.0  # efectivamente desactivada
         GHOST_MIN_USER_AUDIO_CHUNKS = 0
 
+        # State del resampler del audio del cliente -> 16kHz (ver _pcm16_to_16k).
+        # Persiste durante toda la conexion del cliente (incluso renovaciones de
+        # la WS a Gemini) para no introducir clicks entre chunks consecutivos.
+        resample_state = {"state": None}
+
         async def client_to_google() -> None:
             try:
                 while not stop_event.is_set():
@@ -501,6 +552,29 @@ class GeminiLiveEngine(VoiceEngine):
                         # Tracking para defensa anti-ghost: este chunk cuenta
                         # como "user mando audio desde el ultimo coach close".
                         ghost_state["user_audio_chunks_since_last_coach"] += 1
+                        # Resampleo a 16kHz: Gemini Live native-audio solo
+                        # transcribe input a 16kHz. Si el cliente capta a otro
+                        # rate (iOS Safari = 48000), convertimos aca antes de
+                        # mandar. Sin esto Vertex no transcribia y el coach
+                        # quedaba mudo tras el saludo (S502/S503).
+                        send_sr = client_sr
+                        if client_sr != 16000 and b64:
+                            try:
+                                pcm_in = base64.b64decode(b64)
+                                pcm_16k, resample_state["state"] = _pcm16_to_16k(
+                                    pcm_in, client_sr, resample_state["state"])
+                                b64 = base64.b64encode(pcm_16k).decode("ascii")
+                                send_sr = 16000
+                                if counters["user_audio_chunks"] == 1:
+                                    trace.event("client.audio.resampled",
+                                                session_id=session_id_log,
+                                                from_sr=client_sr, to_sr=16000)
+                            except Exception as e:
+                                # Si el resampleo falla, mandamos el original (no
+                                # romper la sesion). Peor transcripcion > corte.
+                                trace.warn("client.audio.resample_failed",
+                                           session_id=session_id_log, error=str(e))
+                                send_sr = client_sr
                         # Log el sample rate la primera vez
                         if counters["user_audio_chunks"] == 1:
                             trace.event("client.audio.first_chunk",
@@ -517,7 +591,7 @@ class GeminiLiveEngine(VoiceEngine):
                         try:
                             await gws_holder["ws"].send(json.dumps({
                                 "realtimeInput": {
-                                    "audio": {"mimeType": f"audio/pcm;rate={client_sr}", "data": b64}
+                                    "audio": {"mimeType": f"audio/pcm;rate={send_sr}", "data": b64}
                                 }
                             }))
                         except websockets.ConnectionClosed:
