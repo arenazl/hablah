@@ -281,18 +281,18 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                     "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": getattr(ctx, "voice_name", None) or "Kore"}},
                 },
             },
-            # SafetySettings BLOCK_NONE: es una app de aprendizaje de idiomas, los
-            # alumnos hablan de todo (incluso temas crudos, malas palabras). Sin
-            # esto, Gemini Live BLOQUEA SILENCIOSAMENTE turnos enteros del coach
-            # cuando el input contiene palabras que su filtro considera sensibles
-            # (S498 Jona: el coach quedo MUDO en 2 turnos por el filtro de safety).
-            "safetySettings": [
+            # SafetySettings BLOCK_NONE: SOLO Vertex lo acepta a nivel 'setup'. AI Studio
+            # (gemini-3.x-flash-live-preview) rechaza el campo con 1007 "Unknown name
+            # safetySettings at 'setup'" -> cierra el WS y el coach queda MUDO. Por eso
+            # lo incluimos condicional al provider. (BLOCK_NONE evita que el filtro mute
+            # turnos del coach por palabras sensibles - S498 Jona.)
+            **({"safetySettings": [
                 {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
                 {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
                 {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
                 {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
                 {"category": "HARM_CATEGORY_CIVIC_INTEGRITY", "threshold": "BLOCK_NONE"},
-            ],
+            ]} if VOICE_PROVIDER == "vertex" else {}),
             "realtimeInputConfig": {
                 "automaticActivityDetection": {
                     "disabled": False,
