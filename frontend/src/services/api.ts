@@ -422,10 +422,11 @@ export function buildWsBase(): string {
   return fullBase.replace(/^http/, 'ws')
 }
 
-export function buildVoiceWsUrl(sessionId: number, explicitToken?: string): string {
+export function buildVoiceWsUrl(sessionId: number, explicitToken?: string, voice?: string): string {
   const wsBase = buildWsBase()
   const token = explicitToken ?? localStorage.getItem('token') ?? ''
-  return `${wsBase}/voice/ws?session_id=${sessionId}&token=${encodeURIComponent(token)}`
+  const voiceParam = voice ? `&voice=${encodeURIComponent(voice)}` : ''
+  return `${wsBase}/voice/ws?session_id=${sessionId}&token=${encodeURIComponent(token)}${voiceParam}`
 }
 
 /** URL del WebSocket de voice room. Va DIRECTO al backend (no via Netlify) para

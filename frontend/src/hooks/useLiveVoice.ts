@@ -100,6 +100,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   const playQueueRef = useRef<Array<{ floats: Float32Array; sampleRate: number }>>([])
   const playingRef = useRef(false)
   const nextStartTimeRef = useRef<number>(0)
+  // Marca que el coach cerro su turno: el PROXIMO chunk de audio que llegue es
+  // el arranque de un turno nuevo. Lo usamos para re-sincronizar el playback
+  // (descartar cola vieja acumulada) sin cortar a mitad de frase.
+  const coachTurnEndedRef = useRef(false)
   // Trackeamos las BufferSource agendadas para poder cancelarlas si el usuario
   // interrumpe al coach (barge-in).
   const playSourcesRef = useRef<AudioBufferSourceNode[]>([])
@@ -181,6 +185,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         }
         playSourcesRef.current = []
         nextStartTimeRef.current = ctx.currentTime
+        // Telemetria: cuanto se habia acumulado la cola antes de limpiarla.
+        // Si esto aparece con ahead alto, el delay ERA el playback acumulado.
+        trace('voice.playback.drift_reset', activeSessionIdRef.current, {
+          ahead_ms: Math.round(ahead * 1000),
+        })
         optsRef.current.onAudioGlitch?.({
           reason: 'audio_drift_reset',
           delayMs: Math.round(ahead * 1000),
@@ -281,6 +290,26 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         const samples = new Int16Array(bytes.buffer, bytes.byteOffset, Math.floor(bytes.byteLength / 2))
         const float = new Float32Array(samples.length)
         for (let i = 0; i < samples.length; i++) float[i] = samples[i] / 32768
+        // RE-SYNC al iniciar un turno NUEVO del coach: si quedo cola vieja
+        // acumulada (delay de 4-11s medido), la descartamos y arrancamos en el
+        // presente. Se ejecuta SOLO en el primer chunk del turno nuevo (no a
+        // mitad de frase, a diferencia del catch-up que cortaba en cualquier lado).
+        if (coachTurnEndedRef.current && playCtxRef.current) {
+          coachTurnEndedRef.current = false
+          const ahead = nextStartTimeRef.current - playCtxRef.current.currentTime
+          if (ahead > 1.5) {
+            for (const src of playSourcesRef.current) {
+              try { src.stop() } catch {}
+              try { src.disconnect() } catch {}
+            }
+            playSourcesRef.current = []
+            playQueueRef.current = []
+            nextStartTimeRef.current = playCtxRef.current.currentTime
+            trace('voice.playback.turn_resync', activeSessionIdRef.current, {
+              dropped_ms: Math.round(ahead * 1000),
+            })
+          }
+        }
         playQueueRef.current.push({ floats: float, sampleRate })
         if (!playCtxRef.current) {
           const settings = loadAudioSettings()
@@ -304,7 +333,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   )
 
   const start = useCallback(
-    async (sessionId: number, explicitToken?: string) => {
+    async (sessionId: number, explicitToken?: string, voice?: string) => {
       activeSessionIdRef.current = sessionId
       trace('session.client.start', sessionId)
       setStatus('connecting')
@@ -329,7 +358,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       }
       streamRef.current = stream
 
-      const url = buildVoiceWsUrl(sessionId, explicitToken)
+      const url = buildVoiceWsUrl(sessionId, explicitToken, voice)
       trace('ws.client.connecting', sessionId, { url: url.replace(/token=[^&]+/, 'token=…') })
       const ws = new WebSocket(url)
       wsRef.current = ws
@@ -494,6 +523,16 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         optsRef.current.onTranscript?.(line)
       } else if (msg.type === 'turn_complete') {
         setStatusIfChanged('listening')
+        // El coach cerro turno: el proximo audio sera un turno nuevo -> habilita
+        // el re-sync del playback (descartar cola vieja acumulada).
+        coachTurnEndedRef.current = true
+        // Telemetria: backlog de la cola de playback al cerrar el turno.
+        // Si crece turno a turno, el coach se escucha con delay acumulado.
+        const pctx = playCtxRef.current
+        if (pctx) {
+          const backlogMs = Math.round((nextStartTimeRef.current - pctx.currentTime) * 1000)
+          trace('voice.playback.backlog', activeSessionIdRef.current, { backlog_ms: backlogMs })
+        }
         // Marcar timestamp para medir latencia hasta primera respuesta del AI.
         // Sin distinguir quien fue el turno: si el user acaba de terminar,
         // el siguiente audio que llegue del AI sera la respuesta.

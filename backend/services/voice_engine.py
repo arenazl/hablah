@@ -49,6 +49,7 @@ class VoiceEngineContext:
         template_id: Optional[int] = None,
         is_kid: bool = False,
         user_name: Optional[str] = None,
+        voice_name: Optional[str] = None,
     ) -> None:
         self.session_id = session_id
         self.user_id = user_id
@@ -57,6 +58,7 @@ class VoiceEngineContext:
         self.user_name = user_name or ""
         self.super_prompt = super_prompt
         self.voice_id = voice_id  # ElevenLabs voice_id (para engines que lo soporten)
+        self.voice_name = voice_name  # Gemini Live prebuilt voice (Puck, Charon, ...) por personaje kids
         self.language = language
         self.target_language = target_language
         self.silence_tolerance_ms = silence_tolerance_ms

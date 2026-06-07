@@ -123,7 +123,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         }
 
 
-async def voice_proxy(ws: WebSocket, session_id: int, token: str) -> None:
+async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: str | None = None) -> None:
     # Validar JWT
     try:
         payload = decode_token(token)
@@ -137,6 +137,11 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str) -> None:
         await ws.close(code=4004)
         return
 
+    # Voz prebuilt elegida por el chico (Nivel 1 personajes). Whitelist defensiva:
+    # voz desconocida -> None -> el engine cae a Kore (default).
+    _VALID_VOICES = {"Puck", "Charon", "Kore", "Fenrir", "Aoede", "Leda", "Orus", "Zephyr"}
+    safe_voice = voice_name if voice_name in _VALID_VOICES else None
+
     ctx = VoiceEngineContext(
         session_id=ctx_dict["session_id"],
         user_id=ctx_dict["user_id"],
@@ -145,6 +150,7 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str) -> None:
         template_id=ctx_dict.get("template_id"),
         super_prompt=ctx_dict["super_prompt"],
         voice_id=ctx_dict["voice_id"],
+        voice_name=safe_voice,
         language=ctx_dict["language"],
         target_language=ctx_dict["target_language"],
         silence_tolerance_ms=ctx_dict.get("silence_tolerance_ms", 800),

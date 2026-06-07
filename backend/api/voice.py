@@ -26,13 +26,15 @@ async def voice_ws(
     websocket: WebSocket,
     session_id: int = Query(...),
     token: str = Query(...),
+    voice: str = Query(None),
 ):
     """WebSocket bidireccional para conversación en vivo con Gemini Live.
 
     Cliente debe pasar session_id (creado por POST /api/sessions/start) + token JWT.
+    `voice` opcional: voz prebuilt de Gemini (Puck, Charon, ...) por personaje kids.
     """
     await websocket.accept()
-    await voice_proxy(websocket, session_id, token)
+    await voice_proxy(websocket, session_id, token, voice_name=voice)
 
 
 @router.websocket("/ws_room")
