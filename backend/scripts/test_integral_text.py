@@ -36,9 +36,7 @@ COACH = SimpleNamespace(
     scaffold_when_stuck=True, pedagogy_preset="ludico", avoid_superlative_questions=True,
     one_question_per_turn=True, opening_includes_topic_intro=True, curriculum_mode=None,
     identity_description=None, segmento="mini",
-    enfoque=("Enfoque para un nene chiquito: explicale el mundo con palabras simples, dale ejemplos "
-             "concretos, metele alguna broma, y SOBRE TODO andá UNIENDO las palabras que aprende en una "
-             "frasecita. La clase es un CUENTO/AVENTURA donde él es el protagonista y la historia avanza."),
+    enfoque=ENFOQUE_NINOS_PLACEHOLDER,
 )
 MODULE = {
     "focus_name": "Aislamiento fonético", "target_grammar": "Vocabulario visual del tema",
@@ -47,6 +45,24 @@ MODULE = {
                       "Hablás DESPACIO, una idea por turno, esperás respuesta. CADA turno mezcla español + la palabra en inglés. "
                       "PROHIBIDO onomatopeyas de relleno. La clase dura varios minutos y la cierra el adulto: vos NUNCA te despedís."),
 }
+ENFOQUE_NINOS_PLACEHOLDER = (
+    "ENFOQUE para un nene chiquito (3-7), paso a paso:\n"
+    "ARCO: arrancá SIEMPRE con una intro corta y clara: saludá al chico por su nombre y presentá la "
+    "aventura de hoy y QUÉ van a hacer ('Hoy somos cocineros y vamos a aprender los nombres de las "
+    "comidas en inglés'). Recién ahí entrás en la historia.\n"
+    "ENSEÑAR = HACERLO DECIR, no solo escuchar. Con cada palabra clave: (1) presentala en contexto con "
+    "un ejemplo simple ('los brazos son lo que usamos para aplaudir; en inglés es ARMS'); (2) pedile CLARO "
+    "que la repita: 'A ver, decí después de mí: ARMS' y esperá; (3) si la dijo, festejá de verdad; si no, "
+    "modelá de nuevo despacio (NUNCA mientas con un 'muy bien'); (4) después 'ahora vos solo, ¿cómo era?' "
+    "para que la PRODUZCA él. El chico SIEMPRE tiene que saber qué le estás pidiendo.\n"
+    "PEDIDOS CON RESPUESTA: tus pedidos tienen respuesta concreta (repetí esta palabra; elegí entre estas "
+    "dos). PROHIBIDO preguntas abiertas que el chico no puede responder ('¿dónde estará?', '¿qué le "
+    "ponemos?') — no enseñan, lo dejan adivinando.\n"
+    "NO pidas cosas que no podés ver ni oír: nada de mover el cuerpo, saltar o gestos (no lo ves por "
+    "cámara), y NUNCA festejes una acción física que no comprobaste. Lo único que comprobás es lo que DICE.\n"
+    "NADA de onomatopeyas de relleno (oinc, yum, splash)."
+)
+
 CASES = [
     {"topic": "Comidas ricas"},
     {"topic": "Animales de la granja y la selva"},
@@ -90,11 +106,14 @@ STUDENT_SYS = ("Sos un nene de 5 años en una clase de inglés con Habi. Respond
                "una pibada). NO actúes de profe. Máximo 1 frase corta.")
 
 JUDGE_SYS = ("Sos un evaluador pedagógico. Te paso la transcripción de una clase de inglés para un nene de 5 "
-             "años. Devolvé SOLO JSON con estas claves booleanas y un score:\n"
-             '{"narrativa": true si es un cuento/aventura que avanza (NO una lista de palabras sueltas tipo "pizza ok, dog ok"),'
+             "años. Para CADA clave, true=bien. Devolvé SOLO JSON:\n"
+             '{"intro": true si el coach ARRANCA con una introducción clara (saluda y presenta la aventura y qué van a hacer) antes de pedir nada,'
+             ' "narrativa": true si es un cuento/aventura que avanza (NO una lista suelta tipo "pizza ok, dog ok"),'
+             ' "elicita": true si GUÍA al chico a DECIR las palabras con pedidos claros (modela y pide "repetí X" / "ahora vos"), en vez de preguntas abiertas que el chico no puede responder,'
              ' "mezcla_es_en": true si el coach mezcla español+inglés (ningún turno entero en inglés),'
-             ' "no_cierra": true si el coach NUNCA se despide ni cierra la clase,'
-             ' "vocab_del_tema": true si las palabras en inglés son del tema de la clase,'
+             ' "sin_circo": true si NO pide acciones físicas que no puede ver (mover brazos, saltar) NI usa onomatopeyas de relleno (oinc, yum),'
+             ' "no_cierra": true si el coach sigue la clase SIN despedirse (es CORRECTO que NO cierre; la corta el adulto). Poné false SOLO si el coach se despide o cierra él la clase,'
+             ' "vocab_del_tema": true si las palabras en inglés son del tema,'
              ' "coherente": true si todo tiene sentido (NADA tipo "la pizza tiene un name"),'
              ' "score": entero 1-10, "problema": "breve, o vacío si está ok"}')
 
@@ -152,7 +171,7 @@ async def main():
     if not settings.GEMINI_API_KEY:
         print("SIN GEMINI_API_KEY")
         return
-    crit = ["narrativa", "mezcla_es_en", "no_cierra", "vocab_del_tema", "coherente"]
+    crit = ["intro", "narrativa", "elicita", "mezcla_es_en", "sin_circo", "no_cierra", "vocab_del_tema", "coherente"]
     async with httpx.AsyncClient(timeout=60.0) as client:
         for case in CASES:
             prompt, results = await run_case(client, case)
