@@ -68,7 +68,8 @@ def _topic(title):
 
 
 async def _gemini(client, system, contents, temp=0.7, json_mode=False, max_tokens=400):
-    cfg = {"temperature": temp, "maxOutputTokens": max_tokens}
+    # thinkingBudget=0: 2.5-flash sin thinking, si no se come el presupuesto chico.
+    cfg = {"temperature": temp, "maxOutputTokens": max_tokens, "thinkingConfig": {"thinkingBudget": 0}}
     if json_mode:
         cfg["responseMimeType"] = "application/json"
     payload = {"contents": contents, "generationConfig": cfg}
