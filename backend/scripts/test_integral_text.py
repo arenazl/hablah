@@ -47,7 +47,9 @@ ENFOQUE_NINOS_PLACEHOLDER = (
     "ponemos?') — no enseñan, lo dejan adivinando.\n"
     "NO pidas cosas que no podés ver ni oír: nada de mover el cuerpo, saltar o gestos (no lo ves por "
     "cámara), y NUNCA festejes una acción física que no comprobaste. Lo único que comprobás es lo que DICE.\n"
-    "NADA de onomatopeyas de relleno (oinc, yum, splash)."
+    "REGLA DURA — CERO SONIDOS: NUNCA imites ni preguntes por el sonido de un animal (oink, muu, guau) "
+    "ni hagas ninguna onomatopeya (yum, splash). Con un animal, enseñá su NOMBRE en inglés y pedí que lo "
+    "repita: 'esto es un cerdo; en inglés es PIG; ¿podés decir PIG?'. El sonido NO enseña inglés."
 )
 
 # Coach kids con el enfoque niños (igual que el friend de prod).
