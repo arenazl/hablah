@@ -840,6 +840,157 @@ def _admin_directives_block(directives: Optional[list[str]]) -> str:
     )
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Motor Pedagógico Adaptativo — compositor JIT (plan warm-soaring-cloud)
+# Arma el prompt cruzando las 4 patas: coach (persona) + riel (metodología por
+# nivel) + tópico (escenario) + alumno. La bisagra `curriculum_mode` decide cómo
+# se fusionan el RIEL y el ESCENARIO. ADITIVO: entra detrás de feature-flag
+# (env COMPOSER_MODES); las ramas no habilitadas usan el monolito legacy intacto.
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _resolve_curriculum_mode(template, is_kid: bool, cefr: str) -> str:
+    """Modo de fusión riel↔escenario. Explícito en el template; si no, se infiere
+    (back-compat con el comportamiento actual)."""
+    explicit = getattr(template, "curriculum_mode", None)
+    if explicit:
+        return explicit
+    if is_kid and cefr == "A0":
+        return "staged_vocab"
+    if not is_kid and cefr != "A0":
+        return "hidden_objective"
+    return "legacy"  # ramas aún no migradas (kids A1+, adulto A0)
+
+
+def _composer_enabled(mode: str) -> bool:
+    """Flag por modo. env COMPOSER_MODES="staged_vocab,hidden_objective". Vacío = todo legacy."""
+    import os
+    enabled = {m.strip() for m in os.getenv("COMPOSER_MODES", "").split(",") if m.strip()}
+    return mode in enabled
+
+
+def _render_mode(*, mode, user, topic, methodology_module, topic_content,
+                 learning_objective, methodology_stage, free_topic,
+                 target_lang_name, base_lang_name):
+    """Devuelve (riel, escenario, combinacion, arranque) según el modo. La regla
+    de combinación es la sección que invierte la jerarquía riel↔escenario."""
+    topic_title = topic.title if topic else (free_topic or "tema libre")
+
+    def _vocab_list():
+        if topic_content and topic_content.get("allowed_vocabulary"):
+            return topic_content["allowed_vocabulary"]
+        if topic is not None and getattr(topic, "pinned_vocabulary", None):
+            return topic.pinned_vocabulary
+        if methodology_stage and methodology_stage.get("vocabulary"):
+            return methodology_stage["vocabulary"]
+        return []
+
+    if mode == "staged_vocab":
+        # kids A0: el RIEL manda, el tópico es el MUNDO donde se enseña.
+        if methodology_module and methodology_module.get("ai_restraints"):
+            riel = f"CÓMO ENSEÑÁS (riel del nivel — no negociable):\n{methodology_module['ai_restraints']}"
+            estructura = methodology_module.get("target_grammar") or ""
+        else:
+            riel = ("CÓMO ENSEÑÁS: profe cálida, despacio, una idea por turno, mezclá español + "
+                    "la palabra en inglés. Festejá solo cuando lo diga de verdad. Nunca cierres la clase.")
+            estructura = (methodology_stage or {}).get("target_structure") or ""
+        voc = _vocab_list()
+        voc_str = ", ".join((x.get("en") if isinstance(x, dict) else str(x)) for x in voc if x) or "(sin vocabulario cargado)"
+        escenario = (
+            f"QUÉ ENSEÑÁS HOY (la etapa manda):\n"
+            f"- Vocabulario (SOLO estas palabras): {voc_str}\n"
+            + (f"- Estructura objetivo: \"{estructura}\"\n" if estructura else "")
+            + f"- EL MUNDO de hoy (el tema que le gusta): {topic_title}"
+        )
+        combinacion = (
+            "REGLA DE COMBINACIÓN (la etapa manda, el tema es el mundo):\n"
+            f"- Enseñá ESE vocabulario DENTRO del tema \"{topic_title}\". NO lo ignores: ambientá "
+            "cada palabra en ese mundo (ej: tema=animales, vocab=colores → 'el perro es BROWN').\n"
+            "- PROHIBIDO traer vocabulario fuera de la etapa. PROHIBIDO enseñar en abstracto ignorando el tema.\n"
+            "- La clase dura varios minutos. NUNCA te despidas ni cierres la clase: la termina el adulto con el botón."
+        )
+        arranque = (
+            f"ARRANQUE: saludá a {user.nombre} por su nombre en {base_lang_name}, invitalo al mundo de hoy "
+            f"({topic_title}) y esperá que acepte. Recién después, la primera palabra de la etapa."
+        )
+        return riel, escenario, combinacion, arranque
+
+    if mode == "hidden_objective":
+        # adultos A1+: el TÓPICO manda, el objetivo gramatical va invisible.
+        riel = ""
+        if learning_objective:
+            from services.learning_objectives import format_objective_for_prompt
+            riel = format_objective_for_prompt(learning_objective, target_lang_name)
+        elif methodology_module:
+            riel = (f"OBJETIVO INVISIBLE (no lo anuncies): {methodology_module.get('focus_name','')}\n"
+                    f"{methodology_module.get('ai_restraints','')}")
+        escenario = f"TEMA DE HOY: {topic_title}. Es la charla real y visible; todo gira alrededor."
+        combinacion = (
+            "REGLA DE COMBINACIÓN (el tema manda, el objetivo va invisible):\n"
+            "- El tema es la conversación real. El objetivo gramatical NO se anuncia: tejelo creando "
+            "contextos donde el alumno naturalmente lo use. Si hay conflicto, gana la naturalidad de la charla."
+        )
+        arranque = f"ARRANQUE: entrá al tema con un dato/opinión/anécdota concreta sobre {topic_title}. No digas 'let's talk about'."
+        return riel, escenario, combinacion, arranque
+
+    # none / fallback
+    escenario = f"TEMA: {topic_title}. Charla libre."
+    return "", escenario, "REGLA: charla libre sobre el tema, sin objetivo oculto.", \
+        f"ARRANQUE: arrancá la charla sobre {topic_title}."
+
+
+def compose_session_prompt(*, mode, user, template, topic,
+                           methodology_module=None, topic_content=None,
+                           recent_errors=None, free_topic=None, topic_brief=None,
+                           admin_directives=None, topic_visits=0, previous_phrases=None,
+                           recently_used_keywords=None, learning_objective=None,
+                           methodology_stage=None) -> str:
+    """Ensambla el prompt de la sesión con esqueleto fijo de secciones.
+    [PERSONA←coach] [ALUMNO] [RIEL←metodología] [ESCENARIO←tópico] [COMBINACIÓN]
+    [CONTEXTO] [ARRANQUE]. El runtime addon lo prepende el wrapper build_super_prompt."""
+    cefr = user.cefr_level or "B1"
+    target = user.target_language or "en"
+    base = user.base_language or "es"
+    _LANG = {"en": "English", "pt": "Portuguese", "it": "Italian", "es": "Spanish", "fr": "French", "de": "German"}
+    target_lang_name = _LANG.get(target, target)
+    base_lang_name = _LANG.get(base, base)
+    age_group = getattr(user, "age_group", None)
+    is_kid = bool(age_group) or bool(getattr(user, "parent_user_id", None))
+    user_overrides = getattr(user, "user_preferences", None) or {}
+
+    persona = _template_block(template, user_overrides) if template else _fallback_template_block()
+    identity = getattr(template, "identity_description", None) if template else None
+    if identity:
+        persona = f"{persona}\n- {identity}"
+
+    alumno = (f"EL ALUMNO\n- Nombre: {user.nombre}.\n- Nivel: {cefr}.\n"
+              f"- Aprende {target_lang_name}; idioma materno {base_lang_name}.")
+    if is_kid:
+        alumno += f"\n- Es un CHICO/A (grupo {age_group})."
+
+    riel, escenario, combinacion, arranque = _render_mode(
+        mode=mode, user=user, topic=topic,
+        methodology_module=methodology_module, topic_content=topic_content,
+        learning_objective=learning_objective, methodology_stage=methodology_stage,
+        free_topic=free_topic, target_lang_name=target_lang_name, base_lang_name=base_lang_name,
+    )
+
+    contexto_parts = []
+    if recent_errors:
+        items = "\n".join(f"  · {e['label']} ({e['count']}×)" for e in recent_errors[:3])
+        contexto_parts.append(f"ÁREAS DONDE TROPIEZA (sin señalárselo):\n{items}")
+    if topic_visits > 0 and previous_phrases:
+        ph = "\n".join(f'  · "{p}"' for p in previous_phrases[:8])
+        contexto_parts.append(f"YA LE ENSEÑASTE ESTO (no repetir, traé variantes nuevas):\n{ph}")
+    contexto = "\n\n".join(contexto_parts)
+    admin = _admin_directives_block(admin_directives)
+
+    sections = [
+        f"[INSTRUCCIÓN DE SISTEMA — TUTOR HABLÁH · {mode.upper()}]",
+        persona, alumno, riel, escenario, combinacion, contexto, arranque, admin,
+    ]
+    return "\n\n".join(s for s in sections if s and s.strip())
+
+
 def _build_super_prompt_body(
     *,
     user: User,
@@ -854,6 +1005,8 @@ def _build_super_prompt_body(
     recently_used_keywords: Optional[set] = None,
     learning_objective: Optional[dict] = None,
     methodology_stage: Optional[dict] = None,
+    methodology_module: Optional[dict] = None,
+    topic_content: Optional[dict] = None,
 ) -> str:
     cefr = user.cefr_level or "B1"
     cefr_note = CEFR_GUIDANCE.get(cefr, CEFR_GUIDANCE["B1"])
@@ -868,6 +1021,19 @@ def _build_super_prompt_body(
     age_group = getattr(user, "age_group", None)
     is_kid = bool(age_group) or bool(getattr(user, "parent_user_id", None))
     age_label = {"mini": "Mini (4-7 años)", "junior": "Junior (7-10 años)", "tween": "Tween (10-14 años)"}.get(age_group or "", "Kid")
+
+    # Dispatch al compositor JIT si el modo está habilitado por flag (aditivo;
+    # las ramas no habilitadas caen al monolito legacy de abajo, intacto).
+    _mode = _resolve_curriculum_mode(template, is_kid, cefr)
+    if _composer_enabled(_mode):
+        return compose_session_prompt(
+            mode=_mode, user=user, template=template, topic=topic,
+            methodology_module=methodology_module, topic_content=topic_content,
+            recent_errors=recent_errors, free_topic=free_topic, topic_brief=topic_brief,
+            admin_directives=admin_directives, topic_visits=topic_visits,
+            previous_phrases=previous_phrases, recently_used_keywords=recently_used_keywords,
+            learning_objective=learning_objective, methodology_stage=methodology_stage,
+        )
 
     user_overrides = getattr(user, "user_preferences", None) or {}
     template_block = _template_block(template, user_overrides) if template else _fallback_template_block()

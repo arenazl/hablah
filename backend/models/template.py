@@ -85,6 +85,16 @@ class Template(Base):
     interruption_allowed = Column(Boolean, nullable=False, default=False)
     scaffold_when_stuck = Column(Boolean, nullable=False, default=True)
 
+    # ─── Motor Pedagógico Adaptativo (plan warm-soaring-cloud) ───
+    # La "bisagra": cómo se fusionan el riel (metodología) y el escenario (tópico).
+    #   staged_vocab     → el riel manda, el tópico decora (kids A0).
+    #   hidden_objective → el tópico manda, el objetivo va invisible (adultos A1+).
+    #   none             → charla libre.
+    # NULL = el compositor infiere el modo de (is_kid, cefr) — back-compat.
+    curriculum_mode = Column(String(20), nullable=True)
+    # Identidad actoral del coach (skin): descripción de la persona.
+    identity_description = Column(Text, nullable=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -132,6 +142,18 @@ class Topic(Base):
 
     # Solo aplica si category='kids': nivel etario del tópico
     kid_age_group = Column(String(10), nullable=True, index=True)  # 'mini' (4-7) | 'junior' (7-10) | 'tween' (10-14)
+
+    # ─── Motor Pedagógico Adaptativo (plan warm-soaring-cloud) ───
+    # Audiencia del tópico (reemplaza el chequeo frágil category=='kids').
+    audience = Column(String(10), nullable=False, default="adult")  # adult | kid
+    # is_curriculum=True → tópico de plan estructurado (vocab pinneado, ordenado).
+    # Acá migran las filas de MethodologyStage (Saludos/Colores/Conteo).
+    is_curriculum = Column(Boolean, nullable=False, default=False)
+    # nullable: se agrega vía ALTER sobre tabla existente (MySQL no acepta DEFAULT JSON).
+    pinned_vocabulary = Column(JSON, nullable=True)  # [{"en","es"}] (kids); None == []
+    target_structure = Column(String(200), nullable=True)  # "It's red"
+    target_structure_es = Column(String(200), nullable=True)
+    mastery_criteria = Column(String(300), nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

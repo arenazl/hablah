@@ -126,6 +126,47 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "mastery_criteria": st.mastery_criteria,
                 }
 
+        # Motor Pedagógico Adaptativo: cargar el RIEL del nivel (methodology_module)
+        # + la celda del junction (topic_content) para el tópico. TODO en el setup
+        # (nunca por turno). Defensivo: si las tablas aún no migraron, cae a None y
+        # el compositor usa el stage/legacy.
+        methodology_module = None
+        topic_content = None
+        try:
+            from models.methodology import MethodologyModule, TopicModuleContent
+            grp2 = (getattr(user, "age_group", None) or "mini") if is_kid else "adult"
+            level = user.cefr_level or "A0"
+            mod = (await db.execute(
+                select(MethodologyModule).where(
+                    MethodologyModule.student_type == grp2,
+                    MethodologyModule.level == level,
+                    MethodologyModule.active.is_(True),
+                ).order_by(MethodologyModule.module_order)
+            )).scalars().first()
+            if mod:
+                methodology_module = {
+                    "focus_name": mod.focus_name,
+                    "ai_restraints": mod.ai_restraints,
+                    "target_grammar": mod.target_grammar,
+                    "evaluation_criteria": mod.evaluation_criteria,
+                }
+                if topic is not None:
+                    cell = (await db.execute(
+                        select(TopicModuleContent).where(
+                            TopicModuleContent.topic_id == topic.id,
+                            TopicModuleContent.module_id == mod.id,
+                            TopicModuleContent.active.is_(True),
+                        )
+                    )).scalar_one_or_none()
+                    if cell:
+                        topic_content = {
+                            "seed_prompt": cell.seed_prompt,
+                            "required_keywords": cell.required_keywords or [],
+                            "allowed_vocabulary": cell.allowed_vocabulary or [],
+                        }
+        except Exception as e:
+            log.warning(f"motor pedagógico: módulo/junction no disponible ({e}); fallback a stage/legacy")
+
         return {
             "session_id": s.id,
             "user_id": user.id,
@@ -138,6 +179,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                 recently_used_keywords=recently_used_keywords,
                 learning_objective=learning_objective,
                 methodology_stage=methodology_stage,
+                methodology_module=methodology_module,
+                topic_content=topic_content,
             ),
             "voice_id": template_voice_for_lang(template, user.target_language, user=user) if template else None,
             "language": user.target_language or "en",
