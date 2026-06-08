@@ -692,8 +692,11 @@ class GeminiLiveEngine(VoiceEngine):
                         # Barge-in: Gemini detecto que el usuario empezo a hablar
                         # mientras el coach soltaba audio. Avisamos al cliente para
                         # que CANCELE INMEDIATAMENTE la cola de audio que esta
-                        # reproduciendo del coach.
-                        if sc.get("interrupted"):
+                        # reproduciendo del coach. PERO con NO_INTERRUPTION el coach
+                        # NO se aborta (sigue generando) -> cancelar el audio cortaba
+                        # la frase a la mitad ("¡Eso, muy..." + reinicio). Solo
+                        # reenviar el interrupted si el modo realmente interrumpe.
+                        if sc.get("interrupted") and _os.getenv("GEMINI_ACTIVITY_HANDLING", "NO_INTERRUPTION") != "NO_INTERRUPTION":
                             try:
                                 await ws.send_json({"type": "interrupted"})
                             except Exception:
