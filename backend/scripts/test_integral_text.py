@@ -11,7 +11,7 @@ Para cada caso (mini A0 × un tópico real):
 
 Uso (donde está la GEMINI_API_KEY): heroku run python scripts/test_integral_text.py
 """
-import sys, os, asyncio, json
+import sys, os, asyncio, json, time
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -19,7 +19,11 @@ os.environ["COMPOSER_MODES"] = "staged_vocab"
 
 import httpx
 from types import SimpleNamespace
+from sqlalchemy import select
 from core.config import settings
+from core.database import AsyncSessionLocal
+from models.template import Template, Topic
+from models.methodology import MethodologyModule
 from services.super_prompt import build_super_prompt
 
 MODEL = settings.GEMINI_MODEL or "gemini-2.5-flash"
@@ -119,14 +123,17 @@ JUDGE_SYS = ("Sos un evaluador pedagógico. Te paso la transcripción de una cla
 
 
 async def run_iter(client, prompt, topic_title):
-    contents = []  # historia compartida (rol user = lo que recibe cada lado)
     transcript = []
+    times = []  # segundos que tardó cada respuesta del coach (pregunta->respuesta)
     # Coach abre
     coach_hist = [{"role": "user", "parts": [{"text": "(empezá la clase)"}]}]
     student_hist = []
     for _ in range(TURNS):
+        t0 = time.monotonic()
         coach_txt = await _gemini(client, prompt, coach_hist, temp=0.8, max_tokens=500)
-        transcript.append(("HABI", coach_txt))
+        dt = time.monotonic() - t0
+        times.append(dt)
+        transcript.append((f"HABI [{dt:.1f}s]", coach_txt))
         student_hist.append({"role": "user", "parts": [{"text": coach_txt}]})
         stu_txt = await _gemini(client, STUDENT_SYS, student_hist, temp=0.9, max_tokens=80)
         transcript.append(("NENE", stu_txt))
@@ -137,7 +144,7 @@ async def run_iter(client, prompt, topic_title):
     verdict_raw = await _gemini(client, JUDGE_SYS, [{"role": "user", "parts": [{"text": convo}]}],
                                 temp=0.0, json_mode=True, max_tokens=300)
     verdict = _parse_json(verdict_raw)
-    return convo, verdict
+    return convo, verdict, times
 
 
 def _parse_json(raw: str) -> dict:
@@ -156,13 +163,13 @@ def _parse_json(raw: str) -> dict:
         return {"score": 0, "problema": f"juez no parseable: {raw[:90]!r}"}
 
 
-async def run_case(client, case):
-    prompt = build_super_prompt(user=_user(), template=COACH, topic=_topic(case["topic"]),
-                                methodology_stage=None, methodology_module=MODULE, topic_content=None)
+async def run_case(client, coach, module, topic_obj):
+    prompt = build_super_prompt(user=_user(), template=coach, topic=topic_obj,
+                                methodology_stage=None, methodology_module=module, topic_content=None)
     sem = asyncio.Semaphore(CONC)
     async def one():
         async with sem:
-            return await run_iter(client, prompt, case["topic"])
+            return await run_iter(client, prompt, topic_obj.title)
     results = await asyncio.gather(*[one() for _ in range(ITERS)])
     return prompt, results
 
@@ -172,17 +179,41 @@ async def main():
         print("SIN GEMINI_API_KEY")
         return
     crit = ["intro", "narrativa", "elicita", "mezcla_es_en", "sin_circo", "no_cierra", "vocab_del_tema", "coherente"]
+
+    # Cargar las 4 patas REALES de la BD (verifica la integración, no fixtures).
+    # PATA ALUMNO: el _user() fixture va SIN errores/correcciones (limpio, como Timmy).
+    async with AsyncSessionLocal() as db:
+        coach = (await db.execute(select(Template).where(Template.slug == "friend"))).scalar_one_or_none() or COACH
+        mod_row = (await db.execute(select(MethodologyModule).where(
+            MethodologyModule.student_type == "mini", MethodologyModule.level == "A0",
+            MethodologyModule.active.is_(True)).order_by(MethodologyModule.module_order))).scalars().first()
+        module = ({"focus_name": mod_row.focus_name, "ai_restraints": mod_row.ai_restraints,
+                   "target_grammar": mod_row.target_grammar, "evaluation_criteria": mod_row.evaluation_criteria}
+                  if mod_row else MODULE)
+        topics = (await db.execute(select(Topic).where(
+            Topic.segmento == "mini", Topic.is_active.is_(True)).limit(4))).scalars().all()
+    if not topics:
+        topics = [_topic(t) for t in ["Comidas ricas", "Animales de la granja y la selva",
+                                      "Dibujitos y superhéroes", "Jugar en la pantalla"]]
+
+    enf_ok = bool(getattr(coach, "enfoque", None))
+    print("[INTEGRACIÓN 4 PATAS — datos REALES de la BD]")
+    print(f"  COACH: {getattr(coach,'slug','fixture')}  ·  enfoque: {'OK' if enf_ok else 'FALTA'}")
+    print(f"  RIEL mini/A0: {'OK' if mod_row else 'fixture'}  ·  TÓPICOS mini: {len(topics)}  ·  ALUMNO: limpio (sin errores)")
+
     async with httpx.AsyncClient(timeout=60.0) as client:
-        for case in CASES:
-            prompt, results = await run_case(client, case)
-            counts = {c: sum(1 for _, v in results if v.get(c)) for c in crit}
-            scores = [v.get("score", 0) for _, v in results]
+        for topic_obj in topics:
+            prompt, results = await run_case(client, coach, module, topic_obj)
+            counts = {c: sum(1 for r in results if r[1].get(c)) for c in crit}
+            scores = [r[1].get("score", 0) for r in results]
+            all_t = [t for r in results for t in r[2]]
             avg = sum(scores) / max(len(scores), 1)
-            print(f"\n{'='*70}\nCASO: {case['topic']}  (mini A0, 10 iters)")
-            print(f"  score promedio: {avg:.1f}/10")
+            avg_t = sum(all_t) / max(len(all_t), 1)
+            mx_t = max(all_t) if all_t else 0
+            print(f"\n{'='*70}\nCASO: {topic_obj.title}  (mini A0, {ITERS} iters)")
+            print(f"  score promedio: {avg:.1f}/10   |   tiempo coach: prom {avg_t:.1f}s · máx {mx_t:.1f}s")
             for c in crit:
                 print(f"  {c:16s}: {counts[c]}/{ITERS} ok")
-            # peor iteración
             worst = min(results, key=lambda r: r[1].get("score", 0))
             print(f"  --- PEOR (score {worst[1].get('score')}): {worst[1].get('problema','')}")
             for line in worst[0].split("\n"):
