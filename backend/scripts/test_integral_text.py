@@ -105,7 +105,7 @@ async def run_iter(client, prompt, topic_title):
     coach_hist = [{"role": "user", "parts": [{"text": "(empezá la clase)"}]}]
     student_hist = []
     for _ in range(TURNS):
-        coach_txt = await _gemini(client, prompt, coach_hist, temp=0.8, max_tokens=300)
+        coach_txt = await _gemini(client, prompt, coach_hist, temp=0.8, max_tokens=500)
         transcript.append(("HABI", coach_txt))
         student_hist.append({"role": "user", "parts": [{"text": coach_txt}]})
         stu_txt = await _gemini(client, STUDENT_SYS, student_hist, temp=0.9, max_tokens=80)
@@ -116,11 +116,24 @@ async def run_iter(client, prompt, topic_title):
     convo = "\n".join(f"{w}: {t}" for w, t in transcript)
     verdict_raw = await _gemini(client, JUDGE_SYS, [{"role": "user", "parts": [{"text": convo}]}],
                                 temp=0.0, json_mode=True, max_tokens=300)
-    try:
-        verdict = json.loads(verdict_raw)
-    except Exception:
-        verdict = {"score": 0, "problema": "juez no parseable"}
+    verdict = _parse_json(verdict_raw)
     return convo, verdict
+
+
+def _parse_json(raw: str) -> dict:
+    raw = (raw or "").strip()
+    if "```" in raw:
+        seg = raw.split("```")
+        raw = seg[1] if len(seg) > 1 else raw
+        if raw.lstrip().lower().startswith("json"):
+            raw = raw.lstrip()[4:]
+    i, j = raw.find("{"), raw.rfind("}")
+    if i >= 0 and j > i:
+        raw = raw[i:j + 1]
+    try:
+        return json.loads(raw)
+    except Exception:
+        return {"score": 0, "problema": f"juez no parseable: {raw[:90]!r}"}
 
 
 async def run_case(client, case):
