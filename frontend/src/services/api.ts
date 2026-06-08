@@ -139,6 +139,11 @@ export interface Template {
   voice_id_en?: string
   voice_id_es?: string
   voice_id_pt?: string
+  // Motor Pedagógico Adaptativo
+  segmento?: string
+  enfoque?: string
+  curriculum_mode?: string
+  identity_description?: string
 }
 
 export const templatesAPI = {

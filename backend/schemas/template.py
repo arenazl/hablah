@@ -50,6 +50,11 @@ class TemplateBase(BaseModel):
     silence_tolerance_ms: int = 800
     interruption_allowed: bool = False
     scaffold_when_stuck: bool = True
+    # Motor Pedagógico Adaptativo
+    segmento: Optional[str] = None
+    enfoque: Optional[str] = None
+    curriculum_mode: Optional[str] = None
+    identity_description: Optional[str] = None
 
 
 class TemplateCreate(TemplateBase):
@@ -100,6 +105,10 @@ class TemplateUpdate(BaseModel):
     silence_tolerance_ms: Optional[int] = None
     interruption_allowed: Optional[bool] = None
     scaffold_when_stuck: Optional[bool] = None
+    segmento: Optional[str] = None
+    enfoque: Optional[str] = None
+    curriculum_mode: Optional[str] = None
+    identity_description: Optional[str] = None
 
 
 class TemplateResponse(TemplateBase):

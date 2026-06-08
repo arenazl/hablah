@@ -334,6 +334,20 @@ function TemplateEditView({ onMenu }: { onMenu: () => void }) {
               <input className="input" value={t.description} onChange={(e) => update({ description: e.target.value })} style={{ marginTop: 8, fontSize: 13, height: 36 }} placeholder="Descripción breve" />
             </Section>
 
+            {/* Segmento + Enfoque (Motor Pedagógico Adaptativo) */}
+            <Section title="Segmento y enfoque" subtitle="A quién sirve este coach y CÓMO lleva la clase (la receta narrativa del segmento). El nivel del idioma va en Metodología, no acá.">
+              <label style={{ fontSize: 12, color: 'var(--fg-3)', fontWeight: 700 }}>Segmento</label>
+              <select className="input" value={(t as any).segmento || ''} onChange={(e) => update({ segmento: e.target.value } as any)} style={{ marginTop: 4, height: 38 }}>
+                <option value="">—</option>
+                <option value="mini">Mini · chiquitos (4-7)</option>
+                <option value="junior">Junior · más grandes (8-12)</option>
+                <option value="tween">Tween · adolescentes (13+)</option>
+                <option value="adultos">Adultos</option>
+              </select>
+              <label style={{ fontSize: 12, color: 'var(--fg-3)', fontWeight: 700, marginTop: 10, display: 'block' }}>Enfoque — cómo lleva la clase</label>
+              <textarea className="input" value={(t as any).enfoque || ''} onChange={(e) => update({ enfoque: e.target.value } as any)} rows={5} style={{ marginTop: 4, fontSize: 13, lineHeight: 1.5, resize: 'vertical', padding: '8px 10px' }} placeholder="Ej (niños): explicar el mundo + ejemplos + alguna broma + ir uniendo las palabras en una frasecita; la clase es un cuento/aventura donde el chico es protagonista." />
+            </Section>
+
             {/* 0. Personalidad pedagógica (PRESETS) */}
             <Section title="Personalidad pedagógica" subtitle="Elegí cómo se comporta el tutor en la conversación. Cada preset ajusta cuánto habla, qué tipo de preguntas hace y cómo interactúa.">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 6 }}>
