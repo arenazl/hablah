@@ -29,6 +29,8 @@ export interface UseLiveVoiceOptions {
   onTranscript?: (line: TranscriptLine) => void
   onError?: (err: Error) => void
   onAudioLevel?: (level: number) => void
+  /** Nivel del MICRÓFONO del usuario (0..1), tiempo real. Separado del playback de Habi. */
+  onMicLevel?: (level: number) => void
   /** Array de frecuencias 0..1 del audio del tutor (real-time FFT). Para waveform en vivo. */
   onAudioFrequencies?: (bins: Float32Array) => void
   /** Llamado cuando el detector detecta y persiste una preferencia del alumno. */
@@ -397,8 +399,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         const sendPcm = (pcmBuf: ArrayBuffer, rms: number): void => {
           const liveWs = wsRef.current
           if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return
-          // Boost x4 del RMS para matchear escala del audio del tutor (que viene * 3)
-          optsRef.current.onAudioLevel?.(Math.min(1, rms * 4))
+          // Boost x4 del RMS. Es el nivel del MIC del usuario -> feedback "estás hablando".
+          optsRef.current.onMicLevel?.(Math.min(1, rms * 4))
           const bytes = new Uint8Array(pcmBuf)
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
@@ -433,7 +435,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
               // SIEMPRE mandar el PCM. Bloquear chunks de silencio impide que
               // el VAD de Gemini Live cierre el turno y el coach no responde.
               // El flag `silent` queda solo para el visualizer.
-              if (silent) optsRef.current.onAudioLevel?.(Math.min(1, (rms || 0) * 4))
+              if (silent) optsRef.current.onMicLevel?.(Math.min(1, (rms || 0) * 4))
               if (pcm) sendPcm(pcm, rms || 0)
             }
             source.connect(node)
@@ -763,7 +765,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
               // SIEMPRE mandar PCM (incluso silencio). Ver fix worklet/sendPcm
               // arriba — sin silencio entrante, el VAD de Gemini Live no cierra
               // turno y el coach no responde.
-              if (silent) optsRef.current.onAudioLevel?.(Math.min(1, (rms || 0) * 4))
+              if (silent) optsRef.current.onMicLevel?.(Math.min(1, (rms || 0) * 4))
               if (pcm) sendPcm(pcm, rms || 0)
             }
             source.connect(node)
