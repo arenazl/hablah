@@ -696,11 +696,14 @@ class GeminiLiveEngine(VoiceEngine):
                         # NO se aborta (sigue generando) -> cancelar el audio cortaba
                         # la frase a la mitad ("¡Eso, muy..." + reinicio). Solo
                         # reenviar el interrupted si el modo realmente interrumpe.
-                        if sc.get("interrupted") and _os.getenv("GEMINI_ACTIVITY_HANDLING", "NO_INTERRUPTION") != "NO_INTERRUPTION":
-                            try:
-                                await ws.send_json({"type": "interrupted"})
-                            except Exception:
-                                pass
+                        if sc.get("interrupted"):
+                            _ah = _os.getenv("GEMINI_ACTIVITY_HANDLING", "NO_INTERRUPTION")
+                            trace.event("gemini.interrupted", session_id=session_id_log, reenviado=(_ah != "NO_INTERRUPTION"))
+                            if _ah != "NO_INTERRUPTION":
+                                try:
+                                    await ws.send_json({"type": "interrupted"})
+                                except Exception:
+                                    pass
 
                         model_turn = sc.get("modelTurn") or {}
                         # Si llega audio del modelo y estabamos esperando cola
@@ -788,6 +791,7 @@ class GeminiLiveEngine(VoiceEngine):
                                     timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                     counters["ai_text_chunks"] += 1
                                     ai_buf.append(text)
+                                    trace.event("gemini.coach_chunk", session_id=session_id_log, src="part", n=counters["ai_text_chunks"], text=text[:160])
                                     await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": text})
 
                         out_tr = sc.get("outputTranscription")
@@ -802,6 +806,7 @@ class GeminiLiveEngine(VoiceEngine):
                                 timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                 counters["ai_text_chunks"] += 1
                                 ai_buf.append(out_tr["text"])
+                                trace.event("gemini.coach_chunk", session_id=session_id_log, src="outTr", n=counters["ai_text_chunks"], text=out_tr["text"][:160])
                                 await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
 
                         input_tr = sc.get("inputTranscription")
