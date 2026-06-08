@@ -51,6 +51,7 @@ class User(Base):
     kid_charlas_count = Column(Integer, nullable=False, default=0)
     kid_avatar_color = Column(String(20), nullable=False, default="#FF6AA9")
     kid_buddy_id = Column(String(20), nullable=True)  # personaje/amiguito elegido (perro, dino, conejo, ...) -> voz por personaje
+    kid_methodology_order = Column(Integer, nullable=False, default=1)  # etapa del currículo (methodology_stages.order_index) donde está el nene
 
     # Preferencias aprendidas en vivo durante las charlas (override del template).
     # El user dice "corrige menos" en voz alta → un detector lo persiste aquí

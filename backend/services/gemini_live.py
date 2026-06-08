@@ -103,6 +103,29 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             )
             await db.commit()
 
+        # Etapa del currículo (metodología) donde está el nene: el coach enseña
+        # SOLO ese vocabulario + estructura (el QUÉ). El prompt define el CÓMO.
+        methodology_stage = None
+        if is_kid:
+            from models.methodology import MethodologyStage
+            grp = getattr(user, "age_group", None) or "mini"
+            order = getattr(user, "kid_methodology_order", 1) or 1
+            st = (await db.execute(
+                select(MethodologyStage).where(
+                    MethodologyStage.age_group == grp,
+                    MethodologyStage.order_index == order,
+                    MethodologyStage.active.is_(True),
+                )
+            )).scalar_one_or_none()
+            if st:
+                methodology_stage = {
+                    "title": st.title,
+                    "vocabulary": st.vocabulary or [],
+                    "target_structure": st.target_structure,
+                    "target_structure_es": st.target_structure_es,
+                    "mastery_criteria": st.mastery_criteria,
+                }
+
         return {
             "session_id": s.id,
             "user_id": user.id,
@@ -114,6 +137,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                 admin_directives=admin_directives,
                 recently_used_keywords=recently_used_keywords,
                 learning_objective=learning_objective,
+                methodology_stage=methodology_stage,
             ),
             "voice_id": template_voice_for_lang(template, user.target_language, user=user) if template else None,
             "language": user.target_language or "en",
