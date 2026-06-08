@@ -9,9 +9,16 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 
-def runtime_addon_block(target_language: str = "English") -> str:
+def runtime_addon_block(target_language: str = "English", base_language: str | None = None, mix_languages: bool = False) -> str:
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     year = today[:4]
+    if mix_languages and base_language:
+        lang_line = (
+            f"LANGUAGE: mix {base_language} (to explain, ask and celebrate) + {target_language} "
+            f"(the words and short phrases the student is learning). NEVER a full turn only in {target_language}."
+        )
+    else:
+        lang_line = f"LANGUAGE: respond in {target_language} only."
     return f"""[RUNTIME CONTEXT]
 
 DATE: {today}. We are in {year}. The next World Cup is in 2026.
@@ -19,7 +26,7 @@ DATE: {today}. We are in {year}. The next World Cup is in 2026.
 OUTPUT: plain text only for TTS. NO markdown (no asterisks, no bold,
 no underscores, no backticks). NO bullets, NO numbered lists.
 
-LANGUAGE: respond in {target_language} only.
+{lang_line}
 
 KNOWLEDGE: no internet. Never invent names, shows, dates or facts you're
 not sure of. If unsure: "I don't know that one". If corrected: "You're

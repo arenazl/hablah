@@ -885,32 +885,36 @@ def _render_mode(*, mode, user, topic, methodology_module, topic_content,
         return []
 
     if mode == "staged_vocab":
-        # kids A0: el RIEL manda, el tópico es el MUNDO donde se enseña.
+        # NARRATIVA de espina. El léxico sale del TÓPICO (anclas), NUNCA de una
+        # etapa desconectada. La historia avanza; el chico es protagonista.
         if methodology_module and methodology_module.get("ai_restraints"):
             riel = f"CÓMO ENSEÑÁS (riel del nivel — no negociable):\n{methodology_module['ai_restraints']}"
-            estructura = methodology_module.get("target_grammar") or ""
         else:
             riel = ("CÓMO ENSEÑÁS: profe cálida, despacio, una idea por turno, mezclá español + "
-                    "la palabra en inglés. Festejá solo cuando lo diga de verdad. Nunca cierres la clase.")
-            estructura = (methodology_stage or {}).get("target_structure") or ""
-        voc = _vocab_list()
-        voc_str = ", ".join((x.get("en") if isinstance(x, dict) else str(x)) for x in voc if x) or "(sin vocabulario cargado)"
+                    "la palabra en inglés. Festejá solo cuando lo diga de verdad. NUNCA cierres la clase.")
+        # Anclas léxicas: del junction si existe; si no, las elige el coach DEL TEMA.
+        anclas = [str(x) for x in (topic_content.get("allowed_vocabulary") if topic_content else []) if x]
+        anclas_txt = (", ".join(anclas) if anclas
+                      else f"3-5 palabras simples y visuales de \"{topic_title}\" (las elegís vos, del tema)")
         escenario = (
-            f"QUÉ ENSEÑÁS HOY (la etapa manda):\n"
-            f"- Vocabulario (SOLO estas palabras): {voc_str}\n"
-            + (f"- Estructura objetivo: \"{estructura}\"\n" if estructura else "")
-            + f"- EL MUNDO de hoy (el tema que le gusta): {topic_title}"
+            f"EL MUNDO DE HOY: \"{topic_title}\".\n"
+            f"PALABRAS en inglés para tejer en la historia (anclas, NO una lista para recitar): {anclas_txt}."
         )
         combinacion = (
-            "REGLA DE COMBINACIÓN (la etapa manda, el tema es el mundo):\n"
-            f"- Enseñá ESE vocabulario DENTRO del tema \"{topic_title}\". NO lo ignores: ambientá "
-            "cada palabra en ese mundo (ej: tema=animales, vocab=colores → 'el perro es BROWN').\n"
-            "- PROHIBIDO traer vocabulario fuera de la etapa. PROHIBIDO enseñar en abstracto ignorando el tema.\n"
-            "- La clase dura varios minutos. NUNCA te despidas ni cierres la clase: la termina el adulto con el botón."
+            "CÓMO SE LLEVA LA CLASE (narrativa de espina — no negociable):\n"
+            f"- Armá una MINI-AVENTURA / cuento sobre \"{topic_title}\" donde el chico es el PROTAGONISTA "
+            "y decide qué pasa. La historia AVANZA en cada turno.\n"
+            "- Las palabras en inglés aparecen DENTRO de la historia, encadenadas y en contexto. "
+            "PROHIBIDO la lista suelta tipo 'pizza ok, dog ok, bye'. Si decís una palabra, es porque "
+            "algo pasa en el cuento con esa palabra.\n"
+            "- Mezclá español (lo que contás/preguntás/festejás) + la palabra o frasecita en inglés. "
+            "Nunca un turno entero en inglés.\n"
+            "- Las palabras SALEN DEL TEMA; nada que no tenga que ver con la historia.\n"
+            "- La clase dura varios minutos. NUNCA te despidas ni la cierres: la termina el adulto con el botón."
         )
         arranque = (
-            f"ARRANQUE: saludá a {user.nombre} por su nombre en {base_lang_name}, invitalo al mundo de hoy "
-            f"({topic_title}) y esperá que acepte. Recién después, la primera palabra de la etapa."
+            f"ARRANQUE: saludá a {user.nombre} por su nombre en {base_lang_name} y ABRÍ la historia de hoy "
+            f"sobre \"{topic_title}\" con un gancho (algo que pasa, un problemita divertido). Esperá que responda."
         )
         return riel, escenario, combinacion, arranque
 
@@ -1366,4 +1370,12 @@ def build_super_prompt(**kwargs) -> str:
     user = kwargs.get("user")
     target = (getattr(user, "target_language", None) or "en")
     target_lang_name = _LANG_NAMES_FOR_ADDON.get(target, target)
-    return runtime_addon_block(target_lang_name) + "\n\n" + body
+    base = (getattr(user, "base_language", None) or "es")
+    base_lang_name = _LANG_NAMES_FOR_ADDON.get(base, base)
+    # En modo staged_vocab (kids) el coach mezcla ES+EN: el "English only" del
+    # addon lo contradice. Detectamos el modo y activamos la mezcla.
+    template = kwargs.get("template")
+    cefr = (getattr(user, "cefr_level", None) or "B1")
+    is_kid = bool(getattr(user, "age_group", None)) or bool(getattr(user, "parent_user_id", None))
+    mix = _resolve_curriculum_mode(template, is_kid, cefr) == "staged_vocab"
+    return runtime_addon_block(target_lang_name, base_lang_name, mix) + "\n\n" + body

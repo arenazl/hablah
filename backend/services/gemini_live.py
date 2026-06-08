@@ -167,21 +167,60 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"motor pedagógico: módulo/junction no disponible ({e}); fallback a stage/legacy")
 
+        super_prompt = build_super_prompt(
+            user=user, template=template, topic=topic,
+            admin_directives=admin_directives,
+            recently_used_keywords=recently_used_keywords,
+            learning_objective=learning_objective,
+            methodology_stage=methodology_stage,
+            methodology_module=methodology_module,
+            topic_content=topic_content,
+        )
+
+        # ─── OBSERVABILIDAD TOTAL: el circuito entero del prompt ───
+        # Cada clase loguea la cadena de relaciones resuelta + el prompt final.
+        # No es un ABM: es un prompt dinámico desde contextos dinámicos. Para
+        # SABER (no suponer) cómo se armó la cadena y qué recibió el coach.
+        try:
+            import json as _json
+            from services.super_prompt import _resolve_curriculum_mode, _composer_enabled
+            _cefr = user.cefr_level or "B1"
+            _mode = _resolve_curriculum_mode(template, is_kid, _cefr)
+            _circuit = {
+                "session_id": s.id,
+                "user": {
+                    "nombre": user.nombre, "cefr": _cefr, "age_group": getattr(user, "age_group", None),
+                    "is_kid": is_kid, "kid_methodology_order": getattr(user, "kid_methodology_order", None),
+                    "curriculum_position": getattr(user, "curriculum_position", None),
+                },
+                "template": {"name": getattr(template, "name", None), "curriculum_mode": getattr(template, "curriculum_mode", None)},
+                "resolved_mode": _mode, "composer_on": _composer_enabled(_mode),
+                "topic": ({
+                    "id": topic.id, "title": topic.title, "slug": topic.slug,
+                    "audience": getattr(topic, "audience", None), "is_curriculum": getattr(topic, "is_curriculum", None),
+                    "pinned_vocab_n": len(getattr(topic, "pinned_vocabulary", None) or []),
+                } if topic else None),
+                "methodology_module": (methodology_module and {"focus": methodology_module.get("focus_name")}),
+                "junction": ("FOUND " + str(topic_content.get("allowed_vocabulary"))
+                             if topic_content else "MISSING -> fallback a methodology_stage (vocab DESCONECTADO del tópico)"),
+                "stage_fallback": (methodology_stage and {
+                    "title": methodology_stage.get("title"),
+                    "vocab": [v.get("en") for v in (methodology_stage.get("vocabulary") or [])],
+                }),
+                "prompt_len": len(super_prompt),
+            }
+            log.info("PROMPT_CIRCUIT " + _json.dumps(_circuit, ensure_ascii=False))
+            log.info("PROMPT_FINAL session=%s >>>\n%s\n<<< PROMPT_FINAL_END", s.id, super_prompt)
+        except Exception as e:
+            log.warning(f"PROMPT_CIRCUIT log falló: {e}")
+
         return {
             "session_id": s.id,
             "user_id": user.id,
             "user_name": user.nombre,
             "is_kid": is_kid,
             "template_id": template.id if template else None,
-            "super_prompt": build_super_prompt(
-                user=user, template=template, topic=topic,
-                admin_directives=admin_directives,
-                recently_used_keywords=recently_used_keywords,
-                learning_objective=learning_objective,
-                methodology_stage=methodology_stage,
-                methodology_module=methodology_module,
-                topic_content=topic_content,
-            ),
+            "super_prompt": super_prompt,
             "voice_id": template_voice_for_lang(template, user.target_language, user=user) if template else None,
             "language": user.target_language or "en",
             "target_language": user.target_language or "en",
