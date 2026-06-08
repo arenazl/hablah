@@ -48,8 +48,19 @@ methodology_stage = {
     "target_structure": "My name is ___",
 }
 
+coach = SimpleNamespace(
+    name="Habi", tones=["cálida", "juguetona"], response_length="short", warmth_level=5,
+    correction_mode="recast", opening_style="playful", tutor_talk_ratio=40,
+    proactive_questions=True, tutor_shares_opinions=True, interruption_allowed=False,
+    scaffold_when_stuck=True, pedagogy_preset="ludico", avoid_superlative_questions=True,
+    one_question_per_turn=True, opening_includes_topic_intro=True, curriculum_mode=None,
+    identity_description=None, segmento="mini",
+    enfoque=("Enfoque para un nene chiquito: explicale el mundo con palabras simples, dale ejemplos "
+             "concretos, metele alguna broma, y SOBRE TODO andá UNIENDO las palabras que aprende en una "
+             "frasecita. La clase es un CUENTO/AVENTURA donde él es el protagonista y la historia avanza."),
+)
 prompt = build_super_prompt(
-    user=user, template=None, topic=topic,
+    user=user, template=coach, topic=topic,
     methodology_stage=methodology_stage,
     methodology_module=methodology_module,
     topic_content=None,  # <-- el junction (Comidas ricas x A0) NO existe

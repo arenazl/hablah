@@ -965,6 +965,10 @@ def compose_session_prompt(*, mode, user, template, topic,
     identity = getattr(template, "identity_description", None) if template else None
     if identity:
         persona = f"{persona}\n- {identity}"
+    # ENFOQUE del coach (cómo lleva la clase, por segmento) — la receta narrativa.
+    enfoque = getattr(template, "enfoque", None) if template else None
+    if enfoque:
+        persona = f"{persona}\n\nENFOQUE (cómo llevás la clase):\n{enfoque}"
 
     alumno = (f"EL ALUMNO\n- Nombre: {user.nombre}.\n- Nivel: {cefr}.\n"
               f"- Aprende {target_lang_name}; idioma materno {base_lang_name}.")

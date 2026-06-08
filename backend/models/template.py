@@ -94,6 +94,12 @@ class Template(Base):
     curriculum_mode = Column(String(20), nullable=True)
     # Identidad actoral del coach (skin): descripción de la persona.
     identity_description = Column(Text, nullable=True)
+    # Segmento al que sirve este coach (mini/junior/tween/adultos). Adultos tienen
+    # varios (personalidades); kids uno por banda.
+    segmento = Column(String(12), nullable=True, index=True)
+    # ENFOQUE: cómo lleva la clase (la receta narrativa/pedagógica del segmento).
+    # Niños: explicar el mundo + ejemplos + broma + unir las palabras en una frase.
+    enfoque = Column(Text, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
