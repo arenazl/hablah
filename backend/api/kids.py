@@ -46,6 +46,7 @@ class KidProfileResponse(BaseModel):
     coins: int
     rank_slug: str
     charlas_count: int
+    buddy_id: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -66,6 +67,7 @@ class KidsMeResponse(BaseModel):
     rank_slug: str
     charlas_count: int
     parent_user_id: int
+    buddy_id: Optional[str] = None
 
 
 class TopicResponse(BaseModel):
@@ -132,6 +134,7 @@ async def create_kid_profile(
             coins=existing.kid_coins,
             rank_slug=existing.kid_rank_slug,
             charlas_count=existing.kid_charlas_count,
+            buddy_id=existing.kid_buddy_id,
         )
 
     kid = User(
@@ -167,6 +170,7 @@ async def create_kid_profile(
         coins=kid.kid_coins,
         rank_slug=kid.kid_rank_slug,
         charlas_count=kid.kid_charlas_count,
+        buddy_id=kid.kid_buddy_id,
     )
 
 
@@ -190,6 +194,7 @@ async def list_kid_profiles(
             coins=k.kid_coins,
             rank_slug=k.kid_rank_slug,
             charlas_count=k.kid_charlas_count,
+            buddy_id=k.kid_buddy_id,
         )
         for k in kids
     ]
@@ -226,6 +231,7 @@ async def login_as_kid(
             coins=kid.kid_coins,
             rank_slug=kid.kid_rank_slug,
             charlas_count=kid.kid_charlas_count,
+            buddy_id=kid.kid_buddy_id,
         ),
     )
 
@@ -244,6 +250,64 @@ async def kids_me(user: User = Depends(get_current_user)):
         rank_slug=user.kid_rank_slug,
         charlas_count=user.kid_charlas_count,
         parent_user_id=user.parent_user_id,
+        buddy_id=user.kid_buddy_id,
+    )
+
+
+class BuddyUpdate(BaseModel):
+    buddy_id: str
+
+
+@router.patch("/me/buddy", response_model=KidsMeResponse)
+async def update_my_buddy(
+    payload: BuddyUpdate,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """El nene (logueado con kids_token) guarda el personaje que eligió."""
+    if user.parent_user_id is None:
+        raise HTTPException(status_code=403, detail="No es un perfil hijo")
+    user.kid_buddy_id = (payload.buddy_id or "")[:20] or None
+    await db.commit()
+    await db.refresh(user)
+    return KidsMeResponse(
+        id=user.id,
+        name=user.nombre,
+        age_group=user.age_group,
+        avatar_color=user.kid_avatar_color,
+        coins=user.kid_coins,
+        rank_slug=user.kid_rank_slug,
+        charlas_count=user.kid_charlas_count,
+        parent_user_id=user.parent_user_id,
+        buddy_id=user.kid_buddy_id,
+    )
+
+
+@router.patch("/profiles/{kid_id}/buddy", response_model=KidProfileResponse)
+async def update_kid_buddy(
+    kid_id: int,
+    payload: BuddyUpdate,
+    parent: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """El padre cambia el personaje de un hijo desde el panel de perfiles."""
+    kid = (await db.execute(
+        select(User).where(User.id == kid_id, User.parent_user_id == parent.id)
+    )).scalar_one_or_none()
+    if not kid:
+        raise HTTPException(status_code=404, detail="Perfil hijo no encontrado")
+    kid.kid_buddy_id = (payload.buddy_id or "")[:20] or None
+    await db.commit()
+    await db.refresh(kid)
+    return KidProfileResponse(
+        id=kid.id,
+        name=kid.nombre,
+        age_group=kid.age_group or "mini",
+        avatar_color=kid.kid_avatar_color,
+        coins=kid.kid_coins,
+        rank_slug=kid.kid_rank_slug,
+        charlas_count=kid.kid_charlas_count,
+        buddy_id=kid.kid_buddy_id,
     )
 
 
