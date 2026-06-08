@@ -20,7 +20,7 @@ import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
 import { InviteFriendButton } from '../../components/InviteFriendButton'
 import { BuddyPicker } from '../../components/kids/BuddyPicker'
 import { KidsBuddy } from '../../components/kids/KidsBuddy'
-import { getBuddyById } from '../../components/kids/kidsBuddies'
+import { getBuddyById, getSavedBuddyId, saveBuddyId } from '../../components/kids/kidsBuddies'
 
 interface TopicData {
   id: number
@@ -70,6 +70,10 @@ const CSS = `
 .kids-session-status { font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:rgba(232,236,234,.6); display:inline-flex; align-items:center; gap:8px; }
 .kids-session-status .pulse { width:8px; height:8px; border-radius:50%; background:#22C55E; box-shadow:0 0 0 0 rgba(34,197,94,.6); animation:kids-pulse 1.5s ease-out infinite; }
 @keyframes kids-pulse { 0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)} 100%{box-shadow:0 0 0 12px rgba(34,197,94,0)} }
+.kids-mic-wave { display:inline-flex; align-items:center; gap:3px; height:16px; }
+.kids-mic-wave i { width:3px; border-radius:2px; background:#22C55E; height:calc(4px + var(--lvl,0) * 18px); transition:height 80ms ease-out; animation:kids-mic-bar .7s ease-in-out infinite alternate; }
+.kids-mic-wave i:nth-child(2){ animation-delay:.12s } .kids-mic-wave i:nth-child(3){ animation-delay:.24s } .kids-mic-wave i:nth-child(4){ animation-delay:.16s } .kids-mic-wave i:nth-child(5){ animation-delay:.06s }
+@keyframes kids-mic-bar { from { transform:scaleY(.5) } to { transform:scaleY(1) } }
 
 .kids-transcript { width:100%; max-width:680px; padding:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; display:flex; flex-direction:column; gap:6px; }
 .kids-transcript-line { font-size:14px; line-height:1.45; padding:6px 12px; border-radius:10px; max-width:90%; }
@@ -103,8 +107,17 @@ export function KidsSession() {
     (location.state as { topic?: TopicData } | null)?.topic ?? null,
   )
   const [sessionId, setSessionId] = useState<number | null>(null)
-  // Elegir personaje en CADA charla (sin persistir): arranca null -> muestra el picker.
-  const [buddyId, setBuddyId] = useState<string | null>(null)
+  // Personaje elegido UNA vez por nene, persistido en BD (el padre lo cambia desde el panel).
+  // Prioridad: perfil (BD) -> cache local -> null (muestra el picker).
+  const kidBuddyKey = String(kid.id ?? kid.name)
+  const [buddyId, setBuddyId] = useState<string | null>(() => kid.buddy_id ?? getSavedBuddyId(kidBuddyKey))
+
+  // El perfil carga async: cuando llega el personaje de la BD, lo aplicamos
+  // (salvo que el nene ya haya elegido otro en esta misma sesión).
+  useEffect(() => {
+    if (kid.buddy_id && !buddyId) setBuddyId(kid.buddy_id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kid.buddy_id])
   const [audioLevel, setAudioLevel] = useState(0.2)
   const pendingLevelRef = useRef(0.2)
   const [renewBanner, setRenewBanner] = useState<{ kind: 'warn' | 'renewing' | 'renewed'; msg: string } | null>(null)
@@ -363,8 +376,10 @@ export function KidsSession() {
               )}
               {live.status === 'listening' && (
                 <>
-                  <span className="pulse" />
-                  Habi te está escuchando
+                  <span className="kids-mic-wave" style={{ '--lvl': String(Math.min(1, audioLevel)) } as Record<string, string>}>
+                    <i /><i /><i /><i /><i />
+                  </span>
+                  Te escucho — seguí hablando
                 </>
               )}
               {live.status === 'speaking' && (
@@ -420,7 +435,18 @@ export function KidsSession() {
             {(!isActive && !buddyId) ? (
               <BuddyPicker
                 selectedId={buddyId}
-                onPick={(b) => setBuddyId(b.id)}
+                onPick={(b) => {
+                  setBuddyId(b.id)
+                  saveBuddyId(kidBuddyKey, b.id)
+                  const tok = localStorage.getItem(KIDS_TOKEN_KEY)
+                  if (tok) {
+                    fetch('/api/kids/me/buddy', {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` },
+                      body: JSON.stringify({ buddy_id: b.id }),
+                    }).catch(() => {})
+                  }
+                }}
               />
             ) : (
               <div className="kids-orb-wrap">
@@ -453,18 +479,29 @@ export function KidsSession() {
                transcript completo (habi + chico) se manda al backend al
                cerrar la clase para el reporte/analisis. */}
             {live.transcript.length > 0 && (() => {
+              // Mostramos el último mensaje del chico (lo que dijo) Y el último de
+              // Habi: así el nene VE que lo que dice se está captando/mandando.
+              let lastUserIdx = -1
               let lastAiIdx = -1
               for (let i = live.transcript.length - 1; i >= 0; i--) {
-                if (live.transcript[i].who === 'ai') { lastAiIdx = i; break }
+                if (lastAiIdx < 0 && live.transcript[i].who === 'ai') lastAiIdx = i
+                if (lastUserIdx < 0 && live.transcript[i].who === 'user') lastUserIdx = i
+                if (lastAiIdx >= 0 && lastUserIdx >= 0) break
               }
-              if (lastAiIdx < 0) return null
-              const line = live.transcript[lastAiIdx]
+              const items: { who: string; text: string }[] = []
+              if (lastUserIdx >= 0) items.push({ who: 'user', text: live.transcript[lastUserIdx].text })
+              if (lastAiIdx >= 0) items.push({ who: 'ai', text: live.transcript[lastAiIdx].text })
+              // Ordenar por aparición real (si Habi habló después del chico).
+              if (lastUserIdx >= 0 && lastAiIdx >= 0 && lastAiIdx < lastUserIdx) items.reverse()
+              if (items.length === 0) return null
               return (
                 <div className="kids-transcript">
-                  <div className={`kids-transcript-line ai`}>
-                    <span className="who">Habi</span>
-                    {line.text}
-                  </div>
+                  {items.map((it, i) => (
+                    <div key={i} className={`kids-transcript-line ${it.who === 'ai' ? 'ai' : 'user'}`}>
+                      <span className="who">{it.who === 'ai' ? 'Habi' : 'Vos'}</span>
+                      {it.text}
+                    </div>
+                  ))}
                 </div>
               )
             })()}
