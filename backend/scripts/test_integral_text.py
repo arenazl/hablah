@@ -29,7 +29,7 @@ from services.super_prompt import build_super_prompt
 MODEL = settings.GEMINI_MODEL or "gemini-2.5-flash"
 URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
 TURNS = 4          # pares coach<->nene por clase
-ITERS = 10         # iteraciones por caso
+ITERS = 3          # iteraciones por caso (sweep de TODOS los tópicos)
 CONC = 5           # concurrencia de iteraciones
 
 ENFOQUE_NINOS_PLACEHOLDER = (
@@ -191,7 +191,7 @@ async def main():
                    "target_grammar": mod_row.target_grammar, "evaluation_criteria": mod_row.evaluation_criteria}
                   if mod_row else MODULE)
         topics = (await db.execute(select(Topic).where(
-            Topic.segmento == "mini", Topic.is_active.is_(True)).limit(4))).scalars().all()
+            Topic.segmento == "mini", Topic.is_active.is_(True)).order_by(Topic.id))).scalars().all()
     if not topics:
         topics = [_topic(t) for t in ["Comidas ricas", "Animales de la granja y la selva",
                                       "Dibujitos y superhéroes", "Jugar en la pantalla"]]
@@ -202,23 +202,29 @@ async def main():
     print(f"  RIEL mini/A0: {'OK' if mod_row else 'fixture'}  ·  TÓPICOS mini: {len(topics)}  ·  ALUMNO: limpio (sin errores)")
 
     async with httpx.AsyncClient(timeout=60.0) as client:
-        for topic_obj in topics:
+        for i, topic_obj in enumerate(topics):
             prompt, results = await run_case(client, coach, module, topic_obj)
+            if i == 0:
+                print(f"\n{'#'*70}\nPROMPT GENERADO (ejemplo — tópico '{topic_obj.title}'):")
+                print(f"(idéntico para los demás tópicos salvo EL MUNDO DE HOY y el ARRANQUE)\n{'#'*70}")
+                print(prompt)
+                print('#' * 70)
             counts = {c: sum(1 for r in results if r[1].get(c)) for c in crit}
             scores = [r[1].get("score", 0) for r in results]
             all_t = [t for r in results for t in r[2]]
             avg = sum(scores) / max(len(scores), 1)
             avg_t = sum(all_t) / max(len(all_t), 1)
             mx_t = max(all_t) if all_t else 0
-            print(f"\n{'='*70}\nCASO: {topic_obj.title}  (mini A0, {ITERS} iters)")
-            print(f"  score promedio: {avg:.1f}/10   |   tiempo coach: prom {avg_t:.1f}s · máx {mx_t:.1f}s")
-            for c in crit:
-                print(f"  {c:16s}: {counts[c]}/{ITERS} ok")
-            worst = min(results, key=lambda r: r[1].get("score", 0))
-            print(f"  --- PEOR (score {worst[1].get('score')}): {worst[1].get('problema','')}")
-            for line in worst[0].split("\n"):
+            ok_crit = sum(1 for c in crit if counts[c] == ITERS)
+            print(f"\n{'='*70}\nTÓPICO: {topic_obj.title}  (mini A0, {ITERS} iters)")
+            print(f"  score: {avg:.1f}/10  ·  criterios perfectos: {ok_crit}/{len(crit)}  ·  tiempo coach: prom {avg_t:.1f}s máx {mx_t:.1f}s")
+            fails = [f"{c} {counts[c]}/{ITERS}" for c in crit if counts[c] < ITERS]
+            if fails:
+                print(f"  flojos: {', '.join(fails)}")
+            print(f"  --- TRANSCRIPCIÓN (muestra):")
+            for line in results[0][0].split("\n"):
                 print(f"      {line}")
-    print(f"\n{'='*70}\nFIN test integral.")
+    print(f"\n{'='*70}\nFIN sweep de todos los tópicos mini.")
 
 
 if __name__ == "__main__":
