@@ -146,6 +146,9 @@ class Topic(Base):
     # ─── Motor Pedagógico Adaptativo (plan warm-soaring-cloud) ───
     # Audiencia del tópico (reemplaza el chequeo frágil category=='kids').
     audience = Column(String(10), nullable=False, default="adult")  # adult | kid
+    # Segmento: a quién le interesa (madurez/interés, NO nivel de idioma).
+    # mini | junior | tween | adultos. El tópico es agnóstico al nivel CEFR.
+    segmento = Column(String(12), nullable=True, index=True)
     # is_curriculum=True → tópico de plan estructurado (vocab pinneado, ordenado).
     # Acá migran las filas de MethodologyStage (Saludos/Colores/Conteo).
     is_curriculum = Column(Boolean, nullable=False, default=False)
