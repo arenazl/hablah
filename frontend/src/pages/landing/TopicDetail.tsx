@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { ArrowRight, MessageCircle, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpen, GraduationCap, MessageCircle, Quote, Sparkles } from 'lucide-react'
 import {
   Breadcrumbs,
   LandingLayout,
@@ -9,6 +9,29 @@ import {
   type PageMeta,
 } from './_shared'
 
+/** Par bilingüe: termino/frase en inglés con su traducción al español. */
+export interface TopicPhrase {
+  en: string
+  es: string
+}
+
+/**
+ * Contenido editorial extendido de una página de tópico. Es OPCIONAL: los
+ * tópicos sin `content` renderizan la versión corta (chips de vocabulario).
+ * Los que sí lo tienen muestran secciones ricas — sumando texto único real
+ * indexable por Google (≈350 palabras) y más enganche para el visitante.
+ */
+export interface TopicContent {
+  /** Bajada de la sección "qué vas a aprender a decir". */
+  learnIntro: string
+  /** Vocabulario real (en → es) que el tutor te enseña a usar. */
+  terms: ReadonlyArray<TopicPhrase>
+  /** Frases listas para abrir una conversación sobre el tema. */
+  starters: ReadonlyArray<TopicPhrase>
+  /** En qué rango CEFR sirve el tópico, en lenguaje humano. */
+  level: string
+}
+
 export interface PublicTopic {
   id: number
   title: string
@@ -16,6 +39,8 @@ export interface PublicTopic {
   keywords: ReadonlyArray<string>
   /** Meta description única (140-160 chars) para el snippet de Google. */
   metaDescription: string
+  /** Contenido editorial extendido (opcional, ver TopicContent). */
+  content?: TopicContent
 }
 
 // Hardcoded list (sourced from the topics DB research snapshot). Keep in sync.
@@ -28,7 +53,29 @@ export const TOPICS_PUBLIC: ReadonlyArray<PublicTopic> = [
   { id: 6, title: 'Metodologías ágiles – retrospectivas', category: 'tech', keywords: ['scrum', 'retros', 'OKRs', 'sprint', 'kanban'], metaDescription: 'Practicá inglés de trabajo hablando de scrum, retros y OKRs con un tutor de IA. El vocabulario que necesitás para dailies y ceremonias ágiles.' },
   { id: 7, title: 'Cine de los 90 – Tarantino', category: 'arte', keywords: ['Pulp Fiction', 'noir', 'diálogo', 'banda sonora', 'indie'], metaDescription: 'Hablá inglés sobre cine de los 90 y Tarantino con un tutor de IA: diálogo, noir y banda sonora. Aprendé a opinar de películas como un crítico.' },
   { id: 8, title: 'Anécdotas de aeropuertos', category: 'viajes', keywords: ['layovers', 'conexiones', 'aduana', 'cultural shock', 'jet lag'], metaDescription: 'Practicá inglés de viajes con un tutor de IA: layovers, conexiones, aduana y jet lag. El vocabulario que sí vas a usar en tu próximo vuelo.' },
-  { id: 9, title: 'Fútbol – Mundiales y selecciones', category: 'deportes', keywords: ['Messi', 'Maradona', 'táctica', 'Qatar', 'Brasil'], metaDescription: 'Hablá inglés de fútbol con un tutor de IA: Mundiales, tácticas y selecciones. Aprendé a discutir de Messi, Maradona y Brasil como un hincha bilingüe.' },
+  { id: 9, title: 'Fútbol – Mundiales y selecciones', category: 'deportes', keywords: ['Messi', 'Maradona', 'táctica', 'Qatar', 'Brasil'], metaDescription: 'Hablá inglés de fútbol con un tutor de IA: Mundiales, tácticas y selecciones. Aprendé a discutir de Messi, Maradona y Brasil como un hincha bilingüe.', content: {
+    learnIntro:
+      'El fútbol es el tema más fácil para soltarte en inglés: ya tenés las opiniones, solo te faltan las palabras. Con The Coach vas a narrar una jugada, discutir una alineación y bancar tu opinión sobre quién es el GOAT — sin traducir en tu cabeza primero. Estas son algunas de las expresiones que vas a aprender a meter en una charla real, no en una lista para memorizar.',
+    terms: [
+      { en: 'a nutmeg', es: 'un caño' },
+      { en: 'a through ball', es: 'un pase filtrado, en profundidad' },
+      { en: 'stoppage time', es: 'tiempo de descuento' },
+      { en: 'a screamer', es: 'un golazo de afuera del área' },
+      { en: 'to park the bus', es: 'meterse atrás, jugar a defender' },
+      { en: 'a clean sheet', es: 'la valla invicta, el arco en cero' },
+      { en: 'to bottle it', es: 'ahogarse, regalar un partido ganado' },
+      { en: 'the back four', es: 'la línea de cuatro defensores' },
+    ],
+    starters: [
+      { en: 'That was a world-class finish.', es: 'Esa definición fue de otro nivel.' },
+      { en: 'They parked the bus the whole second half.', es: 'Se metieron atrás todo el segundo tiempo.' },
+      { en: "He's been on fire this season.", es: 'Está imparable esta temporada.' },
+      { en: 'The ref bottled the big calls.', es: 'El árbitro se comió las jugadas clave.' },
+      { en: "For me, he's the greatest of all time.", es: 'Para mí, es el mejor de la historia.' },
+    ],
+    level:
+      'Sirve desde A2 hasta C1. En A2 ya hablás de tu equipo y tus jugadores favoritos con frases simples. En B1 y B2 narrás un partido y opinás de tácticas. En C1 debatís polémicas arbitrales y comparás épocas (Maradona vs. Messi) sin trabarte.',
+  } },
   { id: 10, title: 'Básquet – NBA y leyendas', category: 'deportes', keywords: ['Jordan', 'LeBron', 'playoffs', 'triples', 'draft'], metaDescription: 'Practicá inglés hablando de la NBA con un tutor de IA: Jordan, LeBron, playoffs y draft. El vocabulario de los analistas y los fanáticos del básquet.' },
   { id: 11, title: 'Running – entrenamiento y maratones', category: 'deportes', keywords: ['ritmo', 'fondos', 'series', 'zapatillas', 'maratón'], metaDescription: 'Hablá inglés de running con un tutor de IA: ritmo, series, fondos y maratón. Aprendé los términos que usan corredores y entrenadores de verdad.' },
   { id: 12, title: 'Tenis – Grand Slam y rivalidades', category: 'deportes', keywords: ['Federer', 'Nadal', 'Djokovic', 'Wimbledon', 'tierra batida'], metaDescription: 'Practicá inglés de tenis con un tutor de IA: Federer, Nadal, Djokovic y los Grand Slam. El vocabulario para seguir y comentar cada partido.' },
@@ -120,9 +167,76 @@ const PAGE_CSS = `
 .landing-root .topic-cta-card p { font-size: var(--t-lg); color: rgba(255,255,255,.9); margin: 0 0 28px; line-height: 1.5; }
 .landing-root .topic-cta-card .btn-light { font-size: var(--t-lg); padding: 18px 32px; }
 
+/* ---- Contenido editorial extendido (cards modernas + movimiento) ---- */
+.landing-root .topic-section { padding: 56px 0; }
+.landing-root .topic-section .container { max-width: 920px; }
+.landing-root .topic-section .sec-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--primary-dark); display: inline-flex; align-items: center; gap: 7px; margin-bottom: 14px;
+}
+.landing-root .topic-section h2 {
+  font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; letter-spacing: -.025em;
+  line-height: 1.1; margin: 0 0 16px; color: var(--fg-1);
+}
+.landing-root .topic-section .section-lead { font-size: var(--t-lg); color: var(--fg-3); line-height: 1.6; margin: 0 0 36px; max-width: 680px; }
+
+/* Vocabulario: grid de term-cards bilingües */
+.landing-root .term-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.landing-root .term-card {
+  position: relative; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border-1);
+  border-radius: var(--r-xl); padding: 20px 22px;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+  will-change: transform;
+}
+.landing-root .term-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+  transform: scaleY(0); transform-origin: bottom; transition: transform .3s var(--ease);
+}
+.landing-root .term-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); border-color: var(--primary-tint); }
+.landing-root .term-card:hover::before { transform: scaleY(1); }
+.landing-root .term-card .term-en {
+  font-family: var(--font-mono); font-size: 18px; font-weight: 600; color: var(--fg-1);
+  letter-spacing: -.01em; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;
+}
+.landing-root .term-card .term-en .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--primary); flex-shrink: 0; }
+.landing-root .term-card .term-es { font-size: 14px; color: var(--fg-3); line-height: 1.45; }
+
+/* Frases para arrancar: cards estilo cita */
+.landing-root .phrase-list { display: flex; flex-direction: column; gap: 12px; }
+.landing-root .phrase-card {
+  display: flex; align-items: flex-start; gap: 16px;
+  background: var(--bg-2); border: 1px solid var(--border-1);
+  border-radius: var(--r-2xl); padding: 22px 24px;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+  will-change: transform;
+}
+.landing-root .phrase-card:hover { transform: translateX(4px); background: var(--surface); box-shadow: var(--shadow-card); }
+.landing-root .phrase-card .phrase-ico {
+  flex-shrink: 0; width: 38px; height: 38px; border-radius: var(--r-lg);
+  background: var(--primary-tint); color: var(--primary-dark);
+  display: flex; align-items: center; justify-content: center;
+}
+.landing-root .phrase-card .phrase-en { font-size: var(--t-lg); font-weight: 600; color: var(--fg-1); line-height: 1.35; margin-bottom: 5px; }
+.landing-root .phrase-card .phrase-es { font-size: 14px; color: var(--fg-3); line-height: 1.45; }
+
+/* Nivel: bloque con badges A2 → C1 */
+.landing-root .topic-level-block { background: var(--bg-2); border-top: 1px solid var(--border-1); }
+.landing-root .level-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.landing-root .level-badges span {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600; letter-spacing: .04em;
+  padding: 8px 16px; border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--border-2); color: var(--fg-2);
+}
+.landing-root .level-badges span.is-on { background: var(--primary); border-color: var(--primary); color: white; }
+.landing-root .topic-level-block p { font-size: var(--t-lg); color: var(--fg-2); line-height: 1.6; margin: 0; max-width: 720px; }
+
 @media (max-width: 880px) {
   .landing-root .topic-detail-hero { padding: 40px 0 24px; }
   .landing-root .topic-cta-card { padding: 40px 24px; }
+  .landing-root .term-grid { grid-template-columns: 1fr; }
+  .landing-root .topic-section { padding: 40px 0; }
 }
 `
 
@@ -217,20 +331,89 @@ export function TopicDetail() {
         </div>
       </section>
 
-      <section className="topic-vocab fade-on-scroll">
-        <div className="container">
-          <h2>Vocabulario clave</h2>
-          <p className="sub">
-            Algunos conceptos que vas a aprender a usar al conversar sobre este tema. El sistema te enseña a pronunciarlos
-            y a meterlos en frases reales, no en listas para memorizar.
-          </p>
-          <div className="chips">
-            {topic.keywords.map((kw) => (
-              <span key={kw}>{kw}</span>
-            ))}
+      {topic.content ? (
+        <>
+          <section className="topic-section topic-learn fade-on-scroll">
+            <div className="container">
+              <span className="sec-eyebrow">
+                <BookOpen size={14} strokeWidth={2.4} />
+                Vocabulario real
+              </span>
+              <h2>Qué vas a aprender a decir</h2>
+              <p className="section-lead">{topic.content.learnIntro}</p>
+              <div className="term-grid fade-stagger">
+                {topic.content.terms.map((t) => (
+                  <div className="term-card" key={t.en}>
+                    <div className="term-en">
+                      <span className="dot" />
+                      {t.en}
+                    </div>
+                    <div className="term-es">{t.es}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="topic-section topic-starters fade-on-scroll">
+            <div className="container">
+              <span className="sec-eyebrow">
+                <Quote size={14} strokeWidth={2.4} />
+                Frases para arrancar
+              </span>
+              <h2>Empezá una charla hoy mismo</h2>
+              <p className="section-lead">
+                Frases reales que podés soltar apenas entrás. The Coach te las corrige al toque y te enseña cómo seguir la conversación.
+              </p>
+              <div className="phrase-list fade-stagger">
+                {topic.content.starters.map((s) => (
+                  <div className="phrase-card" key={s.en}>
+                    <span className="phrase-ico">
+                      <Quote size={18} strokeWidth={2.2} />
+                    </span>
+                    <div>
+                      <div className="phrase-en">{s.en}</div>
+                      <div className="phrase-es">{s.es}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="topic-section topic-level-block fade-on-scroll">
+            <div className="container">
+              <span className="sec-eyebrow">
+                <GraduationCap size={14} strokeWidth={2.4} />
+                Tu nivel
+              </span>
+              <h2>¿Para qué nivel sirve?</h2>
+              <div className="level-badges">
+                <span className="is-on">A2</span>
+                <span className="is-on">B1</span>
+                <span className="is-on">B2</span>
+                <span className="is-on">C1</span>
+              </div>
+              <p>{topic.content.level}</p>
+            </div>
+          </section>
+        </>
+      ) : (
+        <section className="topic-vocab fade-on-scroll">
+          <div className="container">
+            <h2>Vocabulario clave</h2>
+            <p className="sub">
+              Algunos conceptos que vas a aprender a usar al conversar sobre este tema. El sistema te enseña a pronunciarlos
+              y a meterlos en frases reales, no en listas para memorizar.
+            </p>
+            <div className="chips">
+              {topic.keywords.map((kw) => (
+                <span key={kw}>{kw}</span>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="topic-cta-block">
         <div className="container">
