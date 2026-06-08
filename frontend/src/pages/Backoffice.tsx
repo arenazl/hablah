@@ -9,6 +9,7 @@ import {
   AuditSessionRow, AuditSessionDetail, AuditSessionFilters, AuditStats, AuditLogEvent,
 } from '../services/api'
 import { EvolutionView } from './BackofficeEvolution'
+import AdminMetodologiaPanel from './AdminMetodologiaPanel'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -46,6 +47,7 @@ export function Backoffice() {
             <Route path="/alumnos" element={<AlumnosView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/auditoria" element={<AuditoriaView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/auditoria/:id" element={<AuditoriaDetailView onMenu={() => setMenuOpen(true)} />} />
+            <Route path="/metodologia" element={<AdminMetodologiaPanel />} />
           </Routes>
         </main>
       </div>
@@ -86,6 +88,7 @@ function BoSidebar({ open }: { open: boolean }) {
         <SidebarItem to="/admin" exact label="Resumen" />
         <SidebarItem to="/admin/templates" label="Templates" />
         <SidebarItem to="/admin/topicos" label="Tópicos" />
+        <SidebarItem to="/admin/metodologia" label="Metodología" />
       </nav>
       <div className="sidebar-section">Comunidad</div>
       <nav className="sidebar-nav">
