@@ -275,8 +275,10 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
             "model": LIVE_MODEL,
             "generationConfig": {
                 "responseModalities": ["AUDIO"],
-                # thinkingBudget=0 = desactiva el modo "thinking" del modelo.
-                "thinkingConfig": {"thinkingBudget": 0},
+                # thinkingBudget: con 0 (apagado) el modelo se trababa con inputs
+                # ambiguos + prompt grande (gaps de 6-10s). Un presupuesto bajo le da
+                # "espacio mental" para resolver sin explotar la latencia. Configurable.
+                "thinkingConfig": {"thinkingBudget": int(_os.getenv("GEMINI_THINKING_BUDGET", "1024"))},
                 "speechConfig": {
                     "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": getattr(ctx, "voice_name", None) or "Kore"}},
                 },
@@ -317,10 +319,11 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                         int(min(max(ctx.silence_tolerance_ms, 1500 if is_kid else 600), 2000))
                     ),
                 },
-                # Permitimos siempre que el alumno interrumpa al coach. Si el
-                # VAD se equivoca y el coach arranca antes de tiempo, el
-                # alumno puede cortarlo apenas habla — recupera el control.
-                "activityHandling": "START_OF_ACTIVITY_INTERRUPTS",
+                # NO_INTERRUPTION: con START_OF_ACTIVITY_INTERRUPTS, un ruidito del
+                # nene durante el gap de procesamiento de Gemini abortaba la
+                # generación del coach -> freeze a la 3ra-4ta interacción. Con
+                # NO_INTERRUPTION el VAD de Google ya no aborta solo. Configurable.
+                "activityHandling": _os.getenv("GEMINI_ACTIVITY_HANDLING", "NO_INTERRUPTION"),
             },
             "inputAudioTranscription": {},
             "outputAudioTranscription": {},
