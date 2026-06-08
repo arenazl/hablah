@@ -226,6 +226,14 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   // Gemini ya cancelo el output server-side; aca cancelamos los chunks que ya
   // estaban scheduled en AudioContext (sino seguirian sonando hasta agotarse).
   const cancelTutorPlayback = useCallback(() => {
+    // OBSERVABILIDAD (temporal): loguear cuándo se corta el audio del coach —
+    // caza el glitch de la frase cortada ("¡Eso, muy..."). Correlacionar con
+    // gemini.coach_chunk del backend por timestamp.
+    const _cut = playSourcesRef.current.length
+    const _dropped = playQueueRef.current.length
+    if (_cut > 0 || _dropped > 0) {
+      trace('voice.playback.cancel', activeSessionIdRef.current, { sources_cut: _cut, queued_dropped: _dropped })
+    }
     // Vaciar cola de chunks no agendados
     playQueueRef.current = []
     // Stoppear todas las BufferSources agendadas
