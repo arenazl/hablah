@@ -16,8 +16,22 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Robots-Tag = "index, follow, max-image-preview:large, max-snippet:-1"
+
+# HTML (incluye las paginas prerenderizadas): siempre revalidar para que el
+# CDN no sirva una version vieja del prerender tras un deploy.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# Imagenes estaticas (OG, iconos, logos): cache largo, son versionadas.
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
