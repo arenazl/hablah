@@ -18,7 +18,6 @@ import {
   OnboardingTopic,
 } from '../services/api'
 import { toast } from 'sonner'
-import { AgentAudioVisualizerAura } from './agents-ui/agent-audio-visualizer-aura'
 
 const STYLES = `
 @keyframes ob-drift-1 { 0%,100%{transform:translate(0,0)} 25%{transform:translate(36px,-22px)} 50%{transform:translate(48px,18px)} 75%{transform:translate(12px,32px)} }
@@ -163,8 +162,8 @@ export function OnboardingBubbles({ onDone, onSkip }: Props) {
           }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-              gap: 12, rowGap: 22,
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+              gap: 12,
               maxWidth: 980, width: '100%',
             }}>
               {categories.map((cat, i) => (
@@ -270,47 +269,53 @@ function SplashStage({ onStart, onSkip }: { onStart: () => void; onSkip: () => v
   )
 }
 
-/* ─── Bubble — orb Aura (WebGL) ──────────────────────────────── */
+/* ─── Category card — rectangulo legible, click abre topics ──── */
 function BubbleButton({ label, color, onClick, driftIndex }: {
   label: string; color: string; onClick: () => void; driftIndex: number
 }) {
-  const pseudoAudio = 0.4 + ((driftIndex * 0.13) % 0.45)
-
+  // Stagger de aparicion para que las tarjetas no salten todas juntas.
+  const delay = Math.min(driftIndex * 35, 600)
   return (
-    <div
+    <button
+      className="ob-card"
+      onClick={onClick}
       style={{
+        animation: `ob-pop-in 360ms cubic-bezier(.2,.9,.3,1.2) ${delay}ms both`,
         position: 'relative',
-        animation: `ob-pop-in 420ms ease-out, ob-drift-${(driftIndex % 4) + 1} ${6 + (driftIndex % 5)}s ease-in-out infinite`,
-        display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '22px 14px',
+        minHeight: 96,
+        borderRadius: 18,
+        cursor: 'pointer',
+        background: `linear-gradient(140deg, ${color}26 0%, ${color}10 100%)`,
+        border: `1px solid ${color}55`,
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 700,
+        lineHeight: 1.2,
+        letterSpacing: '-.005em',
+        textAlign: 'center',
+        boxShadow: `0 8px 24px ${color}1a, inset 0 1px 0 rgba(255,255,255,.06)`,
+        transition: 'transform 160ms ease, box-shadow 200ms ease, border-color 160ms ease, background 200ms ease',
+        outline: 'none',
       }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-2px)'
+        e.currentTarget.style.boxShadow = `0 14px 36px ${color}33, inset 0 1px 0 rgba(255,255,255,.1)`
+        e.currentTarget.style.borderColor = `${color}aa`
+        e.currentTarget.style.background = `linear-gradient(140deg, ${color}3d 0%, ${color}1a 100%)`
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.boxShadow = `0 8px 24px ${color}1a, inset 0 1px 0 rgba(255,255,255,.06)`
+        e.currentTarget.style.borderColor = `${color}55`
+        e.currentTarget.style.background = `linear-gradient(140deg, ${color}26 0%, ${color}10 100%)`
+      }}
+      onMouseDown={(e) => { e.currentTarget.style.transform = 'translateY(0) scale(.97)' }}
+      onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-2px)' }}
     >
-      <button
-        className="ob-bubble"
-        onClick={onClick}
-        style={{
-          background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
-          width: 110, height: 110, position: 'relative',
-          display: 'grid', placeItems: 'center',
-        }}
-      >
-        <AgentAudioVisualizerAura
-          status="speaking"
-          audioLevel={pseudoAudio}
-          color={color as `#${string}`}
-          colorShift={0.05}
-          themeMode="dark"
-          size="md"
-        />
-      </button>
-      <span style={{
-        color: 'white', fontSize: 12, fontWeight: 700, lineHeight: 1.15,
-        letterSpacing: '-.01em', textAlign: 'center',
-        textShadow: '0 2px 8px rgba(0,0,0,.6)',
-        maxWidth: 130, pointerEvents: 'none',
-      }}>
-        {label}
-      </span>
-    </div>
+      {label}
+    </button>
   )
 }
 

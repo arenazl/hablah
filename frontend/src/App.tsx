@@ -1,22 +1,48 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ThemedToaster } from './components/ThemedToaster'
 import { useAuth } from './contexts/AuthContext'
-import { Login } from './pages/Login'
 import { Home as Landing } from './pages/landing/Home'
 import { HowItWorks } from './pages/landing/HowItWorks'
 import { Tutors } from './pages/landing/Tutors'
 import { Topics } from './pages/landing/Topics'
 import { Pricing } from './pages/landing/Pricing'
 import { Faq } from './pages/landing/Faq'
-import { KidsHome } from './pages/kids/KidsHome'
-import { KidsAgeSelect } from './pages/kids/KidsAgeSelect'
-import { KidsTopicsAll, KidsCollection, KidsAdventures, KidsProfile } from './pages/kids/KidsPages'
-import { KidsSession } from './pages/kids/KidsSession'
 import { KidsProvider } from './pages/kids/KidsContext'
-import { GuestRoom } from './pages/GuestRoom'
-import { WebApp } from './pages/WebApp'
-import { Backoffice } from './pages/Backoffice'
-import { AudioTuningPage } from './pages/AudioTuningPage'
+
+// Code-split: rutas pesadas se cargan on-demand para acelerar el first paint
+// de la landing publica (SEO / visitantes anonimos). Las rutas de
+// landing/marketing se mantienen sincronicas porque son las que necesitan
+// renderizar de inmediato.
+const TopicDetail = lazy(() =>
+  import('./pages/landing/TopicDetail').then(m => ({ default: m.TopicDetail })),
+)
+const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })))
+const WebApp = lazy(() => import('./pages/WebApp').then(m => ({ default: m.WebApp })))
+const Backoffice = lazy(() => import('./pages/Backoffice').then(m => ({ default: m.Backoffice })))
+const AudioTuningPage = lazy(() =>
+  import('./pages/AudioTuningPage').then(m => ({ default: m.AudioTuningPage })),
+)
+const GuestRoom = lazy(() => import('./pages/GuestRoom').then(m => ({ default: m.GuestRoom })))
+const KidsHome = lazy(() => import('./pages/kids/KidsHome').then(m => ({ default: m.KidsHome })))
+const KidsAgeSelect = lazy(() =>
+  import('./pages/kids/KidsAgeSelect').then(m => ({ default: m.KidsAgeSelect })),
+)
+const KidsSession = lazy(() =>
+  import('./pages/kids/KidsSession').then(m => ({ default: m.KidsSession })),
+)
+const KidsTopicsAll = lazy(() =>
+  import('./pages/kids/KidsPages').then(m => ({ default: m.KidsTopicsAll })),
+)
+const KidsCollection = lazy(() =>
+  import('./pages/kids/KidsPages').then(m => ({ default: m.KidsCollection })),
+)
+const KidsAdventures = lazy(() =>
+  import('./pages/kids/KidsPages').then(m => ({ default: m.KidsAdventures })),
+)
+const KidsProfile = lazy(() =>
+  import('./pages/kids/KidsPages').then(m => ({ default: m.KidsProfile })),
+)
 
 function AuthGate({ children, allowKidMode = false }: { children: React.ReactNode; allowKidMode?: boolean }) {
   const { isAuthenticated, isLoading } = useAuth()
@@ -79,48 +105,51 @@ function RootRedirect() {
 export default function App() {
   return (
     <>
-      <Routes>
-        <Route path="/" element={<RootRedirect />} />
-        <Route path="/como-funciona" element={<HowItWorks />} />
-        <Route path="/tutores" element={<Tutors />} />
-        <Route path="/topicos" element={<Topics />} />
-        <Route path="/precios" element={<Pricing />} />
-        <Route path="/faq" element={<Faq />} />
-        <Route path="/kids" element={<KidsProvider><KidsHome /></KidsProvider>} />
-        <Route path="/kids/seleccionar-edad" element={<KidsAgeSelect />} />
-        <Route path="/kids/topicos" element={<KidsProvider><KidsTopicsAll /></KidsProvider>} />
-        <Route path="/kids/coleccion" element={<KidsProvider><KidsCollection /></KidsProvider>} />
-        <Route path="/kids/aventuras" element={<KidsProvider><KidsAdventures /></KidsProvider>} />
-        <Route path="/kids/perfil" element={<KidsProvider><KidsProfile /></KidsProvider>} />
-        <Route path="/kids/sesion/:topicId" element={<KidsProvider><KidsSession /></KidsProvider>} />
-        <Route path="/kids/*" element={<KidsProvider><KidsHome /></KidsProvider>} />
-        <Route path="/charla/:token" element={<GuestRoom />} />
-        <Route
-          path="/tune"
-          element={
-            <AuthGate>
-              <AudioTuningPage />
-            </AuthGate>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/app/*"
-          element={
-            <AuthGate>
-              <WebApp />
-            </AuthGate>
-          }
-        />
-        <Route
-          path="/admin/*"
-          element={
-            <AuthGate>
-              <Backoffice />
-            </AuthGate>
-          }
-        />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<RootRedirect />} />
+          <Route path="/como-funciona" element={<HowItWorks />} />
+          <Route path="/tutores" element={<Tutors />} />
+          <Route path="/topicos" element={<Topics />} />
+          <Route path="/topicos/:slug" element={<TopicDetail />} />
+          <Route path="/precios" element={<Pricing />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/kids" element={<KidsProvider><KidsHome /></KidsProvider>} />
+          <Route path="/kids/seleccionar-edad" element={<KidsAgeSelect />} />
+          <Route path="/kids/topicos" element={<KidsProvider><KidsTopicsAll /></KidsProvider>} />
+          <Route path="/kids/coleccion" element={<KidsProvider><KidsCollection /></KidsProvider>} />
+          <Route path="/kids/aventuras" element={<KidsProvider><KidsAdventures /></KidsProvider>} />
+          <Route path="/kids/perfil" element={<KidsProvider><KidsProfile /></KidsProvider>} />
+          <Route path="/kids/sesion/:topicId" element={<KidsProvider><KidsSession /></KidsProvider>} />
+          <Route path="/kids/*" element={<KidsProvider><KidsHome /></KidsProvider>} />
+          <Route path="/charla/:token" element={<GuestRoom />} />
+          <Route
+            path="/tune"
+            element={
+              <AuthGate>
+                <AudioTuningPage />
+              </AuthGate>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/app/*"
+            element={
+              <AuthGate>
+                <WebApp />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <AuthGate>
+                <Backoffice />
+              </AuthGate>
+            }
+          />
+        </Routes>
+      </Suspense>
       <ThemedToaster />
     </>
   )

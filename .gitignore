@@ -42,3 +42,11 @@ _design*/
 
 # Local Netlify folder
 .netlify
+
+# Test/debug artifacts (audio dumps, sweeps, served snapshots, scratch)
+*.pcm
+test_input.*
+_sweep_*.txt
+_pause_matrix.txt
+_served_index.html
+tmp_seo/

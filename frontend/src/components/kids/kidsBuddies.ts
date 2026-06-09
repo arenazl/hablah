@@ -29,19 +29,33 @@ export const KIDS_BUDDIES: BuddyDef[] = [
 
 export const BUDDY_STORAGE_KEY = 'hablah_kids_buddy_v1'
 
-export function getSavedBuddyId(): string | null {
+/** Clave de storage del personaje, por perfil de nene (el padre maneja varios). */
+function buddyKey(kidKey: string): string {
+  return `${BUDDY_STORAGE_KEY}_${kidKey}`
+}
+
+export function getSavedBuddyId(kidKey: string): string | null {
   try {
-    return localStorage.getItem(BUDDY_STORAGE_KEY)
+    return localStorage.getItem(buddyKey(kidKey))
   } catch {
     return null
   }
 }
 
-export function saveBuddyId(id: string): void {
+export function saveBuddyId(kidKey: string, id: string): void {
   try {
-    localStorage.setItem(BUDDY_STORAGE_KEY, id)
+    localStorage.setItem(buddyKey(kidKey), id)
   } catch {
     /* localStorage no disponible: la elección dura solo esta sesión */
+  }
+}
+
+/** Reset: el padre vuelve a dejar que el nene elija (muestra el picker de nuevo). */
+export function clearSavedBuddyId(kidKey: string): void {
+  try {
+    localStorage.removeItem(buddyKey(kidKey))
+  } catch {
+    /* noop */
   }
 }
 

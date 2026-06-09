@@ -28,8 +28,8 @@ from services.super_prompt import build_super_prompt
 
 MODEL = settings.GEMINI_MODEL or "gemini-2.5-flash"
 URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
-TURNS = 4          # pares coach<->nene por clase
-ITERS = 3          # iteraciones por caso (sweep de TODOS los tópicos)
+TURNS = 12         # pares coach<->nene por clase (clase LARGA, ~5 min)
+ITERS = 1          # 1 clase larga por tópico (lo que importa ahora: que se sostenga)
 CONC = 5           # concurrencia de iteraciones
 
 ENFOQUE_NINOS_PLACEHOLDER = (

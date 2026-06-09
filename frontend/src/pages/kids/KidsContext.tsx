@@ -23,6 +23,7 @@ export interface KidProfile {
   rank_slug: string
   charlas_count: number
   is_real: boolean // false = mock/preview
+  buddy_id: string | null // personaje elegido, persistido en BD (users.kid_buddy_id)
 }
 
 const FALLBACK_KID: KidProfile = {
@@ -34,6 +35,7 @@ const FALLBACK_KID: KidProfile = {
   rank_slug: 'curioso',
   charlas_count: 0,
   is_real: false,
+  buddy_id: null,
 }
 
 interface KidsContextValue {
@@ -70,6 +72,7 @@ export function KidsProvider({ children }: { children: ReactNode }) {
             rank_slug: data.rank_slug,
             charlas_count: data.charlas_count,
             is_real: true,
+            buddy_id: data.buddy_id ?? null,
           })
           return
         }

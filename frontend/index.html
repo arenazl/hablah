@@ -4,17 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="google-site-verification" content="mlLm84odghXaApSZPwkmT3Gqmb7HWse4xblJcc5d9ik" />
+    <!-- Bing Webmaster verificado via /BingSiteAuth.xml -->
 
     <title>Habláh — Aprender inglés conversando con IA · Sin exámenes</title>
-    <meta name="description" content="Aprendé inglés, portugués o italiano hablando 5 minutos por día con un tutor de IA que se adapta a tu nivel, tus intereses y tus errores. Sin lecciones lineales, sin exámenes. 14 días Pro gratis." />
-    <meta name="keywords" content="aprender ingles con IA, app aprender idiomas, tutor de IA, conversacion en ingles, aprender portugues, aprender italiano, CEFR, fluidez en ingles, hablar ingles, app de idiomas LatAm, alternativa a Duolingo, Babbel, Cambly" />
+    <meta name="description" content="Aprendé inglés, portugués o italiano con un tutor de IA conversacional. 5 minutos al día, sin lecciones lineales ni exámenes. 14 días Pro gratis." />
     <meta name="author" content="Habláh" />
     <meta name="publisher" content="Habláh" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
-    <meta name="language" content="Spanish" />
-    <meta name="geo.region" content="AR" />
-    <meta name="geo.placename" content="Latinoamérica" />
 
     <link rel="canonical" href="https://hablah.com.ar/" />
     <link rel="alternate" hreflang="es" href="https://hablah.com.ar/" />
@@ -25,7 +22,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2" />
     <link rel="manifest" href="/manifest.json?v=2" />
 
-    <meta name="theme-color" content="#050807" />
+    <meta name="theme-color" content="#FAFBFA" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#050807" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="dark light" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -37,7 +35,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Habláh" />
     <meta property="og:title" content="Habláh — Aprender inglés conversando con IA · Sin exámenes" />
-    <meta property="og:description" content="5 minutos al día de conversación con un tutor de IA que se adapta a tu nivel, tus intereses y tus errores. Sin lecciones lineales, sin exámenes. 14 días Pro gratis." />
+    <meta property="og:description" content="Aprendé inglés, portugués o italiano con un tutor de IA conversacional. 5 minutos al día, sin lecciones lineales ni exámenes. 14 días Pro gratis." />
     <meta property="og:url" content="https://hablah.com.ar/" />
     <meta property="og:image" content="https://hablah.com.ar/icons/og-image.png" />
     <meta property="og:image:secure_url" content="https://hablah.com.ar/icons/og-image.png" />
@@ -51,7 +49,7 @@
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Habláh — Aprender inglés conversando con IA" />
-    <meta name="twitter:description" content="5 minutos al día con un tutor de IA. Sin exámenes, sin lecciones lineales. 14 días Pro gratis." />
+    <meta name="twitter:description" content="Aprendé inglés, portugués o italiano con un tutor de IA conversacional. 5 minutos al día, sin lecciones lineales ni exámenes. 14 días Pro gratis." />
     <meta name="twitter:image" content="https://hablah.com.ar/icons/og-image.png" />
     <meta name="twitter:image:alt" content="Habláh — Hablás. Aprendés. Sin exámenes." />
     <meta name="twitter:site" content="@hablah" />
@@ -67,7 +65,7 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "Organization",
+          "@type": "EducationalOrganization",
           "@id": "https://hablah.com.ar/#organization",
           "name": "Habláh",
           "url": "https://hablah.com.ar/",
@@ -79,6 +77,11 @@
           },
           "description": "Plataforma adaptativa de aprendizaje de idiomas con tutores de IA conversacionales.",
           "areaServed": "Latinoamérica",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "hola@hablah.com.ar"
+          },
           "sameAs": []
         },
         {
@@ -89,6 +92,93 @@
           "description": "Aprendé idiomas conversando con un tutor de IA. Sin exámenes.",
           "publisher": { "@id": "https://hablah.com.ar/#organization" },
           "inLanguage": "es-AR"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://hablah.com.ar/#app",
+          "name": "Habláh",
+          "url": "https://hablah.com.ar/",
+          "image": "https://hablah.com.ar/icons/og-image.png",
+          "applicationCategory": "EducationalApplication",
+          "applicationSubCategory": "Language Learning",
+          "operatingSystem": "Web, iOS, Android",
+          "inLanguage": ["es-AR", "es", "en", "pt", "it"],
+          "isAccessibleForFree": true,
+          "publisher": { "@id": "https://hablah.com.ar/#organization" },
+          "offers": [
+            { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD", "category": "free", "description": "Plan gratis con sesiones limitadas" },
+            { "@type": "Offer", "name": "Pro", "price": "12", "priceCurrency": "USD", "category": "subscription", "description": "Plan mensual sin límites. 14 días Pro gratis sin tarjeta." },
+            { "@type": "Offer", "name": "Bootcamp", "price": "49", "priceCurrency": "USD", "category": "subscription", "description": "Plan intensivo con sesiones diarias guiadas" }
+          ],
+          "featureList": [
+            "Conversaciones de voz con IA en tiempo real",
+            "Tutor para inglés, portugués e italiano",
+            "5 minutos al día",
+            "Sin lecciones lineales ni exámenes",
+            "Niveles A1 a C2 (CEFR)",
+            "Audio bidireccional Whisper STT + Gemini Live"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Cómo decide mi nivel sin un examen?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas) y precisión fonética. En 2 a 3 minutos te ubica en el marco CEFR (A1 a C2). Sin opción múltiple, sin presión."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué idiomas están disponibles?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Hoy: inglés (US y UK), portugués (BR y PT) e italiano. Próximamente francés y alemán. Como alumno base aceptamos español (todas las variantes), portugués e inglés."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Necesito buena conexión?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Funciona con 3G estable. El audio se procesa en streaming. Si la conexión se cae, la sesión guarda lo hablado y reanuda al volver."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué pasa con mi audio? ¿Lo guardan?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Por defecto se borra a los 30 días. Podés cambiarlo a \"borrar después de cada sesión\" en tu perfil. Nunca lo usamos para entrenar modelos sin tu consentimiento explícito."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Puedo cancelar Pro cuando quiera?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí, desde la app, en un toque. No hay permanencia. Si cancelás, mantenés tu nivel y rachas, solo pasás al plan Free."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Sirve para certificaciones (TOEFL, IELTS, Cambridge)?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sirve para llegar al nivel, pero no entrena formato de examen. Para eso usamos Bootcamp con coach humano, que arma simulacros específicos."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Y si soy ultra principiante (A0)?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Coach está pensado para vos. Las primeras semanas son híbridas: la IA te tira frases simples, vas repitiendo y construyendo. Al mes ya hacés charlas reales cortas."
+              }
+            }
+          ]
         }
       ]
     }

@@ -5,31 +5,15 @@ import { LandingLayout, breadcrumbList, webPageSchema, type PageMeta } from './_
 const META: PageMeta = {
   title: 'Habláh — Aprender inglés conversando con IA · Sin exámenes',
   description:
-    'Aprendé inglés, portugués o italiano hablando 5 minutos por día con un tutor de IA que se adapta a tu nivel, intereses y errores. Sin lecciones lineales, sin exámenes. 14 días Pro gratis.',
+    'Aprendé inglés, portugués o italiano con un tutor de IA conversacional. 5 min al día, sin lecciones lineales ni exámenes. 14 días Pro gratis.',
   path: '/',
 }
 
+// SoftwareApplication ya esta declarada server-side en index.html JSON-LD (con @id #app)
+// para que Googlebot la vea sin ejecutar JS. NO duplicar aca.
 const STRUCTURED = [
   webPageSchema(META),
   breadcrumbList([{ name: 'Inicio', path: '/' }]),
-  {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'Habláh',
-    url: 'https://hablah.com.ar/',
-    description: META.description,
-    applicationCategory: 'EducationalApplication',
-    applicationSubCategory: 'Language Learning',
-    operatingSystem: 'iOS, Android, Web',
-    inLanguage: ['es-AR', 'es', 'en', 'pt', 'it'],
-    isAccessibleForFree: true,
-    offers: [
-      { '@type': 'Offer', name: 'Free', price: '0', priceCurrency: 'USD', category: 'free' },
-      { '@type': 'Offer', name: 'Pro', price: '12', priceCurrency: 'USD', category: 'subscription' },
-      { '@type': 'Offer', name: 'Bootcamp', price: '49', priceCurrency: 'USD', category: 'subscription' },
-    ],
-    publisher: { '@type': 'Organization', name: 'Habláh', url: 'https://hablah.com.ar/' },
-  },
 ]
 
 const HOME_CSS = `
@@ -450,7 +434,11 @@ export function Home() {
             </div>
             <div className="product-screen-wrap">
               <span className="tag">Web app · vista "Hoy"</span>
-              <img className="product-screen" src="/landing-screens/mision-hoy.png" alt="Pantalla Hoy de Habláh - misión del día con tópico, tutor y rachas" loading="lazy" width="1280" height="800" />
+              <picture>
+                <source type="image/avif" srcSet="/landing-screens/mision-hoy.avif" />
+                <source type="image/webp" srcSet="/landing-screens/mision-hoy.webp" />
+                <img className="product-screen" src="/landing-screens/mision-hoy.png" alt="Pantalla Hoy de Habláh - misión del día con tópico, tutor y rachas" loading="lazy" width="1280" height="800" />
+              </picture>
             </div>
           </div>
         </div>
@@ -461,7 +449,11 @@ export function Home() {
           <div className="product-grid flip fade-on-scroll">
             <div className="product-screen-wrap">
               <span className="tag">Web app · "¿De qué charlamos?"</span>
-              <img className="product-screen" src="/landing-screens/galaxia-topicos.png" alt="Galaxia de tópicos en Habláh - orbs flotando sobre fondo espacial" loading="lazy" width="1280" height="800" />
+              <picture>
+                <source type="image/avif" srcSet="/landing-screens/galaxia-topicos.avif" />
+                <source type="image/webp" srcSet="/landing-screens/galaxia-topicos.webp" />
+                <img className="product-screen" src="/landing-screens/galaxia-topicos.png" alt="Galaxia de tópicos en Habláh - orbs flotando sobre fondo espacial" loading="lazy" width="1280" height="800" />
+              </picture>
             </div>
             <div className="product-text">
               <span className="label-tag">Pantalla 02 · Galaxia</span>
@@ -502,7 +494,11 @@ export function Home() {
             </div>
             <div className="product-screen-wrap">
               <span className="tag">Web app · sesión en vivo</span>
-              <img className="product-screen" src="/landing-screens/sesion-vivo.png" alt="Sesión en vivo de Habláh - orb gigante palpitando con transcripción" loading="lazy" width="1280" height="800" />
+              <picture>
+                <source type="image/avif" srcSet="/landing-screens/sesion-vivo.avif" />
+                <source type="image/webp" srcSet="/landing-screens/sesion-vivo.webp" />
+                <img className="product-screen" src="/landing-screens/sesion-vivo.png" alt="Sesión en vivo de Habláh - orb gigante palpitando con transcripción" loading="lazy" width="1280" height="800" />
+              </picture>
             </div>
           </div>
         </div>

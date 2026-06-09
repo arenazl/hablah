@@ -12,7 +12,7 @@ import os
 import websockets
 
 API_KEY = os.environ.get("GEMINI_API_KEY", "")
-MODEL = "models/gemini-3.1-flash-live-preview"
+MODEL = os.environ.get("LIVE_MODEL", "models/gemini-3.1-flash-live-preview")
 URL = (
     "wss://generativelanguage.googleapis.com/ws/"
     "google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent"

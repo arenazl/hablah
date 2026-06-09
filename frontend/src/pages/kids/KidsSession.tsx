@@ -74,14 +74,13 @@ const CSS = `
 .kids-mic-wave i { width:3px; border-radius:2px; background:#22C55E; height:calc(4px + var(--lvl,0) * 18px); transition:height 80ms ease-out; animation:kids-mic-bar .7s ease-in-out infinite alternate; }
 .kids-mic-wave i:nth-child(2){ animation-delay:.12s } .kids-mic-wave i:nth-child(3){ animation-delay:.24s } .kids-mic-wave i:nth-child(4){ animation-delay:.16s } .kids-mic-wave i:nth-child(5){ animation-delay:.06s }
 @keyframes kids-mic-bar { from { transform:scaleY(.5) } to { transform:scaleY(1) } }
-.kids-mic-big { display:inline-flex; align-items:center; gap:10px; padding:8px 18px; border-radius:99px; background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.32); transition:all .2s; }
-.kids-mic-big .bars { display:inline-flex; align-items:flex-end; gap:4px; height:46px; }
-.kids-mic-big .bars i { width:6px; border-radius:3px; background:#22C55E; height:calc(8px + var(--lvl,0) * 48px); transition:height 70ms ease-out; animation:kids-mic-bar .7s ease-in-out infinite alternate; transform-origin:bottom; }
-.kids-mic-big .bars i:nth-child(2){ animation-delay:.1s } .kids-mic-big .bars i:nth-child(3){ animation-delay:.22s } .kids-mic-big .bars i:nth-child(4){ animation-delay:.14s } .kids-mic-big .bars i:nth-child(5){ animation-delay:.06s } .kids-mic-big .bars i:nth-child(6){ animation-delay:.18s } .kids-mic-big .bars i:nth-child(7){ animation-delay:.09s }
-.kids-mic-big .lbl { font-size:14px; font-weight:800; color:#22C55E; white-space:nowrap; }
-.kids-mic-big.quiet { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.12); }
-.kids-mic-big.quiet .bars i { background:rgba(255,255,255,.28); animation:none; }
-.kids-mic-big.quiet .lbl { color:rgba(255,255,255,.5); }
+.kids-mic-big { display:inline-flex; align-items:center; gap:14px; padding:11px 22px; border-radius:99px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); transition:background .25s, border-color .25s; }
+.kids-mic-big.live { background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.38); }
+.kids-mic-big .bars { display:inline-flex; align-items:center; gap:4px; height:28px; }
+.kids-mic-big .bars i { width:4px; border-radius:99px; background:rgba(255,255,255,.32); height:5px; transition:height 80ms ease-out, background .25s; }
+.kids-mic-big.live .bars i { background:#22C55E; height:calc(5px + var(--lvl,0) * 22px); }
+.kids-mic-big .lbl { font-size:14px; font-weight:700; color:rgba(255,255,255,.55); transition:color .25s; white-space:nowrap; }
+.kids-mic-big.live .lbl { color:#22C55E; }
 
 .kids-transcript { width:100%; max-width:680px; padding:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; display:flex; flex-direction:column; gap:6px; }
 .kids-transcript-line { font-size:14px; line-height:1.45; padding:6px 12px; border-radius:10px; max-width:90%; }
@@ -473,12 +472,12 @@ export function KidsSession() {
             )}
 
             {isActive && (
-              <div className={`kids-mic-big ${micLevel < 0.06 ? 'quiet' : ''}`} aria-label="Tu micrófono">
-                <Mic size={20} strokeWidth={2.4} color={micLevel < 0.06 ? 'rgba(255,255,255,.5)' : '#22C55E'} />
+              <div className={`kids-mic-big ${micLevel >= 0.06 ? 'live' : ''}`} aria-label="Tu micrófono">
+                <Mic size={20} strokeWidth={2.4} color={micLevel >= 0.06 ? '#22C55E' : 'rgba(255,255,255,.5)'} />
                 <span className="bars" style={{ '--lvl': String(Math.min(1, micLevel)) } as Record<string, string>}>
                   <i /><i /><i /><i /><i /><i /><i />
                 </span>
-                <span className="lbl">{micLevel < 0.06 ? 'Te escucho…' : '¡Te oigo!'}</span>
+                <span className="lbl">{micLevel >= 0.06 ? '¡Te oigo!' : 'Te escucho…'}</span>
               </div>
             )}
 

@@ -16,4 +16,7 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
+User-agent: CCBot
+Allow: /
+
 Sitemap: https://hablah.com.ar/sitemap.xml

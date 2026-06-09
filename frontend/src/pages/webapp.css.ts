@@ -158,15 +158,29 @@ export const WEBAPP_CSS = `
 
 .webapp-root .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .webapp-root .topbar {
-  background: rgba(250,251,250,.92);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 1px solid var(--border-1);
+  background: rgba(252,253,252,.78);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(15,30,25,.06);
+  box-shadow: 0 1px 0 rgba(15,30,25,.02), 0 8px 24px -16px rgba(15,30,25,.08);
   position: sticky; top: 0; z-index: 30;
   padding-top: env(safe-area-inset-top, 0px);
 }
-.webapp-root .topbar-inner { height: 64px; display: flex; align-items: center; gap: 16px; padding: 0 32px; }
-.webapp-root .topbar h1 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; margin: 0; }
+[data-theme="dark"] .webapp-root .topbar {
+  background: rgba(14,22,20,.72);
+  border-bottom-color: rgba(255,255,255,.04);
+  box-shadow: 0 1px 0 rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.6);
+}
+.webapp-root .topbar-inner { height: 64px; display: flex; align-items: center; gap: 16px; padding: 0 28px; }
+.webapp-root .topbar h1 {
+  font-size: 18px; font-weight: 800; letter-spacing: -.025em; margin: 0;
+  background: linear-gradient(135deg, var(--fg-1) 0%, var(--fg-2) 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+[data-theme="dark"] .webapp-root .topbar h1 {
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.7) 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
 .webapp-root .topbar .search { flex: 1; max-width: 360px; position: relative; }
 .webapp-root .topbar .search input {
   width: 100%; height: 38px; padding: 0 14px 0 36px;
@@ -175,12 +189,20 @@ export const WEBAPP_CSS = `
 }
 .webapp-root .topbar .search input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-tint); }
 .webapp-root .topbar .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--fg-3); }
-.webapp-root .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.webapp-root .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
 .webapp-root .streak-badge {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 12px; border-radius: 999px;
-  background: var(--accent-tint); color: #8A5A00;
-  font-weight: 700; font-size: 13px;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px 6px 10px; border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255,184,0,.18) 0%, rgba(255,160,0,.10) 100%);
+  border: 1px solid rgba(255,184,0,.28);
+  color: #8A5A00;
+  font-weight: 700; font-size: 12.5px; letter-spacing: -.01em;
+  box-shadow: 0 1px 2px rgba(255,184,0,.12);
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.webapp-root .streak-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(255,184,0,.22);
 }
 .webapp-root .icon-btn {
   width: 38px; height: 38px; border-radius: 10px;
@@ -195,9 +217,23 @@ export const WEBAPP_CSS = `
 }
 .webapp-root .topbar .av-btn {
   width: 38px; height: 38px; border-radius: 50%;
-  background: var(--ink-2); color: white; font-weight: 700;
-  display: grid; place-items: center; font-size: 14px; border: 0;
+  background: linear-gradient(135deg, var(--ink-1) 0%, var(--ink-2) 100%);
+  color: white; font-weight: 800; letter-spacing: -.01em;
+  display: grid; place-items: center; font-size: 14px;
+  border: 0; cursor: pointer; position: relative;
+  box-shadow: 0 1px 2px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.08);
+  transition: transform .18s cubic-bezier(.2,.9,.3,1.2), box-shadow .2s ease;
 }
+.webapp-root .topbar .av-btn::after {
+  content: ''; position: absolute; inset: -3px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--primary) 0%, rgba(0,179,126,0) 60%);
+  opacity: 0; transition: opacity .2s ease;
+  z-index: -1; filter: blur(6px);
+}
+.webapp-root .topbar .av-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.18); }
+.webapp-root .topbar .av-btn:hover::after { opacity: .6; }
+.webapp-root .topbar .av-btn:active { transform: translateY(0) scale(.96); }
 
 .webapp-root .mobile-bar { display: none; }
 
@@ -778,14 +814,19 @@ export const WEBAPP_CSS = `
   .webapp-root .more-sep { height: 1px; background: var(--border-1); margin: 4px 8px; }
 }
 
-/* Settings btn (siempre visible en topbar) */
+/* Icon button (theme / settings — siempre visible en topbar) */
 .webapp-root .settings-btn {
-  background: none; border: 0; padding: 8px; color: var(--fg-2); cursor: pointer;
-  border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
-  transition: background .15s, transform .15s;
+  background: none; border: 0; padding: 9px; color: var(--fg-3); cursor: pointer;
+  border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
 }
-.webapp-root .settings-btn:hover { background: var(--bg-2); color: var(--fg-1); }
-.webapp-root .settings-btn:active { transform: rotate(20deg); }
+.webapp-root .settings-btn:hover {
+  background: rgba(15,30,25,.05);
+  color: var(--fg-1);
+  transform: translateY(-1px);
+}
+.webapp-root .settings-btn:active { transform: translateY(0) scale(.94); }
+[data-theme="dark"] .webapp-root .settings-btn:hover { background: rgba(255,255,255,.06); }
 
 /* Level card (5 escalones) */
 .webapp-root .level-card .level-steps {

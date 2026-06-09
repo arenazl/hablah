@@ -63,21 +63,21 @@ function BuddyTile({
   )
 }
 
+// Grid simétrico: 2 columnas en mobile (2+2+2) y 3 en pantallas anchas (3+3),
+// para que no quede una fila incompleta (4+2 quedaba feo).
+const BUDDY_PICKER_CSS = `
+.buddy-grid { display:grid; gap:12px; width:100%; max-width:560px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media (min-width:440px) { .buddy-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+`
+
 export function BuddyPicker({ selectedId, onPick }: BuddyPickerProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, width: '100%' }}>
+      <style>{BUDDY_PICKER_CSS}</style>
       <h2 style={{ fontSize: 24, fontWeight: 800, color: '#fff', margin: 0, textAlign: 'center' }}>
         ¡Elegí tu amiguito!
       </h2>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-          gap: 12,
-          width: '100%',
-          maxWidth: 560,
-        }}
-      >
+      <div className="buddy-grid">
         {KIDS_BUDDIES.map((b) => (
           <BuddyTile key={b.id} buddy={b} selected={b.id === selectedId} onPick={() => onPick(b)} />
         ))}
