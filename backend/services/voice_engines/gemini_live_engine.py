@@ -8,6 +8,7 @@ import asyncio
 import base64
 import json
 import logging
+import re
 import time
 from typing import AsyncIterator
 
@@ -24,6 +25,18 @@ from core.trace import trace, trace_duration_ms
 from services.voice_engine import VoiceEngine, VoiceEngineContext
 
 log = logging.getLogger(__name__)
+
+
+_MD_NOISE = re.compile(r"[*_`#]+")
+
+
+def _clean_coach_text(text: str) -> str:
+    """Saca markdown (asteriscos, underscores, backticks, #) del texto del coach.
+
+    El modelo native-audio a veces 'negrita' la palabra que enseña (*ARMS*,
+    **SHIP**). No se vocaliza, pero ensucia el subtítulo y cualquier TTS posterior.
+    """
+    return _MD_NOISE.sub("", text) if text else text
 
 
 def _pcm16_to_16k(pcm: bytes, in_rate: int, state):
@@ -788,6 +801,7 @@ class GeminiLiveEngine(VoiceEngine):
                                     # ai_buf nuevo.
                                     _merge_tail_into_last_ai(text)
                                 else:
+                                    text = _clean_coach_text(text)
                                     timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                     counters["ai_text_chunks"] += 1
                                     ai_buf.append(text)
@@ -803,11 +817,12 @@ class GeminiLiveEngine(VoiceEngine):
                                 # Mergear al transcript previo, no al ai_buf nuevo.
                                 _merge_tail_into_last_ai(out_tr["text"])
                             else:
+                                cleaned = _clean_coach_text(out_tr["text"])
                                 timing["last_ai_output_at"] = asyncio.get_event_loop().time()
                                 counters["ai_text_chunks"] += 1
-                                ai_buf.append(out_tr["text"])
-                                trace.event("gemini.coach_chunk", session_id=session_id_log, src="outTr", n=counters["ai_text_chunks"], text=out_tr["text"][:160])
-                                await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": out_tr["text"]})
+                                ai_buf.append(cleaned)
+                                trace.event("gemini.coach_chunk", session_id=session_id_log, src="outTr", n=counters["ai_text_chunks"], text=cleaned[:160])
+                                await ws.send_json({"type": "transcript_chunk", "who": "ai", "text": cleaned})
 
                         input_tr = sc.get("inputTranscription")
                         if input_tr and input_tr.get("text"):

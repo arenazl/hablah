@@ -83,9 +83,21 @@ El enfoque pedagógico, **scopeado por segmento**:
 - **adultos** → **varios** enfoques por personalidad (entrevistador, charlatán,
   mentor, provocador, lúdico — ya existen como `pedagogy_preset`).
 
-> **Separación clave:** el **NIVEL** (restraints: 1-3 palabras, mezclá ES+EN) vive
-> en METODOLOGÍA; el **ENFOQUE / narrativa** vive en el **COACH**. Hoy están
-> mezclados (el enfoque de niños está metido dentro del riel A0) — hay que separarlos.
+> **Separación clave (YA aplicada, 2026-06-09):** el **NIVEL** (riel: 1-3 palabras,
+> mezclá ES+EN — la forma lingüística que cambia con el nivel) vive en METODOLOGÍA;
+> el **ENFOQUE / narrativa** (cómo se lleva la clase, cambia con el segmento/edad)
+> vive en el **COACH**. Se de-duplicó la regla de onomatopeyas (estaba en ambas patas)
+> → ahora sólo en el enfoque.
+>
+> **TEST DE 1 LÍNEA para ubicar cualquier regla nueva (no mezclar patas):**
+> - ¿Cambia con el **nivel** (A0 ≠ B2)? → **riel** (metodología).
+> - ¿Cambia con la **edad/segmento** (nene ≠ adulto), pero es igual en todos sus
+>   niveles? → **enfoque** (coach).
+> - ¿Es **el tema**? → **tópico**.
+> - ¿Es de **este alumno** puntual? → **alumno**.
+>
+> Ej.: "cero onomatopeyas" y "el canal es la palabra (nada de saltar/mostrar/cámara)"
+> no cambian por nivel, valen para todo niño → **enfoque**.
 
 ### 3.5 ALUMNO — la personalización
 Su nivel, segmento, intereses, **errores recientes**, preferencias aprendidas en
@@ -172,6 +184,18 @@ aceptable; latencia en la charla, no (si no, no sirve).
 - **Fallback a la etapa desconectada** cuando falta el léxico → fue la causa de
   *"la pizza tiene un name"*. Se elimina.
 - **"English only"** en el prompt de kids → contradice la mezcla ES+EN. Se saca.
+
+**Resuelto (2026-06-09 · motor kids A0 LIVE):**
+- Riel ↔ enfoque **separados**; onomatopeyas **de-duplicadas** (sólo en el enfoque).
+- **"El canal es la palabra"** reforzado en el enfoque: nada de pedir/festejar acciones
+  físicas (saltar, mostrar, contar con los dedos) — la app es de voz, todo pasa por hablar.
+- **"Cero onomatopeyas"** con el porqué: una onomatopeya en otro idioma no enseña a
+  hablar inglés y el chico no la entiende → enseñar el NOMBRE real.
+- Tópico **"Contar del 1 al 10" desactivado** (drill numérico → inducía falsa-cámara;
+  reenfoque pedagógico pendiente del dueño).
+- **Asteriscos markdown** del coach (`*ARMS*`) **limpiados** en el back antes de mandar
+  al cliente (`_clean_coach_text` en `gemini_live_engine.py`).
+- Densidad de vocab: nudge **AVANCE** en el enfoque (sumar palabras nuevas, no machacar una).
 
 ---
 
