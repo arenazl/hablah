@@ -213,5 +213,30 @@ aceptable; latencia en la charla, no (si no, no sirve).
 
 ---
 
-*Próximo doc: el plan de implementación por pasos (qué se borra, qué se crea, en
-qué orden, con el circuito logueado para verificar cada paso).*
+## 10. Problemas SIN resolver (estado 2026-06-09)
+
+Lo que está LIVE y anda (sólo lo **mecánico**): pulido del coach kids (sin asteriscos,
+sin onomatopeyas, "el canal es la palabra") + latencia **−31%** (`GEMINI_THINKING_BUDGET=256`).
+
+Lo que **NO** está resuelto:
+
+1. **La clase es un DESFILE, no enseña.** El motor encadena vocabulario suelto
+   ("decí MASK, ahora FLY, ahora STAR…") sin explicar el mundo ni unir palabras.
+   Evidencia REAL (micrófono): sesión #574 (Timi, superhéroes) — el alumno se queja
+   en vivo: *"no me ibas explicando"*, *"si no me explicás qué es cape"*. Causa: el
+   enfoque premia "HACELO DECIR" (presentá→repetí→siguiente). **Fix de fondo:** la
+   unidad de la clase debe pasar de "una palabra" a "una escena/idea explorada y
+   explicada" (revertir el nudge AVANCE, que lo empeoró).
+
+2. **Observabilidad NO persistida (deuda crítica).** El armado del prompt (4 patas) y
+   el transcript se loguean a stdout de Heroku (efímero, rota a ~1500 líneas). Falta
+   **persistir por sesión** en DB (`sessions.prompt_snapshot`) o Cloudinary y enchufar
+   la pantalla del backoffice. Sin esto no se audita una clase real pasada.
+
+3. **No medir calidad con tests propios.** Mis tests simulados (alumno = Gemini
+   complaciente) dieron 80/100; la realidad con micrófono dio **~20/100**. La única
+   vara de calidad pedagógica es la **sesión REAL**; los tests propios sólo sirven
+   para lo mecánico (latencia, no-freeze, asteriscos).
+
+**Orden para retomar:** (1) persistir observabilidad → (2) rediseñar el enfoque
+(desfile → exploración) → (3) validar SÓLO con sesiones reales.
