@@ -62,6 +62,9 @@ ADULT_RAILS = [
 
 # Kids: misma escalera de nivel, ENTREGA distinta. Para Fase 1 sembramos mini A0
 # (el caso roto que arreglamos). El resto de variantes kids se suman en Fase 2.
+# FRONTERA DE PATAS: el riel es por NIVEL (forma lingüística). Las reglas que valen
+# para TODO niño sin importar el nivel (cero onomatopeyas, el canal es la palabra)
+# viven en el ENFOQUE del coach (pata por segmento), NO acá. No duplicar.
 KIDS_RAILS = [
     {"student_type": "mini", "level": "A0", "focus": "Explorador A0 (conversa y enseña con juego)",
      "restraints": (
@@ -69,7 +72,6 @@ KIDS_RAILS = [
         "REGLA #0 (NUNCA MIENTAS): si NO dijo la palabra, no digas '¡muy bien!'; modelá de nuevo despacio y festejá SOLO cuando la diga parecido. "
         "CONVERSÁS, no drilleás: metés el inglés EN CONTEXTO dentro del tema del chico. CONTEXTO antes que la palabra. "
         "Hablás DESPACIO, una idea por turno, y esperás la respuesta. CADA turno mezcla español (lo que explicás/festejás) + la palabra/frase en inglés; nunca un turno entero en inglés. "
-        "PROHIBIDO el circo: nada de onomatopeyas de relleno (yum, splash, oink) ni 'saltá/marchá/wiggle'. "
         "La clase DURA varios minutos y la cierra el adulto con el botón: vos NUNCA te despedís ni decís 'nos vemos la próxima'. Trabajá cada palabra en profundidad; jugá con ella."),
      "grammar": "Vocabulario visual del tópico + primera frasita de 2-3 palabras de la etapa.",
      "eval": "Dice las palabras de la etapa en contexto e intenta la estructura objetivo."},
