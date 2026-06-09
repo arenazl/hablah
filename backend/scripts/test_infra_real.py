@@ -30,7 +30,7 @@ from models.template import Topic
 APP = os.getenv("APP_HOST", "hablah-api-abcaf6c43a5d.herokuapp.com")
 BASE = f"https://{APP}"
 WS = f"wss://{APP}/api/voice/ws"
-TURNS = 6
+TURNS = 8
 OUTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "transcripciones")
 GMODEL = settings.GEMINI_MODEL or "gemini-2.5-flash"
 GURL = f"https://generativelanguage.googleapis.com/v1beta/models/{GMODEL}:generateContent?key={settings.GEMINI_API_KEY}"
