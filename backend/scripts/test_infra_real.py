@@ -30,7 +30,7 @@ from models.template import Topic
 APP = os.getenv("APP_HOST", "hablah-api-abcaf6c43a5d.herokuapp.com")
 BASE = f"https://{APP}"
 WS = f"wss://{APP}/api/voice/ws"
-TURNS = 8
+TURNS = 20
 OUTDIR = os.path.join(os.path.dirname(__file__), "..", "..", "transcripciones")
 GMODEL = settings.GEMINI_MODEL or "gemini-2.5-flash"
 GURL = f"https://generativelanguage.googleapis.com/v1beta/models/{GMODEL}:generateContent?key={settings.GEMINI_API_KEY}"
@@ -47,50 +47,6 @@ async def _student(client, hist):
         return r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
     except Exception:
         return "¿y después?"
-
-
-JUDGE_SYS = ("Sos un evaluador pedagógico. Te paso la transcripción de una clase de inglés para un nene de 5 "
-             "años. Para CADA clave, true=bien. Devolvé SOLO JSON:\n"
-             '{"intro": true si el coach ARRANCA con una introducción clara (saluda y presenta la aventura y qué van a hacer) antes de pedir nada,'
-             ' "narrativa": true si es un cuento/aventura que avanza (NO una lista suelta tipo "pizza ok, dog ok"),'
-             ' "elicita": true si GUÍA al chico a DECIR las palabras con pedidos claros (modela y pide "repetí X" / "ahora vos"), en vez de preguntas abiertas que el chico no puede responder,'
-             ' "mezcla_es_en": true si el coach mezcla español+inglés (ningún turno entero en inglés),'
-             ' "sin_circo": true si NO pide acciones físicas que no puede ver (mover brazos, saltar) NI usa onomatopeyas de relleno (oink, yum),'
-             ' "no_cierra": true si el coach sigue la clase SIN despedirse (es CORRECTO que NO cierre; la corta el adulto). Poné false SOLO si el coach se despide o cierra él la clase,'
-             ' "vocab_del_tema": true si las palabras en inglés son del tema,'
-             ' "coherente": true si todo tiene sentido (NADA tipo "la pizza tiene un name"),'
-             ' "score": entero 1-10, "problema": "breve, o vacío si está ok"}')
-CRIT = ["intro", "narrativa", "elicita", "mezcla_es_en", "sin_circo", "no_cierra", "vocab_del_tema", "coherente"]
-
-
-def _parse_json(raw):
-    raw = (raw or "").strip()
-    if "```" in raw:
-        seg = raw.split("```")
-        raw = seg[1] if len(seg) > 1 else raw
-        if raw.lstrip().lower().startswith("json"):
-            raw = raw.lstrip()[4:]
-    i, j = raw.find("{"), raw.rfind("}")
-    if i >= 0 and j > i:
-        raw = raw[i:j + 1]
-    try:
-        return json.loads(raw)
-    except Exception:
-        return {"score": 0, "problema": "juez no parseable"}
-
-
-async def _judge(http, convo):
-    cfg = {"temperature": 0.0, "maxOutputTokens": 500, "thinkingConfig": {"thinkingBudget": 0},
-           "responseMimeType": "application/json"}
-    payload = {"contents": [{"role": "user", "parts": [{"text": convo}]}], "generationConfig": cfg,
-               "systemInstruction": {"parts": [{"text": JUDGE_SYS}]}}
-    for _ in range(2):
-        try:
-            r = await http.post(GURL, json=payload)
-            return _parse_json(r.json()["candidates"][0]["content"]["parts"][0]["text"])
-        except Exception:
-            await asyncio.sleep(1.0)
-    return {"score": 0, "problema": "juez falló"}
 
 
 async def _coach_turn(ws, timeout_first=12.0, settle=2.5):
@@ -164,10 +120,9 @@ async def run_topic(http, kid_id, topic):
         except Exception:
             pass
     convo = "\n".join(lines)
-    verdict = await _judge(http, convo)
     avg = sum(timings) / len(timings) if timings else 0
     mx = max(timings) if timings else 0
-    return sid, prompt, convo, setup_ms, avg, mx, verdict
+    return sid, prompt, convo, setup_ms, avg, mx
 
 
 def _slug(title):
@@ -185,23 +140,21 @@ async def main():
         print(f"FALTA kid={bool(kid)} topics={len(topics) if topics else 0}")
         return
     print(f"[infra real] kid={kid.nombre} (id={kid.id}, age={kid.age_group}) · {len(topics)} tópico(s) · WS={WS}")
-    scores = []
-    async with httpx.AsyncClient(timeout=90.0) as http:
+    async with httpx.AsyncClient(timeout=120.0) as http:
         for topic in topics:
             try:
-                sid, prompt, convo, setup_ms, avg, mx, v = await run_topic(http, kid.id, topic)
-                ok = sum(1 for c in CRIT if v.get(c))
-                fails = [c for c in CRIT if not v.get(c)]
-                scores.append(v.get("score", 0))
-                print(f"{topic.title:34s} score {v.get('score')}/10 · crit {ok}/8 · "
-                      f"setup {setup_ms:.0f}ms · coach prom {avg:.1f}s/máx {mx:.1f}s"
-                      + (f" · flojos: {','.join(fails)}" if fails else "")
-                      + (f"  [{v.get('problema')}]" if v.get('problema') else ""))
+                t0 = time.monotonic()
+                sid, prompt, convo, setup_ms, avg, mx = await run_topic(http, kid.id, topic)
+                dur = time.monotonic() - t0
+                print(f"\n{'='*70}\n=== {topic.title} (session {sid}) ===")
+                print(f"  setup: {setup_ms:.0f}ms · latencia coach: prom {avg:.1f}s · máx {mx:.1f}s · "
+                      f"duración charla: {dur:.0f}s ({TURNS} turnos)")
+                print("  --- transcripción (infra real):")
+                for ln in convo.split("\n"):
+                    print(f"    {ln}")
             except Exception as e:
-                print(f"{topic.title:34s} [ERROR] {type(e).__name__}: {e}")
-    if scores:
-        print(f"\nPROMEDIO score: {sum(scores)/len(scores):.1f}/10  ({len(scores)} tópicos)")
-    print("FIN test infra real (con juez).")
+                print(f"  [ERROR en {topic.title}] {type(e).__name__}: {e}")
+    print(f"\n{'='*70}\nFIN test infra real (sin juez — analizo yo las transcripciones).")
 
 
 if __name__ == "__main__":
