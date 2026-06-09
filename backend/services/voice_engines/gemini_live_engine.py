@@ -519,6 +519,26 @@ class GeminiLiveEngine(VoiceEngine):
         trace.event("session.engine.start", session_id=session_id_log, model=LIVE_MODEL,
                     is_kid=is_kid_log)
 
+        def _mark_first_coach_response(modality: str) -> None:
+            """Desglose de latencia por turno: mide say/input-del-user -> primera
+            respuesta REAL del coach. Si hubo 'thinking' antes, separa cuanto fue
+            red+arranque (time_to_thinking) vs pensar+generar (thinking_to_audio).
+            Solo mide el primer output de cada turno (awaiting_coach_since se limpia)."""
+            t0 = timing.get("awaiting_coach_since")
+            if t0 is None:
+                return
+            now = asyncio.get_event_loop().time()
+            th0 = timing.get("thinking_first_at")
+            trace.event("turn.coach_first_response",
+                        session_id=session_id_log,
+                        modality=modality,
+                        total_ms=int((now - t0) * 1000),
+                        time_to_thinking_ms=int((th0 - t0) * 1000) if th0 else None,
+                        thinking_to_audio_ms=int((now - th0) * 1000) if th0 else None,
+                        had_thinking=th0 is not None)
+            timing["awaiting_coach_since"] = None
+            timing["thinking_first_at"] = None
+
         # Defensa contra "ghost turns": el modelo a veces emite un turno extra
         # con la cola del turno anterior 13-15s despues, sin que el user haya
         # hablado. Sintoma: coach repite algo, se frena, retoma otra cosa
@@ -627,6 +647,10 @@ class GeminiLiveEngine(VoiceEngine):
                                         "turnComplete": True,
                                     }
                                 }))
+                                # Instrumentacion latencia: marca el envio del turno del
+                                # user (modo say) -> medimos say -> 1er audio del coach.
+                                timing["awaiting_coach_since"] = asyncio.get_event_loop().time()
+                                timing["thinking_first_at"] = None
                             except websockets.ConnectionClosed:
                                 pass
                     elif msg.get("type") == "system_update":
@@ -768,6 +792,7 @@ class GeminiLiveEngine(VoiceEngine):
                                 # Si es ghost, NO mandar audio al cliente.
                                 if ghost_state["current_turn_is_ghost"]:
                                     continue
+                                _mark_first_coach_response("audio")
                                 counters["ai_audio_chunks"] += 1
                                 audio_bytes = len(inline.get("data", "")) * 3 // 4
                                 counters["ai_audio_bytes"] += audio_bytes
@@ -788,6 +813,8 @@ class GeminiLiveEngine(VoiceEngine):
                                     stripped.startswith("Following instructions")
                                 )
                                 if looks_like_thinking:
+                                    if timing.get("awaiting_coach_since") and timing.get("thinking_first_at") is None:
+                                        timing["thinking_first_at"] = asyncio.get_event_loop().time()
                                     trace.warn("gemini.text.thinking_dropped",
                                                session_id=session_id_log,
                                                text_preview=stripped[:200])
