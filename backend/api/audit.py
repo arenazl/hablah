@@ -210,6 +210,8 @@ async def session_detail(
         "transcript": s.transcript or [],
         "metrics": s.metrics or {},
         "report": s.report or {},
+        "prompt_circuit": getattr(s, "prompt_circuit", None) or None,
+        "prompt_final": getattr(s, "prompt_final", None) or None,
         "errors": [
             {
                 "id": e.id,

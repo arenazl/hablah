@@ -198,6 +198,12 @@ class Session(Base):
     # (no repetir objetivos en las ultimas N sesiones del alumno).
     learning_objective_code = Column(String(64), nullable=True)
 
+    # ─── Observabilidad durable: el circuito + prompt de ESTA clase ───
+    # Heroku stdout es efimero; sin esto no se audita por que una clase salio
+    # asi. Se escriben 1 vez en el setup del WS (services/gemini_live.py).
+    prompt_circuit = Column(JSON, nullable=True)   # las 4 patas RESUELTAS + modo + junction
+    prompt_final = Column(Text, nullable=True)     # systemInstruction exacto enviado al LLM
+
 
 class ErrorLog(Base):
     """Errores recurrentes del alumno — disparador del modo insistente."""

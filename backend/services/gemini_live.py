@@ -211,8 +211,21 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             }
             log.info("PROMPT_CIRCUIT " + _json.dumps(_circuit, ensure_ascii=False))
             log.info("PROMPT_FINAL session=%s >>>\n%s\n<<< PROMPT_FINAL_END", s.id, super_prompt)
+
+            # Persistir el circuito + prompt en la DB (durable, no solo stdout
+            # efimero de Heroku): 1 UPDATE en el setup, fuera del loop en vivo
+            # -> cero latencia agregada a la charla.
+            _circuit["ai_restraints"] = (methodology_module or {}).get("ai_restraints")
+            _circuit["enfoque"] = getattr(template, "enfoque", None)
+            _circuit["learning_objective"] = (learning_objective or {}).get("code") if learning_objective else None
+            await db.execute(
+                update(SessionModel)
+                .where(SessionModel.id == s.id)
+                .values(prompt_circuit=_circuit, prompt_final=super_prompt)
+            )
+            await db.commit()
         except Exception as e:
-            log.warning(f"PROMPT_CIRCUIT log falló: {e}")
+            log.warning(f"PROMPT_CIRCUIT persist falló: {e}")
 
         return {
             "session_id": s.id,
