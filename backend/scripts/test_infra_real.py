@@ -131,7 +131,6 @@ def _slug(title):
 
 async def main():
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 1
-    os.makedirs(OUTDIR, exist_ok=True)
     async with AsyncSessionLocal() as db:
         kid = (await db.execute(select(User).where(User.age_group.isnot(None)).order_by(User.id))).scalars().first()
         topics = (await db.execute(select(Topic).where(
@@ -150,15 +149,6 @@ async def main():
                 print("  --- transcripción (infra real):")
                 for ln in convo.split("\n"):
                     print(f"    {ln}")
-                path = os.path.join(OUTDIR, f"infra-{_slug(topic.title)}.md")
-                with open(path, "w", encoding="utf-8") as fh:
-                    fh.write(f"# {topic.title} — clase por la INFRA REAL (mini · A0)\n\n"
-                             f"Medido contra el backend real (Heroku + WS + Gemini Live), charla por texto.\n\n"
-                             f"- **Setup** (`POST /sessions/start`): {setup_ms:.0f} ms\n"
-                             f"- **Latencia coach** (1er chunk): prom {avg:.1f}s · máx {mx:.1f}s\n\n"
-                             f"## Prompt final (de prod)\n```\n{prompt}\n```\n\n"
-                             f"## Transcripción (infra real)\n```\n{convo}\n```\n")
-                print(f"  [ok] escrito infra-{_slug(topic.title)}.md")
             except Exception as e:
                 print(f"  [ERROR en {topic.title}] {type(e).__name__}: {e}")
     print("\nFIN test infra real.")
