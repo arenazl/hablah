@@ -2,7 +2,37 @@
 
 > Plataforma adaptativa de aprendizaje de idiomas con IA conversacional por voz.
 > Single source of truth de qué hace cada parte, cómo se conecta, dónde está deployado.
-> **Última actualización:** 2026-05-17
+> **Última actualización:** 2026-06-09
+
+---
+
+## 0. Arquitectura del Motor Pedagógico Adaptativo — las 4 patas
+
+Cada clase NO es un guion enlatado: el prompt se **compone Just-In-Time** cruzando 4
+dimensiones ("patas") para ESE alumno, esa vez. Ninguna se usa sola — convergen en un
+único prompt con narrativa de espina. (Doc macro: `MODELO_APRENDIZAJE_ADAPTATIVO.md`.)
+
+| Pata | Responde | Eje | Vive en |
+|---|---|---|---|
+| **1. TÓPICO** | ¿De qué se habla? (el mundo) | por tema/segmento, **agnóstico al nivel** | `topics` |
+| **2. NIVEL / METODOLOGÍA** (el "riel") | ¿Qué forma del idioma puede usar la IA? (A0: 1-3 palabras; B2: dilemas) | **por nivel** A0→C2 × segmento | `methodology_modules` |
+| **3. COACH / ENFOQUE** | ¿Quién enseña y cómo lleva la clase? | **por segmento** (niño/ado/adulto), no por nivel | `templates.enfoque` |
+| **4. ALUMNO** | ¿Qué sé de este alumno puntual? (errores, progreso) | individual | `users` + `error_logs` (en kids: apagada) |
+
+**El cruce** ocurre en un solo lugar: `services/super_prompt.py::compose_session_prompt()`,
+detrás del flag `COMPOSER_MODES`. La bisagra `curriculum_mode` decide quién manda
+(kids A0 = `staged_vocab`: el riel manda, el tópico es el mundo donde se enseña).
+
+**TEST DE 1 LÍNEA para ubicar cualquier regla nueva (no mezclar patas):**
+- ¿Cambia con el **nivel** (A0 ≠ B2)? → **riel** (metodología).
+- ¿Cambia con la **edad/segmento** (nene ≠ adulto), pero igual en todos sus niveles? → **enfoque** (coach).
+- ¿Es **el tema**? → **tópico**.
+- ¿Es de **este alumno** puntual? → **alumno**.
+
+**Estado:** Fase 1 LIVE para kids A0 (`COMPOSER_MODES=staged_vocab`). Deuda abierta en
+`HANDOFF_2026-06-09.md`: (1) observabilidad persistente (hoy el prompt+circuito se loguean
+a stdout efímero, falta DB/Cloudinary); (2) rediseñar el enfoque para que la clase
+**explique y construya**, no que sea un desfile de palabras ("decí X, ahora decí Y").
 
 ---
 
