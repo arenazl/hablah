@@ -68,6 +68,31 @@ def _serialize(m: MethodologyModule) -> dict:
     }
 
 
+def _serialize_student_type(s: StudentType) -> dict:
+    return {
+        "id": s.id,
+        "slug": s.slug,
+        "name": s.name,
+        "description": s.description or "",
+        "age_min": s.age_min,
+        "age_max": s.age_max,
+        "tutor_mascot": getattr(s, "tutor_mascot", None) or "",
+        "tutor_identity": getattr(s, "tutor_identity", None) or "",
+        "tutor_tonal_rules": getattr(s, "tutor_tonal_rules", None) or "",
+        "session_focus": getattr(s, "session_focus", None) or "",
+        "active": bool(s.active),
+    }
+
+
+class StudentTypeUpdate(BaseModel):
+    tutor_mascot: Optional[str] = None
+    tutor_identity: Optional[str] = None
+    tutor_tonal_rules: Optional[str] = None
+    session_focus: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+
 @router.get("/student-types")
 async def list_student_types(
     db: AsyncSession = Depends(get_db),
@@ -76,7 +101,26 @@ async def list_student_types(
     rows = (await db.execute(
         select(StudentType).where(StudentType.active.is_(True)).order_by(StudentType.sort_order)
     )).scalars().all()
-    return [{"slug": s.slug, "name": s.name, "description": s.description} for s in rows]
+    return [_serialize_student_type(s) for s in rows]
+
+
+@router.patch("/student-types/{slug}")
+async def update_student_type(
+    slug: str,
+    payload: StudentTypeUpdate,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("admin")),
+):
+    s = (await db.execute(
+        select(StudentType).where(StudentType.slug == slug)
+    )).scalar_one_or_none()
+    if not s:
+        raise HTTPException(status_code=404, detail="StudentType no encontrado")
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(s, key, value)
+    await db.commit()
+    await db.refresh(s)
+    return _serialize_student_type(s)
 
 
 @router.get("")

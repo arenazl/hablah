@@ -38,6 +38,11 @@ class StudentType(Base):
     age_max = Column(Integer, nullable=True)
     sort_order = Column(Integer, nullable=False, default=0)
     active = Column(Boolean, nullable=False, default=True)
+    # Bloques 2-4 del compositor: quién es el tutor y cómo lleva la clase.
+    tutor_mascot = Column(String(120), nullable=True)
+    tutor_identity = Column(Text, nullable=True)
+    tutor_tonal_rules = Column(Text, nullable=True)
+    session_focus = Column(Text, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -95,6 +100,10 @@ class TopicModuleContent(Base):
     seed_prompt = Column(Text, nullable=True)  # disparador inicial adaptado al nivel
     required_keywords = Column(JSON, nullable=False, default=list)  # palabras clave del nivel
     allowed_vocabulary = Column(JSON, nullable=False, default=list)  # filtro de léxico (duro en A0/A1)
+
+    # Bloques 8-9 del compositor: narrativa de la clase y comando de arranque.
+    story_spine = Column(Text, nullable=True)      # "Sparky y Timo aterrizan frente a un T-Rex..."
+    start_trigger = Column(Text, nullable=True)    # "Saludá a {name}, explicale que acaban de llegar..."
 
     is_generated = Column(Boolean, nullable=False, default=False)  # True = autogenerado por Gemini
     active = Column(Boolean, nullable=False, default=True)
