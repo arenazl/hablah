@@ -307,7 +307,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         if (coachTurnEndedRef.current && playCtxRef.current) {
           coachTurnEndedRef.current = false
           const ahead = nextStartTimeRef.current - playCtxRef.current.currentTime
-          if (ahead > 1.5) {
+          // Antes 1.5s: cortaba el FINAL de los turnos largos del coach kids (la
+          // consigna "ahora vos, deci X" quedaba sin sonar). Subido a 6s: solo
+          // limpia delay PATOLOGICO de varios turnos acumulados, nunca el cierre
+          // de un turno normal.
+          if (ahead > 6.0) {
             for (const src of playSourcesRef.current) {
               try { src.stop() } catch {}
               try { src.disconnect() } catch {}
