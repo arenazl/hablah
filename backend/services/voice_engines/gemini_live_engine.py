@@ -220,35 +220,29 @@ async def _get_vertex_token() -> str:
     """Genera un Bearer token para Vertex AI.
 
     Prioridad:
-    1. Service Account desde env vars (GOOGLE_CLIENT_EMAIL + GOOGLE_PRIVATE_KEY)
-       -> funciona en Heroku (no hay metadata server).
+    1. GOOGLE_SERVICE_ACCOUNT_JSON_B64: JSON del service account en base64
+       (evita problemas de escapes de \\n en private_key). Recomendado en Heroku.
     2. Metadata server de Google Cloud (Cloud Run / GKE) como fallback.
     """
     import asyncio
+    import base64
+    import json as _json
     import os as _os2
 
-    client_email = _os2.getenv("GOOGLE_CLIENT_EMAIL")
-    private_key = (_os2.getenv("GOOGLE_PRIVATE_KEY") or "").replace("\\n", "\n")
-    project_id = _os2.getenv("GOOGLE_PROJECT_ID") or VERTEX_PROJECT
+    sa_b64 = _os2.getenv("GOOGLE_SERVICE_ACCOUNT_JSON_B64")
 
-    if client_email and private_key:
+    if sa_b64:
         from google.auth.transport.requests import Request
         from google.oauth2 import service_account
 
+        sa_info = _json.loads(base64.b64decode(sa_b64).decode("utf-8"))
         creds = service_account.Credentials.from_service_account_info(
-            {
-                "type": "service_account",
-                "project_id": project_id,
-                "client_email": client_email,
-                "private_key": private_key,
-                "token_uri": "https://oauth2.googleapis.com/token",
-            },
+            sa_info,
             scopes=["https://www.googleapis.com/auth/cloud-platform"],
         )
-        # refresh() es sync; ejecutar en executor para no bloquear el event loop.
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, creds.refresh, Request())
-        log.info("vertex_token: obtenido via service_account env vars (%s)", client_email)
+        log.info("vertex_token: obtenido via GOOGLE_SERVICE_ACCOUNT_JSON_B64 (%s)", sa_info.get("client_email"))
         return creds.token
 
     # Fallback: metadata server (Cloud Run / GKE)
@@ -264,7 +258,7 @@ async def _get_vertex_token() -> str:
             log.info("vertex_token: obtenido via metadata server")
             return r.json()["access_token"]
     except Exception as e:
-        log.error("vertex_token_fetch_failed: no hay env vars ni metadata server: %s", e)
+        log.error("vertex_token_fetch_failed: no hay GOOGLE_SERVICE_ACCOUNT_JSON_B64 ni metadata server: %s", e)
         raise
 
 
