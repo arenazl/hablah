@@ -135,25 +135,34 @@ _LLM_TEST_TOPIC = SimpleNamespace(
     keywords=["dog", "cat", "fish"],
 )
 _LLM_VALID_VOICES = {"Puck", "Charon", "Kore", "Fenrir", "Aoede", "Leda", "Orus", "Zephyr"}
+_LLM_START_SENS = {"START_SENSITIVITY_HIGH", "START_SENSITIVITY_LOW", "START_SENSITIVITY_UNSPECIFIED"}
+_LLM_END_SENS = {"END_SENSITIVITY_HIGH", "END_SENSITIVITY_LOW", "END_SENSITIVITY_UNSPECIFIED"}
+_LLM_ACTIVITY = {"START_OF_ACTIVITY_INTERRUPTS", "NO_INTERRUPTION"}
 
 
 @router.websocket("/ws_llm_test")
 async def voice_ws_llm_test(
     websocket: WebSocket,
     engine: str = Query("gemini_live"),
-    model: str = Query(None),
-    voice: str = Query(None),
+    model: str = Query("models/gemini-3.1-flash-live-preview"),
+    voice: str = Query("Aoede"),
+    start_sens: str = Query("START_SENSITIVITY_HIGH"),
+    end_sens: str = Query("END_SENSITIVITY_HIGH"),
+    silence_ms: int = Query(500),
+    prefix_ms: int = Query(200),
+    activity: str = Query("START_OF_ACTIVITY_INTERRUPTS"),
+    thinking: int = Query(256),
     age_group: str = Query("mini"),
 ):
-    """Banco de pruebas AISLADO de tecnología de voz.
+    """Banco de pruebas AISLADO de voz / turn-taking (ruta frontend /llm).
 
     NO toca la BD, NO pide JWT, NO persiste nada. Arma el prompt de 9 bloques con
-    datos ESTÁTICOS (fallbacks del composer) para un nene A0 y corre el engine
-    elegido con override de modelo/voz por query param. Sirve para medir latencia,
-    cortes y 'palabras comidas' switcheando modelos sin afectar a la app.
+    datos ESTÁTICOS (fallbacks del composer) para un nene A0 y corre el engine con
+    TODOS los knobs de VAD/turn-taking ajustables por query param, para tunear en
+    vivo qué config toma mejor la voz. No afecta a la app.
     """
     await websocket.accept()
-    safe_voice = voice if voice in _LLM_VALID_VOICES else None
+    safe_voice = voice if voice in _LLM_VALID_VOICES else "Aoede"
     seg = age_group if age_group in ("mini", "junior", "tween") else "mini"
     user = SimpleNamespace(
         nombre="Timi",
@@ -175,11 +184,17 @@ async def voice_ws_llm_test(
         target_language="en",
         silence_tolerance_ms=1500,
         interruption_allowed=True,
-        model_override=model,
+        model_override=model or None,
+        start_sensitivity_override=start_sens if start_sens in _LLM_START_SENS else None,
+        end_sensitivity_override=end_sens if end_sens in _LLM_END_SENS else None,
+        silence_ms_override=int(min(max(silence_ms, 0), 2000)),
+        prefix_padding_override=int(min(max(prefix_ms, 0), 1000)),
+        activity_handling_override=activity if activity in _LLM_ACTIVITY else None,
+        thinking_budget_override=int(min(max(thinking, 0), 4096)),
     )
     engine_name = engine if engine in available_engines() else "gemini_live"
-    log.info("voice_ws_llm_test: engine=%s model=%s voice=%s seg=%s",
-             engine_name, model, safe_voice, seg)
+    log.info("voice_ws_llm_test: engine=%s model=%s voice=%s start=%s end=%s silence=%s prefix=%s act=%s think=%s",
+             engine_name, model, safe_voice, start_sens, end_sens, silence_ms, prefix_ms, activity, thinking)
     try:
         eng = get_engine(engine_name)
         async for _line in eng.run(websocket, ctx):

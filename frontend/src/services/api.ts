@@ -446,9 +446,9 @@ export function buildRoomWsUrl(roomToken: string, pid: string, lang?: string): s
 /** URL del WebSocket del banco de pruebas /llm. Va DIRECTO al backend (no via
  * Netlify). Sin JWT ni session_id: el backend arma un prompt 9-bloques estático
  * y corre el engine/modelo elegidos. Módulo aislado, no toca la app. */
-export function buildLlmTestWsUrl(engine: string, model: string, voice?: string): string {
+export function buildLlmTestWsUrl(params: Record<string, string | number>): string {
   const wsBase = buildWsBase()
-  const params = new URLSearchParams({ engine, model })
-  if (voice) params.set('voice', voice)
-  return `${wsBase}/voice/ws_llm_test?${params.toString()}`
+  const sp = new URLSearchParams()
+  for (const [k, v] of Object.entries(params)) sp.set(k, String(v))
+  return `${wsBase}/voice/ws_llm_test?${sp.toString()}`
 }

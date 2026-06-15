@@ -275,6 +275,13 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
     # Override del modelo por sesión (banco de pruebas /llm). Si el ctx no lo
     # trae, usamos el LIVE_MODEL global -> path de prod intacto.
     _model = getattr(ctx, "model_override", None) or LIVE_MODEL
+    # Overrides de VAD/turn-taking del banco /llm. None => valor de prod.
+    _start_sens = getattr(ctx, "start_sensitivity_override", None)
+    _end_sens = getattr(ctx, "end_sensitivity_override", None)
+    _silence_ms = getattr(ctx, "silence_ms_override", None)
+    _prefix_ms = getattr(ctx, "prefix_padding_override", None)
+    _activity = getattr(ctx, "activity_handling_override", None)
+    _thinking = getattr(ctx, "thinking_budget_override", None)
     free_topic = getattr(ctx, "free_topic", None)
     super_prompt_size = len(getattr(ctx, "super_prompt", "") or "")
     trace.event("gemini.setup.start",
@@ -318,7 +325,7 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                 # thinkingBudget: con 0 (apagado) el modelo se trababa con inputs
                 # ambiguos + prompt grande (gaps de 6-10s). Un presupuesto bajo le da
                 # "espacio mental" para resolver sin explotar la latencia. Configurable.
-                "thinkingConfig": {"thinkingBudget": int(_os.getenv("GEMINI_THINKING_BUDGET", "1024"))},
+                "thinkingConfig": {"thinkingBudget": (_thinking if _thinking is not None else int(_os.getenv("GEMINI_THINKING_BUDGET", "1024")))},
                 "speechConfig": {
                     "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": getattr(ctx, "voice_name", None) or "Kore"}},
                 },
@@ -343,27 +350,25 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                     # de fondo o respiracion → el coach cortaba sin sentido y
                     # despues respondia un turn vacio con "muy bien" generico.
                     "startOfSpeechSensitivity": (
-                        "START_SENSITIVITY_LOW" if is_kid else "START_SENSITIVITY_HIGH"
+                        _start_sens or ("START_SENSITIVITY_LOW" if is_kid else "START_SENSITIVITY_HIGH")
                     ),
                     # HIGH: VAD interno mas sensible para detectar voz Y turn-end.
                     # Con LOW no transcribia inputs cortos (S489 tuvo 0 input_transcription
                     # con 60 chunks de audio). El silenceDurationMs=2000 capped evita
                     # que pise al alumno cuando hace pausa corta.
-                    "endOfSpeechSensitivity": "END_SENSITIVITY_HIGH",
-                    "prefixPaddingMs": 200,
+                    "endOfSpeechSensitivity": (_end_sens or "END_SENSITIVITY_HIGH"),
+                    "prefixPaddingMs": (_prefix_ms if _prefix_ms is not None else 200),
                     "silenceDurationMs": (
-                        # Adultos: piso 600ms (templates: 1000ms - el valor de DB manda).
-                        # Para que se sienta fluido, bajar templates a 700ms manualmente.
-                        # Kids: piso 1500ms (cadencia mas lenta).
-                        # Cap a 2000ms (Gemini Live API rechaza valores mayores con 1007).
-                        int(min(max(ctx.silence_tolerance_ms, 1500 if is_kid else 600), 2000))
+                        int(min(max(_silence_ms, 0), 2000)) if _silence_ms is not None
+                        # Adultos: piso 600ms; Kids: piso 1500ms; cap 2000ms (API rechaza >2000 con 1007).
+                        else int(min(max(ctx.silence_tolerance_ms, 1500 if is_kid else 600), 2000))
                     ),
                 },
                 # NO_INTERRUPTION: con START_OF_ACTIVITY_INTERRUPTS, un ruidito del
                 # nene durante el gap de procesamiento de Gemini abortaba la
                 # generación del coach -> freeze a la 3ra-4ta interacción. Con
                 # NO_INTERRUPTION el VAD de Google ya no aborta solo. Configurable.
-                "activityHandling": _os.getenv("GEMINI_ACTIVITY_HANDLING", "NO_INTERRUPTION"),
+                "activityHandling": (_activity or _os.getenv("GEMINI_ACTIVITY_HANDLING", "NO_INTERRUPTION")),
             },
             "inputAudioTranscription": {},
             "outputAudioTranscription": {},

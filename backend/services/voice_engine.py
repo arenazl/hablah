@@ -51,6 +51,12 @@ class VoiceEngineContext:
         user_name: Optional[str] = None,
         voice_name: Optional[str] = None,
         model_override: Optional[str] = None,
+        start_sensitivity_override: Optional[str] = None,
+        end_sensitivity_override: Optional[str] = None,
+        silence_ms_override: Optional[int] = None,
+        prefix_padding_override: Optional[int] = None,
+        activity_handling_override: Optional[str] = None,
+        thinking_budget_override: Optional[int] = None,
     ) -> None:
         self.session_id = session_id
         self.user_id = user_id
@@ -63,6 +69,14 @@ class VoiceEngineContext:
         # Override del modelo por sesión (banco de pruebas /llm). None => usa el
         # LIVE_MODEL global (env GEMINI_LIVE_MODEL). El path de prod no lo setea.
         self.model_override = model_override
+        # Overrides de VAD/turn-taking por sesión (banco de pruebas /llm).
+        # Todos None => comportamiento de prod idéntico.
+        self.start_sensitivity_override = start_sensitivity_override
+        self.end_sensitivity_override = end_sensitivity_override
+        self.silence_ms_override = silence_ms_override
+        self.prefix_padding_override = prefix_padding_override
+        self.activity_handling_override = activity_handling_override
+        self.thinking_budget_override = thinking_budget_override
         self.language = language
         self.target_language = target_language
         self.silence_tolerance_ms = silence_tolerance_ms
