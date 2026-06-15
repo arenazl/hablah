@@ -418,7 +418,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       }
       streamRef.current = stream
 
-      const url = buildVoiceWsUrl(sessionId, explicitToken, voice)
+      // Override global de voz desde settings (para probar voces de Gemini).
+      // Vacio = usar la del personaje/param que vino por argumento.
+      const voiceOverride = loadAudioSettings().geminiVoice
+      const url = buildVoiceWsUrl(sessionId, explicitToken, voiceOverride || voice)
       trace('ws.client.connecting', sessionId, { url: url.replace(/token=[^&]+/, 'token=…') })
       const ws = new WebSocket(url)
       wsRef.current = ws

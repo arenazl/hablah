@@ -44,6 +44,8 @@ export interface AudioSettings {
   wsPingIntervalMs: number
   /** Volumen del audio de OTROS humanos en voice room. */
   participantVolume: number
+  /** Voz prebuilt de Gemini Live (override global para probar). Vacio = la del personaje. */
+  geminiVoice: string
 }
 
 // DEFAULT optimizado para latencia rapida en sesion 1:1.
@@ -71,6 +73,7 @@ export const DEFAULT_SETTINGS: AudioSettings = {
   skipRedundantStatus: true,
   wsPingIntervalMs: 25000,
   participantVolume: 1.0,
+  geminiVoice: '',
 }
 
 export interface AudioPreset {

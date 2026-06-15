@@ -161,7 +161,7 @@ interface Row {
   name: string
   hint?: string
   kind: 'number' | 'select' | 'toggle' | 'float'
-  options?: number[]
+  options?: (number | string)[]
   min?: number
   max?: number
   step?: number
@@ -199,6 +199,13 @@ const GROUPS: { title: string; icon: 'mic' | 'volume' | 'music' | 'settings'; ro
       { key: 'catchUpThresholdSeconds', name: 'Catch threshold (s)', kind: 'float', min: 0.5, max: 10, step: 0.5 },
       { key: 'coachVolume', name: 'Vol. coach', hint: '1.0 = original', kind: 'float', min: 0.1, max: 3.0, step: 0.1 },
       { key: 'participantVolume', name: 'Vol. participantes', hint: 'voice room', kind: 'float', min: 0.1, max: 3.0, step: 0.1 },
+    ],
+  },
+  {
+    title: 'Voz (Gemini)',
+    icon: 'volume',
+    rows: [
+      { key: 'geminiVoice', name: 'Voz del coach', hint: 'override global; vacio = la del personaje', kind: 'select', options: ['', 'Aoede', 'Puck', 'Kore', 'Charon', 'Fenrir', 'Leda', 'Orus', 'Zephyr'] },
     ],
   },
   {
@@ -262,7 +269,7 @@ export function AudioTuningPage() {
   useEffect(() => { saveAudioSettings(settings) }, [settings])
 
   const updateTimerRef = useRef<number | null>(null)
-  const update = (key: keyof AudioSettings, value: number | boolean): void => {
+  const update = (key: keyof AudioSettings, value: number | boolean | string): void => {
     setSettings((s) => ({ ...s, [key]: value }))
     setActivePresetId('')
     // Debounce: si hay charla activa, reconectar al mismo room tras 600ms
@@ -401,9 +408,10 @@ export function AudioTuningPage() {
         <div className={`toggle ${val ? 'on' : ''}`} onClick={() => update(row.key, !val)} />
       )
     } else if (row.kind === 'select') {
+      const isStrOpts = typeof row.options![0] === 'string'
       control = (
-        <select className="setting-input" value={String(val)} onChange={(e) => update(row.key, Number(e.target.value))}>
-          {row.options!.map((o) => <option key={o} value={o}>{o}</option>)}
+        <select className="setting-input" value={String(val)} onChange={(e) => update(row.key, isStrOpts ? e.target.value : Number(e.target.value))}>
+          {row.options!.map((o) => <option key={String(o)} value={o}>{o === '' ? 'Auto (personaje)' : o}</option>)}
         </select>
       )
     } else {
