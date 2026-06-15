@@ -155,8 +155,12 @@ _LLM_TOPIC_CONTENT = {
     "required_keywords": [],
     "story_spine": "Timi y HABI conocen animales. Cada animal que Timi nombra con la frase-puente aparece en la mini-aventura.",
     "start_trigger": (
-        "Saludá a {name} cálido y corto en español. Presentá la primera palabra con la frase-puente: "
-        "\"Perro se dice dog\". Cerrá con \"Ahora vos: perro se dice dog\" y esperá. NO sigas hasta que responda."
+        "Es la PRIMERA clase de {name}. Arrancá presentándote cálido y corto POR TU NOMBRE "
+        "(\"¡Hola {name}! Soy tu profe...\"). Anunciá el tema de hoy con un gancho "
+        "(\"Hoy vamos a conocer animales, ¿alguna vez viste un perro?\"). Después presentá la "
+        "primera palabra con la frase-puente \"Perro se dice dog\". Cerrá con "
+        "\"Ahora vos: perro se dice dog\" y esperá; NO sigas hasta que responda. "
+        "Todo en 3-4 frases cortas, sin colgarte."
     ),
 }
 _LLM_VALID_VOICES = {"Puck", "Charon", "Kore", "Fenrir", "Aoede", "Leda", "Orus", "Zephyr"}
