@@ -27,19 +27,44 @@ from fastapi import WebSocket, WebSocketDisconnect
 
 from core.config import settings
 from services.voice_engine import VoiceEngine, VoiceEngineContext
-from services.voice_engines.gemini_live_engine import LIVE_API_URL, LIVE_MODEL, _pcm16_to_16k
+from services.voice_engines.gemini_live_engine import (
+    LIVE_API_URL,
+    LIVE_MODEL,
+    VERTEX_PROJECT,
+    VERTEX_REGION,
+    VOICE_PROVIDER,
+    _get_vertex_token,
+    _pcm16_to_16k,
+)
 
 log = logging.getLogger(__name__)
 
 ELEVEN_MODEL = os.getenv("ELEVENLABS_MODEL", "eleven_flash_v2_5")
 
-# OJO: el 3.1-flash-live (native-audio) NO soporta responseModalities=TEXT (cierra
-# con 1007). Para modo TEXT hace falta un modelo Live half-cascade. Configurable.
-GEMINI_TEXT_MODEL = os.getenv("GEMINI_TEXT_MODEL", "models/gemini-2.0-flash-live-001")
+# Modelo half-cascade para modo TEXT.
+# Vertex: gemini-live-2.5-flash soporta responseModalities=TEXT.
+# AI Studio: gemini-2.0-flash-live-001 (unico que acepta TEXT en ai_studio).
+if VOICE_PROVIDER == "vertex":
+    GEMINI_TEXT_MODEL = os.getenv(
+        "GEMINI_TEXT_MODEL",
+        f"projects/{VERTEX_PROJECT}/locations/{VERTEX_REGION}"
+        "/publishers/google/models/gemini-live-2.5-flash",
+    )
+else:
+    GEMINI_TEXT_MODEL = os.getenv("GEMINI_TEXT_MODEL", "models/gemini-2.0-flash-live-001")
 
 
-def _gemini_url() -> str:
-    return f"{LIVE_API_URL}?key={settings.GEMINI_API_KEY}"
+async def _connect_gemini():
+    """Abre WS a Gemini Live TEXT. Vertex usa Bearer token; AI Studio usa ?key=."""
+    if VOICE_PROVIDER == "vertex":
+        token = await _get_vertex_token()
+        return await websockets.connect(
+            LIVE_API_URL,
+            max_size=2 ** 24,
+            extra_headers={"Authorization": f"Bearer {token}"},
+        )
+    url = f"{LIVE_API_URL}?key={settings.GEMINI_API_KEY}"
+    return await websockets.connect(url, max_size=2 ** 24)
 
 
 def _eleven_url(voice_id: str) -> str:
@@ -54,7 +79,10 @@ class GeminiTextElevenEngine(VoiceEngine):
     name = "gemini_text_eleven"
 
     async def run(self, ws: WebSocket, ctx: VoiceEngineContext):
-        if not (settings.GEMINI_API_KEY and settings.ELEVENLABS_API_KEY):
+        if VOICE_PROVIDER != "vertex" and not settings.GEMINI_API_KEY:
+            await ws.send_json({"type": "error", "error": "missing_keys"})
+            return
+        if not settings.ELEVENLABS_API_KEY:
             await ws.send_json({"type": "error", "error": "missing_keys"})
             return
 
@@ -68,7 +96,7 @@ class GeminiTextElevenEngine(VoiceEngine):
 
         # ─── Conexión a Gemini (modo TEXT) ───
         try:
-            gws = await websockets.connect(_gemini_url(), max_size=2 ** 24)
+            gws = await _connect_gemini()
         except Exception as e:
             log.exception("gemini connect: %s", e)
             await ws.send_json({"type": "error", "error": "live_unavailable"})
@@ -82,6 +110,13 @@ class GeminiTextElevenEngine(VoiceEngine):
                     "responseModalities": ["TEXT"],
                     "thinkingConfig": {"thinkingBudget": int(os.getenv("GEMINI_THINKING_BUDGET", "256"))},
                 },
+                **({"safetySettings": [
+                    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_CIVIC_INTEGRITY", "threshold": "BLOCK_NONE"},
+                ]} if VOICE_PROVIDER == "vertex" else {}),
                 "realtimeInputConfig": {
                     "automaticActivityDetection": {
                         "disabled": False,

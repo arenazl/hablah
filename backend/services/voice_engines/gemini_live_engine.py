@@ -217,12 +217,41 @@ COACH_SILENCE_HARD_RESCUE_SECONDS = 120
 
 
 async def _get_vertex_token() -> str:
-    """Obtiene un access token del metadata server de Cloud Run.
+    """Genera un Bearer token para Vertex AI.
 
-    En Cloud Run el service account default es compute@... — necesita rol
-    'roles/aiplatform.user' para llamar Vertex. Si no estamos en Cloud Run,
-    devuelve None y cae a auth alternativa.
+    Prioridad:
+    1. Service Account desde env vars (GOOGLE_CLIENT_EMAIL + GOOGLE_PRIVATE_KEY)
+       -> funciona en Heroku (no hay metadata server).
+    2. Metadata server de Google Cloud (Cloud Run / GKE) como fallback.
     """
+    import asyncio
+    import os as _os2
+
+    client_email = _os2.getenv("GOOGLE_CLIENT_EMAIL")
+    private_key = (_os2.getenv("GOOGLE_PRIVATE_KEY") or "").replace("\\n", "\n")
+    project_id = _os2.getenv("GOOGLE_PROJECT_ID") or VERTEX_PROJECT
+
+    if client_email and private_key:
+        from google.auth.transport.requests import Request
+        from google.oauth2 import service_account
+
+        creds = service_account.Credentials.from_service_account_info(
+            {
+                "type": "service_account",
+                "project_id": project_id,
+                "client_email": client_email,
+                "private_key": private_key,
+                "token_uri": "https://oauth2.googleapis.com/token",
+            },
+            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
+        # refresh() es sync; ejecutar en executor para no bloquear el event loop.
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, creds.refresh, Request())
+        log.info("vertex_token: obtenido via service_account env vars (%s)", client_email)
+        return creds.token
+
+    # Fallback: metadata server (Cloud Run / GKE)
     import httpx
     metadata_url = (
         "http://metadata.google.internal/computeMetadata/v1/"
@@ -232,9 +261,10 @@ async def _get_vertex_token() -> str:
         async with httpx.AsyncClient(timeout=5.0) as cli:
             r = await cli.get(metadata_url, headers={"Metadata-Flavor": "Google"})
             r.raise_for_status()
+            log.info("vertex_token: obtenido via metadata server")
             return r.json()["access_token"]
     except Exception as e:
-        log.error("vertex_token_fetch_failed: %s", e)
+        log.error("vertex_token_fetch_failed: no hay env vars ni metadata server: %s", e)
         raise
 
 
