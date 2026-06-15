@@ -160,6 +160,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       try { analyserRef.current.disconnect() } catch {}
       analyserRef.current = null
     }
+    thinkingNodesRef.current = null
     if (playCtxRef.current) {
       try { playCtxRef.current.close() } catch {}
       playCtxRef.current = null
@@ -247,6 +248,51 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     // Resetear el cursor de scheduling
     const ctx = playCtxRef.current
     nextStartTimeRef.current = ctx ? ctx.currentTime : 0
+  }, [])
+
+  // Sonido de espera MUY SUAVE: tapa el silencio mientras el coach PREPARA su
+  // mensaje (arranque de la sesion + antes de cada respuesta). Se corta apenas
+  // llega el primer audio del coach. NO suena mientras el alumno habla.
+  const thinkingNodesRef = useRef<{ oscs: OscillatorNode[]; gain: GainNode } | null>(null)
+  const startThinkingSound = useCallback(() => {
+    if (thinkingNodesRef.current) return // ya sonando
+    let ctx = playCtxRef.current
+    if (!ctx) {
+      try {
+        ctx = new AudioContext({ sampleRate: loadAudioSettings().playbackSampleRate })
+        playCtxRef.current = ctx
+      } catch { return }
+    }
+    try {
+      const gain = ctx.createGain()
+      gain.gain.value = 0
+      gain.connect(ctx.destination)
+      // Dos sine en quinta (hum suave, tipo "cargando") a volumen muy bajo.
+      const oscs = [330, 495].map((f) => {
+        const o = ctx!.createOscillator()
+        o.type = 'sine'
+        o.frequency.value = f
+        o.connect(gain)
+        o.start()
+        return o
+      })
+      gain.gain.setValueAtTime(0, ctx.currentTime)
+      gain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.3) // fade-in suave
+      thinkingNodesRef.current = { oscs, gain }
+    } catch {}
+  }, [])
+  const stopThinkingSound = useCallback(() => {
+    const node = thinkingNodesRef.current
+    const ctx = playCtxRef.current
+    thinkingNodesRef.current = null
+    if (!node || !ctx) return
+    try {
+      node.gain.gain.cancelScheduledValues(ctx.currentTime)
+      node.gain.gain.setValueAtTime(node.gain.gain.value, ctx.currentTime)
+      node.gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.08) // fade-out
+      node.oscs.forEach((o) => { try { o.stop(ctx.currentTime + 0.12) } catch {} })
+      window.setTimeout(() => { try { node.gain.disconnect() } catch {} }, 250)
+    } catch {}
   }, [])
 
   const ensureAnalyser = useCallback(() => {
@@ -380,6 +426,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       ws.onopen = async () => {
         trace('ws.client.opened', sessionId)
         setStatus('listening')
+        // Arranque: el coach esta por generar su primer mensaje (el gap mas largo).
+        startThinkingSound()
         // Keepalive ping cada 25s para evitar que Heroku/proxies maten el WS por idle
         if (pingIntervalRef.current) window.clearInterval(pingIntervalRef.current)
         pingIntervalRef.current = window.setInterval(() => {
@@ -498,6 +546,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     try {
       const msg = JSON.parse(ev.data)
       if (msg.type === 'audio') {
+        // El coach empezo a hablar -> cortar el sonido de espera.
+        stopThinkingSound()
         // Coach Gemini Live: PCM 24kHz
         // Telemetria: medir latencia user-done -> first AI audio. Solo
         // reportamos el PRIMER chunk del turno (despues lo resetea
@@ -533,6 +583,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         })
       } else if (msg.type === 'transcript') {
         const line: TranscriptLine = { who: msg.who, text: msg.text }
+        // El alumno termino (transcripcion final) -> el coach esta por responder:
+        // sonido de espera hasta que llegue su audio.
+        if (msg.who === 'user') startThinkingSound()
         setTranscript((prev) => [...prev, line])
         optsRef.current.onTranscript?.(line)
       } else if (msg.type === 'turn_complete') {
