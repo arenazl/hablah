@@ -52,6 +52,7 @@ async def synth(
     voice_id: Optional[str] = None,
     *,
     model_id: Optional[str] = None,
+    output_format: str = "mp3_44100_128",
     stability: float = 0.45,
     similarity_boost: float = 0.75,
     style: float = 0.0,
@@ -68,11 +69,11 @@ async def synth(
     vid = voice_id or settings.ELEVENLABS_DEFAULT_VOICE_ID
     model = model_id or settings.ELEVENLABS_MODEL or "eleven_flash_v2_5"
 
-    url = f"{_BASE_URL}/text-to-speech/{vid}"
+    url = f"{_BASE_URL}/text-to-speech/{vid}?output_format={output_format}"
     headers = {
         "xi-api-key": settings.ELEVENLABS_API_KEY,
         "Content-Type": "application/json",
-        "Accept": "audio/mpeg",
+        "Accept": "audio/pcm" if output_format.startswith("pcm") else "audio/mpeg",
     }
     payload = {
         "text": text,

@@ -114,11 +114,13 @@ class ElevenLabsPipelineEngine(VoiceEngine):
                 await ws.send_json({"type": "transcript", "who": "ai", "text": text_ai})
                 history.append({"role": "model", "parts": [{"text": text_ai}]})
 
-                # 3) ElevenLabs TTS → manda MP3 entero en un chunk
+                # 3) ElevenLabs TTS → PCM 24kHz crudo (mismo formato que el coach
+                # Gemini native). El cliente reproduce PCM int16 24kHz: si mandamos
+                # MP3 lo interpreta como PCM y suena ruido blanco (shhhh).
                 try:
-                    mp3 = await elevenlabs_synth(text_ai, voice_id=ctx.voice_id or None)
-                    b64 = base64.b64encode(mp3).decode("ascii")
-                    await ws.send_json({"type": "audio", "data": b64, "format": "mp3"})
+                    pcm = await elevenlabs_synth(text_ai, voice_id=ctx.voice_id or None, output_format="pcm_24000")
+                    b64 = base64.b64encode(pcm).decode("ascii")
+                    await ws.send_json({"type": "audio", "data": b64})
                 except Exception as e:
                     log.exception("elevenlabs failed: %s", e)
 
