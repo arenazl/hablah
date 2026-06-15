@@ -48,7 +48,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         if template:
             from services.admin_feedback import load_active_directives
             admin_directives = await load_active_directives(template.id, db)
-        is_kid = bool(getattr(user, "age_group", None)) or bool(getattr(user, "parent_user_id", None))
+        _ag = getattr(user, "age_group", None)
+        is_kid = _ag in ("mini", "junior", "tween") or bool(getattr(user, "parent_user_id", None))
 
         # Calcular qué keywords del topic ya se usaron en las ultimas 5 sesiones
         # del MISMO user+topic. Esto evita que el coach siempre arranque con el
@@ -132,8 +133,9 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         # el compositor usa el stage/legacy.
         methodology_module = None
         topic_content = None
+        student_type_data = None
         try:
-            from models.methodology import MethodologyModule, TopicModuleContent
+            from models.methodology import MethodologyModule, TopicModuleContent, StudentType
             grp2 = (getattr(user, "age_group", None) or "mini") if is_kid else "adult"
             level = user.cefr_level or "A0"
             mod = (await db.execute(
@@ -163,7 +165,22 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                             "seed_prompt": cell.seed_prompt,
                             "required_keywords": cell.required_keywords or [],
                             "allowed_vocabulary": cell.allowed_vocabulary or [],
+                            "story_spine": cell.story_spine,
+                            "start_trigger": cell.start_trigger,
                         }
+            # Persona del tutor según el segmento del alumno (age_group → student_type)
+            st = (await db.execute(
+                select(StudentType).where(StudentType.slug == grp2, StudentType.active.is_(True))
+            )).scalar_one_or_none()
+            if st:
+                student_type_data = {
+                    "slug": st.slug,
+                    "name": st.name,
+                    "tutor_mascot": st.tutor_mascot,
+                    "tutor_identity": st.tutor_identity,
+                    "tutor_tonal_rules": st.tutor_tonal_rules,
+                    "session_focus": st.session_focus,
+                }
         except Exception as e:
             log.warning(f"motor pedagógico: módulo/junction no disponible ({e}); fallback a stage/legacy")
 
@@ -175,6 +192,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             methodology_stage=methodology_stage,
             methodology_module=methodology_module,
             topic_content=topic_content,
+            student_type_data=student_type_data,
         )
 
         # ─── OBSERVABILIDAD TOTAL: el circuito entero del prompt ───

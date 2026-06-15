@@ -45,7 +45,7 @@ class User(Base):
     # ─── Kids module ────────────────────────────────────────────────
     # Si parent_user_id != null, este user es un perfil hijo dentro de la cuenta adulta.
     parent_user_id = Column(Integer, nullable=True, index=True)
-    age_group = Column(String(10), nullable=True)  # 'mini' (4-7) | 'junior' (8-12) | None (adulto)
+    age_group = Column(String(20), nullable=True)  # kids: mini|junior|tween  /  adultos: teen|young_adult|adult|senior
     kid_coins = Column(Integer, nullable=False, default=0)
     kid_rank_slug = Column(String(40), nullable=False, default="curioso")  # curioso | explorador | aventurero | capitan | embajador
     kid_charlas_count = Column(Integer, nullable=False, default=0)
@@ -55,6 +55,14 @@ class User(Base):
     # Motor Pedagógico Adaptativo: posición unificada en el track de metodología
     # (methodology_modules.module_order). Generaliza kid_methodology_order a todos.
     curriculum_position = Column(Integer, nullable=False, default=1)
+
+    # ─── Onboarding v16 ────────────────────────────────────────────────────────
+    # Datos que el alumno elige en las 4-5 preguntas del onboarding. Alimentan
+    # la pata ALUMNO del compositor de prompt (motor pedagógico adaptativo).
+    english_self_level = Column(String(40), nullable=True)  # zero|survival|basic|intermediate|upper|advanced|near_native
+    learning_goal = Column(String(60), nullable=True)  # trabajo|viajes|hobby|estudio|migracion
+    occupation = Column(String(120), nullable=True)  # texto libre
+    onboarding_done = Column(Boolean, nullable=False, default=False)
 
     # Preferencias aprendidas en vivo durante las charlas (override del template).
     # El user dice "corrige menos" en voz alta → un detector lo persiste aquí

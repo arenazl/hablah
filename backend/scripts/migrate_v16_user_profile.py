@@ -1,11 +1,11 @@
 """Migración v16 — Perfil extendido del alumno para el motor adaptativo.
 
-Agrega los campos que captura el onboarding (4-5 preguntas) y que alimentan
-la pata ALUMNO del compositor de prompt. El alumno nunca ve CEFR: elige una
-descripción propia que el sistema mapea internamente.
+Agrega/amplía los campos que captura el onboarding (4-5 preguntas) y que
+alimentan la pata ALUMNO del compositor de prompt.
 
 users:
-  age_group          VARCHAR(20)   teen | young_adult | adult | senior
+  age_group          VARCHAR(20)   mini | junior | tween (kids) | teen | young_adult | adult | senior
+                                   — columna ya existía como VARCHAR(10); se amplía a 20.
   english_self_level VARCHAR(40)   nivel descriptivo elegido en onboarding
   learning_goal      VARCHAR(60)   trabajo | viajes | hobby | estudio | migracion
   occupation         VARCHAR(120)  texto libre ("ingeniero", "jubilado"…)
@@ -20,9 +20,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from sqlalchemy import text
 from core.database import engine
 
-
-COLS = [
-    ("age_group",          "VARCHAR(20) NULL"),
+# Columnas a ADD si no existen
+ADD_COLS = [
     ("english_self_level", "VARCHAR(40) NULL"),
     ("learning_goal",      "VARCHAR(60) NULL"),
     ("occupation",         "VARCHAR(120) NULL"),
@@ -45,10 +44,30 @@ async def add_if_missing(conn, table: str, col: str, defn: str) -> None:
     print(f"  [ok]   {table}.{col}")
 
 
+async def widen_age_group(conn) -> None:
+    """age_group existe como VARCHAR(10); necesitamos VARCHAR(20) para 'young_adult'."""
+    r = await conn.execute(
+        text(
+            "SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS "
+            "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='users' AND COLUMN_NAME='age_group'"
+        )
+    )
+    row = r.scalar_one_or_none()
+    if row is None:
+        await conn.execute(text("ALTER TABLE `users` ADD COLUMN `age_group` VARCHAR(20) NULL"))
+        print("  [ok]   users.age_group (nuevo)")
+    elif int(row) < 20:
+        await conn.execute(text("ALTER TABLE `users` MODIFY COLUMN `age_group` VARCHAR(20) NULL"))
+        print(f"  [ok]   users.age_group ampliado {row}→20")
+    else:
+        print(f"  [skip] users.age_group (ya es VARCHAR({row}))")
+
+
 async def main() -> None:
     async with engine.begin() as conn:
         print("users:")
-        for col, defn in COLS:
+        await widen_age_group(conn)
+        for col, defn in ADD_COLS:
             await add_if_missing(conn, "users", col, defn)
     print("\nOK — migrate_v16 completo")
 
