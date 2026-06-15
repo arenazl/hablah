@@ -1370,6 +1370,18 @@ def build_super_prompt(**kwargs) -> str:
     universal: para gemini_live, cascade y cualquier futuro engine que
     use ctx.super_prompt.
     """
+    # PROTOTIPO (flag PROTO_KIDS_A0, default OFF): probar el método del doc
+    # 'Dynamic Language Engine Orchestration Guide' TAL CUAL en kids A0.
+    # Bypasea TODO el armado actual — incluido el runtime_addon viejo con su
+    # CONVERSATION FIRST. Con el flag apagado este branch no corre y el sistema
+    # queda idéntico. Reversible al instante con heroku config:unset.
+    import os as _os
+    _u = kwargs.get("user")
+    _is_kid = bool(getattr(_u, "age_group", None)) or bool(getattr(_u, "parent_user_id", None))
+    if _os.getenv("PROTO_KIDS_A0") and _is_kid and (getattr(_u, "cefr_level", None) or "") == "A0":
+        from services.composer_proto import compose_proto_prompt
+        return compose_proto_prompt(user=_u, topic=kwargs.get("topic"))
+
     body = _build_super_prompt_body(**kwargs)
     user = kwargs.get("user")
     target = (getattr(user, "target_language", None) or "en")
