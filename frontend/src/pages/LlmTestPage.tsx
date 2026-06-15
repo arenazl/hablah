@@ -1,45 +1,32 @@
-/* LlmTestPage — Banco de tuneo de voz / turn-taking AISLADO (ruta /llm).
+/* LlmTestPage — Banco de tuneo de voz AISLADO (ruta /llm).
  *
  * Módulo independiente: NO toca el resto de la app. Corre una mini-clase A0
- * (prompt 9-bloques ESTÁTICO armado en el backend) por el WS de test
- * `/voice/ws_llm_test` (sin login, sin BD). Expone TODOS los knobs de VAD /
- * turn-taking para tunear EN VIVO qué config toma mejor la voz. Cada "Aplicar"
- * reinicia la sesión con la config elegida (no hace falta refrescar la página).
+ * (prompt 9-bloques estático con FRASE-PUENTE) por el WS de test
+ * `/voice/ws_llm_test` (sin login, sin BD). Panel SIMPLE: 5 controles claros con
+ * botones + defaults; lo técnico queda plegado en "ajustes finos". Cada "Aplicar"
+ * reinicia la sesión.
  */
 import { useCallback, useState } from 'react'
-import { Mic, Square, AlertTriangle, Zap, SlidersHorizontal } from 'lucide-react'
+import { Mic, Square, AlertTriangle, Zap, SlidersHorizontal, ChevronDown, ChevronRight } from 'lucide-react'
 
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { buildLlmTestWsUrl } from '../services/api'
 
-interface ModelOption {
-  value: string
-  label: string
-  note?: string
-}
+interface ModelOption { value: string; label: string; note?: string }
 
 const MODELS: ModelOption[] = [
-  { value: 'models/gemini-3.1-flash-live-preview', label: 'Flash 3.1 Live', note: 'baseline · transcribe input' },
+  { value: 'models/gemini-3.1-flash-live-preview', label: 'Flash 3.1 (recomendado)', note: 'transcribe tu palabra' },
   { value: 'models/gemini-2.5-flash-native-audio-preview-09-2025', label: 'Flash 2.5 Native Audio', note: 'NO transcribe tu palabra' },
   { value: 'models/gemini-2.0-flash-live-001', label: 'Flash 2.0 Live', note: 'experimental' },
 ]
-
 const VOICES = ['Aoede', 'Kore', 'Puck', 'Charon', 'Fenrir', 'Leda', 'Orus', 'Zephyr']
 
 type LogKind = 'info' | 'warn' | 'error'
-interface LogEntry {
-  t: string
-  kind: LogKind
-  msg: string
-}
+interface LogEntry { t: string; kind: LogKind; msg: string }
 
 const STATUS_LABEL: Record<string, string> = {
-  idle: 'Detenido',
-  connecting: 'Conectando…',
-  listening: 'Escuchando',
-  speaking: 'Hablando',
-  error: 'Error',
-  ended: 'Terminado',
+  idle: 'Detenido', connecting: 'Conectando…', listening: 'Escuchando',
+  speaking: 'Hablando', error: 'Error', ended: 'Terminado',
 }
 
 function nowHms(): string {
@@ -48,38 +35,39 @@ function nowHms(): string {
   return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
 }
 
-// ── estilos compartidos ──────────────────────────────────────────────
+// ── estilos ──────────────────────────────────────────────
 const CARD: React.CSSProperties = { background: '#11151d', border: '1px solid #232936', borderRadius: 16, padding: 16 }
-const LABEL: React.CSSProperties = { fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#9aa3af', marginBottom: 6 }
+const LABEL: React.CSSProperties = { fontSize: 13, fontWeight: 600, color: '#e6e8ec', marginBottom: 6 }
+const HELP: React.CSSProperties = { fontSize: 11, color: '#6b7280', marginTop: 5, lineHeight: 1.35 }
 const FIELD: React.CSSProperties = { width: '100%', padding: '8px 10px', borderRadius: 10, border: '1px solid #232936', background: '#0b0e14', color: '#e6e8ec', fontSize: 13 }
 
+function Control({ label, help, children }: { label: string; help?: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div style={LABEL}>{label}</div>
+      {children}
+      {help && <div style={HELP}>{help}</div>}
+    </div>
+  )
+}
+
 function Segmented({ value, onChange, options, disabled }: {
-  value: string
-  onChange: (v: string) => void
-  options: { v: string; label: string }[]
-  disabled?: boolean
+  value: string; onChange: (v: string) => void
+  options: { v: string; label: string }[]; disabled?: boolean
 }) {
   return (
     <div style={{ display: 'flex', gap: 6 }}>
       {options.map((o) => {
         const active = o.v === value
         return (
-          <button
-            key={o.v}
-            onClick={() => !disabled && onChange(o.v)}
-            disabled={disabled}
+          <button key={o.v} onClick={() => !disabled && onChange(o.v)} disabled={disabled}
             style={{
-              flex: 1,
-              padding: '8px 10px',
-              borderRadius: 10,
+              flex: 1, padding: '9px 8px', borderRadius: 10,
               border: `1px solid ${active ? '#38bdf8' : '#232936'}`,
               background: active ? 'rgba(56,189,248,0.12)' : '#0b0e14',
-              color: '#e6e8ec',
-              fontSize: 13,
-              fontWeight: active ? 700 : 400,
+              color: '#e6e8ec', fontSize: 13, fontWeight: active ? 700 : 400,
               cursor: disabled ? 'not-allowed' : 'pointer',
-            }}
-          >
+            }}>
             {o.label}
           </button>
         )
@@ -89,21 +77,21 @@ function Segmented({ value, onChange, options, disabled }: {
 }
 
 export function LlmTestPage() {
-  // Config (todos los knobs). Defaults = VAD responsivo sobre Flash 3.1.
+  // Config. Defaults = lo que funcionó 10/10 (AGC off + VAD responsivo + frase-puente).
   const [model, setModel] = useState(MODELS[0].value)
   const [voice, setVoice] = useState('Aoede')
   const [startSens, setStartSens] = useState('START_SENSITIVITY_HIGH')
   const [endSens, setEndSens] = useState('END_SENSITIVITY_HIGH')
-  const [silenceMs, setSilenceMs] = useState(500)
+  const [silenceMs, setSilenceMs] = useState(700)
   const [prefixMs, setPrefixMs] = useState(200)
   const [activity, setActivity] = useState('START_OF_ACTIVITY_INTERRUPTS')
   const [thinking, setThinking] = useState(256)
-  // Captura del mic — override de SESIÓN (no persiste, no toca /app).
-  const [agc, setAgc] = useState(false)   // AGC OFF: sospechoso de comerse palabras cortas
-  const [ns, setNs] = useState(false)     // noise suppression OFF
-  const [aec, setAec] = useState(true)    // echo cancellation ON (seguro con parlantes)
+  const [agc, setAgc] = useState(false)
+  const [ns, setNs] = useState(false)
+  const [aec, setAec] = useState(true)
   const [captureSr, setCaptureSr] = useState(16000)
   const [workletBuf, setWorkletBuf] = useState(2048)
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   const [log, setLog] = useState<LogEntry[]>([])
   const [micLevel, setMicLevel] = useState(0)
@@ -120,167 +108,124 @@ export function LlmTestPage() {
     onSessionRenewed: () => addLog('info', 'sesión renovada'),
   })
 
-  const isLive =
-    live.status === 'connecting' || live.status === 'listening' || live.status === 'speaking'
+  const isLive = live.status === 'connecting' || live.status === 'listening' || live.status === 'speaking'
 
   const apply = useCallback(async () => {
-    live.stop() // cierra cualquier sesión previa: cada Aplicar arranca limpio
-    setLog([])
-    setMicLevel(0)
+    live.stop()
+    setLog([]); setMicLevel(0)
     const cfg = {
-      engine: 'gemini_live',
-      model,
-      voice,
-      start_sens: startSens,
-      end_sens: endSens,
-      silence_ms: silenceMs,
-      prefix_ms: prefixMs,
-      activity,
-      thinking,
+      engine: 'gemini_live', model, voice,
+      start_sens: startSens, end_sens: endSens, silence_ms: silenceMs,
+      prefix_ms: prefixMs, activity, thinking,
     }
     addLog('info', `aplicar · ${model.replace('models/', '')} · ${voice}`)
-    addLog('info', `start=${startSens.replace('START_SENSITIVITY_', '')} end=${endSens.replace('END_SENSITIVITY_', '')} sil=${silenceMs}ms prefix=${prefixMs}ms act=${activity === 'NO_INTERRUPTION' ? 'no-int' : 'interrumpe'} think=${thinking}`)
-    addLog('info', `mic: agc=${agc ? 'on' : 'off'} ns=${ns ? 'on' : 'off'} aec=${aec ? 'on' : 'off'} sr=${captureSr} buf=${workletBuf}`)
+    addLog('info', `mic AGC=${agc ? 'on' : 'off'} ruido=${ns ? 'on' : 'off'} · rapidez=${silenceMs}ms · oído=${startSens.replace('START_SENSITIVITY_', '')} · interrumpir=${activity === 'NO_INTERRUPTION' ? 'no' : 'sí'}`)
     const audioOverride = {
-      autoGainControl: agc,
-      noiseSuppression: ns,
-      echoCancellation: aec,
-      captureSampleRate: captureSr,
-      workletBufferSamples: workletBuf,
+      autoGainControl: agc, noiseSuppression: ns, echoCancellation: aec,
+      captureSampleRate: captureSr, workletBufferSamples: workletBuf,
     }
     const url = buildLlmTestWsUrl(cfg)
     await live.start(0, undefined, voice, url, audioOverride)
   }, [live, addLog, model, voice, startSens, endSens, silenceMs, prefixMs, activity, thinking, agc, ns, aec, captureSr, workletBuf])
 
-  const stop = useCallback(() => {
-    live.stop()
-    addLog('info', 'sesión terminada')
-    setMicLevel(0)
-  }, [live, addLog])
+  const stop = useCallback(() => { live.stop(); addLog('info', 'sesión terminada'); setMicLevel(0) }, [live, addLog])
 
   return (
     <div style={{ minHeight: '100vh', background: '#0b0e14', color: '#e6e8ec' }}>
-      <div style={{ maxWidth: 1040, margin: '0 auto', padding: '24px 20px 64px' }}>
+      <div style={{ maxWidth: 980, margin: '0 auto', padding: '24px 20px 64px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
           <SlidersHorizontal size={22} color="#7dd3fc" />
           <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0 }}>Banco de tuneo de voz</h1>
         </div>
         <p style={{ color: '#9aa3af', fontSize: 13, margin: '0 0 20px' }}>
-          Mini-clase A0 estática (9 bloques). Tuneá VAD / turn-taking en vivo y encontrá qué config
-          toma mejor tu voz. Cada "Aplicar" reinicia la sesión. Módulo aislado.
+          Cambiá un par de cosas, tocá "Aplicar y arrancar" y hablale al coach. Probá decir
+          la frase-puente entera ("perro se dice dog"). Cada cambio reinicia la sesión.
         </p>
 
-        {/* Panel de config */}
+        {/* Panel simple */}
         <div style={{ ...CARD, marginBottom: 16 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-            <div>
-              <div style={LABEL}>Modelo</div>
-              <select style={FIELD} value={model} disabled={isLive} onChange={(e) => setModel(e.target.value)}>
-                {MODELS.map((m) => (
-                  <option key={m.value} value={m.value}>{m.label}{m.note ? ` — ${m.note}` : ''}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <div style={LABEL}>Voz (Gemini)</div>
-              <select style={FIELD} value={voice} disabled={isLive} onChange={(e) => setVoice(e.target.value)}>
-                {VOICES.map((v) => <option key={v} value={v}>{v}</option>)}
-              </select>
-            </div>
-            <div>
-              <div style={LABEL}>Start sensitivity (detectar que hablás)</div>
-              <Segmented
-                value={startSens}
-                disabled={isLive}
-                onChange={setStartSens}
-                options={[
-                  { v: 'START_SENSITIVITY_HIGH', label: 'HIGH (sensible)' },
-                  { v: 'START_SENSITIVITY_LOW', label: 'LOW (sordo)' },
-                ]}
-              />
-            </div>
-            <div>
-              <div style={LABEL}>End sensitivity (detectar que terminaste)</div>
-              <Segmented
-                value={endSens}
-                disabled={isLive}
-                onChange={setEndSens}
-                options={[
-                  { v: 'END_SENSITIVITY_HIGH', label: 'HIGH' },
-                  { v: 'END_SENSITIVITY_LOW', label: 'LOW' },
-                ]}
-              />
-            </div>
-            <div>
-              <div style={LABEL}>Silencio para cerrar turno (ms)</div>
-              <input type="number" style={FIELD} value={silenceMs} disabled={isLive} min={100} max={2000} step={100}
-                onChange={(e) => setSilenceMs(Number(e.target.value))} />
-            </div>
-            <div>
-              <div style={LABEL}>Prefix padding (ms)</div>
-              <input type="number" style={FIELD} value={prefixMs} disabled={isLive} min={0} max={1000} step={50}
-                onChange={(e) => setPrefixMs(Number(e.target.value))} />
-            </div>
-            <div>
-              <div style={LABEL}>Activity handling</div>
-              <Segmented
-                value={activity}
-                disabled={isLive}
-                onChange={setActivity}
-                options={[
-                  { v: 'START_OF_ACTIVITY_INTERRUPTS', label: 'Interrumpe' },
-                  { v: 'NO_INTERRUPTION', label: 'No interrumpe' },
-                ]}
-              />
-            </div>
-            <div>
-              <div style={LABEL}>Thinking budget</div>
-              <input type="number" style={FIELD} value={thinking} disabled={isLive} min={0} max={2048} step={128}
-                onChange={(e) => setThinking(Number(e.target.value))} />
-            </div>
-            <div>
-              <div style={LABEL}>Auto gain control (AGC)</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 18 }}>
+            <Control label="Ajuste automático del mic" help="El navegador retoca tu volumen solo. Sospechoso de comerse palabras cortas.">
               <Segmented value={agc ? 'on' : 'off'} disabled={isLive} onChange={(v) => setAgc(v === 'on')}
-                options={[{ v: 'off', label: 'OFF (recom.)' }, { v: 'on', label: 'ON' }]} />
-            </div>
-            <div>
-              <div style={LABEL}>Noise suppression</div>
+                options={[{ v: 'off', label: 'Apagado (recom.)' }, { v: 'on', label: 'Encendido' }]} />
+            </Control>
+            <Control label="Filtro de ruido de fondo" help="A veces recorta el arranque de una palabra.">
               <Segmented value={ns ? 'on' : 'off'} disabled={isLive} onChange={(v) => setNs(v === 'on')}
-                options={[{ v: 'off', label: 'OFF' }, { v: 'on', label: 'ON' }]} />
-            </div>
-            <div>
-              <div style={LABEL}>Echo cancellation</div>
-              <Segmented value={aec ? 'on' : 'off'} disabled={isLive} onChange={(v) => setAec(v === 'on')}
-                options={[{ v: 'on', label: 'ON' }, { v: 'off', label: 'OFF' }]} />
-            </div>
-            <div>
-              <div style={LABEL}>Capture sample rate</div>
-              <select style={FIELD} value={captureSr} disabled={isLive} onChange={(e) => setCaptureSr(Number(e.target.value))}>
-                <option value={16000}>16000 (Gemini)</option>
-                <option value={48000}>48000 (resample backend)</option>
-              </select>
-            </div>
-            <div>
-              <div style={LABEL}>Worklet buffer (samples)</div>
-              <select style={FIELD} value={workletBuf} disabled={isLive} onChange={(e) => setWorkletBuf(Number(e.target.value))}>
-                <option value={1024}>1024 (reactivo)</option>
-                <option value={2048}>2048</option>
-                <option value={4096}>4096</option>
-              </select>
-            </div>
+                options={[{ v: 'off', label: 'Apagado' }, { v: 'on', label: 'Encendido' }]} />
+            </Control>
+            <Control label="Rapidez de respuesta" help="Cuánto silencio espera antes de contestarte.">
+              <Segmented value={String(silenceMs)} disabled={isLive} onChange={(v) => setSilenceMs(Number(v))}
+                options={[{ v: '400', label: 'Rápido' }, { v: '700', label: 'Normal' }, { v: '1200', label: 'Paciente' }]} />
+            </Control>
+            <Control label="Oído del coach" help="Qué tan fácil registra que arrancaste a hablar.">
+              <Segmented value={startSens} disabled={isLive} onChange={setStartSens}
+                options={[{ v: 'START_SENSITIVITY_HIGH', label: 'Fino (recom.)' }, { v: 'START_SENSITIVITY_LOW', label: 'Normal' }]} />
+            </Control>
+            <Control label="¿Te puede interrumpir?" help="Si podés cortar al coach mientras habla.">
+              <Segmented value={activity} disabled={isLive} onChange={setActivity}
+                options={[{ v: 'START_OF_ACTIVITY_INTERRUPTS', label: 'Sí' }, { v: 'NO_INTERRUPTION', label: 'No' }]} />
+            </Control>
           </div>
+
+          {/* Ajustes finos (plegado) */}
+          <button onClick={() => setShowAdvanced((s) => !s)}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 16, padding: 0, background: 'none', border: 'none', color: '#7dd3fc', fontSize: 13, cursor: 'pointer' }}>
+            {showAdvanced ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+            Ajustes finos (técnicos)
+          </button>
+          {showAdvanced && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginTop: 14, borderTop: '1px solid #232936', paddingTop: 16 }}>
+              <Control label="Motor de voz">
+                <select style={FIELD} value={model} disabled={isLive} onChange={(e) => setModel(e.target.value)}>
+                  {MODELS.map((m) => <option key={m.value} value={m.value}>{m.label}{m.note ? ` — ${m.note}` : ''}</option>)}
+                </select>
+              </Control>
+              <Control label="Voz del coach">
+                <select style={FIELD} value={voice} disabled={isLive} onChange={(e) => setVoice(e.target.value)}>
+                  {VOICES.map((v) => <option key={v} value={v}>{v}</option>)}
+                </select>
+              </Control>
+              <Control label="Cancelar eco" help="Necesario si usás parlantes; con auriculares no hace falta.">
+                <Segmented value={aec ? 'on' : 'off'} disabled={isLive} onChange={(v) => setAec(v === 'on')}
+                  options={[{ v: 'on', label: 'Sí' }, { v: 'off', label: 'No' }]} />
+              </Control>
+              <Control label="Detectar fin de turno">
+                <Segmented value={endSens} disabled={isLive} onChange={setEndSens}
+                  options={[{ v: 'END_SENSITIVITY_HIGH', label: 'Fino' }, { v: 'END_SENSITIVITY_LOW', label: 'Normal' }]} />
+              </Control>
+              <Control label="Reflexión del coach" help="Cuánto 'piensa' antes de hablar. Más = mejor pero más lento.">
+                <input type="number" style={FIELD} value={thinking} disabled={isLive} min={0} max={2048} step={128}
+                  onChange={(e) => setThinking(Number(e.target.value))} />
+              </Control>
+              <Control label="Margen previo (ms)" help="Audio que conserva justo antes de tu voz.">
+                <input type="number" style={FIELD} value={prefixMs} disabled={isLive} min={0} max={1000} step={50}
+                  onChange={(e) => setPrefixMs(Number(e.target.value))} />
+              </Control>
+              <Control label="Calidad de captura">
+                <select style={FIELD} value={captureSr} disabled={isLive} onChange={(e) => setCaptureSr(Number(e.target.value))}>
+                  <option value={16000}>16000 (Gemini)</option>
+                  <option value={48000}>48000 (resample backend)</option>
+                </select>
+              </Control>
+              <Control label="Buffer del mic">
+                <select style={FIELD} value={workletBuf} disabled={isLive} onChange={(e) => setWorkletBuf(Number(e.target.value))}>
+                  <option value={1024}>1024 (reactivo)</option>
+                  <option value={2048}>2048</option>
+                  <option value={4096}>4096</option>
+                </select>
+              </Control>
+            </div>
+          )}
         </div>
 
         {/* Control + estado */}
         <div style={{ ...CARD, display: 'flex', alignItems: 'center', gap: 18, marginBottom: 16 }}>
-          <button
-            onClick={isLive ? stop : apply}
+          <button onClick={isLive ? stop : apply}
             style={{
               display: 'flex', alignItems: 'center', gap: 10, padding: '14px 22px', borderRadius: 999,
               border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer',
               background: isLive ? '#ef4444' : '#22c55e', color: '#06120a', whiteSpace: 'nowrap',
-            }}
-          >
+            }}>
             {isLive ? <Square size={18} /> : <Mic size={18} />}
             {isLive ? 'Terminar' : 'Aplicar y arrancar'}
           </button>
@@ -288,9 +233,7 @@ export function LlmTestPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{
                 width: 9, height: 9, borderRadius: 999,
-                background: live.status === 'speaking' ? '#38bdf8'
-                  : live.status === 'listening' ? '#22c55e'
-                    : live.status === 'error' ? '#ef4444' : '#6b7280',
+                background: live.status === 'speaking' ? '#38bdf8' : live.status === 'listening' ? '#22c55e' : live.status === 'error' ? '#ef4444' : '#6b7280',
               }} />
               <span style={{ fontSize: 14, fontWeight: 600 }}>{STATUS_LABEL[live.status] ?? live.status}</span>
             </div>
@@ -303,8 +246,8 @@ export function LlmTestPage() {
         {/* Transcript + Log */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div style={CARD}>
-            <div style={LABEL}>Transcripción</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 380, overflowY: 'auto' }}>
+            <div style={{ ...LABEL, marginBottom: 12 }}>Transcripción</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 360, overflowY: 'auto' }}>
               {live.transcript.length === 0 && <div style={{ color: '#6b7280', fontSize: 13 }}>Sin transcripción todavía.</div>}
               {live.transcript.map((line, i) => (
                 <div key={i} style={{ fontSize: 14, lineHeight: 1.4 }}>
@@ -317,8 +260,8 @@ export function LlmTestPage() {
             </div>
           </div>
           <div style={CARD}>
-            <div style={LABEL}>Eventos</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 380, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12 }}>
+            <div style={{ ...LABEL, marginBottom: 12 }}>Eventos</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 360, overflowY: 'auto', fontFamily: 'monospace', fontSize: 12 }}>
               {log.length === 0 && <div style={{ color: '#6b7280' }}>Sin eventos.</div>}
               {log.map((e, i) => (
                 <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
