@@ -50,6 +50,7 @@ class VoiceEngineContext:
         is_kid: bool = False,
         user_name: Optional[str] = None,
         voice_name: Optional[str] = None,
+        model_override: Optional[str] = None,
     ) -> None:
         self.session_id = session_id
         self.user_id = user_id
@@ -59,6 +60,9 @@ class VoiceEngineContext:
         self.super_prompt = super_prompt
         self.voice_id = voice_id  # ElevenLabs voice_id (para engines que lo soporten)
         self.voice_name = voice_name  # Gemini Live prebuilt voice (Puck, Charon, ...) por personaje kids
+        # Override del modelo por sesión (banco de pruebas /llm). None => usa el
+        # LIVE_MODEL global (env GEMINI_LIVE_MODEL). El path de prod no lo setea.
+        self.model_override = model_override
         self.language = language
         self.target_language = target_language
         self.silence_tolerance_ms = silence_tolerance_ms

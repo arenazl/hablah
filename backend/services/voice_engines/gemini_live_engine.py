@@ -272,10 +272,13 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
     session_id = getattr(ctx, "session_id", None)
     t0 = _time.time()
     is_kid = bool(getattr(ctx, "is_kid", False))
+    # Override del modelo por sesión (banco de pruebas /llm). Si el ctx no lo
+    # trae, usamos el LIVE_MODEL global -> path de prod intacto.
+    _model = getattr(ctx, "model_override", None) or LIVE_MODEL
     free_topic = getattr(ctx, "free_topic", None)
     super_prompt_size = len(getattr(ctx, "super_prompt", "") or "")
     trace.event("gemini.setup.start",
-                session_id=session_id, model=LIVE_MODEL, is_kid=is_kid,
+                session_id=session_id, model=_model, is_kid=is_kid,
                 provider=VOICE_PROVIDER,
                 free_topic=free_topic, super_prompt_size=super_prompt_size,
                 is_renewal=bool(transcript_so_far))
@@ -309,7 +312,7 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
     is_kid = bool(getattr(ctx, "is_kid", False))
     setup = {
         "setup": {
-            "model": LIVE_MODEL,
+            "model": _model,
             "generationConfig": {
                 "responseModalities": ["AUDIO"],
                 # thinkingBudget: con 0 (apagado) el modelo se trababa con inputs
@@ -380,7 +383,7 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
             parsed = {"raw": first_msg[:300]}
         if "setupComplete" in parsed:
             trace.event("gemini.setup.complete",
-                        session_id=session_id, model=LIVE_MODEL,
+                        session_id=session_id, model=_model,
                         latency_ms=trace_duration_ms(t0))
         else:
             trace.error("gemini.setup.unexpected_first_msg",
@@ -393,7 +396,7 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
         trace.error("gemini.setup.ws_closed_before_complete",
                     session_id=session_id, provider=VOICE_PROVIDER,
                     close_code=e.code, close_reason=str(e.reason)[:300],
-                    model=LIVE_MODEL,
+                    model=_model,
                     latency_ms=trace_duration_ms(t0))
         try: await google_ws.close()
         except Exception: pass
@@ -540,7 +543,10 @@ class GeminiLiveEngine(VoiceEngine):
 
         session_id_log = getattr(ctx, "session_id", None)
         is_kid_log = bool(getattr(ctx, "is_kid", False))
-        trace.event("session.engine.start", session_id=session_id_log, model=LIVE_MODEL,
+        # model efectivo (override del banco /llm o LIVE_MODEL global). Solo para
+        # que el trace reporte el modelo real que se está probando.
+        _model_log = getattr(ctx, "model_override", None) or LIVE_MODEL
+        trace.event("session.engine.start", session_id=session_id_log, model=_model_log,
                     is_kid=is_kid_log)
 
         def _mark_first_coach_response(modality: str) -> None:

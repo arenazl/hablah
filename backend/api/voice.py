@@ -1,11 +1,13 @@
 import logging
+from types import SimpleNamespace
 
 from fastapi import APIRouter, WebSocket, Query
 from sqlalchemy import select
 
 from core.database import AsyncSessionLocal
 from services.gemini_live import voice_proxy
-from services.voice_engine import VoiceEngineContext
+from services.composer_proto import compose_proto_prompt
+from services.voice_engine import VoiceEngineContext, get_engine, available_engines
 from services.voice_room_engine import (
     Room,
     RoomParticipant,
@@ -123,3 +125,68 @@ async def voice_ws_room(
         await handle_room_ws(websocket, room, participant)
     except Exception as e:
         log.exception("voice_ws_room error: %s", e)
+
+
+# ─── Banco de pruebas de voz (ruta frontend /llm) ────────────────────────────
+# Tópico ESTÁTICO para el banco de pruebas (sin BD). Nene A0, animales.
+_LLM_TEST_TOPIC = SimpleNamespace(
+    title="Animals",
+    pinned_vocabulary=["dog", "cat", "fish"],
+    keywords=["dog", "cat", "fish"],
+)
+_LLM_VALID_VOICES = {"Puck", "Charon", "Kore", "Fenrir", "Aoede", "Leda", "Orus", "Zephyr"}
+
+
+@router.websocket("/ws_llm_test")
+async def voice_ws_llm_test(
+    websocket: WebSocket,
+    engine: str = Query("gemini_live"),
+    model: str = Query(None),
+    voice: str = Query(None),
+    age_group: str = Query("mini"),
+):
+    """Banco de pruebas AISLADO de tecnología de voz.
+
+    NO toca la BD, NO pide JWT, NO persiste nada. Arma el prompt de 9 bloques con
+    datos ESTÁTICOS (fallbacks del composer) para un nene A0 y corre el engine
+    elegido con override de modelo/voz por query param. Sirve para medir latencia,
+    cortes y 'palabras comidas' switcheando modelos sin afectar a la app.
+    """
+    await websocket.accept()
+    safe_voice = voice if voice in _LLM_VALID_VOICES else None
+    seg = age_group if age_group in ("mini", "junior", "tween") else "mini"
+    user = SimpleNamespace(
+        nombre="Timi",
+        target_language="en",
+        base_language="es",
+        cefr_level="A0",
+        age_group=seg,
+    )
+    super_prompt = compose_proto_prompt(user=user, topic=_LLM_TEST_TOPIC)
+    ctx = VoiceEngineContext(
+        session_id=0,
+        user_id=0,
+        user_name=user.nombre,
+        is_kid=True,
+        super_prompt=super_prompt,
+        voice_id=None,
+        voice_name=safe_voice,
+        language="es",
+        target_language="en",
+        silence_tolerance_ms=1500,
+        interruption_allowed=True,
+        model_override=model,
+    )
+    engine_name = engine if engine in available_engines() else "gemini_live"
+    log.info("voice_ws_llm_test: engine=%s model=%s voice=%s seg=%s",
+             engine_name, model, safe_voice, seg)
+    try:
+        eng = get_engine(engine_name)
+        async for _line in eng.run(websocket, ctx):
+            pass
+    except Exception as e:
+        log.exception("voice_ws_llm_test error: %s", e)
+        try:
+            await websocket.close()
+        except Exception:
+            pass

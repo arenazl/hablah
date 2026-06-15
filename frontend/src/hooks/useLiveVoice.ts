@@ -347,7 +347,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   )
 
   const start = useCallback(
-    async (sessionId: number, explicitToken?: string, voice?: string) => {
+    async (sessionId: number, explicitToken?: string, voice?: string, wsUrlOverride?: string) => {
       activeSessionIdRef.current = sessionId
       trace('session.client.start', sessionId)
       setStatus('connecting')
@@ -375,7 +375,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       // Override global de voz desde settings (para probar voces de Gemini).
       // Vacio = usar la del personaje/param que vino por argumento.
       const voiceOverride = loadAudioSettings().geminiVoice
-      const url = buildVoiceWsUrl(sessionId, explicitToken, voiceOverride || voice)
+      // wsUrlOverride: usado SOLO por el banco de pruebas /llm (WS sin JWT). El
+      // resto de la app no lo pasa -> construye la URL normal de /voice/ws.
+      const url = wsUrlOverride || buildVoiceWsUrl(sessionId, explicitToken, voiceOverride || voice)
       trace('ws.client.connecting', sessionId, { url: url.replace(/token=[^&]+/, 'token=…') })
       const ws = new WebSocket(url)
       wsRef.current = ws
