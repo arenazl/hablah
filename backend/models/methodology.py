@@ -43,6 +43,9 @@ class StudentType(Base):
     tutor_identity = Column(Text, nullable=True)
     tutor_tonal_rules = Column(Text, nullable=True)
     session_focus = Column(Text, nullable=True)
+    # Cierre suave (biblia 9 pasos, nota 02): semilla de la frase de cierre por
+    # segmento. El LLM la usa de guía; no es verbatim. Ver docs/mejoras_pedagogicas/03.
+    closing_seed = Column(Text, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -68,6 +71,10 @@ class MethodologyModule(Base):
     ai_restraints = Column(Text, nullable=False, default="")
     target_grammar = Column(String(300), nullable=True)  # estructura exacta a empujar
     evaluation_criteria = Column(Text, nullable=True)  # hito de éxito para avanzar
+    # Duración de la clase (Regla 1 biblia: atada a nivel × segmento). Bajo nivel
+    # / chico = corta (se estrella). Alto nivel = se extiende. NULL = sin límite.
+    max_session_minutes = Column(Integer, nullable=True)
+    max_turns = Column(Integer, nullable=True)
 
     # Heredado de learning_objectives.py (objetivo invisible adultos):
     modeling_examples = Column(JSON, nullable=False, default=list)  # frases modelo
@@ -128,6 +135,45 @@ class MethodologyStage(Base):
     target_structure_es = Column(String(200), nullable=True)  # "Me llamo ___"
     mastery_criteria = Column(String(300), nullable=True)  # cuándo se da por aprendida
     notes = Column(Text, nullable=True)  # notas del pedagogo/admin
+    active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class Coach(Base):
+    """La PERSONA del tutor — el 'quién enseña' (bloque 2 del compositor).
+
+    Cada segmento tiene 2+ coaches (femenino y masculino): MISMA pedagogía,
+    distinta personalidad + voz. El alumno elige; el género del alumno es solo el
+    default sugerido. Separa el PERSONAJE (acá) de la PEDAGOGÍA (StudentType).
+    """
+    __tablename__ = "coaches"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_type = Column(String(20), nullable=False, index=True)  # mini|junior|tween|adult...
+    gender = Column(String(10), nullable=False, default="female")  # female | male | neutral
+    name = Column(String(80), nullable=False)  # único e identificable (Sparky, Nova, Lia...)
+    identity = Column(Text, nullable=True)        # quién es (bloque 2 tutor_profile)
+    personality = Column(Text, nullable=True)     # tono / reglas tonales (bloque 2)
+    voice_name = Column(String(40), nullable=True)  # voz Gemini prebuilt (Aoede/Puck/Kore...)
+    sort_order = Column(Integer, nullable=False, default=0)
+    active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class Level(Base):
+    """Niveles CEFR con NOMBRE AMIGABLE para el usuario (no mostrar 'A1' pelado).
+
+    Lo usa la UI (el alumno ve dónde está) y el selector de nivel del editor.
+    """
+    __tablename__ = "levels"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String(4), unique=True, nullable=False, index=True)  # A0..C2
+    friendly_name = Column(String(60), nullable=False)  # "Explorador", "Maestro"
+    sort_order = Column(Integer, nullable=False, default=0)
+    short_desc = Column(String(200), nullable=True)
     active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

@@ -203,6 +203,10 @@ class Session(Base):
     # asi. Se escriben 1 vez en el setup del WS (services/gemini_live.py).
     prompt_circuit = Column(JSON, nullable=True)   # las 4 patas RESUELTAS + modo + junction
     prompt_final = Column(Text, nullable=True)     # systemInstruction exacto enviado al LLM
+    # Crudo de la sesión para el post-clase (contadores de interacción, target items,
+    # timing, señales). Hoy va al stdout efímero de Heroku; esto lo persiste para
+    # alimentar el SRS/learner_state cuando exista el post-clase. Ver BLUEPRINT §8.
+    raw_session_data = Column(JSON, nullable=True)
 
 
 class ErrorLog(Base):

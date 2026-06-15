@@ -213,6 +213,80 @@ def _get_start_trigger(topic, topic_content: Optional[dict], user_name: str, fir
     )
 
 
+def _fmt_items(items) -> str:
+    out = []
+    for it in items or []:
+        if isinstance(it, dict):
+            item = it.get("item", "")
+            seen, ok = it.get("seen"), it.get("ok")
+            if seen is not None or ok is not None:
+                out.append(f"{item}(seen:{seen or 0}, ok:{ok or 0})")
+            else:
+                out.append(str(item))
+        else:
+            out.append(str(it))
+    return ", ".join(out)
+
+
+def _get_learner_state(learner_state: Optional[dict]) -> str:
+    """Bloque 10 — MEMORIA del alumno (entre clases). Vacío si no hay datos.
+
+    Es la pata que cura la monotonía del motor determinista: con esto, cada alumno
+    y cada día reciben una clase distinta (lo que domina, lo que falla, lo que le
+    gustó). En prod hoy llega vacío (no hay BD de estado) -> bloque omitido.
+    """
+    if not learner_state:
+        return ""
+    rows = [
+        ("Mastered", learner_state.get("mastered")),
+        ("Learning", learner_state.get("learning")),
+        ("Due_For_Review", learner_state.get("due_for_review")),
+        ("Recent_Errors", learner_state.get("recent_errors")),
+        ("Interests", learner_state.get("interests")),
+        ("Traits", learner_state.get("traits")),
+    ]
+    lines = [f"  {label}: [{_fmt_items(vals)}]" for label, vals in rows if vals]
+    if not lines:
+        return ""
+    body = "\n".join(lines)
+    return (
+        f"<learner_state>\n"
+        f"{body}\n"
+        f"  Reglas: repasá lo Due_For_Review y re-targeteá los Recent_Errors. NO re-enseñes "
+        f"lo Mastered (usalo como ancla conocida, no lo traduzcas). Tematizá con los Interests "
+        f"para que la clase NO sea igual a la anterior.\n"
+        f"</learner_state>"
+    )
+
+
+def _get_interaction_state(interaction_state: Optional[dict]) -> str:
+    """Bloque 11 — estado VIVO del turno. Vacío si no hay datos.
+
+    La app lo actualiza entre turnos y lo re-inyecta para adaptar en tiempo real.
+    En prod hoy llega vacío -> bloque omitido (path intacto).
+    """
+    if not interaction_state:
+        return ""
+    rows = [
+        ("Turn", interaction_state.get("turn")),
+        ("Current_Target", interaction_state.get("current_target")),
+        ("Attempts_On_Target", interaction_state.get("attempts")),
+        ("Signal", interaction_state.get("signal")),
+    ]
+    lines = [f"  {label}: {val}" for label, val in rows if val is not None]
+    if not lines:
+        return ""
+    body = "\n".join(lines)
+    return (
+        f"<interaction_state>\n"
+        f"{body}\n"
+        f"  Reglas: si Attempts_On_Target >= 3 -> simplificá (una sola palabra, pista fonética) y "
+        f"dejá ese ítem para después. Si Signal = struggling -> bajá un escalón, más andamiaje. "
+        f"Si Signal = flowing -> introducí el próximo ítem.\n"
+        f"</interaction_state>"
+    )
+
+
 def compose_proto_prompt(
     *,
     user=None,
@@ -220,6 +294,8 @@ def compose_proto_prompt(
     methodology_module: Optional[dict] = None,
     topic_content: Optional[dict] = None,
     student_type_data: Optional[dict] = None,
+    learner_state: Optional[dict] = None,
+    interaction_state: Optional[dict] = None,
 ) -> str:
     """Compositor JIT de 9 bloques XML con datos reales de BD.
 
@@ -238,9 +314,13 @@ def compose_proto_prompt(
         _get_pedagogical_rules(student_type_data),
         _get_gamification_focus(student_type_data),
         _get_student_profile(user, student_type_data),
+        _get_learner_state(learner_state),            # B10 — memoria del alumno (omitido si vacío)
         _get_behavioral_guards(methodology_module, student_type_data),
         _get_vocabulary_block(topic, topic_content),
         _get_story_spine(topic, topic_content, user_name),
         _get_start_trigger(topic, topic_content, user_name, first_word, base_lang),
+        _get_interaction_state(interaction_state),    # B11 — estado vivo del turno (omitido si vacío)
     ]
-    return "\n\n".join(blocks)
+    # Filtramos los bloques vacíos: con learner_state e interaction_state en None
+    # el resultado es byte-idéntico a los 9 bloques originales (path de prod intacto).
+    return "\n\n".join(b for b in blocks if b)

@@ -64,6 +64,12 @@ class User(Base):
     occupation = Column(String(120), nullable=True)  # texto libre
     onboarding_done = Column(Boolean, nullable=False, default=False)
 
+    # ─── Coach (persona) + género ───────────────────────────────────────────────
+    # El género NO afecta la pedagogía; es el default sugerido del coach (que el
+    # alumno puede cambiar). preferred_coach_id apunta a coaches.id (persona+voz).
+    gender = Column(String(10), nullable=True)  # female | male | (null = sin especificar)
+    preferred_coach_id = Column(Integer, nullable=True)  # -> coaches.id
+
     # Preferencias aprendidas en vivo durante las charlas (override del template).
     # El user dice "corrige menos" en voz alta → un detector lo persiste aquí
     # y se aplica en el super_prompt de la próxima sesión. Keys posibles:
