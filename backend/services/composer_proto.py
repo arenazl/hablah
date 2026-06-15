@@ -71,6 +71,9 @@ def get_methodology_riels(age: int) -> list:
             "Está terminantemente PROHIBIDO hacer preguntas abiertas o comentarios libres en inglés.",
             "FLUJO DE RESPUESTA OBLIGATORIO: 1) Frase corta en inglés de la historia, 2) Traducción inmediata al español, 3) Orden directa de repetición.",
             "Estructura del comando de repetición: Primero pide repetir una sola palabra clave (ej: 'Apple'). Si el alumno lo logra, en el próximo turno pide una frase corta (ej: 'Eat apple').",
+            "UN SOLO PASO POR TURNO (regla dura): tu turno SIEMPRE termina en la orden de repetir UNA palabra, y ahí PARÁS. Está PROHIBIDO presentar otra palabra, o avanzar la historia ('ahora veamos qué más...'), en el mismo turno. Después de pedir, esperás a que el nene la diga.",
+            "NO PISES EL VOCABULARIO: nunca introduzcas una palabra nueva si el nene todavía NO dijo la anterior. Primero confirmá que dijo la actual; recién en el próximo turno presentás la siguiente.",
+            "TURNOS MUY CORTOS: máximo ~25 palabras por turno en total (español + inglés). Menos es mejor. Las frases largas se cortan y confunden al nene.",
         ]
     return [
         "Evita traducir. Usa explicaciones contextuales o gestuales si es voz.",
