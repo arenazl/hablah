@@ -65,7 +65,8 @@ async def get_my_profile(
     # Feature gating: desbloqueamos features gradualmente por sessions_total.
     # Kids tiene su propia progresion (achievements) — no aplica este sistema.
     from services.feature_flags import get_feature_flags
-    is_kid = bool(getattr(current, "age_group", None)) or bool(getattr(current, "parent_user_id", None))
+    _ag = getattr(current, "age_group", None)
+    is_kid = _ag in ("mini", "junior", "tween") or bool(getattr(current, "parent_user_id", None))
     feature_flags = await get_feature_flags(
         db, user_id=current.id, sessions_total=total_sessions, is_kid=is_kid,
     )
