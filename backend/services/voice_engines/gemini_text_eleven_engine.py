@@ -33,6 +33,10 @@ log = logging.getLogger(__name__)
 
 ELEVEN_MODEL = os.getenv("ELEVENLABS_MODEL", "eleven_flash_v2_5")
 
+# OJO: el 3.1-flash-live (native-audio) NO soporta responseModalities=TEXT (cierra
+# con 1007). Para modo TEXT hace falta un modelo Live half-cascade. Configurable.
+GEMINI_TEXT_MODEL = os.getenv("GEMINI_TEXT_MODEL", "models/gemini-2.0-flash-live-001")
+
 
 def _gemini_url() -> str:
     return f"{LIVE_API_URL}?key={settings.GEMINI_API_KEY}"
@@ -73,7 +77,7 @@ class GeminiTextElevenEngine(VoiceEngine):
         silence_ms = int(min(max(ctx.silence_tolerance_ms, 1500 if is_kid else 600), 2000))
         setup = {
             "setup": {
-                "model": LIVE_MODEL,
+                "model": GEMINI_TEXT_MODEL,
                 "generationConfig": {
                     "responseModalities": ["TEXT"],
                     "thinkingConfig": {"thinkingBudget": int(os.getenv("GEMINI_THINKING_BUDGET", "256"))},
