@@ -58,7 +58,7 @@ export const DEFAULT_SETTINGS: AudioSettings = {
   vadThreshold: 0.008,
   vadTailFrames: 3,
   playbackSampleRate: 24000,
-  playbackCushionSeconds: 0.02,
+  playbackCushionSeconds: 0.10,
   // Catch-up OFF: probamos ON (threshold 6s) pero CORTABA el audio del coach a
   // la mitad (S514: drift_reset a 6s trunco "Hola Timi... ojo se dice EYE").
   // El audio largo no se ataca cortandolo, se ataca en el prompt (turnos cortos
@@ -150,7 +150,7 @@ export const PRESETS: AudioPreset[] = [
 // v4: forzar reset. v3 habia activado el catch-up y eso CORTABA el audio del
 // coach a la mitad (S514). v4 vuelve catch-up OFF para todos (no depender del
 // localStorage viejo con catch-up ON).
-const STORAGE_KEY = 'hablah_audio_settings_v4'
+const STORAGE_KEY = 'hablah_audio_settings_v5'
 
 export function loadAudioSettings(): AudioSettings {
   try {
