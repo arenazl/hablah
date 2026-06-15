@@ -98,6 +98,12 @@ export function LlmTestPage() {
   const [prefixMs, setPrefixMs] = useState(200)
   const [activity, setActivity] = useState('START_OF_ACTIVITY_INTERRUPTS')
   const [thinking, setThinking] = useState(256)
+  // Captura del mic — override de SESIÓN (no persiste, no toca /app).
+  const [agc, setAgc] = useState(false)   // AGC OFF: sospechoso de comerse palabras cortas
+  const [ns, setNs] = useState(false)     // noise suppression OFF
+  const [aec, setAec] = useState(true)    // echo cancellation ON (seguro con parlantes)
+  const [captureSr, setCaptureSr] = useState(16000)
+  const [workletBuf, setWorkletBuf] = useState(2048)
 
   const [log, setLog] = useState<LogEntry[]>([])
   const [micLevel, setMicLevel] = useState(0)
@@ -134,9 +140,17 @@ export function LlmTestPage() {
     }
     addLog('info', `aplicar · ${model.replace('models/', '')} · ${voice}`)
     addLog('info', `start=${startSens.replace('START_SENSITIVITY_', '')} end=${endSens.replace('END_SENSITIVITY_', '')} sil=${silenceMs}ms prefix=${prefixMs}ms act=${activity === 'NO_INTERRUPTION' ? 'no-int' : 'interrumpe'} think=${thinking}`)
+    addLog('info', `mic: agc=${agc ? 'on' : 'off'} ns=${ns ? 'on' : 'off'} aec=${aec ? 'on' : 'off'} sr=${captureSr} buf=${workletBuf}`)
+    const audioOverride = {
+      autoGainControl: agc,
+      noiseSuppression: ns,
+      echoCancellation: aec,
+      captureSampleRate: captureSr,
+      workletBufferSamples: workletBuf,
+    }
     const url = buildLlmTestWsUrl(cfg)
-    await live.start(0, undefined, voice, url)
-  }, [live, addLog, model, voice, startSens, endSens, silenceMs, prefixMs, activity, thinking])
+    await live.start(0, undefined, voice, url, audioOverride)
+  }, [live, addLog, model, voice, startSens, endSens, silenceMs, prefixMs, activity, thinking, agc, ns, aec, captureSr, workletBuf])
 
   const stop = useCallback(() => {
     live.stop()
@@ -223,6 +237,36 @@ export function LlmTestPage() {
               <div style={LABEL}>Thinking budget</div>
               <input type="number" style={FIELD} value={thinking} disabled={isLive} min={0} max={2048} step={128}
                 onChange={(e) => setThinking(Number(e.target.value))} />
+            </div>
+            <div>
+              <div style={LABEL}>Auto gain control (AGC)</div>
+              <Segmented value={agc ? 'on' : 'off'} disabled={isLive} onChange={(v) => setAgc(v === 'on')}
+                options={[{ v: 'off', label: 'OFF (recom.)' }, { v: 'on', label: 'ON' }]} />
+            </div>
+            <div>
+              <div style={LABEL}>Noise suppression</div>
+              <Segmented value={ns ? 'on' : 'off'} disabled={isLive} onChange={(v) => setNs(v === 'on')}
+                options={[{ v: 'off', label: 'OFF' }, { v: 'on', label: 'ON' }]} />
+            </div>
+            <div>
+              <div style={LABEL}>Echo cancellation</div>
+              <Segmented value={aec ? 'on' : 'off'} disabled={isLive} onChange={(v) => setAec(v === 'on')}
+                options={[{ v: 'on', label: 'ON' }, { v: 'off', label: 'OFF' }]} />
+            </div>
+            <div>
+              <div style={LABEL}>Capture sample rate</div>
+              <select style={FIELD} value={captureSr} disabled={isLive} onChange={(e) => setCaptureSr(Number(e.target.value))}>
+                <option value={16000}>16000 (Gemini)</option>
+                <option value={48000}>48000 (resample backend)</option>
+              </select>
+            </div>
+            <div>
+              <div style={LABEL}>Worklet buffer (samples)</div>
+              <select style={FIELD} value={workletBuf} disabled={isLive} onChange={(e) => setWorkletBuf(Number(e.target.value))}>
+                <option value={1024}>1024 (reactivo)</option>
+                <option value={2048}>2048</option>
+                <option value={4096}>4096</option>
+              </select>
             </div>
           </div>
         </div>

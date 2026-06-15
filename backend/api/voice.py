@@ -134,6 +134,31 @@ _LLM_TEST_TOPIC = SimpleNamespace(
     pinned_vocabulary=["dog", "cat", "fish"],
     keywords=["dog", "cat", "fish"],
 )
+
+# Riel del banco: método de FRASE-PUENTE. El nene repite "<palabra-ES> se dice
+# <word-EN>" (ej: "perro se dice dog"), nunca el monosílabo suelto — así dura lo
+# suficiente para que el VAD lo cace Y es A0-doable (90% español). Es estático y
+# solo del banco: NO toca el _FALLBACK_RIELS_A0_MINI de prod.
+_LLM_METHODOLOGY = {
+    "ai_restraints": (
+        "  - UN SOLO PASO POR TURNO: das un contexto cortito + un ejemplo y cerrás SIEMPRE con \"ahora vos\".\n"
+        "  - El alumno repite una FRASE-PUENTE bilingüe, NUNCA una palabra suelta: \"<palabra en español> se dice <word en inglés>\" (ej: \"perro se dice dog\"). Es 90% español con la palabra nueva en inglés adentro — un nene A0 la puede decir, y dura lo suficiente para escucharse entera.\n"
+        "  - PROHIBIDO pedir que repita SOLO la palabra en inglés suelta (ej: solo \"dog\"): es demasiado corta y no se entiende. Siempre la frase-puente entera.\n"
+        "  - Tu turno termina con \"ahora vos: <palabra-ES> se dice <word-EN>\" y PARÁS. No sigas hasta que responda.\n"
+        "  - Turnos muy cortos (máx ~25 palabras). No te cuelgues con explicaciones largas.\n"
+        "  - La unidad que aprende es la palabra suelta; la frase-puente es solo el envoltorio para que la diga completa.\n"
+        "  - NUNCA mientas: si no la dijo bien, repetí con más energía, no festejes de mentira."
+    ),
+}
+_LLM_TOPIC_CONTENT = {
+    "allowed_vocabulary": ["dog", "cat", "fish"],
+    "required_keywords": [],
+    "story_spine": "Timi y HABI conocen animales. Cada animal que Timi nombra con la frase-puente aparece en la mini-aventura.",
+    "start_trigger": (
+        "Saludá a {name} cálido y corto en español. Presentá la primera palabra con la frase-puente: "
+        "\"Perro se dice dog\". Cerrá con \"Ahora vos: perro se dice dog\" y esperá. NO sigas hasta que responda."
+    ),
+}
 _LLM_VALID_VOICES = {"Puck", "Charon", "Kore", "Fenrir", "Aoede", "Leda", "Orus", "Zephyr"}
 _LLM_START_SENS = {"START_SENSITIVITY_HIGH", "START_SENSITIVITY_LOW", "START_SENSITIVITY_UNSPECIFIED"}
 _LLM_END_SENS = {"END_SENSITIVITY_HIGH", "END_SENSITIVITY_LOW", "END_SENSITIVITY_UNSPECIFIED"}
@@ -171,7 +196,12 @@ async def voice_ws_llm_test(
         cefr_level="A0",
         age_group=seg,
     )
-    super_prompt = compose_proto_prompt(user=user, topic=_LLM_TEST_TOPIC)
+    super_prompt = compose_proto_prompt(
+        user=user,
+        topic=_LLM_TEST_TOPIC,
+        methodology_module=_LLM_METHODOLOGY,
+        topic_content=_LLM_TOPIC_CONTENT,
+    )
     ctx = VoiceEngineContext(
         session_id=0,
         user_id=0,

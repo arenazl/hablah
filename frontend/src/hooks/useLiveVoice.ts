@@ -11,7 +11,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { buildVoiceWsUrl, buildRoomWsUrl } from '../services/api'
-import { loadAudioSettings } from '../lib/audioSettings'
+import { loadAudioSettings, type AudioSettings } from '../lib/audioSettings'
 import { trace } from '../lib/trace'
 
 export interface TranscriptLine {
@@ -347,13 +347,15 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   )
 
   const start = useCallback(
-    async (sessionId: number, explicitToken?: string, voice?: string, wsUrlOverride?: string) => {
+    async (sessionId: number, explicitToken?: string, voice?: string, wsUrlOverride?: string, audioOverride?: Partial<AudioSettings>) => {
       activeSessionIdRef.current = sessionId
       trace('session.client.start', sessionId)
       setStatus('connecting')
       setTranscript([])
 
-      const settings = loadAudioSettings()
+      // audioOverride (banco /llm): override de captura SOLO para esta sesión,
+      // sin persistir en localStorage -> NO afecta las sesiones reales de /app.
+      const settings = { ...loadAudioSettings(), ...(audioOverride || {}) }
       let stream: MediaStream
       try {
         stream = await navigator.mediaDevices.getUserMedia({
