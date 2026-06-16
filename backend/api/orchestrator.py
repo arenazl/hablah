@@ -8,7 +8,8 @@ Es lo que alimenta el panel "cargado vs falta" + el preview del prompt en vivo.
 from types import SimpleNamespace
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,6 +18,7 @@ from core.security import require_role
 from services.composer_proto import compose_proto_prompt
 from models.methodology import StudentType, Coach, Level, MethodologyModule
 from models.config import AppConfig
+from models.orchestration import Orchestration
 from models.template import Topic
 from models.user import User
 
@@ -110,3 +112,55 @@ async def resolve(
             "topic": topic.title if topic else None,
         },
     }
+
+
+# ── Orquestaciones guardadas (clases armadas por el profe) ──
+class OrchestrationIn(BaseModel):
+    name: str
+    student_type: str
+    coach_id: Optional[int] = None
+    level: str
+    topic_id: Optional[int] = None
+
+
+def _serialize_orch(o: Orchestration) -> dict:
+    return {
+        "id": o.id, "name": o.name, "student_type": o.student_type,
+        "coach_id": o.coach_id, "level": o.level, "topic_id": o.topic_id,
+    }
+
+
+@router.get("/saved")
+async def list_orchestrations(
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("admin")),
+):
+    rows = (await db.execute(select(Orchestration).order_by(Orchestration.name))).scalars().all()
+    return [_serialize_orch(o) for o in rows]
+
+
+@router.post("/saved", status_code=201)
+async def save_orchestration(
+    payload: OrchestrationIn,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("admin")),
+):
+    o = Orchestration(**payload.model_dump())
+    db.add(o)
+    await db.commit()
+    await db.refresh(o)
+    return _serialize_orch(o)
+
+
+@router.delete("/saved/{orch_id}")
+async def delete_orchestration(
+    orch_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("admin")),
+):
+    o = (await db.execute(select(Orchestration).where(Orchestration.id == orch_id))).scalar_one_or_none()
+    if not o:
+        raise HTTPException(status_code=404, detail="Orquestación no encontrada")
+    await db.delete(o)
+    await db.commit()
+    return {"ok": True}

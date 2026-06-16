@@ -84,6 +84,8 @@ export default function AdminPromptBuilderPanel() {
   const [level, setLevel] = useState<string | undefined>(undefined)
   const [topicId, setTopicId] = useState<number | undefined>(undefined)
   const [res, setRes] = useState<Resolved | null>(null)
+  const [saved, setSaved] = useState<{ id: number; name: string; student_type: string; coach_id: number | null; level: string; topic_id: number | null }[]>([])
+  const [orchName, setOrchName] = useState('')
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
@@ -104,6 +106,23 @@ export default function AdminPromptBuilderPanel() {
       .then((r) => setRes(r.data)).catch(() => setRes(null))
   }, [st, coachId, level, topicId])
   useEffect(() => { resolve() }, [resolve])
+
+  const loadSaved = useCallback(() => {
+    api.get('/orchestrator/saved').then((r) => setSaved(r.data)).catch(() => {})
+  }, [])
+  useEffect(() => { loadSaved() }, [loadSaved])
+
+  const saveCurrent = () => {
+    if (!orchName.trim() || !st || !level) return
+    api.post('/orchestrator/saved', { name: orchName.trim(), student_type: st, coach_id: coachId ?? null, level, topic_id: topicId ?? null })
+      .then(() => { setOrchName(''); loadSaved() }).catch(() => {})
+  }
+  const applySaved = (o: { student_type: string; coach_id: number | null; level: string; topic_id: number | null }) => {
+    setSt(o.student_type); setCoachId(o.coach_id ?? undefined); setLevel(o.level); setTopicId(o.topic_id ?? undefined)
+  }
+  const deleteSaved = (id: number) => {
+    api.delete(`/orchestrator/saved/${id}`).then(() => loadSaved()).catch(() => {})
+  }
 
   const onDragEnd = (e: DragEndEvent) => {
     const overKind = e.over?.data?.current?.kind
@@ -127,9 +146,26 @@ export default function AdminPromptBuilderPanel() {
     <div style={{ minHeight: '100vh', background: '#0b0e14', color: '#e6e8ec', padding: '22px 20px 64px' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 4px' }}>Orquestador — armá la clase</h1>
-        <p style={{ color: '#9aa3af', fontSize: 13, margin: '0 0 18px' }}>
+        <p style={{ color: '#9aa3af', fontSize: 13, margin: '0 0 14px' }}>
           Arrastrá las piezas a la clase. El motor arma los 9 pasos (en orden fijo) y el prompt se ve en vivo a la derecha.
         </p>
+
+        {/* Guardar / reusar clases armadas */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 16, padding: '10px 12px', background: '#11151d', border: '1px solid #232936', borderRadius: 12 }}>
+          <input value={orchName} onChange={(e) => setOrchName(e.target.value)} placeholder="Nombre de la clase…"
+            style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #232936', background: '#0b0e14', color: '#e6e8ec', fontSize: 12.5, minWidth: 180 }} />
+          <button onClick={saveCurrent} disabled={!orchName.trim() || !st || !level}
+            style={{ padding: '7px 12px', borderRadius: 8, border: 0, background: (!orchName.trim() || !st || !level) ? '#26303f' : '#22c55e', color: '#fff', fontSize: 12.5, fontWeight: 700, cursor: (!orchName.trim() || !st || !level) ? 'default' : 'pointer' }}>
+            Guardar clase
+          </button>
+          {saved.length > 0 && <span style={{ fontSize: 11, color: '#6b7686', marginLeft: 4 }}>guardadas:</span>}
+          {saved.map((o) => (
+            <span key={o.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 9px', borderRadius: 999, background: '#0b0e14', border: '1px solid #2a3140', fontSize: 12 }}>
+              <button onClick={() => applySaved(o)} style={{ background: 'none', border: 0, color: '#7dd3fc', cursor: 'pointer', fontSize: 12, padding: 0 }}>{o.name}</button>
+              <button onClick={() => deleteSaved(o.id)} style={{ background: 'none', border: 0, color: '#9aa3af', cursor: 'pointer', fontSize: 14, lineHeight: 1, padding: 0 }}>×</button>
+            </span>
+          ))}
+        </div>
 
         <DndContext sensors={sensors} onDragEnd={onDragEnd}>
           <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr 1fr', gap: 14, alignItems: 'start' }}>
