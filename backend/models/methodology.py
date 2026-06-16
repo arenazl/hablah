@@ -75,6 +75,10 @@ class MethodologyModule(Base):
     # / chico = corta (se estrella). Alto nivel = se extiende. NULL = sin límite.
     max_session_minutes = Column(Integer, nullable=True)
     max_turns = Column(Integer, nullable=True)
+    # Regla de IDIOMA del coach por nivel — campo propio (no apelmazado en ai_restraints).
+    # A0 = 100% español salvo la palabra objetivo; ramping a 100% inglés en B2+. Es donde
+    # vive el fix del "Now you". Lo renderiza el bloque 6 cuando se haga el wire.
+    language_rule = Column(Text, nullable=True)
 
     # Heredado de learning_objectives.py (objetivo invisible adultos):
     modeling_examples = Column(JSON, nullable=False, default=list)  # frases modelo
