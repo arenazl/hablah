@@ -13,6 +13,7 @@ import AdminMetodologiaPanel from './AdminMetodologiaPanel'
 import AdminConsolaPanel from './AdminConsolaPanel'
 import AdminAbmsPanel from './AdminAbmsPanel'
 import AdminUsersPanel from './AdminUsersPanel'
+import AdminReglasPanel from './AdminReglasPanel'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -54,6 +55,7 @@ export function Backoffice() {
             <Route path="/consola" element={<AdminConsolaPanel />} />
             <Route path="/abms" element={<AdminAbmsPanel />} />
             <Route path="/usuarios" element={<AdminUsersPanel />} />
+            <Route path="/reglas" element={<AdminReglasPanel />} />
           </Routes>
         </main>
       </div>
@@ -95,6 +97,7 @@ function BoSidebar({ open }: { open: boolean }) {
         <SidebarItem to="/admin/metodologia" label="Metodología" />
         <SidebarItem to="/admin/abms" label="ABMs motor" />
         <SidebarItem to="/admin/templates" label="Templates" />
+        <SidebarItem to="/admin/reglas" label="Reglas de salida" />
       </nav>
       <div className="sidebar-section">Operación · trabajás con alumnos</div>
       <nav className="sidebar-nav">
