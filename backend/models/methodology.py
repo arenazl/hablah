@@ -49,6 +49,12 @@ class StudentType(Base):
     # Plantillas de arranque/desarrollo por banda (doc 11 §1.4), como dato.
     opening_seed = Column(Text, nullable=True)
     continuation_seed = Column(Text, nullable=True)
+    # ─── Pedagogía / forma por EDAD (el CÓMO se enseña; agnóstico del tópico y del
+    # nivel). El QUÉ (currículum) vive en levels. Se APILA con el eje nivel, nunca
+    # se cruza. Consolida lo que hoy está disperso (session_focus + presets). ───
+    pedagogy = Column(Text, nullable=True)                  # gamificación, manejo del error, registro por edad
+    form_rules = Column(Text, nullable=True)                # reglas de forma (nene: contexto/celebración; adulto: sin infantilizar)
+    duration_adjust_minutes = Column(Integer, nullable=True)  # ajuste de duración por edad (+/- sobre la base del nivel)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -185,6 +191,15 @@ class Level(Base):
     # nivel (un A0 es español tenga 5 o 40 años). A0=100% español salvo la palabra
     # objetivo -> B2+=100% inglés. Es donde vive el fix del "Now you".
     language_rule = Column(Text, nullable=True)
+    # ─── Currículum lingüístico por NIVEL (universal: B2 = voz pasiva igual tengas
+    # 8 o 90 años). El QUÉ se aprende; el CÓMO (forma/pedagogía) vive en student_types.
+    # Se APILA con el eje edad, nunca se cruza en una fila. ───
+    curriculum_grammar = Column(Text, nullable=True)        # estructuras del nivel (qué se aprende)
+    expected_production = Column(Text, nullable=True)       # qué produce el alumno (A0 sueltas -> C2 matices)
+    duration_base_minutes = Column(Integer, nullable=True)  # duración base del nivel (+ ajuste por edad)
+    # Profundidad de vocab/frases del tópico que entra en este nivel (Sector 2 biblia):
+    # basic = solo la 1ª frase clave; full = todas. El tópico es el mismo; cambia la dosis.
+    vocab_depth = Column(String(10), nullable=True)         # basic | full
     active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

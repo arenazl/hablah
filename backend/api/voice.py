@@ -182,6 +182,7 @@ async def voice_ws_llm_test(
     activity: str = Query("START_OF_ACTIVITY_INTERRUPTS"),
     thinking: int = Query(256),
     age_group: str = Query("mini"),
+    level: str = Query("A0"),
 ):
     """Banco de pruebas AISLADO de voz / turn-taking (ruta frontend /llm).
 
@@ -192,25 +193,47 @@ async def voice_ws_llm_test(
     """
     await websocket.accept()
     safe_voice = voice if voice in _LLM_VALID_VOICES else "Aoede"
-    seg = age_group if age_group in ("mini", "junior", "tween") else "mini"
-    user = SimpleNamespace(
-        nombre="Timi",
-        target_language="en",
-        base_language="es",
-        cefr_level="A0",
-        age_group=seg,
-    )
-    super_prompt = compose_proto_prompt(
-        user=user,
-        topic=_LLM_TEST_TOPIC,
-        methodology_module=_LLM_METHODOLOGY,
-        topic_content=_LLM_TOPIC_CONTENT,
-    )
+    seg = age_group if age_group in ("mini", "junior", "tween", "adult") else "mini"
+    lvl = level if level in ("A0", "A1", "A2", "B1", "B2", "C1", "C2") else "A0"
+    # Prompt REAL del motor desde la BD para (segmento, nivel) — los 28 del smoke test.
+    # Lee catálogos (no persiste). Fail-fast: si falta un dato, cierra con error.
+    from core.database import AsyncSessionLocal
+    from sqlalchemy import select as _sel
+    from models.methodology import StudentType as _ST, Level as _LV
+    from models.config import AppConfig as _AC
+    from models.template import Topic as _TP
+    from services.composer_proto import MotorDataMissing
+    async with AsyncSessionLocal() as _db:
+        _st = (await _db.execute(_sel(_ST).where(_ST.slug == seg))).scalar_one_or_none()
+        _lv = (await _db.execute(_sel(_LV).where(_LV.code == lvl))).scalar_one_or_none()
+        _aud = "kid" if seg in ("mini", "junior", "tween") else "adult"
+        _tp = (await _db.execute(_sel(_TP).where(_TP.is_active.is_(True), _TP.audience == _aud).limit(1))).scalars().first()
+        _appcfg = {c.key: c.value for c in (await _db.execute(_sel(_AC))).scalars().all()}
+    st_data = {
+        "slug": _st.slug, "tutor_mascot": _st.tutor_mascot, "tutor_identity": _st.tutor_identity,
+        "tutor_tonal_rules": _st.tutor_tonal_rules, "session_focus": _st.session_focus,
+        "pedagogy": _st.pedagogy, "form_rules": _st.form_rules, "opening_seed": _st.opening_seed,
+        "continuation_seed": _st.continuation_seed, "closing_seed": _st.closing_seed,
+    } if _st else None
+    level_data = {
+        "language_rule": _lv.language_rule, "curriculum_grammar": _lv.curriculum_grammar,
+        "expected_production": _lv.expected_production, "duration_base_minutes": _lv.duration_base_minutes,
+        "vocab_depth": _lv.vocab_depth,
+    } if _lv else None
+    user = SimpleNamespace(nombre="Timi", target_language="en", base_language="es",
+                           cefr_level=lvl, age_group=seg)
+    try:
+        super_prompt = compose_proto_prompt(user=user, topic=_tp, student_type_data=st_data,
+                                            level_data=level_data, app_config=_appcfg)
+    except MotorDataMissing as _e:
+        log.warning("voice_ws_llm_test: dato faltante %s/%s: %s", seg, lvl, _e)
+        await websocket.close(code=1011)
+        return
     ctx = VoiceEngineContext(
         session_id=0,
         user_id=0,
         user_name=user.nombre,
-        is_kid=True,
+        is_kid=seg in ("mini", "junior", "tween"),
         super_prompt=super_prompt,
         voice_id=None,
         voice_name=safe_voice,

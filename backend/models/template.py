@@ -155,6 +155,10 @@ class Topic(Base):
     # Segmento: a quién le interesa (madurez/interés, NO nivel de idioma).
     # mini | junior | tween | adultos. El tópico es agnóstico al nivel CEFR.
     segmento = Column(String(12), nullable=True, index=True)
+    # Bandas para las que el tópico es apropiado (filtro fino del sequencer, Sector 1
+    # biblia): lista de mini/junior/tween/adult. NULL = sin restricción. NO entra al
+    # prompt: lo usa la SELECCIÓN de tópico (upstream), el contenido sigue agnóstico.
+    appropriate_bands = Column(JSON, nullable=True)
     # is_curriculum=True → tópico de plan estructurado (vocab pinneado, ordenado).
     # Acá migran las filas de MethodologyStage (Saludos/Colores/Conteo).
     is_curriculum = Column(Boolean, nullable=False, default=False)

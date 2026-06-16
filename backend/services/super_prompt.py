@@ -1377,7 +1377,12 @@ def build_super_prompt(**kwargs) -> str:
     _u = kwargs.get("user")
     _ag = getattr(_u, "age_group", None)
     _is_kid = _ag in ("mini", "junior", "tween") or bool(getattr(_u, "parent_user_id", None))
-    if _os.getenv("PROTO_KIDS_A0") and _is_kid and (getattr(_u, "cefr_level", None) or "") == "A0":
+    # MOTOR 9 PASOS = camino ÚNICO (default ON). El composer de 2 ejes (currículum por
+    # nivel + forma por edad, fail-fast) arma el prompt para TODOS los segmentos y
+    # niveles. El cuerpo legacy de abajo queda INERTE (no se ejecuta). Reversible de
+    # emergencia: MOTOR_9PASOS=0 vuelve al legacy.
+    _motor_on = _os.getenv("MOTOR_9PASOS", "1") != "0"
+    if _motor_on:
         from services.composer_proto import compose_proto_prompt
         return compose_proto_prompt(
             user=_u,

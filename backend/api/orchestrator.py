@@ -49,6 +49,8 @@ async def resolve(
             "slug": st.slug,
             "tutor_mascot": st.tutor_mascot, "tutor_identity": st.tutor_identity,
             "tutor_tonal_rules": st.tutor_tonal_rules, "session_focus": st.session_focus,
+            "pedagogy": getattr(st, "pedagogy", None),       # eje edad — el CÓMO (bloque 3)
+            "form_rules": getattr(st, "form_rules", None),   # eje edad — la forma (bloque 6)
             "opening_seed": getattr(st, "opening_seed", None),
             "continuation_seed": getattr(st, "continuation_seed", None),
             "closing_seed": getattr(st, "closing_seed", None),
@@ -67,7 +69,13 @@ async def resolve(
     tags = (getattr(topic, "generated_vocab", None) or getattr(topic, "keywords", None) or []) if topic else []
     tc = {"allowed_vocabulary": tags, "required_keywords": [], "story_spine": None, "start_trigger": None} if topic else None
 
-    level_data = {"language_rule": getattr(lv, "language_rule", None)} if lv else None
+    level_data = {
+        "language_rule": getattr(lv, "language_rule", None),
+        "curriculum_grammar": getattr(lv, "curriculum_grammar", None),       # eje nivel — el QUÉ (bloque 6)
+        "expected_production": getattr(lv, "expected_production", None),
+        "duration_base_minutes": getattr(lv, "duration_base_minutes", None),
+        "vocab_depth": getattr(lv, "vocab_depth", None),                     # Sector 2 — recorte por nivel
+    } if lv else None
     app_config = {c.key: c.value for c in (await db.execute(select(AppConfig))).scalars().all()}
 
     user = SimpleNamespace(
@@ -87,11 +95,11 @@ async def resolve(
         blk(1, "runtime_context", "—", True, "fecha + idiomas"),
         blk(2, "tutor_profile", "Coach" if coach else "student_types.tutor_*",
             bool(coach) or bool(st and st.tutor_mascot), (coach.name if coach else (st.tutor_mascot if st else "")) or ""),
-        blk(3, "pedagogical_rules", "student_types.session_focus", bool(st and st.session_focus), (st.session_focus if st else "") or ""),
+        blk(3, "pedagogical_rules", "student_types.pedagogy", bool(st and getattr(st, "pedagogy", None)), (getattr(st, "pedagogy", "") if st else "") or ""),
         blk(4, "gamification_focus", "student_types (slug)", bool(st), st.slug if st else ""),
         blk(5, "student_profile", "users", True, f"{student_type} / {level}"),
-        blk(6, "behavioral_guards (riel)", "methodology_modules.ai_restraints", bool(riel and riel.ai_restraints), (riel.ai_restraints if riel else "") or ""),
-        blk(6.1, "language_rule", "levels.language_rule", bool(lv and getattr(lv, "language_rule", None)), (getattr(lv, "language_rule", "") if lv else "") or ""),
+        blk(6, "behavioral_guards · forma (edad)", "student_types.form_rules", bool(st and getattr(st, "form_rules", None)), (getattr(st, "form_rules", "") if st else "") or ""),
+        blk(6.1, "behavioral_guards · nivel (idioma+currículum)", "levels.language_rule / curriculum_grammar", bool(lv and getattr(lv, "language_rule", None)), (getattr(lv, "curriculum_grammar", "") if lv else "") or ""),
         blk(6.2, "output_rules", "app_config (salida/seguridad)", any(v == "true" for v in app_config.values()), "voz / ASR / seguridad / validador"),
         blk(7, "current_lesson_vocabulary", "topics.generated_vocab", bool(tags), ", ".join(tags[:6]) if tags else ""),
         blk(8, "story_timeline", "topic_module_content.story_spine", False, "(generado/fallback)"),

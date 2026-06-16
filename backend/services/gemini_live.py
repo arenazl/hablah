@@ -181,6 +181,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "tutor_identity": st.tutor_identity,
                     "tutor_tonal_rules": st.tutor_tonal_rules,
                     "session_focus": st.session_focus,
+                    "pedagogy": getattr(st, "pedagogy", None),      # eje edad — el CÓMO (bloque 3)
+                    "form_rules": getattr(st, "form_rules", None),  # eje edad — la forma (bloque 6)
                     "opening_seed": getattr(st, "opening_seed", None),
                     "continuation_seed": getattr(st, "continuation_seed", None),
                     "closing_seed": getattr(st, "closing_seed", None),
@@ -198,7 +200,13 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                 select(Level).where(Level.code == (user.cefr_level or "A0"))
             )).scalar_one_or_none()
             if lv:
-                level_data = {"language_rule": getattr(lv, "language_rule", None)}
+                level_data = {
+                    "language_rule": getattr(lv, "language_rule", None),
+                    "curriculum_grammar": getattr(lv, "curriculum_grammar", None),     # eje nivel — el QUÉ (bloque 6)
+                    "expected_production": getattr(lv, "expected_production", None),
+                    "duration_base_minutes": getattr(lv, "duration_base_minutes", None),
+                    "vocab_depth": getattr(lv, "vocab_depth", None),                     # Sector 2 — recorte por nivel
+                }
             app_config = {c.key: c.value for c in (await db.execute(select(AppConfig))).scalars().all()}
         except Exception as e:
             log.warning(f"motor pedagógico: level_data/app_config no disponible ({e})")

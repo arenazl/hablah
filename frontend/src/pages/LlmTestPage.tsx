@@ -78,6 +78,8 @@ function Segmented({ value, onChange, options, disabled }: {
 
 export function LlmTestPage() {
   // Config. Defaults = lo que funcionó 10/10 (AGC off + VAD responsivo + frase-puente).
+  const [ageGroup, setAgeGroup] = useState('mini')
+  const [level, setLevel] = useState('A0')
   const [model, setModel] = useState(MODELS[0].value)
   const [voice, setVoice] = useState('Aoede')
   const [startSens, setStartSens] = useState('START_SENSITIVITY_HIGH')
@@ -114,7 +116,7 @@ export function LlmTestPage() {
     live.stop()
     setLog([]); setMicLevel(0)
     const cfg = {
-      engine: 'gemini_live', model, voice,
+      engine: 'gemini_live', model, voice, age_group: ageGroup, level,
       start_sens: startSens, end_sens: endSens, silence_ms: silenceMs,
       prefix_ms: prefixMs, activity, thinking,
     }
@@ -126,7 +128,7 @@ export function LlmTestPage() {
     }
     const url = buildLlmTestWsUrl(cfg)
     await live.start(0, undefined, voice, url, audioOverride)
-  }, [live, addLog, model, voice, startSens, endSens, silenceMs, prefixMs, activity, thinking, agc, ns, aec, captureSr, workletBuf])
+  }, [live, addLog, ageGroup, level, model, voice, startSens, endSens, silenceMs, prefixMs, activity, thinking, agc, ns, aec, captureSr, workletBuf])
 
   const stop = useCallback(() => { live.stop(); addLog('info', 'sesión terminada'); setMicLevel(0) }, [live, addLog])
 
@@ -141,6 +143,25 @@ export function LlmTestPage() {
           Cambiá un par de cosas, tocá "Aplicar y arrancar" y hablale al coach. Probá decir
           la frase-puente entera ("perro se dice dog"). Cada cambio reinicia la sesión.
         </p>
+
+        {/* Selector del prompt del motor (los 28: segmento × nivel) */}
+        <div style={{ ...CARD, marginBottom: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 18 }}>
+            <Control label="Segmento (edad)" help="Perfil del alumno: define tutor, pedagogía y forma.">
+              <Segmented value={ageGroup} disabled={isLive} onChange={setAgeGroup}
+                options={[{ v: 'mini', label: 'Mini' }, { v: 'junior', label: 'Junior' }, { v: 'tween', label: 'Tween' }, { v: 'adult', label: 'Adulto' }]} />
+            </Control>
+            <Control label="Nivel de inglés" help="Define currículum, idioma ES/EN y profundidad. El prompt cambia con esto.">
+              <select style={FIELD} value={level} disabled={isLive} onChange={(e) => setLevel(e.target.value)}>
+                {['A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'].map((l) => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </Control>
+          </div>
+          <div style={{ ...HELP, marginTop: 12 }}>
+            El motor arma el prompt real de 9 pasos para <b>{ageGroup} · {level}</b> desde la BD
+            (el mismo que ves en <code>test-prompts/{level}/{ageGroup}.md</code>). Cambiá segmento/nivel y "Aplicar" para probar otro.
+          </div>
+        </div>
 
         {/* Panel simple */}
         <div style={{ ...CARD, marginBottom: 16 }}>

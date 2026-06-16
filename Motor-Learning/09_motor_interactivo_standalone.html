@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motor de 9 capas — ensamblador real</title>
+<style>
+  :root{
+    --ink:#161922; --paper:#F6F7FA; --card:#FFFFFF; --slate:#5B6070; --slate2:#878D9C;
+    --hair:#E4E7EE; --indigo:#5B3DF5; --indigo-s:#ECE8FE; --amber:#E8820E; --amber-s:#FCEFDC;
+    --gray:#6B7280; --gray-s:#EDEFF3; --teal:#0E9E9E; --grid:#DCE0E8;
+    --fdisp:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --fbody:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --fmono:ui-monospace,'SF Mono','Cascadia Code',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--fbody);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+  .mono{font-family:var(--fmono)}
+  h1,h2,h3{font-family:var(--fdisp);letter-spacing:-0.02em}
+
+  header.top{padding:15px 24px;border-bottom:1px solid var(--hair);background:var(--card);display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  header.top h1{font-size:17px;font-weight:700}
+  header.top .sub{font-size:12.5px;color:var(--slate);max-width:54ch}
+  .legend{display:flex;gap:13px;margin-left:auto;flex-wrap:wrap}
+  .lg{display:flex;align-items:center;gap:6px;font-size:11.5px;font-family:var(--fmono);color:var(--slate)}
+  .sw{width:11px;height:11px;border-radius:3px}
+  .sw.e{background:var(--gray)} .sw.p{background:var(--amber)} .sw.d{background:var(--indigo)}
+
+  .app{display:flex;min-height:calc(100vh - 56px)}
+  .side{width:290px;flex-shrink:0;border-right:1px solid var(--hair);background:var(--card);overflow-y:auto;max-height:calc(100vh - 56px)}
+  .side .hd{padding:13px 18px 7px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate2);font-family:var(--fmono);position:sticky;top:0;background:var(--card)}
+  .pf{padding:10px 16px;border-bottom:1px solid var(--hair);cursor:pointer;display:flex;gap:11px;align-items:flex-start;transition:background .12s}
+  .pf:hover{background:#FAFAFE}
+  .pf.active{background:var(--indigo-s);box-shadow:inset 3px 0 0 var(--indigo)}
+  .av{width:33px;height:33px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;font-family:var(--fdisp)}
+  .pf .nm{font-size:13px;font-weight:600}
+  .pf .mt{font-size:11px;color:var(--slate);margin-top:2px;line-height:1.35}
+  .chip{display:inline-block;font-family:var(--fmono);font-size:10px;padding:1px 6px;border-radius:5px;background:var(--gray-s);color:var(--slate);margin-right:4px}
+
+  .canvas{flex:1;overflow-y:auto;max-height:calc(100vh - 56px);
+    background-image:radial-gradient(circle, var(--grid) 1.1px, transparent 1.1px);background-size:19px 19px;padding:22px 26px 60px}
+  .ctx{max-width:760px;margin:0 auto 12px;background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:13px 18px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .ctx .who{font-family:var(--fdisp);font-weight:700;font-size:17px}
+  .ctx .inp{display:flex;gap:7px;flex-wrap:wrap}
+  .ctx .pill{font-family:var(--fmono);font-size:11px;padding:3px 9px;border-radius:6px;background:var(--indigo-s);color:var(--indigo);font-weight:500}
+  .ctx .pill.topic{background:var(--gray-s);color:var(--ink)}
+
+  .toolbar{max-width:760px;margin:0 auto 12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .seg{display:inline-flex;border:1px solid var(--hair);border-radius:9px;overflow:hidden;background:var(--card)}
+  .seg button{border:0;background:transparent;padding:7px 13px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--slate);border-right:1px solid var(--hair)}
+  .seg button:last-child{border-right:0}
+  .seg button.on{background:var(--ink);color:#fff}
+  .lab{font-size:10.5px;color:var(--slate2);font-family:var(--fmono);align-self:center;padding-left:2px}
+
+  .istate{max-width:760px;margin:0 auto 16px;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .istate .tag{font-family:var(--fmono);font-size:10px;color:var(--slate2);text-transform:uppercase;letter-spacing:.1em}
+  .istate .b{font-family:var(--fmono);font-size:11px;background:#EEF0F4;border:1px solid var(--hair);border-radius:6px;padding:3px 9px;color:var(--ink)}
+  .istate .b b{color:var(--indigo)}
+
+  .stack{max-width:760px;margin:0 auto;display:flex;flex-direction:column}
+  .node{position:relative;background:var(--card);border:1px solid var(--hair);border-left:4px solid var(--gray);border-radius:11px;padding:13px 18px 13px 19px;box-shadow:0 1px 3px rgba(20,22,31,.05)}
+  .node.p{border-left-color:var(--amber)} .node.d{border-left-color:var(--indigo)} .node.e{border-left-color:var(--gray)}
+  .row1{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .num{width:23px;height:23px;border-radius:7px;background:var(--ink);color:#fff;font-family:var(--fmono);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .node h3{font-size:14.5px;font-weight:600;flex:1}
+  .badge{font-family:var(--fmono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px}
+  .badge.e{background:var(--gray-s);color:var(--gray)} .badge.p{background:var(--amber-s);color:var(--amber)} .badge.d{background:var(--indigo-s);color:var(--indigo)}
+  .resp{font-size:12px;color:var(--slate);line-height:1.5;margin-bottom:8px}
+  .resolved{background:#FBFBFD;border:1px solid var(--hair);border-radius:8px;padding:9px 11px;font-family:var(--fmono);font-size:11px;line-height:1.6;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+  .resolved .k{color:var(--slate2)} .resolved .hl{color:var(--indigo);font-weight:600}
+  .sub{margin-top:8px;border-top:1px dashed var(--hair);padding-top:8px}
+  .sub .slbl{font-family:var(--fmono);font-size:10px;color:var(--teal);font-weight:600;margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.06em}
+  .agn{display:inline-block;font-family:var(--fmono);font-size:9.5px;padding:1px 7px;border-radius:5px;background:#E5F6F6;color:var(--teal);margin-left:6px;font-weight:600}
+  .fix{margin-top:8px;font-size:11px;color:var(--slate);display:flex;gap:6px;align-items:flex-start}
+  .fix b{color:var(--ink);font-weight:600}
+  .node.crit .fix b{color:var(--amber)}
+
+  .action{padding:7px 10px;border-radius:7px;border:1px dashed var(--hair);margin-top:6px;font-size:11.5px;color:var(--slate);line-height:1.45}
+  .action.on{border-style:solid;border-color:var(--indigo);background:var(--indigo-s);color:var(--ink)}
+  .action .lbl{font-family:var(--fmono);font-size:10px;color:var(--indigo);font-weight:600;display:block;margin-bottom:2px}
+  .preview{margin-top:9px;font-size:12px;color:var(--ink);background:#FBFBFD;border:1px solid var(--hair);border-left:3px solid var(--teal);border-radius:7px;padding:8px 10px}
+  .preview .pl{font-family:var(--fmono);font-size:10px;color:var(--teal);font-weight:600;display:block;margin-bottom:3px}
+
+  .edge{height:24px;display:flex;justify-content:center;align-items:center;position:relative}
+  .edge::before{content:"";width:2px;height:100%;background:var(--hair)}
+  .edge::after{content:"";position:absolute;bottom:3px;width:7px;height:7px;border-right:2px solid var(--slate2);border-bottom:2px solid var(--slate2);transform:rotate(45deg)}
+
+  .xmlwrap{max-width:760px;margin:0 auto;background:#15171E;border-radius:12px;padding:6px 0 16px;box-shadow:0 4px 16px rgba(20,22,31,.18)}
+  .xmlbar{display:flex;align-items:center;gap:10px;padding:10px 16px 8px}
+  .xmlbar .t{font-family:var(--fmono);font-size:11px;color:#9aa0b0}
+  .xmlbar .cp{margin-left:auto;background:#262a35;border:1px solid #343a48;color:#cdd2dd;font-family:var(--fmono);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer}
+  .xmlbar .cp:active{background:#30343f}
+  pre.xml{font-family:var(--fmono);font-size:11px;line-height:1.55;color:#D7DAE3;white-space:pre;margin:0;padding:4px 18px 0;overflow:auto}
+  pre.xml .tg{color:#7AA2F7} pre.xml .at{color:#9ECE6A} pre.xml .cm{color:#565f73;font-style:italic}
+
+  .note{max-width:760px;margin:18px auto 0;font-size:12px;color:var(--slate);line-height:1.55;background:var(--card);border:1px solid var(--hair);border-radius:10px;padding:12px 16px}
+  .note b{color:var(--ink)}
+
+  .upstream{max-width:760px;margin:0 auto 16px}
+  .up-card{border:1.5px dashed #C9CEDA;border-radius:11px;background:repeating-linear-gradient(135deg,#FAFBFD,#FAFBFD 9px,#F4F6F9 9px,#F4F6F9 18px);padding:12px 16px}
+  .up-lbl{font-family:var(--fmono);font-size:10.5px;color:var(--slate2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:9px}
+  .up-row{font-size:12px;color:var(--ink);margin-top:6px;line-height:1.5}
+  .up-row .up-k{font-family:var(--fmono);font-size:11px;color:var(--slate);margin-right:6px}
+  .kit-chip{display:inline-block;font-family:var(--fmono);font-size:10.5px;padding:2px 8px;border-radius:6px;background:var(--gray-s);color:var(--slate);margin:2px 4px 2px 0}
+  .kit-chip.on{background:var(--indigo);color:#fff;font-weight:600}
+  .up-arrow{font-family:var(--fmono);font-size:10.5px;color:var(--teal);font-weight:600;margin-left:4px}
+  .up-edge{height:18px;display:flex;justify-content:center;align-items:center;position:relative}
+  .up-edge::before{content:"";width:2px;height:100%;background:#C9CEDA}
+  .up-edge::after{content:"";position:absolute;bottom:2px;width:6px;height:6px;border-right:2px solid var(--slate2);border-bottom:2px solid var(--slate2);transform:rotate(45deg)}
+  @media(max-width:920px){
+    .app{flex-direction:column}
+    .side{width:100%;max-height:none;display:flex;overflow-x:auto;border-right:0;border-bottom:1px solid var(--hair)}
+    .side .hd{display:none}
+    .pf{border-bottom:0;border-right:1px solid var(--hair);min-width:190px}
+    .canvas{max-height:none}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Motor de 9 capas · ensamblador real</h1>
+    <div class="sub">El panel se arma desde las reglas (presets por banda + nivel, tópico agnóstico, trigger con apertura y cierre). La vista <b>Stack XML</b> es el prompt literal que recibiría el modelo — sin atajos.</div>
+  </div>
+  <div class="legend">
+    <span class="lg"><span class="sw e"></span> Estático</span>
+    <span class="lg"><span class="sw p"></span> Preset (edad/nivel)</span>
+    <span class="lg"><span class="sw d"></span> Dinámico</span>
+  </div>
+</header>
+
+<div class="app">
+  <nav class="side" id="side"><div class="hd">Perfiles — tocá para cargar</div></nav>
+  <main class="canvas">
+    <div class="ctx" id="ctx"></div>
+    <div class="toolbar">
+      <span class="seg" id="viewSeg">
+        <button data-vw="cards" class="on">Capas</button>
+        <button data-vw="xml">Stack XML</button>
+      </span>
+      <span class="lab" style="align-self:center">un solo prompt · la IA conduce toda la charla</span>
+    </div>
+    <div class="upstream" id="upstream"></div>
+    <div class="stack" id="stack"></div>
+    <div class="xmlwrap" id="xmlwrap" style="display:none">
+      <div class="xmlbar"><span class="t">system_instruction_stack · ensamblado desde las reglas</span>
+        <button class="cp" id="copyBtn">copiar</button></div>
+      <pre class="xml" id="xml"></pre>
+    </div>
+    <div class="note" id="note"></div>
+  </main>
+</div>
+
+<script>
+// ===================== DATOS (presets = fuente de verdad) =====================
+const AVATAR_COLORS=["#5B3DF5","#0E9E9E","#E8820E","#D6336C","#1C7C54","#7048E8","#0B7285","#C2410C"];
+
+const TUTOR={
+  early_child:{name:"Sparky",persona:"Dragoncito espacial",tone:"Súper alegre, onomatopeyas y emojis en pantalla"},
+  child:{name:"Nova",persona:"Exploradora compañera de aventuras",tone:"Entusiasta, festeja cada logro"},
+  teen:{name:"Leo",persona:"Profe-coach cercano, sin disfraz infantil",tone:"Relajado, actual, motivador"},
+  adult:{name:"Alex",persona:"Profesor/host carismático",tone:"Claro, cordial, con modismos naturales"}
+};
+const PEDAGOGY={
+  early_child:"Gamificación inmersiva. 0% gramática explícita. El error nunca se corrige de forma punitiva.",
+  child:"Lúdico con mini-retos y recompensas. Gramática implícita, sin metalenguaje.",
+  teen:"Comunicativo basado en sus intereses. Gramática contextual ligera.",
+  adult:"Fluency first. No interrumpir por errores menores; anotar vicios en silencio para el cierre."
+};
+const RIELS={
+  early_child:["Prohibido preguntas abiertas en inglés","Flujo de 3 pasos: frase corta → espejo en español → repetir 1 palabra","Máx. 30 palabras por turno"],
+  child:["Solo preguntas cerradas simples (yes/no)","Frases de 2 a 4 palabras","Espejo en español tras cada frase nueva"],
+  teen:["Preguntas abiertas simples permitidas","Español reducido al mínimo","Conectar siempre con sus intereses"],
+  adult:["Una sola pregunta o situación por turno","Si se traba >3s, dar pista o sinónimo, no la respuesta","Priorizar continuidad del diálogo sobre la precisión"]
+};
+const LEVELMOD={
+  A1:"Nivel A1 · espejo en español SIEMPRE activo, vocabulario mínimo",
+  A2:"Nivel A2 · espejo en español frecuente, frases cortas",
+  B1:"Nivel B1 · español solo si se traba, conversación guiada",
+  B2:"Nivel B2 · sin español (inmersión), corrección por recast",
+  C1:"Nivel C1 · sin español (inmersión), matices e idiomático"
+};
+const TOPIC_DATA={
+  "El mundo de los dinosaurios":{vocab:["Dino","Egg"],phrases:["Big dino","A small egg"],obj:"nombrar animales y describir tamaños"},
+  "Explorar el espacio":{vocab:["Star","Planet"],phrases:["A bright star","The red planet"],obj:"describir el cielo y los planetas"},
+  "¿Llegaremos a Marte?":{vocab:["Mars","Rocket"],phrases:["Travel to Mars","A big rocket"],obj:"opinar sobre el futuro y la exploración"},
+  "Fútbol":{vocab:["Ball","Goal"],phrases:["Score a goal","Kick the ball"],obj:"hablar de un partido"},
+  "Escalada":{vocab:["Rope","Summit"],phrases:["Reach the summit","Hold the rope"],obj:"describir una actividad al aire libre"},
+  "Deportes al aire libre":{vocab:["Run","Trail"],phrases:["Run on the trail"],obj:"hablar de hábitos y deportes"},
+  "Bandas de música":{vocab:["Song","Band"],phrases:["A great song"],obj:"expresar gustos musicales"},
+  "Cine de aventuras":{vocab:["Movie","Hero"],phrases:["An action movie"],obj:"recomendar y opinar sobre películas"},
+  "Programas de TV clásicos":{vocab:["Show","Channel"],phrases:["A classic show"],obj:"recordar y describir programas"},
+  "Animales del océano":{vocab:["Fish","Whale"],phrases:["A big whale"],obj:"nombrar animales marinos"},
+  "Volcanes":{vocab:["Lava","Erupt"],phrases:["The volcano erupts"],obj:"explicar un fenómeno natural"},
+  "Jardines y plantas":{vocab:["Plant","Flower"],phrases:["Water the plant"],obj:"hablar de rutinas de cuidado"},
+  "Cocina del mundo":{vocab:["Recipe","Dish"],phrases:["A tasty dish"],obj:"describir una receta"},
+  "Videojuegos":{vocab:["Game","Level"],phrases:["Win the level"],obj:"contar cómo se juega"},
+  "Cómo funcionan los robots":{vocab:["Robot","Sensor"],phrases:["The robot moves"],obj:"explicar un proceso técnico"}
+};
+
+// Catálogo: categoría -> subcategoría -> tópicos (el "kit" predefinido del onboarding)
+const CATALOG={
+  "Espacio y ciencia":{"Astronomía":["Explorar el espacio","¿Llegaremos a Marte?"],"Prehistoria":["El mundo de los dinosaurios"]},
+  "Naturaleza":{"Océanos":["Animales del océano"],"Geología":["Volcanes"],"Botánica":["Jardines y plantas"]},
+  "Deportes":{"Pelota":["Fútbol"],"Aire libre":["Escalada","Deportes al aire libre"]},
+  "Cultura y TV":{"Música":["Bandas de música"],"Pantalla":["Cine de aventuras","Programas de TV clásicos"]},
+  "Tecnología":{"Robótica":["Cómo funcionan los robots"],"Juegos":["Videojuegos"]},
+  "Comida":{"Recetas":["Cocina del mundo"]}
+};
+function findSubcat(cat,topic){const c=CATALOG[cat]||{};for(const sc in c){if(c[sc].includes(topic))return sc;}return "—";}
+function kitOf(cat,subcat){return (CATALOG[cat]&&CATALOG[cat][subcat])?CATALOG[cat][subcat]:[];}
+
+const PROFILES=[
+  {name:"Timo",age:5,level:"A1",cat:"Espacio y ciencia",topic:"El mundo de los dinosaurios",interests:["dinosaurios","cohetes"],errors:["Banana"]},
+  {name:"Mía",age:6,level:"A1",cat:"Naturaleza",topic:"Animales del océano",interests:["animales"],errors:[]},
+  {name:"Benja",age:7,level:"A2",cat:"Deportes",topic:"Fútbol",interests:["fútbol"],errors:["sonido 'th'"]},
+  {name:"Lola",age:8,level:"A1",cat:"Espacio y ciencia",topic:"El mundo de los dinosaurios",interests:["dibujar"],errors:[]},
+  {name:"Thiago",age:9,level:"A2",cat:"Espacio y ciencia",topic:"Explorar el espacio",interests:["espacio"],errors:["Rocket"]},
+  {name:"Valen",age:10,level:"B1",cat:"Cultura y TV",topic:"Bandas de música",interests:["música"],errors:[]},
+  {name:"Bruno",age:11,level:"A2",cat:"Deportes",topic:"Escalada",interests:["montaña"],errors:["mountain"]},
+  {name:"Cata",age:12,level:"B1",cat:"Naturaleza",topic:"Volcanes",interests:["ciencia"],errors:[]},
+  {name:"Lucas",age:13,level:"A2",cat:"Tecnología",topic:"Videojuegos",interests:["gaming"],errors:["build"]},
+  {name:"Martina",age:14,level:"B2",cat:"Cultura y TV",topic:"Cine de aventuras",interests:["cine"],errors:[]},
+  {name:"Nico",age:15,level:"B1",cat:"Cultura y TV",topic:"Programas de TV clásicos",interests:["series"],errors:[]},
+  {name:"Sofía",age:16,level:"B2",cat:"Naturaleza",topic:"Volcanes",interests:["medio ambiente"],errors:[]},
+  {name:"Tomás",age:17,level:"C1",cat:"Tecnología",topic:"Cómo funcionan los robots",interests:["programación"],errors:[]},
+  {name:"Flor",age:19,level:"A2",cat:"Comida",topic:"Cocina del mundo",interests:["cocina"],errors:["recipe"]},
+  {name:"Diego",age:24,level:"B1",cat:"Deportes",topic:"Deportes al aire libre",interests:["running"],errors:[]},
+  {name:"Caro",age:28,level:"B2",cat:"Espacio y ciencia",topic:"¿Llegaremos a Marte?",interests:["divulgación"],errors:[]},
+  {name:"Javier",age:35,level:"B1",cat:"Cultura y TV",topic:"Bandas de música",interests:["DJ"],errors:["terminaciones -ed"]},
+  {name:"Romina",age:42,level:"A1",cat:"Naturaleza",topic:"Jardines y plantas",interests:["jardinería"],errors:["plural -s"]},
+  {name:"Gustavo",age:55,level:"B2",cat:"Espacio y ciencia",topic:"Explorar el espacio",interests:["astronomía"],errors:[]},
+  {name:"Elena",age:68,level:"B1",cat:"Cultura y TV",topic:"Programas de TV clásicos",interests:["historia"],errors:[]}
+];
+
+// ===================== LÓGICA DE ENSAMBLADO =====================
+function band(a){ if(a<=6)return"early_child"; if(a<=10)return"child"; if(a<=17)return"teen"; return"adult"; }
+function bandLabel(b){return {early_child:"Primera infancia",child:"Niñez",teen:"Adolescencia",adult:"Adulto"}[b];}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function isKid(b){return b==="early_child"||b==="child";}
+function adv(level){return ["B1","B2","C1"].includes(level);}
+function pacingMin(b,level){const base={early_child:3,child:4,teen:6,adult:8}[b];return base+(["B2","C1"].includes(level)?2:0);}
+function topicScale(p){const t=TOPIC_DATA[p.topic];return {words:t.vocab,phrases:adv(p.level)?t.phrases:t.phrases.slice(0,1),obj:t.obj};}
+
+function phasesOf(b){
+  if(isKid(b)) return ["Phase 1: Arrival (saludo + enganche con el mundo de hoy)","Phase 2: Mission (juego con el vocabulario objetivo)","Phase 3: Reward (logro y refuerzo)","Phase 4: Session Close (mini-repaso + gancho)"];
+  return ["Phase 1: Context Setup (apertura del escenario)","Phase 2: Development (desarrollo de la conversación)","Phase 3: Resolution (resolución del objetivo)","Phase 4: Session Close (salir del marco: repaso + feedback + gancho)"];
+}
+function phaseName(sel){return sel==="open"?"Phase 1":sel==="dev"?"Phase 2":"Phase 4";}
+function istate(b,level,sel){
+  const tgt=pacingMin(b,level);
+  if(sel==="open") return {Turn:1,Elapsed:0,Signal:"idle",Phase:"Phase 1",tgt};
+  if(sel==="dev")  return {Turn:Math.max(3,Math.round(tgt/2)),Elapsed:Math.round(tgt/2),Signal:"flowing",Phase:"Phase 2",tgt};
+  return {Turn:"último",Elapsed:tgt,Signal:"flowing",Phase:"Phase 4",tgt};
+}
+
+function openingAction(b,p){
+  const t=TUTOR[b],td=TOPIC_DATA[p.topic];
+  if(isKid(b)) return `Saludá a ${p.name} con mucha energía como ${t.name}, presentá el mundo de hoy ("${p.topic}") y enganchá. Pedile repetir "${td.vocab[0]}". Respetá el flujo de 3 pasos.`;
+  if(b==="teen") return `Saludá a ${p.name} de forma relajada como ${t.name}, presentá el tema ("${p.topic}") y abrí con una sola pregunta simple en inglés.`;
+  return `Presentate como ${t.name} e iniciá en inglés. Saludá a ${p.name}, dale la bienvenida, presentá el escenario ("${p.topic}") y abrí con la primera consigna. Una sola pregunta por turno.`;
+}
+function continuationAction(b,p){
+  if(isKid(b)) return `Avanzá un paso por turno: 1 frase en inglés → espejo en español → pedir repetición. Nunca preguntas abiertas. Máx. 30 palabras.`;
+  if(b==="teen") return `Sostené la charla con una sola pregunta o consigna por turno, español al mínimo, conectando con sus intereses.`;
+  return `Mantené la conversación viva: una pregunta/situación por turno, sin castellano, con pistas si se traba >3s. Avanzá hacia ${TOPIC_DATA[p.topic].obj}.`;
+}
+function closingAction(b,p){
+  const td=TOPIC_DATA[p.topic];
+  if(isKid(b)) return `Cerrá con calidez: repaso MUY breve ("Hoy aprendimos sobre ${p.topic}: ${td.vocab.join(", ")}"), festejá el logro y enganchá ("¿Jugamos un ratito más?" / "¡Nos vemos la próxima!"). En español con alguna palabra en inglés.`;
+  if(b==="teen") return `Cerrá en inglés simple: repaso breve ("Today we practiced ${td.phrases[0]}"), un elogio corto y gancho ("Wanna keep going?" / "See you next time!").`;
+  return `Salí suavemente del marco. Repaso al nivel ${p.level} de lo trabajado (${td.obj}: "${td.phrases.join('", "')}"). Entregá 1–2 correcciones de Recent_Errors (los vicios anotados en silencio), sin abrumar. Gancho: "Shall we continue?" / "Well done, ${p.name} — see you next time!".`;
+}
+function previewLine(b,p,sel){
+  const t=TUTOR[b],td=TOPIC_DATA[p.topic];
+  if(sel==="open"){
+    if(isKid(b)) return `¡Hola ${p.name}! Soy ${t.name}. Hoy vamos a explorar "${p.topic}", ¿te gusta? Decí conmigo: "${td.vocab[0]}".`;
+    if(b==="teen") return `Hey ${p.name}! I'm ${t.name}. Today we'll talk about "${p.topic}". Ready? Let's start!`;
+    return `Hi ${p.name}! I'm ${t.name}, welcome. Today we'll explore "${p.topic}". To start — tell me what you already know about it.`;
+  }
+  if(sel==="dev"){
+    if(isKid(b)) return `${t.name}: "Look! A ${td.vocab[0]}! / ¡Mirá! Decí: ${td.vocab[0]}."`;
+    if(b==="teen") return `${t.name}: "Nice — and what about ${td.vocab[0].toLowerCase()}s? What do you think?"`;
+    return `${t.name}: "Interesting. And ${td.phrases[0].toLowerCase()} — could you tell me more?"`;
+  }
+  if(isKid(b)) return `¡Buenísimo, ${p.name}! Hoy aprendimos: ${td.vocab.join(", ")}. ¿Jugamos un ratito más o lo dejamos hasta la próxima?`;
+  if(b==="teen") return `Great job, ${p.name}! Today we practiced "${td.phrases[0]}". Wanna keep going or call it for today?`;
+  return `Well done, ${p.name}. Today we worked on ${td.obj} — "${td.phrases.join('", "')}". One thing to watch: ${p.errors[0]||"tus tiempos verbales"}. Shall we continue, or see you next time?`;
+}
+
+// Construye los 11 bloques del stack desde las reglas. Única fuente de verdad.
+function buildStack(p,sel){
+  const b=band(p.age),t=TUTOR[b],td=TOPIC_DATA[p.topic],ts=topicScale(p);
+  const today=new Date().toISOString().slice(0,10);
+  const ist=istate(b,p.level,sel);
+  const ph=phasesOf(b);
+  const subcat=findSubcat(p.cat,p.topic);
+  const guards=RIELS[b].concat([LEVELMOD[p.level]]);
+  const order=[];
+  order.push({key:"runtime",core:1,badge:"e",title:"Runtime context",tag:"runtime_context",
+    resp:"Marco de ejecución: fecha, idiomas, dispositivo y regla de salida de voz.",
+    fix:"Idioma objetivo, dialecto del L1, reglas de salida (TTS).",
+    body:[`Current Date: ${today}`,`Target Language: English`,`Native Language: Spanish (es-AR, Rioplatense)`,`Interface Mode: Realtime Multimodal Voice Session`,`Voice Output Rule: el texto al TTS va limpio (emojis y onomatopeyas solo a pantalla).`]});
+  order.push({key:"tutor",core:2,badge:"p",title:"Tutor identity",tag:"tutor_identity",
+    resp:"Quién enseña y cómo suena. Preset por banda de edad.",
+    fix:"Personalidad y tono del profe. Se elige por <b>banda de edad</b>.",
+    body:[`Character Persona: Sos ${t.name}, ${t.persona}.`,`Tone: ${t.tone}.`]});
+  order.push({key:"pedagogy",core:3,badge:"p",title:"Pedagogical framework",tag:"pedagogical_framework_preset",
+    resp:"El estilo de enseñanza global. Preset por banda.",
+    fix:"El estilo pedagógico de la app. Se elige por <b>banda de edad</b>.",
+    body:[`Methodology: ${PEDAGOGY[b]}`]});
+  order.push({key:"focus",core:4,badge:"d",title:"Lesson focus / engagement",tag:"lesson_focus_engagement",
+    resp:"La dinámica concreta de hoy: el juego o escenario con el que se trabaja el tópico.",
+    fix:"El tipo de actividad/juego de la sesión.",
+    body:[ isKid(b)? `Gamification: misión lúdica sobre "${p.topic}". Cada acierto da una recompensa.` : `Gamification: ${b==="teen"?"charla guiada":"roleplay / escenario comunicativo"} sobre "${p.topic}" (objetivo: ${td.obj}).` ]});
+  order.push({key:"student",core:5,badge:"d",title:"Student profile",tag:"student_profile",
+    resp:"Espejo de los 3 inputs (edad, nivel, intereses). No se edita acá: se lee de la base.",
+    fix:"Nada se edita acá: refleja los datos del alumno (DB).",
+    body:[`Name: ${p.name}`,`Age: ${p.age}`,`Language Level: ${p.level}`,`Interests: ${p.interests.join(", ")}`]});
+  order.push({key:"learner",core:5,sub:true,badge:"d",title:"learner_state (memoria)",tag:"learner_state",
+    resp:"Memoria del alumno: la lee la sesión, la escribe el análisis post-clase.",
+    fix:"No se toca a mano: la llena el trabajo post-clase (SRS).",
+    body:[`Mastered: []  (se llena con el historial)`,`Learning: [${ts.words.join(", ")}]`,`Due_For_Review: [${ts.phrases.slice(0,1).join(", ")}]`,`Recent_Errors: [${p.errors.length?p.errors.join(", "):"—"}]`]});
+  order.push({key:"guards",core:6,badge:"p",title:"Behavioral guards · rieles",tag:"behavioral_guards",crit:true,
+    resp:"Las reglas rígidas de interacción. Preset por banda + nivel. Es el cerebro que evita que la IA divague o bloquee al alumno.",
+    fix:"Reglas rígidas: límites, prohibiciones, flujo. Por <b>banda + nivel</b>. ⚠ La capa más sensible.",
+    body:guards.map((g,i)=>`Rule ${i+1}: ${g}`).concat([
+      `Rule ${guards.length+1} (ASR tolerance): si el reconocimiento de voz llega con baja confianza, pedí repetir; no lo cuentes como error.`,
+      `Rule ${guards.length+2} (Stay on frame): si deriva a temas fuera de la clase, redirigí con tacto.`,
+      `Rule ${guards.length+3} (Closing trigger): si Current_Phase = "Phase 4", ejecutá la Closing_Action; no inicies contenido nuevo.`
+    ])});
+  order.push({key:"topic",core:7,badge:"d",title:"Topic / vocabulary",tag:"current_topic_vocabulary",agn:true,
+    resp:"La materia de estudio: vocabulario y frases objetivo. Dato agnóstico de la edad.",
+    fix:"El vocabulario/tópico. Dato agnóstico, <b>sin</b> instrucciones de conducta.",
+    body:[`Category: ${p.cat}`,`Subcategory: ${subcat}`,`Topic Title: ${p.topic}`,`Target Objective: ${td.obj}`,`Key Vocabulary: [${ts.words.join(", ")}]`,`Key Phrases: [${ts.phrases.join(", ")}]`]});
+  order.push({key:"narrative",core:8,badge:"p",title:"Narrative spine · fases",tag:"narrative_spine",
+    resp:"La estructura de la sesión en fases. La apertura y el cierre viven acá como Phase 1 y Phase 4.",
+    fix:"La estructura de fases de la sesión (incluye dónde entra el cierre).",
+    body:[`Pacing: duración objetivo ~${ist.tgt} min (por banda + nivel; ajustable por preferencia).`,`Session Structure:`].concat(ph.map(x=>`  - ${x}`)).concat([`Current Phase: ${ist.Phase}`])});
+  order.push({key:"interaction",core:9,sub:true,badge:"d",title:"interaction_state (vivo)",tag:"interaction_state",
+    resp:"Estado vivo de la sesión, actualizado turno a turno por la app (determinista). Decide cuándo pasar al cierre.",
+    fix:"No se toca a mano: lo actualiza la app en vivo.",
+    body:[`Turn: ${ist.Turn}`,`Elapsed_Min: ${ist.Elapsed} / target ${ist.tgt}`,`Signal: ${ist.Signal}`,`Current_Phase: ${ist.Phase}`]});
+  order.push({key:"trigger",core:9,badge:"d",title:"Execution trigger · apertura+cierre",tag:"execution_trigger",crit:true,
+    resp:"Dispara la acción del momento. Mismo slot, dos extremos: Phase 1 abre (intro), Phase 4 cierra (repaso + gancho). La estructura es fija; el texto, adaptado.",
+    fix:"La estructura de la intro y del cierre. <b>Acá viven la intro y el cierre obligatorios.</b>",
+    actions:{open:openingAction(b,p),dev:continuationAction(b,p),close:closingAction(b,p)},
+    body:[`Phase_Aware: la acción a ejecutar depende de interaction_state.Current_Phase.`,`Opening_Action (Phase 1): ${openingAction(b,p)}`,`Continuation_Action (Phases 2-3): ${continuationAction(b,p)}`,`Closing_Action (Phase 4): ${closingAction(b,p)}`]});
+  return {order,b,ist,ts};
+}
+
+// ===================== RENDER =====================
+let active=0,viewMode="cards";
+
+function renderSide(){
+  const side=document.getElementById("side");
+  PROFILES.forEach((p,i)=>{
+    const b=band(p.age),d=document.createElement("div");
+    d.className="pf"+(i===active?" active":"");
+    d.onclick=()=>{active=i;document.querySelectorAll(".pf").forEach((e,j)=>e.classList.toggle("active",j===i));render();};
+    d.innerHTML=`<div class="av" style="background:${AVATAR_COLORS[i%AVATAR_COLORS.length]}">${esc(p.name[0])}</div>
+      <div><div class="nm">${esc(p.name)}, ${p.age}</div>
+      <div class="mt"><span class="chip">${p.level}</span><span class="chip">${esc(bandLabel(b))}</span><br>${esc(p.topic)}</div></div>`;
+    side.appendChild(d);
+  });
+}
+
+function xmlHighlight(raw){
+  let h=esc(raw);
+  h=h.replace(/(&lt;\/?[a-z_]+&gt;)/g,'<span class="tg">$1</span>');
+  h=h.replace(/^(\s*)([A-Z][A-Za-z_ ]+:)/gm,'$1<span class="at">$2</span>');
+  h=h.replace(/(\(se llena con el historial\))/g,'<span class="cm">$1</span>');
+  return h;
+}
+
+function render(){
+  const p=PROFILES[active],b=band(p.age);
+  const S=buildStack(p,"open");
+  // contexto
+  document.getElementById("ctx").innerHTML=
+    `<span class="who">${esc(p.name)}</span>
+     <div class="inp">
+       <span class="pill">edad: ${p.age} · ${esc(bandLabel(b))}</span>
+       <span class="pill">nivel: ${p.level}</span>
+       <span class="pill">intereses: ${esc(p.interests.join(", "))}</span>
+       <span class="pill topic">tópico: ${esc(p.topic)}</span>
+     </div>`;
+
+  // upstream: onboarding -> kit -> sequencer (no entra al prompt)
+  const subcat=findSubcat(p.cat,p.topic);
+  const kit=kitOf(p.cat,subcat);
+  const kitChips=kit.map(t=>`<span class="kit-chip${t===p.topic?" on":""}">${esc(t)}</span>`).join("");
+  document.getElementById("upstream").innerHTML=
+    `<div class="up-card">
+       <div class="up-lbl">⟲ Pre-clase · onboarding → kit → sequencer · (NO entra al prompt)</div>
+       <div class="up-row"><span class="up-k">Onboarding (1 vez):</span> Categoría <b>${esc(p.cat)}</b> → Subcategoría <b>${esc(subcat)}</b></div>
+       <div class="up-row"><span class="up-k">Kit del alumno (pool predefinido):</span> ${kitChips}</div>
+       <div class="up-row"><span class="up-k">Sequencer (cada sesión):</span> elige 1 → <b>${esc(p.topic)}</b> <span class="up-arrow">↓ entra al Bloque 7</span></div>
+     </div>
+     <div class="up-edge"></div>`;
+
+  // CARDS
+  const stack=document.getElementById("stack"); stack.innerHTML="";
+  const cards=S.order.filter(x=>!x.sub); // 9 core; subs (learner/interaction) se anidan/anexan
+  const learner=S.order.find(x=>x.key==="learner");
+  const inter=S.order.find(x=>x.key==="interaction");
+  cards.forEach((l,idx)=>{
+    const node=document.createElement("div");
+    node.className="node "+l.badge+(l.crit?" crit":"");
+    let inner=`<div class="row1"><div class="num">${l.core}</div><h3>${esc(l.title)}${l.agn?'<span class="agn">AGNÓSTICO</span>':''}</h3><span class="badge ${l.badge}">${l.badge==="e"?"ESTÁTICO":l.badge==="p"?"PRESET":"DINÁMICO"}</span></div>
+      <div class="resp">${esc(l.resp)}</div>`;
+    if(l.key==="trigger"){
+      const acts=[["open","Opening_Action · apertura"],["dev","Continuation_Action · desarrollo"],["close","Closing_Action · cierre"]];
+      inner+=`<div class="resolved" style="margin-bottom:2px"><span class="k">Las tres acciones viajan juntas en el mismo prompt.</span> La IA conduce la charla y va pasando de una a otra sola, según la fase de la conversación (ver narrative_spine).</div>`;
+      acts.forEach(([k,lbl])=>{
+        inner+=`<div class="action"><span class="lbl">${lbl}</span>${esc(l.actions[k])}</div>`;
+      });
+    }else{
+      inner+=`<div class="resolved">${l.body.map(esc).join("\n")}</div>`;
+    }
+    if(l.key==="student" && learner){
+      inner+=`<div class="sub"><span class="slbl">⊕ ${esc(learner.tag)} — memoria (se inyecta junto al alumno)</span><div class="resolved">${learner.body.map(esc).join("\n")}</div></div>`;
+    }
+    if(l.key==="trigger" && inter){
+      inner+=`<div class="sub"><span class="slbl">⊕ ${esc(inter.tag)} — estado al inicio de la sesión</span><div class="resolved">${inter.body.map(esc).join("\n")}</div></div>`;
+    }
+    inner+=`<div class="fix">🛠 <span><b>Para cambiar algo acá:</b> ${l.fix}</span></div>`;
+    node.innerHTML=inner;
+    stack.appendChild(node);
+    if(idx<cards.length-1){const e=document.createElement("div");e.className="edge";stack.appendChild(e);}
+  });
+
+  // XML
+  let raw="<system_instruction_stack>\n\n";
+  S.order.forEach(bl=>{
+    raw+="  <"+bl.tag+">\n";
+    bl.body.forEach(line=> raw+="    "+line+"\n");
+    raw+="  </"+bl.tag+">\n\n";
+  });
+  raw+="</system_instruction_stack>";
+  window.__rawxml=raw;
+  document.getElementById("xml").innerHTML=xmlHighlight(raw);
+
+  document.getElementById("note").innerHTML=
+    `<b>Un solo prompt:</b> las 9 capas (más <code>learner_state</code> e <code>interaction_state</code>) se concatenan en <b>un único</b> <code>system_instruction_stack</code> que se manda una sola vez. La IA lo lee y genera <b>toda</b> la charla — apertura, desarrollo y cierre — pasando de fase por su cuenta (guiada por <b>narrative_spine</b>). Por eso las tres acciones viven juntas dentro del <b>execution_trigger</b>, no son tres envíos. Probá <b>Thiago (9)</b> vs <b>Gustavo (55)</b>: misma capa 7, distinto todo lo demás.`;
+}
+
+// toggles
+document.getElementById("viewSeg").addEventListener("click",e=>{
+  const btn=e.target.closest("button"); if(!btn)return;
+  viewMode=btn.dataset.vw;
+  document.querySelectorAll("#viewSeg button").forEach(x=>x.classList.toggle("on",x===btn));
+  document.getElementById("stack").style.display = viewMode==="cards"?"flex":"none";
+  document.getElementById("xmlwrap").style.display = viewMode==="xml"?"block":"none";
+  document.getElementById("upstream").style.display = viewMode==="cards"?"block":"none";
+});
+document.getElementById("copyBtn").addEventListener("click",()=>{
+  const txt=window.__rawxml||"";
+  const done=()=>{const b=document.getElementById("copyBtn");b.textContent="copiado ✓";setTimeout(()=>b.textContent="copiar",1400);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(()=>fallback());}
+  else fallback();
+  function fallback(){const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done();}catch(e){}document.body.removeChild(ta);}
+});
+
+renderSide(); render();
+</script>
+</body>
+</html>
