@@ -230,6 +230,9 @@ function IdentidadesTab() {
 
   return (
     <>
+      <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 800, letterSpacing: '.04em', padding: '3px 9px', borderRadius: 999, background: 'rgba(232,130,14,.14)', color: '#E8820E', marginBottom: 10 }}>
+        PRESET (P) · lo que editás acá impacta a TODA la banda de edad
+      </div>
       <p style={{ color: 'var(--fg-3)', fontSize: 13, marginBottom: 16 }}>
         Define quién es el tutor para cada segmento etario: nombre, personalidad, tono y el tipo de narrativa que usa.
         Estos campos alimentan los bloques 2-4 del compositor de prompt.
@@ -421,6 +424,9 @@ function RielesTab() {
 
   return (
     <>
+      <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 800, letterSpacing: '.04em', padding: '3px 9px', borderRadius: 999, background: 'rgba(232,130,14,.14)', color: '#E8820E', marginBottom: 10 }}>
+        PRESET (P) · impacta a todas las clases de esa banda × nivel
+      </div>
       <p style={{ color: 'var(--fg-3)', fontSize: 13, marginBottom: 16 }}>
         Las <b>auto-restricciones del coach por nivel</b>: qué puede y qué no puede decir en cada peldaño.
         Es el <i>cómo</i> lingüístico — el <i>quién</i> y el <i>mundo</i> van en Identidades.

@@ -89,22 +89,19 @@ function BoSidebar({ open }: { open: boolean }) {
         </NavLink>
       </div>
 
-      <div className="sidebar-section">Operación</div>
+      <div className="sidebar-section">Carga · definís el sistema</div>
       <nav className="sidebar-nav">
-        <SidebarItem to="/admin" exact label="Resumen" />
-        <SidebarItem to="/admin/templates" label="Templates" />
         <SidebarItem to="/admin/topicos" label="Tópicos" />
         <SidebarItem to="/admin/metodologia" label="Metodología" />
-        <SidebarItem to="/admin/consola" label="Consola motor" />
         <SidebarItem to="/admin/abms" label="ABMs motor" />
+        <SidebarItem to="/admin/templates" label="Templates" />
       </nav>
-      <div className="sidebar-section">Comunidad</div>
+      <div className="sidebar-section">Operación · trabajás con alumnos</div>
       <nav className="sidebar-nav">
+        <SidebarItem to="/admin" exact label="Resumen" />
+        <SidebarItem to="/admin/consola" label="Orquestador" />
         <SidebarItem to="/admin/alumnos" label="Alumnos" />
         <SidebarItem to="/admin/usuarios" label="Usuarios" />
-      </nav>
-      <div className="sidebar-section">Diagnóstico</div>
-      <nav className="sidebar-nav">
         <SidebarItem to="/admin/auditoria" label="Auditoría" />
       </nav>
       <div className="sidebar-foot">
