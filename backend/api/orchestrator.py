@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import get_db
 from core.security import require_role
-from services.composer_proto import compose_proto_prompt
+from services.composer_proto import compose_proto_prompt, MotorDataMissing
 from models.methodology import StudentType, Coach, Level
 from models.config import AppConfig
 from models.orchestration import Orchestration
@@ -73,10 +73,16 @@ async def resolve(
         nombre="Alumno", target_language="en", base_language="es",
         cefr_level=level or "A0", age_group=student_type or "mini",
     )
-    prompt = compose_proto_prompt(
-        user=user, topic=topic, topic_content=tc, student_type_data=st_data,
-        level_data=level_data, app_config=app_config,
-    )
+    # Resiliente: si falta un dato (combo nuevo/a medio cargar), NO explota — devuelve
+    # igual la estructura de los 9 pasos (cargado/falta) para que se pueda editar; el
+    # prompt queda con el aviso de qué falta. El endpoint existe para mostrar eso.
+    try:
+        prompt = compose_proto_prompt(
+            user=user, topic=topic, topic_content=tc, student_type_data=st_data,
+            level_data=level_data, app_config=app_config,
+        )
+    except MotorDataMissing as e:
+        prompt = f"[FALTA DATO — completá los campos en rojo del timeline]\n{e}"
 
     # ── Estado por bloque: cargado (dato real) vs fallback ──
     def blk(n, name, source, loaded, preview=""):

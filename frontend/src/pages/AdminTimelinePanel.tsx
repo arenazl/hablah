@@ -12,7 +12,9 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { Play } from 'lucide-react'
 import api from '../services/api'
+import ClassTester from './ClassTester'
 
 /* ── tipos ── */
 interface St {
@@ -153,6 +155,7 @@ const CFG_KEYS = ['voice_emojis_screen_only', 'asr_low_confidence_retry', 'kid_s
 const FIELD: React.CSSProperties = { width: '100%', boxSizing: 'border-box', padding: '8px 10px', borderRadius: 9, border: '1px solid #232936', background: '#0b0e14', color: '#e6e8ec', fontSize: 13, fontFamily: 'inherit' }
 const LBL: React.CSSProperties = { fontSize: 10, textTransform: 'uppercase', letterSpacing: 1, color: '#9aa3af', marginBottom: 5 }
 const SAVE: React.CSSProperties = { padding: '7px 14px', borderRadius: 999, border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer', background: '#22c55e', color: '#06120a' }
+const GHOST: React.CSSProperties = { padding: '8px 12px', borderRadius: 9, border: '1px solid #232936', background: '#11151d', color: '#9aa3af', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }
 
 function nKey(n: number | string): string { return String(n) }
 
@@ -170,8 +173,13 @@ export default function AdminTimelinePanel() {
 
   const [res, setRes] = useState<Resolved | null>(null)
   const [focus, setFocus] = useState<string>('6.1')
-  const [tab, setTab] = useState<'guia' | 'prompt'>('guia')
+  const [tab, setTab] = useState<'guia' | 'prompt' | 'probar'>('guia')
   const [drafts, setDrafts] = useState<Record<string, string>>({})
+
+  // Crear nivel / segmento nuevo (queda vacío → el timeline lo marca en rojo para llenar).
+  const [creating, setCreating] = useState<'level' | 'segment' | null>(null)
+  const [newCode, setNewCode] = useState('')
+  const [newName, setNewName] = useState('')
 
   const segData = useMemo(() => studentTypes.find((s) => s.slug === seg), [studentTypes, seg])
   const lvlData = useMemo(() => levels.find((l) => l.code === level), [levels, level])
@@ -231,6 +239,25 @@ export default function AdminTimelinePanel() {
     catch { toast.error('No se pudo guardar'); loadMasters() }
   }
 
+  const createNew = async () => {
+    const code = newCode.trim(); const name = newName.trim()
+    if (!code || !name) { toast.error('Completá código y nombre'); return }
+    try {
+      if (creating === 'level') {
+        await api.post('/levels', { code, friendly_name: name })
+        api.get('/levels').then((r) => setLevels(r.data)).catch(() => {})
+        setLevel(code)
+      } else {
+        const slug = code.toLowerCase()
+        await api.post('/methodology-modules/student-types', { slug, name })
+        api.get('/methodology-modules/student-types').then((r) => setStudentTypes(r.data)).catch(() => {})
+        setSeg(slug)
+      }
+      toast.success('Creado — ahora completá sus campos en rojo en el timeline')
+      setCreating(null); setNewCode(''); setNewName('')
+    } catch { toast.error('No se pudo crear (¿ya existe ese código?)') }
+  }
+
   const blocks = res?.blocks ?? []
   const guide = GUIDE[focus]
 
@@ -265,6 +292,24 @@ export default function AdminTimelinePanel() {
           {res && <div style={{ marginLeft: 'auto', fontSize: 12, color: '#9aa3af' }}>
             Cargados <b style={{ color: '#22c55e' }}>{res.loaded_count}</b>/{res.total}
           </div>}
+        </div>
+
+        {/* crear nivel / segmento nuevo */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 18, flexWrap: 'wrap', alignItems: 'center' }}>
+          {creating === null ? (
+            <>
+              <button style={GHOST} onClick={() => { setCreating('segment'); setNewCode(''); setNewName('') }}>+ Nuevo segmento</button>
+              <button style={GHOST} onClick={() => { setCreating('level'); setNewCode(''); setNewName('') }}>+ Nuevo nivel</button>
+            </>
+          ) : (
+            <>
+              <input style={{ ...FIELD, width: 150 }} placeholder={creating === 'level' ? 'Código (ej C3)' : 'Slug (ej senior)'} value={newCode} onChange={(e) => setNewCode(e.target.value)} />
+              <input style={{ ...FIELD, width: 220 }} placeholder={creating === 'level' ? 'Nombre amigable (ej Sabio)' : 'Nombre (ej Senior 65+)'} value={newName} onChange={(e) => setNewName(e.target.value)} />
+              <button style={SAVE} onClick={createNew}>Crear {creating === 'level' ? 'nivel' : 'segmento'}</button>
+              <button style={GHOST} onClick={() => setCreating(null)}>Cancelar</button>
+              <span style={{ fontSize: 11.5, color: '#6b7280' }}>Queda vacío; lo completás en los pasos (en rojo).</span>
+            </>
+          )}
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.55fr) minmax(0,1fr)', gap: 18, alignItems: 'start' }}>
@@ -337,18 +382,36 @@ export default function AdminTimelinePanel() {
                 </div>
               )
             })}
+            {blocks.length > 0 && (
+              <div style={{ position: 'relative', marginBottom: 12 }}>
+                <div style={{ position: 'absolute', left: -22, top: 16, width: 12, height: 12, borderRadius: 999, background: '#22c55e', border: '2px solid #0b0e14' }} />
+                <div onClick={() => setTab('probar')}
+                  style={{ background: 'linear-gradient(180deg, #0e2a1c, #11151d)', border: '1px solid #22c55e', borderRadius: 12, padding: 14, cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Play size={15} color="#22c55e" />
+                    <span style={{ fontSize: 14, fontWeight: 700 }}>Paso final · Ejecución — probar la clase</span>
+                    <span style={{ marginLeft: 'auto', fontSize: 11, color: '#22c55e', fontWeight: 700 }}>abrir probador →</span>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>
+                    Corré la clase real (voz) para {seg} · {level} con lo último que guardaste, sin salir de acá.
+                  </div>
+                </div>
+              </div>
+            )}
             {blocks.length === 0 && <div style={{ color: '#6b7280', fontSize: 13 }}>Resolviendo…</div>}
           </div>
 
           {/* ── PANEL DERECHO: guía pedagógica / prompt en vivo ── */}
           <div style={{ position: 'sticky', top: 16 }}>
             <div style={{ display: 'flex', gap: 4, marginBottom: 10 }}>
-              {(['guia', 'prompt'] as const).map((tk) => (
-                <button key={tk} onClick={() => setTab(tk)} style={{ flex: 1, padding: '8px 10px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 12.5, fontWeight: 700, background: tab === tk ? '#172033' : '#11151d', color: tab === tk ? '#7dd3fc' : '#9aa3af' }}>
-                  {tk === 'guia' ? 'Guía pedagógica' : 'Prompt en vivo'}
+              {([['guia', 'Guía'], ['prompt', 'Prompt'], ['probar', 'Probar clase']] as const).map(([tk, lbl]) => (
+                <button key={tk} onClick={() => setTab(tk)} style={{ flex: 1, padding: '8px 8px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 12.5, fontWeight: 700, background: tab === tk ? (tk === 'probar' ? '#0e2a1c' : '#172033') : '#11151d', color: tab === tk ? (tk === 'probar' ? '#22c55e' : '#7dd3fc') : '#9aa3af' }}>
+                  {lbl}
                 </button>
               ))}
             </div>
+
+            {tab === 'probar' && <ClassTester ageGroup={seg} level={level} />}
 
             {tab === 'guia' && guide && (
               <div style={{ background: '#11151d', border: '1px solid #232936', borderRadius: 14, padding: 18 }}>
