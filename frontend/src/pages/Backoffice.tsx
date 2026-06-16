@@ -14,6 +14,7 @@ import AdminConsolaPanel from './AdminConsolaPanel'
 import AdminAbmsPanel from './AdminAbmsPanel'
 import AdminUsersPanel from './AdminUsersPanel'
 import AdminReglasPanel from './AdminReglasPanel'
+import AdminKitsPanel from './AdminKitsPanel'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -56,6 +57,7 @@ export function Backoffice() {
             <Route path="/abms" element={<AdminAbmsPanel />} />
             <Route path="/usuarios" element={<AdminUsersPanel />} />
             <Route path="/reglas" element={<AdminReglasPanel />} />
+            <Route path="/kits" element={<AdminKitsPanel />} />
           </Routes>
         </main>
       </div>
@@ -94,6 +96,7 @@ function BoSidebar({ open }: { open: boolean }) {
       <div className="sidebar-section">Carga · definís el sistema</div>
       <nav className="sidebar-nav">
         <SidebarItem to="/admin/topicos" label="Tópicos" />
+        <SidebarItem to="/admin/kits" label="Kits" />
         <SidebarItem to="/admin/metodologia" label="Metodología" />
         <SidebarItem to="/admin/abms" label="ABMs motor" />
         <SidebarItem to="/admin/templates" label="Templates" />
