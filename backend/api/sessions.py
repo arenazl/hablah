@@ -171,10 +171,12 @@ async def end_session(
     await db.commit()
     await db.refresh(s)
 
-    # Dispatch análisis post-sesión (asíncrono, no bloquea respuesta)
+    # Dispatch post-sesión (asíncrono, no bloquea): reporte + MEMORIA del alumno.
     from services.session_analyzer import analyze_session_safe
+    from services.memory_analyzer import analyze_memory_safe
     import asyncio
     asyncio.create_task(analyze_session_safe(session_id))
+    asyncio.create_task(analyze_memory_safe(session_id))
 
     return _serialize(s)
 

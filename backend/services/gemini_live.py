@@ -211,6 +211,14 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"motor pedagógico: level_data/app_config no disponible ({e})")
 
+        # Memoria del alumno (post-clase) — el composer la inyecta en el bloque 5b si hay datos.
+        learner_state = None
+        try:
+            from services.memory_analyzer import load_learner_state
+            learner_state = await load_learner_state(db, user.id)
+        except Exception as e:
+            log.warning(f"learner_state no disponible ({e})")
+
         super_prompt = build_super_prompt(
             user=user, template=template, topic=topic,
             admin_directives=admin_directives,
@@ -222,6 +230,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             student_type_data=student_type_data,
             level_data=level_data,
             app_config=app_config,
+            learner_state=learner_state,
         )
 
         # ─── OBSERVABILIDAD TOTAL: el circuito entero del prompt ───

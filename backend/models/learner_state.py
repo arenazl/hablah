@@ -77,4 +77,8 @@ class SessionInsight(Base):
     new_interests = Column(Text, nullable=True)     # JSON list (se guarda como texto)
     items_to_reinforce = Column(Text, nullable=True)  # JSON list
     suggested_topic = Column(String(200), nullable=True)
+    traits = Column(Text, nullable=True)  # JSON [{trait, confidence}] de la Mitad B; se propaga al aprobar
+    # Aprobación del profe (human-in-the-loop): pending hasta que el profe revise; al
+    # aprobar se propaga a learner_interests / learner_traits / reinforcement_queue.
+    status = Column(String(20), nullable=False, default="pending")  # pending | approved | discarded
     created_at = Column(DateTime, server_default=func.now())

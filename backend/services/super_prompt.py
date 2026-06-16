@@ -1392,11 +1392,12 @@ def build_super_prompt(**kwargs) -> str:
             student_type_data=kwargs.get("student_type_data"),
             level_data=kwargs.get("level_data"),
             app_config=kwargs.get("app_config"),
+            learner_state=kwargs.get("learner_state"),
         )
 
     # _build_super_prompt_body (legacy, firma fija) NO acepta las kwargs del Motor
     # Pedagógico: las consume solo el path proto/composer. Las filtramos para no romperlo.
-    _MOTOR_ONLY = ("student_type_data", "level_data", "app_config")
+    _MOTOR_ONLY = ("student_type_data", "level_data", "app_config", "learner_state")
     body = _build_super_prompt_body(**{k: v for k, v in kwargs.items() if k not in _MOTOR_ONLY})
     user = kwargs.get("user")
     target = (getattr(user, "target_language", None) or "en")
