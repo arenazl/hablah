@@ -17,6 +17,7 @@ import AdminReglasPanel from './AdminReglasPanel'
 import AdminKitsPanel from './AdminKitsPanel'
 import AdminPromptBuilderPanel from './AdminPromptBuilderPanel'
 import AdminWizardPanel from './AdminWizardPanel'
+import AdminTimelinePanel from './AdminTimelinePanel'
 import AdminFlowPanel from './AdminFlowPanel'
 import AdminPostClasePanel from './AdminPostClasePanel'
 import AdminMemoriaPanel from './AdminMemoriaPanel'
@@ -65,6 +66,7 @@ export function Backoffice() {
             <Route path="/kits" element={<AdminKitsPanel />} />
             <Route path="/orquestador" element={<AdminPromptBuilderPanel />} />
             <Route path="/wizard" element={<AdminWizardPanel />} />
+            <Route path="/timeline" element={<AdminTimelinePanel />} />
             <Route path="/flujo" element={<AdminFlowPanel />} />
             <Route path="/post-clase" element={<AdminPostClasePanel />} />
             <Route path="/memoria" element={<AdminMemoriaPanel />} />
@@ -115,6 +117,7 @@ function BoSidebar({ open }: { open: boolean }) {
       <div className="sidebar-section">Operación · trabajás con alumnos</div>
       <nav className="sidebar-nav">
         <SidebarItem to="/admin" exact label="Resumen" />
+        <SidebarItem to="/admin/timeline" label="Mesa de control" />
         <SidebarItem to="/admin/orquestador" label="Orquestador" />
         <SidebarItem to="/admin/wizard" label="Wizard (9 etapas)" />
         <SidebarItem to="/admin/flujo" label="Flujo (mapa)" />
