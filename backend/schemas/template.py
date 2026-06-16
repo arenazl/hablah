@@ -130,6 +130,11 @@ class TopicBase(BaseModel):
     levels: list[str] = []
     is_hot: bool = False
     is_active: bool = True
+    # Motor: a quién sirve el tópico (lo usa el sequencer para filtrar por banda).
+    audience: str = "adult"                              # kid | adult
+    segmento: Optional[str] = None                       # mini | junior | tween | adultos
+    appropriate_bands: Optional[list[str]] = None        # [mini,junior,tween,adult] o null = sin restricción
+    generated_vocab: Optional[list[str]] = None          # frases-ancla (batch, revisables)
 
 
 class TopicCreate(TopicBase):
@@ -144,6 +149,10 @@ class TopicUpdate(BaseModel):
     levels: Optional[list[str]] = None
     is_hot: Optional[bool] = None
     is_active: Optional[bool] = None
+    audience: Optional[str] = None
+    segmento: Optional[str] = None
+    appropriate_bands: Optional[list[str]] = None
+    generated_vocab: Optional[list[str]] = None
 
 
 class TopicResponse(TopicBase):

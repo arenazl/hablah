@@ -29,7 +29,14 @@ from models.methodology import Level, StudentType
 LEVELS = {
     "A0": dict(
         grammar="Sustantivos directos, adjetivos simples (big, small), saludos.",
-        production="Asocia sonido con concepto y suelta palabras/frases de 1-3 palabras.",
+        production=("El alumno produce SIEMPRE la frase-puente bilingüe COMPLETA "
+                    "'<palabra-ES> se dice <word-EN>' (ej: 'perro se dice dog'), NUNCA la palabra "
+                    "inglesa suelta. Motivo: una palabra suelta dura menos de 1 segundo y el motor "
+                    "de voz no la capta (no dispara respuesta); la frase-puente dura más de 1 segundo, "
+                    "se escucha entera y de paso ancla el concepto en español con la palabra nueva en "
+                    "inglés. La unidad que aprende es la palabra nueva; la frase-puente es solo el "
+                    "envoltorio para que la diga completa. Tu turno cierra con 'ahora vos: <palabra-ES> "
+                    "se dice <word-EN>' y PARÁS hasta que responda."),
         lang=("Idioma de instrucción del coach: 100% ESPAÑOL. Lo ÚNICO en inglés es la palabra "
               "objetivo del día. NUNCA traduzcas tus consignas al inglés (decí \"ahora vos\", NUNCA \"now you\")."),
         dur=6),

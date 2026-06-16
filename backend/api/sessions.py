@@ -42,6 +42,18 @@ async def start_session(
     if payload.topic_id:
         topic = (await db.execute(select(Topic).where(Topic.id == payload.topic_id))).scalar_one_or_none()
 
+    # Sequencer: si el alumno no eligió tópico (ni texto libre), lo elige el motor desde
+    # su memoria (post-clase): última sugerencia + tópico apropiado a su banda no visto
+    # recientemente. Determinista; si no hay datos, queda None y sigue el flujo normal.
+    if not topic and not (payload.free_topic and payload.free_topic.strip()):
+        try:
+            from services.memory_analyzer import suggest_next_topic
+            nxt = await suggest_next_topic(db, current.id)
+            if nxt.get("topic_id"):
+                topic = (await db.execute(select(Topic).where(Topic.id == nxt["topic_id"]))).scalar_one_or_none()
+        except Exception:
+            pass
+
     template = None
     template_id = payload.template_id or current.active_template_id
     if template_id:

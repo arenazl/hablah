@@ -159,8 +159,8 @@ class Topic(Base):
     # biblia): lista de mini/junior/tween/adult. NULL = sin restricción. NO entra al
     # prompt: lo usa la SELECCIÓN de tópico (upstream), el contenido sigue agnóstico.
     appropriate_bands = Column(JSON, nullable=True)
-    # is_curriculum=True → tópico de plan estructurado (vocab pinneado, ordenado).
-    # Acá migran las filas de MethodologyStage (Saludos/Colores/Conteo).
+    # is_curriculum=True → tópico de plan estructurado (vocab pinneado, ordenado),
+    # ej. los tópicos kids de A0 (Saludos/Colores/Conteo) con vocab fijo.
     is_curriculum = Column(Boolean, nullable=False, default=False)
     # nullable: se agrega vía ALTER sobre tabla existente (MySQL no acepta DEFAULT JSON).
     pinned_vocabulary = Column(JSON, nullable=True)  # [{"en","es"}] (kids); None == []

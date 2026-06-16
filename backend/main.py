@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
-from api import auth, users, push, templates, topics, sessions, me, alumnos, dashboard, tts, voice, onboarding, kids, rooms, admin_directives, frontend_errors, grammar, diag, qa, admin_users, audit, methodology, methodology_modules
+from api import auth, users, push, templates, topics, sessions, me, alumnos, dashboard, tts, voice, onboarding, kids, rooms, admin_directives, frontend_errors, grammar, diag, qa, admin_users, audit, methodology_modules
 from api import coaches, catalog, levels, orchestrator, config, kits, memory
 
 
@@ -56,7 +56,6 @@ app.include_router(diag.router, prefix="/api/diag", tags=["diag"])
 app.include_router(qa.router, prefix="/api/qa", tags=["qa"])
 app.include_router(admin_users.router, prefix="/api/admin/users", tags=["admin_users"])
 app.include_router(audit.router, prefix="/api/audit", tags=["audit"])
-app.include_router(methodology.router, prefix="/api/methodology", tags=["methodology"])
 app.include_router(methodology_modules.router, prefix="/api/methodology-modules", tags=["methodology-modules"])
 # ─── Consola del motor (ABMs + orquestador) ───
 app.include_router(coaches.router, prefix="/api/coaches", tags=["coaches"])

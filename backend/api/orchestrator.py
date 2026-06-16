@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from core.security import require_role
 from services.composer_proto import compose_proto_prompt
-from models.methodology import StudentType, Coach, Level, MethodologyModule
+from models.methodology import StudentType, Coach, Level
 from models.config import AppConfig
 from models.orchestration import Orchestration
 from models.template import Topic
@@ -37,9 +37,6 @@ async def resolve(
     st = (await db.execute(select(StudentType).where(StudentType.slug == student_type))).scalar_one_or_none()
     coach = (await db.execute(select(Coach).where(Coach.id == coach_id))).scalar_one_or_none() if coach_id else None
     lv = (await db.execute(select(Level).where(Level.code == level))).scalar_one_or_none()
-    riel = (await db.execute(select(MethodologyModule).where(
-        MethodologyModule.student_type == student_type, MethodologyModule.level == level
-    ).order_by(MethodologyModule.module_order))).scalars().first()
     topic = (await db.execute(select(Topic).where(Topic.id == topic_id))).scalar_one_or_none() if topic_id else None
 
     # ── Armar los dicts para el composer ──
@@ -60,12 +57,6 @@ async def resolve(
             st_data["tutor_identity"] = coach.identity
             st_data["tutor_tonal_rules"] = coach.personality
 
-    mm = None
-    if riel:
-        mm = {
-            "ai_restraints": riel.ai_restraints,
-            "max_session_minutes": getattr(riel, "max_session_minutes", None),
-        }
     tags = (getattr(topic, "generated_vocab", None) or getattr(topic, "keywords", None) or []) if topic else []
     tc = {"allowed_vocabulary": tags, "required_keywords": [], "story_spine": None, "start_trigger": None} if topic else None
 
@@ -83,7 +74,7 @@ async def resolve(
         cefr_level=level or "A0", age_group=student_type or "mini",
     )
     prompt = compose_proto_prompt(
-        user=user, topic=topic, methodology_module=mm, topic_content=tc, student_type_data=st_data,
+        user=user, topic=topic, topic_content=tc, student_type_data=st_data,
         level_data=level_data, app_config=app_config,
     )
 
@@ -102,7 +93,7 @@ async def resolve(
         blk(6.1, "behavioral_guards · nivel (idioma+currículum)", "levels.language_rule / curriculum_grammar", bool(lv and getattr(lv, "language_rule", None)), (getattr(lv, "curriculum_grammar", "") if lv else "") or ""),
         blk(6.2, "output_rules", "app_config (salida/seguridad)", any(v == "true" for v in app_config.values()), "voz / ASR / seguridad / validador"),
         blk(7, "current_lesson_vocabulary", "topics.generated_vocab", bool(tags), ", ".join(tags[:6]) if tags else ""),
-        blk(8, "story_timeline", "topic_module_content.story_spine", False, "(generado/fallback)"),
+        blk(8, "story_timeline", "topics (curaduría por tópico — opcional)", False, "(opcional)"),
         blk(9, "start_execution_command", "student_types.opening_seed / topic_content", bool(st and getattr(st, "opening_seed", None)), (getattr(st, "opening_seed", "") if st else "") or "(generado/fallback)"),
         blk(9.1, "session_actions", "student_types.continuation/closing_seed", bool(st and (getattr(st, "continuation_seed", None) or getattr(st, "closing_seed", None))), "desarrollo + cierre"),
     ]

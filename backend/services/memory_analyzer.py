@@ -81,6 +81,42 @@ def _student_text(transcript) -> str:
     return " \n".join(l.get("text", "") for l in (transcript or []) if (l.get("who") or "").lower() == "user")
 
 
+def compute_interaction_counters(transcript, target_items: list[str]) -> dict:
+    """Contadores por ítem desde el transcript (base del SRS, más exacto que binario):
+      attempts      = veces que el ALUMNO dijo el ítem objetivo,
+      confirmations = veces que el COACH lo confirmó (eco del ítem en su turno siguiente).
+    Sigue siendo derivado del transcript (no de confianza de ASR), pero cuenta intentos
+    reales y usa la confirmación del coach para distinguir 'lo dijo bien' de 'lo intentó'."""
+    counters = {it: {"attempts": 0, "confirmations": 0} for it in target_items}
+    turns = transcript or []
+    low_items = [(it, it.lower().strip()) for it in target_items if it]
+    for i, turn in enumerate(turns):
+        if (turn.get("who") or "").lower() != "user":
+            continue
+        text = (turn.get("text") or "").lower()
+        said = [it for (it, low) in low_items if low and low in text]
+        if not said:
+            continue
+        nxt = turns[i + 1] if i + 1 < len(turns) else None
+        ai_next = (nxt.get("text") or "").lower() if (nxt and (nxt.get("who") or "").lower() == "ai") else ""
+        for it in said:
+            counters[it]["attempts"] += 1
+            if it.lower().strip() in ai_next:
+                counters[it]["confirmations"] += 1
+    return counters
+
+
+def build_raw_session_data(transcript, target_items: list[str]) -> dict:
+    """Snapshot durable per-turno de la clase (sessions.raw_session_data). Lo persiste el
+    motor de voz al cerrar el WS (lado de consumo, cero latencia en la charla)."""
+    return {
+        "schema": "v1",
+        "target_items": target_items,
+        "counters": compute_interaction_counters(transcript, target_items),
+        "turns": [{"who": (t.get("who") or ""), "text": (t.get("text") or "")} for t in (transcript or [])],
+    }
+
+
 async def load_learner_state(db, student_id: int) -> Optional[dict]:
     """Arma el dict learner_state (bloque 5b) desde la memoria del alumno. None si vacío
     → el composer omite el bloque (fail-safe)."""
@@ -98,6 +134,82 @@ async def load_learner_state(db, student_id: int) -> Optional[dict]:
         "traits": [r.trait for r in lt],
     }
     return state if any(state.values()) else None
+
+
+def _band_of(user) -> tuple[str, str]:
+    """(band, audience) del alumno. band = mini|junior|tween|adult; audience = kid|adult."""
+    band = getattr(user, "age_group", None) or "adult"
+    audience = "kid" if band in ("mini", "junior", "tween") else "adult"
+    return band, audience
+
+
+def _topic_ok_for_band(topic: Topic, band: str) -> bool:
+    """appropriate_bands NULL = sin restricción; si tiene lista, el band debe estar."""
+    bands = getattr(topic, "appropriate_bands", None)
+    if not bands:
+        return True
+    try:
+        return band in [str(b) for b in bands]
+    except TypeError:
+        return True
+
+
+async def suggest_next_topic(db, student_id: int) -> dict:
+    """Sequencer determinista: elige el próximo tópico para el alumno desde su memoria.
+
+    Resuelve un topic_id CONCRETO (no solo texto) para que el arranque de clase lo use:
+      1) match del 'suggested_topic' del último post-clase contra el catálogo (por título),
+      2) si no, un tópico apropiado a su banda que NO haya hecho en las últimas 5 clases,
+      3) si no, cualquiera apropiado a su banda.
+    Filtra por audience + appropriate_bands. Devuelve {topic_id, topic_title, due_items,
+    reinforce_items, suggested_topic, reason}.
+    """
+    today = datetime.date.today()
+    user = (await db.execute(select(User).where(User.id == student_id))).scalar_one_or_none()
+    band, audience = _band_of(user)
+
+    vp = (await db.execute(select(VocabProgress).where(VocabProgress.student_id == student_id))).scalars().all()
+    due = [r.item for r in vp if r.next_review and r.next_review <= today]
+    rq = (await db.execute(select(ReinforcementQueue).where(ReinforcementQueue.student_id == student_id))).scalars().all()
+    last = (await db.execute(
+        select(SessionInsight).where(SessionInsight.student_id == student_id).order_by(SessionInsight.id.desc()).limit(1)
+    )).scalars().first()
+    suggested_text = getattr(last, "suggested_topic", None)
+
+    # Catálogo apropiado a la banda (audience + appropriate_bands).
+    cands = (await db.execute(
+        select(Topic).where(Topic.is_active.is_(True), Topic.audience == audience)
+    )).scalars().all()
+    cands = [t for t in cands if _topic_ok_for_band(t, band)]
+
+    # Tópicos hechos en las últimas 5 clases (para no repetir).
+    recent_rows = (await db.execute(
+        select(SessionModel.topic_id).where(SessionModel.user_id == student_id, SessionModel.topic_id.isnot(None))
+        .order_by(SessionModel.id.desc()).limit(5)
+    )).all()
+    recent_ids = {r[0] for r in recent_rows}
+
+    chosen = None
+    reason = ""
+    if suggested_text:
+        needle = suggested_text.lower().strip()
+        chosen = next((t for t in cands if needle in (t.title or "").lower() or (t.title or "").lower() in needle), None)
+        if chosen:
+            reason = f"match del post-clase: '{suggested_text}'"
+    if not chosen:
+        fresh = [t for t in cands if t.id not in recent_ids]
+        chosen = fresh[0] if fresh else (cands[0] if cands else None)
+        if chosen:
+            reason = "tópico apropiado a la banda no visto recientemente"
+
+    return {
+        "topic_id": getattr(chosen, "id", None),
+        "topic_title": getattr(chosen, "title", None),
+        "due_items": due,
+        "reinforce_items": [r.item for r in rq],
+        "suggested_topic": suggested_text,
+        "reason": reason or "sin datos de memoria; el alumno elige el tópico",
+    }
 
 
 MEMORY_PROMPT = """Sos un analista pedagógico de Habláh. Leé la transcripción de una clase de inglés
@@ -132,19 +244,40 @@ async def analyze_memory(session_id: int) -> Optional[dict]:
         if s.topic_id:
             topic = (await db.execute(select(Topic).where(Topic.id == s.topic_id))).scalar_one_or_none()
 
-        # ── Mitad A — SRS determinista (los ítems objetivo que el alumno dijo) ──
-        said = _student_text(s.transcript).lower()
-        updated = 0
-        for item in _target_items(topic):
-            if item.lower().strip() not in said:
-                continue  # no lo dijo: no se penaliza (pudo no llegar a ese ítem)
+        # ── Mitad A — SRS determinista ──
+        async def _row_for(item: str) -> VocabProgress:
             row = (await db.execute(select(VocabProgress).where(
                 VocabProgress.student_id == user.id, VocabProgress.item == item))).scalar_one_or_none()
             if not row:
                 row = VocabProgress(student_id=user.id, item=item, status="new", ease=2.5)
                 db.add(row)
-            _srs_apply(row, "ok", today)
-            updated += 1
+            return row
+
+        updated = 0
+        raw = getattr(s, "raw_session_data", None)
+        counters = raw.get("counters") if isinstance(raw, dict) else None
+        if counters:
+            # EXACTO: usa los contadores per-ítem que capturó el motor de voz (attempts +
+            # confirmations). 'ok' si el coach lo confirmó; 'struggled' si lo intentó sin confirmar.
+            for item, c in counters.items():
+                attempts = int((c or {}).get("attempts") or 0)
+                if attempts <= 0:
+                    continue  # no lo dijo: no se penaliza
+                row = await _row_for(item)
+                result = "ok" if int((c or {}).get("confirmations") or 0) > 0 else "struggled"
+                _srs_apply(row, result, today)
+                if attempts > 1:
+                    row.seen_count = (row.seen_count or 0) + (attempts - 1)  # reflejar intentos reales
+                updated += 1
+        else:
+            # FALLBACK (sin raw_session_data): derivación binaria del transcript.
+            said = _student_text(s.transcript).lower()
+            for item in _target_items(topic):
+                if item.lower().strip() not in said:
+                    continue
+                row = await _row_for(item)
+                _srs_apply(row, "ok", today)
+                updated += 1
         await db.commit()
 
         # ── Mitad B — insights cualitativos (1 llamada IA), queda 'pending' ──

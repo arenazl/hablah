@@ -184,6 +184,9 @@ export interface Topic {
   id: number; slug: string; title: string; category: string
   seed_prompts: Record<string, string>; keywords: string[]
   levels: string[]; is_hot: boolean; is_active: boolean; usage_count: number
+  // Motor: a quién sirve el tópico (lo usa el sequencer para filtrar por banda).
+  audience?: string; segmento?: string | null
+  appropriate_bands?: string[] | null; generated_vocab?: string[] | null
 }
 
 export const topicsAPI = {

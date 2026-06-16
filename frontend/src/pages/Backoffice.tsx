@@ -815,6 +815,38 @@ function TopicEditView({ onMenu }: { onMenu: () => void }) {
               ))}
             </div>
           </div>
+          <div className="card card-elev seed-card">
+            <div style={{ fontWeight: 700, fontSize: 15 }}>Bandas apropiadas <span style={{ fontWeight: 400, fontSize: 12, color: 'var(--fg-3)' }}>(sequencer)</span></div>
+            <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 14 }}>
+              A qué segmentos de edad les conviene este tópico. El sequencer lo usa para elegir el tópico de la próxima clase.
+              Ninguna marcada = sin restricción (sirve a todos). No cambia el contenido del tópico, solo a quién se le ofrece.
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {(['mini', 'junior', 'tween', 'adult'] as const).map((b) => {
+                const on = (t.appropriate_bands || []).includes(b)
+                return (
+                  <button
+                    key={b}
+                    type="button"
+                    onClick={() => {
+                      const cur = new Set(t.appropriate_bands || [])
+                      on ? cur.delete(b) : cur.add(b)
+                      const arr = Array.from(cur)
+                      setT({ ...t, appropriate_bands: arr.length ? arr : null })
+                    }}
+                    style={{
+                      padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                      border: on ? '1px solid var(--primary)' : '1px solid var(--border-2)',
+                      background: on ? 'var(--primary)' : 'transparent',
+                      color: on ? 'white' : 'var(--fg-2)',
+                    }}
+                  >
+                    {b === 'mini' ? 'Mini · 4-7' : b === 'junior' ? 'Junior · 8-12' : b === 'tween' ? 'Tween · 13+' : 'Adulto'}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </>

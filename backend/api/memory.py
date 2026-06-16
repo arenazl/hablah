@@ -119,17 +119,7 @@ async def student_memory(student_id: int, db: AsyncSession = Depends(get_db), _:
 
 @router.get("/suggest-next-topic")
 async def suggest_next_topic(user_id: int = Query(...), db: AsyncSession = Depends(get_db), _: User = Depends(require_role("admin"))):
-    """Sequencer simple: ítems debidos + última sugerencia del post-clase. Determinista."""
-    today = datetime.date.today()
-    vp = (await db.execute(select(VocabProgress).where(VocabProgress.student_id == user_id))).scalars().all()
-    due = [r.item for r in vp if r.next_review and r.next_review <= today]
-    rq = (await db.execute(select(ReinforcementQueue).where(ReinforcementQueue.student_id == user_id))).scalars().all()
-    last = (await db.execute(
-        select(SessionInsight).where(SessionInsight.student_id == user_id).order_by(desc(SessionInsight.id)).limit(1)
-    )).scalars().first()
-    return {
-        "due_items": due,
-        "reinforce_items": [r.item for r in rq],
-        "suggested_topic": getattr(last, "suggested_topic", None),
-        "reason": "ítems SRS debidos hoy + cola de refuerzo + sugerencia del último post-clase",
-    }
+    """Sequencer determinista: resuelve el próximo tópico (topic_id + título) desde la
+    memoria del alumno + el catálogo. Misma lógica que usa el arranque de clase."""
+    from services.memory_analyzer import suggest_next_topic as _seq
+    return await _seq(db, user_id)

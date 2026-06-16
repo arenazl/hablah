@@ -104,72 +104,14 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             )
             await db.commit()
 
-        # Etapa del currículo (metodología) donde está el nene: el coach enseña
-        # SOLO ese vocabulario + estructura (el QUÉ). El prompt define el CÓMO.
-        methodology_stage = None
-        if is_kid:
-            from models.methodology import MethodologyStage
-            grp = getattr(user, "age_group", None) or "mini"
-            order = getattr(user, "kid_methodology_order", 1) or 1
-            st = (await db.execute(
-                select(MethodologyStage).where(
-                    MethodologyStage.age_group == grp,
-                    MethodologyStage.order_index == order,
-                    MethodologyStage.active.is_(True),
-                )
-            )).scalar_one_or_none()
-            if st:
-                methodology_stage = {
-                    "title": st.title,
-                    "vocabulary": st.vocabulary or [],
-                    "target_structure": st.target_structure,
-                    "target_structure_es": st.target_structure_es,
-                    "mastery_criteria": st.mastery_criteria,
-                }
-
-        # Motor Pedagógico Adaptativo: cargar el RIEL del nivel (methodology_module)
-        # + la celda del junction (topic_content) para el tópico. TODO en el setup
-        # (nunca por turno). Defensivo: si las tablas aún no migraron, cae a None y
-        # el compositor usa el stage/legacy.
-        methodology_module = None
-        topic_content = None
+        # Motor de 9 pasos = camino ÚNICO (kids y adultos). Cargamos el EJE EDAD como
+        # dato: student_types (tutor + pedagogía + foco + forma + arranque). Ya NO hay
+        # tablas-cruce legacy (methodology_module/stage/topic_module_content: se borraron);
+        # el CÓMO sale de este catálogo, el QUÉ de levels, y el léxico del tópico.
         student_type_data = None
         try:
-            from models.methodology import MethodologyModule, TopicModuleContent, StudentType
+            from models.methodology import StudentType
             grp2 = (getattr(user, "age_group", None) or "mini") if is_kid else "adult"
-            level = user.cefr_level or "A0"
-            mod = (await db.execute(
-                select(MethodologyModule).where(
-                    MethodologyModule.student_type == grp2,
-                    MethodologyModule.level == level,
-                    MethodologyModule.active.is_(True),
-                ).order_by(MethodologyModule.module_order)
-            )).scalars().first()
-            if mod:
-                methodology_module = {
-                    "focus_name": mod.focus_name,
-                    "ai_restraints": mod.ai_restraints,
-                    "target_grammar": mod.target_grammar,
-                    "evaluation_criteria": mod.evaluation_criteria,
-                    "max_session_minutes": getattr(mod, "max_session_minutes", None),
-                }
-                if topic is not None:
-                    cell = (await db.execute(
-                        select(TopicModuleContent).where(
-                            TopicModuleContent.topic_id == topic.id,
-                            TopicModuleContent.module_id == mod.id,
-                            TopicModuleContent.active.is_(True),
-                        )
-                    )).scalar_one_or_none()
-                    if cell:
-                        topic_content = {
-                            "seed_prompt": cell.seed_prompt,
-                            "required_keywords": cell.required_keywords or [],
-                            "allowed_vocabulary": cell.allowed_vocabulary or [],
-                            "story_spine": cell.story_spine,
-                            "start_trigger": cell.start_trigger,
-                        }
-            # Persona del tutor según el segmento del alumno (age_group → student_type)
             st = (await db.execute(
                 select(StudentType).where(StudentType.slug == grp2, StudentType.active.is_(True))
             )).scalar_one_or_none()
@@ -188,7 +130,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "closing_seed": getattr(st, "closing_seed", None),
                 }
         except Exception as e:
-            log.warning(f"motor pedagógico: módulo/junction no disponible ({e}); fallback a stage/legacy")
+            log.warning(f"motor: student_type_data no disponible ({e})")
 
         # Idioma por nivel (el "ahora vos") + reglas de salida/seguridad, como dato.
         level_data = None
@@ -224,9 +166,6 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             admin_directives=admin_directives,
             recently_used_keywords=recently_used_keywords,
             learning_objective=learning_objective,
-            methodology_stage=methodology_stage,
-            methodology_module=methodology_module,
-            topic_content=topic_content,
             student_type_data=student_type_data,
             level_data=level_data,
             app_config=app_config,
@@ -256,13 +195,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "audience": getattr(topic, "audience", None), "is_curriculum": getattr(topic, "is_curriculum", None),
                     "pinned_vocab_n": len(getattr(topic, "pinned_vocabulary", None) or []),
                 } if topic else None),
-                "methodology_module": (methodology_module and {"focus": methodology_module.get("focus_name")}),
-                "junction": ("FOUND " + str(topic_content.get("allowed_vocabulary"))
-                             if topic_content else "MISSING -> fallback a methodology_stage (vocab DESCONECTADO del tópico)"),
-                "stage_fallback": (methodology_stage and {
-                    "title": methodology_stage.get("title"),
-                    "vocab": [v.get("en") for v in (methodology_stage.get("vocabulary") or [])],
-                }),
+                "student_type": (student_type_data and student_type_data.get("slug")),
+                "level_data_loaded": bool(level_data),
                 "prompt_len": len(super_prompt),
             }
             log.info("PROMPT_CIRCUIT " + _json.dumps(_circuit, ensure_ascii=False))
@@ -271,7 +205,6 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             # Persistir el circuito + prompt en la DB (durable, no solo stdout
             # efimero de Heroku): 1 UPDATE en el setup, fuera del loop en vivo
             # -> cero latencia agregada a la charla.
-            _circuit["ai_restraints"] = (methodology_module or {}).get("ai_restraints")
             _circuit["enfoque"] = getattr(template, "enfoque", None)
             _circuit["learning_objective"] = (learning_objective or {}).get("code") if learning_objective else None
             await db.execute(
@@ -363,4 +296,15 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: st
                         s.transcript = existing + transcript
                 else:
                     s.transcript = existing + transcript
+                # Instrumentación SRS: snapshot per-turno (raw_session_data) con contadores
+                # por ítem objetivo. Va acá (lado de CONSUMO del WS, no en el loop de audio)
+                # → cero latencia agregada a la charla. Lo lee el post-clase (Mitad A).
+                try:
+                    from services.memory_analyzer import _target_items, build_raw_session_data
+                    _topic = None
+                    if s.topic_id:
+                        _topic = (await db.execute(select(Topic).where(Topic.id == s.topic_id))).scalar_one_or_none()
+                    s.raw_session_data = build_raw_session_data(s.transcript, _target_items(_topic))
+                except Exception as e:
+                    log.warning(f"raw_session_data no persistido (session {session_id}): {e}")
                 await db.commit()
