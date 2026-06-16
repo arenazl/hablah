@@ -46,6 +46,9 @@ class StudentType(Base):
     # Cierre suave (biblia 9 pasos, nota 02): semilla de la frase de cierre por
     # segmento. El LLM la usa de guía; no es verbatim. Ver docs/mejoras_pedagogicas/03.
     closing_seed = Column(Text, nullable=True)
+    # Plantillas de arranque/desarrollo por banda (doc 11 §1.4), como dato.
+    opening_seed = Column(Text, nullable=True)
+    continuation_seed = Column(Text, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 

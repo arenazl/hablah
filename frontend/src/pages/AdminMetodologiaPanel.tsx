@@ -22,6 +22,8 @@ interface StudentType {
   tutor_identity: string
   tutor_tonal_rules: string
   session_focus: string
+  opening_seed: string
+  continuation_seed: string
   closing_seed: string
 }
 
@@ -213,6 +215,8 @@ function IdentidadesTab() {
           tutor_identity: d.tutor_identity,
           tutor_tonal_rules: d.tutor_tonal_rules,
           session_focus: d.session_focus,
+          opening_seed: d.opening_seed,
+          continuation_seed: d.continuation_seed,
           closing_seed: d.closing_seed,
         }),
       })
@@ -291,6 +295,26 @@ function IdentidadesTab() {
                   value={d.session_focus ?? ''}
                   onChange={(e) => patch(slug, 'session_focus', e.target.value)}
                   placeholder="Aventura en el mundo del tópico: el chico y el tutor exploran juntos…"
+                />
+              </div>
+
+              <div className="meto-id-field">
+                <label>Apertura (semilla) · saludo + tópico + enganche</label>
+                <textarea
+                  rows={2}
+                  value={d.opening_seed ?? ''}
+                  onChange={(e) => patch(slug, 'opening_seed', e.target.value)}
+                  placeholder="Cómo abre la clase: saludar, presentar el tópico y enganchar. Placeholders: {name}, {topic}, {first_vocab}…"
+                />
+              </div>
+
+              <div className="meto-id-field">
+                <label>Desarrollo (semilla) · regla de cada turno</label>
+                <textarea
+                  rows={2}
+                  value={d.continuation_seed ?? ''}
+                  onChange={(e) => patch(slug, 'continuation_seed', e.target.value)}
+                  placeholder="La regla de cada turno: una pregunta/consigna por turno, pistas si se traba…"
                 />
               </div>
 

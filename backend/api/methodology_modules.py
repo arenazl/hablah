@@ -86,6 +86,8 @@ def _serialize_student_type(s: StudentType) -> dict:
         "tutor_identity": getattr(s, "tutor_identity", None) or "",
         "tutor_tonal_rules": getattr(s, "tutor_tonal_rules", None) or "",
         "session_focus": getattr(s, "session_focus", None) or "",
+        "opening_seed": getattr(s, "opening_seed", None) or "",
+        "continuation_seed": getattr(s, "continuation_seed", None) or "",
         "closing_seed": getattr(s, "closing_seed", None) or "",
         "active": bool(s.active),
     }
@@ -96,6 +98,8 @@ class StudentTypeUpdate(BaseModel):
     tutor_identity: Optional[str] = None
     tutor_tonal_rules: Optional[str] = None
     session_focus: Optional[str] = None
+    opening_seed: Optional[str] = None
+    continuation_seed: Optional[str] = None
     closing_seed: Optional[str] = None
     name: Optional[str] = None
     description: Optional[str] = None
@@ -142,6 +146,8 @@ class StudentTypeCreate(BaseModel):
     tutor_identity: Optional[str] = None
     tutor_tonal_rules: Optional[str] = None
     session_focus: Optional[str] = None
+    opening_seed: Optional[str] = None
+    continuation_seed: Optional[str] = None
     closing_seed: Optional[str] = None
 
 
