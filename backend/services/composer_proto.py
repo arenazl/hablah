@@ -104,13 +104,14 @@ def _get_gamification_focus(student_type_data: Optional[dict]) -> str:
     )
 
 
-def _get_student_profile(user, student_type_data: Optional[dict]) -> str:
+def _get_student_profile(user, student_type_data: Optional[dict], max_minutes: Optional[int] = None) -> str:
     name = getattr(user, "nombre", "Estudiante")
     cefr = getattr(user, "cefr_level", "A0") or "A0"
     age_group = getattr(user, "age_group", None) or "mini"
     age = _KID_AGE.get(age_group, 8)
     slug = (student_type_data or {}).get("slug") or age_group
     segment_label = {"mini": "Mini (4-7 años)", "junior": "Junior (8-12 años)", "tween": "Tween (13-17 años)", "adult": "Adulto"}.get(slug, slug)
+    pacing = f"  Target_Session_Minutes: {max_minutes}\n" if max_minutes else ""
     return (
         f"<student_profile>\n"
         f"  Name: {name}\n"
@@ -118,17 +119,25 @@ def _get_student_profile(user, student_type_data: Optional[dict]) -> str:
         f"  Approx_Age: {age}\n"
         f"  Level: {cefr}\n"
         f"  Max_Words_Response: {'4' if slug == 'mini' else '8' if slug == 'junior' else '15'}\n"
+        f"{pacing}"
         f"</student_profile>"
     )
 
 
-def _get_behavioral_guards(methodology_module: Optional[dict], student_type_data: Optional[dict]) -> str:
+def _get_behavioral_guards(
+    methodology_module: Optional[dict],
+    student_type_data: Optional[dict],
+    language_rule: Optional[str] = None,
+) -> str:
     if methodology_module and methodology_module.get("ai_restraints"):
         riels_text = methodology_module["ai_restraints"].strip()
     else:
         riels_text = "\n".join(f"  - {r}" for r in _FALLBACK_RIELS_A0_MINI)
+    # Regla de idioma por NIVEL (levels.language_rule) — donde vive el "ahora vos".
+    lang_line = f"  Language_Rule (nivel): {language_rule.strip()}\n" if language_rule else ""
     return (
         f"<behavioral_guards>\n"
+        f"{lang_line}"
         f"{riels_text}\n"
         f"</behavioral_guards>"
     )
@@ -193,11 +202,18 @@ def _get_story_spine(topic, topic_content: Optional[dict], user_name: str) -> st
     )
 
 
-def _get_start_trigger(topic, topic_content: Optional[dict], user_name: str, first_word: str, base_lang: str) -> str:
-    if topic_content and topic_content.get("start_trigger"):
-        trigger = topic_content["start_trigger"].replace("{name}", user_name).replace("{word}", first_word)
+def _get_start_trigger(topic, topic_content: Optional[dict], user_name: str, first_word: str, base_lang: str, opening_seed: Optional[str] = None) -> str:
+    topic_title = getattr(topic, "title", "el tema de hoy") if topic else "el tema de hoy"
+
+    def _interp(s: str) -> str:
+        return (s.replace("{name}", user_name).replace("{topic}", topic_title)
+                 .replace("{first_vocab}", first_word).replace("{word}", first_word))
+
+    if opening_seed:  # plantilla de apertura por banda (student_types.opening_seed)
+        trigger = _interp(opening_seed)
+    elif topic_content and topic_content.get("start_trigger"):
+        trigger = _interp(topic_content["start_trigger"])
     else:
-        topic_title = getattr(topic, "title", "el tema de hoy") if topic else "el tema de hoy"
         _LANG = {"es": "español", "en": "inglés", "pt": "portugués", "it": "italiano"}
         lang_name = _LANG.get(base_lang, "español")
         trigger = (
@@ -287,6 +303,36 @@ def _get_interaction_state(interaction_state: Optional[dict]) -> str:
     )
 
 
+def _get_output_rules(app_config: Optional[dict]) -> str:
+    """Reglas de salida/seguridad desde app_config (doc 11 §1.5). Omitido si no hay config."""
+    if not app_config:
+        return ""
+    lines = []
+    if app_config.get("voice_emojis_screen_only") == "true":
+        lines.append("  Voice_Output: el texto al TTS va limpio; emojis y onomatopeyas SOLO a pantalla.")
+    if app_config.get("asr_low_confidence_retry") == "true":
+        lines.append("  ASR_Tolerance: ante baja confianza del reconocimiento, pedí repetir; no lo cuentes como error.")
+    if app_config.get("kid_safety_guard") == "true":
+        lines.append("  Kid_Safety: nunca pidas datos personales ni propongas secretos/encuentros; redirigí con tacto cualquier tema fuera de la lección.")
+    if app_config.get("adult_stay_on_frame") == "true":
+        lines.append("  Stay_On_Frame: si deriva fuera del marco de la clase, redirigí con suavidad.")
+    if not lines:
+        return ""
+    return "<output_rules>\n" + "\n".join(lines) + "\n</output_rules>"
+
+
+def _get_session_actions(continuation_seed: Optional[str], closing_seed: Optional[str]) -> str:
+    """Regla de cada turno (desarrollo) + semilla de cierre (doc 11 §1.4). Omitido si no hay datos."""
+    lines = []
+    if continuation_seed:
+        lines.append(f"  Continuation_Action (cada turno): {continuation_seed.strip()}")
+    if closing_seed:
+        lines.append(f"  Closing_Action (al cerrar): {closing_seed.strip()}")
+    if not lines:
+        return ""
+    return "<session_actions>\n" + "\n".join(lines) + "\n</session_actions>"
+
+
 def compose_proto_prompt(
     *,
     user=None,
@@ -294,6 +340,8 @@ def compose_proto_prompt(
     methodology_module: Optional[dict] = None,
     topic_content: Optional[dict] = None,
     student_type_data: Optional[dict] = None,
+    level_data: Optional[dict] = None,
+    app_config: Optional[dict] = None,
     learner_state: Optional[dict] = None,
     interaction_state: Optional[dict] = None,
 ) -> str:
@@ -304,23 +352,31 @@ def compose_proto_prompt(
     """
     user_name = getattr(user, "nombre", None) or "Estudiante"
     base_lang = getattr(user, "base_language", "es") or "es"
+    std = student_type_data or {}
 
     _, vocab, _ = _get_vocabulary(topic, topic_content)
     first_word = vocab[0] if vocab else "hello"
+
+    language_rule = (level_data or {}).get("language_rule")
+    max_minutes = (methodology_module or {}).get("max_session_minutes")
+    opening_seed = std.get("opening_seed")
+    continuation_seed = std.get("continuation_seed")
+    closing_seed = std.get("closing_seed")
 
     blocks = [
         _get_runtime_context(user),
         _get_tutor_profile(student_type_data),
         _get_pedagogical_rules(student_type_data),
         _get_gamification_focus(student_type_data),
-        _get_student_profile(user, student_type_data),
+        _get_student_profile(user, student_type_data, max_minutes),
         _get_learner_state(learner_state),            # B10 — memoria del alumno (omitido si vacío)
-        _get_behavioral_guards(methodology_module, student_type_data),
+        _get_behavioral_guards(methodology_module, student_type_data, language_rule),
+        _get_output_rules(app_config),                # reglas de salida/seguridad (app_config)
         _get_vocabulary_block(topic, topic_content),
         _get_story_spine(topic, topic_content, user_name),
-        _get_start_trigger(topic, topic_content, user_name, first_word, base_lang),
+        _get_start_trigger(topic, topic_content, user_name, first_word, base_lang, opening_seed),
+        _get_session_actions(continuation_seed, closing_seed),
         _get_interaction_state(interaction_state),    # B11 — estado vivo del turno (omitido si vacío)
     ]
-    # Filtramos los bloques vacíos: con learner_state e interaction_state en None
-    # el resultado es byte-idéntico a los 9 bloques originales (path de prod intacto).
+    # Bloques vacíos se filtran: sin datos nuevos el path queda igual al original.
     return "\n\n".join(b for b in blocks if b)

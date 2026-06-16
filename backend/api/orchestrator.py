@@ -16,6 +16,7 @@ from core.database import get_db
 from core.security import require_role
 from services.composer_proto import compose_proto_prompt
 from models.methodology import StudentType, Coach, Level, MethodologyModule
+from models.config import AppConfig
 from models.template import Topic
 from models.user import User
 
@@ -46,15 +47,26 @@ async def resolve(
             "slug": st.slug,
             "tutor_mascot": st.tutor_mascot, "tutor_identity": st.tutor_identity,
             "tutor_tonal_rules": st.tutor_tonal_rules, "session_focus": st.session_focus,
+            "opening_seed": getattr(st, "opening_seed", None),
+            "continuation_seed": getattr(st, "continuation_seed", None),
+            "closing_seed": getattr(st, "closing_seed", None),
         }
         if coach:  # el coach elegido manda en el bloque 2 (persona)
             st_data["tutor_mascot"] = coach.name
             st_data["tutor_identity"] = coach.identity
             st_data["tutor_tonal_rules"] = coach.personality
 
-    mm = {"ai_restraints": riel.ai_restraints} if (riel and riel.ai_restraints) else None
+    mm = None
+    if riel:
+        mm = {
+            "ai_restraints": riel.ai_restraints,
+            "max_session_minutes": getattr(riel, "max_session_minutes", None),
+        }
     tags = (getattr(topic, "generated_vocab", None) or getattr(topic, "keywords", None) or []) if topic else []
     tc = {"allowed_vocabulary": tags, "required_keywords": [], "story_spine": None, "start_trigger": None} if topic else None
+
+    level_data = {"language_rule": getattr(lv, "language_rule", None)} if lv else None
+    app_config = {c.key: c.value for c in (await db.execute(select(AppConfig))).scalars().all()}
 
     user = SimpleNamespace(
         nombre="Alumno", target_language="en", base_language="es",
@@ -62,6 +74,7 @@ async def resolve(
     )
     prompt = compose_proto_prompt(
         user=user, topic=topic, methodology_module=mm, topic_content=tc, student_type_data=st_data,
+        level_data=level_data, app_config=app_config,
     )
 
     # ── Estado por bloque: cargado (dato real) vs fallback ──
@@ -77,9 +90,11 @@ async def resolve(
         blk(5, "student_profile", "users", True, f"{student_type} / {level}"),
         blk(6, "behavioral_guards (riel)", "methodology_modules.ai_restraints", bool(riel and riel.ai_restraints), (riel.ai_restraints if riel else "") or ""),
         blk(6.1, "language_rule", "levels.language_rule", bool(lv and getattr(lv, "language_rule", None)), (getattr(lv, "language_rule", "") if lv else "") or ""),
+        blk(6.2, "output_rules", "app_config (salida/seguridad)", any(v == "true" for v in app_config.values()), "voz / ASR / seguridad / validador"),
         blk(7, "current_lesson_vocabulary", "topics.generated_vocab", bool(tags), ", ".join(tags[:6]) if tags else ""),
         blk(8, "story_timeline", "topic_module_content.story_spine", False, "(generado/fallback)"),
-        blk(9, "start_execution_command", "topic_module_content.start_trigger", False, "(generado/fallback)"),
+        blk(9, "start_execution_command", "student_types.opening_seed / topic_content", bool(st and getattr(st, "opening_seed", None)), (getattr(st, "opening_seed", "") if st else "") or "(generado/fallback)"),
+        blk(9.1, "session_actions", "student_types.continuation/closing_seed", bool(st and (getattr(st, "continuation_seed", None) or getattr(st, "closing_seed", None))), "desarrollo + cierre"),
     ]
     loaded = sum(1 for b in blocks if b["loaded"])
     return {
