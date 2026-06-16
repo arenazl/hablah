@@ -181,3 +181,34 @@ class Level(Base):
     active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class Category(Base):
+    """Categoría padre del catálogo de tópicos (Deportes, Arte, Tech…).
+
+    Jerarquía determinística decidida por nosotros: Categoría → Subcategoría → Tópico.
+    El tópico es agnóstico al nivel; esto es solo organización del catálogo.
+    """
+    __tablename__ = "categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    slug = Column(String(60), unique=True, nullable=False, index=True)
+    name = Column(String(80), nullable=False)
+    sort_order = Column(Integer, nullable=False, default=0)
+    active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class Subcategory(Base):
+    """Subcategoría (hija de una Categoría). El tópico cuelga de acá."""
+    __tablename__ = "subcategories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    category_id = Column(Integer, nullable=False, index=True)  # -> categories.id
+    slug = Column(String(80), nullable=False, index=True)
+    name = Column(String(120), nullable=False)
+    sort_order = Column(Integer, nullable=False, default=0)
+    active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

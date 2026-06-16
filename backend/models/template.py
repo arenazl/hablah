@@ -164,6 +164,13 @@ class Topic(Base):
     target_structure_es = Column(String(200), nullable=True)
     mastery_criteria = Column(String(300), nullable=True)
 
+    # ─── Catálogo jerárquico (Categoría → Subcategoría → Tópico) ───
+    category_id = Column(Integer, nullable=True, index=True)     # -> categories.id
+    subcategory_id = Column(Integer, nullable=True, index=True)  # -> subcategories.id
+    # Tags guía generados por IA en BATCH (offline) y revisables. NO es currículo:
+    # son anclas conversacionales naturales para guiar la charla. Ver doctrina 05.
+    generated_vocab = Column(JSON, nullable=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
