@@ -24,6 +24,42 @@ const CARD: React.CSSProperties = { background: '#11151d', border: '1px solid #2
 const LBL: React.CSSProperties = { fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: '#9aa3af', marginBottom: 6 }
 const FIELD: React.CSSProperties = { width: '100%', padding: '8px 10px', borderRadius: 10, border: '1px solid #232936', background: '#0b0e14', color: '#e6e8ec', fontSize: 13 }
 
+function TopicAutocomplete({ topics, value, onChange }: { topics: Top[]; value?: number; onChange: (id?: number) => void }) {
+  const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
+  const selected = topics.find((t) => t.id === value)
+  const q = query.trim().toLowerCase()
+  const matches = (q ? topics.filter((t) => t.title.toLowerCase().includes(q)) : topics).slice(0, 60)
+  const pick = (id?: number) => { onChange(id); setQuery(''); setOpen(false) }
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        style={FIELD}
+        placeholder={selected ? selected.title : 'Buscar tópico…'}
+        value={query}
+        onFocus={() => setOpen(true)}
+        onChange={(e) => { setQuery(e.target.value); setOpen(true) }}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+      />
+      {open && (
+        <div style={{ position: 'absolute', zIndex: 30, top: '100%', left: 0, right: 0, marginTop: 4, maxHeight: 280, overflowY: 'auto', background: '#0b0e14', border: '1px solid #232936', borderRadius: 10, boxShadow: '0 12px 32px rgba(0,0,0,.5)' }}>
+          <div onMouseDown={() => pick(undefined)} style={{ padding: '8px 10px', fontSize: 13, color: '#9aa3af', cursor: 'pointer' }}>(sin tópico)</div>
+          {matches.map((t) => (
+            <div
+              key={t.id}
+              onMouseDown={() => pick(t.id)}
+              style={{ padding: '8px 10px', fontSize: 13, color: '#e6e8ec', cursor: 'pointer', borderTop: '1px solid #1c2230', background: t.id === value ? '#172033' : 'transparent' }}
+            >
+              {t.title}
+            </div>
+          ))}
+          {matches.length === 0 && <div style={{ padding: '8px 10px', fontSize: 12, color: '#9aa3af' }}>sin resultados</div>}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function AdminConsolaPanel() {
   const [studentTypes, setStudentTypes] = useState<St[]>([])
   const [coaches, setCoaches] = useState<Coach[]>([])
@@ -90,10 +126,7 @@ export default function AdminConsolaPanel() {
             </div>
             <div>
               <div style={LBL}>Tópico</div>
-              <select style={FIELD} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}>
-                <option value="">(sin tópico)</option>
-                {topics.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
-              </select>
+              <TopicAutocomplete topics={topics} value={topicId} onChange={setTopicId} />
             </div>
           </div>
           {err && <div style={{ color: '#fca5a5', fontSize: 13, marginTop: 10 }}>{err}</div>}

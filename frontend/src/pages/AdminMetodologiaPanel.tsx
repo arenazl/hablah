@@ -320,6 +320,9 @@ function RielesTab() {
   const [edit, setEdit] = useState<ModuleEdit | null>(null)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState<number | null>(null)
+  const [previewLevel, setPreviewLevel] = useState('A0')
+  const [previewPrompt, setPreviewPrompt] = useState('')
+  const [previewLoading, setPreviewLoading] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -337,6 +340,24 @@ function RielesTab() {
   }, [ageFilter])
 
   useEffect(() => { load() }, [load])
+
+  const loadPreview = useCallback(async () => {
+    setPreviewLoading(true)
+    try {
+      const res = await fetch(`${API_BASE_URL}/orchestrator/resolve?student_type=${ageFilter}&level=${previewLevel}`, {
+        headers: { Authorization: `Bearer ${tok()}` },
+      })
+      if (!res.ok) throw new Error()
+      const data = await res.json()
+      setPreviewPrompt(data.prompt || '')
+    } catch {
+      setPreviewPrompt('(no se pudo resolver el preview)')
+    } finally {
+      setPreviewLoading(false)
+    }
+  }, [ageFilter, previewLevel])
+
+  useEffect(() => { loadPreview() }, [loadPreview])
 
   const startNew = () => setEdit({ ...EMPTY_MODULE, student_type: ageFilter })
   const startEdit = (m: Module) => setEdit({
@@ -373,6 +394,7 @@ function RielesTab() {
       toast.success(edit.id ? 'Riel actualizado' : 'Riel creado')
       setEdit(null)
       load()
+      loadPreview()
     } catch {
       toast.error('No se pudo guardar')
     } finally {
@@ -453,6 +475,21 @@ function RielesTab() {
           </tbody>
         </table>
       )}
+
+      <div style={{ marginTop: 26 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10, flexWrap: 'wrap' }}>
+          <h3 style={{ fontSize: 15, fontWeight: 800, margin: 0 }}>Preview del prompt en vivo</h3>
+          <select className="meto-search" style={{ maxWidth: 130, height: 32 }} value={previewLevel} onChange={(e) => setPreviewLevel(e.target.value)}>
+            {LEVELS.map((l) => <option key={l} value={l}>Nivel {l}</option>)}
+          </select>
+          <span style={{ fontSize: 12.5, color: 'var(--fg-3)' }}>
+            lo que recibiría la IA para un alumno <b>{AGES.find((a) => a.slug === ageFilter)?.label}</b> en <b>{previewLevel}</b> — editá un riel y mirá cómo cambia.
+          </span>
+        </div>
+        <pre style={{ background: 'var(--bg-2)', border: '1px solid var(--border-1)', borderRadius: 12, padding: 14, fontSize: 12, lineHeight: 1.5, color: 'var(--fg-2)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: 440, overflowY: 'auto', margin: 0, fontFamily: 'var(--fmono, monospace)' }}>
+          {previewLoading ? 'Resolviendo…' : (previewPrompt || '(sin datos)')}
+        </pre>
+      </div>
 
       {edit && (
         <div className="meto-modal-backdrop" onClick={() => setEdit(null)}>
