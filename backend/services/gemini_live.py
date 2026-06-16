@@ -151,6 +151,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "ai_restraints": mod.ai_restraints,
                     "target_grammar": mod.target_grammar,
                     "evaluation_criteria": mod.evaluation_criteria,
+                    "max_session_minutes": getattr(mod, "max_session_minutes", None),
                 }
                 if topic is not None:
                     cell = (await db.execute(
@@ -180,9 +181,27 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "tutor_identity": st.tutor_identity,
                     "tutor_tonal_rules": st.tutor_tonal_rules,
                     "session_focus": st.session_focus,
+                    "opening_seed": getattr(st, "opening_seed", None),
+                    "continuation_seed": getattr(st, "continuation_seed", None),
+                    "closing_seed": getattr(st, "closing_seed", None),
                 }
         except Exception as e:
             log.warning(f"motor pedagógico: módulo/junction no disponible ({e}); fallback a stage/legacy")
+
+        # Idioma por nivel (el "ahora vos") + reglas de salida/seguridad, como dato.
+        level_data = None
+        app_config = None
+        try:
+            from models.methodology import Level
+            from models.config import AppConfig
+            lv = (await db.execute(
+                select(Level).where(Level.code == (user.cefr_level or "A0"))
+            )).scalar_one_or_none()
+            if lv:
+                level_data = {"language_rule": getattr(lv, "language_rule", None)}
+            app_config = {c.key: c.value for c in (await db.execute(select(AppConfig))).scalars().all()}
+        except Exception as e:
+            log.warning(f"motor pedagógico: level_data/app_config no disponible ({e})")
 
         super_prompt = build_super_prompt(
             user=user, template=template, topic=topic,
@@ -193,6 +212,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             methodology_module=methodology_module,
             topic_content=topic_content,
             student_type_data=student_type_data,
+            level_data=level_data,
+            app_config=app_config,
         )
 
         # ─── OBSERVABILIDAD TOTAL: el circuito entero del prompt ───
