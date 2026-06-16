@@ -12,6 +12,7 @@ import { EvolutionView } from './BackofficeEvolution'
 import AdminMetodologiaPanel from './AdminMetodologiaPanel'
 import AdminConsolaPanel from './AdminConsolaPanel'
 import AdminAbmsPanel from './AdminAbmsPanel'
+import AdminUsersPanel from './AdminUsersPanel'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -52,6 +53,7 @@ export function Backoffice() {
             <Route path="/metodologia" element={<AdminMetodologiaPanel />} />
             <Route path="/consola" element={<AdminConsolaPanel />} />
             <Route path="/abms" element={<AdminAbmsPanel />} />
+            <Route path="/usuarios" element={<AdminUsersPanel />} />
           </Routes>
         </main>
       </div>
@@ -99,6 +101,7 @@ function BoSidebar({ open }: { open: boolean }) {
       <div className="sidebar-section">Comunidad</div>
       <nav className="sidebar-nav">
         <SidebarItem to="/admin/alumnos" label="Alumnos" />
+        <SidebarItem to="/admin/usuarios" label="Usuarios" />
       </nav>
       <div className="sidebar-section">Diagnóstico</div>
       <nav className="sidebar-nav">

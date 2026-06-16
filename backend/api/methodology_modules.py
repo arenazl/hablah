@@ -28,6 +28,8 @@ class ModuleBase(BaseModel):
     target_grammar: Optional[str] = None
     evaluation_criteria: Optional[str] = None
     correction_hint: Optional[str] = None
+    max_session_minutes: Optional[int] = None
+    max_turns: Optional[int] = None
     code: Optional[str] = None
     notes: Optional[str] = None
     active: bool = True
@@ -129,6 +131,54 @@ async def update_student_type(
     return _serialize_student_type(s)
 
 
+class StudentTypeCreate(BaseModel):
+    slug: str
+    name: str
+    description: Optional[str] = None
+    age_min: Optional[int] = None
+    age_max: Optional[int] = None
+    sort_order: int = 0
+    tutor_mascot: Optional[str] = None
+    tutor_identity: Optional[str] = None
+    tutor_tonal_rules: Optional[str] = None
+    session_focus: Optional[str] = None
+    closing_seed: Optional[str] = None
+
+
+@router.post("/student-types", status_code=201)
+async def create_student_type(
+    payload: StudentTypeCreate,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("admin")),
+):
+    exists = (await db.execute(
+        select(StudentType).where(StudentType.slug == payload.slug)
+    )).scalar_one_or_none()
+    if exists:
+        raise HTTPException(status_code=409, detail="Ya existe un StudentType con ese slug")
+    s = StudentType(**payload.model_dump())
+    db.add(s)
+    await db.commit()
+    await db.refresh(s)
+    return _serialize_student_type(s)
+
+
+@router.delete("/student-types/{slug}")
+async def delete_student_type(
+    slug: str,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("admin")),
+):
+    s = (await db.execute(
+        select(StudentType).where(StudentType.slug == slug)
+    )).scalar_one_or_none()
+    if not s:
+        raise HTTPException(status_code=404, detail="StudentType no encontrado")
+    await db.delete(s)
+    await db.commit()
+    return {"ok": True}
+
+
 @router.get("")
 async def list_modules(
     student_type: Optional[str] = Query(None),
@@ -157,7 +207,9 @@ async def create_module(
         student_type=payload.student_type, level=payload.level, module_order=payload.module_order,
         focus_name=payload.focus_name, ai_restraints=payload.ai_restraints,
         target_grammar=payload.target_grammar, evaluation_criteria=payload.evaluation_criteria,
-        correction_hint=payload.correction_hint, code=payload.code,
+        correction_hint=payload.correction_hint,
+        max_session_minutes=payload.max_session_minutes, max_turns=payload.max_turns,
+        code=payload.code,
         notes=payload.notes, active=payload.active, modeling_examples=[], spaced_review=[],
     )
     db.add(m)

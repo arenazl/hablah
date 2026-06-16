@@ -65,3 +65,12 @@ async def update_level(level_id: int, payload: LevelUpdate, db: AsyncSession = D
         setattr(lv, k, v)
     await db.commit(); await db.refresh(lv)
     return _serialize(lv)
+
+
+@router.delete("/{level_id}")
+async def delete_level(level_id: int, db: AsyncSession = Depends(get_db), _: User = Depends(require_role("admin"))):
+    lv = (await db.execute(select(Level).where(Level.id == level_id))).scalar_one_or_none()
+    if not lv:
+        raise HTTPException(404, "Nivel no encontrado")
+    await db.delete(lv); await db.commit()
+    return {"ok": True}

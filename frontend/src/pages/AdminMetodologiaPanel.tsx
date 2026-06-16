@@ -22,6 +22,7 @@ interface StudentType {
   tutor_identity: string
   tutor_tonal_rules: string
   session_focus: string
+  closing_seed: string
 }
 
 interface Module {
@@ -34,6 +35,8 @@ interface Module {
   target_grammar: string | null
   evaluation_criteria: string | null
   correction_hint: string | null
+  max_session_minutes: number | null
+  max_turns: number | null
   code: string | null
   notes: string | null
   active: boolean
@@ -49,6 +52,8 @@ interface ModuleEdit {
   target_grammar: string
   evaluation_criteria: string
   correction_hint: string
+  max_session_minutes: number | null
+  max_turns: number | null
   notes: string
   active: boolean
 }
@@ -65,7 +70,7 @@ const LEVELS = ['A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 const EMPTY_MODULE: ModuleEdit = {
   student_type: 'adult', level: 'A0', module_order: 1, focus_name: '',
   ai_restraints: '', target_grammar: '', evaluation_criteria: '',
-  correction_hint: '', notes: '', active: true,
+  correction_hint: '', max_session_minutes: null, max_turns: null, notes: '', active: true,
 }
 
 /* ── estilos ─────────────────────────────────────────────────────────────────── */
@@ -208,6 +213,7 @@ function IdentidadesTab() {
           tutor_identity: d.tutor_identity,
           tutor_tonal_rules: d.tutor_tonal_rules,
           session_focus: d.session_focus,
+          closing_seed: d.closing_seed,
         }),
       })
       if (!res.ok) throw new Error()
@@ -285,6 +291,16 @@ function IdentidadesTab() {
                 />
               </div>
 
+              <div className="meto-id-field">
+                <label>Cierre suave (semilla)</label>
+                <textarea
+                  rows={2}
+                  value={d.closing_seed ?? ''}
+                  onChange={(e) => patch(slug, 'closing_seed', e.target.value)}
+                  placeholder="Cómo cerrar con calidez: repaso breve + gancho ('¿Seguimos un ratito más o lo dejamos hasta la próxima?')…"
+                />
+              </div>
+
               <button className="meto-id-save" onClick={() => save(slug)} disabled={isSaving}>
                 {isSaving ? 'Guardando…' : 'Guardar'}
               </button>
@@ -327,7 +343,9 @@ function RielesTab() {
     id: m.id, student_type: m.student_type, level: m.level, module_order: m.module_order,
     focus_name: m.focus_name, ai_restraints: m.ai_restraints || '',
     target_grammar: m.target_grammar || '', evaluation_criteria: m.evaluation_criteria || '',
-    correction_hint: m.correction_hint || '', notes: m.notes || '', active: m.active,
+    correction_hint: m.correction_hint || '',
+    max_session_minutes: m.max_session_minutes, max_turns: m.max_turns,
+    notes: m.notes || '', active: m.active,
   })
 
   const submit = async () => {
@@ -340,6 +358,7 @@ function RielesTab() {
         target_grammar: edit.target_grammar || null,
         evaluation_criteria: edit.evaluation_criteria || null,
         correction_hint: edit.correction_hint || null,
+        max_session_minutes: edit.max_session_minutes, max_turns: edit.max_turns,
         notes: edit.notes || null, active: edit.active,
       }
       const url = edit.id
@@ -455,6 +474,14 @@ function RielesTab() {
               <div className="meto-field">
                 <label>Orden</label>
                 <input type="number" value={edit.module_order} onChange={(e) => setEdit({ ...edit, module_order: parseInt(e.target.value) || 1 })} />
+              </div>
+              <div className="meto-field">
+                <label>Duración (min)</label>
+                <input type="number" value={edit.max_session_minutes ?? ''} onChange={(e) => setEdit({ ...edit, max_session_minutes: e.target.value === '' ? null : parseInt(e.target.value) })} placeholder="ej. 6" />
+              </div>
+              <div className="meto-field">
+                <label>Máx. turnos</label>
+                <input type="number" value={edit.max_turns ?? ''} onChange={(e) => setEdit({ ...edit, max_turns: e.target.value === '' ? null : parseInt(e.target.value) })} placeholder="ej. 12" />
               </div>
               <div className="meto-field full">
                 <label>Foco (nombre del módulo)</label>
