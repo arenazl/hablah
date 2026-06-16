@@ -67,11 +67,37 @@ Migraciones: `scripts/migrate_v17..v19`. Seeds: `seed_coaches/levels/method_laye
      + verde=cargado/rojo=falta) + el PROMPT final en vivo + botón "Probar" (reusa `/llm`).
    - Agregar rutas en `App.tsx` (Backoffice) + wrappers en `services/api.ts`.
 
-### 4. El WIRE (aparte) — que el composer LEA todo esto en la clase real
-   - `services/gemini_live.py::_load_session_context` + `composer_proto`: leer el Coach elegido
-     (bloque 2), `language_rule` (desde levels, bloque 6), duraciones, closing_seed.
-   - Persistir `sessions.raw_session_data` (crudo para post-clase, BLUEPRINT §8).
-   - Mantener fallback: si falta dato, comportamiento actual (prod byte-idéntico).
+### 4. El WIRE — ÚNICO PENDIENTE (lo demás de la consola ya está LIVE)
+
+> §1 (backend CRUD: coaches/catalog/levels), §2 (orquestador) y §3 (frontend:
+> /admin/consola + /admin/abms) están HECHOS y deployados. Falta solo esto:
+> que la CLASE REAL lea los datos nuevos (hoy el orquestador ya los compone y
+> muestra, pero la sesión `/voice/ws` y el banco `/llm` todavía no los usan).
+
+**Regla dura: ADITIVO con fallback.** Si falta el dato, comportamiento actual →
+prod byte-idéntico. Verificar con el chequeo "sin dato => 9 bloques" como en v17.
+
+**Pasos concretos:**
+1. **`composer_proto.compose_proto_prompt`**: que el bloque 6 (`_get_behavioral_guards`)
+   renderice también la **`language_rule`** (viene de `levels`, NO del riel). Pasarla
+   como arg nuevo `language_rule: Optional[str]=None` (si None, no se renderiza →
+   prod intacto). Y el cierre suave (`closing_seed` del StudentType) como sub-regla
+   del bloque 3/enfoque, también opcional.
+2. **`services/gemini_live.py::_load_session_context`** (arma los inputs del composer
+   para la sesión real): cargar de la BD el **Coach** elegido (`users.preferred_coach_id`
+   → `coaches`) y meterlo en `student_type_data` (mascot/identity/tonal = coach), el
+   **`levels.language_rule`** del nivel del alumno, las **duraciones** del riel, el
+   **`closing_seed`** del student_type. Pasarlos a `compose_proto_prompt`.
+3. **Banco `/llm`** (`api/voice.py::voice_ws_llm_test`): pasar también `language_rule`
+   (del nivel A0) + el coach, para que el "Now you" se arregle en vivo ahí.
+4. **Persistir crudo**: en `services/gemini_live.py::voice_proxy`, al cerrar la sesión,
+   volcar los `counters` + target items + timing a `sessions.raw_session_data`
+   (observabilidad dev, BLUEPRINT §8 + memoria `project-observabilidad-dev-oro`).
+5. Deploy: `git push heroku main` + verificar `/health` 200. Probar en `/llm` que
+   el coach A0 ya NO dice "now you" (dice "ahora vos") — ahí está el éxito del wire.
+
+**Referencia del patrón aditivo:** los overrides de `model_override`/VAD en
+`gemini_live_engine.py` (cómo se agregó algo opcional sin tocar el path de prod).
 
 ## Deploy
 `git push origin main && git push heroku main` (backend) · `cd frontend && npm run build &&
