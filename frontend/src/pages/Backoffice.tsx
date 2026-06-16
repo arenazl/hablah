@@ -16,6 +16,8 @@ import AdminUsersPanel from './AdminUsersPanel'
 import AdminReglasPanel from './AdminReglasPanel'
 import AdminKitsPanel from './AdminKitsPanel'
 import AdminPromptBuilderPanel from './AdminPromptBuilderPanel'
+import AdminWizardPanel from './AdminWizardPanel'
+import AdminFlowPanel from './AdminFlowPanel'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -60,6 +62,8 @@ export function Backoffice() {
             <Route path="/reglas" element={<AdminReglasPanel />} />
             <Route path="/kits" element={<AdminKitsPanel />} />
             <Route path="/orquestador" element={<AdminPromptBuilderPanel />} />
+            <Route path="/wizard" element={<AdminWizardPanel />} />
+            <Route path="/flujo" element={<AdminFlowPanel />} />
           </Routes>
         </main>
       </div>
@@ -108,6 +112,8 @@ function BoSidebar({ open }: { open: boolean }) {
       <nav className="sidebar-nav">
         <SidebarItem to="/admin" exact label="Resumen" />
         <SidebarItem to="/admin/orquestador" label="Orquestador" />
+        <SidebarItem to="/admin/wizard" label="Wizard (9 etapas)" />
+        <SidebarItem to="/admin/flujo" label="Flujo (mapa)" />
         <SidebarItem to="/admin/consola" label="Consola (debug)" />
         <SidebarItem to="/admin/alumnos" label="Alumnos" />
         <SidebarItem to="/admin/usuarios" label="Usuarios" />

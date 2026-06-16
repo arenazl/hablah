@@ -3,9 +3,28 @@
 import { useState } from 'react'
 import { AbmTable, AbmCol } from './AbmTable'
 
-interface TabDef { key: string; label: string; endpoint: string; columns: AbmCol[]; newRow: Record<string, unknown> }
+interface TabDef { key: string; label: string; endpoint: string; columns: AbmCol[]; newRow: Record<string, unknown>; idField?: string }
 
 const TABS: TabDef[] = [
+  {
+    key: 'student_types', label: 'Segmentos (edad)', endpoint: '/methodology-modules/student-types', idField: 'slug',
+    columns: [
+      { field: 'slug', label: 'Segmento', readOnly: true },
+      { field: 'name', label: 'Nombre' },
+      { field: 'tutor_mascot', label: 'Mascota tutor' },
+      { field: 'pedagogy', label: 'Pedagogía — cómo enseña', type: 'textarea' },
+      { field: 'form_rules', label: 'Forma — reglas por edad', type: 'textarea' },
+      { field: 'session_focus', label: 'Foco de sesión', type: 'textarea' },
+      { field: 'opening_seed', label: 'Arranque', type: 'textarea' },
+      { field: 'continuation_seed', label: 'Desarrollo', type: 'textarea' },
+      { field: 'closing_seed', label: 'Cierre', type: 'textarea' },
+      { field: 'tutor_identity', label: 'Identidad tutor', type: 'textarea' },
+      { field: 'tutor_tonal_rules', label: 'Tono', type: 'textarea' },
+      { field: 'duration_adjust_minutes', label: 'Ajuste duración (min)', type: 'number' },
+      { field: 'active', label: 'Activo', type: 'bool' },
+    ],
+    newRow: { slug: '', name: '', tutor_mascot: '', pedagogy: '', form_rules: '', session_focus: '', opening_seed: '', continuation_seed: '', closing_seed: '', tutor_identity: '', tutor_tonal_rules: '', duration_adjust_minutes: 0, active: true },
+  },
   {
     key: 'coaches', label: 'Coaches', endpoint: '/coaches',
     columns: [
@@ -28,11 +47,15 @@ const TABS: TabDef[] = [
       { field: 'code', label: 'CEFR' },
       { field: 'friendly_name', label: 'Nombre amigable' },
       { field: 'short_desc', label: 'Descripción' },
-      { field: 'language_rule', label: 'Regla de idioma', type: 'textarea' },
+      { field: 'language_rule', label: 'Regla de idioma (ES/EN)', type: 'textarea' },
+      { field: 'curriculum_grammar', label: 'Currículum — qué se aprende', type: 'textarea' },
+      { field: 'expected_production', label: 'Producción esperada', type: 'textarea' },
+      { field: 'vocab_depth', label: 'Profundidad vocab (basic/full)' },
+      { field: 'duration_base_minutes', label: 'Duración base (min)', type: 'number' },
       { field: 'sort_order', label: 'Orden', type: 'number' },
       { field: 'active', label: 'Activo', type: 'bool' },
     ],
-    newRow: { code: '', friendly_name: '', short_desc: '', language_rule: '', sort_order: 0, active: true },
+    newRow: { code: '', friendly_name: '', short_desc: '', language_rule: '', curriculum_grammar: '', expected_production: '', vocab_depth: 'full', duration_base_minutes: 10, sort_order: 0, active: true },
   },
   {
     key: 'categories', label: 'Categorías', endpoint: '/catalog/categories',
@@ -82,7 +105,7 @@ export default function AdminAbmsPanel() {
           ))}
         </div>
         <div style={{ background: '#11151d', border: '1px solid #232936', borderRadius: 14, padding: 16 }}>
-          <AbmTable key={active.key} endpoint={active.endpoint} columns={active.columns} newRow={active.newRow} />
+          <AbmTable key={active.key} endpoint={active.endpoint} columns={active.columns} newRow={active.newRow} idField={active.idField} />
         </div>
       </div>
     </div>

@@ -89,6 +89,10 @@ def _serialize_student_type(s: StudentType) -> dict:
         "opening_seed": getattr(s, "opening_seed", None) or "",
         "continuation_seed": getattr(s, "continuation_seed", None) or "",
         "closing_seed": getattr(s, "closing_seed", None) or "",
+        # Eje EDAD del motor (cómo enseña / forma): lo lee el bloque 3 y 6.
+        "pedagogy": getattr(s, "pedagogy", None) or "",
+        "form_rules": getattr(s, "form_rules", None) or "",
+        "duration_adjust_minutes": getattr(s, "duration_adjust_minutes", None),
         "active": bool(s.active),
     }
 
@@ -101,6 +105,9 @@ class StudentTypeUpdate(BaseModel):
     opening_seed: Optional[str] = None
     continuation_seed: Optional[str] = None
     closing_seed: Optional[str] = None
+    pedagogy: Optional[str] = None
+    form_rules: Optional[str] = None
+    duration_adjust_minutes: Optional[int] = None
     name: Optional[str] = None
     description: Optional[str] = None
 
@@ -149,6 +156,9 @@ class StudentTypeCreate(BaseModel):
     opening_seed: Optional[str] = None
     continuation_seed: Optional[str] = None
     closing_seed: Optional[str] = None
+    pedagogy: Optional[str] = None
+    form_rules: Optional[str] = None
+    duration_adjust_minutes: Optional[int] = None
 
 
 @router.post("/student-types", status_code=201)

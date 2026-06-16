@@ -23,6 +23,11 @@ class LevelBase(BaseModel):
     sort_order: int = 0
     short_desc: Optional[str] = None
     language_rule: Optional[str] = None
+    # Eje NIVEL del motor (lo que lee el bloque 6/7): qué se aprende + producción + profundidad.
+    curriculum_grammar: Optional[str] = None
+    expected_production: Optional[str] = None
+    vocab_depth: Optional[str] = None            # basic | full
+    duration_base_minutes: Optional[int] = None
     active: bool = True
 
 
@@ -32,6 +37,10 @@ class LevelUpdate(BaseModel):
     sort_order: Optional[int] = None
     short_desc: Optional[str] = None
     language_rule: Optional[str] = None
+    curriculum_grammar: Optional[str] = None
+    expected_production: Optional[str] = None
+    vocab_depth: Optional[str] = None
+    duration_base_minutes: Optional[int] = None
     active: Optional[bool] = None
 
 
@@ -39,7 +48,12 @@ def _serialize(lv: Level) -> dict:
     return {
         "id": lv.id, "code": lv.code, "friendly_name": lv.friendly_name,
         "sort_order": lv.sort_order, "short_desc": lv.short_desc or "",
-        "language_rule": getattr(lv, "language_rule", None) or "", "active": bool(lv.active),
+        "language_rule": getattr(lv, "language_rule", None) or "",
+        "curriculum_grammar": getattr(lv, "curriculum_grammar", None) or "",
+        "expected_production": getattr(lv, "expected_production", None) or "",
+        "vocab_depth": getattr(lv, "vocab_depth", None) or "",
+        "duration_base_minutes": getattr(lv, "duration_base_minutes", None),
+        "active": bool(lv.active),
     }
 
 
