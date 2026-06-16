@@ -46,6 +46,8 @@ class ModuleUpdate(BaseModel):
     target_grammar: Optional[str] = None
     evaluation_criteria: Optional[str] = None
     correction_hint: Optional[str] = None
+    max_session_minutes: Optional[int] = None
+    max_turns: Optional[int] = None
     code: Optional[str] = None
     notes: Optional[str] = None
     active: Optional[bool] = None
@@ -62,6 +64,8 @@ def _serialize(m: MethodologyModule) -> dict:
         "target_grammar": m.target_grammar,
         "evaluation_criteria": m.evaluation_criteria,
         "correction_hint": m.correction_hint,
+        "max_session_minutes": getattr(m, "max_session_minutes", None),
+        "max_turns": getattr(m, "max_turns", None),
         "code": m.code,
         "notes": m.notes,
         "active": bool(m.active),
@@ -80,6 +84,7 @@ def _serialize_student_type(s: StudentType) -> dict:
         "tutor_identity": getattr(s, "tutor_identity", None) or "",
         "tutor_tonal_rules": getattr(s, "tutor_tonal_rules", None) or "",
         "session_focus": getattr(s, "session_focus", None) or "",
+        "closing_seed": getattr(s, "closing_seed", None) or "",
         "active": bool(s.active),
     }
 
@@ -89,6 +94,7 @@ class StudentTypeUpdate(BaseModel):
     tutor_identity: Optional[str] = None
     tutor_tonal_rules: Optional[str] = None
     session_focus: Optional[str] = None
+    closing_seed: Optional[str] = None
     name: Optional[str] = None
     description: Optional[str] = None
 

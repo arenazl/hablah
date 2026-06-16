@@ -178,6 +178,10 @@ class Level(Base):
     friendly_name = Column(String(60), nullable=False)  # "Explorador", "Maestro"
     sort_order = Column(Integer, nullable=False, default=0)
     short_desc = Column(String(200), nullable=True)
+    # Regla de IDIOMA del coach — vive ACÁ porque la mezcla ES/EN depende SOLO del
+    # nivel (un A0 es español tenga 5 o 40 años). A0=100% español salvo la palabra
+    # objetivo -> B2+=100% inglés. Es donde vive el fix del "Now you".
+    language_rule = Column(Text, nullable=True)
     active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
