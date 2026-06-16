@@ -716,6 +716,12 @@ function TopicEditView({ onMenu }: { onMenu: () => void }) {
   if (!t) return <><PageHead eyebrow="Tópicos · Editar" title="Cargando…" onMenu={onMenu} /></>
 
   const save = async () => {
+    // doc 11 §1.1 — el tópico es SOLO data. Si detectamos instrucciones de conducta, avisamos (no bloquea).
+    const blob = [...Object.values(t.seed_prompts || {}), ...(t.keywords || [])].join('  ').toLowerCase()
+    const conductFlags = ['no digas', 'hablá despacio', 'habla despacio', 'corregí', 'una pregunta por turno', 'espejo en español', 'prohibido', 'en voz baja', 'onomatopey', 'usá un tono']
+    if (conductFlags.some((f) => blob.includes(f))) {
+      toast('Ojo: eso parece una instrucción de conducta. El "cómo enseñar" (tono, reglas, ritmo) va en Metodología → Rieles. El tópico es solo data: vocabulario, frases y objetivo.', { duration: 8000 })
+    }
     try {
       await topicsAPI.update(t.id, t)
       toast.success('Tópico guardado')
