@@ -398,6 +398,42 @@ export const ttsAPI = {
   },
 }
 
+/* ────────────── MOTOR v3 (back office del modelo de 9 capas) ────────────── */
+export interface MotorColumn {
+  name: string; data_type: string; is_pk: boolean; auto: boolean
+  nullable: boolean; enum_options: string[] | null; fk_ref: string | null
+}
+export interface MotorTable {
+  name: string; label: string; group: string; pk: string[]; columns: MotorColumn[]; count: number
+}
+export interface MotorResolve {
+  prompt: string
+  meta: {
+    band_code: string; band_label: string; level: string; topic_title: string | null
+    tutor_name: string | null; orchestration_name: string | null; pacing_min: number
+    objectives: { kind: string; description: string; estado: string }[]
+    words: string[]; phrases: string[]
+  }
+  guards_pool: { guard_id: number; ord: number; body: string }[]
+  guards_final: string[]
+}
+export interface MotorOverride { slot: string; action: 'disable' | 'add' | 'pin'; target_id?: number; body?: string }
+
+export const motorAPI = {
+  tables: () => api.get<MotorTable[]>('/motor/tables').then((r) => r.data),
+  rows: (t: string) => api.get<any[]>(`/motor/rows/${t}`).then((r) => r.data),
+  insert: (t: string, row: Record<string, any>) => api.post(`/motor/rows/${t}`, row).then((r) => r.data),
+  update: (t: string, pk: Record<string, any>, set: Record<string, any>) =>
+    api.patch(`/motor/rows/${t}`, { pk, set }).then((r) => r.data),
+  remove: (t: string, pk: Record<string, any>) =>
+    api.delete(`/motor/rows/${t}`, { data: { pk } }).then((r) => r.data),
+  dimensions: () => api.get('/motor/dimensions').then((r) => r.data),
+  resolve: (body: {
+    band_code: string; level_code: string; topic_id?: number | null
+    student_id?: number | null; test_overrides?: MotorOverride[]
+  }) => api.post<MotorResolve>('/motor/resolve', body).then((r) => r.data),
+}
+
 /* ────────────── VOICE WS ────────────── */
 /** Base de WS apuntando al backend real (no via proxy de Netlify, que rompe
  * el WebSocket upgrade y devuelve 404). Ej: wss://hablah-api-XXX.herokuapp.com/api */

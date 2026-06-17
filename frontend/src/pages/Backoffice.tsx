@@ -19,6 +19,8 @@ import AdminWizardPanel from './AdminWizardPanel'
 import AdminTimelinePanel from './AdminTimelinePanel'
 import AdminRulesPanel from './AdminRulesPanel'
 import AdminOrquestacionesPanel from './AdminOrquestacionesPanel'
+import MotorPlaygroundPanel from './MotorPlaygroundPanel'
+import MotorAbmPanel from './MotorAbmPanel'
 import AdminFlowPanel from './AdminFlowPanel'
 import AdminPostClasePanel from './AdminPostClasePanel'
 import AdminMemoriaPanel from './AdminMemoriaPanel'
@@ -69,6 +71,8 @@ export function Backoffice() {
             <Route path="/timeline" element={<AdminTimelinePanel />} />
             <Route path="/reglas-motor" element={<AdminRulesPanel />} />
             <Route path="/orquestaciones" element={<AdminOrquestacionesPanel />} />
+            <Route path="/motor" element={<MotorPlaygroundPanel />} />
+            <Route path="/motor-abms" element={<MotorAbmPanel />} />
             <Route path="/flujo" element={<AdminFlowPanel />} />
             <Route path="/post-clase" element={<AdminPostClasePanel />} />
             <Route path="/memoria" element={<AdminMemoriaPanel />} />
@@ -107,16 +111,10 @@ function BoSidebar({ open }: { open: boolean }) {
         </NavLink>
       </div>
 
-      <div className="sidebar-section">Motor · armás la orquestación</div>
+      <div className="sidebar-section">Motor de 9 capas (modelo v3)</div>
       <nav className="sidebar-nav">
-        <SidebarItem to="/admin/orquestaciones" label="Orquestaciones" />
-        <SidebarItem to="/admin/wizard" label="Wizard (armar la clase)" />
-        <SidebarItem to="/admin/orquestador" label="Orquestador (drag-drop)" />
-        <SidebarItem to="/admin/reglas-motor" label="Biblioteca de reglas" />
-        <SidebarItem to="/admin/abms" label="ABMs (banda/nivel/coach)" />
-        <SidebarItem to="/admin/topicos" label="Tópicos" />
-        <SidebarItem to="/admin/kits" label="Kits" />
-        <SidebarItem to="/admin/reglas" label="Reglas de salida" />
+        <SidebarItem to="/admin/motor" label="Playground (probar clases)" />
+        <SidebarItem to="/admin/motor-abms" label="Tags del modelo (ABM)" />
       </nav>
       <div className="sidebar-section">Operación · trabajás con alumnos</div>
       <nav className="sidebar-nav">
