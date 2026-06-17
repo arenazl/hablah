@@ -25,6 +25,7 @@ const AudioTuningPage = lazy(() =>
 )
 const GuestRoom = lazy(() => import('./pages/GuestRoom').then(m => ({ default: m.GuestRoom })))
 const LlmTestPage = lazy(() => import('./pages/LlmTestPage').then(m => ({ default: m.LlmTestPage })))
+const TrainingPanel = lazy(() => import('./pages/TrainingPanel'))
 const KidsHome = lazy(() => import('./pages/kids/KidsHome').then(m => ({ default: m.KidsHome })))
 const KidsAgeSelect = lazy(() =>
   import('./pages/kids/KidsAgeSelect').then(m => ({ default: m.KidsAgeSelect })),
@@ -125,6 +126,7 @@ export default function App() {
           <Route path="/kids/*" element={<KidsProvider><KidsHome /></KidsProvider>} />
           <Route path="/charla/:token" element={<GuestRoom />} />
           <Route path="/llm" element={<LlmTestPage />} />
+          <Route path="/training" element={<TrainingPanel />} />
           <Route
             path="/tune"
             element={

@@ -162,8 +162,9 @@ async def delete_row(table: str, payload: dict = Body(...), db: AsyncSession = D
 
 # ════════════════════════════ Playground (orquestación JIT) ════════════════════════════
 @router.get("/dimensions")
-async def dimensions(db: AsyncSession = Depends(get_db), _: User = _admin):
-    """Selectores del playground: bandas, niveles, catálogo cat→subcat→tópicos, alumnos."""
+async def dimensions(db: AsyncSession = Depends(get_db)):
+    """Selectores del playground: bandas, niveles, catálogo cat→subcat→tópicos, alumnos.
+    Sin auth: lo consume el probador/training de prueba (como /llm)."""
     bands = _rows(await db.execute(text(
         "SELECT band_id, code, label, min_age, max_age, phase_group FROM age_band ORDER BY band_id")))
     levels = _rows(await db.execute(text(
@@ -219,8 +220,8 @@ async def postclass(payload: PostclassIn, _: User = _admin):
 
 # ════════════════════════════ /training · ciclo de aprendizaje ════════════════════════════
 @router.get("/train/state/{student_id}")
-async def train_state(student_id: int, _: User = _admin):
-    """Memoria del alumno (objetivos del nivel con estado SRS + ítems)."""
+async def train_state(student_id: int):
+    """Memoria del alumno (objetivos del nivel con estado SRS + ítems). Sin auth (/training)."""
     try:
         return await motor_engine.train_state(student_id)
     except Exception as e:
@@ -233,8 +234,8 @@ class TrainApplyIn(BaseModel):
 
 
 @router.post("/train/apply")
-async def train_apply(payload: TrainApplyIn, _: User = _admin):
-    """Cierra la clase de training: sube la escalera SRS del alumno."""
+async def train_apply(payload: TrainApplyIn):
+    """Cierra la clase de training: sube la escalera SRS del alumno. Sin auth (/training)."""
     try:
         return await motor_engine.train_apply(payload.student_id, payload.outcomes)
     except Exception as e:
