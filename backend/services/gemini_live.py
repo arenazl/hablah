@@ -157,15 +157,28 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"learner_state no disponible ({e})")
 
-        super_prompt = build_super_prompt(
-            user=user, template=template, topic=topic,
-            recently_used_keywords=recently_used_keywords,
-            learning_objective=learning_objective,
-            student_type_data=student_type_data,
-            level_data=level_data,
-            app_config=app_config,
-            learner_state=learner_state,
-        )
+        # MOTOR v2 — el catálogo de reglas maneja la clase: dado (banda, nivel, tópico)
+        # SELECCIONA las reglas del catálogo (no texto libre). Detrás de flag RULES_MOTOR
+        # (default OFF) hasta validar; con OFF sigue el composer viejo, intacto.
+        if os.getenv("RULES_MOTOR", "0") == "1":
+            from services.composer_rules import compose_from_catalog
+            _res = await compose_from_catalog(
+                db, segment=(getattr(user, "age_group", None) or "adult"),
+                nivel=(user.cefr_level or "A1"), topic=topic,
+                user_name=user.nombre, learner_state=learner_state,
+            )
+            super_prompt = _res["prompt"]
+            log.info("PROMPT via MOTOR v2 (catálogo) — slots: %s", {k: len(v) for k, v in _res["slots"].items() if v})
+        else:
+            super_prompt = build_super_prompt(
+                user=user, template=template, topic=topic,
+                recently_used_keywords=recently_used_keywords,
+                learning_objective=learning_objective,
+                student_type_data=student_type_data,
+                level_data=level_data,
+                app_config=app_config,
+                learner_state=learner_state,
+            )
 
         # ─── OBSERVABILIDAD TOTAL: el circuito entero del prompt ───
         # Cada clase loguea la cadena de relaciones resuelta + el prompt final.

@@ -105,24 +105,17 @@ function BoSidebar({ open }: { open: boolean }) {
         </NavLink>
       </div>
 
-      <div className="sidebar-section">Carga · definís el sistema</div>
+      <div className="sidebar-section">Motor · armás la orquestación</div>
       <nav className="sidebar-nav">
         <SidebarItem to="/admin/reglas-motor" label="Motor de reglas" />
+        <SidebarItem to="/admin/abms" label="ABMs (banda/nivel/coach)" />
         <SidebarItem to="/admin/topicos" label="Tópicos" />
         <SidebarItem to="/admin/kits" label="Kits" />
-        <SidebarItem to="/admin/metodologia" label="Metodología" />
-        <SidebarItem to="/admin/abms" label="ABMs motor" />
-        <SidebarItem to="/admin/templates" label="Templates" />
         <SidebarItem to="/admin/reglas" label="Reglas de salida" />
       </nav>
       <div className="sidebar-section">Operación · trabajás con alumnos</div>
       <nav className="sidebar-nav">
         <SidebarItem to="/admin" exact label="Resumen" />
-        <SidebarItem to="/admin/timeline" label="Mesa de control" />
-        <SidebarItem to="/admin/orquestador" label="Orquestador" />
-        <SidebarItem to="/admin/wizard" label="Wizard (9 etapas)" />
-        <SidebarItem to="/admin/flujo" label="Flujo (mapa)" />
-        <SidebarItem to="/admin/consola" label="Consola (debug)" />
         <SidebarItem to="/admin/alumnos" label="Alumnos" />
         <SidebarItem to="/admin/usuarios" label="Usuarios" />
         <SidebarItem to="/admin/post-clase" label="Post-clase" />

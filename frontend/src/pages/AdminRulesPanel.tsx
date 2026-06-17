@@ -33,7 +33,7 @@ export default function AdminRulesPanel() {
   const [res, setRes] = useState<Resolved | null>(null)
   const [seg, setSeg] = useState('mini')
   const [nivel, setNivel] = useState('A1')
-  const [onlyActive, setOnlyActive] = useState(false)
+  const [showAll, setShowAll] = useState(false)  // por defecto: solo la orquestación que cae
   const isMobile = useIsMobile()
 
   const load = useCallback(() => {
@@ -88,8 +88,9 @@ export default function AdminRulesPanel() {
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 4px' }}>Motor de reglas · catálogo</h1>
         <p style={{ color: '#9aa3af', fontSize: 13, margin: '0 0 16px', maxWidth: 820 }}>
-          Las reglas predefinidas del motor, por capa. Elegí banda + nivel y mirá cuáles <b>caen</b> en la clase
-          (resaltadas en verde) + el prompt armado. Prendé/apagá, corregí el texto o agregá una. Nada es texto libre.
+          Elegí <b>banda + nivel</b> y el motor te arma la orquestación: <b>las reglas que caen</b>, por capa,
+          y el prompt resultante. Cambiá la banda o el nivel y se re-selecciona todo solo. Corregí una regla o
+          agregá; activá "ver todo el catálogo" si querés sumar desde la biblioteca completa. Cero texto libre.
         </p>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 16 }}>
@@ -102,10 +103,10 @@ export default function AdminRulesPanel() {
               {NIVELES.map((n) => <option key={n} value={n}>{n}</option>)}
             </select></div>
           <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: '#cbd5e1', cursor: 'pointer' }}>
-            <input type="checkbox" checked={onlyActive} onChange={(e) => setOnlyActive(e.target.checked)} /> solo las que caen
+            <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} /> ver todo el catálogo
           </label>
           <div style={{ marginLeft: isMobile ? 0 : 'auto', fontSize: 12, color: '#9aa3af' }}>
-            {selectedIds.size} reglas en la clase · {rules.length} en el catálogo
+            <b style={{ color: '#22c55e' }}>{selectedIds.size}</b> reglas en esta orquestación · {rules.length} en la biblioteca
           </div>
         </div>
 
@@ -113,8 +114,8 @@ export default function AdminRulesPanel() {
           {/* catálogo por slot */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {groups.map(([bloque, rs]) => {
-              const shown = onlyActive ? rs.filter((r) => selectedIds.has(r.id)) : rs
-              if (onlyActive && shown.length === 0) return null
+              const shown = showAll ? rs : rs.filter((r) => selectedIds.has(r.id))
+              if (!showAll && shown.length === 0) return null
               return (
                 <div key={bloque} style={{ background: '#11151d', border: '1px solid #232936', borderRadius: 14, padding: 14 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>

@@ -111,6 +111,10 @@ async def compose_from_catalog(
         # la clase es UNO solo, el que eligió el sequencer. Acá entra ese + la profundidad (DPT).
         if slot == "7":
             matched = [r for r in matched if not r.id.startswith("TOP-")]
+        # Slot 2 (personalidad): la banda tiene un POOL; la clase usa UNA. Rotación = futuro;
+        # por ahora la 1ª del pool (por sort_order).
+        if slot == "2" and len(matched) > 1:
+            matched = matched[:1]
 
         # meta = dato vivo (runtime/tópico) como key:value; las REGLAS del catálogo, como viñetas.
         meta: list[str] = []
