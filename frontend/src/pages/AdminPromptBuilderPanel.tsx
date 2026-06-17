@@ -13,7 +13,9 @@ import api from '../services/api'
 interface St { slug: string; name: string }
 interface Coach { id: number; name: string; gender: string; voice_name: string }
 interface Lvl { code: string; friendly_name: string }
-interface Top { id: number; title: string }
+interface Top { id: number; title: string; audience?: string }
+
+const KID_SEGS = ['mini', 'junior', 'tween']
 interface Block { n: number; name: string; source: string; loaded: boolean; preview: string }
 interface Resolved { prompt: string; blocks: Block[]; loaded_count: number; total: number }
 
@@ -25,6 +27,8 @@ const STEP_LABEL: Record<string, { label: string; help: string; edit?: string }>
   gamification_focus: { label: 'La dinámica', help: 'El juego/enfoque de la sesión', edit: '/admin/metodologia' },
   student_profile: { label: 'El alumno', help: 'Nombre, edad, nivel' },
   'behavioral_guards (riel)': { label: 'Las reglas del nivel', help: 'Qué puede y qué no decir el coach', edit: '/admin/metodologia' },
+  'behavioral_guards · forma (edad)': { label: 'La forma (por edad)', help: 'Cómo produce y se corrige el alumno', edit: '/admin/metodologia' },
+  'behavioral_guards · nivel (idioma+currículum)': { label: 'Las reglas del nivel', help: 'Idioma ES/EN + currículum del nivel', edit: '/admin/abms' },
   language_rule: { label: 'Idioma por nivel', help: 'El "ahora vos" vs "now you"', edit: '/admin/abms' },
   output_rules: { label: 'Reglas de salida', help: 'Voz, ASR, seguridad, validador', edit: '/admin/reglas' },
   current_lesson_vocabulary: { label: 'De qué se habla', help: 'El tópico y sus palabras ancla', edit: '/admin/topicos' },
@@ -50,6 +54,18 @@ function Piece({ id, kind, label, sub }: { id: string; kind: string; label: stri
     >
       <div style={{ fontWeight: 600 }}>{label}</div>
       {sub && <div style={{ fontSize: 11, color: '#9aa3af', marginTop: 1 }}>{sub}</div>}
+    </div>
+  )
+}
+
+/* ── encabezado de sección de la paleta (colapsa al elegir) ──────────────── */
+function SectionHead({ title, chosen, onChange }: { title: string; chosen?: string | null; onChange: () => void }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, margin: '12px 0 5px' }}>
+      <div style={{ fontSize: 11, color: '#9aa3af', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {title}{chosen ? ': ' : ''}<span style={{ color: '#22c55e', fontWeight: 700 }}>{chosen || ''}</span>
+      </div>
+      {chosen && <button onClick={onChange} style={{ background: 'none', border: 0, color: '#7dd3fc', cursor: 'pointer', fontSize: 11, flexShrink: 0 }}>cambiar</button>}
     </div>
   )
 }
@@ -86,6 +102,12 @@ export default function AdminPromptBuilderPanel() {
   const [res, setRes] = useState<Resolved | null>(null)
   const [saved, setSaved] = useState<{ id: number; name: string; student_type: string; coach_id: number | null; level: string; topic_id: number | null }[]>([])
   const [orchName, setOrchName] = useState('')
+
+  // Acordeón de la paleta: cada sección se COLAPSA al elegir (menos scroll). "cambiar" la reabre.
+  const [reopened, setReopened] = useState<Set<string>>(new Set())
+  const isOpen = (key: string, hasVal: boolean) => !hasVal || reopened.has(key)
+  const reopen = (key: string) => setReopened((p) => new Set(p).add(key))
+  const collapseKind = (key: string) => setReopened((p) => { const n = new Set(p); n.delete(key); return n })
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
@@ -133,14 +155,19 @@ export default function AdminPromptBuilderPanel() {
     else if (kind === 'coach') setCoachId(Number(val))
     else if (kind === 'level') setLevel(val)
     else if (kind === 'topic') setTopicId(Number(val))
+    collapseKind(kind)  // al elegir, la sección se minimiza
   }
 
   const stName = studentTypes.find((s) => s.slug === st)?.name
   const coachName = coaches.find((c) => c.id === coachId)?.name
   const lvlName = levels.find((l) => l.code === level)?.friendly_name
   const topName = topics.find((t) => t.id === topicId)?.title
+  // El tópico se filtra por la AUDIENCIA del segmento elegido: chicos ven tópicos de
+  // chicos, adultos los de adultos (concepto clave; no se mezclan).
+  const audience = st ? (KID_SEGS.includes(st) ? 'kid' : 'adult') : null
   const ql = topicQ.trim().toLowerCase()
-  const topFiltered = (ql ? topics.filter((t) => t.title.toLowerCase().includes(ql)) : topics).slice(0, 40)
+  const topByAud = audience ? topics.filter((t) => (t.audience || 'adult') === audience) : topics
+  const topFiltered = (ql ? topByAud.filter((t) => t.title.toLowerCase().includes(ql)) : topByAud).slice(0, 40)
 
   return (
     <div style={{ minHeight: '100vh', background: '#0b0e14', color: '#e6e8ec', padding: '22px 20px 64px' }}>
@@ -173,18 +200,29 @@ export default function AdminPromptBuilderPanel() {
             {/* ── PALETA ── */}
             <div style={COL}>
               <div style={LBL}>Piezas</div>
-              <div style={{ fontSize: 11, color: '#9aa3af', marginBottom: 4 }}>Segmento (enfoque)</div>
-              {studentTypes.map((s) => <Piece key={s.slug} id={`segment:${s.slug}`} kind="segment" label={s.name} sub={s.slug} />)}
-              <div style={{ fontSize: 11, color: '#9aa3af', margin: '10px 0 4px' }}>Coach{st ? '' : ' (elegí segmento)'}</div>
-              {coaches.map((c) => <Piece key={c.id} id={`coach:${c.id}`} kind="coach" label={c.name} sub={`${c.gender} · ${c.voice_name}`} />)}
-              <div style={{ fontSize: 11, color: '#9aa3af', margin: '10px 0 4px' }}>Nivel (reglas)</div>
-              {levels.map((l) => <Piece key={l.code} id={`level:${l.code}`} kind="level" label={l.code} sub={l.friendly_name} />)}
-              <div style={{ fontSize: 11, color: '#9aa3af', margin: '10px 0 4px' }}>Tópico</div>
-              <input value={topicQ} onChange={(e) => setTopicQ(e.target.value)} placeholder="Buscar tópico…"
-                style={{ width: '100%', padding: '6px 9px', borderRadius: 8, border: '1px solid #232936', background: '#0b0e14', color: '#e6e8ec', fontSize: 12, marginBottom: 6 }} />
-              <div style={{ maxHeight: 200, overflowY: 'auto' }}>
-                {topFiltered.map((t) => <Piece key={t.id} id={`topic:${t.id}`} kind="topic" label={t.title} />)}
-              </div>
+
+              <SectionHead title="Segmento (enfoque)" chosen={isOpen('segment', !!st) ? null : stName} onChange={() => reopen('segment')} />
+              {isOpen('segment', !!st) && studentTypes.map((s) => <Piece key={s.slug} id={`segment:${s.slug}`} kind="segment" label={s.name} sub={s.slug} />)}
+
+              <SectionHead title={`Coach${st ? '' : ' (elegí segmento)'}`} chosen={isOpen('coach', !!coachId) ? null : coachName} onChange={() => reopen('coach')} />
+              {isOpen('coach', !!coachId) && coaches.map((c) => <Piece key={c.id} id={`coach:${c.id}`} kind="coach" label={c.name} sub={`${c.gender} · ${c.voice_name}`} />)}
+
+              <SectionHead title="Nivel (reglas)" chosen={isOpen('level', !!level) ? null : (lvlName ? `${level} — ${lvlName}` : null)} onChange={() => reopen('level')} />
+              {isOpen('level', !!level) && levels.map((l) => <Piece key={l.code} id={`level:${l.code}`} kind="level" label={l.code} sub={l.friendly_name} />)}
+
+              <SectionHead title="Tópico" chosen={isOpen('topic', !!topicId) ? null : topName} onChange={() => reopen('topic')} />
+              {isOpen('topic', !!topicId) && (
+                <>
+                  {!st
+                    ? <div style={{ fontSize: 11, color: '#6b7686', marginBottom: 6 }}>Elegí un segmento para ver sus tópicos.</div>
+                    : <div style={{ fontSize: 10.5, color: '#5b6473', marginBottom: 6 }}>{audience === 'kid' ? 'Tópicos de chicos' : 'Tópicos de adultos'}</div>}
+                  <input value={topicQ} onChange={(e) => setTopicQ(e.target.value)} placeholder="Buscar tópico…"
+                    style={{ width: '100%', padding: '6px 9px', borderRadius: 8, border: '1px solid #232936', background: '#0b0e14', color: '#e6e8ec', fontSize: 12, marginBottom: 6 }} />
+                  <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                    {topFiltered.map((t) => <Piece key={t.id} id={`topic:${t.id}`} kind="topic" label={t.title} />)}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* ── CANVAS (la clase) ── */}
