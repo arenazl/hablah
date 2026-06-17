@@ -105,32 +105,6 @@ class Template(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
-class AdminDirective(Base):
-    """Modo evolutivo del coach. Cuando el super-admin dice durante una sesion Live:
-    "hola soy el super admin Luquitas, <feedback>", se intercepta el transcript
-    y se guarda una directiva acá. La directiva se inyecta como regla DURA en el
-    super_prompt para todas las sesiones futuras de ese template. Persistente.
-
-    Cada entrada guarda snapshot completo del prompt ANTES y DESPUES, asi el admin
-    puede auditar el efecto de cada feedback suyo.
-    """
-    __tablename__ = "admin_directives"
-
-    id = Column(Integer, primary_key=True, index=True)
-    template_id = Column(Integer, nullable=False, index=True)
-    session_id = Column(Integer, nullable=True, index=True)  # de que sesion vino
-    user_id = Column(Integer, nullable=False, index=True)    # el admin que lo dijo
-
-    raw_feedback = Column(Text, nullable=False)              # transcripcion literal
-    directive_text = Column(Text, nullable=False)            # regla refinada por Flash
-
-    prompt_before = Column(Text, nullable=False)             # snapshot completo antes
-    prompt_after = Column(Text, nullable=False)              # snapshot completo despues
-
-    active = Column(Boolean, nullable=False, default=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-
 class Topic(Base):
     """Punteros temáticos. Cada usuario elige 4-5 al onboarding."""
     __tablename__ = "topics"

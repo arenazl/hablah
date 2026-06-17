@@ -91,12 +91,6 @@ async def start_session(
             is_kid=is_kid,
         )
 
-    # Directivas vigentes del super-admin para este template (modo evolutivo).
-    # Se inyectan como reglas duras al final del super_prompt.
-    admin_directives: list[str] = []
-    if template:
-        from services.admin_feedback import load_active_directives
-        admin_directives = await load_active_directives(template.id, db)
 
     # Historial del topico para ESTE alumno: cuantas veces lo hizo + frases
     # que el coach YA le enseno (entre comillas en el transcript). Asi el

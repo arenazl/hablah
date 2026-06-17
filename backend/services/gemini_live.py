@@ -44,10 +44,6 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             topic = (await db.execute(select(Topic).where(Topic.id == s.topic_id))).scalar_one_or_none()
         if not user:
             return None
-        admin_directives: list[str] = []
-        if template:
-            from services.admin_feedback import load_active_directives
-            admin_directives = await load_active_directives(template.id, db)
         _ag = getattr(user, "age_group", None)
         is_kid = _ag in ("mini", "junior", "tween") or bool(getattr(user, "parent_user_id", None))
 
@@ -163,7 +159,6 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
 
         super_prompt = build_super_prompt(
             user=user, template=template, topic=topic,
-            admin_directives=admin_directives,
             recently_used_keywords=recently_used_keywords,
             learning_objective=learning_objective,
             student_type_data=student_type_data,

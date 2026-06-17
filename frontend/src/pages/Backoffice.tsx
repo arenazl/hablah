@@ -8,7 +8,6 @@ import {
   Template, Topic, Alumno,
   AuditSessionRow, AuditSessionDetail, AuditSessionFilters, AuditStats, AuditLogEvent,
 } from '../services/api'
-import { EvolutionView } from './BackofficeEvolution'
 import AdminMetodologiaPanel from './AdminMetodologiaPanel'
 import AdminConsolaPanel from './AdminConsolaPanel'
 import AdminAbmsPanel from './AdminAbmsPanel'
@@ -52,7 +51,6 @@ export function Backoffice() {
             <Route path="/" element={<ResumenView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/templates" element={<TemplatesView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/templates/:id" element={<TemplateEditView onMenu={() => setMenuOpen(true)} />} />
-            <Route path="/templates/:id/evolution" element={<EvolutionView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/topicos" element={<TopicosView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/topicos/:id" element={<TopicEditView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/alumnos" element={<AlumnosView onMenu={() => setMenuOpen(true)} />} />
@@ -345,9 +343,6 @@ function TemplateEditView({ onMenu }: { onMenu: () => void }) {
         actions={
           <>
             <button className="btn btn-ghost btn-sm" onClick={() => nav('/admin/templates')}>← Volver</button>
-            <button className="btn btn-secondary btn-sm" onClick={() => nav(`/admin/templates/${t.id}/evolution`)}>
-              Evolución
-            </button>
             <button className="btn btn-secondary btn-sm" onClick={playVoice}>▶ Probar voz</button>
             <button className="btn btn-primary btn-sm" onClick={save} disabled={saving}>
               {saving ? 'Guardando…' : 'Guardar cambios'}

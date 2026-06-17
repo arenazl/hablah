@@ -155,29 +155,6 @@ export const templatesAPI = {
   remove: (id: number) => api.delete(`/templates/${id}`).then((r) => r.data),
 }
 
-/* ────────────── ADMIN DIRECTIVES (modo evolutivo) ────────────── */
-export interface AdminDirective {
-  id: number
-  template_id: number
-  session_id: number | null
-  user_id: number
-  raw_feedback: string
-  directive_text: string
-  prompt_before: string
-  prompt_after: string
-  active: boolean
-  created_at: string | null
-}
-
-export const adminDirectivesAPI = {
-  list: (templateId: number) =>
-    api.get<{ template: { id: number; name: string; slug: string }; directives: AdminDirective[] }>(
-      `/admin/templates/${templateId}/directives`,
-    ).then((r) => r.data),
-  toggle: (id: number, active: boolean) =>
-    api.patch<AdminDirective>(`/admin/directives/${id}`, { active }).then((r) => r.data),
-  remove: (id: number) => api.delete(`/admin/directives/${id}`).then((r) => r.data),
-}
 
 /* ────────────── TOPICS ────────────── */
 export interface Topic {

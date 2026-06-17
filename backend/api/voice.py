@@ -88,13 +88,8 @@ async def voice_ws_room(
         if vroom.template_id:
             template = (await db.execute(select(Template).where(Template.id == vroom.template_id))).scalar_one_or_none()
 
-        admin_directives: list[str] = []
-        if template:
-            from services.admin_feedback import load_active_directives
-            admin_directives = await load_active_directives(template.id, db)
         super_prompt = build_super_prompt(
             user=host, template=template, topic=topic,
-            admin_directives=admin_directives,
         )
 
     is_kid_host = bool(getattr(host, "age_group", None)) or bool(getattr(host, "parent_user_id", None)) if host else False
