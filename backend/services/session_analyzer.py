@@ -66,9 +66,14 @@ def _build_analyzer_prompt(
 
     # Construir el JSON schema esperado dinámicamente
     json_keys = [
-        '"score": 0..100  // puntaje global de la charla',
+        '"score": 0..100  // puntaje global INTERNO (tracking) — NUNCA se le muestra crudo al alumno',
         f'"praise": [string]  // {praise_count} elogios concretos sobre cosas que el alumno hizo bien',
         f'"feedback": [object]  // max {max_fb} errores, cada uno con: type, label, snippet_wrong, snippet_correct, why',
+        ('"student_summary": {"vibe": string, "did_well": [string], "to_improve": [string]}'
+         f'  // LO QUE VE EL ALUMNO al terminar. Cálido, en {base_lang_name} ({base_tone}), CERO técnico, SIN número/score.'
+         ' vibe = 1 frase corta de aliento sobre cómo fue la charla.'
+         ' did_well = 2-3 cosas CONCRETAS que le salieron bien (lo más importante, va primero y grande).'
+         ' to_improve = 2-3 cosas para la próxima, SUAVES y en positivo ("la próxima probá...", NUNCA "error" ni reto).'),
         '"metrics": {"words_spoken": int, "wpm": int, "keywords_hit": int, "keywords_total": int}',
     ]
     if include_summary:
@@ -117,6 +122,9 @@ CRÍTICO:
 - Todos los textos en {base_lang_name} ({base_tone}), EXCEPTO snippet_wrong/snippet_correct/word/context que van en {target_name}.
 - Si no podés llenar un campo (ej: no hay errores de pronunciación que reportar), devolvé array vacío [], NO inventes.
 - Sé específico, no genérico. "Usaste 'rewatchable' perfecto" > "Hablaste bien".
+- student_summary es LO ÚNICO que ve el alumno: tono de profe que alienta, NADA de jerga, NADA de número/score,
+  NUNCA la palabra "error". Aunque le haya ido flojo, el to_improve va en positivo y con cariño. Si habló muy poco,
+  did_well puede ser 1 sola cosa (hasta "te animaste a arrancar") y to_improve invita a soltarse más la próxima.
 """
     return prompt
 

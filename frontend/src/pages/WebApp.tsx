@@ -2077,6 +2077,9 @@ function SessionReport({ sessionId, initial, actions }: SessionReportProps) {
   const vocab: any[] = r.vocab_suggestions || []
   const pron: any[] = r.pronunciation_notes || []
   const nextTip: string = r.next_session_tip || ''
+  const ss: any = r.student_summary || {}
+  const didWell: string[] = Array.isArray(ss.did_well) ? ss.did_well : []
+  const toImprove: string[] = Array.isArray(ss.to_improve) ? ss.to_improve : []
   const durationMin = data.duration_seconds ? Math.round(data.duration_seconds / 60) : 0
 
   return (
@@ -2104,7 +2107,6 @@ function SessionReport({ sessionId, initial, actions }: SessionReportProps) {
         )}
         {!polling && (
           <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
-            <Stat label="Score" value={score != null ? `${score}` : '—'} highlight />
             <Stat label="Palabras" value={metrics.words_spoken ?? '—'} />
             <Stat label="WPM" value={metrics.wpm ?? '—'} />
             <Stat label="Keywords" value={`${metrics.keywords_hit ?? 0}/${metrics.keywords_total ?? 0}`} />
@@ -2123,6 +2125,36 @@ function SessionReport({ sessionId, initial, actions }: SessionReportProps) {
 
         {!polling && (
           <>
+            {/* Resumen para el ALUMNO: lo que salió bien (arriba, destacado) + para la próxima
+                (suave). Sin número/score — eso queda interno. */}
+            {(didWell.length > 0 || toImprove.length > 0) && (
+              <div style={{ marginBottom: 22 }}>
+                {ss.vibe && <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--fg-1)', marginBottom: 14, lineHeight: 1.4 }}>{ss.vibe}</div>}
+                {didWell.length > 0 && (
+                  <div style={{ background: 'rgba(0,179,126,.08)', border: '1px solid rgba(0,179,126,.25)', borderRadius: 14, padding: '16px 18px', marginBottom: 12 }}>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--primary-dark)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 11 }}>Lo que te salió bien</div>
+                    {didWell.map((x, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', marginBottom: 8, fontSize: 15, color: 'var(--fg-1)', lineHeight: 1.4 }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}><polyline points="20 6 9 17 4 12" /></svg>
+                        <span>{x}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {toImprove.length > 0 && (
+                  <div style={{ background: 'var(--bg-2)', borderRadius: 14, padding: '14px 18px' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 9 }}>Para la próxima</div>
+                    {toImprove.map((x, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', marginBottom: 6, fontSize: 14, color: 'var(--fg-2)', lineHeight: 1.45 }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--fg-4)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 3 }}><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+                        <span>{x}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Resumen narrativo */}
             {summary && (
               <ReportBlock title="Resumen de la charla">
