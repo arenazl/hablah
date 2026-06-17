@@ -15,8 +15,9 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Habi, KidsLayout } from './_shared'
 import { KIDS_AGE_KEY, type KidsAgeGroup } from './KidsAgeSelect'
-import { useKid, KIDS_RANKS } from './KidsContext'
+import { useKid, KIDS_RANKS, KIDS_TOKEN_KEY } from './KidsContext'
 import { TopicScene, KIDS_SCENE_CSS } from './KidsTopicScenes'
+import CategorySelector from '../../components/CategorySelector'
 
 interface KidsTopic {
   id: number
@@ -519,10 +520,31 @@ export function KidsHome() {
     charlas_to_next: 0,
   }
 
+  // Selector de intereses (categoría → subcategoría) con el token del CHICO, no del padre.
+  const [showSelector, setShowSelector] = useState(false)
+  const kidsToken = (typeof window !== 'undefined' && localStorage.getItem(KIDS_TOKEN_KEY)) || ''
+  const startFromSelector = async () => {
+    try {
+      const res = await fetch('/api/me/next-topic', { headers: { Authorization: `Bearer ${kidsToken}` } })
+      const data = await res.json()
+      setShowSelector(false)
+      navigate(data?.topic_id ? `/kids/sesion/${data.topic_id}` : '/kids/topicos')
+    } catch { setShowSelector(false); navigate('/kids/topicos') }
+  }
+
   return (
     <KidsLayout>
       <style>{HOME_CSS}</style>
       <style>{KIDS_SCENE_CSS}</style>
+      {showSelector && (
+        <CategorySelector
+          token={kidsToken}
+          title="¿De qué hablamos hoy?"
+          startLabel="¡A hablar!"
+          onSkip={() => setShowSelector(false)}
+          onStart={startFromSelector}
+        />
+      )}
 
       <header className="kids-topbar">
         <div className="kids-crumbs">
@@ -577,10 +599,10 @@ export function KidsHome() {
               </span>
               ¡A hablar con Habi!
             </button>
-            <Link to="/kids/topicos" className="btn-ghost-w">
+            <button type="button" onClick={() => setShowSelector(true)} className="btn-ghost-w" style={{ border: 'none', cursor: 'pointer' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v8h8"/></svg>
-              Cambiar tema
-            </Link>
+              Elegir de qué hablar
+            </button>
           </div>
 
           <div className="kids-hero-meta">

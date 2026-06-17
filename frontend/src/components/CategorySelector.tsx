@@ -15,11 +15,14 @@ import api from '../services/api'
 interface Cat { id: number; slug: string; name: string }
 interface Sub { id: number; category_id: number; slug: string; name: string }
 
-export default function CategorySelector({ onStart, onSkip, title = '¿De qué te gusta hablar?', startLabel = 'Arrancar la clase' }: {
+export default function CategorySelector({ onStart, onSkip, title = '¿De qué te gusta hablar?', startLabel = 'Arrancar la clase', token }: {
   onStart: () => void | Promise<void>
   onSkip?: () => void
   title?: string
   startLabel?: string
+  /** Si viene (kids), se usa este token (perfil del chico) con fetch relativo /api,
+   *  para NO guardar los intereses en el perfil del adulto. Sin token = axios adulto. */
+  token?: string
 }) {
   const [cats, setCats] = useState<Cat[]>([])
   const [subs, setSubs] = useState<Sub[]>([])
@@ -27,10 +30,25 @@ export default function CategorySelector({ onStart, onSkip, title = '¿De qué t
   const [picked, setPicked] = useState<Set<number>>(new Set())
   const [starting, setStarting] = useState(false)
 
+  // Llamada que respeta el perfil: con token → fetch+kid token; sin token → axios adulto.
+  const call = async (method: 'get' | 'put', path: string, body?: unknown) => {
+    if (token) {
+      const res = await fetch('/api' + path, {
+        method: method.toUpperCase(),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        ...(body ? { body: JSON.stringify(body) } : {}),
+      })
+      if (!res.ok) throw new Error('http ' + res.status)
+      return { data: await res.json() }
+    }
+    return method === 'put' ? api.put(path, body) : api.get(path)
+  }
+
   useEffect(() => {
-    api.get('/catalog/public/categories').then((r) => setCats(r.data)).catch(() => toast.error('No pude cargar las categorías'))
-    api.get('/catalog/public/subcategories').then((r) => setSubs(r.data)).catch(() => {})
-    api.get('/me/subcategory-interests').then((r) => setPicked(new Set((r.data?.subcategory_ids || []).map(Number)))).catch(() => {})
+    call('get', '/catalog/public/categories').then((r) => setCats(r.data)).catch(() => toast.error('No pude cargar las categorías'))
+    call('get', '/catalog/public/subcategories').then((r) => setSubs(r.data)).catch(() => {})
+    call('get', '/me/subcategory-interests').then((r) => setPicked(new Set((r.data?.subcategory_ids || []).map(Number)))).catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const subsOf = useMemo(() => {
@@ -51,7 +69,7 @@ export default function CategorySelector({ onStart, onSkip, title = '¿De qué t
     if (picked.size === 0) { toast.error('Elegí al menos una subcategoría'); return }
     setStarting(true)
     try {
-      await api.put('/me/subcategory-interests', { subcategory_ids: Array.from(picked) })
+      await call('put', '/me/subcategory-interests', { subcategory_ids: Array.from(picked) })
       await onStart()
     } catch {
       toast.error('No se pudo arrancar la clase')
