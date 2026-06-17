@@ -146,9 +146,11 @@ def resolve_lexis(db: MotorDB, ctx: dict) -> tuple[list[str], list[str]]:
 
 
 def resolve_objectives(db: MotorDB, ctx: dict, limit: int = OBJECTIVES_PER_CLASS) -> list[dict]:
-    """Capa 7b (DINÁMICO): currículum del nivel − dominado, priorizando 'due'."""
-    return db.q(
-        """SELECT lo.kind, lo.description, COALESCE(luo.status,'nuevo') AS estado
+    """Capa 7b (DINÁMICO): currículum del nivel − dominado, priorizando 'due'.
+    Cada objetivo trae sus chunks comunicativos (objective_chunk): el material de
+    habla colgado de la FUNCIÓN, no del tópico → reutilizable en cualquier tema."""
+    rows = db.q(
+        """SELECT lo.objective_id, lo.kind, lo.description, COALESCE(luo.status,'nuevo') AS estado
            FROM language_objective lo
            LEFT JOIN learner_objective luo
              ON luo.objective_id=lo.objective_id AND luo.student_id=%s
@@ -157,6 +159,10 @@ def resolve_objectives(db: MotorDB, ctx: dict, limit: int = OBJECTIVES_PER_CLASS
            LIMIT %s""",
         (ctx["student"]["student_id"], ctx["level"]["level_code"], limit),
     )
+    for r in rows:
+        r["chunks"] = [c["chunk"] for c in db.q(
+            "SELECT chunk FROM objective_chunk WHERE objective_id=%s ORDER BY ord", (r["objective_id"],))]
+    return rows
 
 
 def render_triggers(db: MotorDB, ctx: dict, words, phrases) -> dict:
@@ -282,14 +288,21 @@ def render_prompt(stack: dict) -> str:
     block("learner_state", [f"{i['item_type']}: {i['item_value']} [{i['status']}]"
                             for i in stack["learner_state"]] or ["(vacío)"])
     block("behavioral_guards", [f"Rule {n}: {g}" for n, g in enumerate(stack["behavioral_guards"], 1)])
+    # capa 7 (léxico) DORMIDA: si el tópico no tiene vocab cargado, no inyectamos un
+    # bloque hueco. El coach genera el vocabulario del tema en vivo desde el título.
     tv = stack["topic_vocabulary"]
-    block("current_topic_vocabulary",
-          [f"Topic Title: {tv['title']}",
-           f"Key Vocabulary: [{', '.join(tv['words'])}]",
-           f"Key Phrases: [{', '.join(tv['phrases'])}]"])
-    # capa dinámica: qué aprender hoy
-    block("lesson_objectives",
-          [f"- ({o['kind']}) {o['description']} [{o['estado']}]" for o in stack["lesson_objectives"]])
+    if tv["words"] or tv["phrases"]:
+        block("current_topic_vocabulary",
+              [f"Topic Title: {tv['title']}",
+               f"Key Vocabulary: [{', '.join(tv['words'])}]",
+               f"Key Phrases: [{', '.join(tv['phrases'])}]"])
+    # capa dinámica: qué aprender hoy + los chunks comunicativos de cada función
+    obj_lines = []
+    for o in stack["lesson_objectives"]:
+        obj_lines.append(f"- ({o['kind']}) {o['description']} [{o['estado']}]")
+        for ch in o.get("chunks", []):
+            obj_lines.append(f"    · {ch}")
+    block("lesson_objectives", obj_lines)
     ns = stack["narrative_spine"]
     block("narrative_spine", [f"Pacing: duración objetivo ~{ns['target_min']} min", "Session Structure:"]
           + [f"  - {p}" for p in ns["phases"]])

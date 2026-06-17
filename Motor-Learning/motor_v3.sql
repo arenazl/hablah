@@ -10,7 +10,7 @@
 -- ============================================================================
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS orchestration_override, orchestration, session_event, session, learner_objective, learner_item,
+DROP TABLE IF EXISTS objective_chunk, orchestration_override, orchestration, session_event, session, learner_objective, learner_item,
   student_interest, student, topic_suggested_band, topic_lexis, topic,
   subcategory, category, trigger_template, phase, level_policy, band_policy,
   behavioral_guard, reward, activity_type, pedagogy, tutor_identity,
@@ -40,6 +40,18 @@ CREATE TABLE language_objective (
   description VARCHAR(200) NOT NULL, sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
   CONSTRAINT fk_lo_level FOREIGN KEY (cefr_level) REFERENCES `level`(level_code),
   INDEX ix_lo (cefr_level, sort_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- chunks comunicativos por OBJETIVO (capa 7b): material de habla colgado de la
+-- FUNCIÓN, no del tópico → reutilizable en cualquier tema del mismo nivel.
+-- (el seed de chunks vive en backend/scripts/migrate_v3_chunks.py, idempotente)
+CREATE TABLE objective_chunk (
+  chunk_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  objective_id INT UNSIGNED NOT NULL,
+  chunk VARCHAR(160) NOT NULL,
+  ord SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  CONSTRAINT fk_oc_obj FOREIGN KEY (objective_id) REFERENCES language_objective(objective_id) ON DELETE CASCADE,
+  INDEX ix_oc (objective_id, ord)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===== PRESETS · FIJO =====

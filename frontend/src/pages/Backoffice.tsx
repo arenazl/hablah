@@ -114,6 +114,7 @@ function BoSidebar({ open }: { open: boolean }) {
       <div className="sidebar-section">Motor de 9 capas (modelo v3)</div>
       <nav className="sidebar-nav">
         <SidebarItem to="/admin/motor" label="Playground (probar clases)" />
+        <SidebarItem to="/admin/reglas-motor" label="Reglas del coach (edad × nivel)" />
         <SidebarItem to="/admin/motor-abms" label="Tags del modelo (ABM)" />
       </nav>
       <div className="sidebar-section">Operación · trabajás con alumnos</div>
