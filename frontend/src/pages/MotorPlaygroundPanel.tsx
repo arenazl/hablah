@@ -43,13 +43,12 @@ const LAYER: Record<string, { n: number; label: string; nat: keyof typeof NAT; d
 }
 
 function parseLayers(prompt: string): { tag: string; body: string }[] {
+  // saco el wrapper para que el regex capture los bloques INTERNOS (no el externo)
+  const inner = prompt.replace(/<\/?system_instruction_stack>/g, '')
   const out: { tag: string; body: string }[] = []
   const re = /<([a-z_]+)>([\s\S]*?)<\/\1>/g
   let m: RegExpExecArray | null
-  while ((m = re.exec(prompt))) {
-    if (m[1] === 'system_instruction_stack') continue
-    out.push({ tag: m[1], body: m[2].trim() })
-  }
+  while ((m = re.exec(inner))) out.push({ tag: m[1], body: m[2].trim() })
   return out
 }
 
