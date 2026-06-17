@@ -9,6 +9,7 @@ import { useCallback, useState } from 'react'
 import { Mic, Square } from 'lucide-react'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { buildLlmTestWsUrl } from '../services/api'
+import LiveSubtitle from '../components/LiveSubtitle'
 
 const STATUS_LABEL: Record<string, string> = {
   idle: 'Detenido', connecting: 'Conectando…', listening: 'Escuchando',
@@ -69,17 +70,8 @@ export default function ClassTester({ ageGroup, level, voice = 'Aoede' }: { ageG
       </div>
       {err && <div style={{ color: '#fca5a5', fontSize: 12, marginBottom: 10 }}>{err}</div>}
 
-      <div style={{ fontSize: 10, fontWeight: 800, color: '#9aa3af', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>Transcripción</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9, maxHeight: '46vh', overflowY: 'auto' }}>
-        {live.transcript.length === 0 && <div style={{ color: '#6b7280', fontSize: 13 }}>Arrancá la clase y hablá. Acá aparece lo que decís vos y el coach.</div>}
-        {live.transcript.map((line, i) => (
-          <div key={i} style={{ fontSize: 13.5, lineHeight: 1.4 }}>
-            <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: line.who === 'ai' ? '#7dd3fc' : '#86efac', marginRight: 8 }}>
-              {line.who === 'ai' ? 'Coach' : 'Vos'}
-            </span>
-            <span>{line.text}</span>
-          </div>
-        ))}
+      <div style={{ borderTop: '1px solid #232936', paddingTop: 6 }}>
+        <LiveSubtitle transcript={live.transcript} aiLabel="Coach" minHeight={140} />
       </div>
     </div>
   )

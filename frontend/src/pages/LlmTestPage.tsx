@@ -11,6 +11,7 @@ import { Mic, Square, AlertTriangle, Zap, SlidersHorizontal, ChevronDown, Chevro
 
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { buildLlmTestWsUrl } from '../services/api'
+import LiveSubtitle from '../components/LiveSubtitle'
 
 interface ModelOption { value: string; label: string; note?: string }
 
@@ -267,18 +268,8 @@ export function LlmTestPage() {
         {/* Transcript + Log */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div style={CARD}>
-            <div style={{ ...LABEL, marginBottom: 12 }}>Transcripción</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 360, overflowY: 'auto' }}>
-              {live.transcript.length === 0 && <div style={{ color: '#6b7280', fontSize: 13 }}>Sin transcripción todavía.</div>}
-              {live.transcript.map((line, i) => (
-                <div key={i} style={{ fontSize: 14, lineHeight: 1.4 }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: line.who === 'ai' ? '#7dd3fc' : '#86efac', marginRight: 8 }}>
-                    {line.who === 'ai' ? 'Coach' : 'Vos'}
-                  </span>
-                  <span>{line.text}</span>
-                </div>
-              ))}
-            </div>
+            <div style={{ ...LABEL, marginBottom: 12 }}>Transcripción (subtítulo)</div>
+            <LiveSubtitle transcript={live.transcript} aiLabel="Coach" minHeight={300} />
           </div>
           <div style={CARD}>
             <div style={{ ...LABEL, marginBottom: 12 }}>Eventos</div>

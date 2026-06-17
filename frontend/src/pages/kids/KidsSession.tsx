@@ -16,6 +16,7 @@ import { ArrowLeft, Mic, RefreshCw, Square, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import confetti from 'canvas-confetti'
 import { useLiveVoice } from '../../hooks/useLiveVoice'
+import LiveSubtitle from '../../components/LiveSubtitle'
 import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
 import { InviteFriendButton } from '../../components/InviteFriendButton'
 import { BuddyPicker } from '../../components/kids/BuddyPicker'
@@ -500,33 +501,13 @@ export function KidsSession() {
                y reforzar el aprendizaje leyendo lo que dice Habi. El
                transcript completo (habi + chico) se manda al backend al
                cerrar la clase para el reporte/analisis. */}
-            {live.transcript.length > 0 && (() => {
-              // Mostramos el último mensaje del chico (lo que dijo) Y el último de
-              // Habi: así el nene VE que lo que dice se está captando/mandando.
-              let lastUserIdx = -1
-              let lastAiIdx = -1
-              for (let i = live.transcript.length - 1; i >= 0; i--) {
-                if (lastAiIdx < 0 && live.transcript[i].who === 'ai') lastAiIdx = i
-                if (lastUserIdx < 0 && live.transcript[i].who === 'user') lastUserIdx = i
-                if (lastAiIdx >= 0 && lastUserIdx >= 0) break
-              }
-              const items: { who: string; text: string }[] = []
-              if (lastUserIdx >= 0) items.push({ who: 'user', text: live.transcript[lastUserIdx].text })
-              if (lastAiIdx >= 0) items.push({ who: 'ai', text: live.transcript[lastAiIdx].text })
-              // Ordenar por aparición real (si Habi habló después del chico).
-              if (lastUserIdx >= 0 && lastAiIdx >= 0 && lastAiIdx < lastUserIdx) items.reverse()
-              if (items.length === 0) return null
-              return (
-                <div className="kids-transcript">
-                  {items.map((it, i) => (
-                    <div key={i} className={`kids-transcript-line ${it.who === 'ai' ? 'ai' : 'user'}`}>
-                      <span className="who">{it.who === 'ai' ? 'Habi' : 'Vos'}</span>
-                      {it.text}
-                    </div>
-                  ))}
-                </div>
-              )
-            })()}
+            {/* Subtítulo en vivo: el turno ACTUAL grande, el anterior tenue. No es un
+               chat que scrollea y se pierde abajo: cuando llega texto nuevo, reemplaza. */}
+            {live.transcript.length > 0 && (
+              <div className="kids-transcript">
+                <LiveSubtitle transcript={live.transcript} aiLabel="Habi" minHeight={96} />
+              </div>
+            )}
           </>
         )}
       </div>
