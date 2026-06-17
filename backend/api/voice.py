@@ -1,3 +1,4 @@
+import json
 import logging
 from types import SimpleNamespace
 
@@ -15,6 +16,7 @@ from services.voice_room_engine import (
     handle_room_ws,
 )
 from services.super_prompt import build_super_prompt
+from services import motor_engine
 from models.rooms import VoiceRoom
 from models.user import User
 from models.template import Topic, Template
@@ -253,6 +255,59 @@ async def voice_ws_llm_test(
             pass
     except Exception as e:
         log.exception("voice_ws_llm_test error: %s", e)
+        try:
+            await websocket.close()
+        except Exception:
+            pass
+
+
+@router.websocket("/ws_orchestration")
+async def voice_ws_orchestration(
+    websocket: WebSocket,
+    band_code: str = Query("adult"),
+    level_code: str = Query("B2"),
+    topic_id: int = Query(0),
+    overrides: str = Query(""),
+    engine: str = Query("gemini_live"),
+    model: str = Query("models/gemini-3.1-flash-live-preview"),
+    voice: str = Query("Aoede"),
+):
+    """Prueba de voz de UNA ORQUESTACIÓN v3 COMPLETA (ruta frontend /probar-orq).
+
+    Resuelve el circuito con el MOTOR v3 (banda × nivel × tópico + overrides JIT del
+    fine-tuning) y conversa con ESE prompt — toda la orquestación, no el proto genérico.
+    Sin login / sin BD persistida. overrides = JSON [{slot,action,target_id?,body?}].
+    """
+    await websocket.accept()
+    safe_voice = voice if voice in _LLM_VALID_VOICES else "Aoede"
+    try:
+        ovr = json.loads(overrides) if overrides else None
+    except Exception:
+        ovr = None
+    try:
+        res = await motor_engine.resolve(band_code, level_code, topic_id or None, None, ovr)
+        super_prompt = res["prompt"]
+    except Exception as e:
+        log.warning("voice_ws_orchestration resolve falló %s/%s: %s", band_code, level_code, e)
+        await websocket.close(code=1011)
+        return
+    ctx = VoiceEngineContext(
+        session_id=0, user_id=0, user_name="Alumno",
+        is_kid=band_code in ("early_child", "child"),
+        super_prompt=super_prompt, voice_id=None, voice_name=safe_voice,
+        language="es", target_language="en",
+        silence_tolerance_ms=1500, interruption_allowed=True,
+        model_override=model or None,
+    )
+    engine_name = engine if engine in available_engines() else "gemini_live"
+    log.info("voice_ws_orchestration: %s/%s topic=%s engine=%s voice=%s overrides=%s",
+             band_code, level_code, topic_id, engine_name, safe_voice, bool(ovr))
+    try:
+        eng = get_engine(engine_name)
+        async for _line in eng.run(websocket, ctx):
+            pass
+    except Exception as e:
+        log.exception("voice_ws_orchestration error: %s", e)
         try:
             await websocket.close()
         except Exception:

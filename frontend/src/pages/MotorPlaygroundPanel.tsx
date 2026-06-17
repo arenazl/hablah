@@ -114,7 +114,15 @@ export default function MotorPlaygroundPanel() {
   const meta = res?.meta
   const layers = useMemo(() => (res ? parseLayers(res.prompt) : []), [res])
   const toggleGuard = (id: number) => setDisabled((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n })
-  const probarUrl = `/llm?band=${band}&level=${level}${topicId ? `&topic=${topicId}` : ''}`
+  // ▶ Probar: abre la prueba de voz con TU circuito (no el genérico de /llm).
+  const probarUrl = useMemo(() => {
+    const topTitle = topics.find((t) => t.topic_id === topicId)?.title || ''
+    const q = new URLSearchParams({ band, level, voice: 'Aoede' })
+    if (topicId) q.set('topic', String(topicId))
+    if (topTitle) q.set('t', topTitle)
+    if (overrides.length) q.set('overrides', JSON.stringify(overrides))
+    return `/probar-orq?${q.toString()}`
+  }, [band, level, topicId, topics, overrides])
 
   // presets del catálogo para el paso activo (dinámico por paso)
   const presetsForLayer = (tag: string): { items: { text: string; tag?: string }[]; note?: string } => {
