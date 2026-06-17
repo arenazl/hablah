@@ -137,16 +137,10 @@ async def start_session(
                     break
             previous_phrases = phrases
 
-    super_prompt = build_super_prompt(
-        user=current,
-        template=template,
-        topic=topic,
-        free_topic=payload.free_topic,
-        topic_brief=topic_brief,
-        admin_directives=admin_directives,
-        topic_visits=topic_visits,
-        previous_phrases=previous_phrases,
-    )
+    # El prompt de la clase lo arma el WS de voz (gemini_live) server-side con los datos del
+    # motor de 9 pasos; el cliente NO usa este campo (sólo necesita session_id + voz). Por eso
+    # acá no se construye: evita un MotorDataMissing y desacopla /start del builder.
+    super_prompt = ""
     voice_id = template_voice_for_lang(template, current.target_language, user=current)
 
     return {

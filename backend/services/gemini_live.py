@@ -178,9 +178,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         # SABER (no suponer) cómo se armó la cadena y qué recibió el coach.
         try:
             import json as _json
-            from services.super_prompt import _resolve_curriculum_mode, _composer_enabled
             _cefr = user.cefr_level or "B1"
-            _mode = _resolve_curriculum_mode(template, is_kid, _cefr)
             _circuit = {
                 "session_id": s.id,
                 "user": {
@@ -188,8 +186,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "is_kid": is_kid, "kid_methodology_order": getattr(user, "kid_methodology_order", None),
                     "curriculum_position": getattr(user, "curriculum_position", None),
                 },
-                "template": {"name": getattr(template, "name", None), "curriculum_mode": getattr(template, "curriculum_mode", None)},
-                "resolved_mode": _mode, "composer_on": _composer_enabled(_mode),
+                "template": {"name": getattr(template, "name", None)},
+                "engine": "motor_9pasos",
                 "topic": ({
                     "id": topic.id, "title": topic.title, "slug": topic.slug,
                     "audience": getattr(topic, "audience", None), "is_curriculum": getattr(topic, "is_curriculum", None),
