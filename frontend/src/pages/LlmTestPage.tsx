@@ -266,7 +266,7 @@ export function LlmTestPage() {
         </div>
 
         {/* Transcript + Log */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
           <div style={CARD}>
             <div style={{ ...LABEL, marginBottom: 12 }}>Transcripción (subtítulo)</div>
             <LiveSubtitle transcript={live.transcript} aiLabel="Coach" minHeight={300} />

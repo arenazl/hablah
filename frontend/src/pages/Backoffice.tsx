@@ -380,7 +380,7 @@ function TemplateEditView({ onMenu }: { onMenu: () => void }) {
 
             {/* 0. Personalidad pedagógica (PRESETS) */}
             <Section title="Personalidad pedagógica" subtitle="Elegí cómo se comporta el tutor en la conversación. Cada preset ajusta cuánto habla, qué tipo de preguntas hace y cómo interactúa.">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 6 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginTop: 6 }}>
                 {([
                   { id: 'entrevistador', name: 'Entrevistador', desc: 'Habla poco. Hace muchas preguntas cortas. Para alumnos que necesitan hablar más.' },
                   { id: 'balanced', name: 'Conversación pareja', desc: '50/50. Aporta y pregunta en partes iguales. Default seguro.' },
@@ -1037,8 +1037,8 @@ function AuditoriaView({ onMenu }: { onMenu: () => void }) {
         </div>
 
         {/* Tabla */}
-        <div className="card card-elev" style={{ marginTop: 14, overflow: 'hidden' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.2fr 0.8fr 1.4fr 0.9fr 0.7fr 0.6fr', gap: 10, padding: '12px 16px', fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', borderBottom: '1px solid var(--border-1)' }}>
+        <div className="card card-elev" style={{ marginTop: 14, overflowX: 'auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.2fr 0.8fr 1.4fr 0.9fr 0.7fr 0.6fr', minWidth: 680, gap: 10, padding: '12px 16px', fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', borderBottom: '1px solid var(--border-1)' }}>
             <span>Usuario</span><span>Inicio</span><span>Duración</span><span>Tutor · Tópico</span><span>Estado</span><span>Turnos</span><span>Score</span>
           </div>
           {loading && <div style={{ padding: 30, textAlign: 'center', color: 'var(--fg-3)' }}>Cargando…</div>}
@@ -1049,7 +1049,7 @@ function AuditoriaView({ onMenu }: { onMenu: () => void }) {
           )}
           {!loading && rows.map((s) => (
             <div key={s.id} onClick={() => nav(`/admin/auditoria/${s.id}`)}
-              style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.2fr 0.8fr 1.4fr 0.9fr 0.7fr 0.6fr', gap: 10, padding: '12px 16px', fontSize: 13, alignItems: 'center', borderBottom: '1px solid var(--border-1)', cursor: 'pointer' }}
+              style={{ display: 'grid', gridTemplateColumns: '1.6fr 1.2fr 0.8fr 1.4fr 0.9fr 0.7fr 0.6fr', minWidth: 680, gap: 10, padding: '12px 16px', fontSize: 13, alignItems: 'center', borderBottom: '1px solid var(--border-1)', cursor: 'pointer' }}
               className="audit-row">
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 600, color: 'var(--fg-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.user_name}</div>
@@ -1126,7 +1126,7 @@ function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
         {/* Timeline unificado: conversación + eventos (desde Cloud Logging) */}
         <UnifiedTimeline d={d} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14, marginTop: 14 }}>
           {/* Métricas */}
           <div className="card card-elev" style={{ padding: 16 }}>
             <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Métricas</div>

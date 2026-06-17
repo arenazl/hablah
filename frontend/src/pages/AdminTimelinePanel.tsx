@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { Play } from 'lucide-react'
 import api from '../services/api'
 import ClassTester from './ClassTester'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 /* ── tipos ── */
 interface St {
@@ -180,6 +181,7 @@ export default function AdminTimelinePanel() {
   const [creating, setCreating] = useState<'level' | 'segment' | null>(null)
   const [newCode, setNewCode] = useState('')
   const [newName, setNewName] = useState('')
+  const isMobile = useIsMobile()
 
   const segData = useMemo(() => studentTypes.find((s) => s.slug === seg), [studentTypes, seg])
   const lvlData = useMemo(() => levels.find((l) => l.code === level), [levels, level])
@@ -272,24 +274,24 @@ export default function AdminTimelinePanel() {
 
         {/* selectores */}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 18, alignItems: 'flex-end' }}>
-          <div><div style={LBL}>Segmento (edad)</div>
-            <select style={{ ...FIELD, width: 180 }} value={seg} onChange={(e) => setSeg(e.target.value)}>
+          <div style={{ flex: '1 1 150px', minWidth: 0 }}><div style={LBL}>Segmento (edad)</div>
+            <select style={{ ...FIELD, width: '100%' }} value={seg} onChange={(e) => setSeg(e.target.value)}>
               {studentTypes.map((s) => <option key={s.slug} value={s.slug}>{s.name}</option>)}
             </select></div>
-          <div><div style={LBL}>Nivel</div>
-            <select style={{ ...FIELD, width: 150 }} value={level} onChange={(e) => setLevel(e.target.value)}>
+          <div style={{ flex: '1 1 120px', minWidth: 0 }}><div style={LBL}>Nivel</div>
+            <select style={{ ...FIELD, width: '100%' }} value={level} onChange={(e) => setLevel(e.target.value)}>
               {levels.map((l) => <option key={l.code} value={l.code}>{l.code} — {l.friendly_name}</option>)}
             </select></div>
-          <div><div style={LBL}>Coach</div>
-            <select style={{ ...FIELD, width: 170 }} value={coachId ?? ''} onChange={(e) => setCoachId(Number(e.target.value))}>
+          <div style={{ flex: '1 1 140px', minWidth: 0 }}><div style={LBL}>Coach</div>
+            <select style={{ ...FIELD, width: '100%' }} value={coachId ?? ''} onChange={(e) => setCoachId(Number(e.target.value))}>
               {coaches.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.gender})</option>)}
             </select></div>
-          <div><div style={LBL}>Tópico (preview bloque 7)</div>
-            <select style={{ ...FIELD, width: 240 }} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}>
+          <div style={{ flex: '2 1 200px', minWidth: 0 }}><div style={LBL}>Tópico (preview bloque 7)</div>
+            <select style={{ ...FIELD, width: '100%' }} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}>
               <option value="">(sin tópico)</option>
               {topics.slice(0, 200).map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
             </select></div>
-          {res && <div style={{ marginLeft: 'auto', fontSize: 12, color: '#9aa3af' }}>
+          {res && <div style={{ marginLeft: isMobile ? 0 : 'auto', fontSize: 12, color: '#9aa3af' }}>
             Cargados <b style={{ color: '#22c55e' }}>{res.loaded_count}</b>/{res.total}
           </div>}
         </div>
@@ -303,8 +305,8 @@ export default function AdminTimelinePanel() {
             </>
           ) : (
             <>
-              <input style={{ ...FIELD, width: 150 }} placeholder={creating === 'level' ? 'Código (ej C3)' : 'Slug (ej senior)'} value={newCode} onChange={(e) => setNewCode(e.target.value)} />
-              <input style={{ ...FIELD, width: 220 }} placeholder={creating === 'level' ? 'Nombre amigable (ej Sabio)' : 'Nombre (ej Senior 65+)'} value={newName} onChange={(e) => setNewName(e.target.value)} />
+              <input style={{ ...FIELD, flex: '1 1 130px', minWidth: 0 }} placeholder={creating === 'level' ? 'Código (ej C3)' : 'Slug (ej senior)'} value={newCode} onChange={(e) => setNewCode(e.target.value)} />
+              <input style={{ ...FIELD, flex: '2 1 180px', minWidth: 0 }} placeholder={creating === 'level' ? 'Nombre amigable (ej Sabio)' : 'Nombre (ej Senior 65+)'} value={newName} onChange={(e) => setNewName(e.target.value)} />
               <button style={SAVE} onClick={createNew}>Crear {creating === 'level' ? 'nivel' : 'segmento'}</button>
               <button style={GHOST} onClick={() => setCreating(null)}>Cancelar</button>
               <span style={{ fontSize: 11.5, color: '#6b7280' }}>Queda vacío; lo completás en los pasos (en rojo).</span>
@@ -312,7 +314,7 @@ export default function AdminTimelinePanel() {
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.55fr) minmax(0,1fr)', gap: 18, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.55fr) minmax(0,1fr)', gap: 18, alignItems: 'start' }}>
           {/* ── TIMELINE VERTICAL ── */}
           <div style={{ position: 'relative', paddingLeft: 26 }}>
             <div style={{ position: 'absolute', left: 9, top: 8, bottom: 8, width: 2, background: '#1c2230' }} />

@@ -6,6 +6,7 @@
  */
 import { useEffect, useState } from 'react'
 import api from '../services/api'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Vp { item: string; status: string; seen: number; ok: number; fail: number; next_review: string | null; due: boolean }
 interface Mem {
@@ -27,6 +28,7 @@ export default function AdminMemoriaPanel() {
   const [uid, setUid] = useState<number | undefined>(undefined)
   const [mem, setMem] = useState<Mem | null>(null)
   const [next, setNext] = useState<NextT | null>(null)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     api.get('/alumnos').then((r) => {
@@ -64,7 +66,7 @@ export default function AdminMemoriaPanel() {
         {uid && empty && <div style={{ ...CARD, color: '#9aa3af', fontSize: 14 }}>Este alumno todavía no tiene memoria cargada. Aparece a medida que da clases (y vos aprobás los insights).</div>}
 
         {uid && mem && !empty && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
             {/* SRS */}
             <div style={{ ...CARD, gridColumn: '1 / -1' }}>
               <div style={LBL}>SRS — vocabulario</div>
