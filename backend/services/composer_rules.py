@@ -112,16 +112,18 @@ async def compose_from_catalog(
         if slot == "7":
             matched = [r for r in matched if not r.id.startswith("TOP-")]
 
-        lines: list[str] = []
-        lines += _runtime_block(slot, user_name, nivel, banda, learner_state)
+        # meta = dato vivo (runtime/tópico) como key:value; las REGLAS del catálogo, como viñetas.
+        meta: list[str] = []
+        meta += _runtime_block(slot, user_name, nivel, banda, learner_state)
         if slot == "7":
-            lines += _topic_block(topic)
-        lines += [r.regla for r in matched]
+            meta += _topic_block(topic)
+        rule_lines = [f"- {r.regla}" for r in matched]
 
         selected[slot] = [r.id for r in matched]
-        if not lines:
+        body_lines = meta + rule_lines
+        if not body_lines:
             continue
-        body = "\n".join(f"  {ln}" for ln in lines)
+        body = "\n".join(f"  {ln}" for ln in body_lines)
         blocks.append(f"<{tag}>\n{body}\n</{tag}>")
 
     return {"prompt": "\n\n".join(blocks), "slots": selected, "banda": banda, "nivel": nivel}
