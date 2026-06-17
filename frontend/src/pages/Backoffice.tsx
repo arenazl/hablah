@@ -21,6 +21,7 @@ import AdminRulesPanel from './AdminRulesPanel'
 import AdminOrquestacionesPanel from './AdminOrquestacionesPanel'
 import MotorPlaygroundPanel from './MotorPlaygroundPanel'
 import MotorAbmPanel from './MotorAbmPanel'
+import TrainingPanel from './TrainingPanel'
 import AdminFlowPanel from './AdminFlowPanel'
 import AdminPostClasePanel from './AdminPostClasePanel'
 import AdminMemoriaPanel from './AdminMemoriaPanel'
@@ -72,6 +73,7 @@ export function Backoffice() {
             <Route path="/reglas-motor" element={<AdminRulesPanel />} />
             <Route path="/orquestaciones" element={<AdminOrquestacionesPanel />} />
             <Route path="/motor" element={<MotorPlaygroundPanel />} />
+            <Route path="/training" element={<TrainingPanel />} />
             <Route path="/motor-abms" element={<MotorAbmPanel />} />
             <Route path="/flujo" element={<AdminFlowPanel />} />
             <Route path="/post-clase" element={<AdminPostClasePanel />} />
@@ -113,7 +115,8 @@ function BoSidebar({ open }: { open: boolean }) {
 
       <div className="sidebar-section">Motor de 9 capas (modelo v3)</div>
       <nav className="sidebar-nav">
-        <SidebarItem to="/admin/motor" label="Playground (probar clases)" />
+        <SidebarItem to="/admin/motor" label="Probador de orquestación" />
+        <SidebarItem to="/admin/training" label="Training (ciclo de aprendizaje)" />
         <SidebarItem to="/admin/reglas-motor" label="Reglas del coach (edad × nivel)" />
         <SidebarItem to="/admin/motor-abms" label="Tags del modelo (ABM)" />
       </nav>

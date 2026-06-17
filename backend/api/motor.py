@@ -215,3 +215,27 @@ async def postclass(payload: PostclassIn, _: User = _admin):
         return await motor_engine.postclass(payload.session_id, payload.outcomes)
     except Exception as e:
         raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
+# ════════════════════════════ /training · ciclo de aprendizaje ════════════════════════════
+@router.get("/train/state/{student_id}")
+async def train_state(student_id: int, _: User = _admin):
+    """Memoria del alumno (objetivos del nivel con estado SRS + ítems)."""
+    try:
+        return await motor_engine.train_state(student_id)
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
+class TrainApplyIn(BaseModel):
+    student_id: int
+    outcomes: dict[str, Any]   # {objectives:[[objective_id, score]], items:[[type,val,score]]}
+
+
+@router.post("/train/apply")
+async def train_apply(payload: TrainApplyIn, _: User = _admin):
+    """Cierra la clase de training: sube la escalera SRS del alumno."""
+    try:
+        return await motor_engine.train_apply(payload.student_id, payload.outcomes)
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")

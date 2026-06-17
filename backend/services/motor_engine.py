@@ -99,3 +99,50 @@ def _postclass_sync(session_id, outcomes) -> dict:
 async def postclass(session_id: int, outcomes: dict) -> dict:
     """Cierra el ciclo: aplica la escalera SRS al progreso del alumno."""
     return await asyncio.to_thread(_postclass_sync, session_id, outcomes)
+
+
+# ── /training · ciclo de aprendizaje por alumno (sin session) ──
+def _train_state_sync(student_id: int) -> dict:
+    db = _connect()
+    try:
+        st = db.q1("SELECT student_id, name, age, level_code FROM student WHERE student_id=%s", (student_id,))
+        if not st:
+            raise ValueError(f"student {student_id} inexistente")
+        objectives = db.q(
+            """SELECT lo.objective_id, lo.code, lo.kind, lo.description,
+                      COALESCE(luo.status,'nuevo') AS status, luo.due_at, luo.last_seen
+               FROM language_objective lo
+               LEFT JOIN learner_objective luo
+                 ON luo.objective_id=lo.objective_id AND luo.student_id=%s
+               WHERE lo.cefr_level=%s ORDER BY lo.sort_order""",
+            (student_id, st["level_code"]))
+        items = db.q(
+            "SELECT item_type, item_value, status, due_at FROM learner_item WHERE student_id=%s ORDER BY item_type, item_value",
+            (student_id,))
+        return {"student": st, "objectives": objectives, "items": items}
+    finally:
+        db.conn.close()
+
+
+async def train_state(student_id: int) -> dict:
+    """Memoria del alumno: objetivos del currículum de su nivel con su estado SRS + ítems."""
+    return await asyncio.to_thread(_train_state_sync, student_id)
+
+
+def _train_apply_sync(student_id: int, outcomes: dict) -> dict:
+    db = _connect()
+    try:
+        rep = {"objectives": {}, "items": {}}
+        for oid, score in (outcomes.get("objectives") or []):
+            rep["objectives"][str(oid)] = motor_postclass.record_objective(db, student_id, int(oid), score)
+        for it in (outcomes.get("items") or []):
+            rep["items"][it[1]] = motor_postclass.record_item(db, student_id, it[0], it[1], it[2])
+        db.conn.commit()
+        return rep
+    finally:
+        db.conn.close()
+
+
+async def train_apply(student_id: int, outcomes: dict) -> dict:
+    """Post-clase del training: sube la escalera SRS del alumno (sin session real)."""
+    return await asyncio.to_thread(_train_apply_sync, student_id, outcomes)

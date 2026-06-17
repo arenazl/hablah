@@ -432,6 +432,9 @@ export const motorAPI = {
     band_code: string; level_code: string; topic_id?: number | null
     student_id?: number | null; test_overrides?: MotorOverride[]
   }) => api.post<MotorResolve>('/motor/resolve', body).then((r) => r.data),
+  trainState: (studentId: number) => api.get(`/motor/train/state/${studentId}`).then((r) => r.data),
+  trainApply: (body: { student_id: number; outcomes: { objectives?: [number, string][]; items?: [string, string, string][] } }) =>
+    api.post('/motor/train/apply', body).then((r) => r.data),
 }
 
 /* ────────────── VOICE WS ────────────── */
