@@ -129,6 +129,35 @@ from pydantic import BaseModel
 from typing import Optional
 
 
+class SubcatInterests(BaseModel):
+    subcategory_ids: list[int]
+
+
+@router.get("/subcategory-interests")
+async def get_subcat_interests(current: User = Depends(get_current_user)):
+    """Las subcategorías que el alumno eligió en el selector. El sequencer propone tópicos de ahí."""
+    return {"subcategory_ids": getattr(current, "interest_subcategory_ids", None) or []}
+
+
+@router.put("/subcategory-interests")
+async def set_subcat_interests(
+    payload: SubcatInterests,
+    db: AsyncSession = Depends(get_db),
+    current: User = Depends(get_current_user),
+):
+    current.interest_subcategory_ids = [int(x) for x in payload.subcategory_ids]
+    await db.commit()
+    return {"subcategory_ids": current.interest_subcategory_ids}
+
+
+@router.get("/next-topic")
+async def my_next_topic(db: AsyncSession = Depends(get_db), current: User = Depends(get_current_user)):
+    """El tópico que el sequencer elige para el alumno (desde su memoria + subcategorías
+    elegidas). NO crea sesión: solo devuelve {topic_id, topic_title} para arrancar la clase."""
+    from services.memory_analyzer import suggest_next_topic
+    return await suggest_next_topic(db, current.id)
+
+
 class SettingsUpdate(BaseModel):
     accent_preference: Optional[str] = None
     target_minutes_per_session: Optional[int] = None

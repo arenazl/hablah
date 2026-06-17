@@ -11,7 +11,7 @@ import { CONVO_BG_CSS } from './convo-bg.css'
 import { meAPI, sessionsAPI, topicsAPI, templatesAPI, onboardingAPI, MeProfile, SessionData, Topic, Template, HeatmapCell, LevelProgress, TodayPayload } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { AgentAudioVisualizerAura } from '../components/agents-ui/agent-audio-visualizer-aura'
-import { OnboardingBubbles } from '../components/OnboardingBubbles'
+import CategorySelector from '../components/CategorySelector'
 import { PracticarGalaxy } from '../components/PracticarGalaxy'
 import { CoachPhrasePanels } from '../components/CoachPhrasePanels'
 import QaPanel from './QaPanel'
@@ -144,6 +144,7 @@ export function WebApp() {
   // Cerrar drawer al cambiar de ruta
   useEffect(() => { setDrawerOpen(false) }, [loc.pathname])
 
+  const navigate = useNavigate()
   // Onboarding solo si user nuevo (sin intereses) y no lo saltó en esta sesión
   const shouldOnboard = !loading && profile && profile.interests.length === 0 && !onboardingSkipped
 
@@ -175,8 +176,8 @@ export function WebApp() {
       </div>
       <MobileBar />
       {shouldOnboard && (
-        <OnboardingBubbles
-          onDone={() => refresh()}
+        <CategorySelector
+          onStart={async () => { await refresh(); navigate('/app/practicar') }}
           onSkip={() => setOnboardingSkipped(true)}
         />
       )}

@@ -63,6 +63,9 @@ class User(Base):
     learning_goal = Column(String(60), nullable=True)  # trabajo|viajes|hobby|estudio|migracion
     occupation = Column(String(120), nullable=True)  # texto libre
     onboarding_done = Column(Boolean, nullable=False, default=False)
+    # Selector de intereses (categoría → subcategoría): IDs de subcategorías elegidas.
+    # El sequencer propone tópicos SOLO de estas subcategorías. NULL/[] = todo el catálogo.
+    interest_subcategory_ids = Column(JSON, nullable=True)
 
     # ─── Coach (persona) + género ───────────────────────────────────────────────
     # El género NO afecta la pedagogía; es el default sugerido del coach (que el

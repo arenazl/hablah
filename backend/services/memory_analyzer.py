@@ -182,6 +182,15 @@ async def suggest_next_topic(db, student_id: int) -> dict:
     )).scalars().all()
     cands = [t for t in cands if _topic_ok_for_band(t, band)]
 
+    # Intereses del alumno (selector categoría→subcategoría): proponer SOLO de esas
+    # subcategorías. Si ninguna trae tópicos, se cae a todo el catálogo de la banda.
+    chosen_subcats = getattr(user, "interest_subcategory_ids", None) or []
+    if chosen_subcats:
+        sc = {int(x) for x in chosen_subcats}
+        in_interest = [t for t in cands if getattr(t, "subcategory_id", None) in sc]
+        if in_interest:
+            cands = in_interest
+
     # Tópicos hechos en las últimas 5 clases (para no repetir).
     recent_rows = (await db.execute(
         select(SessionModel.topic_id).where(SessionModel.user_id == student_id, SessionModel.topic_id.isnot(None))

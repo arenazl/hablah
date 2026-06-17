@@ -10,11 +10,29 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import get_db
-from core.security import require_role
+from core.security import require_role, get_current_user
 from models.methodology import Category, Subcategory
 from models.user import User
 
 router = APIRouter()
+
+
+# ─── Público (alumno logueado): para el selector de intereses categoría→subcategoría ──
+@router.get("/public/categories")
+async def public_categories(db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
+    rows = (await db.execute(
+        select(Category).where(Category.active.is_(True)).order_by(Category.sort_order)
+    )).scalars().all()
+    return [{"id": c.id, "slug": c.slug, "name": c.name} for c in rows]
+
+
+@router.get("/public/subcategories")
+async def public_subcategories(category_id: Optional[int] = Query(None), db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
+    q = select(Subcategory).where(Subcategory.active.is_(True))
+    if category_id:
+        q = q.where(Subcategory.category_id == category_id)
+    rows = (await db.execute(q.order_by(Subcategory.category_id, Subcategory.sort_order))).scalars().all()
+    return [{"id": s.id, "category_id": s.category_id, "slug": s.slug, "name": s.name} for s in rows]
 
 
 # ─── Categorías ──────────────────────────────────────────────────────────────
