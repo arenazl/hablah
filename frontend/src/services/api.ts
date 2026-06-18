@@ -435,6 +435,10 @@ export const motorAPI = {
   trainState: (studentId: number) => api.get(`/motor/train/state/${studentId}`).then((r) => r.data),
   trainApply: (body: { student_id: number; outcomes: { objectives?: [number, string][]; items?: [string, string, string][] } }) =>
     api.post('/motor/train/apply', body).then((r) => r.data),
+  saveCircuit: (body: { band_code: string; level_code: string; overrides: MotorOverride[] }) =>
+    api.post('/motor/circuit/save', body).then((r) => r.data),
+  loadCircuit: (band: string, level: string) =>
+    api.get<{ overrides: MotorOverride[] }>(`/motor/circuit/${band}/${level}`).then((r) => r.data),
 }
 
 /* ────────────── VOICE WS ────────────── */

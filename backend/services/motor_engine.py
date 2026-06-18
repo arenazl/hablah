@@ -146,3 +146,58 @@ def _train_apply_sync(student_id: int, outcomes: dict) -> dict:
 async def train_apply(student_id: int, outcomes: dict) -> dict:
     """Post-clase del training: sube la escalera SRS del alumno (sin session real)."""
     return await asyncio.to_thread(_train_apply_sync, student_id, outcomes)
+
+
+# ── Grabar/leer el CIRCUITO de un edad×nivel (orchestration + overrides, tópico NULL) ──
+def _save_circuit_sync(band_code, level_code, overrides) -> dict:
+    db = _connect()
+    try:
+        band = db.q1("SELECT band_id FROM age_band WHERE code=%s", (band_code,))
+        if not band:
+            raise ValueError(f"banda {band_code} inexistente")
+        bid = band["band_id"]
+        with db.conn.cursor() as cur:
+            cur.execute("SELECT orchestration_id FROM orchestration WHERE band_id=%s AND level_code=%s AND topic_id IS NULL", (bid, level_code))
+            row = cur.fetchone()
+            if row:
+                oid = row["orchestration_id"]
+                cur.execute("UPDATE orchestration SET status='active' WHERE orchestration_id=%s", (oid,))
+                cur.execute("DELETE FROM orchestration_override WHERE orchestration_id=%s", (oid,))
+            else:
+                cur.execute("INSERT INTO orchestration (name, status, band_id, level_code, topic_id) VALUES (%s,'active',%s,%s,NULL)",
+                            (f"Circuito {band_code} × {level_code}", bid, level_code))
+                oid = cur.lastrowid
+            for o in (overrides or []):
+                cur.execute(
+                    "INSERT INTO orchestration_override (orchestration_id, slot, action, target_id, body) VALUES (%s,%s,%s,%s,%s)",
+                    (oid, o["slot"], o["action"], o.get("target_id"), o.get("body")))
+        db.conn.commit()
+        return {"orchestration_id": oid, "overrides_saved": len(overrides or [])}
+    finally:
+        db.conn.close()
+
+
+def _load_circuit_sync(band_code, level_code) -> dict:
+    db = _connect()
+    try:
+        band = db.q1("SELECT band_id FROM age_band WHERE code=%s", (band_code,))
+        if not band:
+            return {"overrides": []}
+        orc = db.q1("SELECT orchestration_id FROM orchestration WHERE band_id=%s AND level_code=%s AND topic_id IS NULL",
+                    (band["band_id"], level_code))
+        if not orc:
+            return {"overrides": []}
+        rows = db.q("SELECT slot, action, target_id, body FROM orchestration_override WHERE orchestration_id=%s", (orc["orchestration_id"],))
+        return {"orchestration_id": orc["orchestration_id"], "overrides": rows}
+    finally:
+        db.conn.close()
+
+
+async def save_circuit(band_code: str, level_code: str, overrides: list) -> dict:
+    """Persiste el circuito (overrides del fine-tuning) del edad×nivel. NO es la clase: es el molde."""
+    return await asyncio.to_thread(_save_circuit_sync, band_code, level_code, overrides)
+
+
+async def load_circuit(band_code: str, level_code: str) -> dict:
+    """Lee el circuito grabado de un edad×nivel (para pre-cargar el probador)."""
+    return await asyncio.to_thread(_load_circuit_sync, band_code, level_code)

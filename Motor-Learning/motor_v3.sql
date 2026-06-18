@@ -110,7 +110,8 @@ CREATE TABLE trigger_template (
   template_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   band_group ENUM('kid','teen','adult') NOT NULL,
   kind ENUM('opening','continuation','closing') NOT NULL, body VARCHAR(500) NOT NULL,
-  UNIQUE KEY uq_trg (band_group, kind)
+  level_code CHAR(2) NULL,   -- NULL = genérico de la banda; con nivel = override del arranque/cierre por nivel
+  UNIQUE KEY uq_trg (band_group, kind, level_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===== PRESETS · NIVEL =====

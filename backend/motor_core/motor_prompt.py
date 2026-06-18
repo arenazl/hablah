@@ -172,9 +172,13 @@ def resolve_objectives(db: MotorDB, ctx: dict, limit: int = OBJECTIVES_PER_CLASS
            LIMIT %s""",
         (ctx["student"]["student_id"], ctx["level"]["level_code"], limit),
     )
+    dis = _ov_disabled(ctx["overrides"], "objective")
+    rows = [r for r in rows if r["objective_id"] not in dis]
     for r in rows:
         r["chunks"] = [c["chunk"] for c in db.q(
             "SELECT chunk FROM objective_chunk WHERE objective_id=%s ORDER BY ord", (r["objective_id"],))]
+    for body in _ov_added(ctx["overrides"], "objective"):
+        rows.append({"objective_id": None, "kind": "custom", "description": body, "estado": "nuevo", "chunks": []})
     return rows
 
 
@@ -194,7 +198,14 @@ def render_triggers(db: MotorDB, ctx: dict, words, phrases) -> dict:
         "{phrases}": ", ".join(phrases),
     }
     out = {}
-    for t in db.q("SELECT kind, body FROM trigger_template WHERE band_group=%s", (band_group,)):
+    # arranque/cierre por banda + override por nivel: el de level_code=nivel pisa al genérico (NULL)
+    rows = db.q(
+        """SELECT kind, body FROM trigger_template
+           WHERE band_group=%s AND (level_code IS NULL OR level_code=%s)
+           ORDER BY (level_code IS NOT NULL)""",
+        (band_group, ctx["level"]["level_code"]),
+    )
+    for t in rows:
         body = t["body"]
         for k, v in repl.items():
             body = body.replace(k, v)
@@ -226,7 +237,10 @@ def _assemble(db: MotorDB, ctx: dict) -> dict:
     cfg = {r["config_key"]: r["config_value"] for r in db.q("SELECT * FROM app_config")}
     tutor = db.q1("SELECT * FROM tutor_identity WHERE band_id=%s", (band["band_id"],))
     pedagogy = db.q1("SELECT methodology FROM pedagogy WHERE band_id=%s", (band["band_id"],))
-    band_pol = db.q("SELECT kind, body FROM band_policy WHERE band_id=%s", (band["band_id"],))
+    _bp = db.q("SELECT policy_id, kind, body FROM band_policy WHERE band_id=%s", (band["band_id"],))
+    band_pol = [{"kind": p["kind"], "body": p["body"]} for p in _bp
+                if p["policy_id"] not in _ov_disabled(ctx["overrides"], "band_policy")] \
+        + [{"kind": "custom", "body": b} for b in _ov_added(ctx["overrides"], "band_policy")]
     activity = db.q1("SELECT description FROM activity_type WHERE band_id=%s", (band["band_id"],))
     reward = db.q1("SELECT description FROM reward WHERE band_id=%s", (band["band_id"],))
     interests = [r["interest"] for r in

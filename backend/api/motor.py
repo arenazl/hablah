@@ -242,3 +242,28 @@ async def train_apply(payload: TrainApplyIn):
         return await motor_engine.train_apply(payload.student_id, payload.outcomes)
     except Exception as e:
         raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
+# ════════════════════════════ Grabar/leer el CIRCUITO (edad×nivel) ════════════════════════════
+class CircuitSaveIn(BaseModel):
+    band_code: str
+    level_code: str
+    overrides: list[dict[str, Any]] = []   # [{slot,action,target_id?,body?}]
+
+
+@router.post("/circuit/save")
+async def circuit_save(payload: CircuitSaveIn):
+    """Graba el circuito (overrides) de un edad×nivel. Sin auth (probador público)."""
+    try:
+        return await motor_engine.save_circuit(payload.band_code, payload.level_code, payload.overrides)
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
+@router.get("/circuit/{band_code}/{level_code}")
+async def circuit_load(band_code: str, level_code: str):
+    """Lee el circuito grabado de un edad×nivel (para pre-cargar el probador). Sin auth."""
+    try:
+        return await motor_engine.load_circuit(band_code, level_code)
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
