@@ -226,9 +226,8 @@ export default function MotorPlaygroundPanel() {
         )}
         {err && <div style={{ color: C.red, fontSize: 13, padding: 10 }}>{err}</div>}
 
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.7fr) minmax(0,1fr)', gap: 14, alignItems: 'start' }}>
-          {/* ── 9 capas · en mobile los presets se despliegan debajo de la capa tocada ── */}
-          <div>
+        {/* ── 9 capas · al tocar una, sus presets se despliegan DEBAJO (acordeón); no hay columna que reserve espacio ── */}
+        <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: C.dim, fontWeight: 700 }}>Las 9 capas {loading && '· armando…'} · tocá una</div>
               <button onClick={() => setShowXml((v) => !v)} style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.accent, borderRadius: 7, fontSize: 11, padding: '3px 9px', cursor: 'pointer' }}>{showXml ? 'ver capas' : 'ver XML'}</button>
@@ -242,16 +241,16 @@ export default function MotorPlaygroundPanel() {
                   const col = NAT[lm.nat]; const on = tag === activeLayer
                   return (
                     <div key={i}>
-                      <button onClick={() => setActiveLayer(isMobile && on ? '' : tag)} style={{ width: '100%', textAlign: 'left', background: on ? 'rgba(56,189,248,0.06)' : C.panel, border: `1px solid ${on ? C.accent : C.border}`, borderLeft: `3px solid ${col}`, borderRadius: 10, padding: '10px 12px', cursor: 'pointer', color: C.fg }}>
+                      <button onClick={() => setActiveLayer(on ? '' : tag)} style={{ width: '100%', textAlign: 'left', background: on ? 'rgba(56,189,248,0.06)' : C.panel, border: `1px solid ${on ? C.accent : C.border}`, borderLeft: `3px solid ${col}`, borderRadius: 10, padding: '10px 12px', cursor: 'pointer', color: C.fg }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
                           <span style={{ fontSize: 10, fontWeight: 800, color: col, minWidth: 16 }}>{lm.n || '·'}</span>
                           <span style={{ fontSize: 13, fontWeight: 700 }}>{lm.label}</span>
-                          {isMobile && on && <span style={{ marginLeft: 'auto', fontSize: 16, color: C.accent, lineHeight: 1 }}>−</span>}
-                          {!(isMobile && on) && <span style={{ marginLeft: 'auto', fontSize: 9.5, color: col, fontWeight: 700 }}>{lm.dep}</span>}
+                          {on && <span style={{ marginLeft: 'auto', fontSize: 16, color: C.accent, lineHeight: 1 }}>−</span>}
+                          {!on && <span style={{ marginLeft: 'auto', fontSize: 9.5, color: col, fontWeight: 700 }}>{lm.dep}</span>}
                         </div>
                         <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.5, whiteSpace: 'pre-wrap', maxHeight: 130, overflowY: 'auto' }}>{body}</div>
                       </button>
-                      {isMobile && on && <div style={{ marginTop: 8 }}>{presetsBox()}</div>}
+                      {on && <div style={{ marginTop: 8 }}>{presetsBox()}</div>}
                     </div>
                   )
                 })}
