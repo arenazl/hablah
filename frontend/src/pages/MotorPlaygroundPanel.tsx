@@ -143,19 +143,63 @@ export default function MotorPlaygroundPanel() {
   const layerMeta = LAYER[activeLayer] || { label: activeLayer, nat: 'fijo' as const, dep: '', n: 0 }
   const presets = presetsForLayer(activeLayer)
 
+  // panel de presets de la capa activa — desktop: columna derecha; mobile: acordeón bajo la capa
+  const presetsBox = () => (
+    <div style={{ background: C.panel, border: `1px solid ${C.accent}`, borderRadius: 12, padding: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+        <span style={{ width: 9, height: 9, borderRadius: 999, background: NAT[layerMeta.nat] }} />
+        <div style={{ fontSize: 13, fontWeight: 800 }}>Presets · {layerMeta.label}</div>
+      </div>
+      <div style={{ fontSize: 11.5, color: C.dim, marginBottom: 10 }}>{layerMeta.dep}{isGuards ? ' · ajustá en vivo (JIT)' : ''}</div>
+      {isGuards ? (
+        <>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {(res?.guards_pool || []).map((g) => {
+              const off = disabled.has(g.guard_id)
+              return (
+                <div key={g.guard_id} style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '7px 9px', borderRadius: 8, background: off ? 'rgba(248,113,113,0.08)' : C.bg, border: `1px solid ${off ? 'rgba(248,113,113,0.3)' : C.soft}` }}>
+                  <span style={{ flex: 1, fontSize: 12.5, color: off ? C.faint : C.fg, textDecoration: off ? 'line-through' : 'none' }}>{g.body}</span>
+                  <button onClick={() => toggleGuard(g.guard_id)} title={off ? 'reactivar' : 'sacar'} style={{ background: 'none', border: 0, color: off ? C.green : C.faint, cursor: 'pointer', display: 'flex' }}><Ico d={off ? 'M20 6L9 17l-5-5' : 'M18 6L6 18M6 6l12 12'} /></button>
+                </div>
+              )
+            })}
+            {added.map((b, i) => (
+              <div key={`a${i}`} style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '7px 9px', borderRadius: 8, background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.3)' }}>
+                <span style={{ flex: 1, fontSize: 12.5, color: C.fg }}>{b}</span>
+                <button onClick={() => setAdded((p) => p.filter((_, j) => j !== i))} style={{ background: 'none', border: 0, color: C.faint, cursor: 'pointer', display: 'flex' }}><Ico d="M18 6L6 18M6 6l12 12" /></button>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
+            <input value={newGuard} onChange={(e) => setNewGuard(e.target.value)} placeholder="Sumar un guard de prueba…" onKeyDown={(e) => { if (e.key === 'Enter' && newGuard.trim()) { setAdded((p) => [...p, newGuard.trim()]); setNewGuard('') } }} style={{ ...sel, flex: 1 }} />
+            <button disabled={!newGuard.trim()} onClick={() => { setAdded((p) => [...p, newGuard.trim()]); setNewGuard('') }} style={{ background: C.green, border: 0, color: '#06281a', borderRadius: 8, fontSize: 14, fontWeight: 700, padding: '0 12px', cursor: 'pointer', opacity: newGuard.trim() ? 1 : 0.4 }}>+</button>
+          </div>
+        </>
+      ) : (
+        <>
+          {presets.note && <div style={{ fontSize: 11.5, color: C.faint, marginBottom: 8, lineHeight: 1.4 }}>{presets.note}</div>}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {presets.items.map((p, i) => (
+              <div key={i} style={{ padding: '7px 9px', borderRadius: 8, background: C.bg, border: `1px solid ${C.soft}` }}>
+                <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.4 }}>{p.text}</div>
+                {p.tag && <span style={{ fontSize: 9.5, color: C.faint, fontFamily: 'monospace' }}>{p.tag}</span>}
+              </div>
+            ))}
+            {!presets.items.length && !presets.note && <div style={{ fontSize: 12, color: C.faint }}>Sin presets para este paso.</div>}
+          </div>
+        </>
+      )}
+    </div>
+  )
+
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.fg, padding: '18px 16px 64px' }}>
       <div style={{ maxWidth: 1340, margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
-          <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 2px' }}>Probador de orquestación</h1>
-            <p style={{ color: C.dim, fontSize: 12.5, margin: '0 0 14px', maxWidth: 720 }}>
-              Contexto de prueba (edad × nivel × tópico) → el template ya viene armado. Clickeá una capa y a la derecha aparecen sus presets. Ajustás JIT y ▶ probás. No se persiste.
-            </p>
-          </div>
-          <a href={probarUrl} target="_blank" rel="noreferrer" style={{ background: C.green, color: '#06281a', borderRadius: 9, fontSize: 13, fontWeight: 800, padding: '10px 16px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 7, flexShrink: 0 }}>
-            <Ico d="M5 3l14 9-14 9V3z" size={15} /> Probar la clase
-          </a>
+        <div>
+          <h1 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 2px' }}>Probador de orquestación</h1>
+          <p style={{ color: C.dim, fontSize: 12.5, margin: '0 0 14px', maxWidth: 720 }}>
+            Contexto de prueba (edad × nivel × tópico) → el template ya viene armado. Clickeá una capa y abajo aparecen sus presets. Ajustás JIT y, cuando revisaste todo, probás la clase (abajo de todo). No se persiste.
+          </p>
         </div>
 
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8 }}>
@@ -183,10 +227,10 @@ export default function MotorPlaygroundPanel() {
         {err && <div style={{ color: C.red, fontSize: 13, padding: 10 }}>{err}</div>}
 
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.7fr) minmax(0,1fr)', gap: 14, alignItems: 'start' }}>
-          {/* ── 9 capas (clickeables) ── */}
+          {/* ── 9 capas · en mobile los presets se despliegan debajo de la capa tocada ── */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: C.dim, fontWeight: 700 }}>Las 9 capas {loading && '· armando…'} · clickeá una</div>
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: C.dim, fontWeight: 700 }}>Las 9 capas {loading && '· armando…'} · tocá una</div>
               <button onClick={() => setShowXml((v) => !v)} style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.accent, borderRadius: 7, fontSize: 11, padding: '3px 9px', cursor: 'pointer' }}>{showXml ? 'ver capas' : 'ver XML'}</button>
             </div>
             {showXml ? (
@@ -197,15 +241,18 @@ export default function MotorPlaygroundPanel() {
                   const lm = LAYER[tag] || { n: 0, label: tag, nat: 'fijo' as const, dep: '' }
                   const col = NAT[lm.nat]; const on = tag === activeLayer
                   return (
-                    <button key={i} onClick={() => setActiveLayer(tag)} style={{ textAlign: 'left', background: on ? 'rgba(56,189,248,0.06)' : C.panel, border: `1px solid ${on ? C.accent : C.border}`, borderLeft: `3px solid ${col}`, borderRadius: 10, padding: '10px 12px', cursor: 'pointer', color: C.fg }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
-                        <span style={{ fontSize: 10, fontWeight: 800, color: col, minWidth: 16 }}>{lm.n || '·'}</span>
-                        <span style={{ fontSize: 13, fontWeight: 700 }}>{lm.label}</span>
-                        <span style={{ fontSize: 10, color: C.faint, fontFamily: 'monospace' }}>{tag}</span>
-                        <span style={{ marginLeft: 'auto', fontSize: 9.5, color: col, fontWeight: 700 }}>{lm.dep}</span>
-                      </div>
-                      <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.5, whiteSpace: 'pre-wrap', maxHeight: 130, overflowY: 'auto' }}>{body}</div>
-                    </button>
+                    <div key={i}>
+                      <button onClick={() => setActiveLayer(isMobile && on ? '' : tag)} style={{ width: '100%', textAlign: 'left', background: on ? 'rgba(56,189,248,0.06)' : C.panel, border: `1px solid ${on ? C.accent : C.border}`, borderLeft: `3px solid ${col}`, borderRadius: 10, padding: '10px 12px', cursor: 'pointer', color: C.fg }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                          <span style={{ fontSize: 10, fontWeight: 800, color: col, minWidth: 16 }}>{lm.n || '·'}</span>
+                          <span style={{ fontSize: 13, fontWeight: 700 }}>{lm.label}</span>
+                          {isMobile && on && <span style={{ marginLeft: 'auto', fontSize: 16, color: C.accent, lineHeight: 1 }}>−</span>}
+                          {!(isMobile && on) && <span style={{ marginLeft: 'auto', fontSize: 9.5, color: col, fontWeight: 700 }}>{lm.dep}</span>}
+                        </div>
+                        <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.5, whiteSpace: 'pre-wrap', maxHeight: 130, overflowY: 'auto' }}>{body}</div>
+                      </button>
+                      {isMobile && on && <div style={{ marginTop: 8 }}>{presetsBox()}</div>}
+                    </div>
                   )
                 })}
                 {!layers.length && !loading && <div style={{ color: C.faint, fontSize: 13, padding: 12 }}>Elegí edad y nivel para ver el ensamblado.</div>}
@@ -213,54 +260,16 @@ export default function MotorPlaygroundPanel() {
             )}
           </div>
 
-          {/* ── presets del paso activo (dinámico) ── */}
-          <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, position: isMobile ? 'static' : 'sticky', top: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-              <span style={{ width: 9, height: 9, borderRadius: 999, background: NAT[layerMeta.nat] }} />
-              <div style={{ fontSize: 13, fontWeight: 800 }}>Presets · {layerMeta.label}</div>
-            </div>
-            <div style={{ fontSize: 11.5, color: C.dim, marginBottom: 10 }}>{layerMeta.dep}{isGuards ? ' · ajustá en vivo (JIT)' : ''}</div>
-
-            {isGuards ? (
-              <>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {(res?.guards_pool || []).map((g) => {
-                    const off = disabled.has(g.guard_id)
-                    return (
-                      <div key={g.guard_id} style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '7px 9px', borderRadius: 8, background: off ? 'rgba(248,113,113,0.08)' : C.bg, border: `1px solid ${off ? 'rgba(248,113,113,0.3)' : C.soft}` }}>
-                        <span style={{ flex: 1, fontSize: 12.5, color: off ? C.faint : C.fg, textDecoration: off ? 'line-through' : 'none' }}>{g.body}</span>
-                        <button onClick={() => toggleGuard(g.guard_id)} title={off ? 'reactivar' : 'sacar'} style={{ background: 'none', border: 0, color: off ? C.green : C.faint, cursor: 'pointer', display: 'flex' }}><Ico d={off ? 'M20 6L9 17l-5-5' : 'M18 6L6 18M6 6l12 12'} /></button>
-                      </div>
-                    )
-                  })}
-                  {added.map((b, i) => (
-                    <div key={`a${i}`} style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '7px 9px', borderRadius: 8, background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.3)' }}>
-                      <span style={{ flex: 1, fontSize: 12.5, color: C.fg }}>{b}</span>
-                      <button onClick={() => setAdded((p) => p.filter((_, j) => j !== i))} style={{ background: 'none', border: 0, color: C.faint, cursor: 'pointer', display: 'flex' }}><Ico d="M18 6L6 18M6 6l12 12" /></button>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
-                  <input value={newGuard} onChange={(e) => setNewGuard(e.target.value)} placeholder="Sumar un guard de prueba…" onKeyDown={(e) => { if (e.key === 'Enter' && newGuard.trim()) { setAdded((p) => [...p, newGuard.trim()]); setNewGuard('') } }} style={{ ...sel, flex: 1 }} />
-                  <button disabled={!newGuard.trim()} onClick={() => { setAdded((p) => [...p, newGuard.trim()]); setNewGuard('') }} style={{ background: C.green, border: 0, color: '#06281a', borderRadius: 8, fontSize: 14, fontWeight: 700, padding: '0 12px', cursor: 'pointer', opacity: newGuard.trim() ? 1 : 0.4 }}>+</button>
-                </div>
-              </>
-            ) : (
-              <>
-                {presets.note && <div style={{ fontSize: 11.5, color: C.faint, marginBottom: 8, lineHeight: 1.4 }}>{presets.note}</div>}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {presets.items.map((p, i) => (
-                    <div key={i} style={{ padding: '7px 9px', borderRadius: 8, background: C.bg, border: `1px solid ${C.soft}` }}>
-                      <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.4 }}>{p.text}</div>
-                      {p.tag && <span style={{ fontSize: 9.5, color: C.faint, fontFamily: 'monospace' }}>{p.tag}</span>}
-                    </div>
-                  ))}
-                  {!presets.items.length && !presets.note && <div style={{ fontSize: 12, color: C.faint }}>Sin presets para este paso.</div>}
-                </div>
-              </>
-            )}
-          </div>
+          {/* desktop: columna derecha sticky; en mobile los presets van inline (acordeón) */}
+          {!isMobile && <div style={{ position: 'sticky', top: 14 }}>{presetsBox()}</div>}
         </div>
+
+        {/* ▶ Probar: AL FINAL — lo último, una vez revisada toda la orquestación */}
+        <a href={probarUrl} target="_blank" rel="noreferrer"
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, marginTop: 20,
+            background: C.green, color: '#06281a', borderRadius: 12, fontSize: 16, fontWeight: 800, padding: '15px 0', textDecoration: 'none' }}>
+          <Ico d="M5 3l14 9-14 9V3z" size={17} /> Probar la clase
+        </a>
       </div>
     </div>
   )
