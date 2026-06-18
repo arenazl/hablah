@@ -22,7 +22,7 @@ const C = {
   fg: '#e6e8ec', dim: '#9aa3af', faint: '#6b7686', accent: '#38bdf8', green: '#22c55e', red: '#f87171',
 }
 const NAT = { fijo: '#9aa3af', edad: '#fbbf24', nivel: '#7dd3fc', dinamico: '#818cf8' }
-const sel: React.CSSProperties = { padding: '8px 10px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.bg, color: C.fg, fontSize: 13, minWidth: 0 }
+const sel: React.CSSProperties = { width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '8px 10px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.bg, color: C.fg, fontSize: 13, minWidth: 0 }
 const Ico = ({ d, size = 14 }: { d: string; size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
 )
@@ -202,7 +202,7 @@ export default function MotorPlaygroundPanel() {
           </p>
         </div>
 
-        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8 }}>
+        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8, alignItems: 'start' }}>
           <Ctx label="Edad"><select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>{bands.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}</select></Ctx>
           <Ctx label="Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levels.map((l) => <option key={l.level_code} value={l.level_code}>{l.level_code}</option>)}</select></Ctx>
           <Ctx label="Categoría"><select style={sel} value={catId ?? ''} onChange={(e) => { setCatId(e.target.value ? Number(e.target.value) : undefined); setSubId(undefined) }}><option value="">—</option>{catalog.map((c) => <option key={c.category_id} value={c.category_id}>{c.name}</option>)}</select></Ctx>
@@ -217,7 +217,7 @@ export default function MotorPlaygroundPanel() {
             <Chip label="Pacing" value={`${meta.pacing_min} min`} />
             <Chip label="Objetivos" value={String(meta.objectives.length)} />
             <Chip label="Léxico" value={meta.words.length + meta.phrases.length ? `${meta.words.length}w·${meta.phrases.length}f` : 'en vivo'} />
-            <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, fontSize: 10.5, color: C.faint }}>
+            <div style={{ marginLeft: isMobile ? 0 : 'auto', display: 'flex', flexWrap: 'wrap', gap: 10, fontSize: 10.5, color: C.faint }}>
               {Object.entries({ fijo: 'fijo', edad: 'edad', nivel: 'nivel', dinamico: 'dinámico' }).map(([k, l]) => (
                 <span key={k} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><span style={{ width: 8, height: 8, borderRadius: 999, background: NAT[k as keyof typeof NAT] }} /> {l}</span>
               ))}
@@ -276,7 +276,12 @@ export default function MotorPlaygroundPanel() {
 }
 
 function Ctx({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 10.5, color: C.faint, fontWeight: 700, textTransform: 'uppercase' }}>{label}{children}</label>
+  return (
+    <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 10.5, color: C.faint, fontWeight: 700, textTransform: 'uppercase', minWidth: 0 }}>
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>
+      {children}
+    </label>
+  )
 }
 function Chip({ label, value }: { label: string; value: string }) {
   return (
