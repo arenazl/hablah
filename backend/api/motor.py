@@ -107,7 +107,8 @@ def _check_table(table: str) -> None:
 
 
 @router.get("/rows/{table}")
-async def list_rows(table: str, db: AsyncSession = Depends(get_db), _: User = _admin):
+async def list_rows(table: str, db: AsyncSession = Depends(get_db)):
+    """Sin auth: lo lee el probador público (presets por capa), como /llm y /training."""
     _check_table(table)
     return _rows(await db.execute(text(f"SELECT * FROM `{table}`")))
 
@@ -195,8 +196,9 @@ class ResolveIn(BaseModel):
 
 
 @router.post("/resolve")
-async def resolve(payload: ResolveIn, _: User = _admin):
-    """Arma el prompt JIT. test_overrides = jugar con guards en memoria (no persiste)."""
+async def resolve(payload: ResolveIn):
+    """Arma el prompt JIT. test_overrides = jugar con guards en memoria (no persiste).
+    Sin auth: lo usa el probador público (/motor)."""
     try:
         return await motor_engine.resolve(
             payload.band_code, payload.level_code, payload.topic_id,

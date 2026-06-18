@@ -107,25 +107,38 @@ def resolve_context_params(db: MotorDB, band_code: str, level_code: str, topic_i
             "topic": topic, "orchestration": orch, "overrides": overrides}
 
 
+def _ov_disabled(overrides: list, slot: str) -> set:
+    return {o["target_id"] for o in overrides
+            if o["slot"] == slot and o["action"] == "disable" and o.get("target_id")}
+
+
+def _ov_added(overrides: list, slot: str) -> list[str]:
+    return [o["body"] for o in overrides
+            if o["slot"] == slot and o["action"] == "add" and o.get("body")]
+
+
 def resolve_guards(db: MotorDB, ctx: dict) -> list[str]:
-    """Capa 6: guardas de banda (− disabled) + modificador de nivel +
-    políticas de nivel + universales + 'add' de la orquestación."""
-    band, level = ctx["band"], ctx["level"]
-    disabled = {o["target_id"] for o in ctx["overrides"]
-                if o["slot"] == "behavioral_guard" and o["action"] == "disable" and o["target_id"]}
+    """Capa 6: guardas de banda (− disabled + added) + modificador de nivel +
+    políticas de nivel + universales, cada sub-grupo editable por su slot."""
+    band, level, ov = ctx["band"], ctx["level"], ctx["overrides"]
     out = []
-    for g in db.q("SELECT * FROM behavioral_guard WHERE band_id=%s ORDER BY ord", (band["band_id"],)):
-        if g["guard_id"] not in disabled:
+    dis_g = _ov_disabled(ov, "behavioral_guard")
+    for g in db.q("SELECT guard_id, body FROM behavioral_guard WHERE band_id=%s ORDER BY ord", (band["band_id"],)):
+        if g["guard_id"] not in dis_g:
             out.append(g["body"])
+    out += _ov_added(ov, "behavioral_guard")
     out.append(level["modifier"])
-    for p in db.q("SELECT body FROM level_policy WHERE level_code=%s ORDER BY kind",
+    dis_lp = _ov_disabled(ov, "level_policy")
+    for p in db.q("SELECT policy_id, body FROM level_policy WHERE level_code=%s ORDER BY kind",
                   (level["level_code"],)):
-        out.append(p["body"])
-    for u in db.q("SELECT body FROM universal_policy ORDER BY kind, ord"):
-        out.append(u["body"])
-    for o in ctx["overrides"]:
-        if o["slot"] == "behavioral_guard" and o["action"] == "add" and o["body"]:
-            out.append(o["body"])
+        if p["policy_id"] not in dis_lp:
+            out.append(p["body"])
+    out += _ov_added(ov, "level_policy")
+    dis_u = _ov_disabled(ov, "universal_policy")
+    for u in db.q("SELECT policy_id, body FROM universal_policy ORDER BY kind, ord"):
+        if u["policy_id"] not in dis_u:
+            out.append(u["body"])
+    out += _ov_added(ov, "universal_policy")
     return out
 
 
