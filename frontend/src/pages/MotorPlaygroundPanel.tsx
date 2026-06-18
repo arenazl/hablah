@@ -259,11 +259,7 @@ export default function MotorPlaygroundPanel() {
             )}
           </div>
 
-          {/* desktop: columna derecha sticky; en mobile los presets van inline (acordeón) */}
-          {!isMobile && <div style={{ position: 'sticky', top: 14 }}>{presetsBox()}</div>}
-        </div>
-
-        {/* ▶ Probar: AL FINAL — lo último, una vez revisada toda la orquestación */}
+        {/* ▶ Probar: AL FINAL — lo último (botón al pie) */}
         <a href={probarUrl} target="_blank" rel="noreferrer"
           style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, marginTop: 20,
             background: C.green, color: '#06281a', borderRadius: 12, fontSize: 16, fontWeight: 800, padding: '15px 0', textDecoration: 'none' }}>
