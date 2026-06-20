@@ -267,8 +267,9 @@ export default function MotorPlaygroundPanel() {
         )}
         {err && <div style={{ color: C.red, fontSize: 13, padding: 10 }}>{err}</div>}
 
-        {/* ── 9 capas · al tocar una, su panel se despliega DEBAJO (acordeón) ── */}
-        <div>
+        {/* wide (tablet/desktop) = 2 paneles (capas | presets sticky); celular = acordeón */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(0,1.6fr) minmax(0,1fr)', gap: 14, alignItems: 'start' }}>
+          <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: C.dim, fontWeight: 700 }}>Las 9 capas {loading && '· armando…'} · tocá una</div>
             <button onClick={() => setShowXml((v) => !v)} style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.accent, borderRadius: 7, fontSize: 11, padding: '3px 9px', cursor: 'pointer' }}>{showXml ? 'ver capas' : 'ver XML'}</button>
@@ -291,11 +292,21 @@ export default function MotorPlaygroundPanel() {
                       </div>
                       <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.5, whiteSpace: 'pre-wrap', maxHeight: 130, overflowY: 'auto' }}>{body}</div>
                     </button>
-                    {on && <div style={{ marginTop: 8 }}>{presetsBox()}</div>}
+                    {isMobile && on && <div style={{ marginTop: 8 }}>{presetsBox()}</div>}
                   </div>
                 )
               })}
               {!layers.length && !loading && <div style={{ color: C.faint, fontSize: 13, padding: 12 }}>Elegí edad y nivel para ver el ensamblado.</div>}
+            </div>
+          )}
+          </div>
+
+          {/* col derecha (wide): panel de la capa activa, sticky. En celular va inline (acordeón) */}
+          {!isMobile && (
+            <div style={{ position: 'sticky', top: 14 }}>
+              {activeLayer
+                ? presetsBox()
+                : <div style={{ color: C.faint, fontSize: 12.5, padding: 14, border: `1px dashed ${C.border}`, borderRadius: 12 }}>Tocá una capa de la izquierda para ver y editar sus presets.</div>}
             </div>
           )}
         </div>
