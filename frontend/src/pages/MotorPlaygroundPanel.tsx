@@ -48,6 +48,21 @@ const plainTag = (t?: string) => (t ? (t in PLAIN_TAG ? PLAIN_TAG[t] : t) : '')
 const KIND_LABEL: Record<string, string> = {
   error: 'error', chunk: 'chunk', comportamiento: 'conducta', motivacion: 'motivación',
 }
+// qué hace cada sector (grupo) del panel, en una línea
+const GROUP_HINT: Record<string, string> = {
+  'Por la edad': 'Reglas según la edad del alumno.',
+  'Por el nivel': 'Reglas según el nivel (A1–C1).',
+  'Universales (seguridad)': 'Reglas fijas de seguridad y privacidad — no se editan.',
+  'Metodología': 'El método con el que enseña, según la edad.',
+  'Políticas de banda': 'Ajustes de cómo enseña para esta edad.',
+  'Objetivos del nivel': 'Lo que se aprende en este nivel.',
+  'Tutor de la edad': 'Quién es el profe para esta edad.',
+  'Actividad': 'La actividad central de la clase.',
+  'Recompensa': 'Cómo se premia el avance.',
+  'Fases': 'Los momentos de la clase, en orden.',
+  'Arranque / cierre': 'Cómo abre y cierra la clase.',
+  'Config global': 'Parámetros fijos de la sesión.',
+}
 // placeholder del "agregar" según la capa (sin la palabra "preset")
 const ADD_PH: Record<string, string> = {
   behavioral_guard: 'Escribí una regla nueva…', level_policy: 'Escribí una regla nueva…',
@@ -138,6 +153,9 @@ export default function MotorPlaygroundPanel() {
   const [running, setRunning] = useState(false)
   const [lastRun, setLastRun] = useState<string | null>(null)
   const [analysis, setAnalysis] = useState<MotorStageNote[]>([])
+  const [openRO, setOpenRO] = useState<Set<string>>(new Set())   // grupos read-only abiertos (seguridad colapsada por default)
+  const [techTags, setTechTags] = useState<Set<string>>(new Set()) // capas con "texto técnico" visible
+  const toggleSet = (set: Set<string>, k: string, fn: (s: Set<string>) => void) => { const n = new Set(set); n.has(k) ? n.delete(k) : n.add(k); fn(n) }
 
   useEffect(() => {
     motorAPI.dimensions().then((d) => {
@@ -344,12 +362,18 @@ export default function MotorPlaygroundPanel() {
         {note && <div style={{ fontSize: 11.5, color: C.faint, marginBottom: 8, lineHeight: 1.4 }}>{note}</div>}
         {groups.map((g, gi) => {
           const addedHere = added.map((a, idx) => ({ ...a, idx })).filter((a) => a.slot === g.slot)
+          const collapsible = !g.editable                       // grupos read-only (seguridad) se pliegan
+          const open = !collapsible || openRO.has(g.label)
           return (
             <div key={gi} style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: g.editable ? C.fg : C.faint, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
-                {g.label}{!g.editable && <span style={{ color: C.faint }}><Ico d="M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM7 11V7a5 5 0 0 1 10 0v4" size={11} /></span>}
+              <div onClick={collapsible ? () => toggleSet(openRO, g.label, setOpenRO) : undefined}
+                style={{ fontSize: 10, fontWeight: 700, color: g.editable ? C.fg : C.faint, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: open ? 6 : 0, display: 'flex', alignItems: 'center', gap: 6, cursor: collapsible ? 'pointer' : 'default' }}>
+                {collapsible && <Ico d={open ? 'M6 9l6 6 6-6' : 'M9 18l6-6-6-6'} size={11} />}
+                {g.label}{!g.editable && <span style={{ color: C.faint }}><Ico d="M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zM7 11V7a5 5 0 0 1 10 0v4" size={10} /></span>}
+                {collapsible && <span style={{ color: C.faint, fontWeight: 700 }}>· {g.items.length} fijas</span>}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {open && GROUP_HINT[g.label] && <div style={{ fontSize: 10.5, color: C.faint, marginBottom: 6, lineHeight: 1.35 }}>{GROUP_HINT[g.label]}</div>}
+              {open && <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {g.items.map((it, i) => {
                   const key = g.slot && it.id != null ? `${g.slot}:${it.id}` : ''
                   const off = !!key && disabled.has(key)
@@ -395,8 +419,8 @@ export default function MotorPlaygroundPanel() {
                     <button onClick={() => removeAdded(a.idx)} style={{ background: 'none', border: 0, color: C.faint, cursor: 'pointer', display: 'flex' }}><Ico d="M18 6L6 18M6 6l12 12" /></button>
                   </div>
                 ))}
-              </div>
-              {g.editable && g.slot && <AddPreset slot={g.slot} placeholder={ADD_PH[g.slot] || 'Agregar…'} onAdd={addPreset} />}
+              </div>}
+              {open && g.editable && g.slot && <AddPreset slot={g.slot} placeholder={ADD_PH[g.slot] || 'Agregar…'} onAdd={addPreset} />}
             </div>
           )
         })}
@@ -479,8 +503,11 @@ export default function MotorPlaygroundPanel() {
                       <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.5 }}>{LAYER_DESC[tag] || lm.dep}</div>
                       {on && body && (
                         <div style={{ marginTop: 8, paddingTop: 8, borderTop: `1px solid ${C.soft}` }}>
-                          <div style={{ fontSize: 9, color: C.faint, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Texto técnico (lo que recibe la IA)</div>
-                          <div style={{ fontSize: 11, color: C.faint, lineHeight: 1.5, whiteSpace: 'pre-wrap', maxHeight: 160, overflowY: 'auto' }}>{body}</div>
+                          <span onClick={(e) => { e.stopPropagation(); toggleSet(techTags, tag, setTechTags) }}
+                            style={{ fontSize: 9, color: C.faint, textTransform: 'uppercase', letterSpacing: 0.5, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <Ico d={techTags.has(tag) ? 'M6 9l6 6 6-6' : 'M9 18l6-6-6-6'} size={9} /> Texto técnico (lo que recibe la IA)
+                          </span>
+                          {techTags.has(tag) && <div style={{ fontSize: 11, color: C.faint, lineHeight: 1.5, whiteSpace: 'pre-wrap', maxHeight: 160, overflowY: 'auto', marginTop: 5 }}>{body}</div>}
                         </div>
                       )}
                     </button>
