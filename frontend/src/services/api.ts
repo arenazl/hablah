@@ -451,8 +451,10 @@ export interface MotorPreset {
   category?: string; level_hint?: string; example_wrong?: string; example_right?: string
   status: string; state: string; occurrences: number
 }
+export interface MotorStageNote { stage: number; name: string; note: string }
 export interface MotorPresetRun {
   presets: { kind: string; canonical_key: string; label: string }[]
+  stage_analysis?: MotorStageNote[]
   new_presets?: { canonical_key: string; label: string }[]
   reinforced?: string[]; merged?: { propuesto: string; fusionado_en: string }[]; applied?: number
   error?: string

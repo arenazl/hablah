@@ -105,6 +105,13 @@ REGLAS DURAS:
 - category: gramática | vocabulario | preposición | orden | concordancia | falso_amigo | otro.
 - level_hint: nivel CEFR donde típicamente aparece (A1..C1) o null.
 
+ADEMÁS devolvé "stage_analysis": un análisis de la clase recorriendo las 9 ETAPAS del motor.
+Para cada etapa, una nota CORTA en castellano de profe sobre qué mostró ESTA clase respecto de
+esa etapa (qué se cumplió, qué falló, qué conviene ajustar). Si no hay datos, note: "sin datos".
+Las 9 etapas:
+  1 Contexto · 2 Quién enseña · 3 Cómo enseña · 4 La dinámica · 5 Memoria del alumno ·
+  6 Reglas/rieles · 7 Qué aprende · 8 Fases y ritmo · 9 Arranque/cierre
+
 NIVEL DE LA CLASE: {level}
 
 PRESETS_EXISTENTES (para dedupe):
@@ -113,8 +120,9 @@ PRESETS_EXISTENTES (para dedupe):
 OBSERVACIONES (texto libre):
 {observations}
 
-Devolvé EXACTAMENTE este formato:
-{{"presets":[{{"kind":"error","canonical_key":"AGE_HAVE","label":"Dice la edad con 'have'","category":"gramática","level_hint":"A1","example_wrong":"I have 20 years","example_right":"I am 20","match":"new"}}]}}"""
+Devolvé EXACTAMENTE este formato (sin nada más):
+{{"presets":[{{"kind":"error","canonical_key":"AGE_HAVE","label":"Dice la edad con 'have'","category":"gramática","level_hint":"A1","example_wrong":"I have 20 years","example_right":"I am 20","match":"new"}}],
+"stage_analysis":[{{"stage":6,"name":"Reglas/rieles","note":"Respetó los rieles; se trabó 1 vez y se le dio pista."}},{{"stage":7,"name":"Qué aprende","note":"Practicó pasado simple, falló en present perfect."}}]}}"""
 
 
 def _build_prompt(observations: list[str], level_code: str, existing: list[dict]) -> str:
@@ -243,7 +251,7 @@ async def categorize(observations: list[str], level_code: str, *, provider: str 
     parsed = _parse_json(raw)
     if not parsed or "presets" not in parsed:
         return {"presets": [], "error": "json_invalido", "raw": raw[:300]}
-    return {"presets": parsed["presets"]}
+    return {"presets": parsed["presets"], "stage_analysis": parsed.get("stage_analysis", [])}
 
 
 async def process(student_id: int, observations: list[str], level_code: str, *, provider: str = "auto") -> dict:
@@ -252,4 +260,4 @@ async def process(student_id: int, observations: list[str], level_code: str, *, 
     if cat.get("error"):
         return cat
     rep = await asyncio.to_thread(_apply_sync, student_id, cat["presets"])
-    return {"presets": cat["presets"], **rep}
+    return {"presets": cat["presets"], "stage_analysis": cat.get("stage_analysis", []), **rep}

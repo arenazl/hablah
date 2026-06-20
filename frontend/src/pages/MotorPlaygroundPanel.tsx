@@ -8,7 +8,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { motorAPI, MotorResolve, MotorOverride, MotorPreset } from '../services/api'
+import { motorAPI, MotorResolve, MotorOverride, MotorPreset, MotorStageNote } from '../services/api'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Band { band_id: number; code: string; label: string; phase_group?: string }
@@ -131,6 +131,7 @@ export default function MotorPlaygroundPanel() {
   const [obsText, setObsText] = useState('')
   const [running, setRunning] = useState(false)
   const [lastRun, setLastRun] = useState<string | null>(null)
+  const [analysis, setAnalysis] = useState<MotorStageNote[]>([])
 
   useEffect(() => {
     motorAPI.dimensions().then((d) => {
@@ -249,6 +250,7 @@ export default function MotorPlaygroundPanel() {
       if (r.error) { toast.error(`Protocolo: ${r.error}`); return }
       const nuevos = r.new_presets?.length || 0, ref = r.reinforced?.length || 0, mrg = r.merged?.length || 0
       setLastRun(`${r.applied || 0} aplicados · ${nuevos} nuevos · ${ref} reforzados${mrg ? ` · ${mrg} fusionados` : ''}`)
+      setAnalysis(r.stage_analysis || [])
       setObsText('')
       loadPresets(); resolve() // refresca etapa 5 (memoria) y re-arma la clase con el nuevo estado
       toast.success('Clase procesada · la memoria del alumno cambió')
@@ -512,6 +514,26 @@ export default function MotorPlaygroundPanel() {
             </div>
           )}
         </div>
+
+        {analysis.length > 0 && (
+          <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14, marginTop: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <span style={{ width: 9, height: 9, borderRadius: 999, background: C.accent }} />
+              <div style={{ fontSize: 14, fontWeight: 800 }}>Análisis de la clase · por etapa</div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {analysis.map((a) => (
+                <div key={a.stage} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: '8px 10px', borderRadius: 8, background: C.bg, border: `1px solid ${C.soft}` }}>
+                  <span style={{ fontSize: 10, fontWeight: 800, color: C.accent, minWidth: 58, flexShrink: 0, paddingTop: 1 }}>Etapa {a.stage}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 11.5, fontWeight: 700, color: C.fg }}>{a.name}</div>
+                    <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.4 }}>{a.note}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* acciones finales: grabar el circuito + probar la clase */}
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 10, marginTop: 20 }}>
