@@ -251,11 +251,16 @@ def _assemble(db: MotorDB, ctx: dict) -> dict:
     # Es lo que hace que la MISMA clase cambie cuando el alumno deja huella. Tolerante a que la
     # tabla no exista todavía (deploy viejo).
     try:
-        _lp = db.q("""SELECT lp.kind, lp.label, lpe.state
+        _lp = db.q("""SELECT lp.kind, lp.label, lp.polarity, lp.directive, lpe.state
                       FROM learner_preset lpe JOIN learned_preset lp ON lp.preset_id=lpe.preset_id
                       WHERE lpe.student_id=%s ORDER BY lpe.occurrences DESC, lpe.last_seen DESC""", (sid,))
-        learner = list(learner) + [{"item_type": p["kind"], "item_value": p["label"], "status": p["state"]}
-                                   for p in _lp]
+        learner = list(learner)
+        for p in _lp:
+            sign = "+" if p.get("polarity") == "positive" else "-" if p.get("polarity") == "negative" else "·"
+            val = f"{sign} {p['label']}"
+            if p.get("directive"):
+                val += f" -> {p['directive']}"   # la DIRECTIVA accionable entra a la orquestación
+            learner.append({"item_type": p["kind"], "item_value": val, "status": p["state"]})
     except Exception:
         pass
     guards = resolve_guards(db, ctx)
