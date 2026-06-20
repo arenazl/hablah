@@ -24,8 +24,8 @@ interface PGroup { label: string; slot?: string; editable: boolean; items: PItem
 // que setea el root según el tema; accent/green/red son semánticos y no cambian.
 const THEMES: Record<string, { bg: string; panel: string; border: string; soft: string; fg: string; dim: string; faint: string }> = {
   dark: { bg: '#0b0e14', panel: '#11151d', border: '#232936', soft: '#1c2230', fg: '#e6e8ec', dim: '#9aa3af', faint: '#6b7686' },
-  azul: { bg: '#eaf2fb', panel: '#ffffff', border: '#c4d9f0', soft: '#dcebfa', fg: '#16273c', dim: '#4d6a8c', faint: '#8aa0bb' },
-  ambar: { bg: '#fbf6ea', panel: '#fffdf7', border: '#ecdcbf', soft: '#f4ead3', fg: '#3a2d14', dim: '#7a6a45', faint: '#a99565' },
+  azul: { bg: '#d4e6fb', panel: '#f3f9ff', border: '#a3c8ef', soft: '#c1ddfa', fg: '#13243c', dim: '#3f6190', faint: '#7295c2' },
+  ambar: { bg: '#fbecca', panel: '#fff9ee', border: '#e6c98c', soft: '#f6e2b4', fg: '#3a2a0d', dim: '#806a33', faint: '#b3934f' },
 }
 const themeVars = (t: string): React.CSSProperties => {
   const p = THEMES[t] || THEMES.dark
@@ -70,6 +70,7 @@ export default function MotorPlaygroundPanel() {
   const [bands, setBands] = useState<Band[]>([])
   const [levels, setLevels] = useState<Level[]>([])
   const [catalog, setCatalog] = useState<Cat[]>([])
+  const [tsb, setTsb] = useState<{ topic_id: number; band_id: number }[]>([])
   const [students, setStudents] = useState<Student[]>([])
   const [cat, setCat] = useState<Record<string, any[]>>({})
 
@@ -96,6 +97,7 @@ export default function MotorPlaygroundPanel() {
   useEffect(() => {
     motorAPI.dimensions().then((d) => {
       setBands(d.bands); setLevels(d.levels); setCatalog(d.catalog); setStudents(d.students)
+      setTsb(d.topic_suggested_band || [])
     }).catch(() => {})
     const tbls = ['tutor_identity', 'pedagogy', 'activity_type', 'reward', 'behavioral_guard',
       'band_policy', 'level_policy', 'language_objective', 'phase', 'trigger_template', 'app_config', 'universal_policy']
@@ -130,9 +132,26 @@ export default function MotorPlaygroundPanel() {
   }, [band, level, topicId, studentId, overrides])
   useEffect(() => { resolve() }, [resolve])
 
-  const subs = useMemo(() => catalog.find((c) => c.category_id === catId)?.subcategories || [], [catalog, catId])
-  const topics = useMemo(() => subId ? (subs.find((s) => s.subcategory_id === subId)?.topics || []) : subs.flatMap((s) => s.topics), [subs, subId])
   const bandId = useMemo(() => bands.find((b) => b.code === band)?.band_id, [bands, band])
+  // conexión edad→tópico: sólo cat/subcat/tópicos sugeridos para la banda elegida (topic_suggested_band)
+  const allowed = useMemo(() => {
+    const ids = tsb.filter((r) => r.band_id === bandId).map((r) => r.topic_id)
+    return ids.length ? new Set(ids) : null // null = sin data de banda → no filtrar (fallback)
+  }, [tsb, bandId])
+  const catalogB = useMemo(() => {
+    if (!allowed) return catalog
+    return catalog
+      .map((c) => ({ ...c, subcategories: c.subcategories
+        .map((s) => ({ ...s, topics: s.topics.filter((t) => allowed.has(t.topic_id)) }))
+        .filter((s) => s.topics.length > 0) }))
+      .filter((c) => c.subcategories.length > 0)
+  }, [catalog, allowed])
+  const subs = useMemo(() => catalogB.find((c) => c.category_id === catId)?.subcategories || [], [catalogB, catId])
+  const topics = useMemo(() => subId ? (subs.find((s) => s.subcategory_id === subId)?.topics || []) : subs.flatMap((s) => s.topics), [subs, subId])
+  // al cambiar la banda, si la selección actual ya no aplica a esa edad, la reseteo
+  useEffect(() => { if (catId != null && !catalogB.some((c) => c.category_id === catId)) { setCatId(undefined); setSubId(undefined) } }, [catalogB, catId])
+  useEffect(() => { if (subId != null && !subs.some((s) => s.subcategory_id === subId)) setSubId(undefined) }, [subs, subId])
+  useEffect(() => { if (topicId != null && allowed && !allowed.has(topicId)) setTopicId(undefined) }, [allowed, topicId])
   const phaseGroup = band === 'early_child' || band === 'child' ? 'kid' : 'adult'
   const trigGroup = band === 'early_child' || band === 'child' ? 'kid' : band
 
@@ -270,7 +289,7 @@ export default function MotorPlaygroundPanel() {
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8, alignItems: 'start' }}>
           <Ctx label="Edad"><select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>{bands.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}</select></Ctx>
           <Ctx label="Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levels.map((l) => <option key={l.level_code} value={l.level_code}>{l.level_code}</option>)}</select></Ctx>
-          <Ctx label="Categoría"><select style={sel} value={catId ?? ''} onChange={(e) => { setCatId(e.target.value ? Number(e.target.value) : undefined); setSubId(undefined) }}><option value="">—</option>{catalog.map((c) => <option key={c.category_id} value={c.category_id}>{c.name}</option>)}</select></Ctx>
+          <Ctx label="Categoría"><select style={sel} value={catId ?? ''} onChange={(e) => { setCatId(e.target.value ? Number(e.target.value) : undefined); setSubId(undefined) }}><option value="">—</option>{catalogB.map((c) => <option key={c.category_id} value={c.category_id}>{c.name}</option>)}</select></Ctx>
           <Ctx label="Subcategoría"><select style={sel} value={subId ?? ''} disabled={!catId} onChange={(e) => setSubId(e.target.value ? Number(e.target.value) : undefined)}><option value="">—</option>{subs.map((s) => <option key={s.subcategory_id} value={s.subcategory_id}>{s.name}</option>)}</select></Ctx>
           <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topics.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
           <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (neutra)</option>{students.map((s) => <option key={s.student_id} value={s.student_id}>{s.name} ({s.age}·{s.level_code})</option>)}</select></Ctx>
