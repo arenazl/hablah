@@ -444,16 +444,24 @@ export const motorAPI = {
     api.post<MotorPresetRun>('/motor/protocol/run', body).then((r) => r.data),
   studentPresets: (studentId: number) =>
     api.get<{ presets: MotorPreset[] }>(`/motor/student-presets/${studentId}`).then((r) => r.data),
+  // perfil-molde por edad×nivel (acumula su learned_state) + borrar historial
+  profile: (band: string, level: string) =>
+    api.get<{ student_id: number; name: string; profile_key: string; presets: MotorPreset[] }>(`/motor/profile/${band}/${level}`).then((r) => r.data),
+  wipeProfile: (studentId: number) =>
+    api.post<{ wiped: { presets: number; objectives: number; items: number } }>(`/motor/profile/${studentId}/wipe`, {}).then((r) => r.data),
 }
 
 export interface MotorPreset {
-  preset_id: number; kind: 'error' | 'chunk'; canonical_key: string; label: string
-  category?: string; level_hint?: string; example_wrong?: string; example_right?: string
+  preset_id: number; kind: string; canonical_key: string; label: string
+  category?: string; polarity?: 'positive' | 'negative' | 'neutral'; directive?: string
+  level_hint?: string; example_wrong?: string; example_right?: string
   status: string; state: string; occurrences: number
 }
 export interface MotorStageNote { stage: number; name: string; note: string }
 export interface MotorPresetRun {
-  presets: { kind: string; canonical_key: string; label: string }[]
+  presets: { kind: string; canonical_key: string; label: string; polarity?: string; directive?: string }[]
+  objectives?: { objective_id: number; score: string }[]
+  objectives_applied?: Record<string, string>
   stage_analysis?: MotorStageNote[]
   new_presets?: { canonical_key: string; label: string }[]
   reinforced?: string[]; merged?: { propuesto: string; fusionado_en: string }[]; applied?: number

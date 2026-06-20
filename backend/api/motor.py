@@ -272,6 +272,26 @@ async def student_presets(student_id: int):
         raise HTTPException(400, f"{type(e).__name__}: {e}")
 
 
+@router.get("/profile/{band_code}/{level_code}")
+async def profile(band_code: str, level_code: str):
+    """Perfil-molde de (edad, nivel): lo crea si no existe + sus presets acumulados. Sin auth."""
+    try:
+        prof = await motor_protocol.get_or_create_profile(band_code, level_code)
+        prof["presets"] = await motor_protocol.student_presets(prof["student_id"])
+        return prof
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
+@router.post("/profile/{student_id}/wipe")
+async def profile_wipe(student_id: int):
+    """Borra el learned_state del perfil/alumno (para comparar clase con/sin historial). Sin auth."""
+    try:
+        return await motor_protocol.wipe_learned_state(student_id)
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
 # ════════════════════════════ Grabar/leer el CIRCUITO (edad×nivel) ════════════════════════════
 class CircuitSaveIn(BaseModel):
     band_code: str

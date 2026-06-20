@@ -102,12 +102,20 @@ REGLAS DURAS:
 - kind: "error" (algo que el alumno hace mal) o "chunk" (vocabulario/frase que usó o necesita).
 - label: en castellano, claro para un profe (no técnico).
 - Para errores: example_wrong y example_right. Para chunks: example_right = la frase en inglés; example_wrong = null.
-- category: gramática | vocabulario | preposición | orden | concordancia | falso_amigo | otro.
+- category: gramática | vocabulario | preposición | orden | concordancia | falso_amigo | comportamiento | motivación | otro.
 - level_hint: nivel CEFR donde típicamente aparece (A1..C1) o null.
+- ANATOMÍA de cada patrón (obligatoria):
+  - polarity: "positive" (fortaleza / lo que aprovechás) | "negative" (lo que hay que trabajar) | "neutral".
+  - directive: instrucción CORTA al coach de qué hacer con esto en la próxima clase.
+      positivo -> aprovechá/reforzá ; negativo -> andamiá/repasá.
+  - confidence: 0..1, qué tan seguro estás de que el patrón es REAL según la evidencia (1=clarísimo, <0.5=dudoso).
+- kind admite, además de error/chunk: "comportamiento" (cómo actúa el alumno) y "motivación" (qué lo mueve/traba).
 
-ADEMÁS devolvé "stage_analysis": un análisis de la clase recorriendo las 9 ETAPAS del motor.
-Para cada etapa, una nota CORTA en castellano de profe sobre qué mostró ESTA clase respecto de
-esa etapa (qué se cumplió, qué falló, qué conviene ajustar). Si no hay datos, note: "sin datos".
+ADEMÁS devolvé "objectives": de OBJETIVOS_DEL_NIVEL, cuáles se PRACTICARON en la clase y con qué
+desempeño. Usá SOLO objective_id de esa lista. score: "good" | "partial" | "fail".
+
+ADEMÁS devolvé "stage_analysis": un análisis recorriendo las 9 ETAPAS del motor, una nota CORTA
+por etapa de qué mostró ESTA clase (qué se cumplió, qué falló, qué ajustar). Si no hay datos, "sin datos".
 Las 9 etapas:
   1 Contexto · 2 Quién enseña · 3 Cómo enseña · 4 La dinámica · 5 Memoria del alumno ·
   6 Reglas/rieles · 7 Qué aprende · 8 Fases y ritmo · 9 Arranque/cierre
@@ -117,18 +125,23 @@ NIVEL DE LA CLASE: {level}
 PRESETS_EXISTENTES (para dedupe):
 {existing}
 
+OBJETIVOS_DEL_NIVEL (para marcar desempeño; usá estos objective_id):
+{objectives}
+
 OBSERVACIONES (texto libre):
 {observations}
 
 Devolvé EXACTAMENTE este formato (sin nada más):
-{{"presets":[{{"kind":"error","canonical_key":"AGE_HAVE","label":"Dice la edad con 'have'","category":"gramática","level_hint":"A1","example_wrong":"I have 20 years","example_right":"I am 20","match":"new"}}],
-"stage_analysis":[{{"stage":6,"name":"Reglas/rieles","note":"Respetó los rieles; se trabó 1 vez y se le dio pista."}},{{"stage":7,"name":"Qué aprende","note":"Practicó pasado simple, falló en present perfect."}}]}}"""
+{{"presets":[{{"kind":"error","canonical_key":"AGE_HAVE","label":"Dice la edad con 'have'","category":"gramática","polarity":"negative","directive":"Recast suave; modelá 'I am X' sin señalar el error.","confidence":0.95,"level_hint":"A1","example_wrong":"I have 20 years","example_right":"I am 20","match":"new"}}],
+"objectives":[{{"objective_id":12,"score":"good"}}],
+"stage_analysis":[{{"stage":7,"name":"Qué aprende","note":"Practicó pasado simple, falló en present perfect."}}]}}"""
 
 
-def _build_prompt(observations: list[str], level_code: str, existing: list[dict]) -> str:
+def _build_prompt(observations: list[str], level_code: str, existing: list[dict], objectives: list[dict]) -> str:
     ex = "\n".join(f"- [{e['kind']}] {e['canonical_key']}: {e['label']}" for e in existing) or "(ninguno todavía)"
+    ob = "\n".join(f"- id={o['objective_id']} [{o.get('code', '')}] {o['description']}" for o in objectives) or "(ninguno)"
     obs = "\n".join(f"- {o}" for o in observations if o and o.strip()) or "(ninguna)"
-    return _PROMPT.format(level=level_code, existing=ex, observations=obs)
+    return _PROMPT.format(level=level_code, existing=ex, objectives=ob, observations=obs)
 
 
 def _parse_json(raw: str) -> Optional[dict]:
@@ -151,6 +164,14 @@ def _load_existing_sync() -> list[dict]:
         db.conn.close()
 
 
+def _load_objectives_sync(level_code: str) -> list[dict]:
+    db = motor_engine._connect()
+    try:
+        return db.q("SELECT objective_id, code, description FROM language_objective WHERE cefr_level=%s ORDER BY sort_order", (level_code,))
+    finally:
+        db.conn.close()
+
+
 def _norm(s: str) -> str:
     s = unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode().lower()
     return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]", " ", s)).strip()
@@ -158,6 +179,15 @@ def _norm(s: str) -> str:
 
 def _tokens(s: str) -> set:
     return {t for t in _norm(s).split() if len(t) > 2}
+
+
+_KINDS = ("error", "chunk", "comportamiento", "motivacion")
+_POLARITIES = ("positive", "negative", "neutral")
+_CONF_AUTO = 0.75  # >= se aplica solo (active); por debajo queda candidate para revisar
+
+
+def _norm_kind(k) -> str:
+    return _norm(k or "").replace(" ", "")  # "motivación" -> "motivacion"
 
 
 def _looks_same(p: dict, ex: dict) -> bool:
@@ -186,8 +216,8 @@ def _apply_sync(student_id: int, presets: list[dict]) -> dict:
     try:
         with db.conn.cursor() as cur:
             for p in presets:
-                kind = p.get("kind"); ckey = (p.get("canonical_key") or "").strip().upper()[:60]
-                if kind not in ("error", "chunk") or not ckey:
+                kind = _norm_kind(p.get("kind")); ckey = (p.get("canonical_key") or "").strip().upper()[:60]
+                if kind not in _KINDS or not ckey:
                     continue
                 pp = {"kind": kind, "canonical_key": ckey, "label": p.get("label") or ckey}
                 # 1) match exacto por canonical_key  2) red determinística por parecido
@@ -199,15 +229,21 @@ def _apply_sync(student_id: int, presets: list[dict]) -> dict:
                 if hit:
                     pid = hit["preset_id"]
                 else:
+                    pol = _norm(p.get("polarity"))
+                    polarity = pol if pol in _POLARITIES else "neutral"
+                    conf = p.get("confidence")
+                    # AUTONOMÍA: alta confianza entra como 'active' (se aplica solo); baja, 'candidate'
+                    status = "active" if isinstance(conf, (int, float)) and conf >= _CONF_AUTO else "candidate"
                     cur.execute(
                         """INSERT INTO learned_preset
-                           (kind, canonical_key, label, category, level_hint, example_wrong, example_right, source, status)
-                           VALUES (%s,%s,%s,%s,%s,%s,%s,'protocol','candidate')""",
-                        (kind, ckey, pp["label"][:180], (p.get("category") or None),
-                         (p.get("level_hint") or None), (p.get("example_wrong") or None), (p.get("example_right") or None)))
+                           (kind, canonical_key, label, category, polarity, directive, level_hint, example_wrong, example_right, source, status)
+                           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,'protocol',%s)""",
+                        (kind, ckey, pp["label"][:180], (p.get("category") or None), polarity,
+                         (p.get("directive") or None), (p.get("level_hint") or None),
+                         (p.get("example_wrong") or None), (p.get("example_right") or None), status))
                     pid = cur.lastrowid
                     existing.append({"preset_id": pid, "kind": kind, "canonical_key": ckey, "label": pp["label"]})
-                    rep["new_presets"].append({"preset_id": pid, "kind": kind, "canonical_key": ckey, "label": p.get("label")})
+                    rep["new_presets"].append({"preset_id": pid, "kind": kind, "canonical_key": ckey, "label": p.get("label"), "status": status})
                 # estado del alumno: refuerza ocurrencia o lo crea (active = a trabajar)
                 exists = db.q1("SELECT 1 FROM learner_preset WHERE student_id=%s AND preset_id=%s", (student_id, pid))
                 if exists:
@@ -222,13 +258,34 @@ def _apply_sync(student_id: int, presets: list[dict]) -> dict:
         db.conn.close()
 
 
+def _apply_objectives_sync(student_id: int, objectives: list[dict], valid_ids: set) -> dict:
+    """La MANO (SRS) sobre los objetivos del catálogo: la escalera que YA converge,
+    intacta. Reusa motor_postclass.record_objective. Solo objective_id válidos del nivel."""
+    db = motor_engine._connect()
+    out = {"objectives_applied": {}}
+    try:
+        for o in objectives or []:
+            try:
+                oid = int(o.get("objective_id"))
+            except (TypeError, ValueError):
+                continue
+            score = o.get("score")
+            if oid not in valid_ids or score not in ("good", "partial", "fail"):
+                continue
+            out["objectives_applied"][oid] = motor_engine.motor_postclass.record_objective(db, student_id, oid, score)
+        db.conn.commit()
+        return out
+    finally:
+        db.conn.close()
+
+
 # ───────────────────────── API del protocolo ─────────────────────────
 def _student_presets_sync(student_id: int) -> list[dict]:
     db = motor_engine._connect()
     try:
         return db.q(
             """SELECT lp.preset_id, lp.kind, lp.canonical_key, lp.label, lp.category,
-                      lp.level_hint, lp.example_wrong, lp.example_right, lp.status,
+                      lp.polarity, lp.directive, lp.level_hint, lp.example_wrong, lp.example_right, lp.status,
                       lpe.state, lpe.occurrences
                FROM learner_preset lpe JOIN learned_preset lp ON lp.preset_id=lpe.preset_id
                WHERE lpe.student_id=%s ORDER BY lpe.occurrences DESC, lpe.last_seen DESC""",
@@ -242,22 +299,78 @@ async def student_presets(student_id: int) -> list[dict]:
     return await asyncio.to_thread(_student_presets_sync, student_id)
 
 
-async def categorize(observations: list[str], level_code: str, *, provider: str = "auto") -> dict:
-    """Texto libre -> presets canónicos (sin tocar BD). Devuelve {'presets':[...]} o {'error':...}."""
+# ───────────────────────── perfiles por edad×nivel (banco de pruebas) ─────────────────────────
+_BAND_AGE = {"early_child": 5, "child": 10, "teen": 15, "adult": 30}
+
+
+def _get_or_create_profile_sync(band_code: str, level_code: str) -> dict:
+    """Un alumno-molde por (edad, nivel). Acumula su propio learned_state."""
+    key = f"{band_code}:{level_code}"
+    db = motor_engine._connect()
+    try:
+        row = db.q1("SELECT student_id, name FROM student WHERE profile_key=%s", (key,))
+        if row:
+            return {"student_id": row["student_id"], "name": row["name"], "profile_key": key}
+        name = f"Perfil · {band_code} · {level_code}"
+        with db.conn.cursor() as cur:
+            cur.execute("INSERT INTO student (name, profile_key, age, level_code) VALUES (%s,%s,%s,%s)",
+                        (name, key, _BAND_AGE.get(band_code, 18), level_code))
+            sid = cur.lastrowid
+        db.conn.commit()
+        return {"student_id": sid, "name": name, "profile_key": key}
+    finally:
+        db.conn.close()
+
+
+def _wipe_sync(student_id: int) -> dict:
+    """Borra TODO el learned_state del perfil/alumno (para ver la clase sin historial)."""
+    db = motor_engine._connect()
+    try:
+        with db.conn.cursor() as cur:
+            cur.execute("DELETE FROM learner_preset WHERE student_id=%s", (student_id,)); n1 = cur.rowcount
+            cur.execute("DELETE FROM learner_objective WHERE student_id=%s", (student_id,)); n2 = cur.rowcount
+            cur.execute("DELETE FROM learner_item WHERE student_id=%s", (student_id,)); n3 = cur.rowcount
+        db.conn.commit()
+        return {"wiped": {"presets": n1, "objectives": n2, "items": n3}}
+    finally:
+        db.conn.close()
+
+
+async def get_or_create_profile(band_code: str, level_code: str) -> dict:
+    return await asyncio.to_thread(_get_or_create_profile_sync, band_code, level_code)
+
+
+async def wipe_learned_state(student_id: int) -> dict:
+    return await asyncio.to_thread(_wipe_sync, student_id)
+
+
+async def categorize(observations: list[str], level_code: str, *, objectives_catalog: Optional[list] = None, provider: str = "auto") -> dict:
+    """Texto libre -> presets canónicos + objetivos practicados + análisis (sin tocar BD)."""
     existing = await asyncio.to_thread(_load_existing_sync)
-    raw = await _run_llm(_build_prompt(observations, level_code, existing), provider)
+    if objectives_catalog is None:
+        objectives_catalog = await asyncio.to_thread(_load_objectives_sync, level_code)
+    raw = await _run_llm(_build_prompt(observations, level_code, existing, objectives_catalog), provider)
     if not raw:
         return {"presets": [], "error": "llm_sin_respuesta"}
     parsed = _parse_json(raw)
     if not parsed or "presets" not in parsed:
         return {"presets": [], "error": "json_invalido", "raw": raw[:300]}
-    return {"presets": parsed["presets"], "stage_analysis": parsed.get("stage_analysis", [])}
+    return {"presets": parsed["presets"], "objectives": parsed.get("objectives", []),
+            "stage_analysis": parsed.get("stage_analysis", [])}
 
 
 async def process(student_id: int, observations: list[str], level_code: str, *, provider: str = "auto") -> dict:
-    """Pipeline completo: texto libre -> presets -> estado del alumno (learner_preset)."""
-    cat = await categorize(observations, level_code, provider=provider)
+    """MOTOR POST-CLASE unificado: texto libre -> classify (ojos) -> SRS (mano).
+    - patrones (error/chunk/comportamiento/motivación) -> learner_preset (escalera de patrones).
+    - objetivos del catálogo -> record_objective (la escalera que YA converge, intacta).
+    - errores como PATRONES, nunca texto libre. + análisis por etapa.
+    Corre solo (autonomía): alta confianza se aplica; el resto queda candidate."""
+    objectives_catalog = await asyncio.to_thread(_load_objectives_sync, level_code)
+    cat = await categorize(observations, level_code, objectives_catalog=objectives_catalog, provider=provider)
     if cat.get("error"):
         return cat
     rep = await asyncio.to_thread(_apply_sync, student_id, cat["presets"])
-    return {"presets": cat["presets"], "stage_analysis": cat.get("stage_analysis", []), **rep}
+    valid_ids = {o["objective_id"] for o in objectives_catalog}
+    objrep = await asyncio.to_thread(_apply_objectives_sync, student_id, cat.get("objectives", []), valid_ids)
+    return {"presets": cat["presets"], "objectives": cat.get("objectives", []),
+            "stage_analysis": cat.get("stage_analysis", []), **rep, **objrep}

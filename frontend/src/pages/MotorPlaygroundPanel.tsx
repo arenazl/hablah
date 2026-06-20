@@ -44,6 +44,10 @@ const PLAIN_TAG: Record<string, string> = {
   idle_timeout: 'pausa larga', universal_guard: '',
 }
 const plainTag = (t?: string) => (t ? (t in PLAIN_TAG ? PLAIN_TAG[t] : t) : '')
+// tipo de preset del learned_state -> etiqueta de profe
+const KIND_LABEL: Record<string, string> = {
+  error: 'error', chunk: 'chunk', comportamiento: 'conducta', motivacion: 'motivación',
+}
 // placeholder del "agregar" según la capa (sin la palabra "preset")
 const ADD_PH: Record<string, string> = {
   behavioral_guard: 'Escribí una regla nueva…', level_policy: 'Escribí una regla nueva…',
@@ -108,6 +112,8 @@ export default function MotorPlaygroundPanel() {
   const [subId, setSubId] = useState<number | undefined>()
   const [topicId, setTopicId] = useState<number | undefined>(7)
   const [studentId, setStudentId] = useState<number | undefined>()
+  // perfil-molde de este edad×nivel (acumula learned_state); si no se elige alumno, se usa este
+  const [profile, setProfile] = useState<{ student_id: number; name: string } | null>(null)
 
   // overrides generalizados por slot: disabled = Set("slot:id"), added = [{slot, body}],
   // edited = {"slot:id": textoCorregido} (corrección en el lugar de una regla del catálogo)
@@ -156,6 +162,13 @@ export default function MotorPlaygroundPanel() {
     }).catch(() => { setDisabled(new Set()); setAdded([]); setEdited({}) })
   }, [band, level])
 
+  // perfil-molde de este edad×nivel: lo trae (o crea) para que el loop acumule sobre él
+  useEffect(() => {
+    motorAPI.profile(band, level).then((p) => setProfile({ student_id: p.student_id, name: p.name })).catch(() => setProfile(null))
+  }, [band, level])
+  // alumno efectivo: el elegido a mano, o el perfil del nivel por defecto
+  const effStudent = useMemo(() => studentId ?? profile?.student_id, [studentId, profile])
+
   const overrides = useMemo<MotorOverride[]>(() => {
     const out: MotorOverride[] = []
     for (const k of disabled) { const i = k.indexOf(':'); out.push({ slot: k.slice(0, i), action: 'disable', target_id: Number(k.slice(i + 1)) }) }
@@ -168,10 +181,10 @@ export default function MotorPlaygroundPanel() {
     setLoading(true); setErr(null)
     motorAPI.resolve({
       band_code: band, level_code: level, topic_id: topicId ?? null,
-      student_id: studentId ?? null, test_overrides: overrides.length ? overrides : undefined,
+      student_id: effStudent ?? null, test_overrides: overrides.length ? overrides : undefined,
     }).then(setRes).catch((e) => { setErr(e?.response?.data?.detail || 'Error'); setRes(null) })
       .finally(() => setLoading(false))
-  }, [band, level, topicId, studentId, overrides])
+  }, [band, level, topicId, effStudent, overrides])
   useEffect(() => { resolve() }, [resolve])
 
   const bandId = useMemo(() => bands.find((b) => b.code === band)?.band_id, [bands, band])
@@ -234,19 +247,30 @@ export default function MotorPlaygroundPanel() {
 
   // presets que arrastra el alumno (etapa 5 / memoria): se refrescan al elegir alumno o tras la clase
   const loadPresets = useCallback(() => {
-    if (studentId == null) { setPresets([]); return }
-    motorAPI.studentPresets(studentId).then((r) => setPresets(r.presets || [])).catch(() => setPresets([]))
-  }, [studentId])
+    if (effStudent == null) { setPresets([]); return }
+    motorAPI.studentPresets(effStudent).then((r) => setPresets(r.presets || [])).catch(() => setPresets([]))
+  }, [effStudent])
   useEffect(() => { loadPresets() }, [loadPresets])
+
+  // borrar el historial (learned_state) del perfil/alumno: para ver la clase SIN historial
+  const wipeHistory = async () => {
+    if (effStudent == null) return
+    try {
+      await motorAPI.wipeProfile(effStudent)
+      setAnalysis([]); setLastRun(null)
+      loadPresets(); resolve()
+      toast.success('Historial borrado · la clase vuelve a "sin historial"')
+    } catch { toast.error('No se pudo borrar el historial') }
+  }
 
   // correr la clase: texto libre -> protocolo (IA encasilla) -> presets -> la MISMA clase cambia
   const runClass = async () => {
-    if (studentId == null) { toast.error('Elegí un alumno para correr el loop'); return }
+    if (effStudent == null) { toast.error('Elegí edad y nivel (se usa el perfil del nivel)'); return }
     const observations = obsText.split('\n').map((s) => s.trim()).filter(Boolean)
     if (!observations.length) { toast.error('Escribí al menos una observación de la clase'); return }
     setRunning(true)
     try {
-      const r = await motorAPI.protocolRun({ student_id: studentId, level_code: level, observations })
+      const r = await motorAPI.protocolRun({ student_id: effStudent, level_code: level, observations })
       if (r.error) { toast.error(`Protocolo: ${r.error}`); return }
       const nuevos = r.new_presets?.length || 0, ref = r.reinforced?.length || 0, mrg = r.merged?.length || 0
       setLastRun(`${r.applied || 0} aplicados · ${nuevos} nuevos · ${ref} reforzados${mrg ? ` · ${mrg} fusionados` : ''}`)
@@ -395,7 +419,7 @@ export default function MotorPlaygroundPanel() {
           <Ctx label="Categoría"><select style={sel} value={catId ?? ''} onChange={(e) => { setCatId(e.target.value ? Number(e.target.value) : undefined); setSubId(undefined) }}><option value="">—</option>{catalogB.map((c) => <option key={c.category_id} value={c.category_id}>{c.name}</option>)}</select></Ctx>
           <Ctx label="Subcategoría"><select style={sel} value={subId ?? ''} disabled={!catId} onChange={(e) => setSubId(e.target.value ? Number(e.target.value) : undefined)}><option value="">—</option>{subs.map((s) => <option key={s.subcategory_id} value={s.subcategory_id}>{s.name}</option>)}</select></Ctx>
           <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topics.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
-          <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (neutra)</option>{students.map((s) => <option key={s.student_id} value={s.student_id}>{s.name} ({s.age}·{s.level_code})</option>)}</select></Ctx>
+          <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— Perfil del nivel</option>{students.map((s) => <option key={s.student_id} value={s.student_id}>{s.name} ({s.age}·{s.level_code})</option>)}</select></Ctx>
         </div>
 
         {meta && (
@@ -470,32 +494,45 @@ export default function MotorPlaygroundPanel() {
             <div style={{ fontSize: 14, fontWeight: 800 }}>Loop de aprendizaje</div>
           </div>
           <div style={{ fontSize: 11.5, color: C.dim, marginBottom: 12 }}>
-            El alumno deja huella en cada clase y la <b>misma clase cambia</b>. La IA encasilla lo observado en presets (errores a vigilar / chunks a reforzar), nunca texto libre.
+            El alumno deja huella en cada clase y la <b>misma clase cambia</b>. La IA encasilla lo observado en presets (errores / chunks / comportamiento / motivación, con polaridad +/−), nunca texto libre. <b>Borrá el historial</b> para comparar la clase con y sin memoria.
           </div>
-          {studentId == null ? (
+          {effStudent == null ? (
             <div style={{ fontSize: 12.5, color: C.faint, padding: '10px 12px', border: `1px dashed ${C.border}`, borderRadius: 10 }}>
-              Elegí un <b>alumno</b> arriba para ver su memoria y correr el loop.
+              Elegí <b>edad y nivel</b> arriba — se usa el perfil de ese nivel.
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14, alignItems: 'start' }}>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: C.faint, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
-                  Memoria del alumno · {presets.length} preset{presets.length === 1 ? '' : 's'}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: C.faint, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                    Memoria{studentId == null && profile ? ` · ${profile.name}` : ''} · {presets.length} preset{presets.length === 1 ? '' : 's'}
+                  </div>
+                  {presets.length > 0 && (
+                    <button onClick={wipeHistory} title="borrar el learned_state" style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: `1px solid ${C.border}`, color: C.red, borderRadius: 7, fontSize: 10.5, fontWeight: 700, padding: '3px 8px', cursor: 'pointer', flexShrink: 0 }}>
+                      <Ico d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" size={11} /> Borrar historial
+                    </button>
+                  )}
                 </div>
                 {presets.length === 0
                   ? <div style={{ fontSize: 12, color: C.faint }}>(vacía — corré una clase)</div>
                   : <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {presets.map((p) => (
-                      <div key={p.preset_id} style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '7px 9px', borderRadius: 8, background: C.bg, border: `1px solid ${C.soft}` }}>
-                        <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 6, color: p.kind === 'error' ? C.red : C.green, background: p.kind === 'error' ? 'rgba(248,113,113,0.12)' : 'rgba(34,197,94,0.12)' }}>
-                          {p.kind === 'error' ? 'error' : 'chunk'}
-                        </span>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.35 }}>{p.label}</div>
-                          <span style={{ fontSize: 9.5, color: C.faint }}>{p.state} · visto x{p.occurrences}{p.status === 'candidate' ? ' · candidato' : ''}</span>
+                    {presets.map((p) => {
+                      const pos = p.polarity === 'positive', neg = p.polarity === 'negative'
+                      const col = pos ? C.green : neg ? C.red : C.dim
+                      const bg = pos ? 'rgba(34,197,94,0.12)' : neg ? 'rgba(248,113,113,0.12)' : C.soft
+                      return (
+                        <div key={p.preset_id} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', padding: '7px 9px', borderRadius: 8, background: C.bg, border: `1px solid ${C.soft}` }}>
+                          <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 6, color: col, background: bg, flexShrink: 0, whiteSpace: 'nowrap' }}>
+                            {pos ? '+' : neg ? '−' : '·'} {KIND_LABEL[p.kind] || p.kind}
+                          </span>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.35 }}>{p.label}</div>
+                            {p.directive && <div style={{ fontSize: 11, color: C.dim, lineHeight: 1.35, marginTop: 2, fontStyle: 'italic' }}>→ {p.directive}</div>}
+                            <span style={{ fontSize: 9.5, color: C.faint }}>{p.state} · x{p.occurrences}{p.status === 'candidate' ? ' · candidato' : ''}</span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>}
               </div>
               <div>
