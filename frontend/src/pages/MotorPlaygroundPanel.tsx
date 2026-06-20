@@ -20,9 +20,20 @@ interface Student { student_id: number; name: string; age: number; level_code: s
 interface PItem { id?: number; text: string; tag?: string }
 interface PGroup { label: string; slot?: string; editable: boolean; items: PItem[] }
 
+// 3 temas (oscuro / azul claro / ámbar claro). Los colores estructurales salen de CSS vars
+// que setea el root según el tema; accent/green/red son semánticos y no cambian.
+const THEMES: Record<string, { bg: string; panel: string; border: string; soft: string; fg: string; dim: string; faint: string }> = {
+  dark: { bg: '#0b0e14', panel: '#11151d', border: '#232936', soft: '#1c2230', fg: '#e6e8ec', dim: '#9aa3af', faint: '#6b7686' },
+  azul: { bg: '#eaf2fb', panel: '#ffffff', border: '#c4d9f0', soft: '#dcebfa', fg: '#16273c', dim: '#4d6a8c', faint: '#8aa0bb' },
+  ambar: { bg: '#fbf6ea', panel: '#fffdf7', border: '#ecdcbf', soft: '#f4ead3', fg: '#3a2d14', dim: '#7a6a45', faint: '#a99565' },
+}
+const themeVars = (t: string): React.CSSProperties => {
+  const p = THEMES[t] || THEMES.dark
+  return { '--m-bg': p.bg, '--m-panel': p.panel, '--m-border': p.border, '--m-soft': p.soft, '--m-fg': p.fg, '--m-dim': p.dim, '--m-faint': p.faint } as React.CSSProperties
+}
 const C = {
-  bg: '#0b0e14', panel: '#11151d', border: '#232936', soft: '#1c2230',
-  fg: '#e6e8ec', dim: '#9aa3af', faint: '#6b7686', accent: '#38bdf8', green: '#22c55e', red: '#f87171',
+  bg: 'var(--m-bg)', panel: 'var(--m-panel)', border: 'var(--m-border)', soft: 'var(--m-soft)',
+  fg: 'var(--m-fg)', dim: 'var(--m-dim)', faint: 'var(--m-faint)', accent: '#38bdf8', green: '#22c55e', red: '#f87171',
 }
 const NAT = { fijo: '#9aa3af', edad: '#fbbf24', nivel: '#7dd3fc', dinamico: '#818cf8' }
 const sel: React.CSSProperties = { width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '8px 10px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.bg, color: C.fg, fontSize: 13, minWidth: 0 }
@@ -79,6 +90,8 @@ export default function MotorPlaygroundPanel() {
   const [showXml, setShowXml] = useState(false)
   const [activeLayer, setActiveLayer] = useState('behavioral_guards')
   const [saving, setSaving] = useState(false)
+  const [theme, setTheme] = useState<string>(() => (typeof localStorage !== 'undefined' && localStorage.getItem('motorTheme')) || 'dark')
+  useEffect(() => { try { localStorage.setItem('motorTheme', theme) } catch {} }, [theme])
 
   useEffect(() => {
     motorAPI.dimensions().then((d) => {
@@ -234,13 +247,24 @@ export default function MotorPlaygroundPanel() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: C.bg, color: C.fg, padding: '18px 16px 64px' }}>
+    <div style={{ ...themeVars(theme), minHeight: '100vh', background: C.bg, color: C.fg, padding: '18px 16px 64px' }}>
       <div style={{ maxWidth: 1340, margin: '0 auto' }}>
-        <div>
-          <h1 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 2px' }}>Probador de orquestación</h1>
-          <p style={{ color: C.dim, fontSize: 12.5, margin: '0 0 14px', maxWidth: 760 }}>
-            Elegí el perfil (edad × nivel × tópico). Tocá una capa: las de preset las editás (agregás/sacás), las dinámicas/estructurales se ven nomás. <b>Grabás</b> el circuito del nivel o lo <b>probás</b> en vivo (abajo).
-          </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 2px' }}>Probador de orquestación</h1>
+            <p style={{ color: C.dim, fontSize: 12.5, margin: '0 0 14px', maxWidth: 760 }}>
+              Elegí el perfil (edad × nivel × tópico). Tocá una capa: las de preset las editás (agregás/sacás), las dinámicas/estructurales se ven nomás. <b>Grabás</b> el circuito del nivel o lo <b>probás</b> en vivo (abajo).
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
+            {([['dark', 'Oscuro'], ['azul', 'Azul'], ['ambar', 'Ámbar']] as const).map(([t, l]) => (
+              <button key={t} onClick={() => setTheme(t)}
+                style={{ padding: '6px 11px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                  border: `1px solid ${theme === t ? C.accent : C.border}`, background: theme === t ? 'rgba(56,189,248,0.12)' : C.panel, color: theme === t ? C.accent : C.dim }}>
+                {l}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8, alignItems: 'start' }}>
@@ -275,7 +299,7 @@ export default function MotorPlaygroundPanel() {
             <button onClick={() => setShowXml((v) => !v)} style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.accent, borderRadius: 7, fontSize: 11, padding: '3px 9px', cursor: 'pointer' }}>{showXml ? 'ver capas' : 'ver XML'}</button>
           </div>
           {showXml ? (
-            <pre style={{ margin: 0, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11, lineHeight: 1.55, color: '#cbd5e1', maxHeight: '74vh', overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>{res?.prompt || '(elegí contexto)'}</pre>
+            <pre style={{ margin: 0, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11, lineHeight: 1.55, color: C.dim, maxHeight: '74vh', overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>{res?.prompt || '(elegí contexto)'}</pre>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {layers.map(({ tag, body }, i) => {
