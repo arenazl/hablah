@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { motorAPI, MotorResolve, MotorOverride, MotorPreset, MotorStageNote } from '../services/api'
 import { useIsMobile } from '../hooks/useIsMobile'
 
-interface Band { band_id: number; code: string; label: string; phase_group?: string }
+interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
 interface Level { level_code: string; label: string; sort_order: number }
 interface Topic { topic_id: number; subcategory_id: number; title: string }
 interface Sub { subcategory_id: number; category_id: number; name: string; topics: Topic[] }
@@ -208,6 +208,14 @@ export default function MotorPlaygroundPanel() {
   useEffect(() => { resolve() }, [])
 
   const bandId = useMemo(() => bands.find((b) => b.code === band)?.band_id, [bands, band])
+  // niveles válidos para esta edad (un nene no es C1): tope por max_level_order
+  const levelsForBand = useMemo(() => {
+    const mx = bands.find((b) => b.code === band)?.max_level_order ?? 99
+    return levels.filter((l) => l.sort_order <= mx)
+  }, [levels, bands, band])
+  useEffect(() => {
+    if (levelsForBand.length && !levelsForBand.some((l) => l.level_code === level)) setLevel(levelsForBand[levelsForBand.length - 1].level_code)
+  }, [levelsForBand, level])
   // conexión edad→tópico: sólo cat/subcat/tópicos sugeridos para la banda elegida (topic_suggested_band)
   const allowed = useMemo(() => {
     const ids = tsb.filter((r) => r.band_id === bandId).map((r) => r.topic_id)
@@ -455,7 +463,7 @@ export default function MotorPlaygroundPanel() {
 
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8, alignItems: 'start' }}>
           <Ctx label="Edad"><select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>{bands.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}</select></Ctx>
-          <Ctx label="Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levels.map((l) => <option key={l.level_code} value={l.level_code}>{l.level_code}</option>)}</select></Ctx>
+          <Ctx label="Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levelsForBand.map((l) => <option key={l.level_code} value={l.level_code}>{l.level_code}</option>)}</select></Ctx>
           <Ctx label="Categoría"><select style={sel} value={catId ?? ''} onChange={(e) => { setCatId(e.target.value ? Number(e.target.value) : undefined); setSubId(undefined) }}><option value="">—</option>{catalogB.map((c) => <option key={c.category_id} value={c.category_id}>{c.name}</option>)}</select></Ctx>
           <Ctx label="Subcategoría"><select style={sel} value={subId ?? ''} disabled={!catId} onChange={(e) => setSubId(e.target.value ? Number(e.target.value) : undefined)}><option value="">—</option>{subs.map((s) => <option key={s.subcategory_id} value={s.subcategory_id}>{s.name}</option>)}</select></Ctx>
           <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topics.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>

@@ -167,7 +167,7 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
     """Selectores del playground: bandas, niveles, catálogo cat→subcat→tópicos, alumnos.
     Sin auth: lo consume el probador/training de prueba (como /llm)."""
     bands = _rows(await db.execute(text(
-        "SELECT band_id, code, label, min_age, max_age, phase_group FROM age_band ORDER BY band_id")))
+        "SELECT band_id, code, label, min_age, max_age, phase_group, max_level_order FROM age_band ORDER BY band_id")))
     levels = _rows(await db.execute(text(
         "SELECT level_code, label, sort_order FROM `level` ORDER BY sort_order")))
     cats = _rows(await db.execute(text("SELECT category_id, name FROM category ORDER BY name")))
