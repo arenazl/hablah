@@ -439,6 +439,23 @@ export const motorAPI = {
     api.post('/motor/circuit/save', body).then((r) => r.data),
   loadCircuit: (band: string, level: string) =>
     api.get<{ overrides: MotorOverride[] }>(`/motor/circuit/${band}/${level}`).then((r) => r.data),
+  // loop de aprendizaje: texto libre de la clase -> presets canónicos -> estado del alumno
+  protocolRun: (body: { student_id: number; level_code: string; observations: string[]; provider?: string }) =>
+    api.post<MotorPresetRun>('/motor/protocol/run', body).then((r) => r.data),
+  studentPresets: (studentId: number) =>
+    api.get<{ presets: MotorPreset[] }>(`/motor/student-presets/${studentId}`).then((r) => r.data),
+}
+
+export interface MotorPreset {
+  preset_id: number; kind: 'error' | 'chunk'; canonical_key: string; label: string
+  category?: string; level_hint?: string; example_wrong?: string; example_right?: string
+  status: string; state: string; occurrences: number
+}
+export interface MotorPresetRun {
+  presets: { kind: string; canonical_key: string; label: string }[]
+  new_presets?: { canonical_key: string; label: string }[]
+  reinforced?: string[]; merged?: { propuesto: string; fusionado_en: string }[]; applied?: number
+  error?: string
 }
 
 /* ────────────── VOICE WS ────────────── */

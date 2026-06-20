@@ -247,6 +247,17 @@ def _assemble(db: MotorDB, ctx: dict) -> dict:
                  db.q("SELECT interest FROM student_interest WHERE student_id=%s", (sid,))]
     learner = db.q("SELECT item_type, item_value, status FROM learner_item WHERE student_id=%s",
                    (sid,))
+    # presets dinámicos del alumno (estado, no texto libre): errores a vigilar / chunks a reforzar.
+    # Es lo que hace que la MISMA clase cambie cuando el alumno deja huella. Tolerante a que la
+    # tabla no exista todavía (deploy viejo).
+    try:
+        _lp = db.q("""SELECT lp.kind, lp.label, lpe.state
+                      FROM learner_preset lpe JOIN learned_preset lp ON lp.preset_id=lpe.preset_id
+                      WHERE lpe.student_id=%s ORDER BY lpe.occurrences DESC, lpe.last_seen DESC""", (sid,))
+        learner = list(learner) + [{"item_type": p["kind"], "item_value": p["label"], "status": p["state"]}
+                                   for p in _lp]
+    except Exception:
+        pass
     guards = resolve_guards(db, ctx)
     words, phrases = resolve_lexis(db, ctx)
     objectives = resolve_objectives(db, ctx)

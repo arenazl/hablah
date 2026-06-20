@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from core.security import require_role
 from models.user import User
-from services import motor_engine
+from services import motor_engine, motor_protocol
 
 router = APIRouter()
 _admin = Depends(require_role("admin"))
@@ -240,6 +240,34 @@ async def train_apply(payload: TrainApplyIn):
     """Cierra la clase de training: sube la escalera SRS del alumno. Sin auth (/training)."""
     try:
         return await motor_engine.train_apply(payload.student_id, payload.outcomes)
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
+# ════════════════════════════ PROTOCOLO · texto libre -> presets (loop de aprendizaje) ════════════════════════════
+class ProtocolRunIn(BaseModel):
+    student_id: int
+    level_code: str
+    observations: list[str]
+    provider: str = "auto"   # 'claude' (construcción local) · 'gemini' (app/prod) · 'auto'
+
+
+@router.post("/protocol/run")
+async def protocol_run(payload: ProtocolRunIn):
+    """Corre el protocolo: texto libre de la clase -> presets canónicos -> estado del alumno.
+    La IA encasilla (Claude headless al construir / Gemini en la app). Sin auth (probador)."""
+    try:
+        return await motor_protocol.process(
+            payload.student_id, payload.observations, payload.level_code, provider=payload.provider)
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
+@router.get("/student-presets/{student_id}")
+async def student_presets(student_id: int):
+    """Presets que arrastra el alumno (etapa 5 / memoria). Sin auth (probador)."""
+    try:
+        return {"presets": await motor_protocol.student_presets(student_id)}
     except Exception as e:
         raise HTTPException(400, f"{type(e).__name__}: {e}")
 
