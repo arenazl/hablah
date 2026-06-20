@@ -185,7 +185,9 @@ export default function MotorPlaygroundPanel() {
     }).then(setRes).catch((e) => { setErr(e?.response?.data?.detail || 'Error'); setRes(null) })
       .finally(() => setLoading(false))
   }, [band, level, topicId, effStudent, overrides])
-  useEffect(() => { resolve() }, [resolve])
+  // resolve MANUAL: solo al inicio y con el botón Actualizar (no en cada uno de los ~10 inputs)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { resolve() }, [])
 
   const bandId = useMemo(() => bands.find((b) => b.code === band)?.band_id, [bands, band])
   // conexión edad→tópico: sólo cat/subcat/tópicos sugeridos para la banda elegida (topic_suggested_band)
@@ -251,6 +253,8 @@ export default function MotorPlaygroundPanel() {
     motorAPI.studentPresets(effStudent).then((r) => setPresets(r.presets || [])).catch(() => setPresets([]))
   }, [effStudent])
   useEffect(() => { loadPresets() }, [loadPresets])
+  // renovar resultados al cambiar cualquier input: no arrastrar la clase anterior
+  useEffect(() => { setAnalysis([]); setLastRun(null) }, [band, level, effStudent, topicId])
 
   // borrar el historial (learned_state) del perfil/alumno: para ver la clase SIN historial
   const wipeHistory = async () => {
@@ -262,6 +266,14 @@ export default function MotorPlaygroundPanel() {
       toast.success('Historial borrado · la clase vuelve a "sin historial"')
     } catch { toast.error('No se pudo borrar el historial') }
   }
+
+  // ACTUALIZAR: re-sincroniza todo desde los inputs actuales (prompt + memoria + perfil)
+  const refreshAll = useCallback(() => {
+    resolve()
+    loadPresets()
+    motorAPI.profile(band, level).then((p) => setProfile({ student_id: p.student_id, name: p.name })).catch(() => {})
+    toast.success('Actualizado desde los inputs')
+  }, [resolve, loadPresets, band, level])
 
   // correr la clase: texto libre -> protocolo (IA encasilla) -> presets -> la MISMA clase cambia
   const runClass = async () => {
@@ -402,7 +414,11 @@ export default function MotorPlaygroundPanel() {
               Elegí el perfil (edad × nivel × tópico). Tocá una capa para ver qué hace: las reglas las <b>corregís</b> en el lugar, el resto se ve nomás. <b>Grabás</b> el circuito del nivel o <b>probás</b> la clase (abajo).
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 5, flexShrink: 0, alignItems: 'center' }}>
+            <button onClick={refreshAll} title="recalcular las 9 capas desde los inputs actuales"
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, fontSize: 12.5, fontWeight: 800, cursor: 'pointer', border: `1px solid ${C.accent}`, background: 'rgba(56,189,248,0.14)', color: C.accent, marginRight: 6 }}>
+              <Ico d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" size={13} /> Actualizar
+            </button>
             {([['dark', 'Oscuro'], ['azul', 'Azul'], ['ambar', 'Ámbar']] as const).map(([t, l]) => (
               <button key={t} onClick={() => setTheme(t)}
                 style={{ padding: '6px 11px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
