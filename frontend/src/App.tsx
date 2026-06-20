@@ -28,6 +28,7 @@ const LlmTestPage = lazy(() => import('./pages/LlmTestPage').then(m => ({ defaul
 const TrainingPanel = lazy(() => import('./pages/TrainingPanel'))
 const ProbarOrquestacion = lazy(() => import('./pages/ProbarOrquestacion'))
 const MotorPlaygroundPanel = lazy(() => import('./pages/MotorPlaygroundPanel'))
+const AuditoriaPanel = lazy(() => import('./pages/AuditoriaPanel'))
 const KidsHome = lazy(() => import('./pages/kids/KidsHome').then(m => ({ default: m.KidsHome })))
 const KidsAgeSelect = lazy(() =>
   import('./pages/kids/KidsAgeSelect').then(m => ({ default: m.KidsAgeSelect })),
@@ -131,6 +132,7 @@ export default function App() {
           <Route path="/training" element={<TrainingPanel />} />
           <Route path="/probar-orq" element={<ProbarOrquestacion />} />
           <Route path="/motor" element={<MotorPlaygroundPanel />} />
+          <Route path="/auditoria" element={<AuditoriaPanel />} />
           <Route
             path="/tune"
             element={

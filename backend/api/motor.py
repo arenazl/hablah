@@ -292,6 +292,42 @@ async def profile_wipe(student_id: int):
         raise HTTPException(400, f"{type(e).__name__}: {e}")
 
 
+# ════════════════════════════ Auditoría pedagógica por nivel (propuestas) ════════════════════════════
+@router.get("/catalog-proposals")
+async def catalog_proposals(db: AsyncSession = Depends(get_db)):
+    """Propuestas del especialista por nivel + el estado actual (objetivos/variables). Sin auth (vista /auditoria)."""
+    levels = _rows(await db.execute(text(
+        "SELECT level_code, label, spanish_mirror, vocab_depth, pacing_bonus_min, modifier FROM `level` ORDER BY sort_order")))
+    objs = _rows(await db.execute(text(
+        "SELECT cefr_level, kind, description FROM language_objective ORDER BY cefr_level, sort_order")))
+    props = _rows(await db.execute(text(
+        "SELECT proposal_id, level_code, scope, area, action, current_value, proposed_value, rationale, status "
+        "FROM catalog_proposal ORDER BY level_code, FIELD(action,'add','change','remove','keep')")))
+    by_obj: dict = {}
+    for o in objs:
+        by_obj.setdefault(o["cefr_level"], []).append({"kind": o["kind"], "description": o["description"]})
+    by_prop: dict = {}
+    for p in props:
+        by_prop.setdefault(p["level_code"], []).append(p)
+    out = [{**lv, "objectives": by_obj.get(lv["level_code"], []), "proposals": by_prop.get(lv["level_code"], [])}
+           for lv in levels]
+    return {"levels": out}
+
+
+class ProposalDecideIn(BaseModel):
+    action: str   # 'adopt' | 'reject'
+
+
+@router.post("/catalog-proposals/{proposal_id}/decide")
+async def catalog_proposal_decide(proposal_id: int, payload: ProposalDecideIn, db: AsyncSession = Depends(get_db)):
+    """Marca una propuesta como adoptada/rechazada (registra la decisión del profe). Sin auth."""
+    status = "adopted" if payload.action == "adopt" else "rejected"
+    await db.execute(text("UPDATE catalog_proposal SET status=:s WHERE proposal_id=:id"),
+                     {"s": status, "id": proposal_id})
+    await db.commit()
+    return {"proposal_id": proposal_id, "status": status}
+
+
 # ════════════════════════════ Grabar/leer el CIRCUITO (edad×nivel) ════════════════════════════
 class CircuitSaveIn(BaseModel):
     band_code: str

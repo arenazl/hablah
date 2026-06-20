@@ -137,11 +137,33 @@ Devolvé EXACTAMENTE este formato (sin nada más):
 "stage_analysis":[{{"stage":7,"name":"Qué aprende","note":"Practicó pasado simple, falló en present perfect."}}]}}"""
 
 
-def _build_prompt(observations: list[str], level_code: str, existing: list[dict], objectives: list[dict]) -> str:
+# V2: lente de ESPECIALISTA en pedagogía de idiomas (SLA), basado en evidencia.
+# Mejora SOBRE TODO la redacción de la DIRECTIVA (no cambia el formato ni la doctrina).
+_SPECIALIST = """SOS UN ESPECIALISTA EN PEDAGOGÍA DE IDIOMAS (20 años, formado en adquisición de
+segundas lenguas). Al redactar la DIRECTIVA de cada patrón, aplicá estas prácticas basadas en
+evidencia (no las nombres, aplicalas):
+- CORRECCIÓN: el recast (reformular sin señalar) capta poco (~31%). Para errores DISCRETOS, que se
+  REPITEN, o en ADULTOS, usá corrección EXPLÍCITA breve (metalingüística, capta ~50%): nombrá la
+  regla en 1 línea y pedí que la reformule. Reservá el recast para fluidez, formas complejas o
+  niños chicos. Si un error PERSISTE, ESCALÁ de recast a explícito.
+- FILTRO AFECTIVO (Krashen): ante frustración/vergüenza, bajá la ansiedad y celebrá intentos ANTES
+  de corregir; nunca cortes la fluidez por un error menor.
+- INPUT COMPRENSIBLE i+1: apuntá UN paso por encima del nivel actual, no más.
+- TAREA COMUNICATIVA (TBLT): convertí la motivación en una TAREA con objetivo comunicativo real
+  (no solo "hablá de X"), para producción con sentido.
+- CONSTRUÍ SOBRE FORTALEZAS: usá lo positivo como andamio de lo nuevo.
+La directiva debe ser CONCRETA, accionable para el coach, y adecuada al nivel y la edad.
+
+"""
+
+
+def _build_prompt(observations: list[str], level_code: str, existing: list[dict],
+                  objectives: list[dict], version: str = "v1") -> str:
     ex = "\n".join(f"- [{e['kind']}] {e['canonical_key']}: {e['label']}" for e in existing) or "(ninguno todavía)"
     ob = "\n".join(f"- id={o['objective_id']} [{o.get('code', '')}] {o['description']}" for o in objectives) or "(ninguno)"
     obs = "\n".join(f"- {o}" for o in observations if o and o.strip()) or "(ninguna)"
-    return _PROMPT.format(level=level_code, existing=ex, objectives=ob, observations=obs)
+    base = _PROMPT.format(level=level_code, existing=ex, objectives=ob, observations=obs)
+    return (_SPECIALIST + base) if version == "v2" else base
 
 
 def _parse_json(raw: str) -> Optional[dict]:
@@ -234,13 +256,17 @@ def _apply_sync(student_id: int, presets: list[dict]) -> dict:
                     conf = p.get("confidence")
                     # AUTONOMÍA: alta confianza entra como 'active' (se aplica solo); baja, 'candidate'
                     status = "active" if isinstance(conf, (int, float)) and conf >= _CONF_AUTO else "candidate"
+                    lh = p.get("level_hint")
+                    lh = lh if lh in ("A1", "A2", "B1", "B2", "C1") else None  # CHAR(2): solo nivel válido
+                    cat = (p.get("category") or "").strip()[:40] or None
+                    direc = (p.get("directive") or "").strip()[:300] or None
+                    ew = (p.get("example_wrong") or "").strip()[:160] or None
+                    er = (p.get("example_right") or "").strip()[:160] or None
                     cur.execute(
                         """INSERT INTO learned_preset
                            (kind, canonical_key, label, category, polarity, directive, level_hint, example_wrong, example_right, source, status)
                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,'protocol',%s)""",
-                        (kind, ckey, pp["label"][:180], (p.get("category") or None), polarity,
-                         (p.get("directive") or None), (p.get("level_hint") or None),
-                         (p.get("example_wrong") or None), (p.get("example_right") or None), status))
+                        (kind, ckey, pp["label"][:180], cat, polarity, direc, lh, ew, er, status))
                     pid = cur.lastrowid
                     existing.append({"preset_id": pid, "kind": kind, "canonical_key": ckey, "label": pp["label"]})
                     rep["new_presets"].append({"preset_id": pid, "kind": kind, "canonical_key": ckey, "label": p.get("label"), "status": status})
@@ -344,12 +370,14 @@ async def wipe_learned_state(student_id: int) -> dict:
     return await asyncio.to_thread(_wipe_sync, student_id)
 
 
-async def categorize(observations: list[str], level_code: str, *, objectives_catalog: Optional[list] = None, provider: str = "auto") -> dict:
-    """Texto libre -> presets canónicos + objetivos practicados + análisis (sin tocar BD)."""
+async def categorize(observations: list[str], level_code: str, *, objectives_catalog: Optional[list] = None,
+                     provider: str = "auto", version: str = "v1") -> dict:
+    """Texto libre -> presets canónicos + objetivos practicados + análisis (sin tocar BD).
+    version='v2' = lente de especialista (mejores directivas, basado en evidencia)."""
     existing = await asyncio.to_thread(_load_existing_sync)
     if objectives_catalog is None:
         objectives_catalog = await asyncio.to_thread(_load_objectives_sync, level_code)
-    raw = await _run_llm(_build_prompt(observations, level_code, existing, objectives_catalog), provider)
+    raw = await _run_llm(_build_prompt(observations, level_code, existing, objectives_catalog, version), provider)
     if not raw:
         return {"presets": [], "error": "llm_sin_respuesta"}
     parsed = _parse_json(raw)
