@@ -68,6 +68,21 @@ const LAYER: Record<string, { n: number; label: string; nat: keyof typeof NAT; d
   execution_trigger: { n: 9, label: 'Arranque / cierre', nat: 'dinamico', dep: 'edad × nivel' },
   interaction_state: { n: 9, label: 'Estado de sesión', nat: 'dinamico', dep: 'runtime' },
 }
+// qué hace cada capa, en castellano de profe (lo crudo en inglés queda detrás de "ver XML")
+const LAYER_DESC: Record<string, string> = {
+  runtime_context: 'Idioma meta, modo de voz y reglas globales de la sesión.',
+  tutor_identity: 'Quién es el profe: nombre y tono con el que habla.',
+  pedagogical_framework: 'Con qué método enseña y sus políticas, según la edad.',
+  lesson_focus_engagement: 'La actividad de la clase y cómo se premia el avance.',
+  student_profile: 'Edad, nivel e intereses del alumno.',
+  learner_state: 'Su memoria: lo que ya sabe y lo que todavía falla.',
+  behavioral_guards: 'Las reglas/rieles que el profe respeta (por edad y por nivel).',
+  current_topic_vocabulary: 'El vocabulario del tópico (si el tópico trae).',
+  lesson_objectives: 'Qué se aprende en este nivel + frases para poder decirlo.',
+  narrative_spine: 'Las fases de la clase y cuánto dura.',
+  execution_trigger: 'Cómo arranca y cómo cierra la clase.',
+  interaction_state: 'El estado en vivo de la sesión (runtime).',
+}
 
 function parseLayers(prompt: string): { tag: string; body: string }[] {
   const inner = prompt.replace(/<\/?system_instruction_stack>/g, '')
@@ -356,9 +371,9 @@ export default function MotorPlaygroundPanel() {
       <div style={{ maxWidth: 1340, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 2px' }}>Probador de orquestación</h1>
+            <h1 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 2px' }}>Probador de clases</h1>
             <p style={{ color: C.dim, fontSize: 12.5, margin: '0 0 14px', maxWidth: 760 }}>
-              Elegí el perfil (edad × nivel × tópico). Tocá una capa: las de preset las editás (agregás/sacás), las dinámicas/estructurales se ven nomás. <b>Grabás</b> el circuito del nivel o lo <b>probás</b> en vivo (abajo).
+              Elegí el perfil (edad × nivel × tópico). Tocá una capa para ver qué hace: las reglas las <b>corregís</b> en el lugar, el resto se ve nomás. <b>Grabás</b> el circuito del nivel o <b>probás</b> la clase (abajo).
             </p>
           </div>
           <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
@@ -419,7 +434,13 @@ export default function MotorPlaygroundPanel() {
                         {on && <span style={{ marginLeft: 'auto', fontSize: 16, color: C.accent, lineHeight: 1 }}>−</span>}
                         {!on && <span style={{ marginLeft: 'auto', fontSize: 9.5, color: col, fontWeight: 700 }}>{lm.dep}</span>}
                       </div>
-                      <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.5, whiteSpace: 'pre-wrap', maxHeight: 130, overflowY: 'auto' }}>{body}</div>
+                      <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.5 }}>{LAYER_DESC[tag] || lm.dep}</div>
+                      {on && body && (
+                        <div style={{ marginTop: 8, paddingTop: 8, borderTop: `1px solid ${C.soft}` }}>
+                          <div style={{ fontSize: 9, color: C.faint, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Texto técnico (lo que recibe la IA)</div>
+                          <div style={{ fontSize: 11, color: C.faint, lineHeight: 1.5, whiteSpace: 'pre-wrap', maxHeight: 160, overflowY: 'auto' }}>{body}</div>
+                        </div>
+                      )}
                     </button>
                     {isMobile && on && <div style={{ marginTop: 8 }}>{presetsBox()}</div>}
                   </div>
