@@ -374,6 +374,23 @@ async def kids_vocab(db: AsyncSession = Depends(get_db)):
         "WHERE active=1 ORDER BY category, word_en")))
 
 
+@router.get("/kids-topic-vocab")
+async def kids_topic_vocab(db: AsyncSession = Depends(get_db)):
+    """Cada tópico de kids con su vocab generado (palabra + visual + cobertura). Para curar. Sin auth."""
+    rows = _rows(await db.execute(text(
+        "SELECT t.topic_id, t.title, k.word_en, k.word_es, k.emoji, k.asset_file "
+        "FROM topic_kids_vocab tkv "
+        "JOIN topic t ON t.topic_id = tkv.topic_id "
+        "JOIN kids_visual_vocab k ON k.word_en = tkv.word_en "
+        "ORDER BY t.title, k.word_en")))
+    by_topic: dict[int, dict[str, Any]] = {}
+    for r in rows:
+        t = by_topic.setdefault(r["topic_id"], {"topic_id": r["topic_id"], "title": r["title"], "vocab": []})
+        t["vocab"].append({"word_en": r["word_en"], "word_es": r["word_es"],
+                           "emoji": r["emoji"], "asset_file": r["asset_file"]})
+    return list(by_topic.values())
+
+
 class ProposalDecideIn(BaseModel):
     action: str   # 'adopt' | 'reject'
 

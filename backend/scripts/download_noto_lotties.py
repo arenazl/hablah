@@ -71,38 +71,41 @@ def main() -> None:
     os.makedirs(OUT_SVG, exist_ok=True)
     conn = pymysql.connect(host=settings.DB_HOST, port=settings.DB_PORT, user=settings.DB_USER,
                            password=settings.DB_PASSWORD, database=settings.DB_NAME, ssl=CTX,
-                           cursorclass=DictCursor, charset="utf8mb4")
+                           cursorclass=DictCursor, charset="utf8mb4", autocommit=True)
     cur = conn.cursor()
-    cur.execute("SELECT word_en, emoji, asset_file FROM kids_visual_vocab ORDER BY id")
+    cur.execute("SET SESSION innodb_lock_wait_timeout=5")  # filas trabadas por el zombie: saltear, no colgar
+    # incremental: solo las que aún no tienen asset (palabras nuevas del batch)
+    cur.execute("SELECT word_en, emoji, asset_file FROM kids_visual_vocab WHERE asset_file IS NULL ORDER BY id")
     rows = cur.fetchall()
-    lottie, svg, miss, kept = [], [], [], []
+    lottie, svg, miss, kept, locked = [], [], [], [], []
     for r in rows:
         if r["asset_file"] and r["asset_file"].startswith("/animals/"):
             kept.append(r["word_en"]); continue  # Lottie custom, no tocar
-        data = fetch_lottie(r["emoji"])
-        if data:
-            fn = f"{slug(r['word_en'])}.json"
-            with open(os.path.join(OUT_DIR, fn), "wb") as f:
-                f.write(data)
-            cur.execute("UPDATE kids_visual_vocab SET asset_file=%s WHERE word_en=%s",
-                        (f"/emoji-lottie/{fn}", r["word_en"]))
-            lottie.append(r["word_en"]); continue
-        data = fetch_svg(r["emoji"])  # 3ra fuente: SVG estático de Noto
-        if data:
-            fn = f"{slug(r['word_en'])}.svg"
-            with open(os.path.join(OUT_SVG, fn), "wb") as f:
-                f.write(data)
-            cur.execute("UPDATE kids_visual_vocab SET asset_file=%s WHERE word_en=%s",
-                        (f"/emoji-svg/{fn}", r["word_en"]))
-            svg.append(r["word_en"])
-        else:
-            cur.execute("UPDATE kids_visual_vocab SET asset_file=NULL WHERE word_en=%s", (r["word_en"],))
-            miss.append(r["word_en"])
-    conn.commit()
-    print(f"Lottie animado: {len(lottie)} (Noto) + {len(kept)} (custom) | SVG estático: {len(svg)} | emoji solo: {len(miss)}")
-    print(f"cobertura con imagen real: {len(lottie) + len(kept) + len(svg)}/{len(rows)}")
+        try:
+            data = fetch_lottie(r["emoji"])
+            if data:
+                fn = f"{slug(r['word_en'])}.json"
+                with open(os.path.join(OUT_DIR, fn), "wb") as f:
+                    f.write(data)
+                cur.execute("UPDATE kids_visual_vocab SET asset_file=%s WHERE word_en=%s",
+                            (f"/emoji-lottie/{fn}", r["word_en"]))
+                lottie.append(r["word_en"]); continue
+            data = fetch_svg(r["emoji"])  # 3ra fuente: SVG estático de Noto
+            if data:
+                fn = f"{slug(r['word_en'])}.svg"
+                with open(os.path.join(OUT_SVG, fn), "wb") as f:
+                    f.write(data)
+                cur.execute("UPDATE kids_visual_vocab SET asset_file=%s WHERE word_en=%s",
+                            (f"/emoji-svg/{fn}", r["word_en"]))
+                svg.append(r["word_en"])
+            else:
+                miss.append(r["word_en"])  # sin emoji/Noto: queda sin asset (gap, 4ta fuente después)
+        except pymysql.err.OperationalError:
+            locked.append(r["word_en"])  # fila trabada por el zombie; se recupera en otra corrida
+    print(f"Lottie animado: {len(lottie)} (Noto) + {len(kept)} (custom) | SVG estático: {len(svg)} | sin emoji: {len(miss)} | trabados: {len(locked)}")
+    print(f"procesadas: {len(lottie) + len(svg)}/{len(rows)} con imagen nueva")
     if miss:
-        print("SIN imagen (emoji):", ", ".join(miss))
+        print("sin emoji (gap, 4ta fuente):", ", ".join(miss[:40]))
     cur.close(); conn.close()
 
 

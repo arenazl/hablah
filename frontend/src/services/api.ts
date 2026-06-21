@@ -458,6 +458,7 @@ export const motorAPI = {
   kidsClassDemo: (body: { band?: string; level?: string; topic_id?: number | null; vocab?: string[] }) =>
     api.post<{ turns: { text: string; show: string | null }[] }>('/motor/kids-class-demo', body).then((r) => r.data),
   kidsVocab: () => api.get<KidsVocabItem[]>('/motor/kids-vocab').then((r) => r.data),
+  kidsTopicVocab: () => api.get<KidsTopicVocab[]>('/motor/kids-topic-vocab').then((r) => r.data),
 }
 
 export interface KidsVocabItem {
@@ -466,6 +467,12 @@ export interface KidsVocabItem {
   category: string
   emoji: string
   asset_file: string | null
+}
+
+export interface KidsTopicVocab {
+  topic_id: number
+  title: string
+  vocab: { word_en: string; word_es: string; emoji: string; asset_file: string | null }[]
 }
 
 export interface ClassTranscript {

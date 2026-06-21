@@ -1,0 +1,127 @@
+{
+  "results": [
+    {
+      "topic_id": 438,
+      "topic_title": "La rutina del fin de semana",
+      "vocab": [
+        {"en": "play", "es": "jugar", "emoji": "🎮"},
+        {"en": "park", "es": "parque", "emoji": "🌳"},
+        {"en": "bicycle", "es": "bicicleta", "emoji": "🚲"},
+        {"en": "toy", "es": "juguete", "emoji": "🧸"},
+        {"en": "movie", "es": "película", "emoji": "🎬"},
+        {"en": "pizza", "es": "pizza", "emoji": "🍕"},
+        {"en": "friend", "es": "amigo", "emoji": "👨‍🤝‍👨"},
+        {"en": "sleep", "es": "dormir", "emoji": "😴"}
+      ]
+    },
+    {
+      "topic_id": 443,
+      "topic_title": "La rutina de los chicos",
+      "vocab": [
+        {"en": "wake up", "es": "despertar", "emoji": "🌅"},
+        {"en": "breakfast", "es": "desayuno", "emoji": "🥣"},
+        {"en": "school", "es": "escuela", "emoji": "🏫"},
+        {"en": "homework", "es": "tarea", "emoji": "📚"},
+        {"en": "lunch", "es": "almuerzo", "emoji": "🍽️"},
+        {"en": "play", "es": "jugar", "emoji": "🎮"},
+        {"en": "brush teeth", "es": "cepillar dientes", "emoji": "🪥"},
+        {"en": "sleep", "es": "dormir", "emoji": "🛏️"},
+        {"en": "bath", "es": "baño", "emoji": "🛁"}
+      ]
+    },
+    {
+      "topic_id": 445,
+      "topic_title": "Mi habitación",
+      "vocab": [
+        {"en": "bed", "es": "cama", "emoji": "🛏️"},
+        {"en": "desk", "es": "escritorio", "emoji": "🪑"},
+        {"en": "toy", "es": "juguete", "emoji": "🧸"},
+        {"en": "window", "es": "ventana", "emoji": "🪟"},
+        {"en": "door", "es": "puerta", "emoji": "🚪"},
+        {"en": "closet", "es": "armario", "emoji": "🚪"},
+        {"en": "light", "es": "luz", "emoji": "💡"},
+        {"en": "poster", "es": "póster", "emoji": "🖼️"},
+        {"en": "pillow", "es": "almohada", "emoji": "🛌"},
+        {"en": "carpet", "es": "alfombra", "emoji": ""}
+      ]
+    },
+    {
+      "topic_id": 446,
+      "topic_title": "Ordenar y limpiar",
+      "vocab": [
+        {"en": "broom", "es": "escoba", "emoji": "🧹"},
+        {"en": "dustpan", "es": "recogedor", "emoji": ""},
+        {"en": "clean", "es": "limpiar", "emoji": "🧼"},
+        {"en": "sweep", "es": "barrer", "emoji": "🧹"},
+        {"en": "organize", "es": "organizar", "emoji": ""},
+        {"en": "bucket", "es": "balde", "emoji": "🪣"},
+        {"en": "cloth", "es": "trapo", "emoji": "🧽"},
+        {"en": "trash", "es": "basura", "emoji": "🗑️"},
+        {"en": "toy box", "es": "caja de juguetes", "emoji": "📦"}
+      ]
+    },
+    {
+      "topic_id": 448,
+      "topic_title": "La casa de mis sueños",
+      "vocab": [
+        {"en": "house", "es": "casa", "emoji": "🏠"},
+        {"en": "pool", "es": "piscina", "emoji": "🏊"},
+        {"en": "garden", "es": "jardín", "emoji": "🌻"},
+        {"en": "room", "es": "cuarto", "emoji": "🚪"},
+        {"en": "stairs", "es": "escaleras", "emoji": "🪜"},
+        {"en": "kitchen", "es": "cocina", "emoji": "🍳"},
+        {"en": "bathroom", "es": "baño", "emoji": "🚿"},
+        {"en": "swing", "es": "columpio", "emoji": "🎪"},
+        {"en": "window", "es": "ventana", "emoji": "🪟"},
+        {"en": "door", "es": "puerta", "emoji": "🚪"}
+      ]
+    },
+    {
+      "topic_id": 450,
+      "topic_title": "Las tareas de la casa",
+      "vocab": [
+        {"en": "wash dishes", "es": "lavar platos", "emoji": "🍽️"},
+        {"en": "sweep", "es": "barrer", "emoji": "🧹"},
+        {"en": "mop", "es": "trapear", "emoji": ""},
+        {"en": "dust", "es": "desempolvar", "emoji": "☁️"},
+        {"en": "cook", "es": "cocinar", "emoji": "🍳"},
+        {"en": "fold clothes", "es": "doblar ropa", "emoji": "👔"},
+        {"en": "set table", "es": "poner la mesa", "emoji": "🍽️"},
+        {"en": "take out trash", "es": "sacar basura", "emoji": "🗑️"},
+        {"en": "water plants", "es": "regar plantas", "emoji": "💧"}
+      ]
+    },
+    {
+      "topic_id": 453,
+      "topic_title": "Plantas en casa",
+      "vocab": [
+        {"en": "flower", "es": "flor", "emoji": "🌸"},
+        {"en": "tree", "es": "árbol", "emoji": "🌳"},
+        {"en": "plant", "es": "planta", "emoji": "🌱"},
+        {"en": "pot", "es": "maceta", "emoji": "🪴"},
+        {"en": "leaf", "es": "hoja", "emoji": "🍃"},
+        {"en": "water", "es": "agua", "emoji": "💧"},
+        {"en": "seed", "es": "semilla", "emoji": ""},
+        {"en": "sun", "es": "sol", "emoji": "☀️"},
+        {"en": "soil", "es": "tierra", "emoji": "🌍"},
+        {"en": "grow", "es": "crecer", "emoji": "📈"}
+      ]
+    },
+    {
+      "topic_id": 455,
+      "topic_title": "Ir al supermercado",
+      "vocab": [
+        {"en": "cart", "es": "carrito", "emoji": "🛒"},
+        {"en": "apple", "es": "manzana", "emoji": "🍎"},
+        {"en": "banana", "es": "plátano", "emoji": "🍌"},
+        {"en": "milk", "es": "leche", "emoji": "🥛"},
+        {"en": "bread", "es": "pan", "emoji": "🍞"},
+        {"en": "cheese", "es": "queso", "emoji": "🧀"},
+        {"en": "cereal", "es": "cereal", "emoji": "🥣"},
+        {"en": "carrot", "es": "zanahoria", "emoji": "🥕"},
+        {"en": "chicken", "es": "pollo", "emoji": "🍗"},
+        {"en": "juice", "es": "jugo", "emoji": "🧃"}
+      ]
+    }
+  ]
+}
