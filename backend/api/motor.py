@@ -329,6 +329,14 @@ async def comparison(db: AsyncSession = Depends(get_db)):
     return {"combos": json.loads(rows[0]["data"]) if rows else []}
 
 
+@router.get("/transcripts")
+async def transcripts(db: AsyncSession = Depends(get_db)):
+    """Transcripciones de clases reales antes/después del especialista (3 perfiles). Sin auth."""
+    rows = _rows(await db.execute(text("SELECT data FROM transcript_result ORDER BY id DESC LIMIT 1")))
+    import json
+    return json.loads(rows[0]["data"]) if rows else {"antes": [], "despues": []}
+
+
 class ProposalDecideIn(BaseModel):
     action: str   # 'adopt' | 'reject'
 

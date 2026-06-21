@@ -38,7 +38,8 @@ SCHEMA = """Tablas y columnas (respetá enums):
 - `level`(level_code PK, spanish_mirror ENUM[always,frequent,on_stall,never], vocab_depth ENUM[minimal,full], pacing_bonus_min INT, modifier VARCHAR255)
 - level_policy(policy_id PK auto, level_code CHAR2, kind ENUM[hint_policy,error_policy], body VARCHAR300)
 - behavioral_guard(guard_id PK auto, band_id INT, ord INT, body VARCHAR300)
-- band_policy(policy_id PK auto, band_id INT, kind VARCHAR40, body VARCHAR300)
+- band_policy(policy_id PK auto, band_id INT, kind VARCHAR60[etiqueta corta libre], body VARCHAR300)
+  OJO: tutor_identity, pedagogy, activity_type, reward tienen UNA fila por band_id -> para esas usá op "update" (no insert).
 - tutor_identity(tutor_id PK auto, band_id INT, name, persona, tone)
 - pedagogy(pedagogy_id PK auto, band_id INT, methodology VARCHAR400)
 - activity_type(activity_id PK auto, band_id INT, description VARCHAR300)
@@ -126,12 +127,24 @@ def _valid_op(cur, op, colcache):
     return True
 
 
+_ONE_PER_BAND = {"activity_type", "reward", "pedagogy", "tutor_identity"}
+
+
 def _exec_op(cur, op, bid, pg):
     t = op["table"]; vals = dict(op.get("values") or {})
-    # completar band_id / band_group si la IA no los puso pero la tabla los pide
     if op["op"] == "insert":
         cols = list(vals.keys()); ph = ",".join(["%s"] * len(cols))
-        cur.execute(f"INSERT INTO `{t}` ({','.join('`'+c+'`' for c in cols)}) VALUES ({ph})", [vals[c] for c in cols])
+        try:
+            cur.execute(f"INSERT INTO `{t}` ({','.join('`'+c+'`' for c in cols)}) VALUES ({ph})", [vals[c] for c in cols])
+        except pymysql.err.IntegrityError as e:
+            # tabla de UNA fila por banda: si choca, lo convertimos en UPDATE (es un "cambiar", no "agregar")
+            if e.args[0] == 1062 and t in _ONE_PER_BAND:
+                b = vals.get("band_id") or bid
+                upd = {k: v for k, v in vals.items() if k != "band_id"}
+                sets = ",".join(f"`{c}`=%s" for c in upd)
+                cur.execute(f"UPDATE `{t}` SET {sets} WHERE band_id=%s", [*upd.values(), b])
+            else:
+                raise
     elif op["op"] == "update":
         wh = op["where"]; sets = ",".join(f"`{c}`=%s" for c in vals); whs = " AND ".join(f"`{c}`=%s" for c in wh)
         cur.execute(f"UPDATE `{t}` SET {sets} WHERE {whs}", [*vals.values(), *wh.values()])

@@ -31,6 +31,7 @@ const MotorPlaygroundPanel = lazy(() => import('./pages/MotorPlaygroundPanel'))
 const AuditoriaPanel = lazy(() => import('./pages/AuditoriaPanel'))
 const OrquestacionPanel = lazy(() => import('./pages/OrquestacionPanel'))
 const ComparacionPanel = lazy(() => import('./pages/ComparacionPanel'))
+const TranscripcionesPanel = lazy(() => import('./pages/TranscripcionesPanel'))
 const KidsHome = lazy(() => import('./pages/kids/KidsHome').then(m => ({ default: m.KidsHome })))
 const KidsAgeSelect = lazy(() =>
   import('./pages/kids/KidsAgeSelect').then(m => ({ default: m.KidsAgeSelect })),
@@ -140,6 +141,7 @@ export default function App() {
           <Route path="/orquestación" element={<OrquestacionPanel />} />
           <Route path="/comparacion" element={<ComparacionPanel />} />
           <Route path="/comparación" element={<ComparacionPanel />} />
+          <Route path="/transcripciones" element={<TranscripcionesPanel />} />
           <Route
             path="/tune"
             element={

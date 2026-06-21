@@ -454,6 +454,11 @@ export const motorAPI = {
   decideProposal: (id: number, action: 'adopt' | 'reject') =>
     api.post<{ proposal_id: number; status: string }>(`/motor/catalog-proposals/${id}/decide`, { action }).then((r) => r.data),
   comparison: () => api.get<{ combos: CompareCombo[] }>('/motor/comparison').then((r) => r.data),
+  transcripts: () => api.get<{ antes: ClassTranscript[]; despues: ClassTranscript[] }>('/motor/transcripts').then((r) => r.data),
+}
+
+export interface ClassTranscript {
+  band: string; level: string; theme: string; history: { who: string; text: string }[]
 }
 
 export interface CompareCombo {
