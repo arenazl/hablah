@@ -366,6 +366,14 @@ async def kids_class_demo(payload: KidsDemoIn):
         raise HTTPException(400, f"{type(e).__name__}: {e}")
 
 
+@router.get("/kids-vocab")
+async def kids_vocab(db: AsyncSession = Depends(get_db)):
+    """Biblioteca core de vocab visual de kids (con su asset: Lottie .json / SVG .svg / emoji). Sin auth."""
+    return _rows(await db.execute(text(
+        "SELECT word_en, word_es, category, emoji, asset_file FROM kids_visual_vocab "
+        "WHERE active=1 ORDER BY category, word_en")))
+
+
 class ProposalDecideIn(BaseModel):
     action: str   # 'adopt' | 'reject'
 

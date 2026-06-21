@@ -457,6 +457,15 @@ export const motorAPI = {
   transcripts: () => api.get<{ antes: ClassTranscript[]; despues: ClassTranscript[] }>('/motor/transcripts').then((r) => r.data),
   kidsClassDemo: (body: { band?: string; level?: string; topic_id?: number | null; vocab?: string[] }) =>
     api.post<{ turns: { text: string; show: string | null }[] }>('/motor/kids-class-demo', body).then((r) => r.data),
+  kidsVocab: () => api.get<KidsVocabItem[]>('/motor/kids-vocab').then((r) => r.data),
+}
+
+export interface KidsVocabItem {
+  word_en: string
+  word_es: string
+  category: string
+  emoji: string
+  asset_file: string | null
 }
 
 export interface ClassTranscript {

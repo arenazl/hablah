@@ -33,6 +33,7 @@ const OrquestacionPanel = lazy(() => import('./pages/OrquestacionPanel'))
 const ComparacionPanel = lazy(() => import('./pages/ComparacionPanel'))
 const TranscripcionesPanel = lazy(() => import('./pages/TranscripcionesPanel'))
 const KidsKitPanel = lazy(() => import('./pages/kids/KidsKitPanel'))
+const KidsGaleriaPanel = lazy(() => import('./pages/kids/KidsGaleriaPanel'))
 const KidsHome = lazy(() => import('./pages/kids/KidsHome').then(m => ({ default: m.KidsHome })))
 const KidsAgeSelect = lazy(() =>
   import('./pages/kids/KidsAgeSelect').then(m => ({ default: m.KidsAgeSelect })),
@@ -144,6 +145,8 @@ export default function App() {
           <Route path="/comparación" element={<ComparacionPanel />} />
           <Route path="/transcripciones" element={<TranscripcionesPanel />} />
           <Route path="/kids/kit" element={<KidsKitPanel />} />
+          <Route path="/kids/galeria" element={<KidsGaleriaPanel />} />
+          <Route path="/kids/galería" element={<KidsGaleriaPanel />} />
           <Route
             path="/tune"
             element={
