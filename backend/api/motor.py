@@ -391,6 +391,45 @@ async def kids_topic_vocab(db: AsyncSession = Depends(get_db)):
     return list(by_topic.values())
 
 
+class InfraResultIn(BaseModel):
+    server: str
+    turn_index: int = 0
+    rtt_ms: Optional[int] = None
+    ok: bool = True
+    note: Optional[str] = None
+
+
+@router.post("/infra-result")
+async def infra_result(payload: InfraResultIn, db: AsyncSession = Depends(get_db)):
+    """Loguea un round-trip de la prueba de infra (Heroku vs GCloud). Sin auth."""
+    await db.execute(text("INSERT INTO infra_test_result (server,turn_index,rtt_ms,ok,note) "
+                          "VALUES (:s,:t,:r,:o,:n)"),
+                     {"s": payload.server[:20], "t": payload.turn_index, "r": payload.rtt_ms,
+                      "o": payload.ok, "n": (payload.note or "")[:255]})
+    await db.commit()
+    return {"saved": True}
+
+
+@router.get("/infra-results")
+async def infra_results(db: AsyncSession = Depends(get_db)):
+    """Resultados de la prueba de infra + resumen por servidor (p50/p95/min/max/fallos). Sin auth."""
+    rows = _rows(await db.execute(text(
+        "SELECT id,server,turn_index,rtt_ms,ok,note,created_at FROM infra_test_result ORDER BY id")))
+    summary: dict[str, Any] = {}
+    for srv in {r["server"] for r in rows}:
+        vals = sorted(r["rtt_ms"] for r in rows if r["server"] == srv and r["ok"] and r["rtt_ms"] is not None)
+        fails = sum(1 for r in rows if r["server"] == srv and not r["ok"])
+        if vals:
+            def pct(p: float) -> int:
+                return vals[min(len(vals) - 1, int(p * len(vals)))]
+            summary[srv] = {"n": len(vals), "fails": fails, "min": vals[0], "max": vals[-1],
+                            "p50": pct(0.5), "p95": pct(0.95),
+                            "avg": round(sum(vals) / len(vals))}
+        else:
+            summary[srv] = {"n": 0, "fails": fails}
+    return {"rows": rows, "summary": summary}
+
+
 class ProposalDecideIn(BaseModel):
     action: str   # 'adopt' | 'reject'
 

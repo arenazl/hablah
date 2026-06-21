@@ -459,6 +459,16 @@ export const motorAPI = {
     api.post<{ turns: { text: string; show: string | null }[] }>('/motor/kids-class-demo', body).then((r) => r.data),
   kidsVocab: () => api.get<KidsVocabItem[]>('/motor/kids-vocab').then((r) => r.data),
   kidsTopicVocab: () => api.get<KidsTopicVocab[]>('/motor/kids-topic-vocab').then((r) => r.data),
+  infraResult: (body: { server: string; turn_index: number; rtt_ms: number | null; ok: boolean; note?: string }) =>
+    api.post('/motor/infra-result', body).then((r) => r.data),
+  infraResults: () => api.get<{ rows: InfraRow[]; summary: Record<string, InfraSummary> }>('/motor/infra-results').then((r) => r.data),
+}
+
+export interface InfraRow {
+  id: number; server: string; turn_index: number; rtt_ms: number | null; ok: boolean; note: string | null; created_at: string
+}
+export interface InfraSummary {
+  n: number; fails: number; min?: number; max?: number; p50?: number; p95?: number; avg?: number
 }
 
 export interface KidsVocabItem {
