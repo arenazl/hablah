@@ -195,9 +195,8 @@ async def voice_ws_llm_test(
     # Prompt REAL del motor desde la BD para (segmento, nivel) — los 28 del smoke test.
     # Lee catálogos (no persiste). Fail-fast: si falta un dato, cierra con error.
     from core.database import AsyncSessionLocal
-    from sqlalchemy import select as _sel
+    from sqlalchemy import select as _sel, text as _text
     from models.methodology import StudentType as _ST, Level as _LV
-    from models.config import AppConfig as _AC
     from models.template import Topic as _TP
     from services.composer_proto import MotorDataMissing
     async with AsyncSessionLocal() as _db:
@@ -205,7 +204,8 @@ async def voice_ws_llm_test(
         _lv = (await _db.execute(_sel(_LV).where(_LV.code == lvl))).scalar_one_or_none()
         _aud = "kid" if seg in ("mini", "junior", "tween") else "adult"
         _tp = (await _db.execute(_sel(_TP).where(_TP.is_active.is_(True), _TP.audience == _aud).limit(1))).scalars().first()
-        _appcfg = {c.key: c.value for c in (await _db.execute(_sel(_AC))).scalars().all()}
+        # la tabla app_config real usa columnas config_key/config_value (no el ORM key/value) -> raw SQL
+        _appcfg = {r[0]: r[1] for r in (await _db.execute(_text("SELECT config_key, config_value FROM app_config"))).all()}
     st_data = {
         "slug": _st.slug, "tutor_mascot": _st.tutor_mascot, "tutor_identity": _st.tutor_identity,
         "tutor_tonal_rules": _st.tutor_tonal_rules, "session_focus": _st.session_focus,
