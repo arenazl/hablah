@@ -374,6 +374,17 @@ async def kids_vocab(db: AsyncSession = Depends(get_db)):
         "WHERE active=1 ORDER BY category, word_en")))
 
 
+@router.get("/vocab-transcripts")
+async def vocab_transcripts(db: AsyncSession = Depends(get_db)):
+    """Transcripciones kids SIN vocab vs CON vocab (mismo motor nuevo). Análisis. Sin auth."""
+    import json
+    try:
+        rows = _rows(await db.execute(text("SELECT data FROM vocab_transcript_result ORDER BY id DESC LIMIT 1")))
+        return json.loads(rows[0]["data"]) if rows else {"profiles": []}
+    except Exception:
+        return {"profiles": []}
+
+
 @router.get("/kids-topic-vocab")
 async def kids_topic_vocab(db: AsyncSession = Depends(get_db)):
     """Cada tópico de kids con su vocab generado (palabra + visual + cobertura). Para curar. Sin auth."""

@@ -459,6 +459,7 @@ export const motorAPI = {
     api.post<{ turns: { text: string; show: string | null }[] }>('/motor/kids-class-demo', body).then((r) => r.data),
   kidsVocab: () => api.get<KidsVocabItem[]>('/motor/kids-vocab').then((r) => r.data),
   kidsTopicVocab: () => api.get<KidsTopicVocab[]>('/motor/kids-topic-vocab').then((r) => r.data),
+  vocabTranscripts: () => api.get<{ profiles: VocabTranscriptProfile[] }>('/motor/vocab-transcripts').then((r) => r.data),
   infraResult: (body: { server: string; turn_index: number; rtt_ms: number | null; ok: boolean; note?: string }) =>
     api.post('/motor/infra-result', body).then((r) => r.data),
   infraResults: () => api.get<{ rows: InfraRow[]; summary: Record<string, InfraSummary> }>('/motor/infra-results').then((r) => r.data),
@@ -483,6 +484,24 @@ export interface KidsTopicVocab {
   topic_id: number
   title: string
   vocab: { word_en: string; word_es: string; emoji: string; asset_file: string | null }[]
+}
+
+export interface VocabTranscriptProfile {
+  band: string
+  level: string
+  title: string
+  vocab: string[]
+  sin: { who: string; text: string }[]
+  con: { who: string; text: string }[]
+  eval?: {
+    score?: number | null
+    integration?: string
+    recycling?: string
+    strengths?: string[]
+    issues?: string[]
+    vocab_helped?: boolean
+    verdict?: string
+  }
 }
 
 export interface ClassTranscript {
