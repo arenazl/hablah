@@ -455,6 +455,8 @@ export const motorAPI = {
     api.post<{ proposal_id: number; status: string }>(`/motor/catalog-proposals/${id}/decide`, { action }).then((r) => r.data),
   comparison: () => api.get<{ combos: CompareCombo[] }>('/motor/comparison').then((r) => r.data),
   transcripts: () => api.get<{ antes: ClassTranscript[]; despues: ClassTranscript[] }>('/motor/transcripts').then((r) => r.data),
+  kidsClassDemo: (body: { band?: string; level?: string; topic_id?: number | null; vocab?: string[] }) =>
+    api.post<{ turns: { text: string; show: string | null }[] }>('/motor/kids-class-demo', body).then((r) => r.data),
 }
 
 export interface ClassTranscript {

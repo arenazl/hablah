@@ -337,6 +337,35 @@ async def transcripts(db: AsyncSession = Depends(get_db)):
     return json.loads(rows[0]["data"]) if rows else {"antes": [], "despues": []}
 
 
+class KidsDemoIn(BaseModel):
+    band: str = "early_child"
+    level: str = "A1"
+    topic_id: Optional[int] = None
+    vocab: list[str] = ["dog", "cat", "lion", "bear", "rabbit"]   # vocab que SÍ tiene imagen
+
+
+@router.post("/kids-class-demo")
+async def kids_class_demo(payload: KidsDemoIn):
+    """Genera una mini-clase visual de kids: el coach (motor) improvisa pero SOLO con el
+    vocab que tiene imagen, y marca qué mostrar en cada turno. Dinámico (cada vez distinto)."""
+    try:
+        res = await motor_engine.resolve(payload.band, payload.level, payload.topic_id, None, None)
+        coach = res.get("prompt", "")
+        prompt = (coach + "\n\n--- MODO CLASE VISUAL (kids) ---\n"
+                  f"Tenemos imágenes SOLO para este vocabulario: {', '.join(payload.vocab)}.\n"
+                  "Dá una mini-clase dinámica de ~7 turnos sobre animales, usando SOLO ese vocabulario "
+                  "(elegí vos el orden y cómo). En cada turno que enseñes un animal, indicá cuál en 'show' "
+                  "(una de esas palabras EXACTAS, en minúscula). Turnos de apertura/cierre con show=null. "
+                  "Estilo nene A1: español de apoyo + la palabra en inglés, cálido y simple.\n"
+                  "Devolvé SOLO JSON: {\"turns\":[{\"text\":\"...\",\"show\":\"dog\"},{\"text\":\"...\",\"show\":null}]}")
+        raw = await motor_protocol._run_llm(prompt, "claude")
+        parsed = motor_protocol._parse_json(raw or "") or {}
+        turns = [t for t in parsed.get("turns", []) if isinstance(t, dict) and t.get("text")]
+        return {"turns": turns}
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
 class ProposalDecideIn(BaseModel):
     action: str   # 'adopt' | 'reject'
 
