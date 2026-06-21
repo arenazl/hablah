@@ -298,20 +298,27 @@ async def catalog_proposals(db: AsyncSession = Depends(get_db)):
     """Propuestas del especialista por nivel + el estado actual (objetivos/variables). Sin auth (vista /auditoria)."""
     levels = _rows(await db.execute(text(
         "SELECT level_code, label, spanish_mirror, vocab_depth, pacing_bonus_min, modifier FROM `level` ORDER BY sort_order")))
+    bands_rows = _rows(await db.execute(text(
+        "SELECT code, label FROM age_band ORDER BY band_id")))
     objs = _rows(await db.execute(text(
         "SELECT cefr_level, kind, description FROM language_objective ORDER BY cefr_level, sort_order")))
     props = _rows(await db.execute(text(
-        "SELECT proposal_id, level_code, scope, area, action, current_value, proposed_value, rationale, status "
-        "FROM catalog_proposal ORDER BY level_code, FIELD(action,'add','change','remove','keep')")))
+        "SELECT proposal_id, level_code, band_code, scope, area, action, current_value, proposed_value, rationale, status "
+        "FROM catalog_proposal ORDER BY FIELD(action,'add','change','remove','keep')")))
     by_obj: dict = {}
     for o in objs:
         by_obj.setdefault(o["cefr_level"], []).append({"kind": o["kind"], "description": o["description"]})
-    by_prop: dict = {}
+    by_lvl: dict = {}
+    by_band: dict = {}
     for p in props:
-        by_prop.setdefault(p["level_code"], []).append(p)
-    out = [{**lv, "objectives": by_obj.get(lv["level_code"], []), "proposals": by_prop.get(lv["level_code"], [])}
-           for lv in levels]
-    return {"levels": out}
+        if p.get("band_code"):
+            by_band.setdefault(p["band_code"], []).append(p)
+        elif p.get("level_code"):
+            by_lvl.setdefault(p["level_code"], []).append(p)
+    out_levels = [{**lv, "objectives": by_obj.get(lv["level_code"], []), "proposals": by_lvl.get(lv["level_code"], [])}
+                  for lv in levels]
+    out_bands = [{**b, "proposals": by_band.get(b["code"], [])} for b in bands_rows]
+    return {"levels": out_levels, "bands": out_bands}
 
 
 class ProposalDecideIn(BaseModel):

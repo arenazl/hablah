@@ -65,25 +65,78 @@ async def audit_level(lv: dict) -> dict:
     return {"level": lv, "objs": objs, "pol": pol, "props": props}
 
 
-def _persist(results):
+BAND_PROMPT = """Sos un especialista en pedagogía de idiomas y SLA, auditando el ENFOQUE POR EDAD
+para la franja "{band}" (inglés, alumno hispanohablante). Aplicá (usalos, no los nombres): CLT/TBLT
+(competencia comunicativa, tareas reales), Krashen (input i+1, filtro afectivo), desarrollo cognitivo
+por edad, corrección por evidencia.
+
+ESTADO ACTUAL de la franja {band}:
+- Tutor (quién enseña): {tutor}
+- Método (cómo enseña): {pedagogy}
+- Políticas de la franja: {band_policy}
+- Actividad de la clase: {activity}
+- Recompensa: {reward}
+- Fases de la clase: {phases}
+
+Auditá cada instancia y, EN CADA PUNTO, marcá TU RECOMENDACIÓN concreta como especialista:
+¿el tutor/tono es el adecuado para esta edad? ¿el método? ¿la actividad y la recompensa motivan a
+esta edad? ¿las fases tienen sentido? Solo cambios con valor real (máx ~6).
+
+Devolvé SOLO JSON (sin prosa):
+{{"proposals":[{{"scope":"tutor|pedagogy|activity|phase|policy","area":"texto corto","action":"add|change|remove|keep","current":"qué hay hoy","proposed":"TU RECOMENDACIÓN concreta","rationale":"por qué, basado en evidencia"}}]}}"""
+
+
+async def audit_band(b: dict) -> dict:
+    db = motor_engine._connect()
+    try:
+        bid = b["band_id"]
+        tutor = db.q1("SELECT name, persona, tone FROM tutor_identity WHERE band_id=%s", (bid,))
+        ped = db.q1("SELECT methodology FROM pedagogy WHERE band_id=%s", (bid,))
+        bpol = db.q("SELECT kind, body FROM band_policy WHERE band_id=%s", (bid,))
+        act = db.q1("SELECT description FROM activity_type WHERE band_id=%s", (bid,))
+        rew = db.q1("SELECT description FROM reward WHERE band_id=%s", (bid,))
+        phases = db.q("SELECT name FROM phase WHERE band_group=%s ORDER BY ord", (b["phase_group"],))
+    finally:
+        db.conn.close()
+    prompt = BAND_PROMPT.format(
+        band=b["code"],
+        tutor=f"{tutor['name']} — {tutor['persona']} (tono: {tutor['tone']})" if tutor else "(ninguno)",
+        pedagogy=ped["methodology"] if ped else "(ninguno)",
+        band_policy=_fmt_pol(bpol),
+        activity=act["description"] if act else "(ninguna)",
+        reward=rew["description"] if rew else "(ninguna)",
+        phases=", ".join(p["name"] for p in phases) or "(ninguna)")
+    raw = await mp._run_llm(prompt, "claude")
+    parsed = mp._parse_json(raw or "") or {}
+    return {"band": b, "props": parsed.get("proposals", [])}
+
+
+def _persist(level_results, band_results):
     db = motor_engine._connect()
     n = 0
     try:
         with db.conn.cursor() as cur:
-            for r in results:
+            cur.execute("DELETE FROM catalog_proposal WHERE status='proposed'")  # re-corre limpio, conserva decididas
+            rows = []
+            for r in level_results:
                 for p in r["props"]:
-                    sc = p.get("scope", "other")
-                    if sc not in ("objective", "level_var", "level_policy", "other"):
-                        sc = "other"
-                    act = p.get("action", "change")
-                    if act not in ("add", "change", "remove", "keep"):
-                        act = "change"
-                    cur.execute(
-                        """INSERT INTO catalog_proposal (level_code, scope, area, action, current_value, proposed_value, rationale, status)
-                           VALUES (%s,%s,%s,%s,%s,%s,%s,'proposed')""",
-                        (r["level"]["level_code"], sc, (p.get("area") or "")[:40], act,
-                         (p.get("current") or "")[:500], (p.get("proposed") or "")[:500], (p.get("rationale") or "")[:600]))
-                    n += 1
+                    rows.append((r["level"]["level_code"], None, p))
+            for r in band_results:
+                for p in r["props"]:
+                    rows.append((None, r["band"]["code"], p))
+            for level_code, band_code, p in rows:
+                sc = p.get("scope", "other")
+                if sc not in ("objective", "level_var", "level_policy", "other"):
+                    sc = "other"
+                act = p.get("action", "change")
+                if act not in ("add", "change", "remove", "keep"):
+                    act = "change"
+                cur.execute(
+                    """INSERT INTO catalog_proposal (level_code, band_code, scope, area, action, current_value, proposed_value, rationale, status)
+                       VALUES (%s,%s,%s,%s,%s,%s,%s,%s,'proposed')""",
+                    (level_code, band_code, sc, (p.get("area") or "")[:40], act,
+                     (p.get("current") or "")[:500], (p.get("proposed") or "")[:500], (p.get("rationale") or "")[:600]))
+                n += 1
         db.conn.commit()
     finally:
         db.conn.close()
@@ -134,16 +187,18 @@ def build_html(results):
 async def main():
     db = motor_engine._connect()
     levels = db.q("SELECT level_code, label, spanish_mirror, vocab_depth, pacing_bonus_min, modifier FROM `level` ORDER BY sort_order")
+    bands = db.q("SELECT band_id, code, phase_group FROM age_band ORDER BY band_id")
     db.conn.close()
-    results = []
+    level_results = []
     for lv in levels:
-        print(f"auditando {lv['level_code']} ...")
-        results.append(await audit_level(lv))
-    n = _persist(results)
-    print(f"persistidas {n} propuestas en catalog_proposal")
-    with open(OUT, "w", encoding="utf-8") as f:
-        f.write(build_html(results))
-    print("HTML:", OUT)
+        print(f"auditando nivel {lv['level_code']} ...")
+        level_results.append(await audit_level(lv))
+    band_results = []
+    for b in bands:
+        print(f"auditando edad {b['code']} ...")
+        band_results.append(await audit_band(b))
+    n = _persist(level_results, band_results)
+    print(f"persistidas {n} propuestas (niveles + edades) en catalog_proposal")
 
 
 if __name__ == "__main__":

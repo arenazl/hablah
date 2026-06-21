@@ -450,19 +450,22 @@ export const motorAPI = {
   wipeProfile: (studentId: number) =>
     api.post<{ wiped: { presets: number; objectives: number; items: number } }>(`/motor/profile/${studentId}/wipe`, {}).then((r) => r.data),
   // auditoría pedagógica por nivel (propuestas del especialista)
-  catalogProposals: () => api.get<{ levels: AuditLevel[] }>('/motor/catalog-proposals').then((r) => r.data),
+  catalogProposals: () => api.get<{ levels: AuditLevel[]; bands: AuditBand[] }>('/motor/catalog-proposals').then((r) => r.data),
   decideProposal: (id: number, action: 'adopt' | 'reject') =>
     api.post<{ proposal_id: number; status: string }>(`/motor/catalog-proposals/${id}/decide`, { action }).then((r) => r.data),
 }
 
 export interface AuditProposal {
-  proposal_id: number; level_code: string; scope: string; area: string
+  proposal_id: number; level_code?: string; band_code?: string; scope: string; area: string
   action: 'add' | 'change' | 'remove' | 'keep'; current_value?: string; proposed_value: string
   rationale?: string; status: 'proposed' | 'adopted' | 'rejected'
 }
 export interface AuditLevel {
   level_code: string; label: string; spanish_mirror: string; vocab_depth: string; pacing_bonus_min: number
   modifier: string; objectives: { kind: string; description: string }[]; proposals: AuditProposal[]
+}
+export interface AuditBand {
+  code: string; label: string; proposals: AuditProposal[]
 }
 
 export interface MotorPreset {
