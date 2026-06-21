@@ -14,7 +14,9 @@ const HOSTS: Record<string, { label: string; wss: string }> = {
   gcloud: { label: 'Google Cloud', wss: 'wss://hablah-api-test-233354572460.us-central1.run.app/api' },
 }
 const WS_PATH = '/voice/ws_llm_test?age_group=mini&level=A0&voice=Aoede'
-const TURNS = 11 // se descarta el #1
+const TURNS = 8 // se descarta el #1
+const SILENCE_MS = 1300 // cola de silencio: dispara el VAD de Gemini para cerrar el turno
+const MAX_CLIP_MS = 4000 // recorta el clip (medimos latencia, no charla larga; cuida el límite de sesión)
 const RESP_TIMEOUT_MS = 20000
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))

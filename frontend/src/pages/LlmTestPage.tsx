@@ -77,6 +77,14 @@ function Segmented({ value, onChange, options, disabled }: {
   )
 }
 
+// Presets de tuneo (setean varios knobs a la vez). El sweep mostró: thinking es LA palanca
+// (256 -> 0 baja ~3.0s a ~1.7s y estabiliza); silence_ms bajo no ayuda y corta al nene.
+const TUNE_PRESETS = [
+  { name: 'Actual (256)', desc: 'referencia · lo de hoy', thinking: 256, silence_ms: 500, activity: 'NO_INTERRUPTION', start_sens: 'START_SENSITIVITY_HIGH', end_sens: 'END_SENSITIVITY_HIGH', prefix_ms: 200, color: '#64748b' },
+  { name: 'Rápido kids ★', desc: 'thinking 0 · paciente (recom.)', thinking: 0, silence_ms: 500, activity: 'NO_INTERRUPTION', start_sens: 'START_SENSITIVITY_HIGH', end_sens: 'END_SENSITIVITY_HIGH', prefix_ms: 200, color: '#22c55e' },
+  { name: 'Ultra', desc: 'thinking 0 · cierra rápido', thinking: 0, silence_ms: 300, activity: 'NO_INTERRUPTION', start_sens: 'START_SENSITIVITY_HIGH', end_sens: 'END_SENSITIVITY_HIGH', prefix_ms: 150, color: '#38bdf8' },
+] as const
+
 export function LlmTestPage() {
   // Config. Defaults = lo que funcionó 10/10 (AGC off + VAD responsivo + frase-puente).
   const [ageGroup, setAgeGroup] = useState('mini')
@@ -131,6 +139,20 @@ export function LlmTestPage() {
     await live.start(0, undefined, voice, url, audioOverride)
   }, [live, addLog, ageGroup, level, model, voice, startSens, endSens, silenceMs, prefixMs, activity, thinking, agc, ns, aec, captureSr, workletBuf])
 
+  const applyPreset = useCallback(async (p: typeof TUNE_PRESETS[number]) => {
+    setStartSens(p.start_sens); setEndSens(p.end_sens); setSilenceMs(p.silence_ms)
+    setPrefixMs(p.prefix_ms); setActivity(p.activity); setThinking(p.thinking)
+    live.stop(); setLog([]); setMicLevel(0)
+    const cfg = {
+      engine: 'gemini_live', model, voice, age_group: ageGroup, level,
+      start_sens: p.start_sens, end_sens: p.end_sens, silence_ms: p.silence_ms,
+      prefix_ms: p.prefix_ms, activity: p.activity, thinking: p.thinking,
+    }
+    addLog('info', `PRESET ${p.name} · ${ageGroup}/${level} · thinking=${p.thinking} · silence=${p.silence_ms} · interrumpir=${p.activity === 'NO_INTERRUPTION' ? 'no' : 'sí'}`)
+    const audioOverride = { autoGainControl: agc, noiseSuppression: ns, echoCancellation: aec, captureSampleRate: captureSr, workletBufferSamples: workletBuf }
+    await live.start(0, undefined, voice, buildLlmTestWsUrl(cfg), audioOverride)
+  }, [live, addLog, ageGroup, level, model, voice, agc, ns, aec, captureSr, workletBuf])
+
   const stop = useCallback(() => { live.stop(); addLog('info', 'sesión terminada'); setMicLevel(0) }, [live, addLog])
 
   return (
@@ -161,6 +183,23 @@ export function LlmTestPage() {
           <div style={{ ...HELP, marginTop: 12 }}>
             El motor arma el prompt real de 9 pasos para <b>{ageGroup} · {level}</b> desde la BD
             (el mismo que ves en <code>test-prompts/{level}/{ageGroup}.md</code>). Cambiá segmento/nivel y "Aplicar" para probar otro.
+          </div>
+        </div>
+
+        {/* Presets de tuneo: un toque setea varios knobs + arranca la sesión */}
+        <div style={{ ...CARD, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Presets de un toque (setea + arranca con micrófono)</div>
+          <div style={{ ...HELP, marginBottom: 12 }}>
+            Tocá un preset y hablale al coach. Comparás <b>velocidad · ¿se congela? · calidad</b>. Usan el segmento·nivel de arriba ({ageGroup} · {level}).
+          </div>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {TUNE_PRESETS.map((p) => (
+              <button key={p.name} onClick={() => applyPreset(p)} disabled={isLive}
+                style={{ flex: '1 1 200px', textAlign: 'left', background: 'rgba(255,255,255,.04)', border: `1px solid ${p.color}`, borderRadius: 12, padding: '12px 14px', color: '#e6e8ec', cursor: isLive ? 'default' : 'pointer', opacity: isLive ? 0.5 : 1 }}>
+                <div style={{ fontWeight: 800, color: p.color }}>{p.name}</div>
+                <div style={{ fontSize: 12, color: '#9aa3af', marginTop: 2 }}>{p.desc}</div>
+              </button>
+            ))}
           </div>
         </div>
 
