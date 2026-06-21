@@ -29,6 +29,7 @@ const TrainingPanel = lazy(() => import('./pages/TrainingPanel'))
 const ProbarOrquestacion = lazy(() => import('./pages/ProbarOrquestacion'))
 const MotorPlaygroundPanel = lazy(() => import('./pages/MotorPlaygroundPanel'))
 const AuditoriaPanel = lazy(() => import('./pages/AuditoriaPanel'))
+const OrquestacionPanel = lazy(() => import('./pages/OrquestacionPanel'))
 const KidsHome = lazy(() => import('./pages/kids/KidsHome').then(m => ({ default: m.KidsHome })))
 const KidsAgeSelect = lazy(() =>
   import('./pages/kids/KidsAgeSelect').then(m => ({ default: m.KidsAgeSelect })),
@@ -133,6 +134,9 @@ export default function App() {
           <Route path="/probar-orq" element={<ProbarOrquestacion />} />
           <Route path="/motor" element={<MotorPlaygroundPanel />} />
           <Route path="/auditoria" element={<AuditoriaPanel />} />
+          <Route path="/auditoría" element={<AuditoriaPanel />} />
+          <Route path="/orquestacion" element={<OrquestacionPanel />} />
+          <Route path="/orquestación" element={<OrquestacionPanel />} />
           <Route
             path="/tune"
             element={
