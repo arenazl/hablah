@@ -321,6 +321,14 @@ async def catalog_proposals(db: AsyncSession = Depends(get_db)):
     return {"levels": out_levels, "bands": out_bands}
 
 
+@router.get("/comparison")
+async def comparison(db: AsyncSession = Depends(get_db)):
+    """Comparación orquestación antes/después del especialista (la última computada). Sin auth."""
+    rows = _rows(await db.execute(text("SELECT data FROM comparison_result ORDER BY id DESC LIMIT 1")))
+    import json
+    return {"combos": json.loads(rows[0]["data"]) if rows else []}
+
+
 class ProposalDecideIn(BaseModel):
     action: str   # 'adopt' | 'reject'
 

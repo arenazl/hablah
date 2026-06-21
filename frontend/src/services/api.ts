@@ -453,6 +453,12 @@ export const motorAPI = {
   catalogProposals: () => api.get<{ levels: AuditLevel[]; bands: AuditBand[] }>('/motor/catalog-proposals').then((r) => r.data),
   decideProposal: (id: number, action: 'adopt' | 'reject') =>
     api.post<{ proposal_id: number; status: string }>(`/motor/catalog-proposals/${id}/decide`, { action }).then((r) => r.data),
+  comparison: () => api.get<{ combos: CompareCombo[] }>('/motor/comparison').then((r) => r.data),
+}
+
+export interface CompareCombo {
+  band: string; level: string
+  etapas: { tag: string; title: string; antes: string; despues: string }[]
 }
 
 export interface AuditProposal {
