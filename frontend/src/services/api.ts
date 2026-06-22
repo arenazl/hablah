@@ -486,15 +486,11 @@ export interface KidsTopicVocab {
   vocab: { word_en: string; word_es: string; emoji: string; asset_file: string | null }[]
 }
 
-export interface VocabTranscriptProfile {
-  band: string
-  level: string
-  title: string
-  vocab: string[]
-  sin: { who: string; text: string }[]
-  con: { who: string; text: string }[]
+export interface VocabCharla {
+  transcript: { who: string; text: string }[]
   eval?: {
     score?: number | null
+    naturalness?: string
     integration?: string
     recycling?: string
     strengths?: string[]
@@ -502,6 +498,22 @@ export interface VocabTranscriptProfile {
     vocab_helped?: boolean
     verdict?: string
   }
+}
+
+export interface VocabRun {
+  key: string
+  label: string
+  charlas: VocabCharla[]
+  scores?: number[]
+  avg_score?: number | null
+}
+
+export interface VocabTranscriptProfile {
+  band: string
+  level: string
+  title: string
+  vocab: string[]
+  runs: VocabRun[]
 }
 
 export interface ClassTranscript {

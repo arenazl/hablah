@@ -1,9 +1,9 @@
-/* /transcripciones-vocab — análisis: la MISMA clase de kids SIN vocab vs CON vocab
- * (mismo motor nuevo). Para ver si obligar al coach a seguir la lista de palabras del
- * tópico mejora la clase o la pone rígida. Lado a lado por perfil.
+/* /transcripciones-vocab — el DIAL del vocabulario en kids, PROMEDIADO sobre 3 charlas
+ * por condición (el LLM varía; 1 sola es ruido). Por banda: SIN vocab (libre) vs dosis del
+ * especialista (early 2-3 / child 3-4). Muestra el promedio + las 3 notas + una charla de muestra.
  */
 import { useEffect, useState } from 'react'
-import { motorAPI, type VocabTranscriptProfile } from '../services/api'
+import { motorAPI, type VocabTranscriptProfile, type VocabRun } from '../services/api'
 
 function Bubbles({ conv }: { conv: { who: string; text: string }[] }) {
   return (
@@ -11,7 +11,7 @@ function Bubbles({ conv }: { conv: { who: string; text: string }[] }) {
       {conv.map((l, i) => {
         const profe = l.who.toLowerCase().startsWith('profe')
         return (
-          <div key={i} style={{ alignSelf: profe ? 'flex-start' : 'flex-end', maxWidth: '88%' }}>
+          <div key={i} style={{ alignSelf: profe ? 'flex-start' : 'flex-end', maxWidth: '90%' }}>
             <div style={{ fontSize: 10, color: '#9aa6e0', margin: profe ? '0 0 2px 4px' : '0 4px 2px 0', textAlign: profe ? 'left' : 'right' }}>
               {profe ? 'Profe (motor)' : 'Alumno (IA)'}
             </div>
@@ -21,6 +21,33 @@ function Bubbles({ conv }: { conv: { who: string; text: string }[] }) {
           </div>
         )
       })}
+    </div>
+  )
+}
+
+function RunCard({ run }: { run: VocabRun }) {
+  const libre = run.key === 'libre'
+  const avg = run.avg_score
+  const col = (avg ?? 0) >= 8 ? '#22c55e' : (avg ?? 0) >= 6.5 ? '#f59e0b' : '#ef4444'
+  const sample = run.charlas?.[0]
+  const e = sample?.eval
+  return (
+    <div style={{ background: libre ? 'rgba(148,163,184,.05)' : 'rgba(34,197,94,.05)', border: `1px solid ${libre ? 'rgba(148,163,184,.2)' : 'rgba(34,197,94,.25)'}`, borderRadius: 14, padding: 14 }}>
+      <div style={{ fontWeight: 800, color: libre ? '#94a3b8' : '#22c55e', marginBottom: 8 }}>{run.label}</div>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'baseline', marginBottom: 8 }}>
+        <span style={{ fontWeight: 900, fontSize: 30, color: col }}>{avg ?? '-'}</span>
+        <span style={{ fontSize: 12, color: '#9aa6e0' }}>promedio · 3 charlas: {(run.scores || []).join(', ') || '—'}</span>
+      </div>
+      {e?.verdict && <div style={{ fontSize: 12.5, marginBottom: 6, lineHeight: 1.35, color: '#c7d2fe' }}>{e.verdict}</div>}
+      {!!e?.issues?.length && (
+        <ul style={{ margin: '0 0 10px', paddingLeft: 16, fontSize: 11.5, color: '#f3c98b' }}>
+          {e.issues.slice(0, 3).map((s, i) => <li key={i}>{s}</li>)}
+        </ul>
+      )}
+      <details>
+        <summary style={{ cursor: 'pointer', fontSize: 12, color: '#9aa6e0', marginBottom: 8 }}>ver una charla de muestra</summary>
+        {sample && <Bubbles conv={sample.transcript} />}
+      </details>
     </div>
   )
 }
@@ -36,49 +63,19 @@ export default function TranscripcionesVocabPanel() {
   return (
     <div style={{ minHeight: '100vh', background: '#0b0e2e', color: '#fff', fontFamily: 'Nunito, system-ui, sans-serif', padding: '24px 20px 60px' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <h1 style={{ fontSize: 26, fontWeight: 900, margin: '0 0 4px' }}>Clases kids — SIN vocab vs CON vocab</h1>
+        <h1 style={{ fontSize: 26, fontWeight: 900, margin: '0 0 4px' }}>El dial del vocabulario — kids (promediado)</h1>
         <p style={{ color: '#9aa6e0', margin: '0 0 20px' }}>
-          Misma clase, mismo motor nuevo. Izquierda: como hoy (sin lista). Derecha: el coach OBLIGADO a usar el vocab del tópico. ¿Mejora o se pone rígida?
+          Promedio de 3 charlas por condición (el LLM varía). Por banda: improvisación LIBRE vs dosis del especialista (primera infancia 2-3 / infancia 3-4). ¿La dosis chica mantiene la magia o la degrada?
         </p>
-        {loading && <p style={{ color: '#9aa6e0' }}>Cargando… (el análisis puede seguir generándose)</p>}
-        {!loading && !profiles.length && <p style={{ color: '#9aa6e0' }}>Todavía no hay análisis. Esperá a que termine la corrida.</p>}
+        {loading && <p style={{ color: '#9aa6e0' }}>Cargando…</p>}
+        {!loading && !profiles.length && <p style={{ color: '#9aa6e0' }}>Todavía no hay análisis.</p>}
 
         {profiles.map((p, idx) => (
           <section key={idx} style={{ marginBottom: 30 }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>{p.band} · {p.level} · {p.title}</h2>
-            </div>
-            <div style={{ fontSize: 12, color: '#c7d2fe', marginBottom: 12 }}>
-              vocab obligatorio ({p.vocab.length}): {p.vocab.join(', ')}
-            </div>
-            {p.eval && (
-              <div style={{ background: 'rgba(168,85,247,.08)', border: '1px solid rgba(168,85,247,.3)', borderRadius: 12, padding: 14, marginBottom: 14 }}>
-                <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontWeight: 900, fontSize: 18, color: '#c084fc' }}>Especialista: {p.eval.score ?? '-'}/10</span>
-                  <span style={{ fontSize: 12, color: '#9aa6e0' }}>integración: <b>{p.eval.integration ?? '-'}</b> · reciclado: <b>{p.eval.recycling ?? '-'}</b> · ¿vocab ayudó?: <b>{p.eval.vocab_helped ? 'sí' : 'no'}</b></span>
-                </div>
-                {p.eval.verdict && <div style={{ fontSize: 13.5, marginBottom: 8 }}>{p.eval.verdict}</div>}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
-                  {!!p.eval.strengths?.length && (
-                    <div><div style={{ fontSize: 11, fontWeight: 800, color: '#22c55e', marginBottom: 3 }}>FORTALEZAS</div>
-                      <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12.5, color: '#cbd5e1' }}>{p.eval.strengths.map((s, i) => <li key={i}>{s}</li>)}</ul></div>
-                  )}
-                  {!!p.eval.issues?.length && (
-                    <div><div style={{ fontSize: 11, fontWeight: 800, color: '#f59e0b', marginBottom: 3 }}>PROBLEMAS</div>
-                      <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12.5, color: '#cbd5e1' }}>{p.eval.issues.map((s, i) => <li key={i}>{s}</li>)}</ul></div>
-                  )}
-                </div>
-              </div>
-            )}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
-              <div style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 14, padding: 14 }}>
-                <div style={{ fontWeight: 800, color: '#94a3b8', marginBottom: 10 }}>SIN vocab (como hoy)</div>
-                <Bubbles conv={p.sin} />
-              </div>
-              <div style={{ background: 'rgba(34,197,94,.05)', border: '1px solid rgba(34,197,94,.2)', borderRadius: 14, padding: 14 }}>
-                <div style={{ fontWeight: 800, color: '#22c55e', marginBottom: 10 }}>CON vocab (obligado a la lista)</div>
-                <Bubbles conv={p.con} />
-              </div>
+            <h2 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 2px' }}>{p.band} · {p.level} · {p.title}</h2>
+            <div style={{ fontSize: 12, color: '#c7d2fe', marginBottom: 12 }}>pozo del tópico ({p.vocab.length}): {p.vocab.join(', ')}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: 16 }}>
+              {p.runs.map((run) => <RunCard key={run.key} run={run} />)}
             </div>
           </section>
         ))}

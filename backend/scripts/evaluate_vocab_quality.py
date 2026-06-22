@@ -8,6 +8,33 @@ import asyncio
 import json
 import os
 import sys
+import time
+
+
+def _retry(fn, tries=5, wait=5):
+    last = None
+    for i in range(tries):
+        try:
+            return fn()
+        except Exception as e:
+            last = e
+            print(f"  (reintento DB {i+1}/{tries} tras {type(e).__name__})")
+            time.sleep(wait)
+    raise last
+
+
+async def _llm(prompt, tries=4, wait=8):
+    """Llamada al LLM con reintento (resiliente a hipos de Anthropic)."""
+    import asyncio
+    last = None
+    for i in range(tries):
+        try:
+            return await mp._claude_headless(prompt, timeout=90)
+        except Exception as e:
+            last = e
+            print(f"  (reintento LLM {i+1}/{tries} tras {type(e).__name__})")
+            await asyncio.sleep(wait)
+    raise last
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from services import motor_engine, motor_protocol as mp  # noqa: E402
@@ -40,33 +67,55 @@ evidencia, no impresión. Marco (aplicalo, no lo nombres):
 """
 
 
-async def evaluate(pr):
-    convo = "\n".join(f"{l['who']}: {l['text']}" for l in pr["con"])
+async def evaluate_vocab(pr, conv):
+    convo = "\n".join(f"{l['who']}: {l['text']}" for l in conv)
     prompt = (
         _RUBRIC +
         f"\nEvaluá esta clase de un nene ({pr['band']} {pr['level']}) sobre '{pr['title']}', donde el "
-        f"coach DEBÍA usar este vocabulario: {', '.join(pr['vocab'])}.\n\nTRANSCRIPCIÓN:\n{convo}\n\n"
-        "Revisá 7 puntos: (1) integración del vocab (natural vs lista mecánica/forzada), (2) reciclado/repetición, "
-        "(3) comprensibilidad 90-98%/i+1, (4) forma+significado, (5) filtro afectivo, (6) corrección balanceada, "
-        "(7) ¿el vocab obligatorio AYUDÓ o ENTORPECIÓ?\n"
-        "Devolvé SOLO JSON: {\"score\":1-10,\"integration\":\"natural|forzado|mixto\","
+        f"coach DEBÍA usar vocab del pozo: {', '.join(pr['vocab'])}.\n\nTRANSCRIPCIÓN:\n{convo}\n\n"
+        "Revisá: (1) integración del vocab (natural vs forzada/drill), (2) reciclado, (3) comprensibilidad i+1, "
+        "(4) forma+significado, (5) filtro afectivo, (6) corrección, (7) ¿el vocab AYUDÓ o ENTORPECIÓ la naturalidad?\n"
+        "Devolvé SOLO JSON: {\"score\":1-10,\"naturalness\":\"alta|media|baja\",\"integration\":\"natural|forzado|mixto\","
         "\"recycling\":\"bueno|pobre\",\"strengths\":[\"...\"],\"issues\":[\"...\"],"
         "\"vocab_helped\":true/false,\"verdict\":\"1-2 frases\"}"
     )
-    raw = await mp._claude_headless(prompt, timeout=90)
+    raw = await _llm(prompt)
+    return mp._parse_json(raw or "") or {"score": None, "verdict": "(no se pudo evaluar)"}
+
+
+async def evaluate_free(pr, conv):
+    convo = "\n".join(f"{l['who']}: {l['text']}" for l in conv)
+    prompt = (
+        _RUBRIC +
+        f"\nEvaluá esta clase LIBRE (improvisación pura, SIN vocabulario obligatorio) de un nene "
+        f"({pr['band']} {pr['level']}) sobre '{pr['title']}'.\n\nTRANSCRIPCIÓN:\n{convo}\n\n"
+        "Evaluá la NATURALIDAD/magia de la improvisación, el filtro afectivo, comprensibilidad i+1 y la "
+        "calidad pedagógica general. Acá NO hay vocab obligatorio: NO penalices por no seguir una lista.\n"
+        "Devolvé SOLO JSON: {\"score\":1-10,\"naturalness\":\"alta|media|baja\","
+        "\"strengths\":[\"...\"],\"issues\":[\"...\"],\"verdict\":\"1-2 frases\"}"
+    )
+    raw = await _llm(prompt)
     return mp._parse_json(raw or "") or {"score": None, "verdict": "(no se pudo evaluar)"}
 
 
 async def main():
-    row_id, data = _load()
+    row_id, data = _retry(_load)
     if not data or not data.get("profiles"):
         print("no hay vocab_transcript_result todavía"); return
     for pr in data["profiles"]:
         print(f"evaluando {pr['band']} {pr['level']} · {pr['title']} ...")
-        pr["eval"] = await evaluate(pr)
-        e = pr["eval"]
-        print(f"  score={e.get('score')} integración={e.get('integration')} · {e.get('verdict','')[:80]}")
-    _save(row_id, data)
+        for run in pr.get("runs", []):
+            scores = []
+            for charla in run.get("charlas", []):
+                conv = charla["transcript"]
+                charla["eval"] = await (evaluate_free(pr, conv) if run["key"] == "libre" else evaluate_vocab(pr, conv))
+                s = charla["eval"].get("score")
+                if isinstance(s, (int, float)):
+                    scores.append(s)
+            run["scores"] = scores
+            run["avg_score"] = round(sum(scores) / len(scores), 1) if scores else None
+            print(f"  {run['label']}: charlas={scores} · PROMEDIO={run['avg_score']}")
+    _retry(lambda: _save(row_id, data))
     print("\neval persistida en vocab_transcript_result")
 
 
