@@ -24,7 +24,7 @@ from core.database import get_db
 from core.security import get_password_hash, create_access_token, get_current_user
 from core.config import settings
 from models.user import User, UserRole
-from models.template import Template, Topic, TopicProgress
+from models.template import Template, Topic, TopicProgress, Session
 from models.kids import AchievementCatalog, UserAchievement
 
 
@@ -88,6 +88,16 @@ class AchievementResponse(BaseModel):
     threshold: Optional[int]
     order: int
     awarded: bool  # si el user actual ya lo tiene
+
+
+class KidsSessionResponse(BaseModel):
+    """Una charla terminada del chico (para la pagina Aventuras)."""
+    id: int
+    topic_id: Optional[int]
+    title: str
+    started_at: Optional[str]  # ISO; el front formatea relativo
+    duration_seconds: Optional[int]
+    score: Optional[int]  # 0..100
 
 
 # ─── Helpers ────────────────────────────────────────────────────────
@@ -252,6 +262,46 @@ async def kids_me(user: User = Depends(get_current_user)):
         parent_user_id=user.parent_user_id,
         buddy_id=user.kid_buddy_id,
     )
+
+
+@router.get("/sessions", response_model=list[KidsSessionResponse])
+async def kids_sessions(
+    limit: int = 30,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Charlas terminadas del chico actual, mas recientes primero. Datos REALES
+    (tabla sessions): es lo que alimenta la pagina Aventuras. Solo cuenta sesiones
+    que ya cerraron (status != active), nunca la que esta en curso."""
+    if user.parent_user_id is None or user.age_group is None:
+        raise HTTPException(status_code=403, detail="No es un perfil hijo")
+
+    rows = (await db.execute(
+        select(Session)
+        .where(Session.user_id == user.id, Session.status != "active")
+        .order_by(Session.started_at.desc())
+        .limit(min(max(limit, 1), 100))
+    )).scalars().all()
+
+    titles: dict[int, str] = {}
+    topic_ids = [s.topic_id for s in rows if s.topic_id]
+    if topic_ids:
+        for tid, ttl in (await db.execute(
+            select(Topic.id, Topic.title).where(Topic.id.in_(topic_ids))
+        )).all():
+            titles[tid] = ttl
+
+    return [
+        KidsSessionResponse(
+            id=s.id,
+            topic_id=s.topic_id,
+            title=titles.get(s.topic_id, "Charla libre"),
+            started_at=s.started_at.isoformat() if s.started_at else None,
+            duration_seconds=s.duration_seconds,
+            score=s.score,
+        )
+        for s in rows
+    ]
 
 
 class BuddyUpdate(BaseModel):

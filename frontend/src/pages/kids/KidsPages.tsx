@@ -4,10 +4,10 @@
  * Comparten KidsLayout (sidebar + tabbar). Foco en plomeria - estetica usa
  * mismos tokens del KIDS_CSS shared.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { KidsLayout } from './_shared'
-import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
+import { useKid, KIDS_TOKEN_KEY, rankInfo } from './KidsContext'
 import { KIDS_AGE_KEY } from './KidsAgeSelect'
 import { PracticarGalaxy } from '../../components/PracticarGalaxy'
 
@@ -34,50 +34,108 @@ interface Achievement {
 // CSS compartido para las 4 paginas
 // ─────────────────────────────────────────────────────────────
 const PAGE_CSS = `
-.kids-page-header { padding:18px 0 24px; }
-.kids-page-header h1 { font-family:'Sora',sans-serif; font-weight:800; font-size:32px; letter-spacing:-0.025em; margin:0 0 6px; color:#0D1412; }
-.kids-page-header h1 em { font-style:normal; color:#008F63; background:linear-gradient(180deg,transparent 64%,rgba(0,179,126,.22) 64% 96%,transparent 96%); padding:0 4px; }
-.kids-page-header p { font-size:15px; color:#3A4441; margin:0; max-width:540px; }
+.kids-page-header { padding:18px 0 18px; }
+.kids-page-header .eyebrow { font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:800; color:var(--green-700); margin:0 0 6px; }
+.kids-page-header h1 { font-family:var(--font-display); font-weight:800; font-size:32px; letter-spacing:-0.025em; margin:0 0 6px; color:var(--fg-1); }
+.kids-page-header h1 em { font-style:normal; color:var(--green-700); background:linear-gradient(180deg,transparent 64%,rgba(0,179,126,.22) 64% 96%,transparent 96%); padding:0 4px; }
+.kids-page-header p { font-size:15px; color:var(--fg-2); margin:0; max-width:540px; }
 
-.kids-pg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
-.kids-pg-card { position:relative; border-radius:22px; padding:18px; min-height:150px; cursor:pointer; color:#fff; border:0; text-align:left; display:flex; flex-direction:column; justify-content:space-between; transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s; overflow:hidden; }
-.kids-pg-card:hover { transform:translateY(-3px) rotate(-.4deg); box-shadow:0 12px 30px rgba(13,20,18,.10); }
-.kids-pg-card .pg-name { font-family:'Sora',sans-serif; font-weight:800; font-size:17px; letter-spacing:-0.015em; line-height:1.15; }
-.kids-pg-card .pg-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
-.kids-pg-card .pg-tags span { font-size:10.5px; padding:2px 8px; border-radius:99px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.14); font-weight:600; }
-.kids-pg-card .pg-hot { position:absolute; top:-8px; left:14px; background:#FFB800; color:#3A2A00; font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:99px; box-shadow:0 4px 10px rgba(255,184,0,.4); }
+/* ── Banda hero con progreso (colección) ── */
+.kids-hero { position:relative; overflow:hidden; border-radius:var(--r-card-lg); padding:22px 24px; margin-bottom:22px; color:#fff; background:linear-gradient(135deg,var(--green),var(--green-700)); box-shadow:var(--shadow-pop); }
+.kids-hero::after { content:""; position:absolute; right:-40px; top:-50px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%); pointer-events:none; }
+.kids-hero .ht { position:relative; z-index:1; }
+.kids-hero .hero-row { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.kids-hero .hero-big { font-family:var(--font-display); font-weight:900; font-size:40px; line-height:1; letter-spacing:-0.03em; font-feature-settings:"tnum"; }
+.kids-hero .hero-big span { font-size:22px; font-weight:700; opacity:.7; }
+.kids-hero .hero-sub { font-size:13px; opacity:.92; margin-top:4px; font-weight:600; }
+.kids-hero .hero-medal { width:56px; height:56px; border-radius:18px; background:rgba(255,255,255,.16); display:grid; place-items:center; flex-shrink:0; }
+.kids-hero-bar { height:10px; border-radius:99px; background:rgba(255,255,255,.22); overflow:hidden; margin-top:16px; }
+.kids-hero-bar i { display:block; height:100%; background:#fff; border-radius:99px; transition:width .5s var(--ease); }
+.kids-hero .hero-next { font-size:12.5px; opacity:.92; margin-top:10px; font-weight:600; }
+.kids-hero .hero-next b { font-weight:800; }
 
-.kids-coll-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:14px; }
-.kids-coll-card { background:#fff; border:1px solid rgba(13,20,18,.06); border-radius:18px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; transition:transform .15s; cursor:default; }
-.kids-coll-card.awarded:hover { transform:scale(1.05) rotate(-2deg); }
-.kids-coll-card.locked { background:repeating-linear-gradient(135deg,#F2EAD9,#F2EAD9 6px,#E8DFCA 6px 12px); opacity:.55; }
-.kids-coll-card .ic { width:50px; height:50px; border-radius:14px; display:grid; place-items:center; color:#fff; }
-.kids-coll-card.locked .ic { background:#E8DFCA; color:#98A19D; }
-.kids-coll-card .nm { font-family:'Sora',sans-serif; font-weight:700; font-size:13px; color:#0D1412; }
-.kids-coll-card .ds { font-size:11px; color:#6B7672; line-height:1.3; }
-.kids-coll-card.locked .nm, .kids-coll-card.locked .ds { color:#98A19D; }
+/* ── Tarjetas de stats (aventuras + perfil) ── */
+.kids-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:22px; }
+.kids-stat { background:var(--surface); border:1px solid var(--border-1); border-radius:var(--r-card); padding:16px; box-shadow:var(--shadow-soft); }
+.kids-stat .si { width:38px; height:38px; border-radius:12px; display:grid; place-items:center; color:#fff; margin-bottom:11px; }
+.kids-stat .sv { font-family:var(--font-display); font-weight:800; font-size:24px; color:var(--fg-1); line-height:1; font-feature-settings:"tnum"; }
+.kids-stat .sl { font-size:12px; color:var(--fg-3); margin-top:4px; font-weight:600; }
+@media (max-width:560px) { .kids-stats { gap:8px; } .kids-stat { padding:13px; } .kids-stat .sv { font-size:20px; } }
 
-.kids-adv-list { display:flex; flex-direction:column; gap:10px; }
-.kids-adv-item { display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center; background:#fff; border:1px solid rgba(13,20,18,.06); border-radius:16px; padding:14px 18px; }
-.kids-adv-item .av { width:42px; height:42px; border-radius:12px; display:grid; place-items:center; color:#fff; font-family:'Sora',sans-serif; font-weight:800; }
-.kids-adv-item .tx h4 { margin:0; font-family:'Sora',sans-serif; font-weight:700; font-size:15px; color:#0D1412; }
-.kids-adv-item .tx p { margin:2px 0 0; font-size:12px; color:#6B7672; }
-.kids-adv-item .met { font-size:12px; color:#7A5800; background:#FFF7DD; padding:5px 10px; border-radius:99px; font-weight:800; display:inline-flex; align-items:center; gap:4px; }
+/* ── Grilla de colección ── */
+.kids-coll-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; }
+.kids-coll-card { position:relative; background:var(--surface); border:1px solid var(--border-1); border-radius:18px; padding:18px 14px 14px; display:flex; flex-direction:column; align-items:center; gap:9px; text-align:center; box-shadow:var(--shadow-soft); transition:transform .16s var(--ease), box-shadow .16s var(--ease); overflow:hidden; }
+.kids-coll-card.awarded { background:linear-gradient(180deg,var(--tint,rgba(0,179,126,.08)),var(--surface) 62%); }
+.kids-coll-card.awarded:hover { transform:translateY(-3px) rotate(-1.5deg); box-shadow:var(--shadow-pop); }
+.kids-coll-card.locked { background:repeating-linear-gradient(135deg,var(--bg-3),var(--bg-3) 6px,var(--bg-2) 6px 12px); box-shadow:none; opacity:.78; }
+.kids-coll-card .ic { width:54px; height:54px; border-radius:16px; display:grid; place-items:center; color:#fff; box-shadow:0 6px 14px rgba(13,20,18,.12); }
+.kids-coll-card.locked .ic { background:var(--bg-3); color:var(--fg-4); box-shadow:none; }
+.kids-coll-card .nm { font-family:var(--font-display); font-weight:700; font-size:13px; color:var(--fg-1); }
+.kids-coll-card .ds { font-size:11px; color:var(--fg-3); line-height:1.3; }
+.kids-coll-card.locked .nm, .kids-coll-card.locked .ds { color:var(--fg-4); }
+.kids-coll-card .pin { position:absolute; top:9px; right:9px; display:grid; place-items:center; }
+.kids-coll-card .pin.lock { color:var(--fg-4); }
+.kids-coll-card .pin.check { width:20px; height:20px; border-radius:50%; background:var(--green); color:#fff; box-shadow:0 2px 6px rgba(0,143,99,.45); }
 
-.kids-profile-card { background:#fff; border:1px solid rgba(13,20,18,.06); border-radius:22px; padding:24px; display:flex; flex-direction:column; gap:16px; max-width:520px; }
-.kids-profile-card .row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px dashed rgba(13,20,18,.10); }
-.kids-profile-card .row:last-child { border-bottom:0; }
-.kids-profile-card .row .k { font-size:13px; color:#6B7672; }
-.kids-profile-card .row .v { font-family:'Sora',sans-serif; font-weight:700; font-size:15px; color:#0D1412; }
-.kids-profile-card .actions { display:flex; gap:10px; margin-top:8px; }
-.kids-btn-secondary { padding:10px 16px; border-radius:14px; background:#FFF7DD; color:#7A5800; border:1px solid rgba(255,184,0,.35); font-weight:800; font-size:13.5px; cursor:pointer; transition:all .15s; }
+/* ── Timeline de aventuras ── */
+.kids-tl-day { font-family:var(--font-display); font-weight:800; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--fg-4); margin:18px 0 10px; }
+.kids-tl { position:relative; margin-left:7px; padding-left:24px; border-left:2px solid var(--border-2); display:flex; flex-direction:column; gap:12px; }
+.kids-tl-card { position:relative; background:var(--surface); border:1px solid var(--border-1); border-radius:16px; padding:13px 16px; box-shadow:var(--shadow-soft); display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center; transition:transform .15s var(--ease); }
+.kids-tl-card:hover { transform:translateX(2px); }
+.kids-tl-card::before { content:""; position:absolute; left:-31px; top:50%; transform:translateY(-50%); width:14px; height:14px; border-radius:50%; background:var(--node,var(--green)); border:3px solid var(--bg-1); box-shadow:0 0 0 2px var(--border-2); }
+.kids-tl-card .av { width:42px; height:42px; border-radius:12px; display:grid; place-items:center; color:#fff; font-family:var(--font-display); font-weight:800; font-size:18px; flex-shrink:0; }
+.kids-tl-card .tx h4 { margin:0; font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--fg-1); }
+.kids-tl-card .tx p { margin:2px 0 0; font-size:12px; color:var(--fg-3); }
+.kids-tl-card .met { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:800; color:var(--amber-bg); }
+.kids-tl-card .met { color:#7A5800; background:var(--amber-bg); padding:5px 10px; border-radius:99px; }
+
+/* ── Perfil ── */
+.kids-profile-hero { position:relative; overflow:hidden; border-radius:var(--r-card-lg); padding:24px; margin-bottom:18px; background:linear-gradient(135deg,var(--green),var(--green-700)); color:#fff; box-shadow:var(--shadow-pop); display:flex; align-items:center; gap:18px; }
+.kids-profile-hero::after { content:""; position:absolute; right:-50px; bottom:-70px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.15),transparent 70%); pointer-events:none; }
+.kids-profile-hero .pa { width:76px; height:76px; border-radius:50%; display:grid; place-items:center; font-family:var(--font-display); font-weight:800; font-size:32px; color:#fff; border:3px solid rgba(255,255,255,.5); flex-shrink:0; position:relative; z-index:1; box-shadow:0 8px 20px rgba(13,20,18,.18); }
+.kids-profile-hero .pi { position:relative; z-index:1; flex:1; min-width:0; }
+.kids-profile-hero .pi h2 { margin:0; font-family:var(--font-display); font-weight:800; font-size:26px; letter-spacing:-0.02em; }
+.kids-profile-hero .pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.kids-profile-hero .pill { font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:99px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.22); }
+.kids-profile-hero .barwrap { margin-top:13px; }
+.kids-profile-hero .barwrap .bl { font-size:11.5px; color:rgba(255,255,255,.92); margin-bottom:6px; font-weight:600; }
+.kids-profile-hero .bar { height:8px; border-radius:99px; background:rgba(255,255,255,.22); overflow:hidden; }
+.kids-profile-hero .bar i { display:block; height:100%; background:var(--amber); border-radius:99px; transition:width .5s var(--ease); }
+@media (max-width:560px) { .kids-profile-hero { flex-direction:column; text-align:center; align-items:center; } .kids-profile-hero .pills { justify-content:center; } }
+
+.kids-profile-card { background:var(--surface); border:1px solid var(--border-1); border-radius:var(--r-card); padding:18px 22px; display:flex; flex-direction:column; gap:8px; max-width:560px; box-shadow:var(--shadow-soft); }
+.kids-profile-card .row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px dashed var(--border-2); }
+.kids-profile-card .row:last-of-type { border-bottom:0; }
+.kids-profile-card .row .k { font-size:13px; color:var(--fg-3); }
+.kids-profile-card .row .v { font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--fg-1); }
+.kids-profile-card .actions { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+.kids-btn-secondary { padding:11px 16px; border-radius:14px; background:var(--amber-bg); color:#7A5800; border:1px solid rgba(255,184,0,.35); font-weight:800; font-size:13.5px; cursor:pointer; transition:all .15s var(--ease); }
 .kids-btn-secondary:hover { background:#FFE9A6; transform:translateY(-1px); }
-.kids-btn-danger { padding:10px 16px; border-radius:14px; background:#FCE8E9; color:#B42127; border:1px solid rgba(180,33,39,.20); font-weight:800; font-size:13.5px; cursor:pointer; }
+.kids-btn-danger { padding:11px 16px; border-radius:14px; background:#FCE8E9; color:#B42127; border:1px solid rgba(180,33,39,.20); font-weight:800; font-size:13.5px; cursor:pointer; transition:all .15s var(--ease); }
 .kids-btn-danger:hover { background:#F8D7D9; }
+.kids-family { margin-top:18px; max-width:560px; font-size:12.5px; color:var(--fg-3); line-height:1.5; }
+.kids-family a { color:var(--green-700); font-weight:700; display:inline-flex; align-items:center; gap:3px; }
 
-.kids-empty { text-align:center; padding:48px 24px; color:#6B7672; }
-.kids-empty h3 { font-family:'Sora',sans-serif; font-weight:800; font-size:20px; color:#0D1412; margin:0 0 6px; }
+.kids-empty { text-align:center; padding:48px 24px; color:var(--fg-3); }
+.kids-empty h3 { font-family:var(--font-display); font-weight:800; font-size:20px; color:var(--fg-1); margin:0 0 6px; }
 `
+
+// ── Helpers de color/fecha (compartidos por las páginas) ──
+function hexToRgba(hex: string, a: number): string {
+  const h = (hex || '').replace('#', '')
+  const n = h.length === 3 ? h.split('').map((c) => c + c).join('') : h
+  const v = parseInt(n, 16)
+  if (Number.isNaN(v) || n.length < 6) return `rgba(0,179,126,${a})`
+  return `rgba(${(v >> 16) & 255},${(v >> 8) & 255},${v & 255},${a})`
+}
+
+function shade(hex: string, f = 0.72): string {
+  const h = (hex || '').replace('#', '')
+  const n = h.length === 3 ? h.split('').map((c) => c + c).join('') : h
+  const v = parseInt(n, 16)
+  if (Number.isNaN(v) || n.length < 6) return hex || '#008F63'
+  return `rgb(${Math.round(((v >> 16) & 255) * f)},${Math.round(((v >> 8) & 255) * f)},${Math.round((v & 255) * f)})`
+}
 
 // ─────────────────────────────────────────────────────────────
 // /kids/topicos -- todos los topicos del nivel
@@ -232,33 +290,70 @@ function AchievementIcon({ name, color }: { name: string; color: string }) {
 }
 
 export function KidsCollection() {
-  const { kid } = useKid()
   const [items, setItems] = useState<Achievement[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const token = localStorage.getItem(KIDS_TOKEN_KEY)
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
     fetch('/api/kids/achievements', { headers })
       .then((r) => (r.ok ? r.json() : []))
-      .then(setItems)
+      .then((d) => setItems(Array.isArray(d) ? d : []))
       .catch(() => setItems([]))
+      .finally(() => setLoading(false))
   }, [])
 
+  const total = items.length
   const awarded = items.filter((a) => a.awarded).length
+  const pct = total ? Math.round((awarded / total) * 100) : 0
+  const next = items.filter((a) => !a.awarded).sort((a, b) => a.order - b.order)[0]
 
   return (
     <KidsLayout>
       <style>{PAGE_CSS}</style>
       <div className="kids-page-header">
+        <p className="eyebrow">Tu vitrina</p>
         <h1>Mi <em>colección</em></h1>
-        <p>Cada vez que aprendes algo nuevo, sumás un logro. Llevás {awarded} de {items.length}.</p>
+        <p>Cada vez que aprendés algo nuevo, ganás un logro para tu vitrina.</p>
       </div>
+
+      {total > 0 && (
+        <div className="kids-hero">
+          <div className="ht">
+            <div className="hero-row">
+              <div>
+                <div className="hero-big">{awarded}<span>/{total}</span></div>
+                <div className="hero-sub">logros desbloqueados</div>
+              </div>
+              <div className="hero-medal">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="8" r="6" /><path d="M9 13.5 7.5 22 12 19l4.5 3-1.5-8.5" />
+                </svg>
+              </div>
+            </div>
+            <div className="kids-hero-bar"><i style={{ width: `${pct}%` }} /></div>
+            {next && <div className="hero-next">Próximo logro: <b>{next.name}</b></div>}
+          </div>
+        </div>
+      )}
 
       <div className="kids-coll-grid">
         {items.map((a) => (
-          <div key={a.slug} className={`kids-coll-card ${a.awarded ? 'awarded' : 'locked'}`} title={a.description}>
+          <div
+            key={a.slug}
+            className={`kids-coll-card ${a.awarded ? 'awarded' : 'locked'}`}
+            title={a.description}
+            style={a.awarded ? ({ '--tint': hexToRgba(a.icon_color, 0.1) } as CSSProperties) : undefined}
+          >
+            <span className={`pin ${a.awarded ? 'check' : 'lock'}`}>
+              {a.awarded ? (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+              )}
+            </span>
             <div className="ic" style={a.awarded ? { background: a.icon_color } : undefined}>
-              <AchievementIcon name={a.icon_name} color="#fff" />
+              <AchievementIcon name={a.icon_name} color={a.awarded ? '#fff' : 'currentColor'} />
             </div>
             <div className="nm">{a.name}</div>
             <div className="ds">{a.description}</div>
@@ -266,10 +361,10 @@ export function KidsCollection() {
         ))}
       </div>
 
-      {items.length === 0 && (
+      {!loading && total === 0 && (
         <div className="kids-empty">
-          <h3>Aún no hay logros</h3>
-          <p>Cargá una sesión kid para empezar a coleccionar.</p>
+          <h3>Tu vitrina te espera</h3>
+          <p>Cuando termines tu primera charla con Habi, vas a empezar a ganar logros.</p>
         </div>
       )}
     </KidsLayout>
@@ -277,49 +372,142 @@ export function KidsCollection() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// /kids/aventuras -- historial de sesiones (mock por ahora)
+// /kids/aventuras -- historial REAL de sesiones (GET /api/kids/sessions)
 // ─────────────────────────────────────────────────────────────
-const MOCK_ADVENTURES = [
-  { date: 'Hoy', topic: 'Dinosaurios', minutes: 5, coins: 18, color: '#00B37E' },
-  { date: 'Ayer', topic: 'Mar y animales', minutes: 6, coins: 22, color: '#06B6D4' },
-  { date: 'Lunes', topic: 'Cocina', minutes: 4, coins: 15, color: '#FB7C39' },
-  { date: 'Domingo', topic: 'Mi familia', minutes: 7, coins: 25, color: '#EC4899' },
-  { date: 'Sábado', topic: 'Música', minutes: 5, coins: 17, color: '#3B82F6' },
-]
+interface KidSession {
+  id: number
+  topic_id: number | null
+  title: string
+  started_at: string | null
+  duration_seconds: number | null
+  score: number | null
+}
+
+const ADV_COLORS = ['#00B37E', '#06B6D4', '#FB7C39', '#EC4899', '#3B82F6', '#A855F7', '#FACC15']
+
+function relDay(iso: string | null): string {
+  if (!iso) return 'Hace poco'
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return 'Hace poco'
+  const startOf = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime()
+  const days = Math.round((startOf(new Date()) - startOf(d)) / 86400000)
+  if (days <= 0) return 'Hoy'
+  if (days === 1) return 'Ayer'
+  if (days < 7) return d.toLocaleDateString('es', { weekday: 'long' })
+  return d.toLocaleDateString('es', { day: 'numeric', month: 'long' })
+}
+
+function fmtMin(secs: number | null): string {
+  if (!secs || secs < 60) return 'menos de 1 min'
+  return `${Math.round(secs / 60)} min`
+}
 
 export function KidsAdventures() {
   const { kid } = useKid()
-  // En el futuro: fetch real a /api/kids/sessions
+  const [sessions, setSessions] = useState<KidSession[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const token = localStorage.getItem(KIDS_TOKEN_KEY)
+    if (!token) {
+      setLoading(false)
+      return
+    }
+    fetch('/api/kids/sessions', { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d) => setSessions(Array.isArray(d) ? d : []))
+      .catch(() => setSessions([]))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const totalMin = Math.round(sessions.reduce((s, x) => s + (x.duration_seconds || 0), 0) / 60)
+  const scored = sessions.filter((s) => typeof s.score === 'number')
+  const avgScore = scored.length
+    ? Math.round(scored.reduce((s, x) => s + (x.score || 0), 0) / scored.length)
+    : null
+
+  // Agrupado por día relativo, respetando el orden (más reciente primero)
+  const groups: { day: string; items: KidSession[] }[] = []
+  for (const s of sessions) {
+    const day = relDay(s.started_at)
+    const last = groups[groups.length - 1]
+    if (last && last.day === day) last.items.push(s)
+    else groups.push({ day, items: [s] })
+  }
 
   return (
     <KidsLayout>
       <style>{PAGE_CSS}</style>
       <div className="kids-page-header">
+        <p className="eyebrow">Tu historia</p>
         <h1>Mis <em>aventuras</em></h1>
-        <p>Acá quedan todas tus charlas con Habi. Mirá cuánto creciste.</p>
+        <p>Todas tus charlas con Habi, una por una. Mirá cuánto creciste.</p>
       </div>
 
-      <div className="kids-adv-list">
-        {MOCK_ADVENTURES.map((a, i) => (
-          <div key={i} className="kids-adv-item">
-            <div className="av" style={{ background: a.color }}>{a.topic.charAt(0)}</div>
-            <div className="tx">
-              <h4>{a.topic}</h4>
-              <p>{a.date} · {a.minutes} minutos hablando con Habi</p>
-            </div>
-            <span className="met">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
-              +{a.coins}
-            </span>
+      <div className="kids-stats">
+        <div className="kids-stat">
+          <div className="si" style={{ background: 'var(--green)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z" /></svg>
           </div>
-        ))}
+          <div className="sv">{kid.charlas_count}</div>
+          <div className="sl">charlas en total</div>
+        </div>
+        <div className="kids-stat">
+          <div className="si" style={{ background: 'var(--kid-cyan)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+          </div>
+          <div className="sv">{totalMin}</div>
+          <div className="sl">minutos hablando</div>
+        </div>
+        <div className="kids-stat">
+          <div className="si" style={{ background: 'var(--amber)', color: '#3A2A00' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" /></svg>
+          </div>
+          <div className="sv">{avgScore ?? '—'}</div>
+          <div className="sl">puntaje promedio</div>
+        </div>
       </div>
 
-      <div className="kids-empty" style={{ marginTop: 24, padding: 32 }}>
-        <p style={{ fontSize: 13 }}>
-          {kid.is_real ? 'Próximamente acá vas a ver tus sesiones reales.' : 'Datos de ejemplo. Cuando completes una charla real, aparecerá acá.'}
-        </p>
-      </div>
+      {loading && (
+        <div className="kids-empty"><h3>Cargando tus aventuras...</h3></div>
+      )}
+
+      {!loading && sessions.length === 0 && (
+        <div className="kids-empty">
+          <h3>Todavía no hay aventuras</h3>
+          <p>
+            {kid.is_real
+              ? 'Cuando termines tu primera charla con Habi, va a aparecer acá.'
+              : 'Entrá con tu perfil y completá una charla para empezar tu historia.'}
+          </p>
+        </div>
+      )}
+
+      {!loading && groups.map((g, gi) => (
+        <div key={`${g.day}-${gi}`}>
+          <div className="kids-tl-day">{g.day}</div>
+          <div className="kids-tl">
+            {g.items.map((s, i) => {
+              const color = ADV_COLORS[(gi + i) % ADV_COLORS.length]
+              return (
+                <div key={s.id} className="kids-tl-card" style={{ '--node': color } as CSSProperties}>
+                  <div className="av" style={{ background: color }}>{(s.title || '?').charAt(0).toUpperCase()}</div>
+                  <div className="tx">
+                    <h4>{s.title}</h4>
+                    <p>{fmtMin(s.duration_seconds)} hablando con Habi</p>
+                  </div>
+                  {typeof s.score === 'number' && (
+                    <span className="met">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" /></svg>
+                      {s.score}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ))}
     </KidsLayout>
   )
 }
@@ -336,6 +524,16 @@ const AGE_LABEL: Record<string, string> = {
 export function KidsProfile() {
   const navigate = useNavigate()
   const { kid, logoutKid } = useKid()
+  const { current, next } = rankInfo(kid.rank_slug)
+
+  let pct = 100
+  let toNext = 0
+  if (next) {
+    const span = Math.max(1, next.minCharlas - current.minCharlas)
+    const done = Math.max(0, kid.charlas_count - current.minCharlas)
+    pct = Math.min(100, Math.round((done / span) * 100))
+    toNext = Math.max(0, next.minCharlas - kid.charlas_count)
+  }
 
   const onChangeAge = () => navigate('/kids/seleccionar-edad')
   const onExit = () => {
@@ -349,50 +547,76 @@ export function KidsProfile() {
     <KidsLayout>
       <style>{PAGE_CSS}</style>
       <div className="kids-page-header">
+        <p className="eyebrow">Quién sos</p>
         <h1>Mi <em>perfil</em></h1>
-        <p>Tus datos y configuración. Si querés cambiar algo grande, pedile a tu mamá o papá.</p>
+        <p>Tus datos y tu progreso. Para cambios grandes, pedile a tu adulto.</p>
+      </div>
+
+      <div className="kids-profile-hero">
+        <div className="pa" style={{ background: `linear-gradient(135deg, ${kid.avatar_color}, ${shade(kid.avatar_color)})` }}>
+          {(kid.name || '?').charAt(0).toUpperCase()}
+        </div>
+        <div className="pi">
+          <h2>{kid.name}</h2>
+          <div className="pills">
+            <span className="pill">{current.name}</span>
+            <span className="pill">{AGE_LABEL[kid.age_group] ?? kid.age_group}</span>
+          </div>
+          <div className="barwrap">
+            <div className="bl">{next ? `Faltan ${toNext} charlas para ${next.name}` : '¡Llegaste al rango máximo!'}</div>
+            <div className="bar"><i style={{ width: `${pct}%` }} /></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="kids-stats">
+        <div className="kids-stat">
+          <div className="si" style={{ background: 'var(--amber)', color: '#3A2A00' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" /></svg>
+          </div>
+          <div className="sv">{kid.coins}</div>
+          <div className="sl">monedas habi</div>
+        </div>
+        <div className="kids-stat">
+          <div className="si" style={{ background: 'var(--green)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z" /></svg>
+          </div>
+          <div className="sv">{kid.charlas_count}</div>
+          <div className="sl">charlas hechas</div>
+        </div>
+        <div className="kids-stat">
+          <div className="si" style={{ background: 'var(--kid-violet)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4.5 3.5L12 5l4.5 6.5L21 8l-1.5 11h-15z" /></svg>
+          </div>
+          <div className="sv" style={{ fontSize: 15 }}>{current.name}</div>
+          <div className="sl">tu rango</div>
+        </div>
       </div>
 
       <div className="kids-profile-card">
         <div className="row">
-          <span className="k">Nombre</span>
-          <span className="v">{kid.name}</span>
-        </div>
-        <div className="row">
-          <span className="k">Nivel de edad</span>
-          <span className="v">{AGE_LABEL[kid.age_group] ?? kid.age_group}</span>
-        </div>
-        <div className="row">
-          <span className="k">Rango</span>
-          <span className="v" style={{ textTransform: 'capitalize' }}>{kid.rank_slug}</span>
-        </div>
-        <div className="row">
-          <span className="k">Monedas habi</span>
-          <span className="v">{kid.coins}</span>
-        </div>
-        <div className="row">
-          <span className="k">Charlas completadas</span>
-          <span className="v">{kid.charlas_count}</span>
-        </div>
-        <div className="row">
           <span className="k">Cuenta</span>
-          <span className="v" style={{ fontSize: 12, color: kid.is_real ? '#008F63' : '#7A5800' }}>
-            {kid.is_real ? '✓ Perfil real (creado por tu adulto)' : 'Modo demo (sin login)'}
+          <span className="v" style={{ fontSize: 12.5, color: kid.is_real ? 'var(--green-700)' : '#7A5800', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            {kid.is_real ? (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                Perfil real
+              </>
+            ) : 'Modo demo (sin login)'}
           </span>
         </div>
-
         <div className="actions">
-          <button className="kids-btn-secondary" onClick={onChangeAge}>
-            Cambiar nivel de edad
-          </button>
-          <button className="kids-btn-danger" onClick={onExit}>
-            Salir del modo Habi
-          </button>
+          <button className="kids-btn-secondary" onClick={onChangeAge}>Cambiar nivel de edad</button>
+          <button className="kids-btn-danger" onClick={onExit}>Salir del modo Habi</button>
         </div>
       </div>
 
-      <div style={{ marginTop: 32, maxWidth: 520, fontSize: 12, color: '#6B7672', lineHeight: 1.5 }}>
-        <b>Modo familia</b>: tu adulto puede ver lo que practicaste hoy desde su cuenta principal. <Link to="/app" style={{ color: '#008F63', fontWeight: 700 }}>Ir a modo familia →</Link>
+      <div className="kids-family">
+        <b>Modo familia</b>: tu adulto puede ver lo que practicaste desde su cuenta.{' '}
+        <Link to="/app">
+          Ir a modo familia
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+        </Link>
       </div>
     </KidsLayout>
   )
