@@ -267,6 +267,7 @@ async def voice_ws_orchestration(
     band_code: str = Query("adult"),
     level_code: str = Query("B2"),
     topic_id: int = Query(0),
+    student_id: int = Query(0),
     overrides: str = Query(""),
     engine: str = Query("gemini_live"),
     model: str = Query("models/gemini-3.1-flash-live-preview"),
@@ -285,7 +286,7 @@ async def voice_ws_orchestration(
     except Exception:
         ovr = None
     try:
-        res = await motor_engine.resolve(band_code, level_code, topic_id or None, None, ovr)
+        res = await motor_engine.resolve(band_code, level_code, topic_id or None, student_id or None, ovr)
         super_prompt = res["prompt"]
     except Exception as e:
         log.warning("voice_ws_orchestration resolve falló %s/%s: %s", band_code, level_code, e)

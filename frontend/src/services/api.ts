@@ -589,3 +589,39 @@ export function buildLlmTestWsUrl(params: Record<string, string | number>): stri
   for (const [k, v] of Object.entries(params)) sp.set(k, String(v))
   return `${wsBase}/voice/ws_llm_test?${sp.toString()}`
 }
+
+/** URL del WS de orquestación v3 COMPLETA (banda×nivel×tópico + student para historia).
+ * Va DIRECTO al backend (no via Netlify) para que el WS upgrade funcione. Sin JWT. */
+export function buildOrchestrationWsUrl(params: Record<string, string | number>): string {
+  const wsBase = buildWsBase()
+  const sp = new URLSearchParams()
+  for (const [k, v] of Object.entries(params)) sp.set(k, String(v))
+  return `${wsBase}/voice/ws_orchestration?${sp.toString()}`
+}
+
+/* ────────────── FINALTEST (consola de prueba de clases reales) ────────────── */
+export interface FtBand { code: string; label: string }
+export interface FtOptions { bands: FtBand[]; levels: string[] }
+export interface FtTopic { id: number; title: string }
+export type FtDims = Record<string, number | null>
+export interface FtResolve { prompt?: string; meta?: Record<string, unknown>; student_id: number; hist_obj: number; hist_items: number; error?: string }
+export interface FtSaveResult { id: number; score: number | null; verdict: string | null; dims: FtDims; md_path: string }
+export interface FtTranscriptLine { who: string; text: string }
+export interface FtClassRow {
+  id: number; created_at: string; band_code: string; level_code: string; topic_title: string
+  student_id: number; hist_obj: number; hist_items: number; score: number | null; verdict: string | null
+}
+export interface FtClassDetail extends FtClassRow { topic_id: number; dims: FtDims; transcript: FtTranscriptLine[]; md_path: string }
+
+export const finaltestAPI = {
+  options: (): Promise<FtOptions> => api.get('/finaltest/options').then((r) => r.data),
+  topics: (band: string): Promise<FtTopic[]> => api.get('/finaltest/topics', { params: { band } }).then((r) => r.data),
+  resolve: (body: { band_code: string; level_code: string; topic_id: number }): Promise<FtResolve> =>
+    api.post('/finaltest/resolve', body).then((r) => r.data),
+  reset: (body: { band_code: string; level_code: string }): Promise<{ ok: boolean; student_id: number }> =>
+    api.post('/finaltest/reset', body).then((r) => r.data),
+  save: (body: { band_code: string; level_code: string; topic_id: number; topic_title: string; student_id: number; transcript: FtTranscriptLine[] }): Promise<FtSaveResult> =>
+    api.post('/finaltest/save', body).then((r) => r.data),
+  list: (): Promise<FtClassRow[]> => api.get('/finaltest/list').then((r) => r.data),
+  getClass: (id: number): Promise<FtClassDetail> => api.get(`/finaltest/class/${id}`).then((r) => r.data),
+}

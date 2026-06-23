@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
 from api import auth, users, push, templates, topics, sessions, me, alumnos, dashboard, tts, voice, onboarding, kids, rooms, frontend_errors, grammar, diag, qa, admin_users, audit, methodology_modules
-from api import coaches, catalog, levels, orchestrator, config, kits, memory, rules, motor
+from api import coaches, catalog, levels, orchestrator, config, kits, memory, rules, motor, finaltest
 
 
 @asynccontextmanager
@@ -66,3 +66,4 @@ app.include_router(kits.router, prefix="/api/kits", tags=["kits"])
 app.include_router(memory.router, prefix="/api/memory", tags=["memory"])
 app.include_router(rules.router, prefix="/api/rules", tags=["rules"])
 app.include_router(motor.router, prefix="/api/motor", tags=["motor"])
+app.include_router(finaltest.router, prefix="/api/finaltest", tags=["finaltest"])
