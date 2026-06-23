@@ -16,6 +16,7 @@ import os
 from datetime import datetime
 from typing import Any, Optional
 
+import httpx
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -44,6 +45,47 @@ _RUBRIC = (
     "NO penalices cobertura de vocab. Si el alumno produjo poco, evaluá si el profe supo INVITAR a producir.\n"
     'Devolvé SOLO JSON: {"score":1-10,"naturalidad":1-10,"afecto":1-10,"i1":1-10,"reciclado":1-10,"recast":1-10,"continuity":1-10,"verdict":"1-2 frases"}'
 )
+
+# Juez = OTRA FAMILIA que el coach (coach=Gemini -> juez=gpt-oss/OpenAI vía Ollama). Evita el
+# sesgo "Gemini se juzga a sí mismo". Contrato JSON forzado (format=schema). Fallback a Gemini.
+def _read_ollama_key() -> str:
+    k = os.environ.get("OLLAMA_KEY")
+    if k:
+        return k.strip()
+    try:
+        return open(os.path.join(os.path.dirname(__file__), "..", ".ollama_key")).read().strip()
+    except Exception:
+        return ""
+
+
+_OLLAMA_KEY = _read_ollama_key()
+_JUDGE_MODEL = os.environ.get("FINALTEST_JUDGE_MODEL", "gpt-oss:120b")
+_JUDGE_SCHEMA = {
+    "type": "object",
+    "properties": {k: ({"type": "string"} if k == "verdict" else {"type": "number"})
+                   for k in ("score", "naturalidad", "afecto", "i1", "reciclado", "recast", "continuity", "verdict")},
+    "required": ["score", "verdict"],
+}
+
+
+async def _ollama_judge(prompt: str) -> Optional[dict]:
+    if not _OLLAMA_KEY:
+        return None
+    body = {"model": _JUDGE_MODEL, "stream": False, "format": _JUDGE_SCHEMA,
+            "messages": [{"role": "user", "content": prompt}]}
+    for _ in range(3):
+        try:
+            async with httpx.AsyncClient(timeout=90) as c:
+                r = await c.post("https://ollama.com/api/chat",
+                                 headers={"Authorization": f"Bearer {_OLLAMA_KEY}"}, json=body)
+            if r.status_code == 200:
+                txt = (r.json().get("message", {}) or {}).get("content", "")
+                if txt:
+                    return mp._parse_json(txt)
+        except Exception:
+            pass
+        await asyncio.sleep(3)
+    return None
 
 
 # ───────────────────────── helpers de BD (sync, corren en thread) ─────────────────────────
@@ -167,10 +209,16 @@ def _convo_text(transcript: list[dict]) -> str:
 
 
 async def _judge(level: str, title: str, transcript: list[dict]) -> dict:
-    raw = await mp._gemini(f"{_RUBRIC}\n\nClase ({level}) sobre '{title}':\n{_convo_text(transcript)}")
-    p = mp._parse_json(raw or "") or {}
+    prompt = f"{_RUBRIC}\n\nClase ({level}) sobre '{title}':\n{_convo_text(transcript)}"
+    p = await _ollama_judge(prompt)               # juez = otra familia que el coach
+    judge_model = _JUDGE_MODEL
+    if not p:                                      # fallback a Gemini si Ollama no responde
+        p = mp._parse_json(await mp._gemini(prompt) or "") or {}
+        judge_model = "gemini-2.5-flash (fallback)"
     keys = ("score", "naturalidad", "afecto", "i1", "reciclado", "recast", "continuity", "verdict")
-    return {k: p.get(k) for k in keys}
+    out = {k: p.get(k) for k in keys}
+    out["judge_model"] = judge_model
+    return out
 
 
 async def _derive(level: str, transcript: list[dict]) -> dict:
@@ -278,6 +326,7 @@ async def save(body: SaveBody):
     transcript = [t for t in body.transcript if t.get("text")]
     st = await asyncio.to_thread(_student_sync, body.band_code, body.level_code)
     ev = await _judge(body.level_code, body.topic_title or body.level_code, transcript)
+    ev["verdict"] = (ev.get("verdict") or "") + f"  ·  juez: {ev.get('judge_model', '?')}"
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     payload = {"band_code": body.band_code, "level_code": body.level_code, "topic_id": body.topic_id,
                "topic_title": body.topic_title, "student_id": st["student_id"],
