@@ -1,0 +1,129 @@
+{
+  "level": [
+    {
+      "level_code": "A1",
+      "label": "Nivel A1",
+      "sort_order": 1,
+      "modifier": "Espejo en español SIEMPRE activo, vocabulario mínimo",
+      "spanish_mirror": "on_stall",
+      "vocab_depth": "minimal",
+      "pacing_bonus_min": 3
+    },
+    {
+      "level_code": "A2",
+      "label": "Nivel A2",
+      "sort_order": 2,
+      "modifier": "Espejo en español frecuente, frases cortas",
+      "spanish_mirror": "frequent",
+      "vocab_depth": "minimal",
+      "pacing_bonus_min": 0
+    },
+    {
+      "level_code": "B1",
+      "label": "Nivel B1",
+      "sort_order": 3,
+      "modifier": "Español solo si se traba, conversación guiada",
+      "spanish_mirror": "on_stall",
+      "vocab_depth": "full",
+      "pacing_bonus_min": 0
+    },
+    {
+      "level_code": "B2",
+      "label": "Nivel B2",
+      "sort_order": 4,
+      "modifier": "Log known_word_ratio vs new_word_ratio daily to ensure i+1 complexity",
+      "spanish_mirror": "never",
+      "vocab_depth": "full",
+      "pacing_bonus_min": 2
+    },
+    {
+      "level_code": "C1",
+      "label": "Nivel C1",
+      "sort_order": 5,
+      "modifier": "focus_input_noticing=subtle_features: C1 debe notar (1) connotaciones semánticas en near-synonyms, (2) shifts de registro/estilo en authentic materials, (3) formulaic sequences idiomáticas",
+      "spanish_mirror": "never",
+      "vocab_depth": "full",
+      "pacing_bonus_min": 2
+    }
+  ],
+  "level_policy": [
+    {
+      "policy_id": 1,
+      "level_code": "A1",
+      "kind": "hint_policy",
+      "body": "Escalera: (1) espera 3-5s + gesto, (2) recast en inglés simple, (3) traducción parcial si persiste bloqueo",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 2,
+      "level_code": "A2",
+      "kind": "hint_policy",
+      "body": "Ante traba: reformulation (parafrasear en inglés) + recast implícito. Traducir solo si 2+ intentos fallidos.",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 3,
+      "level_code": "B1",
+      "kind": "hint_policy",
+      "body": "Ante traba: dar pista en inglés antes de traducir",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 4,
+      "level_code": "B2",
+      "kind": "hint_policy",
+      "body": "Ante traba: sinónimo o reformulación en inglés, nunca traducir",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 5,
+      "level_code": "C1",
+      "kind": "hint_policy",
+      "body": "Ante traba: sinónimo o reformulación en inglés, nunca traducir",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 6,
+      "level_code": "A1",
+      "kind": "error_policy",
+      "body": "Modelado implícito (recast suave), sin señalar el error",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 7,
+      "level_code": "A2",
+      "kind": "error_policy",
+      "body": "Modelado implícito (recast suave), sin señalar el error",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 8,
+      "level_code": "B1",
+      "kind": "error_policy",
+      "body": "Recast; errores que rompen comunicación + confusión past simple/continuous (objeto hoy)",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 9,
+      "level_code": "B2",
+      "kind": "error_policy",
+      "body": "Escalada de corrección: minor error = silent recast; high-impact error (fossilizable/idiomático) = recast + brief explicit input",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 10,
+      "level_code": "C1",
+      "kind": "error_policy",
+      "body": "Recast + foco en matiz/idiomático cuando es relevante",
+      "source": "proposed"
+    },
+    {
+      "policy_id": 13,
+      "level_code": "B2",
+      "kind": "error_policy",
+      "body": "Pragmatic competence: polite disagreement patterns ('I see your point, but...', 'That may be true; however...')",
+      "source": "proposed"
+    }
+  ],
+  "language_objective": []
+}
