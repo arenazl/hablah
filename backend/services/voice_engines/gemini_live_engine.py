@@ -28,15 +28,28 @@ log = logging.getLogger(__name__)
 
 
 _MD_NOISE = re.compile(r"[*_`#]+")
+# Emojis y pictogramas: el prompt los pedía "para pantalla" pero no hay canal de pantalla
+# separado en la sesión de voz -> ensuciaban el subtítulo. En una clase por VOZ no aportan.
+# Red de seguridad: que NUNCA pase un emoji, sin importar qué genere el modelo.
+_EMOJI = re.compile(
+    "[\U0001F000-\U0001FAFF\U00002600-\U000027BF\U00002B00-\U00002BFF"
+    "\U00002190-\U000021FF\U00002300-\U000023FF\U0001F1E6-\U0001F1FF"
+    "\U0000FE00-\U0000FE0F\U0000200D\U000020E3]+",
+    flags=re.UNICODE)
 
 
 def _clean_coach_text(text: str) -> str:
-    """Saca markdown (asteriscos, underscores, backticks, #) del texto del coach.
+    """Saca emojis y markdown del texto del coach.
 
-    El modelo native-audio a veces 'negrita' la palabra que enseña (*ARMS*,
-    **SHIP**). No se vocaliza, pero ensucia el subtítulo y cualquier TTS posterior.
+    El modelo native-audio a veces mete emojis (heredado del prompt) o 'negrita' la
+    palabra que enseña (*ARMS*). No se vocaliza, pero ensucia el subtítulo y cualquier
+    TTS posterior. Se quitan ambos y se colapsan los espacios dobles que dejan.
     """
-    return _MD_NOISE.sub("", text) if text else text
+    if not text:
+        return text
+    text = _EMOJI.sub("", text)
+    text = _MD_NOISE.sub("", text)
+    return re.sub(r"\s{2,}", " ", text).strip()
 
 
 def _pcm16_to_16k(pcm: bytes, in_rate: int, state):
