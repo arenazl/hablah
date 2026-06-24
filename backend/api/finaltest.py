@@ -59,19 +59,23 @@ def _read_ollama_key() -> str:
 
 
 _OLLAMA_KEY = _read_ollama_key()
-_JUDGE_MODEL = os.environ.get("FINALTEST_JUDGE_MODEL", "gpt-oss:120b")
+# Panel de jueces: familias DISTINTAS entre sí y del coach (Gemini). Promediar cancela el sesgo
+# de cualquier juez puntual. Serializado (Ollama Cloud rebota concurrencia). Configurable por env.
+_JUDGE_PANEL = [m.strip() for m in os.environ.get(
+    "FINALTEST_JUDGE_PANEL", "gpt-oss:120b,qwen3-coder:480b,minimax-m3").split(",") if m.strip()]
 _JUDGE_SCHEMA = {
     "type": "object",
     "properties": {k: ({"type": "string"} if k == "verdict" else {"type": "number"})
                    for k in ("score", "naturalidad", "afecto", "i1", "reciclado", "recast", "continuity", "verdict")},
     "required": ["score", "verdict"],
 }
+_DIM_KEYS = ("score", "naturalidad", "afecto", "i1", "reciclado", "recast", "continuity")
 
 
-async def _ollama_judge(prompt: str) -> Optional[dict]:
+async def _ollama_judge(prompt: str, model: str) -> Optional[dict]:
     if not _OLLAMA_KEY:
         return None
-    body = {"model": _JUDGE_MODEL, "stream": False, "format": _JUDGE_SCHEMA,
+    body = {"model": model, "stream": False, "format": _JUDGE_SCHEMA,
             "messages": [{"role": "user", "content": prompt}]}
     for _ in range(3):
         try:
@@ -209,15 +213,31 @@ def _convo_text(transcript: list[dict]) -> str:
 
 
 async def _judge(level: str, title: str, transcript: list[dict]) -> dict:
+    """Panel de jueces de familias distintas (≠ coach). Promedia score y dims; cada voto cancela
+    el sesgo de los otros. Serializado por el rate limit de Ollama. Fallback a Gemini si el panel
+    entero cae."""
     prompt = f"{_RUBRIC}\n\nClase ({level}) sobre '{title}':\n{_convo_text(transcript)}"
-    p = await _ollama_judge(prompt)               # juez = otra familia que el coach
-    judge_model = _JUDGE_MODEL
-    if not p:                                      # fallback a Gemini si Ollama no responde
-        p = mp._parse_json(await mp._gemini(prompt) or "") or {}
-        judge_model = "gemini-2.5-flash (fallback)"
-    keys = ("score", "naturalidad", "afecto", "i1", "reciclado", "recast", "continuity", "verdict")
-    out = {k: p.get(k) for k in keys}
-    out["judge_model"] = judge_model
+    votes: list[dict] = []
+    for model in _JUDGE_PANEL:
+        p = await _ollama_judge(prompt, model)
+        if p and isinstance(p.get("score"), (int, float)):
+            votes.append({"model": model, **p})
+    if not votes:                                  # todo el panel cayó -> Gemini
+        g = mp._parse_json(await mp._gemini(prompt) or "") or {}
+        if isinstance(g.get("score"), (int, float)):
+            votes.append({"model": "gemini-2.5-flash", **g})
+    if not votes:
+        return {**{k: None for k in _DIM_KEYS}, "verdict": "(sin respuesta del panel)",
+                "judge_model": "-", "panel": []}
+
+    def _avg(key: str) -> Optional[float]:
+        nums = [v.get(key) for v in votes if isinstance(v.get(key), (int, float))]
+        return round(sum(nums) / len(nums), 1) if nums else None
+
+    out: dict[str, Any] = {k: _avg(k) for k in _DIM_KEYS}
+    out["verdict"] = votes[0].get("verdict", "")
+    out["panel"] = [{"model": v["model"], "score": v.get("score")} for v in votes]
+    out["judge_model"] = "panel(" + ", ".join(v["model"] for v in votes) + ")"
     return out
 
 
@@ -251,9 +271,12 @@ def _write_md(payload: dict, ev: dict) -> str:
     ts = payload["ts"]
     safe = f"{payload['band_code']}_{payload['level_code']}_{payload['topic_id']}_{ts}".replace(" ", "")
     path = os.path.join(_MD_DIR, f"{safe}.md")
+    panel = ev.get("panel") or []
+    panel_str = " · ".join(f"{p['model']} {p.get('score')}" for p in panel) if panel else "—"
     L = [f"# {payload['band_code']} · {payload['level_code']} · {payload['topic_title']}",
          f"fecha {ts} · historia previa {payload['hist_obj']}obj/{payload['hist_items']}it · "
          f"**score {ev.get('score')}**", "",
+         f"panel de jueces: {panel_str}", "",
          f"> {ev.get('verdict', '')}", "",
          "dims: " + " · ".join(f"{k} {ev.get(k)}" for k in ("naturalidad", "afecto", "i1", "reciclado", "recast", "continuity")),
          "", "## Transcripción", ""]
@@ -333,6 +356,7 @@ async def save(body: SaveBody):
                "hist_obj": st["hist_obj"], "hist_items": st["hist_items"], "transcript": transcript, "ts": ts}
     md_path = _write_md(payload, ev)
     dims = {k: ev.get(k) for k in ("naturalidad", "afecto", "i1", "reciclado", "recast", "continuity")}
+    dims["panel"] = ev.get("panel", [])
     rid = await asyncio.to_thread(_save_row_sync, {
         **payload, "score": ev.get("score"), "verdict": ev.get("verdict") or "", "dims": dims, "md_path": md_path})
     # historia: best-effort, no rompe el guardado si falla

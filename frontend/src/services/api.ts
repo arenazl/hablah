@@ -603,7 +603,12 @@ export function buildOrchestrationWsUrl(params: Record<string, string | number>)
 export interface FtBand { code: string; label: string }
 export interface FtOptions { bands: FtBand[]; levels: string[] }
 export interface FtTopic { id: number; title: string }
-export type FtDims = Record<string, number | null>
+export interface FtPanelVote { model: string; score: number | null }
+export interface FtDims {
+  naturalidad?: number | null; afecto?: number | null; i1?: number | null
+  reciclado?: number | null; recast?: number | null; continuity?: number | null
+  panel?: FtPanelVote[]
+}
 export interface FtResolve { prompt?: string; meta?: Record<string, unknown>; student_id: number; hist_obj: number; hist_items: number; error?: string }
 export interface FtSaveResult { id: number; score: number | null; verdict: string | null; dims: FtDims; md_path: string }
 export interface FtTranscriptLine { who: string; text: string }

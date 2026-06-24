@@ -12,7 +12,7 @@ import { Mic, Square, RotateCcw, ChevronDown, ChevronRight, FileText, Loader2, H
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import {
   buildOrchestrationWsUrl, finaltestAPI,
-  type FtBand, type FtTopic, type FtClassRow, type FtClassDetail, type FtDims,
+  type FtBand, type FtTopic, type FtClassRow, type FtClassDetail, type FtDims, type FtPanelVote,
 } from '../services/api'
 
 // ── estilos (tema oscuro técnico, consistente con /llm) ──
@@ -63,6 +63,20 @@ function DimsBar({ dims }: { dims: FtDims }) {
         <div key={k} style={{ fontSize: 12, color: '#9aa3af' }}>
           {k} <b style={{ color: scoreColor(dims[k]) }}>{dims[k] ?? '—'}</b>
         </div>
+      ))}
+    </div>
+  )
+}
+
+function PanelBar({ panel }: { panel?: FtPanelVote[] }) {
+  if (!panel || panel.length === 0) return null
+  return (
+    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 10, alignItems: 'center', paddingTop: 8, borderTop: '1px dashed #232936' }}>
+      <span style={{ fontSize: 11, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>panel de jueces</span>
+      {panel.map((p, i) => (
+        <span key={i} style={{ fontSize: 12, color: '#9aa3af' }}>
+          {p.model.replace(':', ' ')} <b style={{ color: scoreColor(p.score) }}>{p.score ?? '—'}</b>
+        </span>
       ))}
     </div>
   )
@@ -226,7 +240,7 @@ export function TestFinalConsole() {
               <span style={{ width: 9, height: 9, borderRadius: 999, background: live.status === 'speaking' ? '#38bdf8' : live.status === 'listening' ? '#22c55e' : live.status === 'error' ? '#ef4444' : '#6b7280' }} />
               <span style={{ fontSize: 13, color: '#9aa3af' }}>{live.status}</span>
             </div>
-            {saving && <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#7dd3fc' }}><Loader2 size={14} className="spin" /> puntuando con el juez…</span>}
+            {saving && <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#7dd3fc' }}><Loader2 size={14} className="spin" /> puntuando con el panel de jueces…</span>}
           </div>
 
           {/* orquestación colapsable */}
@@ -265,6 +279,7 @@ export function TestFinalConsole() {
                 </div>
                 {lastResult.verdict && <div style={{ fontSize: 13, color: '#cbd5e1', marginTop: 6 }}>{lastResult.verdict}</div>}
                 <DimsBar dims={lastResult.dims} />
+                <PanelBar panel={lastResult.dims.panel} />
               </div>
             )}
           </div>
@@ -301,6 +316,7 @@ export function TestFinalConsole() {
                   </div>
                   {detail.verdict && <div style={{ fontSize: 13, color: '#cbd5e1', marginBottom: 6 }}>{detail.verdict}</div>}
                   <DimsBar dims={detail.dims} />
+                  <PanelBar panel={detail.dims.panel} />
                   <div style={{ borderTop: '1px solid #232936', margin: '12px 0' }} />
                   <ChatLog lines={detail.transcript} minHeight={200} />
                 </>
