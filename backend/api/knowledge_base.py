@@ -141,13 +141,16 @@ _KB = {
         "No inventar integraciones, dispositivos o funcionalidades que no existan.",
     ],
     "brand": {
+        "logo": "https://look-guides.netlify.app/apps/hablah/logo.svg",
         "colors": {"primary": "#002554", "accent": "#c9a45a"},
+        "fonts": {"display": "Fraunces", "text": "Inter"},
         "tone": "Cercano y motivador, de profe que te banca. Criollo rioplatense, cero jerga técnica.",
         "avoid": ["emojis", "promesas exageradas", "jerga técnica de programación"],
     },
     "screens": [
-        {"label": "Inicio (landing)", "url": "https://hablah.com.ar", "route": "/"},
-        {"label": "Modo kids", "url": "https://hablah.com.ar/kids", "route": "/kids"},
+        {"label": "Clase de voz en vivo", "url": "https://look-guides.netlify.app/apps/hablah/clase.html", "route": "/clase"},
+        {"label": "Home del alumno", "url": "https://look-guides.netlify.app/apps/hablah/home.html", "route": "/app"},
+        {"label": "Modo kids", "url": "https://look-guides.netlify.app/apps/hablah/kids.html", "route": "/kids"},
     ],
     "extra": {
         "platform": "FastAPI + React (Vite + Tailwind)",
