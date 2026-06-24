@@ -148,6 +148,7 @@ _KB = {
         "avoid": ["emojis", "promesas exageradas", "jerga técnica de programación"],
     },
     "screens": [
+        {"label": "Inicio (landing)", "url": "https://look-guides.netlify.app/apps/hablah/landing.html", "route": "/"},
         {"label": "Clase de voz en vivo", "url": "https://look-guides.netlify.app/apps/hablah/clase.html", "route": "/clase"},
         {"label": "Home del alumno", "url": "https://look-guides.netlify.app/apps/hablah/home.html", "route": "/app"},
         {"label": "Modo kids", "url": "https://look-guides.netlify.app/apps/hablah/kids.html", "route": "/kids"},
