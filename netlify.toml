@@ -5,7 +5,7 @@
 [build]
   base = "frontend"
   publish = "dist"
-  command = "npm install && npm run build:client"
+  command = "npm install && npx vite build"
 
 [build.environment]
   NODE_VERSION = "20"
