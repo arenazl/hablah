@@ -103,6 +103,16 @@ function rewriteHeadForRoute(html, route) {
   return { html: out, canonicalReplaced, descriptionReplaced }
 }
 
+// Mata el proceso completo si el prerender se cuelga mas de 4 minutos.
+// Es un backstop de emergencia: si algo se traba (API lenta, Puppeteer colgado),
+// el build de CI no muere — termina con exit 0 y queda el dist CSR.
+const GLOBAL_TIMEOUT_MS = 4 * 60 * 1000
+const globalTimer = setTimeout(() => {
+  console.warn('[prerender] Timeout global (4 min) — saliendo con build CSR.')
+  process.exit(0)
+}, GLOBAL_TIMEOUT_MS)
+globalTimer.unref() // no bloquea el event loop si todo sale bien antes
+
 async function main() {
   let puppeteer
   try {
@@ -126,7 +136,10 @@ async function main() {
     for (const route of ROUTES) {
       const page = await browser.newPage()
       try {
-        await page.goto(base + route, { waitUntil: 'networkidle0', timeout: 60000 })
+        // domcontentloaded en lugar de networkidle0: no esperamos a que terminen
+        // las llamadas al backend (Heroku). El waitForFunction de abajo se encarga
+        // de esperar a que React pinte el contenido.
+        await page.goto(base + route, { waitUntil: 'domcontentloaded', timeout: 15000 })
         // Esperar a que el contenido real este pintado dentro de #root.
         await page
           .waitForFunction(
