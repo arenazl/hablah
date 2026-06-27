@@ -38,6 +38,7 @@ const KidsCurarPanel = lazy(() => import('./pages/kids/KidsCurarPanel'))
 const InfraTestPanel = lazy(() => import('./pages/InfraTestPanel'))
 const TranscripcionesVocabPanel = lazy(() => import('./pages/TranscripcionesVocabPanel'))
 const TestFinalConsole = lazy(() => import('./pages/TestFinalConsole'))
+const MiniTestPanel = lazy(() => import('./pages/MiniTestPanel'))
 const KidsHome = lazy(() => import('./pages/kids/KidsHome').then(m => ({ default: m.KidsHome })))
 const KidsAgeSelect = lazy(() =>
   import('./pages/kids/KidsAgeSelect').then(m => ({ default: m.KidsAgeSelect })),
@@ -139,6 +140,7 @@ export default function App() {
           <Route path="/charla/:token" element={<GuestRoom />} />
           <Route path="/llm" element={<LlmTestPage />} />
           <Route path="/finaltest" element={<TestFinalConsole />} />
+          <Route path="/mini-test" element={<MiniTestPanel />} />
           <Route path="/training" element={<TrainingPanel />} />
           <Route path="/probar-orq" element={<ProbarOrquestacion />} />
           <Route path="/motor" element={<MotorPlaygroundPanel />} />
