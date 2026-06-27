@@ -533,7 +533,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           const last = prev[prev.length - 1]
           if (last && last.who === msg.who) {
             const updated = [...prev]
-            updated[updated.length - 1] = { who: last.who, text: last.text + msg.text }
+            const sep = (last.text.endsWith(' ') || msg.text.startsWith(' ')) ? '' : ' '
+            updated[updated.length - 1] = { who: last.who, text: last.text + sep + msg.text }
             return updated
           }
           return [...prev, { who: msg.who, text: msg.text }]
