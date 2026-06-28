@@ -149,13 +149,21 @@ export default function MiniTestPanel() {
             ))}
           </div>
           {steps?.map((s, i) => (
-            <div key={s.tag} style={{ borderLeft: `3px solid ${dueColor(s.dueno)}`, padding: '6px 0 8px 12px', marginBottom: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+            <div key={s.step} style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                 <span style={{ fontSize: 11, color: '#6b7280' }}>{i + 1}</span>
-                <span style={{ fontSize: 13, fontWeight: 700 }}>{s.label}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#0b0e14', background: dueColor(s.dueno), padding: '2px 7px', borderRadius: 10 }}>{s.dueno}</span>
+                <span style={{ fontSize: 14, fontWeight: 800 }}>{s.step}</span>
               </div>
-              <div style={{ fontSize: 12, color: '#9aa3af', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{s.body}</div>
+              {s.entries.map((en) => (
+                <div key={en.label} style={{ borderLeft: `3px solid ${dueColor(en.dueno)}`, padding: '4px 0 6px 12px', marginBottom: 6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 2 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700 }}>{en.label}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#0b0e14', background: dueColor(en.dueno), padding: '2px 7px', borderRadius: 10 }}>{en.dueno}</span>
+                    <code style={{ fontSize: 10, color: '#6b7280' }}>{en.source}</code>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#9aa3af', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{en.body}</div>
+                </div>
+              ))}
             </div>
           ))}
           {!steps && !loadingSteps && <div style={{ fontSize: 13, color: '#6b7280' }}>Elegí un tópico para ver la orquestación.</div>}

@@ -438,9 +438,9 @@ async def mini_topics():
 
 @router.get("/mini/preview")
 async def mini_preview(age_group: str = "mini", level: str = "A0", topic_id: int = 0):
-    """Arma el prompt por el motor único (v2) y lo devuelve partido en pasos + el dueño de cada uno."""
+    """Desglose de la orquestación POR CAMPO de la base: cada entrada con su fuente (tabla.columna)
+    y su dueño (de qué pilar depende). Deja ver que NO es un registro único — se apilan campos sueltos."""
     try:
-        res = await motor_engine.resolve_v2(age_group, level, topic_id or None)
+        return await motor_engine.resolve_v2_breakdown(age_group, level, topic_id or None)
     except Exception as e:
         return {"error": str(e)}
-    return {"steps": _split_steps(res["prompt"]), "prompt": res["prompt"], "meta": res.get("meta", {})}

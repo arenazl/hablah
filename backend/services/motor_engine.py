@@ -196,6 +196,69 @@ async def resolve_v2(age_group: str, level_code: str, topic_id: Optional[int] = 
     return await asyncio.to_thread(_resolve_v2_sync, age_group, level_code, topic_id, learner_state)
 
 
+def _resolve_v2_breakdown_sync(age_group, level_code, topic_id) -> dict:
+    """Desglose de la orquestación POR CAMPO de la base (no por bloque renderizado): cada entrada
+    trae su FUENTE (tabla.columna) y su DUEÑO (de qué pilar depende). Deja ver que NO es un registro
+    único: el composer apila campos separados de student_types(edad) + levels(nivel) + topics(tópico)."""
+    db = _connect()
+    try:
+        std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))
+        lv = db.q1("SELECT * FROM levels WHERE code=%s", (level_code,))
+        if not std or not lv:
+            raise ValueError(f"falta preset: age_group={age_group} / level={level_code}")
+        tp = db.q1("SELECT * FROM topics WHERE id=%s", (topic_id,)) if topic_id else None
+        words = _json_list(tp.get("pinned_vocabulary")) if tp else []
+        if not words and tp:
+            words = _json_list(tp.get("keywords"))[:6]
+        phrases = _json_list(tp.get("generated_vocab")) if tp else []
+        if (lv.get("vocab_depth") in ("basic", "minimal")) and phrases:
+            phrases = phrases[:1]
+
+        def e(label, source, dueno, body):
+            body = (body or "").strip() if isinstance(body, str) else body
+            return {"label": label, "source": source, "dueno": dueno, "body": body} if body else None
+
+        def step(name, entries):
+            es = [x for x in entries if x]
+            return {"step": name, "entries": es} if es else None
+
+        steps = [s for s in [
+            step("Contexto", [e("Idioma / dispositivo", "runtime", "estático",
+                                "Target: English · Native: Spanish · Voz (mobile)")]),
+            step("El profe", [
+                e("Mascota", "student_types.tutor_mascot", "EDAD", std.get("tutor_mascot")),
+                e("Identidad", "student_types.tutor_identity", "EDAD", std.get("tutor_identity")),
+                e("Tono", "student_types.tutor_tonal_rules", "EDAD", std.get("tutor_tonal_rules")),
+            ]),
+            step("Método", [e("Pedagogía", "student_types.pedagogy", "EDAD", std.get("pedagogy"))]),
+            step("Juego", [e("Foco de sesión", "student_types.session_focus", "EDAD", std.get("session_focus"))]),
+            step("Rieles", [
+                e("Language_Rule", "levels.language_rule", "NIVEL", lv.get("language_rule")),
+                e("Level_Target", "levels.curriculum_grammar", "NIVEL", lv.get("curriculum_grammar")),
+                e("Expected_Production", "levels.expected_production", "NIVEL", lv.get("expected_production")),
+                e("Form_Rules", "student_types.form_rules", "EDAD", std.get("form_rules")),
+            ]),
+            step("Tema (vocab)", [
+                e("Words", "topics.keywords", "TÓPICO", ", ".join(words) if words else None),
+                e("Target_Phrases", "topics.generated_vocab", "TÓPICO", ", ".join(phrases) if phrases else None),
+            ]),
+            step("Arranque", [e("Opening_Seed", "student_types.opening_seed", "EDAD + NIVEL", std.get("opening_seed"))]),
+            step("Turno", [
+                e("Continuation_Seed", "student_types.continuation_seed", "EDAD (+universal)", std.get("continuation_seed")),
+                e("Closing_Seed", "student_types.closing_seed", "EDAD", std.get("closing_seed")),
+            ]),
+        ] if s]
+        return {"steps": steps, "meta": {"engine": "compose_proto (v2)", "age_group": age_group,
+                                         "level": level_code, "topic_title": tp.get("title") if tp else None}}
+    finally:
+        db.conn.close()
+
+
+async def resolve_v2_breakdown(age_group: str, level_code: str, topic_id: Optional[int] = None) -> dict:
+    """Desglose por campo (tabla.columna + dueño) de la orquestación v2 — para el visor de los pasos."""
+    return await asyncio.to_thread(_resolve_v2_breakdown_sync, age_group, level_code, topic_id)
+
+
 # ── /training · ciclo de aprendizaje por alumno (sin session) ──
 def _train_state_sync(student_id: int) -> dict:
     db = _connect()

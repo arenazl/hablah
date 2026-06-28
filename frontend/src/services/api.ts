@@ -642,8 +642,9 @@ export const finaltestAPI = {
 
 /* ───── MOTOR ÚNICO (v2) — tópicos kids dinámicos + preview de los pasos de la orquestación ───── */
 export interface MiniTopic { id: number; title: string; segmento: string; levels: string[] }
-export interface MiniStep { tag: string; label: string; dueno: string; body: string }
-export interface MiniPreview { steps?: MiniStep[]; prompt?: string; meta?: Record<string, unknown>; error?: string }
+export interface MiniEntry { label: string; source: string; dueno: string; body: string }
+export interface MiniStep { step: string; entries: MiniEntry[] }
+export interface MiniPreview { steps?: MiniStep[]; meta?: Record<string, unknown>; error?: string }
 
 export const miniAPI = {
   topics: (): Promise<MiniTopic[]> => api.get('/finaltest/mini/topics').then((r) => r.data),
