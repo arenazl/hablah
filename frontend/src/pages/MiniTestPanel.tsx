@@ -149,21 +149,26 @@ export default function MiniTestPanel() {
             ))}
           </div>
           {steps?.map((s, i) => (
-            <div key={s.step} style={{ marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <div key={s.step} style={{ marginBottom: 18 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <span style={{ fontSize: 11, color: '#6b7280' }}>{i + 1}</span>
                 <span style={{ fontSize: 14, fontWeight: 800 }}>{s.step}</span>
+                {s.entries.length > 1 && (
+                  <span style={{ fontSize: 11, color: '#6b7280' }}>· {s.entries.length} registros</span>
+                )}
               </div>
-              {s.entries.map((en) => (
-                <div key={en.label} style={{ borderLeft: `3px solid ${dueColor(en.dueno)}`, padding: '4px 0 6px 12px', marginBottom: 6 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 2 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700 }}>{en.label}</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#0b0e14', background: dueColor(en.dueno), padding: '2px 7px', borderRadius: 10 }}>{en.dueno}</span>
-                    <code style={{ fontSize: 10, color: '#6b7280' }}>{en.source}</code>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {s.entries.map((en) => (
+                  <div key={en.label} style={{ background: '#0d1119', border: '1px solid #232936', borderLeft: `3px solid ${dueColor(en.dueno)}`, borderRadius: 8, padding: '10px 12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700 }}>{en.label}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#0b0e14', background: dueColor(en.dueno), padding: '2px 7px', borderRadius: 10 }}>{en.dueno}</span>
+                      <code style={{ fontSize: 10, color: '#6b7280' }}>{en.source}</code>
+                    </div>
+                    <div style={{ fontSize: 12, color: '#9aa3af', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{en.body}</div>
                   </div>
-                  <div style={{ fontSize: 12, color: '#9aa3af', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{en.body}</div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ))}
           {!steps && !loadingSteps && <div style={{ fontSize: 13, color: '#6b7280' }}>Elegí un tópico para ver la orquestación.</div>}
