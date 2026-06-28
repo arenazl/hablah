@@ -6,6 +6,7 @@ import './index.css'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { setupVersionCheck } from './lib/versionCheck'
 
 // Registrar service worker para PWA + push notifications
 if ('serviceWorker' in navigator) {
@@ -15,6 +16,9 @@ if ('serviceWorker' in navigator) {
       .catch((err) => console.warn('[SW] error:', err))
   })
 }
+
+// Auto-actualización: si hay un build nuevo deployado, la PWA se recarga sola (sin Ctrl+Shift+R).
+setupVersionCheck()
 
 const container = document.getElementById('root')!
 

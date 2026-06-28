@@ -10,6 +10,21 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim())
 })
 
+// Network-first SOLO para navegaciones (el index.html de arranque de la PWA): nunca sirve un
+// index viejo cacheado si hay internet. No toca el push ni precachea assets.
+self.addEventListener('fetch', (event) => {
+  const req = event.request
+  if (req.mode !== 'navigate') return
+  event.respondWith((async () => {
+    try {
+      return await fetch(req)
+    } catch (e) {
+      const cached = await caches.match(req) // offline: best-effort
+      return cached || Response.error()
+    }
+  })())
+})
+
 self.addEventListener('push', (event) => {
   let data = { title: 'AgentFlow', body: 'Tenes una notificacion' }
   try {
