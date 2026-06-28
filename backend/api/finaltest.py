@@ -378,3 +378,69 @@ async def list_classes():
 async def get_class(class_id: int):
     r = await asyncio.to_thread(_get_sync, class_id)
     return r or {"error": "no existe"}
+
+
+# ───────────── MOTOR ÚNICO (v2) — paginita de los pasos de la orquestación ─────────────
+# La orquestación NO se persiste: se genera al vuelo apilando presets (edad+nivel+tópico+historia).
+# Esta vista muestra, para el combo elegido, cada PASO del prompt y de qué parámetro depende.
+_STEP_MAP = {
+    "runtime_context":           ("Contexto",            "estático"),
+    "tutor_profile":             ("El profe",            "EDAD"),
+    "pedagogical_rules":         ("Método",              "EDAD (+universal)"),
+    "gamification_focus":        ("Juego",               "EDAD"),
+    "student_profile":           ("Alumno",              "HISTORIA"),
+    "learner_state":             ("Memoria del alumno",  "HISTORIA"),
+    "behavioral_guards":         ("Rieles",              "NIVEL + EDAD"),
+    "output_rules":              ("Seguridad / voz",     "estático"),
+    "current_lesson_vocabulary": ("Tema (vocab)",        "TÓPICO"),
+    "story_timeline":            ("Historia del tema",   "TÓPICO"),
+    "start_execution_command":   ("Arranque",            "EDAD + NIVEL"),
+    "session_actions":           ("Turno",               "EDAD (+universal)"),
+    "interaction_state":         ("Estado vivo",         "runtime"),
+}
+
+
+def _split_steps(prompt: str) -> list[dict]:
+    import re as _re
+    steps = []
+    for m in _re.finditer(r"<([a-z_]+)>(.*?)</\1>", prompt, _re.S):
+        tag = m.group(1)
+        label, dueno = _STEP_MAP.get(tag, (tag, "?"))
+        steps.append({"tag": tag, "label": label, "dueno": dueno, "body": m.group(2).strip()})
+    return steps
+
+
+def _mini_topics_sync() -> list[dict]:
+    db = motor_engine._connect()
+    try:
+        rows = db.q("SELECT id, title, segmento, kid_age_group, levels FROM topics "
+                    "WHERE audience='kid' ORDER BY segmento, title")
+        out = []
+        for r in rows:
+            lv = r.get("levels")
+            try:
+                lv = json.loads(lv) if isinstance(lv, str) else (lv or [])
+            except Exception:
+                lv = []
+            out.append({"id": r["id"], "title": r["title"],
+                        "segmento": (r.get("segmento") or r.get("kid_age_group") or "kid"),
+                        "levels": lv})
+        return out
+    finally:
+        db.conn.close()
+
+
+@router.get("/mini/topics")
+async def mini_topics():
+    """Todos los tópicos kids del catálogo v2 (dinámico desde la BD)."""
+    return await asyncio.to_thread(_mini_topics_sync)
+
+
+@router.get("/mini/preview")
+async def mini_preview(age_group: str = "mini", level: str = "A0", topic_id: int = 0):
+    """Arma el prompt por el motor único (v2) y lo devuelve partido en pasos + el dueño de cada uno."""
+    try:
+        res = await motor_engine.resolve_v2(age_group, level, topic_id or None)
+    except Exception as e:
+        return {"error": str(e)}
+    return {"steps": _split_steps(res["prompt"]), "prompt": res["prompt"], "meta": res.get("meta", {})}
