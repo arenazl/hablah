@@ -599,6 +599,15 @@ export function buildOrchestrationWsUrl(params: Record<string, string | number>)
   return `${wsBase}/voice/ws_orchestration?${sp.toString()}`
 }
 
+/** URL del WS del MOTOR ÚNICO (v2/compose_proto) — el MISMO que produce: 3 pilares
+ * edad(age_group)+nivel(level_code)+tópico. Directo al backend, sin JWT. */
+export function buildMiniWsUrl(params: Record<string, string | number>): string {
+  const wsBase = buildWsBase()
+  const sp = new URLSearchParams()
+  for (const [k, v] of Object.entries(params)) sp.set(k, String(v))
+  return `${wsBase}/voice/ws_mini?${sp.toString()}`
+}
+
 /* ────────────── FINALTEST (consola de prueba de clases reales) ────────────── */
 export interface FtBand { code: string; label: string }
 export interface FtOptions { bands: FtBand[]; levels: string[] }

@@ -313,3 +313,50 @@ async def voice_ws_orchestration(
             await websocket.close()
         except Exception:
             pass
+
+
+@router.websocket("/ws_mini")
+async def voice_ws_mini(
+    websocket: WebSocket,
+    age_group: str = Query("mini"),
+    level_code: str = Query("A0"),
+    topic_id: int = Query(0),
+    engine: str = Query("gemini_live"),
+    model: str = Query("models/gemini-3.1-flash-live-preview"),
+    voice: str = Query("Aoede"),
+):
+    """Prueba de clase REAL por el MOTOR ÚNICO (v2 / compose_proto) — el MISMO que produce.
+
+    3 pilares: EDAD (age_group → student_types) + NIVEL (level_code → levels) + TÓPICO
+    (topic_id → topics)  (+ HISTORIA/learner_state cuando el test tenga alumno). Determinístico,
+    genera el prompt al vuelo (no persiste orquestación). Sin login / sin BD persistida.
+    """
+    await websocket.accept()
+    safe_voice = voice if voice in _LLM_VALID_VOICES else "Aoede"
+    try:
+        res = await motor_engine.resolve_v2(age_group, level_code, topic_id or None)
+        super_prompt = res["prompt"]
+    except Exception as e:
+        log.warning("voice_ws_mini resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
+        await websocket.close(code=1011)
+        return
+    ctx = VoiceEngineContext(
+        session_id=0, user_id=0, user_name="Alumno",
+        is_kid=age_group in ("mini", "junior"),
+        super_prompt=super_prompt, voice_id=None, voice_name=safe_voice,
+        language="es", target_language="en",
+        silence_tolerance_ms=1500, interruption_allowed=True,
+        model_override=model or None,
+    )
+    engine_name = engine if engine in available_engines() else "gemini_live"
+    log.info("voice_ws_mini: %s/%s topic=%s engine=%s voice=%s", age_group, level_code, topic_id, engine_name, safe_voice)
+    try:
+        eng = get_engine(engine_name)
+        async for _line in eng.run(websocket, ctx):
+            pass
+    except Exception as e:
+        log.exception("voice_ws_mini error: %s", e)
+        try:
+            await websocket.close()
+        except Exception:
+            pass

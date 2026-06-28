@@ -5,25 +5,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Mic, Square, RotateCcw, CheckCircle } from 'lucide-react'
 import { useLiveVoice } from '../hooks/useLiveVoice'
-import { buildOrchestrationWsUrl, finaltestAPI } from '../services/api'
+import { buildMiniWsUrl, finaltestAPI } from '../services/api'
 
-// v3 topic IDs validados para Mini (legacy 135–146, sin "Jugar en la pantalla" en A0)
+// Tópicos Mini del catálogo v2 (topics.segmento='mini'). La clase corre por el MOTOR ÚNICO
+// (compose_proto), mismo que producción. Edad elige los tópicos; aplican a A0 y A1.
 const TOPICS_A0 = [
-  { id: 615, title: 'Mi familia' },
-  { id: 617, title: 'Mis colores favoritos' },
-  { id: 618, title: 'Animales de la granja y la selva' },
-  { id: 619, title: 'Mi cuerpo' },
-  { id: 620, title: 'Comidas ricas' },
-  { id: 621, title: 'Abrir juguetes' },
-  { id: 622, title: 'Dibujitos y superhéroes' },
-  { id: 624, title: 'Comida divertida' },
+  { id: 135, title: 'Mi familia' },
+  { id: 141, title: 'Mi cuerpo' },
+  { id: 138, title: 'Mis colores favoritos' },
+  { id: 139, title: 'Animales de la granja y la selva' },
+  { id: 142, title: 'Comidas ricas' },
+  { id: 134, title: 'Mascotas' },
+  { id: 140, title: 'Contar del 1 al 10' },
 ]
-const TOPICS_A1 = [
-  ...TOPICS_A0,
-  { id: 623, title: 'Jugar en la pantalla' },
-]
+const TOPICS_A1 = [...TOPICS_A0, { id: 133, title: 'Música y canciones' }]
 
-const BAND = 'early_child'
+const BAND = 'early_child'   // sólo bookkeeping de historia/juez (finaltest); la clase NO usa v3
+const AGE_GROUP = 'mini'     // pilar EDAD del motor único (v2)
 
 function scoreColor(s: number | null | undefined) {
   if (s == null) return '#6b7280'
@@ -34,7 +32,7 @@ function scoreColor(s: number | null | undefined) {
 
 export default function MiniTestPanel() {
   const [level, setLevel] = useState<'A0' | 'A1'>('A0')
-  const [topicId, setTopicId] = useState(615)
+  const [topicId, setTopicId] = useState(135)
   const [studentId, setStudentId] = useState(0)
   const [hist, setHist] = useState({ obj: 0, items: 0 })
   const [result, setResult] = useState<{ score: number; verdict: string } | null>(null)
@@ -69,15 +67,15 @@ export default function MiniTestPanel() {
   useEffect(() => { if (!isLive) void loadStudent() }, [loadStudent, isLive])
 
   const startClass = useCallback(async () => {
-    if (!studentId) return
     setErr(''); setResult(null)
-    const url = buildOrchestrationWsUrl({
-      band_code: BAND, level_code: level, topic_id: topicId,
-      student_id: studentId, engine: 'gemini_live',
+    // MOTOR ÚNICO v2: 3 pilares edad(mini)+nivel+tópico. No depende de student_id v3.
+    const url = buildMiniWsUrl({
+      age_group: AGE_GROUP, level_code: level, topic_id: topicId,
+      engine: 'gemini_live',
       model: 'models/gemini-3.1-flash-live-preview', voice: 'Aoede',
     })
     await live.start(0, undefined, 'Aoede', url)
-  }, [live, level, topicId, studentId])
+  }, [live, level, topicId])
 
   const endClass = useCallback(async () => {
     const transcript = live.transcript.map(l => ({ who: l.who, text: l.text }))
@@ -155,7 +153,7 @@ export default function MiniTestPanel() {
           <div style={{ fontSize: 11, fontWeight: 700, color: '#7c3aed', letterSpacing: 1, marginBottom: 14 }}>PASO 2 — Arrancá y hablá actuando de alumno</div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             {!isLive ? (
-              <button onClick={startClass} disabled={!studentId} style={{
+              <button onClick={startClass} style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 padding: '12px 28px', borderRadius: 10, border: 'none', cursor: 'pointer',
                 background: '#7c3aed', color: '#fff', fontWeight: 700, fontSize: 15,

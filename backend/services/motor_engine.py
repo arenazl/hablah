@@ -101,6 +101,101 @@ async def postclass(session_id: int, outcomes: dict) -> dict:
     return await asyncio.to_thread(_postclass_sync, session_id, outcomes)
 
 
+def _resolve_kid_sync(band_code, level_code, prod_topic_id, student_id):
+    """Mapea el tópico de PRODUCCIÓN (topics.id) al de motor_v3 vía legacy_topic_id y
+    resuelve el prompt nuevo. Devuelve None si el tópico no está migrado -> el caller
+    cae al motor viejo (fail-safe)."""
+    db = _connect()
+    try:
+        v3_tid = None
+        if prod_topic_id:
+            r = db.q1("SELECT topic_id FROM topic WHERE legacy_topic_id=%s", (prod_topic_id,))
+            v3_tid = r["topic_id"] if r else None
+        if v3_tid is None:
+            return None
+        stack = motor_prompt.build_stack_params(db, band_code, level_code, v3_tid, student_id, None)
+        return {"prompt": motor_prompt.render_prompt(stack), "v3_topic_id": v3_tid, "meta": _meta(stack)}
+    finally:
+        db.conn.close()
+
+
+async def resolve_kid(band_code: str, level_code: str, prod_topic_id: Optional[int] = None,
+                      student_id: Optional[int] = None) -> Optional[dict]:
+    """Switch kids -> motor_v3 en producción (detrás del flag MOTOR_V3_KIDS). El tópico se
+    mapea por legacy_topic_id; devuelve None si no está migrado para que el caller use el
+    motor viejo. Sin historia por ahora (student_id None = clase libre)."""
+    return await asyncio.to_thread(_resolve_kid_sync, band_code, level_code, prod_topic_id, student_id)
+
+
+# ── MOTOR ÚNICO (v2 / compose_proto) para el TEST ──
+# Los 3 pilares del dueño: EDAD (student_types) + NIVEL (levels) + HISTORIA (learner_state).
+# Determinístico: apila presets y genera el prompt al vuelo. NO persiste orquestación
+# (no hace falta: O(edad+nivel+tópico) de catálogo vs O(edad×nivel×tópico) de combos curados).
+# Es el MISMO motor que la clase real (gemini_live -> build_super_prompt -> compose_proto).
+def _json_list(v) -> list[str]:
+    """Columna que puede venir lista, JSON-string o None -> lista de strings."""
+    import json as _json
+    if not v:
+        return []
+    if isinstance(v, list):
+        return [str(x) for x in v if x]
+    if isinstance(v, str):
+        try:
+            d = _json.loads(v)
+            return [str(x) for x in d if x] if isinstance(d, list) else ([v] if v.strip() else [])
+        except Exception:
+            return [v] if v.strip() else []
+    return []
+
+
+def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None) -> dict:
+    from types import SimpleNamespace
+    from services.composer_proto import compose_proto_prompt
+    db = _connect()
+    try:
+        std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))
+        lv = db.q1("SELECT * FROM levels WHERE code=%s", (level_code,))
+        if not std or not lv:
+            raise ValueError(f"falta preset: age_group={age_group} / level={level_code}")
+        tp = db.q1("SELECT * FROM topics WHERE id=%s", (topic_id,)) if topic_id else None
+        level_data = {
+            "language_rule": lv.get("language_rule"),
+            "curriculum_grammar": lv.get("curriculum_grammar"),
+            "expected_production": lv.get("expected_production"),
+            "vocab_depth": lv.get("vocab_depth"),
+        }
+        try:   # app_config real (tabla config_key/config_value) -> reglas de voz/seguridad
+            cfg = {r["config_key"]: r["config_value"]
+                   for r in db.q("SELECT config_key, config_value FROM app_config")} or None
+        except Exception:
+            cfg = None
+        user = SimpleNamespace(nombre="Alumno", cefr_level=level_code, age_group=age_group,
+                               target_language="en", base_language="es")
+        topic = None
+        if tp:
+            topic = SimpleNamespace(
+                title=tp.get("title"),
+                pinned_vocabulary=_json_list(tp.get("pinned_vocabulary")),
+                keywords=_json_list(tp.get("keywords")),
+                generated_vocab=_json_list(tp.get("generated_vocab")),
+            )
+        prompt = compose_proto_prompt(
+            user=user, topic=topic, topic_content=None,
+            student_type_data=std, level_data=level_data,
+            app_config=cfg, learner_state=learner_state)
+        return {"prompt": prompt, "meta": {
+            "engine": "compose_proto (v2)", "age_group": age_group, "level": level_code,
+            "topic_title": tp.get("title") if tp else None}}
+    finally:
+        db.conn.close()
+
+
+async def resolve_v2(age_group: str, level_code: str, topic_id: Optional[int] = None,
+                     learner_state: Optional[dict] = None) -> dict:
+    """Motor ÚNICO para el test: 3 pilares edad+nivel+(tópico)+historia, generado al vuelo."""
+    return await asyncio.to_thread(_resolve_v2_sync, age_group, level_code, topic_id, learner_state)
+
+
 # ── /training · ciclo de aprendizaje por alumno (sin session) ──
 def _train_state_sync(student_id: int) -> dict:
     db = _connect()
