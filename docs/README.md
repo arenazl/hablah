@@ -12,6 +12,7 @@ lo viejo no se borra, se archiva en `historico/` con su fecha. **Nada de info cr
 | **[handoffs/2026-06-28_handoff-fable.md](handoffs/2026-06-28_handoff-fable.md)** | **LEER PRIMERO.** Historia de la app, cómo mutó el motor, estado actual, errores detectados (honestidad) y hoja de ruta. Escrito para el modelo que la toma. |
 | [01-recuperacion-motor/01-plan-recuperacion.md](01-recuperacion-motor/01-plan-recuperacion.md) | Análisis objetivo de los 3 motores vs el SPEC + el plan de recuperación por fases. |
 | [01-recuperacion-motor/02-deudas-tecnicas.md](01-recuperacion-motor/02-deudas-tecnicas.md) | Deudas técnicas abiertas (mic PWA, app_config, VAD/ASR, jubilar v3, …). |
+| [02-infra/01-contexto-infra-y-migracion.md](02-infra/01-contexto-infra-y-migracion.md) | Contexto de infra + decisiones técnicas del cutover Heroku → Cloud Run us-east4 (para auditar). **Distingue infra de motor: latencia ≠ robotismo.** |
 
 ## Carpetas
 
@@ -19,6 +20,7 @@ lo viejo no se borra, se archiva en `historico/` con su fecha. **Nada de info cr
 |---|---|
 | `handoffs/` | Cierres de sesión por fecha (`YYYY-MM-DD_titulo.md`). El más nuevo = estado al último corte. |
 | `01-recuperacion-motor/` | Tema de trabajo actual: recuperación del motor (motor único v2, de-robotizado, paginita). |
+| `02-infra/` | Contexto de infraestructura: hot-path del audio, migración Heroku → Cloud Run us-east4 (271 ms → 37 ms), decisiones técnicas del cutover, y **qué es infra vs motor**. |
 | `mejoras_pedagogicas/` | Dominio base: fichas pedagógicas (duración, cierre, apertura, conversación-first). |
 | `historico/` | Docs cerrados/superados por fecha. **No borrar nada — se archiva acá.** Incluye el experimento `2026-06-23_multi-llm-v3/` y la data de lotes de evaluación/transcripción. |
 

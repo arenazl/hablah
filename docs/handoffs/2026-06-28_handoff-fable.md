@@ -6,7 +6,9 @@
 > cambios de rumbo, y terminó en un Frankenstein. Leé esto ANTES de tocar nada.
 >
 > Docs hermanos: [plan de recuperación](../01-recuperacion-motor/01-plan-recuperacion.md) (análisis
-> objetivo de los 3 motores + plan) · [deudas técnicas](../01-recuperacion-motor/02-deudas-tecnicas.md).
+> objetivo de los 3 motores + plan) · [deudas técnicas](../01-recuperacion-motor/02-deudas-tecnicas.md)
+> · [contexto de infra](../02-infra/01-contexto-infra-y-migracion.md) (por qué el server cambia y —
+> importante— **qué es infra y qué es motor**, para no confundir latencia con robotismo).
 
 ---
 
@@ -165,7 +167,13 @@ directivas no alcanzan: (a) hacerlas más imperativas y consolidadas (capa unive
 | `docs/01-recuperacion-motor/01-plan-recuperacion.md` · `02-deudas-tecnicas.md` | Plan objetivo + deudas. |
 
 **Deploy:** continuo vía el proyecto Infra **`structure`** (`d:\Code\structure`). Un push a
-`origin/main` deploya (Heroku backend + Netlify front). NO deployar a mano.
+`origin/main` deploya (backend + Netlify front). NO deployar a mano.
+
+> **OJO — cambio de infra (2026-07-08):** el backend está migrando de **Heroku → Cloud Run `us-east4`**
+> para bajar la latencia del loop de voz (**271 ms → 37 ms** desde Argentina, medido). Es puro
+> transporte: **no toca motor ni prompt**. Si tras la migración el coach sigue robótico, es motor, no
+> infra. Contexto completo + la tabla "infra vs motor":
+> [`../02-infra/01-contexto-infra-y-migracion.md`](../02-infra/01-contexto-infra-y-migracion.md).
 
 **Datos:** una sola base Aiven (compartida por v2 y v3). NO correr seeds a ciegas (hoy el catálogo de
 v2 está sano; verificar con `repr()` antes de tocar).
