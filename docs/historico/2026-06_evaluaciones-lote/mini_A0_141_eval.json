@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 4,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 8,
+    "reciclado": 6,
+    "score": 6.8,
+    "verdict": "El profe es muy afectuoso y el nivel es adecuado para un A0. Sin embargo, la conversación es un poco estructurada y el cierre de la clase es demasiado abrupto, sin un resumen real o una despedida más interactiva."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 8,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 6,
+    "score": 7.5,
+    "variedad": 5,
+    "verdict": "El ambiente es excelente para bajar el filtro afectivo. El input es comprensible y las correcciones son implícitas. Sin embargo, la clase se limita a un solo tipo de interacción, lo que reduce la variedad y las oportunidades de producción verbal forzada."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 9,
+    "ritmo": 8,
+    "score": 8.4,
+    "verdict": "Me sentí muy contento y motivado por el profe. Entendí todo lo que me pedía y me sentí capaz de participar. Me hubiera gustado saber exactamente qué palabras nuevas aprendí."
+  },
+  "score_global": 7.6,
+  "para_mejorar": "Incluir una actividad de repaso al final que invite al alumno a nombrar las partes del cuerpo aprendidas y asegurar una despedida más interactiva.",
+  "banda": "mini",
+  "hallazgos": [
+    "Cierre abrupto de la clase",
+    "Pocas oportunidades para la producción verbal extendida del alumno",
+    "Variedad limitada de actividades",
+    "Alto nivel de afecto y motivación",
+    "Correcciones implícitas bien aplicadas"
+  ],
+  "nivel": "A0",
+  "topico": "Mi cuerpo",
+  "band": "mini",
+  "topic_id": 141
+}

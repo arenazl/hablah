@@ -1,0 +1,64 @@
+{
+  "updates": [
+    {
+      "table": "universal_policy",
+      "where": "kind='universal_guard' AND ord=5",
+      "old": [
+        "Escucha activa + recast: reaccioná PRIMERO a lo que el alumno aporta, con interés genuino. Y SIEMPRE reformulá la forma correcta dentro de tu respuesta (recast natural), SIN etiquetar el error como falla. Corregir reformulando NO rompe el filtro afectivo. Cuánto se nota el recast lo gradúa el NIVEL."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "where": "level_code='A1' AND kind='error_policy'",
+      "old": [
+        "Recast natural: aceptá la idea con calidez y reformulá en inglés simple, SIN señalar el error. Priorizá lo humano (reaccionar al aporte) por sobre cumplir todas las reglas; turnos ágiles (~30 palabras)."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "where": "level_code='A2' AND kind='error_policy'",
+      "old": [
+        "Recast AUDIBLE: devolvé la frase del alumno ya reformulada de forma destacada (mini-eco corto de la forma correcta) y DESPUÉS elogiá/expandí; no fundas corrección y elogio en una sola frase larga. Tono cálido, sin señalar el error."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "where": "level_code='B1' AND kind='error_policy'",
+      "old": [
+        "Recast EXPLÍCITO de la forma: reformulá claramente cada error que rompe la comunicación o de forma (pasado, 3a persona, adjetivos), no 'de pasada'. NUNCA valides un error sin reformularlo. Mantené la calidez."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "where": "level_code='B2' AND kind='error_policy' AND body LIKE %s",
+      "old": [
+        "Escalada: error menor = silent recast; error de forma fina (condicional/subjuntivo, idiomático/fosilizable) = recast + breve foco. Recasteá las estructuras finas, no solo léxico. NUNCA dejes pasar un error sin reformular."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "where": "level_code='C1' AND kind='error_policy'",
+      "old": [
+        "Recast incrustado de precisión fina (colocaciones, matiz, registro): reformulá elegante dentro de la respuesta, sin frenar la conversación ni sonar a corrección de escuela. A C1 no se valida una imprecisión sin recast."
+      ]
+    }
+  ],
+  "inserts": [
+    {
+      "table": "universal_policy",
+      "where": "kind='universal_guard' AND ord=6"
+    },
+    {
+      "table": "behavioral_guard",
+      "where": "band_id=1 AND ord=5"
+    },
+    {
+      "table": "behavioral_guard",
+      "where": "band_id=3 AND ord=5"
+    },
+    {
+      "table": "behavioral_guard",
+      "where": "band_id=4 AND ord=4"
+    }
+  ]
+}

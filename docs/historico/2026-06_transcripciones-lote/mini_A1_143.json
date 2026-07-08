@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 143,
+  "topic_title": "Abrir juguetes",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡soy Sparky! Estoy tan feliz de conocerte. Mira, tengo una caja llena de juguetes increíbles. I have a blue car, look!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Hola, Sparky! I like… blue car! Es muy bonito. ¿Cómo se dice “juguete”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué genial que te guste! Un juguete es un toy. I have a yellow ball too, it is my favorite toy! ¿Y vos, qué juguete tenés ahí cerca?"
+    },
+    {
+      "who": "Alumno",
+      "text": "Yo tengo a yellow ball! Es muy bonita. My cat big? No, es pequeña. ¿Cómo se dice “coche”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Me encanta tu pelota amarilla! Y un coche se dice car. Tu gatito es una pequeña y tierna mascota, is your cat soft and fluffy?"
+    },
+    {
+      "who": "Alumno",
+      "text": "My cat... soft y muy fluffy! Tengo two gatos en casa. ¿Cómo se dice “soft”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Your cats are soft and fluffy! I have two cats too, they are so sweet. Can you tell me, are your cats big or are they small?"
+    },
+    {
+      "who": "Alumno",
+      "text": "My cats small, not big. They are soft y fluffy! ¿Cómo se dice “big” en inglés?"
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, your cats are small! Big means grande. It was so much fun playing with you today and talking about your soft cats and your toys. Next time, tell me more about what your cats like to play with. You did great today!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

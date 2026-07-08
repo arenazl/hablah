@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A0",
+  "topic_id": 142,
+  "topic_title": "Comidas ricas",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hello! I am Sparky, your space dragon friend! I am so happy to be here with you today. Do you like yummy space snacks? I really love sweet apples!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí, sí! Tengo un dog en casa."
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué bueno que tengas un perro! Los perros son amigos increíbles. My dog is very playful too. ¿A tu perro también le gustan las manzanas?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí sí! El dog le gusta las manzanas."
+    },
+    {
+      "who": "Profe",
+      "text": "That is so cool! Your dog loves apples too, he must be a very happy dog! I like apples, but tell me, what is your favorite yummy food to eat?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí sí! Me gusta la pizza."
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, pizza is delicious! I love pizza too. I like to eat pizza with you. Do you like pizza with cheese?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí sí! Yes."
+    },
+    {
+      "who": "Profe",
+      "text": "Yes, cheese pizza is the best! You did an amazing job telling me what you like today. Next time you can tell me more about your dog, but for now, see you later!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

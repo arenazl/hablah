@@ -1,0 +1,821 @@
+{
+ "band": "child",
+ "level": "B1",
+ "title": "El mundo de los dinosaurios",
+ "who": "un nene de 10-11 años, nivel B1: frases más largas en inglés con errores típicos de su nivel",
+ "models": [
+  "gpt-oss:120b",
+  "qwen3-coder:480b",
+  "gemma3:27b",
+  "nemotron-3-nano:30b",
+  "minimax-m3"
+ ],
+ "personas": [
+  "trabado",
+  "fluido",
+  "quedado",
+  "crack"
+ ],
+ "cells": [
+  {
+   "model": "gpt-oss:120b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 27,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of dinosaurs. Look, I have a big dino friend right here! Can you tell me, what is your favorite dinosaur?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Um… I like the T‑rex, because it big."
+    },
+    {
+     "who": "Profe",
+     "text": "The T-rex is amazing! You are right, it is a big dinosaur. Do you think it was the biggest one of all, or was there another one even larger?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Um… maybe the Argentinosaurus is bigger, I think?"
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, excellent choice! I think the Argentinosaurus is bigger too because it was truly massive. Why do you think such a giant dinosaur needed to be so big?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Um… maybe because it need... a lot of food, many plants…?"
+    },
+    {
+     "who": "Profe",
+     "text": "That makes total sense! I think it needed to be that big because it needed to eat a lot of plants to have enough energy. What do you think about the baby dinosaurs? Do you think they started as a small egg?"
+    }
+   ]
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 109,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the amazing world of dinosaurs. Look, I have a big dino toy here! Tell me, what kind of dinosaur do you like the most?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I love the T‑rex the most because it is biggest and it can roar very loud, I wish I can see it in real life! Do you have a favorite dinosaur too?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! The T-rex is definitely the most powerful dinosaur. I think the Triceratops is my favorite because it has three cool horns. Why do you think the T-rex is so loud?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Because it have huge lungs and a giant mouth, the sound become so loud that you can hear it far away, and it looks very scary! What do you think about the T‑rex teeth?"
+    },
+    {
+     "who": "Profe",
+     "text": "The T-rex has huge lungs and sharp teeth, so you are right, it sounds incredibly loud! I think their teeth are terrifying because they are so pointy. Do you think they used their sharp teeth to hunt for food?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yes, I think they used their sharp teeth to hunt other animals because the teeth is very strong and can cut big animals, and sometimes they could also eat dead meat. What you think about the Velociraptor, is it also a good hunter?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great point! I think the Velociraptor is a clever hunter because it was very fast and agile. Why do you think they were so fast compared to other dinosaurs?"
+    }
+   ]
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 87,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, your explorer friend. Today, we are traveling back in time to the amazing world of dinosaurs! I just found a giant, mysterious egg in the jungle. What do you think is inside this big egg?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think maybe a big dino, like a triceratops or maybe a bird dinosaur, but I not sure. Also my brother left his bike in the kitchen."
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, a triceratops would be incredible! I think that it is a big dinosaur because the egg is so heavy. That is funny about your brother's bike in the kitchen, but what makes you think it is a triceratops?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think the egg have three horns like a triceratops, maybe because I saw a picture in my book, but also I wonder why my brother's bike smell weird."
+    },
+    {
+     "who": "Profe",
+     "text": "That is fascinating! You think the egg has three horns because of the picture in your book. I love how you look for clues. Do you think a baby triceratops would be very loud or quiet inside that shell?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think the baby triceratops be quiet, because the shell is like a soft pillow, but my mom singing loud in the kitchen make me think it could be noisy too."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great observation! You think the baby triceratops would be quiet because the shell is soft like a pillow. Do you agree that a big dinosaur would need a very large nest to be comfortable?"
+    }
+   ]
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 88,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, your adventure partner. Today we are exploring a mysterious dinosaur forest! I just found a giant, glowing dino egg hidden in the bushes. What do you think is inside this big egg?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think maybe a huge baby T‑Rex is inside, because the egg glowing and it looks like a secret treasure. The dinosaur forest is very scary but also very exciting!"
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, I think a huge baby T-Rex is a brilliant guess because the egg is glowing so bright. It sounds like you are feeling brave in that exciting forest! What was the most amazing thing you saw while we were walking there?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I saw a enormous fern that were taller than my head, and many pterodactils flying above the trees, it made me feel like an explorer in a secret world."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds incredible! I think you were an explorer in a secret world because you saw enormous ferns and pterodactyls flying above the trees. Did you feel like you were flying too?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I felt like I was flying, because the wind was very strong and the pterodactils was near me. My heart was beating fast like a drum in the forest."
+    },
+    {
+     "who": "Profe",
+     "text": "That is amazing! I think your heart was beating like a drum because the wind was strong and the pterodactyls were flying so close to you. Do you think they were friendly or were they just curious?"
+    }
+   ]
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 52,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of the dinosaurs. Look, I found a big dino egg! Tell me, have you ever seen a dinosaur before?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Uhm... no... I never see a real dinosaur... only in TV."
+    },
+    {
+     "who": "Profe",
+     "text": "That is so cool! You said you have never seen a real dinosaur, only one on TV. I think watching them on TV is amazing because they look so real! What kind of dinosaur is your favorite?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Uhm... I... I like... the T-Rex. Because... it's big and scary. But I never see one real. Only in movies."
+    },
+    {
+     "who": "Profe",
+     "text": "I agree, the T-Rex is incredible! You think it is amazing because it is so big and scary. You have never seen a real one, but you have seen them in movies. Which other dinosaur do you like?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Uhm... I... I like... the Triceratops. Because... it have three horns. And... it's cool. But... I never see it. Only pictures."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! You like the Triceratops because it has three horns, and you have seen it in pictures. Since you love dinosaurs, do you think they were friendly or scary?"
+    }
+   ]
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 95,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of dinosaurs! I just found a giant, mysterious nest. Look, this is a big dino egg. What do you see in the nest?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Profe, I see a big egg too! It's like... uh... how dinosaur baby come from that egg? That's so cool! Can we touch it???"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great question! A baby dinosaur hatches from the egg when it is ready. I think it is amazing! We should be very careful, but we can look closely. Do you think a big dino is inside?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Profe, I think maybe a T-Rex baby is inside because that egg looks super big! Can we hear it make sounds?? I really want to see what color the baby dinosaur is when it comes out!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a brilliant idea! I think a T-Rex baby is inside because the egg is so big. Let's listen closely together. Can you hear any sounds coming from the nest?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Profe, I can't hear anything yet but maybe the baby dino is sleeping inside! Do you think it will be green or brown when it hatches? I really really want to see it come out!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great thought! I think it will be green because it needs to hide in the leaves. What do you think, should we wait for it to wake up?"
+    }
+   ]
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 84,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of the dinosaurs. Look, I found a big dino egg! What do you think is inside?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think it’s a baby T-Rex, but maybe it’s just a rock. I don’t really care, can we go to the cafeteria now?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a creative guess! I think it is a baby T-Rex because it is moving. Let's finish our mission first, and then we can explore more. Do you agree?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yeah, okay, I guess. But what if it's just a boring old fossil and not even a real egg? Can we at least see some pictures of dinosaurs first?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great idea! I have some pictures right here. In my opinion, this big dino is super cool, don't you think?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yeah, it looks kind of cool but I’ve seen bigger ones in my video games. Can we play with the egg now or are we just gonna look at pictures all day?"
+    },
+    {
+     "who": "Profe",
+     "text": "I love that you've seen even bigger ones in your games! Since it's a big dino egg, let's carefully touch it and see if it's warm. Do you think it's a special kind of dinosaur?"
+    }
+   ]
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 77,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of dinosaurs! I just found a giant, mysterious egg. What do you think is inside this big egg?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think it can be a baby dinosaur! Maybe a T-Rex or a Triceratops. I hope it's not a carnivore because they eat meat and they are very dangerous!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a brilliant idea! I think it is a baby dinosaur too because the egg is so massive. Do you think a T-Rex would be a scary neighbor to have?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yeah, a T-Rex would be super scary as a neighbor! It would probably eat my dog and stomp on my house!"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh no, that would be terrible! I think a T-Rex would be a very scary neighbor because it is so huge. What kind of dinosaur would be a better neighbor for you?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think a Triceratops would be a better neighbor because it eats plants and it has those cool horns but it's not as aggressive as a T-Rex!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great point! I agree that a Triceratops would be much friendlier because it eats plants. If you had a Triceratops as a neighbor, what would you name it?"
+    }
+   ]
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 25,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of dinosaurs. Look, I have a big dino fossil right here! What do you see in our adventure today?"
+    },
+    {
+     "who": "Alumno",
+     "text": "... Uh... big. Bones? ... Yes."
+    },
+    {
+     "who": "Profe",
+     "text": "Exactly, those are big dinosaur bones! It is amazing to see how huge they were. I think this dino was very strong because of its large tail. What do you think about it?"
+    },
+    {
+     "who": "Alumno",
+     "text": "... Tail... long. Maybe... eat trees? ... I think."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great point! I think that it ate trees because it had such a long neck to reach the high branches. Do you agree that long-necked dinosaurs were plant eaters?"
+    },
+    {
+     "who": "Alumno",
+     "text": "... Uh... yes. Plants... good. ... Maybe... strong legs too?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a brilliant idea! I think it needed strong legs because it was a giant animal. What do you think, was it faster than a small egg?"
+    }
+   ]
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 125,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are exploring the amazing world of dinosaurs! Look at this big dino right here. What do you think about it?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Oh wow! He is so big, like... much bigger than my house! I think he is a T-Rex, right? My brother have a lot of dinosaur toys, and he says the T-Rex is the most strongest dinosaur of all. Do you think it's true?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a huge T-Rex! My brother has many toys too, and I think he is right because the T-Rex was definitely the strongest. Do you agree that the T-Rex is the coolest dinosaur?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yeah, definitely! I think the T-Rex is the coolest, but the Triceratops is very cool too, because of the horns! My friend Leo says the Stegosaurus is good because it have a spiky tail, but... I don't know, the T-Rex is more... scary, you know?"
+    },
+    {
+     "who": "Profe",
+     "text": "You are right, the T-Rex is really scary! Leo thinks the Stegosaurus is good because it has a spiky tail. Do you think the Stegosaurus is scarier than the T-Rex?"
+    },
+    {
+     "who": "Alumno",
+     "text": "No way! The Stegosaurus isn’t scary, it’s… like, a plant-eater, no? The T-Rex can *eat* you, that's why is more scary, and it has big teeths! Do you think the T-Rex hunted in groups, or alone?"
+    },
+    {
+     "who": "Profe",
+     "text": "You're absolutely right, a plant-eater isn't scary! The T-Rex had big teeth, which makes it even more frightening. That is a great question about hunting; I think they hunted alone because they were so powerful. What do you think?"
+    }
+   ]
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 79,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of the dinosaurs. Look, I have a big dino toy here! Tell me, what is your favorite dinosaur?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Umm... I think... the Triceratops is... good. They have, like, three horns, yeah? It's kinda cool, but I was drawing a robot yesterday, it had lasers."
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, a robot with lasers sounds amazing! I bet that was fun to draw. And I think the Triceratops is an awesome dinosaur because of its three horns. What was your robot doing while you were drawing it?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Uh... my robot... he was, um, fighting a... a big monster. It wasn’t a dinosaur, it was more like a... a space alien, I think. Is the Triceratops a herbivore?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a brilliant idea for a drawing! Yes, the Triceratops is a herbivore, so it eats plants. I think it is fascinating because it uses those three horns to protect itself from predators. Do you like dinosaurs that eat plants or meat?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Umm... meat-eaters are more... strong, I guess. But my dog, he eats meat too, and he's kinda silly sometimes, he chases his tail."
+    },
+    {
+     "who": "Profe",
+     "text": "That is so funny! Your dog sounds like a real explorer. I think meat-eaters are strong too, but herbivores are very impressive. Since you like strong animals, do you think a T-Rex would be stronger than your robot?"
+    }
+   ]
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 107,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of the dinosaurs. Look, I have a big dino toy here! What kind of dinosaur do you like the most?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Oh, wow, a dinosaur! I very like the Tyrannosaurus Rex, because is the most strong and have big teeth. Is very cool, but I think is a little bit scaring, no?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! The T-Rex is really strong because of its big teeth. It is a bit scary, but that is what makes it so cool, right? Tell me, do you think it is the strongest of all dinosaurs?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Maybe the Triceratops is strong too, because have the horns in his face. I think the T-Rex can win, but the Triceratops can defend very good, you know?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a brilliant point! I think the T-Rex is strong, but you are right that the Triceratops defends itself well with those horns. Do you think the T-Rex would win because it is faster?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Hmm, I don't know if the T-Rex is the fast... maybe is not very fast for his size, but he have the big jaws, so can bite very strong and finish quick, I think. Is like, even if the Triceratops defends, the T-Rex can win in the end!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great observation. You think the T-Rex wins because its big jaws are stronger than the Triceratops's defenses. It is fascinating how different their skills are, don't you think?"
+    }
+   ]
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 9,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the amazing world of dinosaurs. Look, I found a big dino footprint! What do you think, is it from a giant creature?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Big foot."
+    },
+    {
+     "who": "Profe",
+     "text": "Yes, that is a really big foot! I think it belongs to a giant dinosaur because the footprint is so deep in the ground. What about you, do you think it is a huge dino?"
+    },
+    {
+     "who": "Alumno",
+     "text": "maybe big dino."
+    },
+    {
+     "who": "Profe",
+     "text": "I agree! It must be a big dino because the footprint is so huge. Imagine seeing one walking by! What do you think, is it a friendly dinosaur or a scary one?"
+    },
+    {
+     "who": "Alumno",
+     "text": "maybe friendly. maybe scary."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great point! I think it could be a friendly dinosaur because it looks like it was moving slowly. Do you agree, or do you think it was a scary one?"
+    }
+   ]
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 82,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to explore the world of dinosaurs. Look, I found a big dino egg hidden in the forest. Do you think a big dino is inside it?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Wow, a dino egg in the forest sounds awesome! I think maybe a huge Tyrannosaurus is inside and it will roar when it hatches. What do you think?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a brilliant idea! I think a huge Tyrannosaurus is inside because the egg is so heavy. Do you agree that the baby dinosaur will be very loud when it hatches?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think the baby will be super loud and maybe it will eat meat like a real predator. What would you name it if it really hatched?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great question! I think I would name him Rex because he sounds like a mighty leader. What name would you choose for this little predator?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I would name it Spike because it sounds cool and maybe my little sister would love it too. What about you, would you give it another name?"
+    },
+    {
+     "who": "Profe",
+     "text": "Spike is a fantastic name! I think I would call him Rocky because he is strong like a rock. Since you mentioned your sister, do you think she would be scared if Spike started to roar?"
+    }
+   ]
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 87,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of the dinosaurs. Look, I have a big dino in my binoculars! What do you see in our adventure today?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Wow, look at that big dino, it’s huge and its skin is like a greenish‑gray color, I think it’s a stegosaurus maybe? And also... maybe we can see some cute little pterodactyls flying around too!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great observation! I think it is a stegosaurus because of those plates on its back. And you are right, I can see some pterodactyls flying; they look so fast, don't they?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Wow, that stegosaurus looks so huge, but I’m also wondering if it would like pizza, cause I love pizza. And… look at the sky, there might be a flying car!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a funny thought! I think the stegosaurus would prefer plants because it is a herbivore. And look at the sky again, do you think that is a flying car, or maybe it is just a cloud?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think it's a flying car, but maybe it's just a cloud, huh? And I would like to eat pizza with dinosour."
+    },
+    {
+     "who": "Profe",
+     "text": "That would be a delicious lunch for a hungry dinosaur! I think it is just a cloud because it is moving so slowly. What do you think, does it look like a fluffy dinosaur?"
+    }
+   ]
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 69,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of dinosaurs. Look, I found a big dino egg! What do you think is inside?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think a big dinos inside maybe a T‑Rex, I like it!"
+    },
+    {
+     "who": "Profe",
+     "text": "A T-Rex would be amazing! I think a big T-Rex is inside because it is a very powerful dinosaur. Do you agree with me?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think it could be a T‑rex because it is very strong and maybe it will hatch soon."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great point! I think it will hatch soon because it is moving a lot. Imagine if we were watching it while it was breaking open! What do you think would happen then?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think when the egg breaks we will see a small T‑rex that start to move, maybe it will run around. I also can imagine that we will hear a loud sound and the dinosaur will be very excited."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds so exciting! I think we would be very surprised if we heard a loud sound. What would you do if you saw a small T-Rex running around for the first time?"
+    }
+   ]
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 20,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi! I am Nova, and today we are traveling back in time to the world of dinosaurs. Look, I have a big dino here! What kind of dinosaur do you think this is?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Umm… I think is… a T-rex?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great guess! You think it is a T-rex because it has sharp teeth, right? What do you think a T-rex eats?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Umm… meat? Like… other… animals?"
+    },
+    {
+     "who": "Profe",
+     "text": "Exactly! I think it eats meat because it is a very big hunter. Do you think a T-rex was fast while it was running?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Umm… I think yes? Because the legs is… big?"
+    },
+    {
+     "who": "Profe",
+     "text": "I agree! You think it was fast because the T-rex had big legs. While it was running, it was probably very quick. Do you think it was scary too?"
+    }
+   ]
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 155,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, your explorer friend. Today, we are entering the incredible world of dinosaurs! I have a very big dino toy, and you, do you have a favorite dinosaur?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ohhh yes! My favorite is the T-Rex because is the most strongest dinosaur in the world, and I have a big toy of him in my room since I was five years old. Teacher, do you like the T-Rex too, or you prefer another one?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! The T-Rex is the strongest dinosaur, and it is amazing that you have kept your toy for so long. I think the T-Rex is impressive because of its power, though I also love the tall Brachiosaurus. What do you think about the tall ones?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ohhh yes, the Brachiosaurus is so cool because is very very tall, I think him can reach the leaves in the highest trees! But Teacher, the tall ones was more safe from the carnivorous dinosaurs, no? My brother says they can hide easy because nobody see them in the forest."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a clever observation! I think the tall ones were safer because their height helped them reach high leaves and spot danger. Why do you think the others were harder to see in the forest?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yes Teacher! Because the forest have a loooot of trees and the small dinosaurs was the same color like the leaves, so the big ones like the T-Rex cannot see them very well in the forest! Also my dad take me to a museum with real fossils last year and was amazing, do you think the T-Rex was smart or "
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like an incredible museum trip! I think the T-Rex was very smart because it was a powerful hunter. Why do you think it was so clever?"
+    }
+   ]
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 113,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the amazing world of dinosaurs. Look, I found a big dino egg! Tell me, have you ever seen a dinosaur before?"
+    },
+    {
+     "who": "Alumno",
+     "text": "No, is imposible, they are exting a lot years ago. But I watch a movie of T-rex in the television with my dad."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like a fun movie night! You are right, dinosaurs are extinct. I think the T-rex is amazing because it is so big. What do you think about the T-rex?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think the T-rex is very scary because he have a lot of big teeth and short arms... or little arms, I don't remember. But I prefer the triceratops because he have a big horn in the face, is more cool, I think."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! The triceratops is super cool with its three horns. I think the T-rex is scary because it has big teeth and short arms, just like you said. Which dinosaur do you think is the fastest?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mmm, I think the velociraptor is the most fastest because in the movie they run very quick and jump a lot, but I'm not sure if is real. My dad say the dinosaur with the long neck is more slow because is very big and heavy, no?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a brilliant observation! I think the velociraptor is the fastest because it is so agile. You are right that the long-necked dinosaurs are slower because they are so heavy. Do you think you would be fast if you were a dinosaur?"
+    }
+   ]
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 127,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Nova, and today we are traveling back in time to the world of the dinosaurs. Look, I found a big dino egg! What do you think is inside this big egg?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ohhh I think inside there is a baby dinosaur! Maybe is a T-Rex because the egg is very big, and I readed that the T-Rex babies born very big too no? 🦖"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great point! I agree that a big egg probably holds a large baby dinosaur. You said the T-Rex baby was born very big, so you think it was a giant even as a hatchling?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yes profe! I think the baby T-Rex was very big, maybe like the size of a big dog or even more bigger! I watched a video that say the T-Rex growed super fast because there was many dangerous dinos in that time, so they needed to be strong from little. 🦖"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a fascinating theory! So you think the T-Rex grew super fast because it needed to be strong to survive the dangerous dinosaurs around it? I agree that it had to be tough!"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yes profe! And I think the T-Rex was very agresive, sometimes they fighted with other dinos for the food or the territory. But the baby dinos was in much danger too, because other animals can eat them when the mom go to hunt! 🦖"
+    },
+    {
+     "who": "Profe",
+     "text": "You make a great point about their survival! It sounds like the baby T-Rexes had to be very careful while their mother was out hunting. Why do you think the mothers were so protective of their little ones?"
+    }
+   ]
+  }
+ ]
+}

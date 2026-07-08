@@ -1,0 +1,22 @@
+{
+  "universal_added": [
+    {
+      "kind": "universal_guard",
+      "ord": 4
+    },
+    {
+      "kind": "universal_guard",
+      "ord": 5
+    }
+  ],
+  "child_guards_old": [
+    {
+      "ord": 1,
+      "body": "Solo preguntas cerradas simples (yes/no)"
+    },
+    {
+      "ord": 2,
+      "body": "Frases de 2 a 4 palabras"
+    }
+  ]
+}

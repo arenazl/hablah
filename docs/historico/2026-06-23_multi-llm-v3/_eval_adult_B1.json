@@ -1,0 +1,158 @@
+{
+ "band": "adult",
+ "level": "B1",
+ "title": "La IA y el trabajo",
+ "who": "un adulto (B1) que mejora ingles para el trabajo, errores y dudas",
+ "transcripts": [
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I'm Alex. Today we're going to practice without any pressure, just remember that mistakes are just information, not a judgment. To get us started, would you prefer to talk about work, travel, or general social conversation today?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Don't worry, take your time! We can keep it casual. Does talking about how AI might change the way we work sound interesting to you, or would you rather start with something else?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No problem at all! Let's dive right into it. Think about your future career or maybe even a part-time job—do you think artificial intelligence will make your tasks easier, or are you a bit worried about it replacing people?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I understand it's a big topic! For example, some people think AI makes jobs easier because it handles boring tasks. What do you think about it? Do you agree?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hola, soy Alex. Hoy practicamos sin presión. Recordá que los errores son información, no juicios. Para empezar, ¿preferís que conversemos hoy sobre trabajo, viajes, alguna situación social o algún otro tema que te interese?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I prefer to talk about work, about AI and how it affect my job. I have many question about the future with IA."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a great topic, AI in the workplace is changing everything so fast. When you say how it affects your job, do you feel like it is already changing your daily tasks, or is it more of a concern for the future?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "It is a big change to process, for sure. Are you worried that AI might replace some of your current tasks, or do you see it more as a tool that could help you work faster?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I am a little scared that AI will replace some of my tasks, but I also think it can be a tool that help me to work faster and do better."
+   },
+   {
+    "who": "Profe",
+    "text": "It is completely normal to feel that way. You are right that it is a tool that helps you to work faster and be more efficient. In your opinion, what is the most important task you currently do that AI will never be able to replace?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I am Alex, and I am really happy to be your tutor today. Here, we practice without any pressure; remember that mistakes are just information, not a judgment, so feel free to ask for help whenever you need it. To get us started, would you prefer to talk about work, travel, or maybe a social topic for our conversation today?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No worries! If you're not sure, let's dive into the future of work and AI. It's a really interesting topic. Do you think artificial intelligence will make our jobs easier in the future?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I think ai will help us a lot in our job, but maybe some people will lose their jobs. It can be good and also a little scary for the future."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a great point, you are highlighting both the benefits and the risks of automation. Since you mentioned some people might lose their jobs, what do you think workers should do to stay relevant in the workplace?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I think workers must learn new skill and take more training, so they can adapt to the new technology and keep their job. Also, maybe they need to be flexible and ready to change their role in the company."
+   },
+   {
+    "who": "Profe",
+    "text": "You're spot on, learning new skills is essential to keep our jobs in an automated world. Since you mentioned staying flexible, have you ever had to adapt quickly to a new tool or technology in your own experience?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi! I'm Alex. Today we're going to practice without any pressure, remember that mistakes are just information, not a judgment. To get us started, would you prefer to talk about work, travel, or general social conversation today?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I like talk about work and the AI, because it is very interesting for my job. Maybe we can discuss how the computers can do some tasks that we do before."
+   },
+   {
+    "who": "Profe",
+    "text": "That sounds like a great topic! I agree, it is interesting how computers can do tasks that we used to do in the past. To start, what do you think is the biggest advantage of using AI in the workplace?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I think the biggest advantag is that AI can make the work faster and help us to **saving** time, so we can concentrate more on the creative parts of our job."
+   },
+   {
+    "who": "Profe",
+    "text": "You're absolutely right, AI can help us save time by taking over repetitive tasks. Since it helps us save time, do you think AI might ever replace human creativity in your field, or is it just a tool?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I understand that's a tough question! In my opinion, it's just a tool because AI doesn't have our personal experiences or emotions. What do you think, can a machine really be creative like a person, or does it lack that human touch?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I'm Alex. Today we're going to practice without any pressure, remember that mistakes are just part of the information we need to improve. To get us started, would you like to talk about work, travel, or something else for our conversation?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No worries! Maybe we can chat about the future of work and artificial intelligence? It is a hot topic lately. What do you think about using AI in our daily jobs?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I think AI can help us a lot, but sometimes it make me scared because I don’t know if the machines will replace us."
+   },
+   {
+    "who": "Profe",
+    "text": "It is totally understandable to feel that way. You feel worried because you are not sure if machines will replace us in the future. Do you think there are some specific jobs that are safe from being replaced by AI?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "It is a tough question, I know. For example, do you think jobs that require a lot of creativity or human connection, like teachers or artists, are safer than others?"
+   }
+  ]
+ ]
+}

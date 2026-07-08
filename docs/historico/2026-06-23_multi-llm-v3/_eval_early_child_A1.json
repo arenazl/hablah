@@ -1,0 +1,158 @@
+{
+ "band": "early_child",
+ "level": "A1",
+ "title": "Mi familia",
+ "who": "un nene de 5 (A1), casi todo en espanol, 1-2 palabras en ingles",
+ "transcripts": [
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola, soy Sparky! Estoy muy feliz de verte. Hoy vamos a conocer a mi familia espacial. Yo tengo una mamá dragón muy divertida. ¿Tú tienes familia aquí?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Yo tengo mami, papi y una hermanita. I love mi familia mucho."
+   },
+   {
+    "who": "Profe",
+    "text": "¡Qué familia tan linda tienes! I have a mom, a dad, and a sister too. Tell me, is your sister big or little?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Mi hermanita es muy chiquita, ella es like my best friend. 😄"
+   },
+   {
+    "who": "Profe",
+    "text": "That is so sweet! Your little sister sounds like the best friend ever. She is a little sister."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "She is a little sister. I have a little friend too! Say, she is small."
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola, aventurero! Soy Sparky, tu amigo dragón. Hoy tengo mucha emoción porque quiero presentarte a mi familia espacial. Yo digo: This is my family. ¿Y tú, tienes una familia grande o pequeña?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "¡No te preocupes! Podemos decir: I have a big family. ¿Quieres contarme quiénes están en tu familia?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Yo have una familia pequeña. Tengo mamá, papá y una hermana."
+   },
+   {
+    "who": "Profe",
+    "text": "¡Qué lindo! You have a small family with your mom, dad, and sister. That sounds wonderful! Can you tell me, who is she? You can say: She is my sister."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No pasa nada, podemos probar juntos. Ella es tu hermana, así que podemos decir: She is my sister. ¿Te animas a decírmelo?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola, soy Sparky! Estoy muy feliz de verte hoy. Mira, traje una foto de mi familia espacial para que la conozcas. This is my brother."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Oh, no te preocupes. Look, this is my brother. ¿Cómo es tu familia? You can say: This is my mom."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Oh, no pasa nada, ¡estamos aprendiendo juntos! Mira, esta es mi mamá, this is my mom. ¿Tenés una mamá o un papá para mostrarme?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No te preocupes, ¡es un juego nuevo! Mira, yo tengo una hermana espacial: I have a sister. ¿Tenés vos algún hermano o una hermana? I have a sister."
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola, amigo! Soy Sparky, tu compañero dragón espacial. Hoy vamos a explorar mi planeta y conocer a mi familia, ¿te parece? Mira, este es mi hermano, he is my brother."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Oh, mi hermano es muy divertido y salta por todos lados. ¿Tú tienes un hermano o una hermana? I have a brother, and you?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Maybe you have a sister? Say, I have a sister. Let's talk about your family."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No te preocupes. Si prefieres, podemos hablar de alguien más. ¿Tienes una mamá? Puedes decir, she is my mom."
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola, soy Sparky! Estoy muy feliz de verte hoy. Mira, traje una foto de mi familia espacial para mostrarte. This is my brother, he is very funny."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Is that your brother? You can say, this is my brother. ¿Te animás a decirme quién es alguien de tu familia?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Oh, don't worry! Maybe you can tell me about your family. You can say, this is my mom, or this is my dad. Who do you want to show me?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Este es mi mamá, she is very nice y tiene un cat. This is my papá, he big y work mucho."
+   },
+   {
+    "who": "Profe",
+    "text": "Wow, your mom is very nice and she has a cat! And your dad is big, that is great. You have a lovely family."
+   }
+  ]
+ ]
+}

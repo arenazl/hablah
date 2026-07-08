@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 144,
+  "topic_title": "Dibujitos y superhéroes",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡qué alegría conocerte! Soy Sparky, tu amigo el dragoncito espacial. Hoy vamos a viajar juntos por el mundo de los dibujos animados. Yo tengo un dibujo favorito, mira, this is my blue superhero!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Hola, Sparky! I like… superhero! My superhero blue y fuerte. ¿Cómo se dice “villain”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué bueno conocerte! Un superhéroe fuerte es genial. Para decir villano en inglés decimos villain. Y dime, does your blue superhero have a big cape?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí! My superhero… have… big cape. It's blue y fuerte. ¿Cómo se dice “capa” en inglés?"
+    },
+    {
+      "who": "Profe",
+      "text": "That is a big blue cape! Yes, in English we say cape. Your superhero has a big blue cape, that sounds amazing!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Gracias, Sparky! My superhero... have big cape. It's... awesome! ¿Cómo se dice “awesome”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Yes, it is awesome! You are doing a great job describing your hero. Tell me, does your hero have a mask too?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí! My hero have mask. Es red! ¿Cómo se dice “mask”?"
+    },
+    {
+      "who": "Profe",
+      "text": "That is a red mask! Mask is how we say it, exactly like that. You did a wonderful job talking about your hero today, I love his red mask and big cape. Next time you can tell me more about your favorite villain, see you soon!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

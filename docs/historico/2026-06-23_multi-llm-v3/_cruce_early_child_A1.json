@@ -1,0 +1,821 @@
+{
+ "band": "early_child",
+ "level": "A1",
+ "title": "Mi familia",
+ "who": "un nene de 5 años, nivel A1: casi todo en español, 1-2 palabras en inglés sueltas",
+ "models": [
+  "gpt-oss:120b",
+  "qwen3-coder:480b",
+  "gemma3:27b",
+  "nemotron-3-nano:30b",
+  "minimax-m3"
+ ],
+ "personas": [
+  "trabado",
+  "fluido",
+  "quedado",
+  "crack"
+ ],
+ "cells": [
+  {
+   "model": "gpt-oss:120b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 7,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría encontrarte. Soy Sparky, tu amigo dragón, y hoy vamos a conocer a mi familia espacial. ¡Mira, este es mi hermano! He is my brother."
+    },
+    {
+     "who": "Alumno",
+     "text": "*asintiendo*… \"Hola… hermano?\""
+    },
+    {
+     "who": "Profe",
+     "text": "¡Claro! Él es mi hermano. He is my brother. ¿Tenés hermanos vos o algún familiar que quieras contarme?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí… hermana."
+    },
+    {
+     "who": "Profe",
+     "text": "¡Qué bueno, una hermana! You have a sister. Is she big or is she little?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí… pequeña."
+    },
+    {
+     "who": "Profe",
+     "text": "She is little! That is so sweet. Look, she is small and happy."
+    }
+   ]
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 56,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Soy Sparky, tu amigo dragón. ¡Qué emoción estar acá! Hoy vamos a jugar y conocer a mi familia espacial. ¿Cómo estás hoy? Tell me, how are you?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola Sparky! Yo estoy muy feliz, un poquito cansado pero I love jugar con dragones."
+    },
+    {
+     "who": "Profe",
+     "text": "¡Qué bueno que estés feliz, me encanta jugar con vos! Si estás un poquito cansado, podemos ir tranquilos. Look, this is my family, I have a big dragon family!"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Yo tengo mamá, papá y mi perrito Bruno! I have a brother también, ¿tú tienes hermanitos en tu familia?"
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, what a lovely family! Yes, I have got one little sister. She is very fast! And you have a dog named Bruno, that is great."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Yo tengo una hermanita pequeñita que se llama Ana y le gusta correr mucho! Do you have other dragons in your family?"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, a little sister named Ana! That sounds wonderful. I have a big brother, he is very strong and he loves to fly!"
+    }
+   ]
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 34,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial, ¡estoy muy emocionado! Mira, esta es mi mamá. She is very happy. ¿Y tú? ¿Quién es tu familia?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mi mamá es... niña? y my brother es small."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, that is wonderful! Your mom is lovely and your brother is small. I have a big family too!"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mi papá es big, y mi hermana es cute."
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, your dad is big and your sister is cute! That is a great family. I have a small sister too, she is very funny."
+    },
+    {
+     "who": "Alumno",
+     "text": "Mi papá es big y mi hermana es cute. Yo también tengo un perrito, es funny."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, a puppy! That is so cool. Your puppy is funny and very special. I have a big space dragon pet, he is very happy too!"
+    }
+   ]
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 38,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, peque! Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Yo tengo un hermanito dragón. ¿Tú tienes hermanos o hermanas?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Sí, yo tengo una hermana y un hermano! My brother is big y mi hermana es cute."
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, that is amazing! So you have a brother and a sister. Your big brother sounds very cool and your sister is cute too."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Yo también tengo un hermanito! He is small y muy funny."
+    },
+    {
+     "who": "Profe",
+     "text": "How wonderful! You have a small and funny brother too. I love having brothers. Is your brother playing with you right now?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Sí! Mi hermano está playing conmigo now y dice “hi”."
+    },
+    {
+     "who": "Profe",
+     "text": "That is so sweet! Say hi to your brother for me. My brother is playing too, he is very happy today."
+    }
+   ]
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 20,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría encontrarte. Soy Sparky, tu amigo dragón, y hoy vamos a conocer a mi familia espacial. Yo tengo una mamá dragona muy divertida. ¿Tú tienes familia, alguien a quien quieras mucho?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí... tengo mamá... y papá... y una hermanita."
+    },
+    {
+     "who": "Profe",
+     "text": "¡Wow, qué familia tan bonita tienes! A big family is wonderful. I have a little sister too. ¿Cómo se llama tu hermanita?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Se llama... Luna. Es pequeña."
+    },
+    {
+     "who": "Profe",
+     "text": "Luna is a beautiful name! She is little. Look, I have a photo of my family here. This is my mom. Do you want to see your sister Luna in a drawing?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí... quiero ver a Luna. Es bonita."
+    },
+    {
+     "who": "Profe",
+     "text": "Luna is beautiful! Let's draw her together. She is little and she is happy. Do you have a red crayon to color her hair?"
+    }
+   ]
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 81,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Soy Sparky, tu amigo dragón. ¡Estoy muy feliz de estar acá! Hoy vamos a conocer a mi familia espacial. Look, this is my brother."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola Sparky! Yo soy Mati y tengo un hermano también, se llama Tito. ¿Tu hermano es grande o chico?"
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, Tito! That sounds great. My brother is big and he loves to fly in space! Is Tito a big brother too?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Sí, Tito es grande y le gusta mucho jugar al fútbol! Yo también quiero tener una nave espacial como tu hermano, Sparky. ¿Tu papá también vuela en el espacio?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is amazing! Yes, my dad is a space pilot and he flies a shiny rocket. Do you have a rocket too, or do you play with your brother?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡No, yo no tengo una nave espacial todavía, pero juego con Tito a ser astronautas en el patio! A veces nos ponemos cascos de cartón y decimos \"¡Vamos a Marte!\" como los grandes."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like a super fun mission! You and Tito are brave astronauts. Do you have a helmet for your space adventures?"
+    }
+   ]
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 57,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría verte. Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Yo tengo una mamá dragona, ¡look, she is big!"
+    },
+    {
+     "who": "Alumno",
+     "text": "Profe... ¿y tu papá también es dragon? Yo tengo hambre. ¿Vamos a ver dibujitos después?"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, qué hambre tenés, ¡espero que después comas algo rico! Mi papá dragón no es tan grande, he is small. Do you have a big family?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Profe... mi familia es grande, sí. Tengo un hermano y una hermana. ¿Y vos tenés hermanos? Yo quiero jugar afuera, no quiero más clase."
+    },
+    {
+     "who": "Profe",
+     "text": "¡Entiendo! Jugar afuera suena muy divertido. Yo no tengo hermanos, pero I have a sister dragon. ¿Cómo se llaman tu hermano y tu hermana?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Se llaman Martín y Juana. Martín es más grande que yo, y Juana llora mucho. ¿Podemos irnos ya?"
+    },
+    {
+     "who": "Profe",
+     "text": "¡Wow, Martín y Juana! Me encanta cómo suenan esos nombres. Seguro te divertís mucho con ellos, y aunque Juana llore a veces, I have a brother and sister too. ¿Querés que juguemos a encontrar a mi familia escondida antes de terminar?"
+    }
+   ]
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 49,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría encontrarte. Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Mira, esta es mi mamá. She is my mom."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola Sparky! Yo también quiero mostrar *mi* familia. Esta es *mi mamá* y este es *mi papá*. ¡Y ese es *mi hermano*!"
+    },
+    {
+     "who": "Profe",
+     "text": "¡Wow, qué familia tan genial tienes! They are your family. Me encanta que me los presentes, ¿tu hermano es divertido?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Sí, mi hermano es muy divertido! *We play* todos los días."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like so much fun! You and your brother play together every day. How many toys do you have for playing?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Tenemos *muchos* juguetes! *My brother and I* jugamos con autos, pelotas y bloques. ¡Es muy divertido!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is amazing! You have many toys to play with. Do you have a favorite car or a big ball?"
+    }
+   ]
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 9,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola! Soy Sparky, tu amigo dragón. Hoy estoy muy feliz porque quiero contarte sobre mi familia. Mira, esta es mi mamá. This is my mom. ¿Me cuentas tú quién vive en tu casa?"
+    },
+    {
+     "who": "Alumno",
+     "text": "... Mamá. Y... papá."
+    },
+    {
+     "who": "Profe",
+     "text": "¡Qué bueno, mamá y papá! That is a great family. I have a dad, too. Tell me, do you have any brothers or sisters?"
+    },
+    {
+     "who": "Alumno",
+     "text": "...Sí. ...Hermano."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, a brother! That is wonderful. I have a brother too. Is your brother big or little?"
+    },
+    {
+     "who": "Alumno",
+     "text": "...Grande. ...Un poco."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, he is big! That is so cool. I have a big brother too, he is very strong. Do you like playing with your brother?"
+    }
+   ]
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 87,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Soy Sparky, tu amigo dragón. Hoy tengo mucha curiosidad por conocer a tu familia. Yo tengo una familia de dragones muy divertida. ¿Cómo es tu familia?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola Sparky! Mi familia es... es grande. Tengo mi mamá, mi papá y mi hermano pequeño, que se llama Tomás. ¡Él es un poquito \"crazy\"! ¿Tu familia de dragones, hacen \"fire\" o qué?"
+    },
+    {
+     "who": "Profe",
+     "text": "¡Wow, qué familia tan divertida! Your brother Tomás sounds amazing. Mi familia de dragones lanza muchas chispas de colores, ¡es un show! And tell me, is your brother big or is he small?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Él es... pequeño, ¡pero mucho ruido hace! Siempre quiere mis juguetes y yo digo \"no, no, no!\". ¿Los dragones tienen... tienen \"beds\"? ¡Yo tengo una cama de coche!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is so cool! A race car bed sounds awesome. And yes, my family has big dragon beds made of soft clouds to sleep on."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Guau, de nubes! ¡Qué suave! Mi cama de coche es roja y tiene luces. ¿Los dragones comen... comen \"pizza\"? ¡A Tomás le gusta mucho la pizza!"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, pizza is delicious! My dragon family loves to eat moon-cheese pizza for dinner. Does your brother Tomás like to eat a big slice of pizza?"
+    }
+   ]
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 37,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría encontrarte. Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Yo tengo una mamá dragona, ¡look, she is big and red!"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mmm... mi mamá... tiene pelo. Y un perro. ¿El perro es... family?"
+    },
+    {
+     "who": "Profe",
+     "text": "¡Claro que sí! Un perro es parte de la familia, it is a lovely pet. I have a dog too, he is very happy."
+    },
+    {
+     "who": "Alumno",
+     "text": "Mi... mi abuela hace bizcocho. Está bueno. ¿Tu perro come bizcocho?"
+    },
+    {
+     "who": "Profe",
+     "text": "¡Qué rico suena ese bizcocho! Tu abuela es genial. My dog likes food too, but he prefers crunchies. Does your grandma make cakes for you?"
+    },
+    {
+     "who": "Alumno",
+     "text": "No sé... a veces. Mi... mi tío tiene un coche. ¿Es family el coche?"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, los coches son geniales, ¡pero no son familia! Your uncle has a car, that is cool. Tell me, do you have a brother or a sister in your family?"
+    }
+   ]
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 49,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Soy Sparky, tu nuevo amigo dragón. Hoy vamos a conocer a mi familia espacial, ¡es muy divertida! Mira, esta es mi mamá, she is my mom. ¿Cómo es tu familia?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola Sparky! Mi familia... mi papá es grande y mi mamá es... nice! Y tengo una hermana, se llama Sofi."
+    },
+    {
+     "who": "Profe",
+     "text": "¡Qué familia tan genial tienes! Sofi sounds like a great sister. My dad is big too, he is very strong. Do you have a brother?"
+    },
+    {
+     "who": "Alumno",
+     "text": "No, no tengo brother. Pero tengo un perro, se llama Max y es... play! Él es mi amigo."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, a dog! Max sounds like a wonderful friend. My family has a small robot pet. Is Max a big dog or a small dog?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Max es... mediano. Él corre mucho y yo le doy... food!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is amazing! Max sounds like a very fast dog. I love that you feed him. Does he like to run in the park?"
+    }
+   ]
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 8,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría encontrarte. Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Mira, esta es mi mamá. She is very happy!"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mamá... Hello."
+    },
+    {
+     "who": "Profe",
+     "text": "Hello to you too! Your mom is wonderful. My mom is big and blue. Do you have a family?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yo tengo una hermana."
+    },
+    {
+     "who": "Profe",
+     "text": "¡Qué genial, tenés una hermana! She is your sister. And tell me, is your sister big or small?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Pequeña, small."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, she is small! That is so sweet. I have a baby brother and he is very small too."
+    }
+   ]
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 55,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Look, this is my mom!"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola, Sparky! Me encanta tu mamá, parece súper cool, ¿ella también tiene super‑poderes? 🚀✨"
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, thank you! Yes, my mom is amazing. She can fly very fast! Look, she is happy."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Wow! Mi mamá también es genial, ella me hace dibujos y nos cocina rico, ¿tú también tienes algo que te gusta hacer con tu mamá? 🌟🚀"
+    },
+    {
+     "who": "Profe",
+     "text": "That is wonderful! My mom and I like to fly through the stars together. I have a fun game with my mom."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Me encanta volar con mi mamá! ¿Podemos jugar al game de los cohetes juntos? 🚀✨"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great idea! Let's play. Look, I have two red rockets. How many rockets do you have?"
+    }
+   ]
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 35,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola! Soy Sparky, tu amigo dragón. Hoy tengo mucha curiosidad por conocer a tu familia. Yo tengo una familia de dragones muy divertida. ¿Cómo es tu familia?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mi familia es grande, mamá, papá y yo. Me gusta jugar, it's cool."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, that sounds like a wonderful family! You have a big family. Tell me, do you have any brothers or sisters, or is it just you, mom and dad?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Solo yo y mis papás. No tengo hermanos, cool."
+    },
+    {
+     "who": "Profe",
+     "text": "I understand! So it is just you, mom, and dad. That is a great team! Do you like to play games with them?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí, juego con papá y mamá, pero a veces me aburro. Dibujo cool."
+    },
+    {
+     "who": "Profe",
+     "text": "That is wonderful! Drawing with mom and dad sounds like a fun way to spend time. Do you like to draw big pictures with them?"
+    }
+   ]
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 50,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola! Soy Sparky, tu amigo dragón. Hoy tengo mucha curiosidad por conocer a tu familia. Yo tengo muchos hermanos dragones, ¡mira, esta es mi mamá!"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola! Mi mamá se llama Ana y yo tengo una hermana que se llama Lola. ¡Me gusta mucho jugar con ellos! (they are nice)"
+    },
+    {
+     "who": "Profe",
+     "text": "¡Qué familia tan linda! It sounds like your family is very nice. Do you have a favorite game to play with Lola?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Nos gusta jugar a la pelota y a los trenes. También jugamos tag en el parque."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like so much fun! Playing tag at the park is the best. Do you have a big ball to play with?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí, tengo una pelota azul grande. La llamo big ball."
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, a big blue ball! That is fantastic. I have a small red ball, but yours sounds much better for playing outside."
+    }
+   ]
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 20,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría encontrarte. Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Mira, esta es mi mamá dragona: This is my mom."
+    },
+    {
+     "who": "Alumno",
+     "text": "mmm... mom... ela... es... bonita."
+    },
+    {
+     "who": "Profe",
+     "text": "¡Qué linda es tu mamá, tenés razón! She is beautiful. ¿Y vos tenés una familia grande?"
+    },
+    {
+     "who": "Alumno",
+     "text": "mmm... yo... tengo... mom... y... dad... y... sister... chiquita."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a wonderful family! You have a mom, a dad, and a little sister. I have a big family too. Is your sister very small?"
+    },
+    {
+     "who": "Alumno",
+     "text": "mmm... sí... she is... very small."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, she is a tiny baby! I have a baby brother too. Look, this is my brother. Do you have a brother or just your sister?"
+    }
+   ]
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 75,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola! Soy Sparky, tu amigo dragón. Hoy tengo muchas ganas de presentarte a mi familia espacial. Look, this is my mom."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola mom! ¡Es muy bonita! Mi mom tiene el pelo largo, como... como yellow. ¿Tu mom vuela también?"
+    },
+    {
+     "who": "Profe",
+     "text": "Your mom has yellow hair? How cool! Yes, my mom flies very fast in the sky. She is very happy. Do you have a big family?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Sí, mi family es muy big! Tengo mom y dad y un brother que se llama Tomás. Es muy loco, siempre rompe mis toys. ¿Tú tienes un dad, Sparky? ¿Cómo se llama?"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, a brother named Tomas! That sounds like a lot of fun. Yes, I have a dad, his name is Sparky Senior. He is very big and strong!"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Jaja se llama igual que vos! ¡Qué funny! Mi dad también es big y cocina muy rico, hace unas pizzas... ¿Tu dad come fuego también?"
+    },
+    {
+     "who": "Profe",
+     "text": "My dad loves to eat space fire! It is his favorite meal. Does your dad like to cook pizza for you?"
+    }
+   ]
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 53,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría encontrarte. Soy Sparky, tu amigo dragón. Hoy vamos a explorar mi mundo y conocer a mi familia. Mira, esta es mi mamá, she is my mom. ¿Tú tienes familia aquí?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí... tengo una mamá. Y un hermano. Mi hermano es... feo. Jaja. ¿Tu mamá es grande?"
+    },
+    {
+     "who": "Profe",
+     "text": "¡Jajaja, qué divertido! Your brother is funny. And my mom is very big! Look, she has got big wings. Is your mom big too?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí, mi mamá es... mediana. No es grande. Eh... ¿tu papá dónde está? ¿Es un dragón también?"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, my mom is big, but your mom sounds great! My dad is a dragon too, he is playing in the clouds. Is your dad a dragon, or is he something else?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mi papá es... humano. Trabaja en una oficina, no sé. Eh... ¿los dragones vuelan mucho? Quiero un dragon de juguete."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, a human dad, that is so cool! Dragons love to fly in the sky all day long. Look, I have a tiny dragon toy right here for you!"
+    }
+   ]
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 45,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "¡Hola, hola! Qué alegría verte. Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Yo tengo una mamá dragona, I have a big mom. ¿Y tú, tienes a alguien especial en tu familia?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola Sparky! Yo tengo una mamá y un papá, y un hermano chiquito. My brother se llama Lucas. 😄"
+    },
+    {
+     "who": "Profe",
+     "text": "Wow, what a great family! Lucas sounds like a fun brother. I have a sister too, she is very tall."
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Wow! Tu hermana es muy alta. My mom también es alta. 😄"
+    },
+    {
+     "who": "Profe",
+     "text": "That is amazing! Your mom sounds super tall too. I have a brother who is very fast, he is like a rocket! Do you have any sisters?"
+    },
+    {
+     "who": "Alumno",
+     "text": "No, no tengo hermanas. Solo tengo a my brother Lucas. ¡Es muy divertido! 😄"
+    },
+    {
+     "who": "Profe",
+     "text": "He sounds like a lot of fun! Having a great brother is wonderful. Since Lucas is fun, is he also very fast like a little rocket?"
+    }
+   ]
+  }
+ ]
+}

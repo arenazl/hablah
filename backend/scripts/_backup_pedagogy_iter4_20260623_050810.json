@@ -1,0 +1,54 @@
+{
+  "updates": [
+    {
+      "table": "trigger_template",
+      "where": "band_group='teen' AND kind='continuation'",
+      "old": [
+        "Una pregunta/consigna por turno, español al mínimo, conectando con sus intereses."
+      ]
+    },
+    {
+      "table": "trigger_template",
+      "where": "band_group='adult' AND kind='continuation'",
+      "old": [
+        "Una situación por turno, sin castellano, pistas si se traba >3s; avanzá hacia {objective}."
+      ]
+    },
+    {
+      "table": "pedagogy",
+      "where": "band_id=4",
+      "old": [
+        "Fluency first. No interrumpir por errores menores; anotar vicios en silencio para el cierre"
+      ]
+    },
+    {
+      "table": "band_policy",
+      "where": "band_id=4 AND kind='feedback'",
+      "old": [
+        "Resumen + 1-2 correcciones + 1 métrica observable (ej: 'Comprendiste 85% sin ayuda; hace 3 clases era 60%') + micro-tarea para casa."
+      ]
+    },
+    {
+      "table": "band_policy",
+      "where": "band_id=2 AND kind='feedback'",
+      "old": [
+        "Visual + recast implícito: Nova repite la forma correcta de manera natural, sin culpa. Ej: niño dice 'The cat sleep' → Nova: 'Ooh, the cat IS sleeping! ¡Durmiendo tan lindo!' (modelado de input integrado)"
+      ]
+    },
+    {
+      "table": "behavioral_guard",
+      "where": "band_id=2 AND ord=2",
+      "old": [
+        "Frases CON SENTIDO (chunks comunicativos), no telegráficas de 2-4 palabras; el objetivo es comunicar una idea, no contar palabras."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "where": "level_code='A2' AND kind='hint_policy'",
+      "old": [
+        "Ante traba: reformulation (parafrasear en inglés) + recast implícito. Traducir solo si 2+ intentos fallidos."
+      ]
+    }
+  ],
+  "inserts": []
+}

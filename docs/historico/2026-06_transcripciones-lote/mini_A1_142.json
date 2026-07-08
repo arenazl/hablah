@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 142,
+  "topic_title": "Comidas ricas",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "¡Hola, hola! Soy Sparky, tu amigo dragón. ¡Estoy súper feliz de conocerte! Hoy vamos a explorar un mundo lleno de comidas deliciosas. Mira, yo tengo una manzana roja aquí, ¡I have a red apple!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Hola Sparky! I like... apple! Es roja y yummy, ¿cómo se dice “banana”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué bueno, te encantan las manzanas! Y claro, esa es una banana amarilla, you have a yellow banana. A mí también me encantan, ¡son deliciosas!"
+    },
+    {
+      "who": "Alumno",
+      "text": "My apple red! Es muy yummy. I like… banana! ¿Cómo se dice “uvas”?"
+    },
+    {
+      "who": "Profe",
+      "text": "You have red apples and you like bananas, that is wonderful! Those little green fruits are grapes, look at these yummy grapes."
+    },
+    {
+      "who": "Alumno",
+      "text": "My grapes green! Son verdes.   I like... grapes! Muy rico.   ¿Cómo se dice “sandía”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, that big, refreshing fruit is a watermelon! I love to eat a big slice of cold watermelon. What about you, do you like watermelon?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Me gusta... watermelon! My watermelon big! Es muy refrescante, ¿cómo se dice “sweet”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Yes, watermelon is so sweet! You did an amazing job today, we learned so many tasty words like apples, grapes and watermelon. I loved hearing about what you like, next time tell me more about your favorite snacks. See you soon!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 139,
+  "topic_title": "Animales de la granja y la selva",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "¡Hola! Soy Sparky, tu amigo dragón. Estoy muy feliz de verte hoy. Mira, ¡tengo un amigo aquí! This is a lion, he is big."
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Hola Sparky! It's a lion! My lion big, ¿verdad? ¿Cómo se dice “big” en inglés?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Hola! Qué alegría que estés conmigo. Yes, you are right, your lion is big! Se dice exactamente así, big. ¿Tu león también tiene amigos para jugar?"
+    },
+    {
+      "who": "Alumno",
+      "text": "My lion big! I like… jugar con él. ¿Cómo se dice “play”?"
+    },
+    {
+      "who": "Profe",
+      "text": "That is wonderful! Play se dice play. You can say I like to play with my lion. What else does your big lion like to do?"
+    },
+    {
+      "who": "Alumno",
+      "text": "My lion big! I like… jugar con él. ¿Cómo se dice “run” en inglés?"
+    },
+    {
+      "who": "Profe",
+      "text": "That is a great word! Run means correr. Your big lion can run very fast! Does your lion like to run in the jungle?"
+    },
+    {
+      "who": "Alumno",
+      "text": "My lion big! I like… run con él. ¿Cómo se dice “jungle”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Jungle se dice jungle. That is so cool, your big lion can run in the jungle! You did a fantastic job today learning all about lions. Next time, tell me more about your favorite animals, goodbye!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 3,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 8,
+    "reciclado": 8,
+    "score": 7,
+    "verdict": "El coach es muy afectuoso y mantiene el nivel adecuado, utilizando recasts y reciclando vocabulario de forma efectiva. Sin embargo, la conversación es un poco unidireccional y el cierre de la clase es muy abrupto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 9,
+    "filtro_afectivo": 9,
+    "input_comprensible": 9,
+    "produccion_forzada": 6,
+    "score": 7.7,
+    "variedad": 4,
+    "verdict": "El ambiente es excelente para reducir el filtro afectivo y el input es muy comprensible. Las correcciones implícitas son efectivas. Sin embargo, la variedad de actividades es limitada y el coach podría generar más oportunidades para una producción más extensa del alumno."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 9,
+    "ritmo": 8,
+    "score": 8.4,
+    "verdict": "Me sentí muy cómodo y motivado para hablar gracias al tono entusiasta del profe. Entendí todo y sentí que practiqué un poco, aunque la clase terminó de forma muy abrupta."
+  },
+  "score_global": 7.7,
+  "para_mejorar": "Añade instrucciones para un cierre gradual de la clase y para formular preguntas que inviten a respuestas más elaboradas del alumno.",
+  "banda": "mini",
+  "hallazgos": [
+    "cierre abrupto",
+    "poca variedad de actividades",
+    "producción del alumno limitada a respuestas cortas",
+    "excelente manejo del filtro afectivo",
+    "input comprensible y recasts efectivos"
+  ],
+  "nivel": "A0",
+  "topico": "Dibujitos y superhéroes",
+  "band": "mini",
+  "topic_id": 144
+}

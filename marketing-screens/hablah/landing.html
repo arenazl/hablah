@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habláh — Inicio (landing)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#002554;--gold:#c9a45a;--cream:#F4F0E7;--ink:#16233a;--muted:#6b7686;--line:#e4ddcf}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink)}
+.nav{height:66px;display:flex;align-items:center;justify-content:space-between;max-width:1080px;margin:0 auto;padding:0 28px}
+.brand{display:flex;align-items:center;gap:11px}
+.mark{width:34px;height:34px;border-radius:10px;background:var(--navy);display:grid;place-items:center}
+.mark span{display:block;width:4px;height:14px;border-radius:2px;background:var(--gold);box-shadow:7px 0 0 var(--gold),-7px 3px 0 #fff}
+.brand-name{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--navy)}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--ink)}
+.nav-links a{color:var(--muted);text-decoration:none}
+.nav-cta{background:var(--navy);color:#fff;font-weight:600;padding:9px 18px;border-radius:999px}
+/* hero */
+.hero{max-width:1080px;margin:0 auto;padding:54px 28px 40px;display:grid;grid-template-columns:1.05fr .95fr;gap:46px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:#8a6d2a;background:rgba(201,164,90,.16);padding:6px 13px;border-radius:999px}
+.eyebrow span{width:6px;height:6px;border-radius:50%;background:#22a05b}
+.h1{font-family:'Fraunces',serif;font-size:52px;line-height:1.05;font-weight:600;color:var(--navy);letter-spacing:-0.02em;margin:18px 0 0}
+.h1 em{font-style:italic;color:var(--gold)}
+.lead{font-size:17px;color:var(--muted);line-height:1.55;margin-top:18px;max-width:480px}
+.cta-row{display:flex;align-items:center;gap:16px;margin-top:28px}
+.cta{background:var(--gold);color:#3b2c08;font-weight:700;font-size:16px;padding:15px 28px;border-radius:999px;display:inline-flex;align-items:center;gap:10px}
+.cta-sec{font-size:14px;color:var(--navy);font-weight:600}
+.trust{display:flex;align-items:center;gap:22px;margin-top:30px;font-size:13px;color:var(--muted)}
+.trust b{font-family:'Fraunces',serif;color:var(--navy);font-size:18px}
+/* hero visual: phone with coach */
+.shot{background:#fff;border-radius:26px;border:1px solid var(--line);box-shadow:0 30px 70px -30px rgba(0,37,84,.5);padding:22px;position:relative}
+.shot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.shot-chip{font-size:11px;font-weight:600;background:rgba(0,37,84,.08);color:var(--navy);padding:4px 10px;border-radius:999px}
+.shot-coach{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0 18px}
+.ring{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 50% 38%,#3a5b91,#002554);display:grid;place-items:center;color:#fff;font-family:'Fraunces',serif;font-size:36px;font-weight:600;box-shadow:0 14px 34px -12px rgba(0,37,84,.6)}
+.wave{display:flex;align-items:flex-end;gap:5px;height:34px}
+.wave i{width:5px;border-radius:3px;background:var(--gold);display:block}
+.wave i:nth-child(1){height:40%}.wave i:nth-child(2){height:80%}.wave i:nth-child(3){height:100%}.wave i:nth-child(4){height:55%}.wave i:nth-child(5){height:75%}.wave i:nth-child(6){height:34%}
+.shot-msg{background:#eef2f8;border-radius:13px;border-bottom-left-radius:5px;padding:11px 14px;font-size:13.5px;color:var(--ink);margin-bottom:9px}
+.shot-msg.you{background:var(--navy);color:#fff;border-radius:13px;border-bottom-right-radius:5px}
+.shot-msg em{color:var(--navy);font-style:normal;font-weight:600}
+/* features */
+.features{max-width:1080px;margin:30px auto 64px;padding:0 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.feat-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin-bottom:14px}
+.feat-h{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.feat-p{font-size:13.5px;color:var(--muted);line-height:1.5}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="brand"><div class="mark"><span></span></div><div class="brand-name">Habláh</div></div>
+  <div class="nav-links">
+    <a>Cómo funciona</a><a>Para chicos</a><a>Precios</a>
+    <a class="nav-cta">Empezar</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="eyebrow"><span></span> Tu coach de inglés por voz</div>
+    <h1 class="h1">Aprendé inglés <em>hablando</em>, no tocando botones.</h1>
+    <p class="lead">Un profe con IA que te escucha, te responde por voz y te corrige sin frenarte. Se adapta a tu nivel y a lo que ya practicaste. Desde cero hasta avanzado.</p>
+    <div class="cta-row">
+      <a class="cta"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b2c08" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg> Probá una clase</a>
+      <span class="cta-sec">Sin tarjeta &middot; 5 minutos</span>
+    </div>
+    <div class="trust">
+      <div><b>A0–C2</b><br>todos los niveles</div>
+      <div><b>Kids y adultos</b><br>un modo para cada uno</div>
+    </div>
+  </div>
+
+  <div class="shot">
+    <div class="shot-top"><div class="shot-chip">Nivel B1 · Viajes</div><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="shot-coach">
+      <div class="ring">A</div>
+      <div style="font-size:12px;color:var(--muted)">Alex está hablando…</div>
+    </div>
+    <div class="shot-msg">Where would you go on your next trip?</div>
+    <div class="shot-msg you">I want go to Japan, I love the food.</div>
+    <div class="shot-msg">Nice! So you <em>want to go</em> to Japan. What would you eat first?</div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feat">
+    <div class="feat-ico" style="background:rgba(0,37,84,.08)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#002554" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
+    <div class="feat-h">Voz real, no chat</div>
+    <div class="feat-p">Hablás y te responden hablando, como una clase de conversación. Nada de escribir ni tocar opciones.</div>
+  </div>
+  <div class="feat">
+    <div class="feat-ico" style="background:rgba(201,164,90,.16)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a6d2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg></div>
+    <div class="feat-h">Se adapta a vos</div>
+    <div class="feat-p">Cada clase se calibra a tu nivel y retoma lo de la vez pasada. El coach te corrige sin frustrarte.</div>
+  </div>
+  <div class="feat">
+    <div class="feat-ico" style="background:rgba(76,195,138,.14)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1c8049" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></div>
+    <div class="feat-h">Kids y adultos</div>
+    <div class="feat-p">Un modo lúdico con personaje para los chicos y conversación por temas reales para los grandes.</div>
+  </div>
+</section>
+</body>
+</html>

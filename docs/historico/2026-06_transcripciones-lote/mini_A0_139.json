@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A0",
+  "topic_id": 139,
+  "topic_title": "Animales de la granja y la selva",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡qué emoción conocerte! Soy Sparky, tu amigo dragón. Estoy buscando animales increíbles hoy, ¿tenés algún animal favorito en casa o en la selva?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí sí! Tengo un dog en casa, se llama Toby. ¡Mira mira!"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Wow, qué nombre genial tiene Toby! Me encanta que tengas un perro, los perros son los mejores amigos. ¿Y Toby es un perro grande o es pequeñito?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Mira mira! Es grande, dog."
+    },
+    {
+      "who": "Profe",
+      "text": "¡Es enorme! Toby sounds like a very big and strong dog. You must have so much fun running with him in the park."
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Mira mira! park?"
+    },
+    {
+      "who": "Profe",
+      "text": "Yes, the park! Es el lugar donde vas con Toby a correr y jugar. Do you like playing in the park with your big dog?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí, me gusta jugar en el parque con mi dog! ¡Mira mira!"
+    },
+    {
+      "who": "Profe",
+      "text": "That is wonderful, Toby sounds like such a happy dog! You did an amazing job telling me about your friend today. Next time, maybe you can tell me even more about the games you play together. See you soon, big dog friend!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

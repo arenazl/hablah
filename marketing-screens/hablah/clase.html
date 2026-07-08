@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habláh — Clase de voz en vivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#002554;--gold:#c9a45a;--cream:#F4F0E7;--ink:#16233a;--muted:#6b7686;--line:#e4ddcf}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+/* top */
+.top{height:62px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 26px;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:11px}
+.mark{width:34px;height:34px;border-radius:10px;background:var(--navy);display:grid;place-items:center}
+.mark span{display:block;width:4px;height:14px;border-radius:2px;background:var(--gold);box-shadow:7px 0 0 var(--gold),-7px 3px 0 #fff}
+.brand-name{font-family:'Fraunces',serif;font-weight:700;font-size:19px;color:var(--navy);letter-spacing:-0.01em}
+.lesson-meta{display:flex;align-items:center;gap:10px}
+.chip{font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px}
+.chip-level{background:rgba(0,37,84,.08);color:var(--navy)}
+.chip-topic{background:rgba(201,164,90,.16);color:#8a6d2a}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#2a4a7f,#002554);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:700}
+/* stage */
+.stage{flex:1;display:grid;grid-template-columns:1fr 380px;gap:0;overflow:hidden}
+.left{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:30px;position:relative}
+.coach{display:flex;flex-direction:column;align-items:center;gap:16px}
+.coach-ring{width:142px;height:142px;border-radius:50%;background:radial-gradient(circle at 50% 38%,#3a5b91,#002554);display:grid;place-items:center;position:relative;box-shadow:0 18px 50px -16px rgba(0,37,84,.55)}
+.coach-ring::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:2px solid rgba(201,164,90,.4)}
+.coach-face{font-family:'Fraunces',serif;font-size:52px;color:#fff;font-weight:600}
+.coach-name{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--navy)}
+.coach-state{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:#22a05b;box-shadow:0 0 0 4px rgba(34,160,91,.16)}
+/* wave */
+.wave{display:flex;align-items:flex-end;gap:5px;height:46px}
+.wave span{width:5px;border-radius:3px;background:var(--gold)}
+.wave span:nth-child(1){height:30%}.wave span:nth-child(2){height:62%}.wave span:nth-child(3){height:100%}
+.wave span:nth-child(4){height:48%}.wave span:nth-child(5){height:80%}.wave span:nth-child(6){height:36%}
+.wave span:nth-child(7){height:70%}.wave span:nth-child(8){height:52%}.wave span:nth-child(9){height:24%}
+.hint{font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 16px;max-width:340px;text-align:center}
+.hint b{color:var(--navy)}
+/* transcript */
+.right{background:#fff;border-left:1px solid var(--line);display:flex;flex-direction:column}
+.right-head{padding:16px 20px;border-bottom:1px solid var(--line);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.chat{flex:1;padding:18px 20px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+.msg{max-width:84%}
+.msg .who{font-size:10.5px;color:var(--muted);margin-bottom:4px}
+.bubble{padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.45}
+.coach-msg{align-self:flex-start}
+.coach-msg .bubble{background:#eef2f8;color:var(--ink);border-bottom-left-radius:5px}
+.coach-msg .bubble em{color:var(--navy);font-style:normal;font-weight:600}
+.you-msg{align-self:flex-end}
+.you-msg .who{text-align:right}
+.you-msg .bubble{background:var(--navy);color:#fff;border-bottom-right-radius:5px}
+/* mic bar */
+.micbar{padding:16px 20px;border-top:1px solid var(--line);display:flex;align-items:center;gap:14px}
+.mic{width:50px;height:50px;border-radius:50%;background:var(--gold);display:grid;place-items:center;flex-shrink:0;box-shadow:0 8px 22px -8px rgba(201,164,90,.8)}
+.mic svg{width:22px;height:22px}
+.level{flex:1}
+.level-label{font-size:11px;color:var(--muted);margin-bottom:6px}
+.level-track{height:7px;border-radius:4px;background:#edeef2;overflow:hidden}
+.level-fill{height:100%;width:58%;border-radius:4px;background:linear-gradient(90deg,#22a05b,#5fcf8e)}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand">
+    <div class="mark"><span></span></div>
+    <div class="brand-name">Habláh</div>
+  </div>
+  <div class="lesson-meta">
+    <span class="chip chip-level">Nivel B1</span>
+    <span class="chip chip-topic">Viajes y culturas</span>
+    <div class="avatar">VL</div>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="left">
+    <div class="coach">
+      <div class="coach-ring"><div class="coach-face">A</div></div>
+      <div style="text-align:center">
+        <div class="coach-name">Alex, tu coach</div>
+        <div class="coach-state" style="justify-content:center;margin-top:5px"><span class="dot"></span> Hablando…</div>
+      </div>
+    </div>
+    <div class="wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="hint">Respondé en voz alta. Si te trabás, el coach te tira una pista y te reformula bien, <b>sin frenar la charla</b>.</div>
+  </div>
+
+  <div class="right">
+    <div class="right-head">Transcripción en vivo</div>
+    <div class="chat">
+      <div class="msg coach-msg"><div class="who">Alex</div><div class="bubble">Hey! If you could travel anywhere right now, where would you go and why?</div></div>
+      <div class="msg you-msg"><div class="who">Vos</div><div class="bubble">I would go to Japan, I love the food and I want see the temples.</div></div>
+      <div class="msg coach-msg"><div class="who">Alex</div><div class="bubble">Japan is a great choice! So you <em>want to see</em> the temples. What is the first place you'd visit?</div></div>
+      <div class="msg you-msg"><div class="who">Vos</div><div class="bubble">Maybe Kyoto, I saw photos and is beautiful.</div></div>
+      <div class="msg coach-msg"><div class="who">Alex</div><div class="bubble">Kyoto, nice. <em>It is</em> beautiful, right? Tell me, what do you want to do there first?</div></div>
+    </div>
+    <div class="micbar">
+      <div class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg></div>
+      <div class="level">
+        <div class="level-label">Tu micrófono</div>
+        <div class="level-track"><div class="level-fill"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

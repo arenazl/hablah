@@ -1,0 +1,44 @@
+{
+  "juez1_profe": {
+    "afecto": 10,
+    "cierre": 9,
+    "naturalidad": 8,
+    "nivel": 9,
+    "recast": 7,
+    "reciclado": 9,
+    "score": 8.7,
+    "verdict": "El profe es muy afectuoso y mantiene un nivel adecuado. Recicla vocabulario de forma excelente, pero podría haber usado más recasts implícitos en lugar de traducciones directas. El cierre fue muy bueno."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 10,
+    "correccion_implicita": 7,
+    "filtro_afectivo": 10,
+    "input_comprensible": 9,
+    "produccion_forzada": 8,
+    "variedad": 7,
+    "verdict": "El ambiente es excelente para bajar el filtro afectivo. El input es comprensible y el coach genera oportunidades de producción. Las correcciones son a menudo explícitas, lo que podría reducirse en favor de más recasts implícitos."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 10,
+    "logro": 8,
+    "motivacion": 10,
+    "ritmo": 9,
+    "score": 9.2,
+    "verdict": "Me sentí muy cómodo y motivado para hablar. El profe fue muy claro y me hizo sentir que aprendí palabras nuevas y pude usarlas."
+  },
+  "score_global": 8.8,
+  "para_mejorar": "Priorizar recasts implícitos para correcciones de vocabulario y gramática, en lugar de traducciones directas, para fomentar la inferencia del alumno.",
+  "banda": "mini",
+  "hallazgos": [
+    "Excelente afecto y motivación del coach",
+    "Nivel de input adecuado para A1",
+    "Reciclado de vocabulario muy efectivo",
+    "Correcciones a menudo explícitas (traducciones directas) en lugar de recasts implícitos",
+    "Cierre de clase muy bien logrado"
+  ],
+  "nivel": "A1",
+  "topico": "Mis colores favoritos",
+  "band": "mini",
+  "topic_id": 138
+}

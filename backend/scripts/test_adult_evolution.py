@@ -107,7 +107,7 @@ async def _derive_outcomes(db, level, conv):
 
 
 def _ensure_student(db, level, topic_id, seq_idx):
-    key = f"itest_adult_{level}_t{topic_id}_{seq_idx}"
+    key = f"it_{level}_{topic_id}_{seq_idx}"  # profile_key VARCHAR(20)
     row = db.q1("SELECT student_id FROM student WHERE profile_key=%s", (key,))
     if row:
         sid = row["student_id"]
@@ -193,11 +193,54 @@ async def _pick_topics(db, levels, n):
     return out
 
 
+# ── modo CONFIRM: ¿el bajón de clase 2 es real o ruido? 3 secuencias/target, promedio por posición ──
+CONFIRM_TARGETS = [
+    ("A1", "Fútbol", "bajó"), ("A2", "Cine", "bajó"), ("B1", "luz", "bajó"),
+    ("A2", "planeta", "control (no bajó)"),
+]
+N_SEQ = 3
+
+
+def _pick_adult_by_match(db, match):
+    r = db.q1("""SELECT t.topic_id, t.title FROM topic t JOIN topic_suggested_band tsb ON tsb.topic_id=t.topic_id
+                 JOIN age_band ab ON ab.band_id=tsb.band_id WHERE ab.code='adult'
+                 AND (t.origin IS NULL OR t.origin<>'kids_personal') AND t.title LIKE %s LIMIT 1""",
+              (f"%{match}%",))
+    return (r["topic_id"], r["title"]) if r else (None, match)
+
+
+async def run_confirm(db, sem):
+    print(f"CONFIRM · {len(CONFIRM_TARGETS)} targets x {N_SEQ} secuencias x {CLASSES} clases (promedio por posición)")
+    rows = []
+    for level, match, tag in CONFIRM_TARGETS:
+        tid, title = _pick_adult_by_match(db, match)
+        if not tid:
+            print(f"  {level} {match}: sin tópico"); continue
+        seqs = await asyncio.gather(*[run_sequence(db, level, tid, title, 100 + i, sem) for i in range(N_SEQ)])
+        per_pos = []
+        for pos in range(CLASSES):
+            vals = [s["scores"][pos] for s in seqs if pos < len(s["scores"]) and s["scores"][pos] is not None]
+            per_pos.append(round(sum(vals) / len(vals), 1) if vals else None)
+        dip = per_pos[0] is not None and per_pos[1] is not None and per_pos[1] < per_pos[0]
+        raw = [s["scores"] for s in seqs]
+        rows.append({"level": level, "title": title, "tag": tag, "per_pos": per_pos, "dip": dip, "raw": raw})
+        print(f"  {level} · {title[:20]:<20} [{tag}] prom c1→c2→c3 = {per_pos}  raw={raw}  {'BAJÓN' if dip else 'sin bajón'}")
+    _persist("confirm dip 3-muestras", rows)
+    print("\n-------- VEREDICTO (¿el bajón de clase 2 es real?) --------")
+    for r in rows:
+        print(f"  {r['level']} {r['title'][:18]:<18} [{r['tag']}] {r['per_pos']} -> {'BAJA en clase 2' if r['dip'] else 'sin bajón'}")
+
+
 async def main():
-    full = len(sys.argv) > 1 and sys.argv[1] == "full"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "smoke"
     db = motor_engine._connect()
     sem = asyncio.Semaphore(CONCURRENCY)
 
+    if mode == "confirm":
+        await run_confirm(db, sem)
+        return
+
+    full = mode == "full"
     if not full:
         # SMOKE: 1 secuencia B1, primer topico adulto
         t = db.q1("""SELECT t.topic_id, t.title FROM topic t

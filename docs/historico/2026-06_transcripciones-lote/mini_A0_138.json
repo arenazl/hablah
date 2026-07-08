@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A0",
+  "topic_id": 138,
+  "topic_title": "Mis colores favoritos",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡qué alegría verte! Soy Sparky, tu amigo dragón. Hoy mi nave espacial brilla con muchos colores. ¿Cuál es tu color favorito?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Mira mira! Mi color favorito es blue. ¿blue?"
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, blue is a beautiful color, just like the deep space! My favorite color is bright orange, like my dragon scales. What other colors do you see on my ship today?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Yo veo red! ¡Sí sí!"
+    },
+    {
+      "who": "Profe",
+      "text": "Wow, you found the red one! That is a super bright red, just like a star. Do you see any yellow on my ship too?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Mira mira! ¿yellow?"
+    },
+    {
+      "who": "Profe",
+      "text": "Yes! You found it! That is a shiny yellow button. You are so good at finding colors!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí sí! ¿yellow?"
+    },
+    {
+      "who": "Profe",
+      "text": "Exactly! You found the shiny yellow button! It has been so much fun finding colors with you today, you did a great job. Next time, tell me all about your favorite toys. See you later!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

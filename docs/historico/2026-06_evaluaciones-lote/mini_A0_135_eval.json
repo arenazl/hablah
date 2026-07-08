@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 3,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 9,
+    "reciclado": 6,
+    "score": 6.8,
+    "verdict": "El profe es muy afectuoso y maneja bien el nivel, con recasts efectivos. Sin embargo, la conversación es algo mecánica y el cierre es demasiado abrupto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 9,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 5,
+    "score": 7.5,
+    "variedad": 5,
+    "verdict": "El ambiente es excelente para bajar el filtro afectivo y el input es comprensible. Sin embargo, la producción del alumno es limitada y la variedad de actividades es baja."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 9,
+    "ritmo": 8,
+    "score": 8.4,
+    "verdict": "Me sentí muy cómodo y motivado para hablar. El profe fue claro y me hizo sentir capaz, aunque la clase terminó un poco de golpe."
+  },
+  "score_global": 7.6,
+  "para_mejorar": "Instruir al coach para que el cierre sea gradual, resumiendo lo aprendido, y para que genere más oportunidades de producción extendida del alumno.",
+  "banda": "mini",
+  "hallazgos": [
+    "cierre abrupto",
+    "pocas oportunidades de producción extendida del alumno",
+    "variedad limitada de interacción (predominio de Q&A)",
+    "excelente manejo del filtro afectivo y recasts implícitos",
+    "nivel y input muy adecuados para A0"
+  ],
+  "nivel": "A0",
+  "topico": "Mi familia",
+  "band": "mini",
+  "topic_id": 135
+}

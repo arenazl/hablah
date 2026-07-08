@@ -1,0 +1,158 @@
+{
+ "band": "adult",
+ "level": "A1",
+ "title": "El mundo de los dinosaurios",
+ "who": "un adulto (A1) principiante, muy basico, mezcla espanol",
+ "transcripts": [
+  [
+   {
+    "who": "Profe",
+    "text": "Hola, soy Alex. Hoy practicamos sin presión. Los errores son solo información para aprender. ¿Te gustaría que charlemos sobre dinosaurios hoy o preferís otro tema para empezar?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Me gusta los dinosaurios, sí, lets talk about them please."
+   },
+   {
+    "who": "Profe",
+    "text": "That sounds great! I love dinosaurs too. Let's start our journey. Look at this picture, it's a T-Rex. It is a very big dinosaur. What about you, what is your favorite dinosaur?"
+   },
+   {
+    "who": "Alumno",
+    "text": "My favorite dinosaur es el T‑Rex, it is very big and I like it because it have big teeth. I think it roar very loud y me hace feliz cuando lo veo en the picture."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a perfect choice, the T-Rex is amazing. It has big teeth and it roars very loudly indeed. If you look at this other one, this is a Triceratops. Is this dinosaur big or small?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Don't worry, take your time! Just look at the Triceratops, it is quite large, isn't it? Would you say it is big or small compared to the T-Rex?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola! Qué bueno que estés acá. Hoy vamos a practicar sin presión, recordá que los errores son parte de aprender. ¿Te parece si imaginamos que estamos en un parque de dinosaurios? Para empezar, decime, ¿te gustaría hablar sobre dinosaurios o preferís algún otro tema?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Sí, me gusta mucho los dinosaurs, quiero hablar de ellos. 😃"
+   },
+   {
+    "who": "Profe",
+    "text": "That sounds great! I love dinosaurs too. To start, imagine we are looking at a huge nest together. Look, there is a big dinosaur egg! Can you tell me what you see?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Look, it is a giant egg. Is it a big egg or a small egg?"
+   },
+   {
+    "who": "Alumno",
+    "text": "It es a big egg, muy grande, I think es big not small. 😄"
+   },
+   {
+    "who": "Profe",
+    "text": "That is exactly right, it is a big egg. Great job! Now, look at that dinosaur over there. Is it a big dinosaur or a small one?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola! Qué bueno encontrarte. Hoy vamos a practicar sin presión, recordá que los errores son parte del aprendizaje. ¿Qué te parece si imaginamos que estamos en una expedición en el mundo de los dinosaurios? Para arrancar, contame, ¿te gustaría que practiquemos sobre este tema o preferís algún otro?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Me gusta mucho los dinosaurios, I think they are very big and I want learn more. 🙈"
+   },
+   {
+    "who": "Profe",
+    "text": "That sounds like a great plan! They are indeed huge creatures. Let's start our adventure: look, I see a T-Rex in the distance, and it is very big. What animal do you see in the jungle?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I see a triceratops, yo veo it in the jungle y es big and tiene three horns. 🙃"
+   },
+   {
+    "who": "Profe",
+    "text": "That is an impressive sighting! A triceratops is quite large and has three horns, just like you said. Look, I see a small egg near the triceratops. Is it a baby dinosaur?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Yes, it es un bebé dinosaurio, maybe it will hatch soon y crecer big! 🙈"
+   },
+   {
+    "who": "Profe",
+    "text": "That is right, it is a baby dinosaur. It is small now, but soon it will be a big, strong dinosaur. I see another one near it, how many eggs do you see in total?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hola, soy Alex. Hoy practicamos sin presión. Los errores son solo información para aprender. ¿Te gustaría que hoy practiquemos sobre dinosaurios, viajes o conversación social?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "¡Hola! ¿Cómo va todo? Te propongo viajar al pasado para descubrir dinosaurios, ¿te parece bien? Podemos imaginar que estamos en un parque jurásico."
+   },
+   {
+    "who": "Alumno",
+    "text": "Sí, me gusta mucho! I want to travel to Jurassic park and see los dinosaurios huge."
+   },
+   {
+    "who": "Profe",
+    "text": "That sounds like an amazing trip. You want to see the huge dinosaurs at Jurassic Park, right? Look over there, what kind of animal do you see first?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I see un T‑rex enorme, it look very scary y muy grande."
+   },
+   {
+    "who": "Profe",
+    "text": "Wow, that T-Rex is truly huge and looks very scary. Since that one is so big, can you see any smaller dinosaurs nearby?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hola, soy Alex. Hoy practicamos sin presión. Los errores son solo información para aprender. ¿Qué te parece si empezamos nuestro viaje en el mundo de los dinosaurios? ¿Preferís hablar sobre dinosaurios, trabajo, o algún otro tema para arrancar?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I like los dinosaurios, they are muy grandes and cool. Maybe we can talk about T‑rex y su diet?"
+   },
+   {
+    "who": "Profe",
+    "text": "That sounds like an awesome start. I love how you described them as being really big! So, imagine we are in a prehistoric forest right now, and look, there is a T-Rex. Since it is so big, what do you think it eats?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I think el T‑rex eat meat, maybe otros dinosaurios big o even some plants sometimes. Creo que él come carne y a veces vegetales."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a great point! Since he is a huge predator, he eats a lot of meat. If you saw a small dinosaur next to him, would you say that one is also big, or would you call it small?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I would call it small, because it looks más pequeño than the T‑rex y es not big."
+   },
+   {
+    "who": "Profe",
+    "text": "Exactly, it is definitely small compared to the giant T-Rex. Since it is so small, what other animals or objects around us in this forest look tiny like that?"
+   }
+  ]
+ ]
+}

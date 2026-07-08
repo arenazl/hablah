@@ -1,0 +1,158 @@
+{
+ "band": "child",
+ "level": "A1",
+ "title": "La escuela",
+ "who": "un nene de 8 (A1), pocas palabras, mezcla espanol, timido",
+ "transcripts": [
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola! Soy Nova, tu compañera de aventuras. Hoy vamos a explorar el cole. Yo tengo un lápiz, I have a pencil. ¿Qué tienes tú en tu mochila?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Don't worry! Look, I have a big book. I have a book. Do you have a book or a pencil?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Oh, that's okay. Let's look together. Is this a blue pen? Can you say, I have a pen?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Maybe you have a notebook? Look, I have a notebook. Can you tell me, I have a notebook?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola! Soy Nova, tu compañera de aventuras. Hoy vamos a explorar el mundo de la escuela. Mira, I have a big backpack. ¿Qué tienes tú para ir a clase?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I have a big backpack. Look, I have a colorful notebook too! Do you have a backpack or a book for our class today?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I love school supplies. I have a pen and a notebook. What is in your bag today?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Sometimes school is full of surprises. I have a pencil in my hand. What about you? Do you have a pencil or a crayon?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola! Soy Nova, tu nueva compañera de aventuras. Hoy vamos a explorar el mundo de la escuela juntos. Por ejemplo, I have a big book for our mission. ¿Y tú, qué tienes ahí para nuestra clase hoy?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Oh, don't worry! Maybe you have a pencil or a notebook? Look, I have a red pen. What about you?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "That's okay! We can explore together. I see my blue notebook here. Do you have a notebook or a book in your school bag?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Yo... I have a small pencil y mi cuaderno azul. 🙈"
+   },
+   {
+    "who": "Profe",
+    "text": "Wow, fantastic! You have a small pencil and a blue notebook. That sounds like a great kit for our mission!"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "¡Hola! Soy Nova, tu compañera de aventuras. Hoy vamos a explorar el cole. Yo tengo un lápiz, I have a pencil. ¿Qué tienes tú en tu mochila?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Look, I have a big book. Do you have a notebook or maybe a pen in your bag?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I have a green pen. Is your pen green or maybe blue? Tell me about your pen."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I love my green pen. Do you have a pen, or do you have a pencil?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi! I am Nova, your adventure partner. Today we are exploring the school! I have a big notebook for our mission. Do you have a backpack for school?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I have my big blue backpack here. Look, it is my school bag! Do you have a backpack for your books?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I love my school! Tell me, what color is your favorite backpack? Is it blue or red?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Eh... mi mochila es red. I like it."
+   },
+   {
+    "who": "Profe",
+    "text": "Your backpack is red! That is a great color. Do you have many books inside your red backpack?"
+   }
+  ]
+ ]
+}

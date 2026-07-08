@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 146,
+  "topic_title": "Comida divertida",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "¡Hola, hola! Soy Sparky, tu amigo dragón. Hoy tengo mucha hambre y encontré un mundo lleno de comida muy divertida. Mira, ¡tengo una manzana roja gigante! I have a big red apple. ¿Qué comida te gusta a vos?"
+    },
+    {
+      "who": "Alumno",
+      "text": "I like pizza! Es muy rico.   También me gusta... ice cream! ¿Cómo se dice “helado”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Wow, pizza y helado! ¡Qué combinación deliciosa elegiste! En inglés decimos ice cream, se dice igual a lo que nombraste. I love pizza and ice cream too, it is my favorite food!"
+    },
+    {
+      "who": "Alumno",
+      "text": "My cat big.   Es muy suave.   I like... zanahoria! ¿Cómo se dice “carrot”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Tu gato es muy grande y suave! Y me encanta que te gusten las zanahorias, in English we say I like carrots. Do you have a big carrot for your cat?"
+    },
+    {
+      "who": "Alumno",
+      "text": "My cat big. I have two cats at home. ¿Cómo se dice “rabbit”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Two cats, how wonderful! My friend, a rabbit is called a rabbit. Look, the rabbit likes a big carrot too!"
+    },
+    {
+      "who": "Alumno",
+      "text": "I like rabbit! Es muy fluffy. My cat big... ¿Cómo se dice “lettuce”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué lindo que tu gato sea grande y suave! Y para la lechuga, en inglés decimos lettuce. ¡Sos un genio aprendiendo tantas comidas hoy! La próxima me vas a contar más sobre tus gatos, it was wonderful to talk with you today."
+    }
+  ],
+  "student_prompt_version": "v1"
+}

@@ -1,0 +1,126 @@
+{
+  "total": 17,
+  "score_promedio": 7.58,
+  "score_min": 6.2,
+  "score_max": 8.8,
+  "por_nivel": {
+    "A0": 7.44,
+    "A1": 7.7
+  },
+  "hallazgos_frecuentes": {
+    "cierre abrupto": 3,
+    "pocas oportunidades de producción extendida del alumno": 2,
+    "excelente manejo del filtro afectivo": 2,
+    "input comprensible y recasts efectivos": 2,
+    "Coach muy afectuoso y motivador": 2,
+    "Cierre abrupto": 2,
+    "Coach es muy afectuoso y motivador": 2,
+    "Nivel de input adecuado para A1": 2,
+    "Cierre un poco abrupto": 2,
+    "variedad limitada de interacción (predominio de Q&A)": 1
+  },
+  "items": [
+    {
+      "topico": "Mi familia",
+      "nivel": "A0",
+      "score_global": 7.6,
+      "para_mejorar": "Instruir al coach para que el cierre sea gradual, resumiendo lo aprendido, y para que genere más oportunidades de producción extendida del alumno."
+    },
+    {
+      "topico": "Mis colores favoritos",
+      "nivel": "A0",
+      "score_global": 7.7,
+      "para_mejorar": "Incluir una actividad lúdica final para consolidar los colores y una frase de transición antes del cierre."
+    },
+    {
+      "topico": "Animales de la granja y la selva",
+      "nivel": "A0",
+      "score_global": 6.2,
+      "para_mejorar": "Instruir al coach a mantener el input en oraciones simples y vocabulario básico para A0, y a guiar un cierre más gradual de la conversación."
+    },
+    {
+      "topico": "Mi cuerpo",
+      "nivel": "A0",
+      "score_global": 7.6,
+      "para_mejorar": "Incluir una actividad de repaso al final que invite al alumno a nombrar las partes del cuerpo aprendidas y asegurar una despedida más interactiva."
+    },
+    {
+      "topico": "Comidas ricas",
+      "nivel": "A0",
+      "score_global": 7.1,
+      "para_mejorar": "Instruye al coach para que formule más preguntas abiertas que requieran más que un 'sí/no' y para que extienda el cierre con una breve recapitulación de lo conversado."
+    },
+    {
+      "topico": "Abrir juguetes",
+      "nivel": "A0",
+      "score_global": 8.0,
+      "para_mejorar": "Incluye más oportunidades para que el alumno elija entre 2-3 opciones o describa brevemente el juguete, fomentando una producción un poco más elaborada."
+    },
+    {
+      "topico": "Dibujitos y superhéroes",
+      "nivel": "A0",
+      "score_global": 7.7,
+      "para_mejorar": "Añade instrucciones para un cierre gradual de la clase y para formular preguntas que inviten a respuestas más elaboradas del alumno."
+    },
+    {
+      "topico": "Comida divertida",
+      "nivel": "A0",
+      "score_global": 7.6,
+      "para_mejorar": "Incluir preguntas abiertas o actividades que inviten al alumno a elaborar más sus respuestas, más allá de frases cortas o sí/no."
+    },
+    {
+      "topico": "Mi familia",
+      "nivel": "A1",
+      "score_global": 7.9,
+      "para_mejorar": "Incluir más preguntas abiertas o actividades que requieran al alumno producir frases más largas y complejas, no solo respuestas cortas o traducciones."
+    },
+    {
+      "topico": "Mis colores favoritos",
+      "nivel": "A1",
+      "score_global": 8.8,
+      "para_mejorar": "Priorizar recasts implícitos para correcciones de vocabulario y gramática, en lugar de traducciones directas, para fomentar la inferencia del alumno."
+    },
+    {
+      "topico": "Animales de la granja y la selva",
+      "nivel": "A1",
+      "score_global": 7.2,
+      "para_mejorar": "Instruir al coach para que, ante la repetición constante de una frase por parte del alumno, intente expandir esa frase con preguntas de sí/no o con opciones, en lugar de solo introducir nuevo vocabulario."
+    },
+    {
+      "topico": "Mi cuerpo",
+      "nivel": "A1",
+      "score_global": 7.2,
+      "para_mejorar": "Prioriza la producción del alumno: después de introducir vocabulario, pide al alumno que lo use en una frase o lo identifique. Si el alumno repite una pregunta, reformúlala o anímale a recordar la respuesta antes de darla."
+    },
+    {
+      "topico": "Comidas ricas",
+      "nivel": "A1",
+      "score_global": 7.2,
+      "para_mejorar": "Instruir al coach a priorizar la producción del alumno antes de introducir nuevo vocabulario, por ejemplo, pidiendo al alumno que describa la fruta que quiere nombrar. Además, asegurar recasts consistentes para errores gramaticales recurrentes como 'My X Y'."
+    },
+    {
+      "topico": "Abrir juguetes",
+      "nivel": "A1",
+      "score_global": 8.8,
+      "para_mejorar": "Instruir al coach para que incluya una breve actividad de repaso o un resumen de 1-2 frases del vocabulario clave antes de la despedida."
+    },
+    {
+      "topico": "Dibujitos y superhéroes",
+      "nivel": "A1",
+      "score_global": 7.4,
+      "para_mejorar": "Asegúrate de aplicar recasts implícitos de manera más consistente para errores gramaticales recurrentes (ej. 'have' por 'has') y busca introducir una actividad breve que permita al alumno usar el vocabulario aprendido en frases más elaboradas o en un contexto ligeramente diferente antes del cierre."
+    },
+    {
+      "topico": "Jugar en la pantalla",
+      "nivel": "A1",
+      "score_global": 7.5,
+      "para_mejorar": "Cuando el alumno pregunte por una traducción de una palabra que ya se ha usado o que el alumno podría inferir, el coach debe intentar un recast o una pregunta que invite al alumno a recordar o producir la palabra, en lugar de dar la traducción directa."
+    },
+    {
+      "topico": "Comida divertida",
+      "nivel": "A1",
+      "score_global": 7.3,
+      "para_mejorar": "Después de introducir o confirmar una palabra nueva, pedir al alumno que la use en una oración completa en inglés, o que describa algo usando esa palabra."
+    }
+  ]
+}

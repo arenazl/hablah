@@ -1,0 +1,158 @@
+{
+ "band": "child",
+ "level": "A2",
+ "title": "Mi casa y mis habitaciones",
+ "who": "un nene de 9 (A2), frases cortas, mezcla espanol, con errores",
+ "transcripts": [
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I am Nova, your explorer friend. Today we are going to explore our houses and discover what we do in each room. Tell me, what is your favorite room in your house?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I love my living room because it is very cozy. Do you like your bedroom or the living room more?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Sometimes it is hard to choose! Maybe you like the kitchen because of the snacks? Or do you prefer playing in your bedroom?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I love my bedroom, especially because I have all my toys there! What about you, do you like your bedroom?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I am Nova, your adventure partner. Today we are exploring our houses. Look at mine! In my bedroom, I usually read books. What do you usually do in your bedroom?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Sometimes in my room I like to draw. Do you like to play with your toys or sleep in your bedroom?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I play con mis toys y read book, and I sometimes sleep en mi bedroom. 😴🏠"
+   },
+   {
+    "who": "Profe",
+    "text": "That is awesome! You play with your toys and read books in your bedroom. Excellent! And do you usually play in your bedroom in the morning or in the evening?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I usually play in the morning because I have energía, but sometimes I also play en the evening. 🌞🌙"
+   },
+   {
+    "who": "Profe",
+    "text": "That is great! You have a lot of energy in the morning. Since you play with your toys, do you also like to build things with them in your bedroom?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I am Nova, your explorer friend. Today, we are going to explore our houses and the things we do in them. In my house, I usually read books in the bedroom. What do you do in your house?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Sometimes I like to play with my toys in the living room. What is your favorite room in your house?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "My favorite room is the kitchen because I love eating yummy snacks there! Do you like your kitchen, or do you prefer your bedroom?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I like my bedroom more, I play con mis toys all day. Kitchen is nice but I no like cooking mucho."
+   },
+   {
+    "who": "Profe",
+    "text": "I play with my toys in my bedroom all day! That sounds like so much fun. Since you don't like cooking, what is the best toy to play with in your room?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I am Nova, your explorer friend. Today we are going on an adventure to discover our homes. Where do you spend most of your time? I usually hang out in my living room."
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Sometimes it is fun to be in the kitchen because that is where the yummy snacks are. Which room do you like the best in your house?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I like my bedroom because I have many toys y mi cama is soft. Also the kitchen is cool for snacks."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a perfect bedroom, your bed is soft and you have many toys there. That sounds like a great place to relax! Do you usually play in your bedroom or do you prefer the kitchen?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Yo play en mi bedroom, pero sometimes I go a kitchen for snack porque es yummy."
+   },
+   {
+    "who": "Profe",
+    "text": "You play in your bedroom, but sometimes you go to the kitchen for a snack. Great job using those connectors! Is there something special you usually do in your bedroom besides playing?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I am Nova, your adventure partner. Today we are exploring our homes! My favorite place is the kitchen because I love to snack. What about you? What is your favorite room in your house?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I love the kitchen! Maybe you like your bedroom? Tell me, do you have a favorite room in your house?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "My favorite room is my bedroom because I have my toys there. Do you have a bedroom or maybe a playroom?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "In my house, I like the living room because it is big. What is your favorite room? You can tell me which one you like!"
+   }
+  ]
+ ]
+}

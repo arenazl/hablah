@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 3,
+    "naturalidad": 5,
+    "nivel": 8,
+    "recast": 7,
+    "reciclado": 6,
+    "score": 6.3,
+    "verdict": "El profe es muy afectuoso y el nivel del input es adecuado. Sin embargo, la conversación se siente repetitiva y el cierre es demasiado abrupto, sin un resumen o una transición suave."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 8,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 5,
+    "score": 7.2,
+    "variedad": 4,
+    "verdict": "El ambiente es excelente para bajar el filtro afectivo y el input es comprensible. Sin embargo, el coach no logra generar una producción más variada o compleja del alumno, que se mantiene en frases muy repetitivas."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 6,
+    "motivacion": 8,
+    "ritmo": 8,
+    "score": 8.0,
+    "verdict": "Me sentí muy cómodo y el profe fue muy amable. Entendí todo lo que me dijo. Me hubiera gustado sentir que avancé un poco más en cómo armar las frases."
+  },
+  "score_global": 7.2,
+  "para_mejorar": "Instruir al coach para que, ante la repetición constante de una frase por parte del alumno, intente expandir esa frase con preguntas de sí/no o con opciones, en lugar de solo introducir nuevo vocabulario.",
+  "banda": "mini",
+  "hallazgos": [
+    "El coach es muy afectuoso y genera un ambiente de baja ansiedad.",
+    "El input del coach es adecuado para el nivel A1.",
+    "El alumno se mantiene en producciones muy repetitivas ('My lion big!').",
+    "El cierre de la clase es abrupto.",
+    "Falta variedad en los tipos de interacción."
+  ],
+  "nivel": "A1",
+  "topico": "Animales de la granja y la selva",
+  "band": "mini",
+  "topic_id": 139
+}

@@ -1,0 +1,20 @@
+{
+  "ts": "20260623_152129",
+  "rows": [
+    {
+      "tag": "A·level.modifier A1",
+      "upd": "UPDATE `level` SET modifier=%s WHERE level_code='A1'",
+      "value": "Espejo en español DINÁMICO: cuando el alumno se traba o lo necesita, NO en cada turno. Vocabulario simple, no telegráfico."
+    },
+    {
+      "tag": "B·level_policy A1 hint_policy",
+      "upd": "UPDATE level_policy SET body=%s, source='proposed' WHERE level_code='A1' AND kind='hint_policy'",
+      "value": "Escalera: (1) espera 3-5s + gesto, (2) recast en inglés simple, (3) traducción parcial si persiste bloqueo"
+    },
+    {
+      "tag": "C·behavioral_guard g19 (early_child anti-silencio)",
+      "upd": "UPDATE behavioral_guard SET body=%s WHERE guard_id=19",
+      "value": "Ante silencio del nene: NUNCA repitas la misma frase 2x. Reformulá DESDE lo último que dijo (su nombre, 'she is happy') en un modelo nuevo y corto en EN; si sigue callado, ofrecé UNA elección concreta. El español acompaña, no reemplaza el input EN."
+    }
+  ]
+}

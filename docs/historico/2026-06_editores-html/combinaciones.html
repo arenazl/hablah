@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Combinaciones tópico × banda × nivel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0f1117; color: #e2e8f0; padding: 24px; }
+  h1 { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #f8fafc; }
+  .meta { font-size: 13px; color: #64748b; margin-bottom: 28px; }
+  .band-section { margin-bottom: 40px; }
+  .band-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .band-pill { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; color: #fff; }
+  .band-title { font-size: 17px; font-weight: 600; }
+  .band-count { font-size: 13px; color: #64748b; }
+  .levels { display: flex; flex-wrap: wrap; gap: 16px; }
+  .level-box { background: #1e2130; border: 1px solid #2d3148; border-radius: 10px; padding: 14px; min-width: 220px; flex: 1; }
+  .level-label { font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #94a3b8; margin-bottom: 10px; }
+  .topic-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1a1e2e; font-size: 13px; }
+  .topic-row:last-child { border-bottom: none; }
+  .topic-name { flex: 1; }
+  .seg-tag { font-size: 10px; padding: 1px 6px; border-radius: 10px; background: #334155; color: #94a3b8; }
+  .seg-tag.mismatch { background: #7f1d1d; color: #fca5a5; }
+  .badge { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 10px; color: #fff; }
+  .badge.gray { background: #334155; color: #64748b; }
+  .summary { background: #1e2130; border: 1px solid #2d3148; border-radius: 10px; padding: 16px; margin-bottom: 28px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .sum-item { text-align: center; }
+  .sum-num { font-size: 26px; font-weight: 800; color: #f8fafc; }
+  .sum-label { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .warn { color: #f59e0b; font-size: 11px; margin-left: 4px; }
+</style>
+</head>
+<body>
+<h1>Combinaciones tópico × banda × nivel</h1>
+<p class="meta">Generado desde topic_band_level. Los scores son del panel de 3 jueces (Juez1+Juez2+Juez3 / 3).</p>
+
+
+<div class="summary">
+  <div class="sum-item"><div class="sum-num">785</div><div class="sum-label">combinaciones totales</div></div>
+  <div class="sum-item"><div class="sum-num">38</div><div class="sum-label">evaluadas</div></div>
+  <div class="sum-item"><div class="sum-num">747</div><div class="sum-label">pendientes</div></div>
+  <div class="sum-item"><div class="sum-num">785</div><div class="sum-label">objetivo final</div></div>
+</div>
+
+
+<div class="band-section">
+  <div class="band-header">
+    <span class="band-pill" style="background:#7c3aed">MINI</span>
+    <span class="band-title">Mini (4–7 años)</span>
+    <span class="band-count">38 combinaciones</span>
+  </div>
+  <div class="levels">
+
+<div class="level-box"><div class="level-label">A0</div>
+<div class="topic-row"><span class="topic-name">Coleccionar cartas y figuritas<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.5</span></div>
+<div class="topic-row"><span class="topic-name">Comida rápida y dulces<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.2</span></div>
+<div class="topic-row"><span class="topic-name">Cómo me siento<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">6.7</span></div>
+<div class="topic-row"><span class="topic-name">Desafíos virales<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#ef4444">5.5</span></div>
+<div class="topic-row"><span class="topic-name">La escuela<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.5</span></div>
+<div class="topic-row"><span class="topic-name">Mi casa y mis habitaciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">6.7</span></div>
+<div class="topic-row"><span class="topic-name">Mi día de la mañana a la noche<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.9</span></div>
+<div class="topic-row"><span class="topic-name">Mundos de bloques<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#22c55e">8.7</span></div>
+<div class="topic-row"><span class="topic-name">Naturaleza y dinosaurios<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#22c55e">8.3</span></div>
+<div class="topic-row"><span class="topic-name">Pasatiempos y deportes<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.8</span></div>
+<div class="topic-row"><span class="topic-name">Abrir juguetes</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">7.9</span></div>
+<div class="topic-row"><span class="topic-name">Animales de la granja y la selva</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">9.0</span></div>
+<div class="topic-row"><span class="topic-name">Comida divertida</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">6.6</span></div>
+<div class="topic-row"><span class="topic-name">Comidas ricas</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">8.5</span></div>
+<div class="topic-row"><span class="topic-name">Dibujitos y superhéroes</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">8.5</span></div>
+<div class="topic-row"><span class="topic-name">Jugar en la pantalla</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">8.4</span></div>
+<div class="topic-row"><span class="topic-name">Mi cuerpo</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">8.0</span></div>
+<div class="topic-row"><span class="topic-name">Mi familia</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">7.7</span></div>
+<div class="topic-row"><span class="topic-name">Mis colores favoritos</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">8.2</span></div>
+</div>
+<div class="level-box"><div class="level-label">A1</div>
+<div class="topic-row"><span class="topic-name">Coleccionar cartas y figuritas<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.7</span></div>
+<div class="topic-row"><span class="topic-name">Comida rápida y dulces<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">6.7</span></div>
+<div class="topic-row"><span class="topic-name">Cómo me siento<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">6.9</span></div>
+<div class="topic-row"><span class="topic-name">Desafíos virales<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.6</span></div>
+<div class="topic-row"><span class="topic-name">La escuela<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#22c55e">8.2</span></div>
+<div class="topic-row"><span class="topic-name">Mi casa y mis habitaciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.2</span></div>
+<div class="topic-row"><span class="topic-name">Mi día de la mañana a la noche<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">7.5</span></div>
+<div class="topic-row"><span class="topic-name">Mundos de bloques<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#22c55e">8.3</span></div>
+<div class="topic-row"><span class="topic-name">Naturaleza y dinosaurios<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#22c55e">8.1</span></div>
+<div class="topic-row"><span class="topic-name">Pasatiempos y deportes<span class="warn">⚠</span></span><span class="seg-tag mismatch">junior</span><span class="badge" style="background:#f59e0b">6.9</span></div>
+<div class="topic-row"><span class="topic-name">Abrir juguetes</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">7.7</span></div>
+<div class="topic-row"><span class="topic-name">Animales de la granja y la selva</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">7.0</span></div>
+<div class="topic-row"><span class="topic-name">Comida divertida</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">7.7</span></div>
+<div class="topic-row"><span class="topic-name">Comidas ricas</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">7.7</span></div>
+<div class="topic-row"><span class="topic-name">Dibujitos y superhéroes</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">7.6</span></div>
+<div class="topic-row"><span class="topic-name">Jugar en la pantalla</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">8.1</span></div>
+<div class="topic-row"><span class="topic-name">Mi cuerpo</span><span class="seg-tag">mini</span><span class="badge" style="background:#f59e0b">7.9</span></div>
+<div class="topic-row"><span class="topic-name">Mi familia</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">8.3</span></div>
+<div class="topic-row"><span class="topic-name">Mis colores favoritos</span><span class="seg-tag">mini</span><span class="badge" style="background:#22c55e">8.0</span></div>
+</div>
+</div></div>
+
+<div class="band-section">
+  <div class="band-header">
+    <span class="band-pill" style="background:#2563eb">JUNIOR</span>
+    <span class="band-title">Junior (8–12 años)</span>
+    <span class="band-count">80 combinaciones</span>
+  </div>
+  <div class="levels">
+
+<div class="level-box"><div class="level-label">A0</div>
+<div class="topic-row"><span class="topic-name">Coleccionar cartas y figuritas</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida rápida y dulces</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cómo me siento</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Desafíos virales</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">La escuela</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi casa y mis habitaciones</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi día de la mañana a la noche</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mundos de bloques</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Naturaleza y dinosaurios</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Pasatiempos y deportes</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar y recetas<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cuidar el planeta<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Decir lo que pensás<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Gaming pro y esports<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música, pelis y series<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Slang y tendencias online<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Streamers y transmisiones<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajos del futuro<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajes y culturas<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Zapatillas y moda urbana<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">A1</div>
+<div class="topic-row"><span class="topic-name">Coleccionar cartas y figuritas</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida rápida y dulces</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cómo me siento</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Desafíos virales</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">La escuela</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi casa y mis habitaciones</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi día de la mañana a la noche</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mundos de bloques</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Naturaleza y dinosaurios</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Pasatiempos y deportes</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar y recetas<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cuidar el planeta<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Decir lo que pensás<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Gaming pro y esports<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música, pelis y series<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Slang y tendencias online<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Streamers y transmisiones<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajos del futuro<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajes y culturas<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Zapatillas y moda urbana<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">A2</div>
+<div class="topic-row"><span class="topic-name">Coleccionar cartas y figuritas</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida rápida y dulces</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cómo me siento</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Desafíos virales</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">La escuela</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi casa y mis habitaciones</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi día de la mañana a la noche</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mundos de bloques</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Naturaleza y dinosaurios</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Pasatiempos y deportes</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar y recetas<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cuidar el planeta<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Decir lo que pensás<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Gaming pro y esports<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música, pelis y series<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Slang y tendencias online<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Streamers y transmisiones<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajos del futuro<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajes y culturas<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Zapatillas y moda urbana<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">B1</div>
+<div class="topic-row"><span class="topic-name">Coleccionar cartas y figuritas</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida rápida y dulces</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cómo me siento</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Desafíos virales</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">La escuela</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi casa y mis habitaciones</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi día de la mañana a la noche</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mundos de bloques</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Naturaleza y dinosaurios</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Pasatiempos y deportes</span><span class="seg-tag">junior</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar y recetas<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cuidar el planeta<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Decir lo que pensás<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Gaming pro y esports<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música, pelis y series<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Slang y tendencias online<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Streamers y transmisiones<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajos del futuro<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajes y culturas<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Zapatillas y moda urbana<span class="warn">⚠</span></span><span class="seg-tag mismatch">tween</span><span class="badge gray">-</span></div>
+</div>
+</div></div>
+
+<div class="band-section">
+  <div class="band-header">
+    <span class="band-pill" style="background:#0891b2">TWEEN</span>
+    <span class="band-title">Tween (13+ años)</span>
+    <span class="band-count">272 combinaciones</span>
+  </div>
+  <div class="levels">
+
+<div class="level-box"><div class="level-label">A1</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar y recetas</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cuidar el planeta</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Decir lo que pensás</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Gaming pro y esports</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música, pelis y series</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Slang y tendencias online</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Streamers y transmisiones</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajos del futuro</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajes y culturas</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Zapatillas y moda urbana</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">A2</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar y recetas</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cuidar el planeta</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Decir lo que pensás</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Gaming pro y esports</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música, pelis y series</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Slang y tendencias online</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Streamers y transmisiones</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajos del futuro</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajes y culturas</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Zapatillas y moda urbana</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">B1</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar y recetas</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cuidar el planeta</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Decir lo que pensás</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Gaming pro y esports</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música, pelis y series</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Slang y tendencias online</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Streamers y transmisiones</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajos del futuro</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajes y culturas</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Zapatillas y moda urbana</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">B2</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA<span class="warn">⚠</span></span><span class="seg-tag mismatch">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar y recetas</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cuidar el planeta</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Decir lo que pensás</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Gaming pro y esports</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música, pelis y series</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Slang y tendencias online</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Streamers y transmisiones</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajos del futuro</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajes y culturas</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Zapatillas y moda urbana</span><span class="seg-tag">tween</span><span class="badge gray">-</span></div>
+</div>
+</div></div>
+
+<div class="band-section">
+  <div class="band-header">
+    <span class="band-pill" style="background:#059669">ADULT</span>
+    <span class="band-title">Adulto (18+ años)</span>
+    <span class="band-count">395 combinaciones</span>
+  </div>
+  <div class="levels">
+
+<div class="level-box"><div class="level-label">A0</div>
+<div class="topic-row"><span class="topic-name">Animales en peligro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">A1</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">A2</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">B1</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">B2</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">C1</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+</div>
+<div class="level-box"><div class="level-label">C2</div>
+<div class="topic-row"><span class="topic-name">Adicción al celular</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales en peligro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Animales raros que existen</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Apps que uso a diario</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender a programar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Aprender un instrumento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Asado argentino · técnica y rituales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cambio climático · ciencia y políticas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Charla abierta</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Choque cultural</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cine vs streaming en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ciudades que quiero conocer</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar en casa</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Cocinar para otros</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comer cuando viajás</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Comida típica de mi país</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Conciertos que me marcaron</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Crear arte propio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">El juego del momento</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Empezar a entrenar</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Espacio · astronomía y misiones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fast fashion</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Fútbol · Mundiales y selecciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Géneros que evito y por qué</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA generativa · ética</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">IA y el futuro del trabajo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Ídolos del deporte</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Inteligencia artificial</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Japón · cultura y tradiciones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Jugar con amigos online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Libro vs película</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Meditación y mindfulness</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi banda favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi comida favorita</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi deporte favorito</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi equipo y sus rivales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi estilo personal</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi mascota</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi rutina actual</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi último viaje</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mi viaje soñado</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Mochilero vs hotel</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Música y emociones</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Nutrición · dietas y mitos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Patagonia · trekking y montañas</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Privacidad online</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Salud mental</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Series de streaming · drama prestigio</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Stand-up · comediantes y especiales</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Trabajo remoto · nómade digital</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Turismo masivo y sus efectos</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un artista que admiro</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un gadget que me cambió la vida</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Un partido inolvidable</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una curiosidad científica</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Una peli que me marcó</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Viajar solo</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+<div class="topic-row"><span class="topic-name">Videojuegos · indie y AAA</span><span class="seg-tag">adultos</span><span class="badge gray">-</span></div>
+</div>
+</div></div>
+</body></html>

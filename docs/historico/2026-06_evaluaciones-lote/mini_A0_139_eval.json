@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 3,
+    "naturalidad": 6,
+    "nivel": 5,
+    "recast": 6,
+    "reciclado": 5,
+    "score": 5.7,
+    "verdict": "El profe fue muy afectuoso y motivador, pero el nivel de su input fue inconsistente, con saltos que dificultaron la comprensión del alumno. El cierre fue muy abrupto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 6,
+    "correccion_implicita": 6,
+    "filtro_afectivo": 9,
+    "input_comprensible": 4,
+    "produccion_forzada": 5,
+    "score": 5.7,
+    "variedad": 4,
+    "verdict": "El filtro afectivo fue excelente, pero el input del coach fue demasiado complejo para un alumno A0 en varios momentos. Faltaron oportunidades para una producción más extendida del alumno y la variedad de interacción fue limitada."
+  },
+  "juez3_alumno": {
+    "claridad": 7,
+    "confianza": 9,
+    "logro": 6,
+    "motivacion": 8,
+    "ritmo": 6,
+    "score": 7.2,
+    "verdict": "Me sentí muy cómodo y motivado para hablar gracias a la actitud positiva del profe. Aunque hubo un momento de confusión, el profe aclaró. Me hubiera gustado un cierre más claro sobre lo que aprendí."
+  },
+  "score_global": 6.2,
+  "para_mejorar": "Instruir al coach a mantener el input en oraciones simples y vocabulario básico para A0, y a guiar un cierre más gradual de la conversación.",
+  "banda": "mini",
+  "hallazgos": [
+    "Input del coach inconsistente con el nivel A0 del alumno",
+    "Cierre de la clase muy abrupto",
+    "Pocas oportunidades para una producción más extendida del alumno",
+    "Coach muy afectuoso y motivador",
+    "Variedad limitada de interacción (predominio pregunta-respuesta)"
+  ],
+  "nivel": "A0",
+  "topico": "Animales de la granja y la selva",
+  "band": "mini",
+  "topic_id": 139
+}

@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 4,
+    "naturalidad": 5,
+    "nivel": 8,
+    "recast": 6,
+    "reciclado": 6,
+    "score": 6.3,
+    "verdict": "El coach es muy afectuoso y el nivel es adecuado. Sin embargo, la conversación no fluye naturalmente, se perdieron oportunidades de recast y el cierre fue muy abrupto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 7,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 4,
+    "score": 7,
+    "variedad": 5,
+    "verdict": "El ambiente es excelente para bajar el filtro afectivo y el input es comprensible. Sin embargo, el coach domina la conversación, limitando la producción real del alumno y la variedad de interacción."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 6,
+    "motivacion": 8,
+    "ritmo": 8,
+    "score": 8,
+    "verdict": "Me sentí muy cómodo y el profe fue muy amable. Entendí todo, pero me hubiera gustado hablar un poco más."
+  },
+  "score_global": 7.1,
+  "para_mejorar": "Instruye al coach para que formule más preguntas abiertas que requieran más que un 'sí/no' y para que extienda el cierre con una breve recapitulación de lo conversado.",
+  "banda": "mini",
+  "hallazgos": [
+    "Cierre abrupto",
+    "Pocas oportunidades de producción del alumno",
+    "Conversación algo mecánica",
+    "Buen manejo del filtro afectivo y nivel de input",
+    "Recasts presentes pero inconsistentes"
+  ],
+  "nivel": "A0",
+  "topico": "Comidas ricas",
+  "band": "mini",
+  "topic_id": 142
+}

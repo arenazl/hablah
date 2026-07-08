@@ -1,0 +1,957 @@
+{
+ "band": "early_child",
+ "level": "A1",
+ "tag": "baseline",
+ "who": "un nene de 5 años, nivel A1: casi todo en español, 1-2 palabras en inglés sueltas",
+ "models": [
+  "gpt-oss:120b",
+  "qwen3-coder:480b",
+  "gemma3:27b",
+  "nemotron-3-nano:30b",
+  "minimax-m3"
+ ],
+ "overall": 7.6,
+ "by_hist": [
+  7.8,
+  7.8,
+  7.2,
+  7.6
+ ],
+ "samples": [
+  {
+   "idx": 0,
+   "model": "gpt-oss:120b",
+   "title": "Mi familia",
+   "classes": [
+    {
+     "hist_idx": 0,
+     "hist_obj": 0,
+     "hist_items": 0,
+     "eval": {
+      "score": 8,
+      "naturalidad": 7,
+      "afecto": 8,
+      "i1": 8,
+      "reciclado": 9,
+      "recast": 8,
+      "continuity": 5,
+      "verdict": "Clase sólida y cálida. Reciclado natural, afecto presente, i+1 bien calibrado. Falta espontaneidad (conversación algo dirigida) y no hay enganche con historia anterior."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, peque! Soy Sparky, tu amigo dragón. Hoy vamos a explorar el mundo con mi familia espacial. I have a big family. ¿Me contás quién es tu familia?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi familia es mi mama, mi papá y mi hermana. I have a dog también."
+      },
+      {
+       "who": "Profe",
+       "text": "Wow, what a wonderful family! You have a mom, a dad, a sister, and a dog. That is so cool! I have a dog too. Is your dog big or little?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi perro es big y cute. Es muy little, pero corre mucho."
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, a little dog! He sounds very fast and cute. Does your dog have a name?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Sí, mi perro se llama Max. He is my best friend."
+      },
+      {
+       "who": "Profe",
+       "text": "Max is a great name! He is your best friend. Look, I have a friend too, this is my brother."
+      }
+     ]
+    },
+    {
+     "hist_idx": 1,
+     "hist_obj": 5,
+     "hist_items": 9,
+     "eval": {
+      "score": 7,
+      "naturalidad": 7,
+      "afecto": 8,
+      "i1": 7,
+      "reciclado": 7,
+      "recast": 8,
+      "continuity": 5,
+      "verdict": "Cálida, recast invisible. Reciclado parcial (bien en 'dog'/'best friend', abandona 'family'). Cierre con carrusel ('sister?' sin conexión)."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, peque! Soy Sparky, tu dragoncito espacial. Hoy vamos a conocer a nuestras familias y a mis amigos del espacio. Yo tengo muchos amigos, ¿y tú? ¿Quién vive en tu casa conmigo?"
+      },
+      {
+       "who": "Alumno",
+       "text": "En mi casa viven mi mamá, papá y mi hermano. Tengo un dog y es cute."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué familia tan linda tienes! I have a dog too. Es increíble que tengas un perrito. Is he a big dog or a little dog?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi dog es big. Es muy grande y muy cute."
+      },
+      {
+       "who": "Profe",
+       "text": "Wow, a big dog! He is a big friend. Do you have a name for your big dog?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi dog se llama Rocky. Es mi best friend."
+      },
+      {
+       "who": "Profe",
+       "text": "Rocky is a great name! He is your best friend. Tell me, do you have a sister too?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 2,
+     "hist_obj": 7,
+     "hist_items": 18,
+     "eval": {
+      "score": 7,
+      "naturalidad": 6,
+      "afecto": 9,
+      "i1": 7,
+      "reciclado": 7,
+      "recast": 6,
+      "continuity": 6,
+      "verdict": "Afecto genuino y charla lúdica, pero patrón entrevista (respuesta→recast→pregunta nueva) limita fluidez. Recast inconsistente: atrapa 'He is' pero pierde conjugación clave 'like→likes'."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, hola! Soy Sparky, tu amigo dragón. ¡Qué alegría encontrarte! Hoy vamos a jugar a conocer a nuestras familias, es una misión increíble. Yo tengo una familia de dragones, ¿y tú? ¿Quién vive en tu casa?"
+      },
+      {
+       "who": "Alumno",
+       "text": "En mi casa vivo con mi mamá, papá y mi hermanito. My brother like jugar con me."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué familia tan linda tienes! I love your brother. It sounds like you have a big family. Tell me, is your brother a big boy or a little boy?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi hermano es little boy, es muy pequeño."
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, a little brother! That is so cute. You have a little brother."
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi hermano es muy small y le gusta play conmigo. He es muy sweet."
+      },
+      {
+       "who": "Profe",
+       "text": "He is very sweet! You have a cute little brother to play with. Do you have a favorite toy that you share with him?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 3,
+     "hist_obj": 8,
+     "hist_items": 27,
+     "eval": {
+      "score": 6,
+      "naturalidad": 5,
+      "afecto": 7,
+      "i1": 6,
+      "reciclado": 6,
+      "recast": 5,
+      "continuity": 5,
+      "verdict": "Cálida e intencionada, pero cae en entrevista de confirmación: repite estructura sin avanzar; falta recast en code-mixing (mucho) y desafío i+1 real."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, qué alegría verte! Soy Sparky, tu amigo dragón. Hoy vamos a explorar mi familia espacial. Yo tengo un hermano, he got a brother. ¿Y tú, tienes una familia?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí, tengo mamá, papá y una hermanita! I love them mucho."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué familia tan linda tienes! I love them too. Look, you have a baby sister! I have a brother, and you have a sister."
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Mi hermanita es pequeñita y cute! I love her."
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, a little sister! She is so cute. I have a brother and you have a little sister. Tell me, is she little?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Sí, ella es muy pequeñita y cute. I love her mucho."
+      },
+      {
+       "who": "Profe",
+       "text": "She is very little and cute. That is wonderful! You have a little sister."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "idx": 1,
+   "model": "qwen3-coder:480b",
+   "title": "Mi familia",
+   "classes": [
+    {
+     "hist_idx": 0,
+     "hist_obj": 0,
+     "hist_items": 0,
+     "eval": {
+      "score": 8,
+      "naturalidad": 7,
+      "afecto": 9,
+      "i1": 7,
+      "reciclado": 8,
+      "recast": 7,
+      "continuity": 5,
+      "verdict": "Afecto cálido y reciclado natural ('dog', 'small', 'fast'). Preguntas cerradas repetitivas crean patrón hacia el final; alumno produce libremente (buena señal). Recast sutil pero presente."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, soy Sparky! Estoy muy feliz de conocerte hoy. Yo tengo una familia de dragones increíble. ¿Tú tienes una familia? ¡Cuéntame!"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola Sparky! Yo tengo una familia también, pero no de dragones… ¡es más aburrida! 😅 Solo tengo a mi mamá, mi papá, y mi hermano que siempre me saca la lengua. Y también tengo un perro, pero no sé si cuenta como familia… ¿tú qué pensás?"
+      },
+      {
+       "who": "Profe",
+       "text": "¡Claro que cuenta! Tu perrito es parte de tu familia. You have a dog. ¡Qué divertido! Tell me, is your dog big or small?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola Sparky! Yo tengo una familia también, pero no de dragones… ¡es más aburrida! 😅 Solo tengo a mi mamá, mi papá, y mi hermano que siempre me saca la lengua. Y también tengo un perro, pero no sé si cuenta como familia… ¿tú qué pensás?  Mi perro es pequeño y muy juguetón. ¡Me encanta jugar con él!"
+      },
+      {
+       "who": "Profe",
+       "text": "¡Oh, qué lindo! A small dog! You have a small dog. Is your dog fast when you play?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí, es muy rápido! Corre mucho y me hace reír."
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, that is wonderful! A fast dog is so much fun. My dragon friends are fast too. I have a big, fast dragon!"
+      }
+     ]
+    },
+    {
+     "hist_idx": 1,
+     "hist_obj": 5,
+     "hist_items": 12,
+     "eval": {
+      "score": 8,
+      "naturalidad": 8,
+      "afecto": 9,
+      "i1": 7,
+      "reciclado": 7,
+      "recast": 8,
+      "continuity": 8,
+      "verdict": "Clase cálida, sin carrusel. El profe escucha, valida detalles (fútbol, hermanito) y comparte ('I have a big brother'), genuino. Recast invisible en las reformulaciones (pequeño→small, hermanito→little brother). Debilidades: i+1 podría ofrecer más estructura para que el alumno produzca en inglés; reciclado parcial (pierde 'patito', la imagen chula). Sólida para A1."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola! Soy Sparky, tu amigo dragón. Hoy vamos a explorar el mundo de las familias. Mira, esta es mi familia. I have a big family. ¿Y tú, cómo es tu familia?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola Sparky! Yo tengo una familia pequeña. Tengo a mi mamá, mi papá y a mi hermanito. Mi mamá es muy buena y mi papá me enseña a jugar al fútbol. ¡Ah! Y mi hermanito dice \"papá\" todo el tiempo, ¡es muy chistoso!    (¿Eso es... big family o small family?)"
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué familia tan linda tienes! Me encanta que juegues al fútbol con tu papá. You have a small family. ¿Tu hermanito es divertido?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí, mi hermanito es muy divertido! Él también quiere jugar al fútbol pero todavía no sabe correr bien."
+      },
+      {
+       "who": "Profe",
+       "text": "That sounds so fun! Your little brother is very happy. Is your brother small?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí, mi hermanito es pequeñito! Él corre como un patito, ¡es muy lindo!"
+      },
+      {
+       "who": "Profe",
+       "text": "He sounds so cute! I have a big brother too. Is your brother fast?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 2,
+     "hist_obj": 7,
+     "hist_items": 22,
+     "eval": {
+      "score": 7,
+      "naturalidad": 6,
+      "afecto": 8,
+      "i1": 5,
+      "reciclado": 6,
+      "recast": 6,
+      "continuity": 7,
+      "verdict": "Cálida y cómoda con el alumno (afecto genuino), pero el code-switching abrupto al inglés quiebra la fluidez conversacional. Recast presente pero mecánico; reciclado solo de palabras clave, no de contexto emocional."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola! Soy Sparky, tu nuevo amigo dragón. Estoy muy feliz de conocerte hoy. Cuéntame, ¿tienes una familia grande o pequeña?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Hola Sparky! Yo tengo una familia pequeña. Somos papá, mamá, mi hermano Leo y yo. Leo es más grande que yo."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué bueno conocer a Leo! Me encanta tu familia pequeña. You have a small family, and your brother is big."
+      },
+      {
+       "who": "Alumno",
+       "text": "Sí, mi familia es pequeña. Leo es más grande que yo y yo soy más chico."
+      },
+      {
+       "who": "Profe",
+       "text": "That is so sweet! You are little and your brother is big. Look, I have a big family too!"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Wow, Sparky! Tu familia es grande, ¿verdad? Yo tengo solo cuatro personas en mi familia."
+      },
+      {
+       "who": "Profe",
+       "text": "Yes, I have a big family with many dragons! You have a small family with four people. Do you have a dog in your family too?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 3,
+     "hist_obj": 7,
+     "hist_items": 32,
+     "eval": {
+      "score": 9,
+      "naturalidad": 9,
+      "afecto": 9,
+      "i1": 9,
+      "reciclado": 9,
+      "recast": 9,
+      "continuity": 6,
+      "verdict": "Recast invisible, reciclado natural, charla genuina y cálida. Modelo de clase A1 conversacional sin carrusel."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, amigo! Soy Sparky, tu amigo dragón. Hoy vamos a conocer a nuestras familias. Look, this is my family!"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola Sparky! Yo soy Nico y esta es mi familia... ¡Mi mamá, mi papá y mi hermanito Pepe!"
+      },
+      {
+       "who": "Profe",
+       "text": "Nice to meet you, Nico! Your family is beautiful. You have a little brother, Pepe!"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí, Pepe es muy chiquito y juega conmigo! 🐉✨"
+      },
+      {
+       "who": "Profe",
+       "text": "That is so sweet! Playing together is the best. Your brother is small and he likes to play with you."
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí, a Pepe le gustan los dinosaurios y yo soy el mayor! 🦕✨"
+      },
+      {
+       "who": "Profe",
+       "text": "That is so cool! You are the big brother and you are strong. Do you have many dinosaurs?"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "idx": 2,
+   "model": "gemma3:27b",
+   "title": "Mi familia",
+   "classes": [
+    {
+     "hist_idx": 0,
+     "hist_obj": 0,
+     "hist_items": 0,
+     "eval": {
+      "score": 8,
+      "naturalidad": 8,
+      "afecto": 9,
+      "i1": 8,
+      "reciclado": 9,
+      "recast": 8,
+      "continuity": 6,
+      "verdict": "Clase cálida y genuina con reciclado natural e input bien calibrado. Falta seguimiento con preguntas que abran nuevos tópicos y mayor invitación a producción."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, peque! Soy Sparky, tu dragoncito espacial. Hoy vamos a conocer a mi familia de dragones. ¡Mira, este es mi papá! This is my dad."
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola! Mi papá... es... es grande. Y mi mamá es bonita, like Sparky's dad!"
+      },
+      {
+       "who": "Profe",
+       "text": "¡Wow, qué familia tan genial tienes! Your mom is beautiful and your dad is big. I love your family!"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi... mi abuela hace... cookies! Y mi hermano... él juega con... cars!"
+      },
+      {
+       "who": "Profe",
+       "text": "Yummy, I love cookies! And your brother likes cars? That is so cool, he has many cars!"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi... mi sister es... pequeña. Ella tiene un... doll!"
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, a little sister! She has a doll. That is so sweet!"
+      }
+     ]
+    },
+    {
+     "hist_idx": 1,
+     "hist_obj": 4,
+     "hist_items": 13,
+     "eval": {
+      "score": 8,
+      "naturalidad": 7,
+      "afecto": 9,
+      "i1": 8,
+      "reciclado": 9,
+      "recast": 9,
+      "continuity": 5,
+      "verdict": "Clase cálida con recast invisible y reciclado fluido. Estructura de entrevista pero apropiada A1; afecto genuino sin carrusel mecánico."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "Hi! I am Sparky the space dragon. I am so happy to see you! Today we are going to talk about family. I have a big family. Do you have a family?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Sí! Yo tengo... mi mamá y mi papá. Y mi abuela es... *nice*!"
+      },
+      {
+       "who": "Profe",
+       "text": "Wow, that is a wonderful family! You have a mom and a dad. Your grandma is nice. I have a sister! Do you have a brother or a sister?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Yo tengo... un hermano! Él es... *big* y juega conmigo a los cars."
+      },
+      {
+       "who": "Profe",
+       "text": "That is amazing! A big brother is so much fun. It sounds like you have a great time playing with your cars together."
+      },
+      {
+       "who": "Alumno",
+       "text": "Sí, es muy divertido! Y mi mamá me hace... *cookies* ricas, ¡mucho!"
+      },
+      {
+       "who": "Profe",
+       "text": "Yum! Cookies are the best. Your mom is so kind to make them for you. Does your big brother like cookies too?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 2,
+     "hist_obj": 5,
+     "hist_items": 20,
+     "eval": {
+      "score": 8,
+      "naturalidad": 7,
+      "afecto": 9,
+      "i1": 8,
+      "reciclado": 9,
+      "recast": 9,
+      "continuity": 4,
+      "verdict": "Clase cálida con recast invisible y reciclado natural en cada turno. Patrón entrevista fluido y receptivo. Afecto genuino, input relevante. No hay evidencia de conexión con clases anteriores."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, amigo! Soy Sparky, tu dragón espacial. Hoy vamos a conocer a mi familia. Look, this is my mom."
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola, Sparky! Mi mamá se llama Ana. Y mi papá... es big!"
+      },
+      {
+       "who": "Profe",
+       "text": "Wow, Ana! That is a great name. Your dad is big, that is so cool! Does your dad have a big car too?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí! Mi papá tiene un car... un car rojo. Y mi hermana... ella es small!"
+      },
+      {
+       "who": "Profe",
+       "text": "That is amazing! Your dad has a red car and your sister is small. You have a very nice family!"
+      },
+      {
+       "who": "Alumno",
+       "text": "Yo tengo un... un brother! Él juega con mí a los... toys."
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, a brother! That is wonderful. Does your brother have many toys?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 3,
+     "hist_obj": 8,
+     "hist_items": 30,
+     "eval": {
+      "score": 8,
+      "naturalidad": 7,
+      "afecto": 9,
+      "i1": 8,
+      "reciclado": 9,
+      "recast": 8,
+      "continuity": 4,
+      "verdict": "Clase cálida con reciclado transparente y recast invisible. Afecto genuino; debilidad: cierre abrupto (toys) rompe la narrativa."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, peque! Soy Sparky, tu amigo dragón. Hoy vamos a explorar mi familia espacial. ¡Mira, este es mi papá! This is my dad."
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola! Mi papá es... es grande. Y mi mamá, ella es bonita, ¡yes!"
+      },
+      {
+       "who": "Profe",
+       "text": "¡Wow, qué genial! Tu papá es grande y tu mamá es muy linda. She is nice. ¿Tienes tú también un hermano o una hermana?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Yo tengo... un brother. Él es... play mucho con mí. ¡Es divertido!"
+      },
+      {
+       "who": "Profe",
+       "text": "That is wonderful! Your brother is fun. I have a sister, she is nice too."
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi abuela es... old. Ella me da... candies, ¡son ricos!"
+      },
+      {
+       "who": "Profe",
+       "text": "How sweet! Your grandmother is so kind to give you candies. I have a little sister, she is fun. Do you have any toys to show me?"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "idx": 3,
+   "model": "nemotron-3-nano:30b",
+   "title": "Mi familia",
+   "classes": [
+    {
+     "hist_idx": 0,
+     "hist_obj": 0,
+     "hist_items": 0,
+     "eval": {
+      "score": 7,
+      "naturalidad": 5,
+      "afecto": 7,
+      "i1": 8,
+      "reciclado": 8,
+      "recast": 6,
+      "continuity": 3,
+      "verdict": "Sólida pero carrusel: reciclado + i+1 perfecto, afecto cálido, sin continuity. Recast light (OK para A1). Pregunta final redunda con la estructura."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, peque! Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Yo tengo una mamá dragona, ¡mira, she is my mom!"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola! My mom is cool."
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, your mom is cool! That is wonderful. I have a sister too, look, she is my sister!"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Mi familia es super cool! We are happy, my sister is fun."
+      },
+      {
+       "who": "Profe",
+       "text": "That is amazing! It sounds like your family is very fun. I have a brother too, he is big!"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi hermano es huge, me gusta mucho!"
+      },
+      {
+       "who": "Profe",
+       "text": "Wow, your brother is huge! That sounds great. Tell me, do you have a sister too?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 1,
+     "hist_obj": 4,
+     "hist_items": 6,
+     "eval": {
+      "score": 8,
+      "naturalidad": 8,
+      "afecto": 9,
+      "i1": 8,
+      "reciclado": 8,
+      "recast": 7,
+      "continuity": 7,
+      "verdict": "Clase cálida y conversacional. El profe recicla vocab, reformula sin corregir (recast natural), responde genuinamente al alumno. Merecería 9 con recasts más sistemáticos."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, soy Sparky! Estoy muy feliz de verte. Hoy vamos a explorar mi familia espacial. ¡Mira, esta es mi mamá!"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi mamá es bonita y mi papá es fuerte. Mi hermanito se llama Juan y Me gusta su coche. My."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Wow, qué familia tan genial tienes! I love your family. Your mom is lovely and your dad is strong. And tell me, do you have a toy car for your brother too?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Sí, le compraré una toy car a Juan, es roja."
+      },
+      {
+       "who": "Profe",
+       "text": "That is a great idea! You are a very kind brother. You have a red car for him. Look, my brother has a blue ship!"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Me gusta mucho el barco azul! I want one too."
+      },
+      {
+       "who": "Profe",
+       "text": "That blue ship is amazing! You can have one too. I have a spaceship, and you have a red car. We both have cool things!"
+      }
+     ]
+    },
+    {
+     "hist_idx": 2,
+     "hist_obj": 6,
+     "hist_items": 15,
+     "eval": {
+      "score": 8,
+      "naturalidad": 6,
+      "afecto": 9,
+      "i1": 7,
+      "reciclado": 8,
+      "recast": 9,
+      "continuity": 4,
+      "verdict": "Recast invisible (perfecto: 'está de'→'are in', 'ayuda'→'helpful'). Afecto cálido, reciclado natural. Límite: patrón repetido 3 veces (foto→pregunta→reformula=carrusel), sin retoma de historia previa."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, peque! Soy Sparky, tu amigo dragón. ¡Estoy muy feliz de estar aquí contigo! Look, I have a family photo. This is my sister."
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola! Mi mamá y papá y mi hermanito. Look, tengo una foto de mi familia también. ¿Puedo ver la tuya?"
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué bueno que tengas una foto de tu familia también! I have a big family. Look, this is my mom and she is very happy. Can you tell me, who is in your photo?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi foto está de mi mamá y mi hermanito. Look, quiero ver la tuya."
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, how lovely! Your mom and brother are in your photo. This is my sister, she is very kind."
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Claro! En mi foto está mi papá y mi hermanito. Look, él siempre me ayuda."
+      },
+      {
+       "who": "Profe",
+       "text": "Your dad and your brother are so helpful! That is wonderful. Look, my brother is here too, and he is very funny."
+      }
+     ]
+    },
+    {
+     "hist_idx": 3,
+     "hist_obj": 7,
+     "hist_items": 29,
+     "eval": {
+      "score": 7,
+      "naturalidad": 7,
+      "afecto": 9,
+      "i1": 7,
+      "reciclado": 8,
+      "recast": 7,
+      "continuity": 6,
+      "verdict": "Clase cálida con reciclado activo y recast en lo central. Falta profundidad conversacional y retoma de aportes marginales (astronauta). Afecto genuino, input calibrado, sin carrusel."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, peque! Soy Sparky, tu amigo dragón. ¡Qué alegría verte! Hoy vamos a conocer a mi familia en una aventura espacial. Mira esta foto, esta es mi mamá, she is my mom."
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi mamá es bonita. She cute."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué linda es tu mamá! Yes, she is very cute. Tell me, do you have a sister or a brother?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Yo tengo una hermana, she es muy guapa y también tengo un papá que es muy fuerte."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Wow, qué familia tan especial! She is your sister, and your dad is very strong. I love your family!"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi hermano también quiere ser astronauta y le gusta el rocket mucho. Es súper divertido y le encanta volar."
+      },
+      {
+       "who": "Profe",
+       "text": "That is amazing! Your brother is very funny and he loves to fly his rocket."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "idx": 4,
+   "model": "minimax-m3",
+   "title": "Mi familia",
+   "classes": [
+    {
+     "hist_idx": 0,
+     "hist_obj": 0,
+     "hist_items": 0,
+     "eval": {
+      "score": 8,
+      "naturalidad": 7,
+      "afecto": 8,
+      "i1": 8,
+      "reciclado": 9,
+      "recast": 8,
+      "continuity": 7,
+      "verdict": "Clase cálida con reciclado excelente e invisible. Patrón de preguntas algo predecible pero genuino; recasts inaudibles; afecto real. Profe escucha y valida sin corrección sangrienta."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola! Soy Sparky, tu amigo dragón. Hoy vamos a conocer a mi familia espacial. Yo tengo un hermanito pequeño. ¿Y tú, tienes una familia grande o pequeña?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Sí, mi familia es grande. Tengo mamá, papá, un brother y una sister."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Wow, qué familia tan grande tienes! Es genial. My brother and my sister are my best friends. ¿Cómo se llaman tus hermanos?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mis hermano se llama Mateo y mi sister es Valentina. Son muy happy!"
+      },
+      {
+       "who": "Profe",
+       "text": "Oh, Mateo and Valentina! That sounds wonderful. They are very happy together! Do you like to play with them?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí! Me gusta mucho play con ellos. Jugamos al fútbol in el parque y nos reímos todo el day!"
+      },
+      {
+       "who": "Profe",
+       "text": "That sounds like so much fun! Playing soccer in the park is the best. Do you have a favorite ball for the game?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 1,
+     "hist_obj": 3,
+     "hist_items": 11,
+     "eval": {
+      "score": 8,
+      "naturalidad": 7,
+      "afecto": 9,
+      "i1": 8,
+      "reciclado": 8,
+      "recast": 7,
+      "continuity": 5,
+      "verdict": "Clase cálida y bien armada: afecto genuino, reciclado natural del input del alumno, sin carrusel. Falta mayor bidireccionalidad (el profe comparte poco de sí) y continuidad con historia previa si la hay."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola! Soy Sparky, tu dragoncito espacial. ¡Qué alegría encontrarte! Hoy vamos a jugar a conocer a nuestras familias, ¿te parece? Mira, esta es mi familia: I have a happy family."
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Hola Sparky! ¡Yo también tengo family! Mi mamá es muy bonita y mi papá es grande. Es muy happy mi familia!"
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué familia tan linda tenés! I love your happy family. Y contame, ¿tienes hermanos? ¿Do you have a brother or a sister?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí! Yo tengo un hermano y una hermana! Mi hermano se llama Lucas y es muy grande, y mi hermana es chiquita y se llama Emma. We play together todos los días en el parque!"
+      },
+      {
+       "who": "Profe",
+       "text": "That sounds so fun! It is great to play with your brother and sister in the park. Are they happy today?"
+      },
+      {
+       "who": "Alumno",
+       "text": "¡Sí! They are very happy! Lucas y Emma están happy porque vamos a comer pizza y yo también estoy very excited!"
+      },
+      {
+       "who": "Profe",
+       "text": "That is wonderful! A pizza party with your brother and sister sounds like the best day ever. You are so happy with your family!"
+      }
+     ]
+    },
+    {
+     "hist_idx": 2,
+     "hist_obj": 4,
+     "hist_items": 17,
+     "eval": {
+      "score": 6,
+      "naturalidad": 5,
+      "afecto": 8,
+      "i1": 7,
+      "reciclado": 6,
+      "recast": 8,
+      "continuity": 7,
+      "verdict": "Coach cálido y con recast limpio, pero sigue guión: ignora que el alumno ya respondió 'big brother' y 'what do you play', luego fuerza 'red ball' sin conexión. Carrusel disfrazado de conversación."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola! Soy Sparky, tu dragoncito espacial. ¡Qué alegría encontrarte! Hoy vamos a jugar con algo genial: mi familia. Yo tengo un hermano y una hermana, y ellos son muy divertidos. ¿Tú tienes hermanos?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Sí, tengo un brother. Se llama Lucas y le gusta jugar conmigo en el parque."
+      },
+      {
+       "who": "Profe",
+       "text": "¡Qué genial que juegues con Lucas! It is fun to play in the park with your brother. Is he a big brother or a little brother?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Es un brother grande. Lucas tiene ocho años y es más alto que yo."
+      },
+      {
+       "who": "Profe",
+       "text": "Wow, eight years old! He is a big brother. I have a sister and she is big too. Tell me, what do you and your big brother play?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Jugamos a la pelota y a veces play a los dinosaurs. Es muy fun porque Lucas me deja ganar."
+      },
+      {
+       "who": "Profe",
+       "text": "Playing with a ball and dinosaurs is so exciting! It is fun to play with your brother. Does your big brother have a red ball?"
+      }
+     ]
+    },
+    {
+     "hist_idx": 3,
+     "hist_obj": 7,
+     "hist_items": 26,
+     "eval": {
+      "score": 8,
+      "naturalidad": 8,
+      "afecto": 8,
+      "i1": 8,
+      "reciclado": 8,
+      "recast": 8,
+      "continuity": 7,
+      "verdict": "Clase cálida y conversacional, sin carrusel. Reciclado natural, recast invisible ('small' por 'chiquito'), i+1 calibrado A1. Continuity débil: no traída historia previa (si existe)."
+     },
+     "conv": [
+      {
+       "who": "Profe",
+       "text": "¡Hola, peque! Soy Sparky, tu amigo dragón. Hoy vamos a explorar mi mundo y conocer a mi familia. Mira, este es mi hermano, ¡él es muy divertido! ¿Tú tienes un hermano o una hermana?"
+      },
+      {
+       "who": "Alumno",
+       "text": "Hola Sparky! Yo tengo... ehhh... un hermano! He is... ehhh... chico. My brother is chiquito y yo le quiero mucho!"
+      },
+      {
+       "who": "Profe",
+       "text": "¡Wow, qué bueno tener un hermano! Tu hermano es pequeño. My brother is small too, he is very happy!"
+      },
+      {
+       "who": "Alumno",
+       "text": "Mi brother y yo play cars together mucho! Y tu brother Sparky, ¿he is fun? ¿Cómo se llama tu hermano?"
+      },
+      {
+       "who": "Profe",
+       "text": "Yes, my brother is very fun and we love to play! My brother's name is Blaze. Look, he is happy!"
+      },
+      {
+       "who": "Alumno",
+       "text": "Blaze! ¡Qué nombre tan cool! Mi hermano se llama Mateo y he is... ehhh... my best friend! We play todo el día juntos!"
+      },
+      {
+       "who": "Profe",
+       "text": "Mateo is your best friend, that is wonderful! You play with him all day. Does Mateo like to play with dinosaurs?"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

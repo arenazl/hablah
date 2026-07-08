@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 141,
+  "topic_title": "Mi cuerpo",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡qué alegría saludarte! Soy Sparky, tu amigo dragón. Hoy vamos a explorar nuestro cuerpo y descubrir cosas maravillosas. Mira, ¡this is my hand! ¿Vos podés mostrarme tu mano?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí! My hand… es aquí. I have five finger. ¿Cómo se dice “finger”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Wow, qué genio, tenés cinco dedos en tu mano! Se dice fingers. I have five fingers. ¡Excelente trabajo comunicando, te ganaste tu primera estrellita!"
+    },
+    {
+      "who": "Alumno",
+      "text": "My hand… está aquí. I have five fingers, pero… ¿Cómo se dice “thumb”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué buen observador sos! Ese dedito se llama thumb. I have one thumb on my hand. ¡Es genial cómo estás explorando tu cuerpo conmigo!"
+    },
+    {
+      "who": "Alumno",
+      "text": "My hand… está aquí. I have five fingers, y… ¿Cómo se dice “thumb” otra vez? También quiero saber “palm”. 😃"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué bueno que preguntes! La palma de la mano se dice palm. My palm is soft. Y mira, te ganaste otra estrellita más por tu curiosidad, ¡lo estás haciendo increíble!"
+    },
+    {
+      "who": "Alumno",
+      "text": "My hand… está aquí. I have five fingers y one thumb. ¿Cómo se dice “palm” otra vez? My palm… es suave."
+    },
+    {
+      "who": "Profe",
+      "text": "That is right, your palm is very soft. You learned so much about your hands today! You are a superstar, and I cannot wait to explore more about our bodies next time. See you later!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

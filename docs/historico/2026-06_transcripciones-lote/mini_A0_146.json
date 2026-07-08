@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A0",
+  "topic_id": 146,
+  "topic_title": "Comida divertida",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡soy Sparky! Estoy muy feliz de verte hoy. ¿Sabes qué? Tengo muchísima hambre y busco comidas divertidas para mi nave, ¡tengo una manzana roja aquí!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Hola Sparky! Me gusta la manzana red. ¿Sí?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Genial! A red apple is delicious, it is so crunchy! Do you like bananas too, or do you prefer strawberries?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí, yes! Me gustan las bananas."
+    },
+    {
+      "who": "Profe",
+      "text": "Yellow bananas are super yummy and fun to eat! Do you like to eat your banana with some sweet honey on top?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí! yes. ¡Mmm! Me gusta la banana con miel."
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, honey and bananas are a perfect match! That sounds like a wonderful treat. Would you like to share a banana with me in my spaceship?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí! yes, me encantaría compartir la banana contigo."
+    },
+    {
+      "who": "Profe",
+      "text": "That is wonderful, I am so happy to share my snack with a new friend! We had so much fun today talking about yummy apples and bananas. You did a great job today, and next time you can tell me all about your favorite breakfast, see you soon!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

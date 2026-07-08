@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A0",
+  "topic_id": 141,
+  "topic_title": "Mi cuerpo",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡qué alegría verte! Soy Sparky, tu amigo dragón. Hoy tengo mucha energía para jugar y descubrir cosas nuevas juntos. ¡Vamos a ver qué tenemos hoy!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Hola, Sparky! ¡Sí sí! Hello."
+    },
+    {
+      "who": "Profe",
+      "text": "Hello! It is so nice to see you. My dragon wings are ready to fly. Look, I have two big eyes to see you, this is my eye. What about you, can you show me your eyes?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Mira mira! Tengo dos ojos grandes."
+    },
+    {
+      "who": "Profe",
+      "text": "Wow, they are very big and beautiful eyes! These are my eyes, you have two eyes too. Can you touch your nose now?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí! yes."
+    },
+    {
+      "who": "Profe",
+      "text": "That is my nose, great job touching your nose! You are super fast, look at that, a star for you!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Qué linda estrella! ¡Mira mira, me gusta!"
+    },
+    {
+      "who": "Profe",
+      "text": "Me encanta que estés tan contento, ¡te ganaste otra estrella por mostrarme tu nariz! Hoy aprendimos muchísimo sobre nuestro cuerpo, sos un genio. La próxima vez vamos a jugar con nuestras manos, ¡no puedo esperar para verte! Bye bye!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

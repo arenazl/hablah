@@ -50,3 +50,5 @@ _sweep_*.txt
 _pause_matrix.txt
 _served_index.html
 tmp_seo/
+.ollama_key
+backend/.ollama_key

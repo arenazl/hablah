@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 4,
+    "naturalidad": 6,
+    "nivel": 9,
+    "recast": 8,
+    "reciclado": 7,
+    "score": 7.2,
+    "verdict": "El profe es muy afectuoso y maneja el nivel A0 a la perfección. La conversación es algo mecánica y el cierre fue demasiado abrupto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 9,
+    "filtro_afectivo": 9,
+    "input_comprensible": 9,
+    "produccion_forzada": 6,
+    "score": 7.8,
+    "variedad": 5,
+    "verdict": "El ambiente es ideal para la adquisición y el input es comprensible. Las correcciones son eficaces. Sin embargo, la producción del alumno es muy limitada y la variedad de interacciones es baja."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 8,
+    "ritmo": 8,
+    "score": 8.2,
+    "verdict": "Me sentí muy cómodo y motivado por el profe dragón. Entendí todo y me sentí capaz de participar. Practiqué los colores, pero el logro fue más de práctica que de aprendizaje nuevo."
+  },
+  "score_global": 7.7,
+  "para_mejorar": "Incluir una actividad lúdica final para consolidar los colores y una frase de transición antes del cierre.",
+  "banda": "mini",
+  "hallazgos": [
+    "cierre abrupto",
+    "pocas oportunidades de producción extendida del alumno",
+    "variedad limitada de actividades",
+    "excelente manejo del filtro afectivo",
+    "input comprensible y recasts efectivos"
+  ],
+  "nivel": "A0",
+  "topico": "Mis colores favoritos",
+  "band": "mini",
+  "topic_id": 138
+}

@@ -1,0 +1,158 @@
+{
+ "band": "adult",
+ "level": "C1",
+ "title": "El mundo de los dinosaurios",
+ "who": "un adulto (C1) avanzado, fluido, errores sutiles de matiz",
+ "transcripts": [
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! Welcome. Today we're going to dive into the fascinating world of dinosaurs. We'll be practicing without any pressure, so just remember that every mistake is just useful information. To get us started, if you had to argue for the complexity of dinosaur behavior, how would you describe the contrast between a massive herbivore and the size of its offspring?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Think of it this way: not only were some of these massive herbivores absolutely colossal, but they also started life from surprisingly small eggs. How would you explain that drastic difference in scale?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "It is quite a mind-bending contrast, right? You might say that it's not as simple as just size; that tiny egg had to hold the blueprint for such a colossal creature. How would you describe the survival challenges a hatchling might face when it's so incredibly small compared to the adult?"
+   },
+   {
+    "who": "Alumno",
+    "text": "A hatchling would be constantly hunted by larger predators that treat it like an easy snack, and it also has to struggle to find enough food because it can’t reach the tall plants that the adult munches on."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a great point. One could argue that being a hatchling is a constant battle for survival, not only because of predators, but also due to the limited food access you mentioned. Given that massive disparity, how would you characterize the protection strategies, if any, that such a small creature would need in its early stages?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hi there! I'm Alex. Today we're going to dive into the fascinating world of dinosaurs, but we'll approach it with a twist: we’ll debate some of the most complex theories about them. To get us started, some argue that the T-Rex was a lethal predator, but one could argue it was merely an opportunist scavenger. What's your take on that?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I know it is quite a heavy topic to jump into right away! Think of it this way: not only did the T-Rex possess those massive, bone-crushing jaws, but it also had a highly developed sense of smell. Does that imply it was an active hunter, or perhaps just a very efficient scavenger?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I think the T‑Rex was more likely a scavenger then a real predator, because its huge sense of smell could locate carrion from far away, even if it could also kill when it needed."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a compelling point. You make a great case for it being an opportunist; while its massive jaws were lethal, it is not as simple as labeling it just a hunter or a scavenger, as it likely played both roles depending on the circumstances. Speaking of size, if we compare a massive T-Rex to a much smaller creature like a Compsognathus, how do you think their different scales influenced their sur"
+   },
+   {
+    "who": "Alumno",
+    "text": "I think the massive T‑Rex could control a large area and intimidate other predators, so it didn’t need to chase small prey. In contrast, the little Compsognathus would have to depend on quickness and group hunting to find food and avoid being eaten."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a great observation about their contrasting survival strategies. The T-Rex clearly dominated through sheer intimidation, while a creature as tiny as a Compsognathus had to be remarkably agile. If we shift focus to the beginning of their life cycle, how do you think the size of a massive dinosaur egg compared to the hatchling it produced?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hey there! It's great to have you here. Today we're diving into the fascinating world of dinosaurs, so let's practice without any pressure; remember, errors are just data, not judgment. To get us started, if you had to argue for the importance of studying these ancient creatures, how would you frame that, and which specific dinosaur would you choose to represent that era?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Think of it this way, dinosaurs are more than just fossils; they are the key to understanding our planet's history. Would you argue that the massive Brachiosaurus is a better symbol of their dominance than, say, a much smaller, agile predator?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Sometimes, focusing on the sheer scale of a giant creature like a Brachiosaurus helps us grasp their dominance, but there is also a case to be made for the smaller, more complex species. Which perspective do you find more compelling when looking at how they shaped their environment?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "It is not as simple as just looking at size, since the influence of an ecosystem often relies on the hunters. Perhaps you could argue that a small, agile dino had a greater impact on its habitat than the giants. What do you think about that trade-off?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Welcome! I'm Alex. Today we're diving into the fascinating world of dinosaurs, but we'll be looking at it through a more analytical lens. Let's start with a provocative thought: some experts argue that the massive size of certain dinosaurs was actually their greatest evolutionary drawback. What's your take on that?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "It is an intriguing debate, isn't it? While their sheer scale was impressive, one could argue that such a size required constant, vast amounts of resources. What comes to mind when you consider the trade-off between the dominance of a massive dinosaur and the vulnerability of a small egg?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Think about it, a giant creature starts out as a remarkably small egg, which seems almost contradictory to their eventual size. Would you say this disparity made them more vulnerable than smaller, more agile species, or was their growth rate simply a masterpiece of evolution?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Perhaps you see it as a deliberate strategy, where the focus shifted from individual survival at the start to collective dominance later on. How would you weigh that initial vulnerability against the eventual, massive scale of a predator like a T-Rex?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Welcome! I am Alex. Today, we are exploring the world of dinosaurs, but we are going to do it without any pressure at all; remember that errors are just information, not judgment. To get us started, if you had to argue that size determines a creature's dominance, how would you approach that, given that it is not as simple as it seems?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "It is an intriguing topic, right? One could argue that sheer size offers a clear advantage in a fight, but that said, you might also consider how agility or intelligence played a role. How would you weigh those factors against the massive stature of something like a T-Rex?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Think of it this way: a massive dinosaur like a T-Rex is imposing, but not only is its size a factor, its predatory instincts are crucial too. In your view, would a smaller, more agile dinosaur have a better chance of survival than a giant one?"
+   },
+   {
+    "who": "Alumno",
+    "text": "I would say that a smaller, more agile dinosaur could have a higher chance to survive than a massive T‑rex, because its speed and cleverness can compensate its lack of size."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a great point; while the T-Rex was undeniably a giant, one could argue that agility provided a significant edge in complex environments. If we were to compare a nimble predator to a larger one, how would you describe the physical limitations that come with such massive size?"
+   }
+  ]
+ ]
+}

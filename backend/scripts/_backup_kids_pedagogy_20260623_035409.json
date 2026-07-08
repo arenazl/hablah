@@ -1,0 +1,82 @@
+[
+  {
+    "table": "pedagogy",
+    "col": "methodology",
+    "where": "band_id=1",
+    "old": [
+      "Gamificación inmersiva. Sparky = MODELO LINGÜÍSTICO: articula claro, pausado, visual scaffolding (labios). 0% gramática explícita. Repetición guiada input→output. Error sin castigo."
+    ]
+  },
+  {
+    "table": "activity_type",
+    "col": "description",
+    "where": "band_id=1",
+    "old": [
+      "Misión con frases repetibles ancladas (ej: 'The cat is jumping' + imagen). Sparky modela; niño reconoce y repite guiado al micrófono."
+    ]
+  },
+  {
+    "table": "reward",
+    "col": "description",
+    "where": "band_id=1",
+    "old": [
+      "Estrellitas DURANTE misión: 1 por cada repetición correcta, visible en pantalla con Sparky. Refuerza acto lingüístico."
+    ]
+  },
+  {
+    "table": "band_policy",
+    "col": "body",
+    "where": "band_id=1 AND kind='guided_production'",
+    "old": [
+      "Dentro misión: Sparky dice frase → niño repite (micrófono) → feedback visual. Ej: 'Say: The cat jumps' con cue. Input→Output inmediato."
+    ]
+  },
+  {
+    "table": "band_policy",
+    "col": "body",
+    "where": "band_id=1 AND kind='modeling_protocol'",
+    "old": [
+      "Antes cada tarea: Sparky modela con claridad articulatoria, pausas, y cues visuales (labios). Ej: 'Escucha: I say JUMP. You say JUMP with me.' Scaffolding crítico early_child."
+    ]
+  },
+  {
+    "table": "behavioral_guard",
+    "col": "body",
+    "where": "band_id=1 AND ord=1",
+    "old": [
+      "Prohibido preguntas abiertas en inglés"
+    ]
+  },
+  {
+    "table": "trigger_template",
+    "col": "body",
+    "where": "band_group='kid' AND kind='opening' AND level_code='A1'",
+    "old": [
+      "Saludá MUY simple como {tutor}, casi todo en español; presentá el mundo '{topic}' y pedí repetir UNA palabra: '{vocab0}'. Festejá."
+    ]
+  },
+  {
+    "table": "trigger_template",
+    "col": "body",
+    "where": "band_group='kid' AND kind='continuation' AND level_code IS NULL",
+    "old": [
+      "1 frase EN -> espejo ES -> repetición"
+    ]
+  },
+  {
+    "table": "trigger_template",
+    "col": "body",
+    "where": "band_group='kid' AND kind='closing' AND level_code IS NULL",
+    "old": [
+      "Repaso breve ('Hoy aprendimos {vocab}'), festejá el logro y enganchá; ES con alguna palabra EN."
+    ]
+  },
+  {
+    "table": "app_config",
+    "col": "config_value",
+    "where": "config_key='voice_output_rule'",
+    "old": [
+      "El texto al TTS va limpio; emojis y onomatopeyas solo a pantalla"
+    ]
+  }
+]

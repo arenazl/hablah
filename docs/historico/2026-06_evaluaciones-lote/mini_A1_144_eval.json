@@ -1,0 +1,44 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 6,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 5,
+    "reciclado": 7,
+    "score": 6.8,
+    "verdict": "El coach fue muy afectuoso y el nivel del lenguaje fue apropiado. Sin embargo, el recast de errores fue inconsistente y el cierre de la clase resultó un poco abrupto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 5,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 6,
+    "score": 7.0,
+    "variedad": 5,
+    "verdict": "El ambiente fue excelente para bajar el filtro afectivo y el input comprensible. No obstante, la producción del alumno no fue suficientemente forzada y las correcciones implícitas fueron escasas."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 9,
+    "ritmo": 8,
+    "score": 8.4,
+    "verdict": "Me sentí muy cómodo y motivado para hablar gracias a la actitud del profe. Aprendí algunas palabras nuevas y pude describir a mi superhéroe sin sentirme presionado."
+  },
+  "score_global": 7.4,
+  "para_mejorar": "Asegúrate de aplicar recasts implícitos de manera más consistente para errores gramaticales recurrentes (ej. 'have' por 'has') y busca introducir una actividad breve que permita al alumno usar el vocabulario aprendido en frases más elaboradas o en un contexto ligeramente diferente antes del cierre.",
+  "banda": "mini",
+  "hallazgos": [
+    "Recast inconsistente, especialmente con errores gramaticales recurrentes.",
+    "Predominio de preguntas y respuestas directas, con poca variedad de interacción.",
+    "El cierre de la clase fue un poco rápido, aunque con un buen resumen.",
+    "Excelente manejo del filtro afectivo y adecuación del input al nivel del alumno."
+  ],
+  "nivel": "A1",
+  "topico": "Dibujitos y superhéroes",
+  "band": "mini",
+  "topic_id": 144
+}

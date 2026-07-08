@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 138,
+  "topic_title": "Mis colores favoritos",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡soy Sparky! Estoy tan feliz de verte hoy. Mira, este es mi color favorito, ¡es brillante y rojo! ¿Y a vos qué color te gusta más?"
+    },
+    {
+      "who": "Alumno",
+      "text": "Me gusta red! Es como mi coche de juguete. I like… blue, ¿cómo se dice \"verde\"?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué bueno que tengas un coche rojo! Y el verde se dice green. ¡I love green too! ¿Tenés algún juguete que sea green?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Mira! I have un dinosaurio green! My dinosaur big, ¿cómo se dice “big”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Wow, qué increíble dinosaurio! It is a big green dinosaur. ¡Es enorme! Contame, ¿dónde vive tu dinosaurio?"
+    },
+    {
+      "who": "Alumno",
+      "text": "Vive en mi cuarto, en una caja. My dinosaur es big y green. ¿Cómo se dice “cueva”?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Claro! Una cueva se dice cave. Es genial que tu dinosaurio grande y verde tenga su propia cueva en tu cuarto. ¿Tu dinosaurio juega en la cave todos los días?"
+    },
+    {
+      "who": "Alumno",
+      "text": "Sí, my dinosaur play en la cave cada día. It's big y green. ¿Cómo se dice “jugando”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Playing, se dice playing. ¡Me encanta que tu dinosaurio grande y verde esté siempre jugando en su cueva! Hoy aprendimos muchísimo sobre colores y juguetes, ¡sos un genio! La próxima me tenés que contar qué más hace tu dinosaurio, ¡me dejaste con muchas ganas de saber más! You have a big green dinosaur."
+    }
+  ],
+  "student_prompt_version": "v1"
+}

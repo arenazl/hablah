@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A0",
+  "topic_id": 144,
+  "topic_title": "Dibujitos y superhéroes",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola! Soy Sparky, tu nuevo amigo dragoncito espacial. ¡Estoy súper emocionado por conocerte! ¿Cuál es tu personaje favorito de los dibujos animados?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Mickey Mouse es mi favorito! Hello."
+    },
+    {
+      "who": "Profe",
+      "text": "Hello there! Mickey Mouse is amazing, he is so fun! I love his red pants. Do you like watching Mickey Mouse at home?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Yes! Me gusta mucho ver a Mickey en casa."
+    },
+    {
+      "who": "Profe",
+      "text": "That is wonderful! Mickey makes me laugh so much. My favorite part is his big yellow shoes. Do you have a favorite toy of Mickey at your house?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí! Tengo una cosita roja, ¿red? ¡Mira mira!"
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, it is red! That is a cool red toy. Look at you go, you are doing great! Is it a little car or a small figure?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Es un car! Mira mira, es rojo."
+    },
+    {
+      "who": "Profe",
+      "text": "Wow, a red car! That is so fast and cool. You are doing such an amazing job telling me about your favorite things today! Next time you can show me more of your toys. See you later!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

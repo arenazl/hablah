@@ -1,0 +1,44 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 8,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 9,
+    "reciclado": 7,
+    "score": 7.8,
+    "verdict": "El coach fue muy afectuoso y recasteó los errores del alumno de forma excelente. La conversación fue un poco guiada, pero el cierre fue adecuado."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 9,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 6,
+    "score": 7.7,
+    "variedad": 5,
+    "verdict": "El ambiente fue excelente para bajar el filtro afectivo y el input fue comprensible. Sin embargo, faltaron oportunidades para que el alumno produjera más lenguaje de forma espontánea."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 8,
+    "ritmo": 8,
+    "score": 8.2,
+    "verdict": "Me sentí muy cómodo y motivado para hablar. Entendí todo y el profe me hizo sentir capaz, aunque me hubiera gustado hablar un poco más."
+  },
+  "score_global": 7.9,
+  "para_mejorar": "Incluir más preguntas abiertas o actividades que requieran al alumno producir frases más largas y complejas, no solo respuestas cortas o traducciones.",
+  "banda": "mini",
+  "hallazgos": [
+    "Excelente manejo del filtro afectivo y recasts implícitos.",
+    "Input comprensible y adecuado al nivel y edad.",
+    "Pocas oportunidades para la producción espontánea y extendida del alumno.",
+    "La conversación fue un poco guiada, limitando la naturalidad y variedad."
+  ],
+  "nivel": "A1",
+  "topico": "Mi familia",
+  "band": "mini",
+  "topic_id": 135
+}

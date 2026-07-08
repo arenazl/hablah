@@ -1,0 +1,46 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 6,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 6,
+    "reciclado": 5,
+    "score": 6.7,
+    "verdict": "El profe es muy afectuoso y el nivel es adecuado. Sin embargo, las oportunidades de recast se desaprovecharon en algunos errores recurrentes del alumno, y el cierre fue un poco abrupto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 8,
+    "correccion_implicita": 6,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 5,
+    "score": 6.8,
+    "variedad": 5,
+    "verdict": "El filtro afectivo es excelente y el input es comprensible. Sin embargo, la clase carece de variedad en las actividades y no genera suficientes oportunidades para que el alumno produzca lenguaje de forma más extendida."
+  },
+  "juez3_alumno": {
+    "claridad": 8,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 8,
+    "ritmo": 8,
+    "score": 8.0,
+    "verdict": "Me sentí muy cómodo y motivado por Sparky. Aprendí varias palabras nuevas de forma clara y sin sentirme presionado."
+  },
+  "score_global": 7.2,
+  "para_mejorar": "Instruir al coach a priorizar la producción del alumno antes de introducir nuevo vocabulario, por ejemplo, pidiendo al alumno que describa la fruta que quiere nombrar. Además, asegurar recasts consistentes para errores gramaticales recurrentes como 'My X Y'.",
+  "banda": "mini",
+  "hallazgos": [
+    "Afecto y motivación muy altos",
+    "Input comprensible y nivel adecuado",
+    "Recasts presentes pero inconsistentes, especialmente con errores estructurales recurrentes",
+    "Poca variedad de actividades, la interacción es mayormente pregunta-respuesta o introducción de vocabulario",
+    "Cierre un poco abrupto",
+    "Faltan oportunidades para producción más extendida del alumno"
+  ],
+  "nivel": "A1",
+  "topico": "Comidas ricas",
+  "band": "mini",
+  "topic_id": 142
+}

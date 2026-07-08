@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 145,
+  "topic_title": "Jugar en la pantalla",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "¡Hola! Soy Sparky, tu amigo dragón. Estoy muy feliz de verte hoy. A mí me encanta jugar en la pantalla, ¡tengo muchos juegos divertidos aquí! I have a fun game."
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Hola Sparky! I'm fine. I like... game! Es muy divertido. ¿Cómo se dice “fun” en inglés?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué genial que te diviertas! Decimos it is fun. I think playing games is fun too! ¿Qué juegos te gustan jugar en la pantalla?"
+    },
+    {
+      "who": "Alumno",
+      "text": "Me gustan los juegos de carreras. I like... racing game! Es rápido. ¿Cómo se dice “coche” en inglés?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Los juegos de carreras son increíbles y muy rápidos! Decimos car para decir coche. I like racing cars, they are so fast! ¿Tienes un coche favorito en el juego?"
+    },
+    {
+      "who": "Alumno",
+      "text": "My favorite... red car! Me gusta mucho. I think... it's fast, muy rápido. ¿Cómo se dice “speed” en inglés?"
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, a red car! It is so fast! We say speed for la velocidad. It is a very cool car, is it big?"
+    },
+    {
+      "who": "Alumno",
+      "text": "My car big! I like… red, muy bonito.   ¿Cómo se dice “fast” en inglés?"
+    },
+    {
+      "who": "Profe",
+      "text": "Yes, it is a big and fast car! You can say it is fast. You did a great job today telling me about your favorite red racing game. I had so much fun with you, and next time you can tell me more about your other favorite games!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

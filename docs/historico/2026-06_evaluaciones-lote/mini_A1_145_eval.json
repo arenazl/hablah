@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 6,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 6,
+    "reciclado": 7,
+    "score": 7,
+    "verdict": "El coach es muy afectuoso y mantiene un nivel adecuado. Sin embargo, las correcciones son a menudo traducciones directas en lugar de recasts, y el cierre es un poco repentino."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 6,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 6,
+    "score": 7.2,
+    "variedad": 5,
+    "verdict": "El ambiente es excelente para reducir la ansiedad y el input es comprensible. Sin embargo, el coach podría haber fomentado más la producción del alumno y utilizado más recasts implícitos en lugar de traducciones directas."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 8,
+    "ritmo": 8,
+    "score": 8.2,
+    "verdict": "Me sentí muy cómodo y motivado para hablar con Sparky. Entendí todo y me sentí capaz, aunque al final no estoy seguro de haber practicado algo más allá de algunas palabras."
+  },
+  "score_global": 7.5,
+  "para_mejorar": "Cuando el alumno pregunte por una traducción de una palabra que ya se ha usado o que el alumno podría inferir, el coach debe intentar un recast o una pregunta que invite al alumno a recordar o producir la palabra, en lugar de dar la traducción directa.",
+  "banda": "mini",
+  "hallazgos": [
+    "El coach crea un ambiente muy afectuoso y de baja ansiedad.",
+    "El input es comprensible y adecuado para el nivel A1.",
+    "Se observan demasiadas traducciones directas en lugar de recasts o prompts para la producción.",
+    "La interacción carece de variedad, siendo predominantemente de pregunta-respuesta.",
+    "El cierre de la clase es abrupto y no incluye un resumen o revisión."
+  ],
+  "nivel": "A1",
+  "topico": "Jugar en la pantalla",
+  "band": "mini",
+  "topic_id": 145
+}

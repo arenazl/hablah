@@ -1,0 +1,44 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 6,
+    "naturalidad": 7,
+    "nivel": 8,
+    "recast": 6,
+    "reciclado": 7,
+    "score": 7,
+    "verdict": "El profe es muy afectuoso y el nivel del lenguaje es adecuado. Hubo oportunidades perdidas para un recast más efectivo de errores recurrentes y el cierre, aunque amable, fue un poco rápido."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 6,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 5,
+    "score": 7,
+    "variedad": 5,
+    "verdict": "El ambiente es excelente para bajar el filtro afectivo y el input es comprensible. Sin embargo, el coach no generó suficientes oportunidades para que el alumno produjera lenguaje de forma más autónoma, limitándose a responder preguntas o dar traducciones."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 8,
+    "score": 8,
+    "verdict": "Me sentí muy cómodo y el profe fue muy amable. Aprendí algunas palabras nuevas, pero me hubiera gustado practicar más cómo armar oraciones en inglés."
+  },
+  "score_global": 7.3,
+  "para_mejorar": "Después de introducir o confirmar una palabra nueva, pedir al alumno que la use en una oración completa en inglés, o que describa algo usando esa palabra.",
+  "banda": "mini",
+  "hallazgos": [
+    "Recasts presentes pero no siempre efectivos para errores persistentes",
+    "Oportunidades limitadas para la producción extendida del alumno",
+    "Reducción muy alta del filtro afectivo",
+    "Buen uso de la persona y refuerzo positivo",
+    "Cierre un poco abrupto"
+  ],
+  "nivel": "A1",
+  "topico": "Comida divertida",
+  "band": "mini",
+  "topic_id": 146
+}

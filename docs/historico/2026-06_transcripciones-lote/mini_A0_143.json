@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A0",
+  "topic_id": 143,
+  "topic_title": "Abrir juguetes",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "¡Hola, soy Sparky! Estoy muy feliz de verte hoy. Mira, traje mi caja de juguetes espaciales, ¿me ayudas a elegir uno? I want the red ball."
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Red! ¿Cuál?"
+    },
+    {
+      "who": "Profe",
+      "text": "That is a great choice! The red ball is bouncy and fun. Do you like the red ball too?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¿too?"
+    },
+    {
+      "who": "Profe",
+      "text": "Yes, too means also! Like, I like the ball, and you like the ball too. Do you want to play with the red ball?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí sí! Red."
+    },
+    {
+      "who": "Profe",
+      "text": "You got it! Let's play with the red ball together. Catch the ball!"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí sí! Ball!"
+    },
+    {
+      "who": "Profe",
+      "text": "You caught the ball, excellent work! Today we played and had so much fun with the red ball together. I loved sharing my space toys with you and I cannot wait for our next adventure to see what other games we can play."
+    }
+  ],
+  "student_prompt_version": "v1"
+}

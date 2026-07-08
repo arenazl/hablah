@@ -1,0 +1,47 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 6,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 6,
+    "reciclado": 5,
+    "score": 6.7,
+    "verdict": "El profe es muy afectuoso y el nivel es adecuado. Sin embargo, la conversación es un poco mecánica, el reciclado de vocabulario es limitado y el cierre es abrupto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 7,
+    "correccion_implicita": 6,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 5,
+    "score": 6.5,
+    "variedad": 4,
+    "verdict": "El filtro afectivo es excelente, pero la clase carece de variedad y oportunidades reales para la producción forzada del alumno. Las correcciones son a menudo explícitas y se ignoran algunos errores."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 7,
+    "motivacion": 9,
+    "ritmo": 8,
+    "score": 8.4,
+    "verdict": "Me sentí muy motivado y confiado para hablar y preguntar. El profe fue muy claro. Aprendí vocabulario nuevo, aunque me hubiera gustado practicarlo un poco más."
+  },
+  "score_global": 7.2,
+  "para_mejorar": "Prioriza la producción del alumno: después de introducir vocabulario, pide al alumno que lo use en una frase o lo identifique. Si el alumno repite una pregunta, reformúlala o anímale a recordar la respuesta antes de darla.",
+  "banda": "mini",
+  "hallazgos": [
+    "Coach es muy afectuoso y motivador",
+    "Nivel de input adecuado para A1",
+    "Pocas oportunidades para la producción forzada del alumno",
+    "Correcciones a menudo explícitas o ignoradas, en lugar de recasts implícitos",
+    "Falta de variedad en los tipos de interacción",
+    "Cierre abrupto",
+    "El alumno repite la pregunta por 'palm' dos veces, lo que podría indicar falta de retención o necesidad de más práctica"
+  ],
+  "nivel": "A1",
+  "topico": "Mi cuerpo",
+  "band": "mini",
+  "topic_id": 141
+}

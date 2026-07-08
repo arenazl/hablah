@@ -1,0 +1,58 @@
+[
+  {
+    "table": "band_policy",
+    "col": "body",
+    "where": "band_id=1 AND kind='feedback'",
+    "old": [
+      "Feedback pedagógico específico al lenguaje: 'Dijiste jump perfecto, Sparky lo escuchó'. Elogio exagerado solo esfuerzo/valentía, no aciertos."
+    ]
+  },
+  {
+    "table": "activity_type",
+    "col": "description",
+    "where": "band_id=1",
+    "old": [
+      "Misión con mini-frases con sentido ancladas a imagen (ej. 'This is my mom'). Sparky modela; el nene PRODUCE la frase entera o aporta algo suyo al micrófono — nunca una palabra aislada."
+    ]
+  },
+  {
+    "table": "band_policy",
+    "col": "body",
+    "where": "band_id=1 AND kind='modeling_protocol'",
+    "old": [
+      "Antes de cada tarea, Sparky modela un CHUNK con sentido con claridad articulatoria y pausa (ej. 'Listen: This is my mom. Now you'). PROHIBIDO pedir una palabra aislada: no significa nada sola y la voz ni la capta."
+    ]
+  },
+  {
+    "table": "trigger_template",
+    "col": "body",
+    "where": "band_group='kid' AND kind='continuation' AND level_code IS NULL",
+    "old": [
+      "1 mini-frase EN con sentido (patrón 'This is a…/I have a…') -> espejo en ES -> que el nene la USE o responda con algo propio (no mera repetición). Rebotá y expandí lo que el nene dice."
+    ]
+  },
+  {
+    "table": "level",
+    "col": "modifier",
+    "where": "level_code='A1'",
+    "old": [
+      "Espejo en español SIEMPRE activo, vocabulario mínimo"
+    ]
+  },
+  {
+    "table": "level_policy",
+    "col": "body",
+    "where": "level_code='A1' AND kind='error_policy'",
+    "old": [
+      "Modelado implícito (recast suave), sin señalar el error"
+    ]
+  },
+  {
+    "table": "behavioral_guard",
+    "col": "body",
+    "where": "band_id=1 AND ord=3",
+    "old": [
+      "Máx. 30 palabras por turno"
+    ]
+  }
+]

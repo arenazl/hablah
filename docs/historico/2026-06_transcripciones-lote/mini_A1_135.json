@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A1",
+  "topic_id": 135,
+  "topic_title": "Mi familia",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "Hola, ¡soy Sparky! Estoy tan feliz de conocerte hoy. Mirá, acá tengo una foto de mi familia espacial, ¡this is my family!"
+    },
+    {
+      "who": "Alumno",
+      "text": "Hi Sparky! I like... la foto!   My dad big y mi mom bonita.   ¿Cómo se dice 'estrella'?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Wow, qué familia tan genial tenés! Your dad is big and your mom is beautiful. Estrella se dice star, y mi familia espacial vive cerca de una star brillante."
+    },
+    {
+      "who": "Alumno",
+      "text": "How are you? I'm fine! I like... la star! My brother small y lindo. ¿Cómo se dice “casa”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, that is wonderful! Your brother is small and cute. Casa se dice house, and I love your house! Tell me, is your house big or small?"
+    },
+    {
+      "who": "Alumno",
+      "text": "Mi casa big! Es muy grande. I like… jugar en el garden. ¿Cómo se dice “coche”?"
+    },
+    {
+      "who": "Profe",
+      "text": "Oh, your house is big! And you like to play in the garden. Coche se dice car, and I bet your car is very fast!"
+    },
+    {
+      "who": "Alumno",
+      "text": "My car fast! I like... car. ¿Cómo se dice “rápido”?"
+    },
+    {
+      "who": "Profe",
+      "text": "That is right, your car is fast! Rápido se dice fast. Lo hiciste increíble hoy contándome tanto sobre tu familia y tu casa. ¡La próxima clase me vas a contar más de tus juguetes favoritos! See you soon."
+    }
+  ],
+  "student_prompt_version": "v1"
+}

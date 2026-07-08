@@ -1,0 +1,77 @@
+{
+  "updates": [
+    {
+      "table": "universal_policy",
+      "col": "body",
+      "where": "kind='universal_guard' AND ord=5",
+      "old": [
+        "Escucha activa: si el alumno aporta algo (aunque sea en su idioma), tu PRIMERA reacción es a ESO, con interés genuino, ANTES de seguir tu plan. Hacé recast natural de su idea al inglés; nunca señales el error como falla."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "col": "body",
+      "where": "level_code='A2' AND kind='error_policy'",
+      "old": [
+        "Modelado implícito (recast suave), sin señalar el error"
+      ]
+    },
+    {
+      "table": "level_policy",
+      "col": "body",
+      "where": "level_code='B1' AND kind='error_policy'",
+      "old": [
+        "Recast; errores que rompen comunicación + confusión past simple/continuous (objeto hoy)"
+      ]
+    },
+    {
+      "table": "level_policy",
+      "col": "body",
+      "where": "level_code='B2' AND kind='error_policy' AND body LIKE %s",
+      "old": [
+        "Escalada de corrección: minor error = silent recast; high-impact error (fossilizable/idiomático) = recast + brief explicit input"
+      ]
+    },
+    {
+      "table": "level_policy",
+      "col": "body",
+      "where": "level_code='C1' AND kind='error_policy'",
+      "old": [
+        "Recast + foco en matiz/idiomático cuando es relevante"
+      ]
+    },
+    {
+      "table": "pedagogy",
+      "col": "methodology",
+      "where": "band_id=1",
+      "old": [
+        "Input comprensible (Sparky modela claro y pausado, scaffolding visual de labios). Producción de CHUNKS CON SENTIDO, NUNCA palabras sueltas. 0% gramática explícita. Seguí la curiosidad del nene; error sin castigo."
+      ]
+    },
+    {
+      "table": "band_policy",
+      "col": "body",
+      "where": "band_id=1 AND kind='guided_production'",
+      "old": [
+        "Sparky modela una mini-frase CON SENTIDO -> el nene la dice entera o responde con contenido propio -> feedback. CHUNKS, nunca palabras sueltas. Si el nene aporta algo (ej. 'me gusta su sonrisa'), rebotalo y expandilo."
+      ]
+    },
+    {
+      "table": "behavioral_guard",
+      "col": "body",
+      "where": "band_id=4 AND ord=2",
+      "old": [
+        "Si se traba >3s, dar pista o sinónimo, no la respuesta"
+      ]
+    },
+    {
+      "table": "behavioral_guard",
+      "col": "body",
+      "where": "band_id=4 AND ord=3",
+      "old": [
+        "Priorizar continuidad del diálogo sobre la precisión"
+      ]
+    }
+  ],
+  "inserts": []
+}

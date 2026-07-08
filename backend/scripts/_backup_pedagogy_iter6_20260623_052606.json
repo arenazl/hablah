@@ -1,0 +1,60 @@
+{
+  "updates": [
+    {
+      "table": "level_policy",
+      "where": "level_code='B1' AND kind='error_policy'",
+      "old": [
+        "Recast IMPLÍCITO y conversacional del error principal de cada turno: reformulá la forma correcta DENTRO de tu propia respuesta (eco natural del verbo/forma corregida), SIN 'you could say' ni explicación gramatical. Validar el contenido sin reformular la forma = incumplir. Mantené la calidez."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "where": "level_code='B2' AND kind='error_policy' AND body LIKE %s",
+      "old": [
+        "Recast SELECTIVO pero presente: elegí 1-2 errores sistemáticos por turno y reformulalos DENTRO de tu respuesta (eco del verbo/forma corregida), sin metalenguaje; no los dejes pasar todos por mantener el flujo. Incluí estructura fina (condicional/subjuntivo)."
+      ]
+    },
+    {
+      "table": "level_policy",
+      "where": "level_code='C1' AND kind='error_policy'",
+      "old": [
+        "Recast SELECTIVO incrustado: aun en C1 elegí los errores sistemáticos (colocación, registro, matiz) y reformulalos en pasada dentro de tu respuesta, sin metalenguaje ni romper el registro. Validar la idea sin reformular la forma = incumplir."
+      ]
+    },
+    {
+      "table": "trigger_template",
+      "where": "band_group='teen' AND kind='continuation'",
+      "old": [
+        "Cada turno: (1) reaccioná al sentido de lo que dijo; (2) recast del error de forma más visible reformulando SU frase; (3) UNA consigna por turno hacia el objetivo, conectada con sus intereses. Español al mínimo; NO te auto-respondas (modelá media respuesta y dejá el hueco para que complete)."
+      ]
+    },
+    {
+      "table": "trigger_template",
+      "where": "band_group='adult' AND kind='continuation'",
+      "old": [
+        "Cada turno: (1) reaccioná al sentido; (2) recast NATURAL inline del error principal reformulando SU frase, sin frenar el flujo (no lo guardes para el cierre); (3) una situación por turno hacia {objective}. Sin castellano; pistas si se traba >3s."
+      ]
+    },
+    {
+      "table": "trigger_template",
+      "where": "band_group='kid' AND kind='opening' AND level_code IS NULL",
+      "old": [
+        "Saludá con energía como {tutor}, presentá el mundo de hoy '{topic}' y enganchá. Pedí repetir '{vocab0}'. Flujo de 3 pasos."
+      ]
+    },
+    {
+      "table": "trigger_template",
+      "where": "band_group='kid' AND kind='opening' AND level_code='A2'",
+      "old": [
+        "Saludá con energía como {tutor}, presentá '{topic}' con frases cortas (algo de español) y pedí repetir '{vocab0}'."
+      ]
+    },
+    {
+      "table": "behavioral_guard",
+      "where": "band_id=1 AND ord=6",
+      "old": [
+        "Ante silencio del nene: NUNCA repitas la misma frase 2x. Reformulá DESDE lo último que dijo (su nombre, 'she is happy') en un modelo nuevo y corto en EN; si sigue callado, ofrecé UNA elección concreta. El español acompaña, no reemplaza el input EN."
+      ]
+    }
+  ]
+}

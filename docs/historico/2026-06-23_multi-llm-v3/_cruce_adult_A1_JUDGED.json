@@ -1,0 +1,1001 @@
+{
+ "band": "adult",
+ "level": "A1",
+ "title": "Cine de aventuras",
+ "who": "un adulto principiante, nivel A1: muy básico, mezcla mucho español, errores de principiante",
+ "models": [
+  "gpt-oss:120b",
+  "qwen3-coder:480b",
+  "gemma3:27b",
+  "nemotron-3-nano:30b",
+  "minimax-m3"
+ ],
+ "personas": [
+  "trabado",
+  "fluido",
+  "quedado",
+  "crack"
+ ],
+ "cells": [
+  {
+   "model": "gpt-oss:120b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 13,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I'm Alex. Today we're going to practice English together in a relaxed way, no pressure at all. Errors are just part of the learning process! To get us started, would you like to talk about movies, travel, or something else today?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Um… movies.   Adventure?"
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like a great choice! Adventure movies are always exciting. To start, who is your favorite hero in an adventure movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Um… me gusta Indiana Jones."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, Indiana Jones is a classic! He is such an adventurous hero. Why do you like his movies?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I… like… because… adventure… fun."
+    },
+    {
+     "who": "Profe",
+     "text": "That makes sense! The action and the mystery make the movies really fun. Is the hero in your favorite movie a brave person?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 8,
+    "reciclado": 9,
+    "recast": 9,
+    "verdict": "Coach natural, buen filtro afectivo. Recicla vocab (adventure, fun, hero) sin forzar. Podría invitar más explícitamente a output; el alumno fue breve pero el profe recicló bien sin romper flujo."
+   }
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 84,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Alex. Today we will practice without any pressure, so remember that errors are just information. To start our adventure, should we talk about movies, travel, or something else today?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I like movies, especially adventure film, me gusta mucho los películas de adventure. Do you think we can talk about travel in movies, or you prefer talk about another thing?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great idea! Movies are perfect for exploring adventure. You said you like adventure films, so let's talk about those. I love that you are already sharing your thoughts on them. What is your favorite adventure movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "My favorite adventure movie is *Indiana Jones*, me gusta because it have many action and travel scenes. What movie you love the most?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a classic choice! I really enjoy watching Indiana Jones too because it has so much excitement. I love the movie Jurassic Park, it is also a very big adventure."
+    },
+    {
+     "who": "Alumno",
+     "text": "I also love Jurassic Park, it is very exciting and have many dinosaurs, me gusta mucho la diversión. What adventure movie you think is the best for travel in the story?"
+    },
+    {
+     "who": "Profe",
+     "text": "I think The Secret Life of Walter Mitty is the best for travel because it has beautiful locations and a great sense of adventure. Do you think that kind of movie is better than action films with a lot of fighting?"
+    }
+   ],
+   "eval": {
+    "score": 7,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 8,
+    "reciclado": 8,
+    "recast": 7,
+    "verdict": "Conversación genuina con afecto claro y reciclado constante del eje (adventure/travel/movies). Recast suave de 3ª persona (have→has) pero indetectable; alumno no lo capta en R6. Falta invitación suave al monitoreo de código-switching; andamiaje explícito (choices, frames) ausente cuando introduce complejidad (comparativa, película desconocida)."
+   }
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 61,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi! I'm Alex. It's great to meet you. Today we're going to talk about movies, so let's practice without pressure. Errors are just information, not a judgment. Tell me, do you prefer to talk about work, travel, or maybe your favorite movies?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I like movies, adventure… I watch many, maybe with friends, but also I... uh… I travel sometimes."
+    },
+    {
+     "who": "Profe",
+     "text": "That's cool, I love adventure movies too! You said you watch them with friends, that sounds like a lot of fun. Since you're into adventures, do you have a favorite hero in a movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "My favorite hero is Indiana Jones, he very brave and run a lot... me gusta su hat."
+    },
+    {
+     "who": "Profe",
+     "text": "He is very brave and he runs a lot, you're right. I love his hat too, it's iconic. So, if you were in an adventure movie, would you wear a hat like Indiana Jones?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yes, I think I would wear the hat, maybe because it looks cool… o porque me gusta el estilo. But I also like not wear hat, sometimes."
+    },
+    {
+     "who": "Profe",
+     "text": "That makes sense, the style is definitely iconic. It's nice to change your look sometimes. Since you like adventure, what is one movie you would recommend to me?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 8,
+    "reciclado": 8,
+    "recast": 8,
+    "verdict": "Profe genuino y cálido; invita conversación sin presión, retoma lo que dice el alumno y lo recircula naturalmente. Recasts limpios en los errores críticos ('he very brave' → 'He is very brave'). Leve: el error 'not wear' se deja pasar sin reformular, pero mantiene fluidez y afecto."
+   }
+  },
+  {
+   "model": "gpt-oss:120b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 67,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I'm Alex. Today we're practicing English without any pressure, so don't worry about mistakes; they are just part of the learning process. Shall we start by talking about movies? What kind of adventure movies do you like?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I like adventure movies, like Indiana Jones. Me gusta the movie because it have many action and fun."
+    },
+    {
+     "who": "Profe",
+     "text": "Indiana Jones is a classic! You like that movie because it has a lot of action and it is very exciting, right? What is your favorite character in that movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "My favorite character is Indiana Jones, because he is very brave y siempre fighting for treasure. I also like his hat, it look cool."
+    },
+    {
+     "who": "Profe",
+     "text": "He is definitely brave! His hat looks cool indeed, and he is always fighting for the treasure. Do you prefer watching movies in the cinema or at home?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I prefer watching movies at home because es más comfortable y I can eat popcorn. In cinema is also nice but I need pay ticket."
+    },
+    {
+     "who": "Profe",
+     "text": "That makes sense. It is definitely more comfortable at home with your popcorn. I prefer the cinema because the screen is so big! Do you have a favorite adventure movie you would recommend to me?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 9,
+    "reciclado": 9,
+    "recast": 7,
+    "verdict": "Clase genuina, afectiva, input i+1 calibrado y reciclado activo. Pierde por no recastear 'I need pay ticket' (estructura to-infinitive)."
+   }
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 41,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I'm Alex. Today we are going to practice without any pressure, remember that mistakes are just part of learning. To start, what would you like to talk about today? We can discuss movies, work, travel, or anything else you'd like."
+    },
+    {
+     "who": "Alumno",
+     "text": "uh... movies? adventure movies? I... I like... Indiana Jones?"
+    },
+    {
+     "who": "Profe",
+     "text": "That's a classic! Indiana Jones is a great choice for adventure. Since you like that movie, would you say the hero is brave, or maybe he is very smart?"
+    },
+    {
+     "who": "Alumno",
+     "text": "uh... both? he is... brave and smart. I think."
+    },
+    {
+     "who": "Profe",
+     "text": "Exactly, he is definitely both! And the movie is very exciting, isn't it? Tell me, is Indiana Jones your favorite movie, or do you have another adventure movie that you really like?"
+    },
+    {
+     "who": "Alumno",
+     "text": "uh... I don't know... maybe... Pirates of the Caribbean? I like Johnny Depp... he's funny... and the pirates... they're cool... but scary sometimes..."
+    },
+    {
+     "who": "Profe",
+     "text": "Johnny Depp is fantastic in that role, he really is very funny. Since you like adventure, do you prefer a movie with a hero like Indiana Jones, or one with a group of pirates?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 8,
+    "reciclado": 6,
+    "recast": 9,
+    "verdict": "Clase cálida y comunicativa con buen manejo de afecto. El profe invita bien a la producción e input es claro. Debilidad: pierde reciclado del vocabulario que produce el alumno (brave, smart, cool, scary)."
+   }
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 121,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi! I'm Alex, and I'm really happy to meet you. Today we are going to practice English without any pressure; remember that mistakes are just part of learning. To start, would you prefer to talk about movies, travel, or something else?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Hi Alex! I'm so happy to meet you too! I really like movies, especially adventure movies because they are so exciting and I can practice English with the subtitles. What's your favorite adventure movie?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! Adventure movies are perfect for practicing. I really like the Indiana Jones movies because the hero is very brave. What about you? Who is your favorite hero in an adventure movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "My favorite hero is Indiana Jones too! I think he is very cool and brave, and I like when he uses his whip to fight bad guys. Do you like the part when he runs away from the big rock in the cave?"
+    },
+    {
+     "who": "Profe",
+     "text": "That scene is iconic! It is so fast and intense. I think that part is really exciting because Indiana Jones is so quick. Do you like other movies with big adventures like that one?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yes, I love that part too! It's so cool when he jumps and the rock is right behind him. I also like the movie Jurassic Park because the dinosaurs are so big and scary, but the adventure is amazing. Do you like dinosaurs too?"
+    },
+    {
+     "who": "Profe",
+     "text": "I love dinosaurs too! Jurassic Park is a classic. It is amazing how big they are in the movie. What is your favorite dinosaur in that film?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 8,
+    "reciclado": 7,
+    "recast": 8,
+    "verdict": "Conversación genuina, afecto sólido (refuerzo, baja ansiedad), input A1 bien calibrado. Recircula lo esencial (adventure, movies, brave). Sin errores del alumno, no hay recast, pero el profe invita constantemente a producir sin sofocación. Muy apropiado para el nivel."
+   }
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 126,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hola, qué tal. Soy Alex, tu profe de inglés. Hoy vamos a practicar sin presión, los errores son solo información para mejorar. ¿Te parece si empezamos hablando sobre películas de aventuras? ¿Cuál es tu favorita?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ah, hola profe... Está bien, supongo. No sé si tengo una favorita, pero me gustó *Indiana Jones*, aunque no me acuerdo bien por qué. ¿Vos la viste?"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, Indiana Jones is a classic! I have seen it, and the hero is really cool. Do you think the movie is exciting?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí, está buena, pero no me acuerdo mucho de la trama... ¿Había un mapa del tesoro o algo así? No sé, igual me gustaron las escenas de acción, aunque a veces me aburría un poco. ¿Vos qué pensás de esas películas de aventuras con mucha acción?"
+    },
+    {
+     "who": "Profe",
+     "text": "I agree, they are very exciting. I like the action, but sometimes the stories are long. I think the hero is brave in Indiana Jones. Do you have a favorite hero in a movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ah, no sé... Indiana Jones es medio viejo, ¿no? Pero igual tiene esas escenas de acción que están buenas. Yo creo que el héroe... ¿cómo se dice? *hero*... sí, él es valiente, pero a veces hace cosas medio locas, ¿no? Como correr de los animales o caerse de lugares altos... jaja, qué loco."
+    },
+    {
+     "who": "Profe",
+     "text": "That is true, he is very brave but sometimes a bit crazy! I think it is fun to watch. Do you have a favorite hero in a different movie?"
+    }
+   ],
+   "eval": {
+    "score": 4,
+    "naturalidad": 3,
+    "afecto": 4,
+    "i1": 6,
+    "reciclado": 5,
+    "recast": 3,
+    "verdict": "Abrió con calidez en español, pero saltó bruscamente al inglés sin andamio. Ignoró el territorio seguro del alumno (A1 necesita mezcla), no celebró intentos, ni reciclaba productivamente."
+   }
+  },
+  {
+   "model": "qwen3-coder:480b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 78,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Alex. Today we will practice English without any pressure. Remember, mistakes are just information, not judgment. Tell me, do you want to talk about movies, work, or travel today?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Hi Alex! I want to talk about movies. I like adventure movies very much. My favorite is Indiana Jones. Do you like movies too?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! Indiana Jones is an amazing adventure movie. I really like adventure films too, especially when the hero travels to new places. What do you think about the main character, Indiana?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think Indiana is very brave and clever. He always find treasures and fight bad guys. I like when he use his whip!"
+    },
+    {
+     "who": "Profe",
+     "text": "He is definitely brave, and he finds treasures in every movie he is in. What is another movie you like that has a hero?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I also like Jurassic Park! The dinosaurs are so scary but the scientist hero, Dr. Alan Grant, he is very smart and brave too. He help the children and everyone survive!"
+    },
+    {
+     "who": "Profe",
+     "text": "Jurassic Park is a classic! It is cool that he helps the children survive the dinosaurs. Do you think the dinosaurs in the movie are big?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 8,
+    "i1": 9,
+    "reciclado": 8,
+    "recast": 6,
+    "verdict": "Conversación genuina, input bien calibrado, buen afecto. Falla: no recasts consistentemente ('use'→'uses' aparece 2 veces sin corregir); recasts 'finds' y 'helps' pero deja hueco. Podría ser más atento a TODOS los errores."
+   }
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 18,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi! I'm Alex. It's great to meet you. Today we're going to talk about adventure movies without any pressure. Remember, mistakes are just how we learn. To start, what kind of movies do you like to watch?"
+    },
+    {
+     "who": "Alumno",
+     "text": "... Eh... Acción... a veces.   ...Sí."
+    },
+    {
+     "who": "Profe",
+     "text": "That's cool! Action movies are great, especially for adventures. I like big heroes and lots of action. Do you have a favorite adventure movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "... Indiana Jones... bueno. ... Difícil."
+    },
+    {
+     "who": "Profe",
+     "text": "Indiana Jones is a classic! He is a very brave hero. Do you think he is cool, or do you prefer other characters?"
+    },
+    {
+     "who": "Alumno",
+     "text": "...Cool... sí. ...Pero... otros... más... modernos."
+    },
+    {
+     "who": "Profe",
+     "text": "I understand! Modern movies are great too. Which modern hero do you think is the best one?"
+    }
+   ],
+   "eval": {
+    "score": 7.5,
+    "naturalidad": 7.5,
+    "afecto": 7.5,
+    "i1": 6.5,
+    "reciclado": 8.5,
+    "recast": 7,
+    "verdict": "Profe cálido, celebra bien, reciclado impecable (action→Action movies, modern×3). Pero dos preguntas sobrecomplexas para A1: 'Do you prefer other characters?' y 'Which modern hero is the best one?'. Podría simplificar (¿Is he cool? ¿Do you like him?). Falta tranquilizar explícitamente cuando alumno señala ansiedad ('Difícil')."
+   }
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 109,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi! I'm Alex, it's nice to meet you. Today we are going to practice English in a relaxed way, and remember, making mistakes is just part of the process. To get started, would you like to talk about movies, work, or something else today?"
+    },
+    {
+     "who": "Alumno",
+     "text": "¡Hola! Yo soy… eh… Ricardo. Es un pleasure, Alex. I like movies, sí, mucho. I see… ¿cómo se dice?… action movies, con explosions y… ¡cosas! ¿You like action movies too?"
+    },
+    {
+     "who": "Profe",
+     "text": "It is a pleasure to meet you too, Ricardo. I love action movies as well, they are very exciting. When you watch a movie with many explosions, do you think the hero is brave?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yes, the hero is… ¿valiente? I think so. Pero sometimes, the explosions are too much, ¿no? My brother, he loves very much the movies with cars, very fast, and… boom! I prefer when the hero use… ¿inteligencia? to win."
+    },
+    {
+     "who": "Profe",
+     "text": "I agree, intelligence is often more important than just explosions. Sometimes it is great when the hero is smart to solve a problem. Is there a movie you really like where the hero is very smart?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mmm… yes, I see one movie, is… ¿cómo se dice?… with Robert Downey Jr., is Iron Man. He is very, very smart, he make… ¿un traje? with… technology, and fight the bad guys, ¿sí? Is a good movie, I think."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a perfect example. Iron Man is incredibly smart because he builds his own armor with technology to fight the bad guys. Do you think he is the smartest hero in movies?"
+    }
+   ],
+   "eval": {
+    "score": 7,
+    "naturalidad": 7,
+    "afecto": 8,
+    "i1": 8,
+    "reciclado": 8,
+    "recast": 6,
+    "verdict": "Clase afectiva con input i+1 bien calibrado y reciclado de vocab. Pero recast débil e inconsistente: deja pasar errores como 'I see', 'he make', 'he loves very much' sin reformular naturalmente."
+   }
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 52,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Alex, and I am so happy to be your teacher today. Remember, we are here to practice without any pressure, so mistakes are just part of the learning process. To start, would you like to practice our English conversation today about movies, travel, or something else?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ah... Hola. Cine... sí, movies. Pero... no sé. Aventures... es como... *aventuras* en español, ¿no?"
+    },
+    {
+     "who": "Profe",
+     "text": "Exactly, adventure movies! They are very exciting. To get us started, tell me, what is your favorite movie character?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mmm... personaje... Uh... Indiana Jones. Es... un hombre con un látigo, ¿no? Y busca cosas antiguas, como... tesoros."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a classic choice! Indiana Jones is a great hero. You can say: He is an explorer who looks for old treasures."
+    },
+    {
+     "who": "Alumno",
+     "text": "Sí, un explorador... eso es. Pero... ¿por qué \"looks\"? No es \"look\"... como \"mirar\"? Es diferente, ¿no? Es complicado..."
+    },
+    {
+     "who": "Profe",
+     "text": "I understand, it can be tricky! In English, when we talk about him or her, we add an 's' to the action, so we say he looks for treasure. If you were talking about yourself, you would say I look for treasure. Does Indiana Jones look for anything else in the movie?"
+    }
+   ],
+   "eval": {
+    "score": 7,
+    "naturalidad": 7,
+    "afecto": 8,
+    "i1": 8,
+    "reciclado": 6,
+    "recast": 8,
+    "verdict": "Coach cálido y celebrador con recast suave. Explicación meta-gramatical (s en 3ª persona) rompe fluidez conversacional; reciclaje emergente pero débil aún."
+   }
+  },
+  {
+   "model": "gemma3:27b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 66,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi! I am Alex, and I am happy to meet you. Today we are practicing without any pressure, remember that mistakes are just part of learning. To start, what would you like to talk about today: work, travel, social conversation, or maybe movies?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Hola Profe Alex! Yo... yo quiero hablar de... movies! Me gusta mucho las peliculas de aventuras, como... Indiana Jones. Es muy... exciting!"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! Indiana Jones is a fantastic action movie. I think it is very exciting too. Tell me, is the hero in your favorite movie strong or is he funny?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Indiana Jones es... es muy strong! Y también... un poquito funny, pero más strong. Él tiene mucha... poder, para fight con los malos."
+    },
+    {
+     "who": "Profe",
+     "text": "He is very strong and funny, you're right. He has a lot of power to fight the bad guys. Do you think a hero needs to be strong in all adventure movies?"
+    },
+    {
+     "who": "Alumno",
+     "text": "No... no creo. A veces, el héroe es... clever, no strong. Como... um... películas con puzzles y... secretos, no solo peleas."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great point, sometimes the hero is very clever instead of strong. I agree that solving puzzles and secrets can be just as exciting as fighting. What is the name of a movie with a clever hero that you really like?"
+    }
+   ],
+   "eval": {
+    "score": 7,
+    "naturalidad": 7,
+    "afecto": 8,
+    "i1": 8,
+    "reciclado": 7,
+    "recast": 8,
+    "verdict": "Clase bien armada: baja ansiedad, invita producción, recast suave, i+1 calibrado. Pregunta binaria es clara pero suena ordenada; reciclado de vocab podría ser más denso."
+   }
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 15,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I'm Alex. Today we'll practice English without any pressure, remember that mistakes are just information. To start, would you like to talk about movies, travel, or something else?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I want talk movies."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like a great plan. Talking about movies is always fun! Tell me, what is your favorite adventure movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "My favorite adventure movie is “Jumanji”."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a classic choice! It is a very exciting movie. Tell me, who is your favorite hero in Jumanji?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I like Alan. He brave."
+    },
+    {
+     "who": "Profe",
+     "text": "Alan is a great character, I agree! You can say that he is very brave."
+    }
+   ],
+   "eval": {
+    "score": 7,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 7,
+    "reciclado": 5,
+    "recast": 8,
+    "verdict": "Excelente gestión afectiva y recast suave que no corta fluidez. Debilidad: no recircula el léxico tras modelarlo (ej: 'brave' se recast pero no se reutiliza) para consolidación."
+   }
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 71,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I am Alex. Today we will practice English without any pressure. Remember, mistakes are just information. To start, would you prefer to talk about movies, work, or social situations today?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I want talk about movies. Yo pienso que las películas de aventura son geniales porque son emocionantes."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds awesome! I agree, adventure movies are really exciting. Tell me, who is your favorite hero in an adventure movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mi héroe favorito es Indiana Jones porque él es muy valiente y le gusta buscar tesoros. ¿Y tú? ¿Quién es tu héroe favorito en una película de aventuras?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! Indiana Jones is very brave. For me, I really like heroes who are clever, like Lara Croft. She is very smart and fast. What movie is your favorite?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Mi película favorita es Raiders of the Lost Arm porque tiene mucha acción y aventura, ¡me encanta! ¿Cuál es tu película favorita del cine de aventuras?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a classic! Raiders of the Lost Ark is incredible. My favorite adventure movie is The Mummy, because it has great action and it is very funny. Do you think the hero in that movie is brave?"
+    }
+   ],
+   "eval": {
+    "score": 9,
+    "naturalidad": 9,
+    "afecto": 9,
+    "i1": 9,
+    "reciclado": 8,
+    "recast": 9,
+    "verdict": "Profe mantiene equilibrio excelente entre input genuino (i+1), celebración afectiva y fluidez. Recasts invisibles (no señala 'I want talk' ni 'Lost Arm'). Única baja: podría recircular más palabras nuevas del alumno (tesoros, emocionante)."
+   }
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 65,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hola, qué tal. Soy Alex, tu profe de inglés. Hoy vamos a practicar sin presión, recordá que los errores son parte del aprendizaje. Para empezar, ¿te gustaría hablar hoy sobre películas de aventura, sobre el trabajo o preferís otro tema?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yo quiero hablar de películas de aventura, son muy divertidas pero a veces me duermo. ¿Podemos ver una de esas?"
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like a great plan, I love adventure movies too! Sometimes they can be quite relaxing. To start, what is one adventure movie that you really like?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I like “Jungle Book” because it has a lot of animals y la historia es fácil de seguir, but sometimes I feel boring y me duermo."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a classic choice! Since the story is easy to follow, you might say the movie is interesting instead of saying you feel boring. Do you think the main hero in The Jungle Book is brave?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I think Mowgli is brave, pero yo no sé si es heroitic enough. Me gusta porque hay many animales."
+    },
+    {
+     "who": "Profe",
+     "text": "He is definitely brave because he lives alone in the wild. I agree, there are many animals, and some of them are very big. Is the bear your favorite animal in the movie?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 9,
+    "reciclado": 8,
+    "recast": 7,
+    "verdict": "Profe empático, baja ansiedad (afecto fuerte). Turno 3 con recast explícito ('instead of') rompe pureza, pero turno 4 corrige con recast implícito. i+1 bien calibrado, invitación a producir clara."
+   }
+  },
+  {
+   "model": "nemotron-3-nano:30b",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 63,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi! I'm Alex. It's great to meet you! Today we are going to talk about movies, so remember: mistakes are just part of learning. To start, what kind of adventure movies do you like?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yo me gusta las películas de aventura con mucho acción y piratas, son muy emocionantes. También me gustan cuando hay música y cantan."
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like a great choice. You like adventure movies with lots of action and pirates, and musicals are fun too! When you think of a hero, do you prefer a brave pirate or maybe a character in a space movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yo prefiero el pirata, porque es muy valiente y tiene una espada grande. Pero también me gustan los astronautas, son muy cool."
+    },
+    {
+     "who": "Profe",
+     "text": "I love that! Pirates are such classic heroes, especially with a big sword. Since you like astronauts too, do you think a space movie is more exciting than a pirate movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Yo creo que las películas de espacio son más emocionante. Porque tienen cohetes y luces, me gustan mucho."
+    },
+    {
+     "who": "Profe",
+     "text": "I agree, space movies are very exciting because of the rockets and the lights! If you had to choose one favorite, would you say a space movie is your favorite, or do you still prefer a classic pirate adventure?"
+    }
+   ],
+   "eval": {
+    "score": 7,
+    "naturalidad": 7,
+    "afecto": 8,
+    "i1": 7,
+    "reciclado": 6,
+    "recast": 8,
+    "verdict": "Cálido y conversacional, recasts limpios. Reciclado ligero para A1; condicionales al cierre empujan A1+. Alumno produce bien."
+   }
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "trabado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 22,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi! I'm Alex. It's really nice to meet you. Today we are going to practice English without any pressure; remember that mistakes are just part of the learning. Should we talk about movies or travel to start our adventure?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ehh... movies... me... me gusta movies... poquito."
+    },
+    {
+     "who": "Profe",
+     "text": "That's great, I love movies too! You can say, I like movies a little bit. What is your favorite movie, is it an adventure movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ehh... si... adventure... Indiana Jones... me gusta... poquito."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, Indiana Jones is a classic! You can say: I like Indiana Jones a lot. Is it an adventure movie with a hero?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ehh... si... hero... si, adventure... poquito difícil..."
+    },
+    {
+     "who": "Profe",
+     "text": "Don't worry, it gets easier with practice. Indiana Jones is a great hero. Is your favorite movie big and exciting?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 8,
+    "reciclado": 7,
+    "recast": 7,
+    "verdict": "Profe cálido, input claro y reciclado. Recasts explícitos ('You can say') cierran feedback; reformula más en la frase del alumno. Últimas preguntas yes/no limitan output; abre con WH-questions amplias."
+   }
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "fluido",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 115,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I'm Alex. Today we practice without any pressure, remember that mistakes are just information. To get us started, would you prefer to talk about movies, work, or travel today?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Hola profe! I prefer movies, me encantan the adventure movies like Indiana Jones, I see it many times with my brother! And you, what is your favorite movie?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice, I love Indiana Jones too! It is so exciting. Since you have seen it many times, you could say: I have watched it many times. What makes that movie your favorite?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Ay profe, me gusta Indiana Jones because the action is very exciting and the music is so cool! I think the first movie is the best, with the treasure and the snakes in the cave, I have watched it maybe five times! And you, you like more the first movie or the second?"
+    },
+    {
+     "who": "Profe",
+     "text": "That is a tough choice! I think I prefer the first movie because the story is classic. Is there another hero in movies that you like as much as Indiana Jones?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Oh yes profe! Me gusta mucho also Lara Croft, she is very strong and brave, I play the video game with my cousin! And you, you have a hero favorite of the adventure movies?"
+    },
+    {
+     "who": "Profe",
+     "text": "Lara Croft is a fantastic choice! She is very brave. My favorite hero is actually Indiana Jones too, he is a classic. Who is your favorite actor or actress?"
+    }
+   ],
+   "eval": {
+    "score": 7,
+    "naturalidad": 7,
+    "afecto": 8,
+    "i1": 7,
+    "reciclado": 7,
+    "recast": 5,
+    "verdict": "Profe cálido, celebra mucho (baja ansiedad ✓). Pero recast explícito ('you could say...') y MISS en errores posteriores (orden en 'I prefer...or...' y 'hero favorite'). Reciclado fluido pero superficial."
+   }
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "quedado",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 89,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hola, qué tal. Soy Alex, tu profe de inglés. Hoy vamos a practicar sin presión, los errores son solo información para mejorar. ¿Te gustaría que hoy charlemos sobre películas de aventuras o prefieres otro tema para empezar?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Eh... hola. Aventuras, okay. Me gusta... no sé, Indiana Jones? Es muy viejo pero bueno. Eh... Tom Cruise también, el mission... imposible. Es la mismo o no?"
+    },
+    {
+     "who": "Profe",
+     "text": "Oh, that's a classic choice! Indiana Jones is a great adventure movie. You're right, both Indiana Jones and Mission Impossible are action movies, but they are different stories."
+    },
+    {
+     "who": "Alumno",
+     "text": "Mm, okay. Aventura, acción... para mí es lo mismo, proff. Yo solo miro la peli y como popcorn. Eh... la última que vi fue con Tom Cruise, me dormí en la mitad."
+    },
+    {
+     "who": "Profe",
+     "text": "Oh no, you fell asleep during the movie? That happens sometimes! Tell me, was it a very long movie, or was it just a bit boring?"
+    },
+    {
+     "who": "Alumno",
+     "text": "Eh... proff, I was very tired that day. My work is... mucho, you know? And the movie is long, I think. Dos horas? No sé, me dormí en the chair."
+    },
+    {
+     "who": "Profe",
+     "text": "That makes total sense, I totally understand. Working hard makes you tired! So, was the movie two hours long? It is definitely a long time to stay awake if you had a busy day."
+    }
+   ],
+   "eval": {
+    "score": 7,
+    "naturalidad": 7,
+    "afecto": 9,
+    "i1": 8,
+    "reciclado": 4,
+    "recast": 7,
+    "verdict": "Excelente empatía y afecto; input claro pero salto abrupto a inglés puro (turno 3) y reciclaje de vocab ausente."
+   }
+  },
+  {
+   "model": "minimax-m3",
+   "persona": "crack",
+   "metrics": {
+    "alumno_turnos": 3,
+    "sin_respuesta": 0,
+    "alumno_palabras": 77,
+    "infra_fail": false
+   },
+   "conv": [
+    {
+     "who": "Profe",
+     "text": "Hi there! I'm Alex. Today we're going to practice some English in a relaxed way, and remember: mistakes are just part of learning, so don't worry at all. Are you ready to start? Let's talk about movies! Do you prefer action, comedy, or maybe adventure movies?"
+    },
+    {
+     "who": "Alumno",
+     "text": "I prefer adventure movies because is very exciting! Action also is good, but comedy no me gusta, is aburrido for me."
+    },
+    {
+     "who": "Profe",
+     "text": "That is a great choice! Adventure movies are indeed very exciting. I understand what you mean about comedies; for me, they can sometimes be a bit boring too. Who is your favorite hero in an adventure movie?"
+    },
+    {
+     "who": "Alumno",
+     "text": "My favorite hero is Indiana Jones because he is muy brave and inteligente. He always find the treasures and save the day, is very exciting!"
+    },
+    {
+     "who": "Profe",
+     "text": "Indiana Jones is definitely a brave and intelligent hero. He always finds treasures and saves the day, which makes his movies so exciting to watch."
+    },
+    {
+     "who": "Alumno",
+     "text": "Yes! The music of Indiana Jones is muy famous también, I love it. I watch all the movies with my hermano in the night, we eat popcorn and is very fun!"
+    },
+    {
+     "who": "Profe",
+     "text": "That sounds like a perfect tradition with your brother! Watching movies with family is really fun, especially with popcorn. Is there any other adventure movie that you like as much as Indiana Jones?"
+    }
+   ],
+   "eval": {
+    "score": 8,
+    "naturalidad": 8,
+    "afecto": 9,
+    "i1": 8,
+    "reciclado": 8,
+    "recast": 9,
+    "verdict": "Clase conversacional bien conducida, afecto sólido y recasts naturales. Coach invita a producir y valida sin sobre-corregir; input i+1 bien calibrado."
+   }
+  }
+ ]
+}

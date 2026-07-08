@@ -1,0 +1,541 @@
+[
+  {
+    "id": 2,
+    "title": "Arquitectura de software",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 3,
+    "title": "Producción musical · Ableton",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 5,
+    "title": "Entrenamiento de fuerza · powerlifting",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 6,
+    "title": "Metodologías ágiles · retrospectivas",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 7,
+    "title": "Cine de los 90 · Tarantino",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 8,
+    "title": "Anécdotas de aeropuertos",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 10,
+    "title": "Básquet · NBA y leyendas",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 11,
+    "title": "Running · entrenamiento y maratones",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 12,
+    "title": "Tenis · Grand Slam y rivalidades",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 13,
+    "title": "Fórmula 1 y automovilismo",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 14,
+    "title": "Cocina italiana · pasta y vinos",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 16,
+    "title": "Café de especialidad · v60, espresso",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 19,
+    "title": "Biología · evolución y genética",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 22,
+    "title": "Rock clásico · 70s a 90s",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 26,
+    "title": "Moda · streetwear y sneakers",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 28,
+    "title": "Entrevistas técnicas · system design",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 29,
+    "title": "Emprender · early-stage startup",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 35,
+    "title": "Música para entrenar",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 37,
+    "title": "Géneros que descubrí",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 38,
+    "title": "Un álbum entero, no playlists",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 40,
+    "title": "Streaming vs comprar música",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 42,
+    "title": "Una serie que no pude parar",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 43,
+    "title": "Personajes inolvidables",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 45,
+    "title": "Spoilers y cómo manejarlos",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 48,
+    "title": "Premios y críticos: ¿importan?",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 53,
+    "title": "Hacer deporte vs mirarlo",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 54,
+    "title": "Reglas raras o injustas",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 55,
+    "title": "Doping y ética",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 56,
+    "title": "El negocio del deporte",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 58,
+    "title": "Console wars",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 60,
+    "title": "Speedruns y secretos",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 61,
+    "title": "Indies vs AAA",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 62,
+    "title": "Historias en videojuegos",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 63,
+    "title": "Esports: ¿deporte real?",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 64,
+    "title": "Videojuegos como arte",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 67,
+    "title": "Una receta que aprendí",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 68,
+    "title": "Restaurantes memorables",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 70,
+    "title": "Dietas y modas",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 72,
+    "title": "Sostenibilidad y comida",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 75,
+    "title": "Tener mascota: ¿sí o no?",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 77,
+    "title": "Inteligencia animal",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 78,
+    "title": "Mascotas exóticas: ¿está bien?",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 79,
+    "title": "Bienestar animal",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 80,
+    "title": "Animales en la ciencia",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 95,
+    "title": "Ética en tecnología",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 97,
+    "title": "El espacio",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 98,
+    "title": "El cuerpo humano",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 99,
+    "title": "Cambio climático",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 100,
+    "title": "Inventos que cambiaron todo",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 101,
+    "title": "Vida en otros planetas",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 102,
+    "title": "Genética y ética",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 103,
+    "title": "Pseudociencia vs ciencia",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 105,
+    "title": "Visitar museos",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 106,
+    "title": "Arte digital vs tradicional",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 107,
+    "title": "Arte callejero",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 109,
+    "title": "Arte y dinero",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 110,
+    "title": "NFTs y arte digital",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 111,
+    "title": "Censura en el arte",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 114,
+    "title": "Yoga y meditación",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 115,
+    "title": "Nutrición básica",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 117,
+    "title": "Running para principiantes",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 118,
+    "title": "Suplementos: ¿sí o no?",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 119,
+    "title": "Cuerpo ideal y presión social",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 121,
+    "title": "Marcas favoritas",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 122,
+    "title": "Sneakers",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 123,
+    "title": "Comprar moda online",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 124,
+    "title": "Vintage vs moderno",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 126,
+    "title": "Moda sostenible",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 127,
+    "title": "Moda y género",
+    "is_active": 1,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 128,
+    "title": "Dinosaurios",
+    "is_active": 0,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 129,
+    "title": "Espacio",
+    "is_active": 0,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 130,
+    "title": "Mar y animales",
+    "is_active": 0,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 131,
+    "title": "Mi deporte",
+    "is_active": 0,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 132,
+    "title": "Dibujar y crear",
+    "is_active": 0,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 133,
+    "title": "Música y canciones",
+    "is_active": 0,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 134,
+    "title": "Mascotas",
+    "is_active": 0,
+    "audience": "adult",
+    "segmento": "adultos"
+  },
+  {
+    "id": 136,
+    "title": "Cómo me siento",
+    "is_active": 0,
+    "audience": "adult",
+    "segmento": "adultos"
+  }
+]

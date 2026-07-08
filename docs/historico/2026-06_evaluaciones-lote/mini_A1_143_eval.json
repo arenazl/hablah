@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 10,
+    "cierre": 7,
+    "naturalidad": 8,
+    "nivel": 9,
+    "recast": 9,
+    "reciclado": 9,
+    "score": 8.7,
+    "verdict": "El profe es muy cálido y maneja el nivel y el reciclado de vocabulario de forma excelente. Los recasts son constantes y efectivos. El cierre, aunque presente, podría ser un poco más elaborado."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 10,
+    "correccion_implicita": 10,
+    "filtro_afectivo": 9,
+    "input_comprensible": 9,
+    "produccion_forzada": 8,
+    "score": 8.8,
+    "variedad": 7,
+    "verdict": "Excelente manejo del filtro afectivo y del input comprensible. Las correcciones implícitas son un modelo a seguir. La producción del alumno es buena, aunque la variedad de actividades podría expandirse un poco más."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 10,
+    "logro": 8,
+    "motivacion": 9,
+    "ritmo": 8,
+    "score": 8.8,
+    "verdict": "Me sentí muy cómodo y motivado para hablar. Entendí todo y aprendí vocabulario nuevo. El profe me hizo sentir muy bien."
+  },
+  "score_global": 8.8,
+  "para_mejorar": "Instruir al coach para que incluya una breve actividad de repaso o un resumen de 1-2 frases del vocabulario clave antes de la despedida.",
+  "banda": "mini",
+  "hallazgos": [
+    "Recasts implícitos muy efectivos y consistentes.",
+    "Excelente manejo del nivel y el input comprensible.",
+    "Ambiente de clase muy positivo y motivador.",
+    "El cierre de la clase podría ser más elaborado.",
+    "La variedad de actividades se limita a la conversación guiada."
+  ],
+  "nivel": "A1",
+  "topico": "Abrir juguetes",
+  "band": "mini",
+  "topic_id": 143
+}

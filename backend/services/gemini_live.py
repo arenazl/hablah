@@ -160,7 +160,28 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         # MOTOR v2 — el catálogo de reglas maneja la clase: dado (banda, nivel, tópico)
         # SELECCIONA las reglas del catálogo (no texto libre). Detrás de flag RULES_MOTOR
         # (default OFF) hasta validar; con OFF sigue el composer viejo, intacto.
-        if os.getenv("RULES_MOTOR", "0") == "1":
+        # MOTOR_V3 KIDS — switch a motor nuevo (flag MOTOR_V3_KIDS, default OFF). SOLO kids.
+        # LABORATORIO: SIN fallback. Si el motor nuevo no puede armar la clase, FALLA FUERTE
+        # y queda logueada (banda/nivel/tópico/error) = bug de orquestación a corregir en el
+        # DATO, no a tapar con el motor viejo. Adultos y flag OFF -> motor de siempre, intacto.
+        if is_kid and os.getenv("MOTOR_V3_KIDS", "0") == "1":
+            from services import motor_engine as _mv3
+            _band = {"mini": "early_child", "junior": "child", "tween": "teen", "teen": "teen"}.get(getattr(user, "age_group", None))
+            _lvl = user.cefr_level or "A1"
+            _ptid = topic.id if topic else None
+            try:
+                _res = await _mv3.resolve_kid(_band, _lvl, _ptid, None)
+            except Exception as e:
+                log.error("MOTOR_V3 KIDS FALLÓ band=%s lvl=%s prod_topic=%s err=%s -> corregir orquestación",
+                          _band, _lvl, _ptid, e)
+                raise
+            if not _res or not _res.get("prompt"):
+                log.error("MOTOR_V3 KIDS sin prompt band=%s lvl=%s prod_topic=%s (tópico no migrado/vacío) -> corregir orquestación",
+                          _band, _lvl, _ptid)
+                raise RuntimeError(f"motor_v3 kids no resolvió: band={_band} lvl={_lvl} prod_topic={_ptid}")
+            super_prompt = _res["prompt"]
+            log.info("PROMPT via MOTOR_V3 (kids) band=%s lvl=%s v3_topic=%s", _band, _lvl, _res.get("v3_topic_id"))
+        elif os.getenv("RULES_MOTOR", "0") == "1":
             from services.composer_rules import compose_from_catalog
             _res = await compose_from_catalog(
                 db, segment=(getattr(user, "age_group", None) or "adult"),

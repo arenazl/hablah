@@ -1,0 +1,45 @@
+{
+  "juez1_profe": {
+    "afecto": 9,
+    "cierre": 8,
+    "naturalidad": 6,
+    "nivel": 8,
+    "recast": 8,
+    "reciclado": 9,
+    "score": 8.0,
+    "verdict": "El profe es muy afectuoso y mantiene un nivel adecuado para el alumno, reciclando el vocabulario clave. La conversación, sin embargo, se siente un poco forzada y repetitiva, centrada en un solo objeto."
+  },
+  "juez2_sla": {
+    "adecuacion_edad_nivel": 9,
+    "correccion_implicita": 8,
+    "filtro_afectivo": 9,
+    "input_comprensible": 8,
+    "produccion_forzada": 6,
+    "score": 7.5,
+    "variedad": 5,
+    "verdict": "El ambiente es excelente para bajar el filtro afectivo y el input es comprensible. Sin embargo, el coach monopoliza la conversación, limitando las oportunidades de producción real del alumno y la variedad de la interacción."
+  },
+  "juez3_alumno": {
+    "claridad": 9,
+    "confianza": 9,
+    "logro": 8,
+    "motivacion": 9,
+    "ritmo": 8,
+    "score": 8.6,
+    "verdict": "Me sentí muy motivado y seguro para hablar gracias al tono entusiasta del profe y las explicaciones claras. Sentí que pude participar y entender lo que se me pedía."
+  },
+  "score_global": 8.0,
+  "para_mejorar": "Incluye más oportunidades para que el alumno elija entre 2-3 opciones o describa brevemente el juguete, fomentando una producción un poco más elaborada.",
+  "banda": "mini",
+  "hallazgos": [
+    "Coach es muy afectuoso y motivador",
+    "Nivel de input y explicaciones son adecuados para A0 mini",
+    "Pocas oportunidades para que el alumno produzca más allá de palabras sueltas",
+    "Variedad limitada de interacción, centrada en un solo objeto",
+    "Reciclado de vocabulario clave es excelente"
+  ],
+  "nivel": "A0",
+  "topico": "Abrir juguetes",
+  "band": "mini",
+  "topic_id": 143
+}

@@ -1,0 +1,48 @@
+{
+  "band": "mini",
+  "level": "A0",
+  "topic_id": 135,
+  "topic_title": "Mi familia",
+  "coach_model": "gemini-3.1-flash-lite-preview",
+  "student_model": "gpt-oss:120b",
+  "exchanges": 4,
+  "transcript": [
+    {
+      "who": "Profe",
+      "text": "¡Hola! ¡Qué alegría verte otra vez! Soy Sparky, tu amigo dragón. Hoy mi familia espacial me vino a visitar y tengo muchas ganas de presentártelos. ¿Tenés ganas de conocerlos conmigo?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí, sí! ¡Quiero conocerlos! Hello."
+    },
+    {
+      "who": "Profe",
+      "text": "Hello! You sound so excited, I love it! Look, this is my big sister Zorg. She is very fast. Do you have a sister or a brother?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Yes! Tengo una hermana. Emmm... ella es fast?"
+    },
+    {
+      "who": "Profe",
+      "text": "¡Qué genial que tengas una hermana! Yes, she is fast, she runs very quickly like my sister Zorg. What is your sister's name?"
+    },
+    {
+      "who": "Alumno",
+      "text": "¡Sí! Se llama Ana. ¡Mira, Ana corre rápido!"
+    },
+    {
+      "who": "Profe",
+      "text": "Wow, Ana is fast too! That is amazing. She sounds like a super sister. Is Ana happy today?"
+    },
+    {
+      "who": "Alumno",
+      "text": "Sí, ella está muy contenta. ¿happy?"
+    },
+    {
+      "who": "Profe",
+      "text": "Yes, she is happy! You are doing a great job talking about Ana today. I loved meeting your sister, and next time you can tell me more about your friends too. You did an amazing job today, see you later!"
+    }
+  ],
+  "student_prompt_version": "v1"
+}

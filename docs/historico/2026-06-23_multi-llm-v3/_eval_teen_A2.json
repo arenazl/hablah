@@ -1,0 +1,158 @@
+{
+ "band": "teen",
+ "level": "A2",
+ "title": "Música, pelis y series",
+ "who": "un chico de 12 (A2), frases cortas, le da verguenza",
+ "transcripts": [
+  [
+   {
+    "who": "Profe",
+    "text": "Hey there! I am Leo. It is great to have you here today. We are going to chat about the movies, series, or music that you really enjoy. To start, what is your favorite movie or TV show right now?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Don't worry! Tell me, what kind of things do you like to watch on TV or on your phone?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "That is fine! For example, I really like watching science fiction movies because they are exciting. What about you? Do you prefer movies or maybe short videos on YouTube?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No worries at all. Some people love action, others like funny videos or maybe gaming streams. Is there any show or YouTuber you watch a lot?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hey there! I am Leo. Let's talk about movies, series, or music today. Tell me, what is your favorite movie right now?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Don't worry, we can start with music instead. Do you have a favorite song or maybe a band you really like listening to?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "That is totally fine, music is a great topic. Who is your favorite artist to listen to when you are hanging out at home?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Um… my favourite artist is Ed Sheeran, I listen him when I am at home. I likes his song “Shape of You”."
+   },
+   {
+    "who": "Profe",
+    "text": "That is a great choice, I love Ed Sheeran too! You listen to him at home, and you like his song Shape of You. Since you enjoy his music, do you usually listen to his songs while you are doing your homework?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hey there! I am Leo. I am really excited to chat with you today about movies, series, and music. Tell me, what kind of movies do you like to watch?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Don't worry! For example, I really like action movies because they are exciting. Do you like action movies, or do you prefer comedies?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Maybe you prefer something else? What about cartoons or maybe science fiction movies?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "That is totally fine. Sometimes it is hard to choose! Do you have a favorite song you listen to a lot, or maybe a series you watch on TV?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hey there! I am Leo. I am really excited to chat about movies, series, and music today. To start things off, what is a movie or a show that you really like?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Don't worry, there are so many to choose from! For example, I really like watching animated movies on weekends. What about you? Do you have a favorite movie or a series you watch?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No stress! I know it is hard to pick just one. Do you like watching comedies, or maybe you prefer action movies?"
+   },
+   {
+    "who": "Alumno",
+    "text": "Um… I like *Harry Potter* movie… and I watch cartoon on tv… (I … not good English)."
+   },
+   {
+    "who": "Profe",
+    "text": "Oh, you like the Harry Potter movies and watching cartoons on TV! You're doing great, don't worry about the English. What is your favorite cartoon to watch?"
+   }
+  ],
+  [
+   {
+    "who": "Profe",
+    "text": "Hey, I'm Leo. It's great to meet you! Today let's chat about your favorite movies, series, or music. What are you really into these days?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "Don't worry, take your time! I really like listening to music, especially rock. What about you? Do you have a favorite band or a show you like to watch?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "No problem! Maybe you prefer movies? For example, I love watching funny movies on the weekend. What kind of movies do you like to watch?"
+   },
+   {
+    "who": "Alumno",
+    "text": "(sin respuesta)"
+   },
+   {
+    "who": "Profe",
+    "text": "I totally get it, picking just one is hard! Maybe you like superheroes, or maybe cartoons? What is your favorite movie?"
+   }
+  ]
+ ]
+}
