@@ -91,8 +91,9 @@ En una charla en tiempo real cada turno cruza el tramo usuario↔backend varias 
 
 **Estado (2026-07-08):** pasos 1-3 **hechos**. El backend nuevo corre en us-east4 (rev `00001-vrb`,
 `/health` 200, RTT medido **12 ms** desde AR) y el front ya pushea a esa URL (commit `c50fd0c`, build de
-Netlify en curso). **Falta:** (4) validar E2E por voz real, (5) apagar Heroku + borrar el servicio viejo
-de São Paulo, (6) armar el trigger de CD para us-east4 con los flags fijos. La copia GCP vieja
+Netlify en curso). Heroku **apagado** (scale 0) y **CD armado** (trigger `deploy-hablah-api`, build validación SUCCESS con
+`min=max=1` + secrets intactos). **Falta:** (4) validar E2E por voz real, (5) borrar el servicio viejo
+de São Paulo (no cobra). La copia GCP vieja
 (`southamerica-east1`, deploy 2026-06-23, `VOICE_PROVIDER=vertex`) se descarta, no se actualiza.
 
 > **Nota de honestidad (para Fable):** el servicio viejo de SP corría `VOICE_PROVIDER=vertex` (us-central1),

@@ -11,25 +11,22 @@ Stack: **FastAPI** (Python 3.12) + **aiomysql** (Aiven) en backend · **React 18
 - **Backend:** **Cloud Run `us-east4`** (proyecto `hablah-prod`) — migrado desde Heroku el 2026-07-08 (RTT desde AR 271→12 ms). URL: `https://hablah-api-685973917497.us-east4.run.app`. Contexto y decisiones: [docs/02-infra/01-contexto-infra-y-migracion.md](docs/02-infra/01-contexto-infra-y-migracion.md).
 - **Frontend:** **Netlify** (`hablah-app`) — **auto-deploy en push a `main`** (build-on-push).
 
-**TL;DR — deploy completo:**
+**TL;DR — un solo push deploya TODO:**
 
 ```powershell
-# 1) FRONT: push a GitHub → Netlify redeploya SOLO (build-on-push)
 git add -A; git commit -m "feat(...): ..."; git push origin main
-
-# 2) BACK: deploy manual a Cloud Run (CD trigger todavía pendiente)
-gcloud run deploy hablah-api --source backend/ --region us-east4 --project hablah-prod `
-  --min-instances=1 --max-instances=1 --no-cpu-throttling --timeout=3600 --memory=512Mi
 ```
 
-> Los flags `--min-instances=1 --max-instances=1 --no-cpu-throttling` son **OBLIGATORIOS**: el estado de las salas de voz vive en memoria del proceso (`gunicorn -w1`) y sin CPU-always los watchdogs/mixer se congelan. Detalle en el doc de infra.
+`git push origin main` dispara **front (Netlify build-on-push) Y back (Cloud Build trigger `deploy-hablah-api` → Cloud Run us-east4)**. No hay pasos manuales.
+
+> El CD del back usa `structure/cloudbuild/cb-hablah-api.yaml`, que lleva escritos los flags **OBLIGATORIOS** `--min-instances=1 --max-instances=1 --no-cpu-throttling` (+ secrets): el estado de las salas de voz vive en memoria del proceso (`gunicorn -w1`) y sin CPU-always los watchdogs/mixer se congelan. **No quitar esos flags del yaml** o el push rompería el coach. Detalle en el doc de infra.
 
 ### Estado por plataforma
 
 | Plataforma | Deploy | Notas |
 |------------|--------|-------|
 | **Netlify** (`hablah-app`, front) | ✅ auto en push a `main` | Site ID `f7daf480-dced-4ad5-89ab-bbb00024fd59` |
-| **Cloud Run** (`hablah-api`, back) | manual (`gcloud run deploy --source`) | `us-east4` / `hablah-prod`; **CD trigger pendiente** (requiere conectar GitHub a Cloud Build) |
+| **Cloud Run** (`hablah-api`, back) | ✅ auto en push a `main` | trigger Cloud Build `deploy-hablah-api` (connection `gh-conn`, sa-east1) → deploya a `us-east4` / `hablah-prod` con los flags del yaml |
 | ~~Heroku~~ | ❌ **apagado 2026-07-08** | migrado a Cloud Run; la app quedó en Heroku con 0 dynos (no cobra) |
 
 ### Detalle por plataforma
@@ -41,17 +38,13 @@ gcloud run deploy hablah-api --source backend/ --region us-east4 --project habla
 - `VITE_API_URL` (en `frontend/.env.production`) → `https://hablah-api-685973917497.us-east4.run.app/api`.
 - Ver deploy: `netlify api listSiteDeploys --data "{\"site_id\":\"f7daf480-dced-4ad5-89ab-bbb00024fd59\",\"per_page\":3}"`
 
-#### Backend — Cloud Run us-east4 (manual por ahora)
+#### Backend — Cloud Run us-east4 (auto en push a `main`)
 
-```powershell
-gcloud run deploy hablah-api --source backend/ --region us-east4 --project hablah-prod `
-  --min-instances=1 --max-instances=1 --no-cpu-throttling --timeout=3600 --memory=512Mi
-```
-
+- CD: trigger Cloud Build **`deploy-hablah-api`** (connection `gh-conn` en `southamerica-east1`) → en cada push a `main` corre `structure/cloudbuild/cb-hablah-api.yaml` que hace `gcloud run deploy --source backend` a `us-east4` con los flags obligatorios + secrets.
 - Servicio: `hablah-api` / proyecto `hablah-prod` / región `us-east4`. URL `https://hablah-api-685973917497.us-east4.run.app`.
-- Secrets: en **Secret Manager** de `hablah-prod` (se montan con `--set-secrets`; ver el doc de infra).
+- Secrets: en **Secret Manager** de `hablah-prod` (los monta el yaml con `--set-secrets`).
 - Logs: `gcloud run services logs read hablah-api --region us-east4 --project hablah-prod`.
-- **Pendiente:** trigger de CD (Cloud Build) para deploy en push — requiere conectar el repo `arenazl/hablah` a Cloud Build. Hasta entonces, el backend se deploya a mano con el comando de arriba.
+- Deploy manual de emergencia (mismo comando que el yaml): `gcloud run deploy hablah-api --source backend/ --region us-east4 --project hablah-prod --min-instances=1 --max-instances=1 --no-cpu-throttling --timeout=3600 --memory=512Mi`.
 
 ---
 
