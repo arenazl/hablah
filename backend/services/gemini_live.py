@@ -145,7 +145,10 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "duration_base_minutes": getattr(lv, "duration_base_minutes", None),
                     "vocab_depth": getattr(lv, "vocab_depth", None),                     # Sector 2 — recorte por nivel
                 }
-            app_config = {c.key: c.value for c in (await db.execute(select(AppConfig))).scalars().all()}
+            # La tabla app_config real tiene columnas config_key/config_value (NO el ORM key/value):
+            # el select(AppConfig) tiraba "Unknown column 'app_config.key'". Raw SQL, igual que ws_llm_test.
+            from sqlalchemy import text as _sqltext
+            app_config = {r[0]: r[1] for r in (await db.execute(_sqltext("SELECT config_key, config_value FROM app_config"))).all()}
         except Exception as e:
             log.warning(f"motor pedagógico: level_data/app_config no disponible ({e})")
 
