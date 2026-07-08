@@ -82,3 +82,58 @@ y no sabés si el prompt lo armó el dato o el fallback. Mejor saber qué falta.
   learner_state) y llama al composer; después abre el WS de voz.
 - Tablas: `student_types` (edad), `levels` (nivel), `topics` (tópico), `app_config` (reglas de voz),
   y el `learner_state` (post-clase, hoy vacío).
+
+## 8. Cómo se arma el prompt, en concreto — y sus peculiaridades
+
+El composer concatena los bloques (§3) en orden fijo y produce un `<system_instruction_stack>` (XML
+plano). Peculiaridades que hay que tener en la cabeza porque **el prompt no se cumple al 100%**:
+
+1. **Recency bias:** los bloques del final (arranque, `session_actions`) pesan MÁS para el modelo que
+   los del medio (guards). Si un seed del final contradice un guard del medio, **suele ganar el seed**.
+   Por eso los seeds delegan la forma a `Expected_Production` en vez de hardcodearla — para no competir.
+2. **Reglas que compiten = clase tibia.** Si la misma conducta está escrita en 2-3 capas
+   (pedagogía + form_rules + seeds) y difieren un poco, el modelo **promedia** y sale mecánico/robótico.
+   Regla: **cada regla en UNA sola capa.** Duplicar marea al modelo.
+3. **Placeholders:** `{topic}`, `{first_vocab}`, `{name}` se interpolan en los seeds; si falta el dato,
+   quedan literales en el prompt (bug visible).
+4. **Bloques opcionales, no fallback:** `learner_state`, `output_rules`, `story_spine` se OMITEN si no
+   hay dato (no se inventan). Hoy `learner_state` casi siempre se omite (no hay historia).
+5. **Fail-fast:** si falta un dato obligatorio, `MotorDataMissing` (no default silencioso).
+
+## 9. La infraestructura de la conversación (donde el papel choca con la realidad)
+
+**Cómo se genera la charla:** el prompt va a **Gemini Live** (modelo `models/gemini-3.1-flash-live-preview`),
+por un **WebSocket bidireccional de audio** (voz Aoede), con **VAD del lado de Gemini** (Gemini decide
+cuándo terminó de hablar el alumno). Backend en **Cloud Run us-east4** (cerca de la DB Aiven NYC; la
+migración bajó mucho la latencia).
+
+**PROS:** latencia baja (~500 ms), audio nativo, charla fluida, no manejamos VAD nosotros.
+
+**CONTRAS (los que nos pasaron de verdad, end-to-end):**
+- **El VAD no capta monosílabos (<1 s):** un "sí"/"no" no se transmite → la clase queda muda. Por eso
+  A0 usa la **frase-puente** ("X se dice Y"): obliga a un enunciado largo que el VAD sí capta. (La
+  pedagogía y la infra empujan a la MISMA solución — no es casualidad.)
+- **Sample rate:** iOS capta a 48 kHz; hay que **resamplear a 16 kHz** en el backend o Gemini no
+  transcribe el input y el coach queda mudo.
+- **El coach corta al alumno** (sensibilidad de fin-de-turno) y el ASR transcribe a medias → **los
+  scores por voz no son 100% confiables**; validar escuchando, no solo por texto.
+- **1011 = sin crédito** en la key (el WS cierra). **Nombre de modelo sin prefijo `models/`** → la API
+  Live lo rechaza (nos rompió el voice tras la migración).
+
+## 10. El eslabón estocástico: la IA INTERPRETA, no obedece
+
+**Este es el punto que la filosofía sola esconde.** El motor es determinístico **hasta que entrega el
+prompt**. De ahí en adelante, el modelo **interpreta** ese prompt y **toma decisiones** — no lo cumple
+al pie de la letra. Consecuencias reales:
+
+- Aunque el dato **prohíba** preguntas sí/no o mencionar fotos, el modelo **a veces igual las mete**:
+  lee "escenario/visual/pantalla" y completa con recursos que no existen; o hace la pregunta cerrada
+  aunque esté prohibida.
+- Aunque las directivas pidan **variar / no-robot**, el Flash tiende a ejecutar la lectura más
+  **literal y segura** → sale robótico. Lo vimos y lo llamamos **"el muro del Flash"**: el dato está
+  perfecto pero el modelo lo sub-ejecuta.
+
+**Por eso:** (a) un prompt que "se ve genial" puede fallar en vivo — **texto ≠ voz**, hay que validar
+END TO END por micrófono; (b) las directivas tienen que ser **imperativas y no competir** entre capas
+(§8.2); (c) si el modelo no ejecuta lo que el dato pide, puede hacer falta un **modelo más fuerte para
+el rol de coach**. La calidad final = motor determinístico **×** qué tan bien el modelo obedece el prompt.
