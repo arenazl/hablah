@@ -25,7 +25,7 @@ Stack final:
 - LLM: cascade con custom coaching layer
 - Frontend: React + Vite + Tailwind
 - DB: aiomysql en Aiven
-- Deploy: Heroku + Netlify
+- Deploy: Google Cloud Run + Netlify
 
 Lo más contraintuitivo que aprendí: el feature más pedido no fue "más idiomas", fue "más personalidades del tutor". El vínculo con el coach es el driver de retención, no el contenido.
 

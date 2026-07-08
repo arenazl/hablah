@@ -169,10 +169,10 @@ directivas no alcanzan: (a) hacerlas más imperativas y consolidadas (capa unive
 **Deploy:** continuo vía el proyecto Infra **`structure`** (`d:\Code\structure`). Un push a
 `origin/main` deploya (backend + Netlify front). NO deployar a mano.
 
-> **OJO — cambio de infra (2026-07-08):** el backend está migrando de **Heroku → Cloud Run `us-east4`**
-> para bajar la latencia del loop de voz (**271 ms → 37 ms** desde Argentina, medido). Es puro
-> transporte: **no toca motor ni prompt**. Si tras la migración el coach sigue robótico, es motor, no
-> infra. Contexto completo + la tabla "infra vs motor":
+> **OJO — cambio de infra (2026-07-08):** el backend **migró** de **Heroku → Cloud Run `us-east4`**
+> (Heroku ya apagado). Bajó la latencia del loop de voz: **271 ms → 12 ms** desde Argentina (medido). Es
+> puro transporte: **no toca motor ni prompt**. Si el coach sigue robótico, es motor, no infra. Contexto
+> completo + la tabla "infra vs motor":
 > [`../02-infra/01-contexto-infra-y-migracion.md`](../02-infra/01-contexto-infra-y-migracion.md).
 
 **Datos:** una sola base Aiven (compartida por v2 y v3). NO correr seeds a ciegas (hoy el catálogo de

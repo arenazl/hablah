@@ -2,76 +2,56 @@
 
 Plataforma de aprendizaje de idiomas conversacional con tutores de IA. App principal: https://hablah.com.ar
 
-Stack: **FastAPI** (Python 3.12) + **aiomysql** (Aiven) en backend · **React 18 + Vite + Tailwind** en frontend · **Heroku** (back) + **Netlify** (front).
+Stack: **FastAPI** (Python 3.12) + **aiomysql** (Aiven) en backend · **React 18 + Vite + Tailwind** en frontend · **Cloud Run us-east4** (back) + **Netlify** (front).
 
 ---
 
 ## ⚠️ DEPLOY — leer antes de tocar nada
 
-**TL;DR — copy/paste para deploy completo (front + back):**
+- **Backend:** **Cloud Run `us-east4`** (proyecto `hablah-prod`) — migrado desde Heroku el 2026-07-08 (RTT desde AR 271→12 ms). URL: `https://hablah-api-685973917497.us-east4.run.app`. Contexto y decisiones: [docs/02-infra/01-contexto-infra-y-migracion.md](docs/02-infra/01-contexto-infra-y-migracion.md).
+- **Frontend:** **Netlify** (`hablah-app`) — **auto-deploy en push a `main`** (build-on-push).
+
+**TL;DR — deploy completo:**
 
 ```powershell
-# 1) commit + push a GitHub (solo guarda código, NO deploya nada)
+# 1) FRONT: push a GitHub → Netlify redeploya SOLO (build-on-push)
 git add -A; git commit -m "feat(...): ..."; git push origin main
 
-# 2) deploy backend → Heroku
-git push heroku main
-
-# 3) deploy frontend → Netlify
-cd frontend; npm run build; netlify deploy --prod --dir=dist
+# 2) BACK: deploy manual a Cloud Run (CD trigger todavía pendiente)
+gcloud run deploy hablah-api --source backend/ --region us-east4 --project hablah-prod `
+  --min-instances=1 --max-instances=1 --no-cpu-throttling --timeout=3600 --memory=512Mi
 ```
 
-Total ~3-4 min. Después de esto, https://hablah.com.ar y https://hablah-api-abcaf6c43a5d.herokuapp.com tienen la versión nueva.
+> Los flags `--min-instances=1 --max-instances=1 --no-cpu-throttling` son **OBLIGATORIOS**: el estado de las salas de voz vive en memoria del proceso (`gunicorn -w1`) y sin CPU-always los watchdogs/mixer se congelan. Detalle en el doc de infra.
 
-### Por qué hay que hacerlo a mano (estado actual)
+### Estado por plataforma
 
-| Plataforma | Auto-deploy desde GitHub | Cómo se deploya hoy |
-|------------|--------------------------|---------------------|
-| **Netlify** (`hablah-app`, front) | ❌ NO | `netlify deploy --prod --dir=dist` desde `frontend/` |
-| **Heroku** (`hablah-api`, back) | ❌ NO | `git push heroku main` (remote ya configurado) |
-| **GitHub Actions** | ❌ NO existen | No hay `.github/workflows/` — nada corre en CI |
-
-**El `git push origin main` solo actualiza GitHub. NO dispara deploy en ningún lado.** Si solo pusheás a `origin`, los sitios siguen mostrando la versión vieja.
+| Plataforma | Deploy | Notas |
+|------------|--------|-------|
+| **Netlify** (`hablah-app`, front) | ✅ auto en push a `main` | Site ID `f7daf480-dced-4ad5-89ab-bbb00024fd59` |
+| **Cloud Run** (`hablah-api`, back) | manual (`gcloud run deploy --source`) | `us-east4` / `hablah-prod`; **CD trigger pendiente** (requiere conectar GitHub a Cloud Build) |
+| ~~Heroku~~ | ❌ **apagado 2026-07-08** | migrado a Cloud Run; la app quedó en Heroku con 0 dynos (no cobra) |
 
 ### Detalle por plataforma
 
-#### Frontend — Netlify (manual via CLI)
-
-```powershell
-cd frontend
-npm run build                            # vite build + prerender, ~10s
-netlify deploy --prod --dir=dist         # upload + activate, ~60-90s
-```
+#### Frontend — Netlify (auto en push a `main`)
 
 - Site ID: `f7daf480-dced-4ad5-89ab-bbb00024fd59` (proyecto `hablah-app`)
-- Config en [netlify.toml](netlify.toml) de la raíz: `base=frontend`, `publish=dist`, `command=npm install && npm run build`, redirect `/api/*` → Heroku
-- Login CLI: `netlify login` (ya logueado como `arenazl@gmail.com`)
-- Status: `netlify status` desde la raíz del repo
+- Config en [netlify.toml](netlify.toml) de la raíz: `base=frontend`, `publish=dist`, redirect `/api/*` → backend Cloud Run.
+- `VITE_API_URL` (en `frontend/.env.production`) → `https://hablah-api-685973917497.us-east4.run.app/api`.
 - Ver deploy: `netlify api listSiteDeploys --data "{\"site_id\":\"f7daf480-dced-4ad5-89ab-bbb00024fd59\",\"per_page\":3}"`
 
-#### Backend — Heroku (manual via git push)
+#### Backend — Cloud Run us-east4 (manual por ahora)
 
 ```powershell
-git push heroku main      # build + release, ~60-90s
+gcloud run deploy hablah-api --source backend/ --region us-east4 --project hablah-prod `
+  --min-instances=1 --max-instances=1 --no-cpu-throttling --timeout=3600 --memory=512Mi
 ```
 
-- App: `hablah-api` (URL externa `hablah-api-abcaf6c43a5d.herokuapp.com`)
-- Remote `heroku` ya configurado: `https://git.heroku.com/hablah-api.git`
-- Login CLI: `heroku login` (ya logueado)
-- Ver releases: `heroku releases -a hablah-api --num 5`
-- Logs en vivo: `heroku logs --tail -a hablah-api`
-- Config vars: `heroku config -a hablah-api`
-- Restart manual: `heroku restart -a hablah-api`
-
-### Opciones para automatizar (no implementadas — pendiente decidir)
-
-Si en algún momento se quiere `git push origin main` → deploy automático en ambos:
-
-1. **Netlify**: en https://app.netlify.com/projects/hablah-app/configuration/deploys → "Link site to Git" → repo `arenazl/hablah` → branch `main`. El `netlify.toml` ya está listo, no requiere cambios.
-2. **Heroku**: en el dashboard del app → tab "Deploy" → "Deployment method: GitHub" → conectar repo → habilitar "Automatic deploys" en `main`.
-3. **GitHub Actions** (alternativa unificada): crear `.github/workflows/deploy.yml` que dispare ambos deploys en cada push a `main`. Requiere guardar `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, `HEROKU_API_KEY` y `HEROKU_APP_NAME` como secrets del repo.
-
-Cualquiera de los 3 elimina el paso manual. Mientras no se decida, el flujo actual es el del TL;DR arriba.
+- Servicio: `hablah-api` / proyecto `hablah-prod` / región `us-east4`. URL `https://hablah-api-685973917497.us-east4.run.app`.
+- Secrets: en **Secret Manager** de `hablah-prod` (se montan con `--set-secrets`; ver el doc de infra).
+- Logs: `gcloud run services logs read hablah-api --region us-east4 --project hablah-prod`.
+- **Pendiente:** trigger de CD (Cloud Build) para deploy en push — requiere conectar el repo `arenazl/hablah` a Cloud Build. Hasta entonces, el backend se deploya a mano con el comando de arriba.
 
 ---
 
@@ -89,7 +69,7 @@ Cualquiera de los 3 elimina el paso manual. Mientras no se decida, el flujo actu
 | Storage | Cloudinary | `backend/services/cloudinary_service.py` |
 | Push | Web Push (VAPID) | `backend/services/push_notif.py` |
 | Hosting front | Netlify (`hablah-app`) | Site ID: `f7daf480-dced-4ad5-89ab-bbb00024fd59` |
-| Hosting back | Heroku (`hablah-api-abcaf6c43a5d`) | Redirect `/api/*` configurado en `netlify.toml` |
+| Hosting back | Cloud Run `us-east4` (`hablah-api` / `hablah-prod`) | `https://hablah-api-685973917497.us-east4.run.app` · redirect `/api/*` en `netlify.toml` |
 
 Credenciales: `d:\Code\APP_GUIDE\.env.master` (NO commitear). Guía maestra del stack: `d:\Code\APP_GUIDE\APP_GUIDE_MASTER.md`.
 
@@ -150,7 +130,7 @@ frontend/
   public/           # static assets
   netlify.toml      # (la fuente de verdad está en /netlify.toml de la raíz)
 
-netlify.toml         # build config + redirects → Heroku
+netlify.toml         # build config + redirects → Cloud Run us-east4
 ```
 
 ---

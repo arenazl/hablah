@@ -30,7 +30,7 @@ Pensé: "esto tiene que ser un producto". Probé prototipos con GPT-4 voice mode
 - LLM: cascade con override rules entrenadas sobre miles de sesiones reales para evitar al "tutor genérico"
 - Frontend: React + Vite + Tailwind
 - DB: aiomysql en Aiven
-- Deploy: Heroku back + Netlify front
+- Deploy: Cloud Run back + Netlify front
 
 **Métricas hasta ahora (beta cerrada, ~3 meses):**
 
@@ -92,7 +92,7 @@ Tried prototyping with GPT-4 voice mode but latency was painful (3-5s per turn) 
 - LLM: cascade with override rules trained on thousands of real sessions to escape the "generic tutor" trap
 - Frontend: React + Vite + Tailwind
 - DB: aiomysql on Aiven
-- Deploy: Heroku (backend) + Netlify (frontend)
+- Deploy: Cloud Run (backend) + Netlify (frontend)
 
 **Metrics so far (closed beta, ~3 months):**
 
