@@ -12,6 +12,8 @@ lo viejo no se borra, se archiva en `historico/` con su fecha. **Nada de info cr
 | **[handoffs/2026-06-28_handoff-fable.md](handoffs/2026-06-28_handoff-fable.md)** | **LEER PRIMERO.** Historia de la app, cómo mutó el motor, estado actual, errores detectados (honestidad) y hoja de ruta. Escrito para el modelo que la toma. |
 | [01-recuperacion-motor/01-plan-recuperacion.md](01-recuperacion-motor/01-plan-recuperacion.md) | Análisis objetivo de los 3 motores vs el SPEC + el plan de recuperación por fases. |
 | [01-recuperacion-motor/02-deudas-tecnicas.md](01-recuperacion-motor/02-deudas-tecnicas.md) | Deudas técnicas abiertas (mic PWA, app_config, VAD/ASR, jubilar v3, …). |
+| [01-recuperacion-motor/03-cobertura-catalogo.md](01-recuperacion-motor/03-cobertura-catalogo.md) | Audit de cobertura edad × nivel × tópico (qué está completo, gaps, controlado vs Fable). |
+| [01-recuperacion-motor/04-cruces-perfil-nivel-topico.md](01-recuperacion-motor/04-cruces-perfil-nivel-topico.md) | **Matriz de cruces** perfil × nivel × tópico (kids por banda, adultos por categoría, tabla plana parseable) — para maduración externa. |
 | [02-infra/01-contexto-infra-y-migracion.md](02-infra/01-contexto-infra-y-migracion.md) | Contexto de infra + decisiones técnicas del cutover Heroku → Cloud Run us-east4 (para auditar). **Distingue infra de motor: latencia ≠ robotismo.** |
 
 ## Carpetas
