@@ -1156,33 +1156,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const [sessionId, setSessionId] = useState<number | null>(null)
   const [topicTitle, setTopicTitle] = useState<string>('')
   const [keywords, setKeywords] = useState<string[]>([])
-  const [audioLevel, setAudioLevel] = useState(0)
-  const lastLevelTsRef = useRef(0)
-  const pendingLevelRef = useRef(0)
-  const flushIntervalRef = useRef<number | null>(null)
-  // Audio level update throttleado a 20fps (50ms). Cada chunk del mic actualiza
-  // el ref, y solo cada 50ms hacemos el setState del orbe. Reduce re-renders
-  // sin perder fluidez visual perceptible.
-  useEffect(() => {
-    flushIntervalRef.current = window.setInterval(() => {
-      const now = performance.now()
-      const since = now - lastLevelTsRef.current
-      if (since > 150) {
-        // Sin audio nuevo: decay
-        setAudioLevel((prev) => (prev > 0.01 ? prev * 0.85 : 0))
-      } else {
-        // Audio reciente: aplicar el pending con smoothing (max nuevo o decay viejo)
-        const lvl = pendingLevelRef.current
-        setAudioLevel((prev) => Math.max(prev * 0.6, lvl))
-      }
-    }, 50)
-    return () => { if (flushIntervalRef.current) clearInterval(flushIntervalRef.current) }
-  }, [])
-  const onAudioLevelTick = useCallback((lvl: number) => {
-    lastLevelTsRef.current = performance.now()
-    // Solo guardamos el max del periodo: el interval flusheara a 20fps
-    pendingLevelRef.current = Math.max(pendingLevelRef.current * 0.7, lvl)
-  }, [])
+  // audioLevel + throttle/decay ahora viven en useLiveVoice (circuitería central) → usamos live.audioLevel.
   const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
   const [extraTopics, setExtraTopics] = useState<Topic[]>([])
   const [endedReport, setEndedReport] = useState<SessionData | null>(null)
@@ -1209,8 +1183,6 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   const rerenderRafRef = useRef<number | null>(null)
 
   const live = useLiveVoice({
-    onAudioLevel: onAudioLevelTick,
-    onMicLevel: onAudioLevelTick,   // feedback en vivo: la aura también reacciona a la voz del ALUMNO
     onAudioFrequencies: (bins) => {
       freqBinsRef.current = bins
       // throttle re-render a ~30fps para que las barras animen sin matar perf
@@ -1507,7 +1479,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
           <div className="convo-orb-wrap">
             <AgentAudioVisualizerAura
               status={live.status}
-              audioLevel={audioLevel}
+              audioLevel={live.audioLevel}
               color="#00B37E"
               colorShift={0.18}
               themeMode="dark"

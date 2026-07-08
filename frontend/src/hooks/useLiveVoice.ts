@@ -71,6 +71,27 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
    * actualiza con eventos participant_joined / participant_left del backend. */
   const [participants, setParticipants] = useState<LiveParticipant[]>([])
 
+  // ── Circuitería de voz CENTRALIZADA (un solo lugar) ──────────────────────────
+  // Un único `audioLevel` (mic del alumno + voz del coach), con throttle ~20fps + decay.
+  // Antes cada pantalla replicaba este bloque; ahora vive acá y TODAS leen `live.audioLevel`
+  // (la aura reacciona igual en toda la app). Los callbacks onMicLevel/onAudioLevel siguen
+  // para quien quiera el nivel crudo (p.ej. las barras de espectro).
+  const [audioLevel, setAudioLevel] = useState(0)
+  const pendingLevelRef = useRef(0)
+  const lastLevelTsRef = useRef(0)
+  const pushLevel = useCallback((lvl: number) => {
+    lastLevelTsRef.current = performance.now()
+    pendingLevelRef.current = Math.max(pendingLevelRef.current * 0.7, lvl)
+  }, [])
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      const since = performance.now() - lastLevelTsRef.current
+      if (since > 150) setAudioLevel((p) => (p > 0.01 ? p * 0.85 : 0))     // sin audio: decay a 0
+      else setAudioLevel((p) => Math.max(p * 0.6, pendingLevelRef.current)) // audio: max(decay, nuevo)
+    }, 50)
+    return () => clearInterval(id)
+  }, [])
+
   // Estabilizamos opts en un ref: el caller pasa literales nuevos cada render
   // pero los callbacks adentro del hook usan optsRef.current para no
   // invalidar dependencias y causar re-renders en loop (React error #310).
@@ -279,7 +300,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         sumSq += v * v
       }
       const rms = Math.sqrt(sumSq / timeBuf.length)
-      optsRef.current.onAudioLevel?.(Math.min(1, rms * 3))
+      const _lvlOut = Math.min(1, rms * 3)
+      optsRef.current.onAudioLevel?.(_lvlOut)
+      pushLevel(_lvlOut)   // circuitería central
 
       // Espectro solo si hay listener Y si hay sonido (skip silencio para no quemar CPU)
       if (optsRef.current.onAudioFrequencies && rms > 0.005) {
@@ -411,7 +434,9 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           const liveWs = wsRef.current
           if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return
           // Boost x4 del RMS. Es el nivel del MIC del usuario -> feedback "estás hablando".
-          optsRef.current.onMicLevel?.(Math.min(1, rms * 4))
+          const _lvlMic = Math.min(1, rms * 4)
+          optsRef.current.onMicLevel?.(_lvlMic)
+          pushLevel(_lvlMic)   // circuitería central
           const bytes = new Uint8Array(pcmBuf)
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
@@ -446,7 +471,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
               // SIEMPRE mandar el PCM. Bloquear chunks de silencio impide que
               // el VAD de Gemini Live cierre el turno y el coach no responde.
               // El flag `silent` queda solo para el visualizer.
-              if (silent) optsRef.current.onMicLevel?.(Math.min(1, (rms || 0) * 4))
+              if (silent) { const _l = Math.min(1, (rms || 0) * 4); optsRef.current.onMicLevel?.(_l); pushLevel(_l) }
               if (pcm) sendPcm(pcm, rms || 0)
             }
             source.connect(node)
@@ -777,7 +802,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
               // SIEMPRE mandar PCM (incluso silencio). Ver fix worklet/sendPcm
               // arriba — sin silencio entrante, el VAD de Gemini Live no cierra
               // turno y el coach no responde.
-              if (silent) optsRef.current.onMicLevel?.(Math.min(1, (rms || 0) * 4))
+              if (silent) { const _l = Math.min(1, (rms || 0) * 4); optsRef.current.onMicLevel?.(_l); pushLevel(_l) }
               if (pcm) sendPcm(pcm, rms || 0)
             }
             source.connect(node)
@@ -814,5 +839,5 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     [attachWsHandlers],
   )
 
-  return { start, stop, status, transcript, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants }
+  return { start, stop, status, transcript, audioLevel, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants }
 }
