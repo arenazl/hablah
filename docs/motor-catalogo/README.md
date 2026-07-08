@@ -13,9 +13,11 @@ Snapshot del motor + catálogo (2026-07-08) para analizar por fuera y madurar el
 - **[orquestaciones/agnosticas/](orquestaciones/agnosticas/)** — el prompt de 9 pasos por cruce
   **edad × nivel** (16), con el tópico como PLACEHOLDER. Es el **marco pedagógico puro** — para
   analizar las reglas del cruce sin ruido de vocabulario.
-- **[orquestaciones/topic-builtin/](orquestaciones/topic-builtin/)** — el mismo prompt pero con el
-  tópico ENCHUFADO: `kids/` = 1 por cada cruce edad×nivel×tópico (87); `adultos/` = 1 por nivel (el
-  marco es igual entre tópicos, cambia solo el vocab). Para ver cómo queda una clase real.
+- **[orquestaciones/topic-builtin/](orquestaciones/topic-builtin/)** — el mismo prompt con un tópico
+  REPRESENTATIVO enchufado, **1 por celda edad × nivel** (16, mismo criterio que `agnosticas/`). Para
+  ver el marco "lleno". _Per-tópico NO se hace a propósito: el motor no decide nada por tópico — solo
+  cambia el bloque de vocab; hacerlo por tópico daría cientos de archivos idénticos (ver §4 y §10 de la
+  filosofía)._
 
 ## Clave para leer
 
