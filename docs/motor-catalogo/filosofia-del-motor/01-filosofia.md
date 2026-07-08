@@ -75,13 +75,15 @@ y no sabés si el prompt lo armó el dato o el fallback. Mejor saber qué falta.
   de catálogo, no O(edad × nivel × tópico) de combos curados.)
 - **No cruza los ejes.** Edad y nivel se apilan; no hay tabla-cruce edad×nivel.
 
-## 7. Dónde vive en el código
+## 7. Los algoritmos (INCLUIDOS acá — autocontenido)
 
-- `backend/services/composer_proto.py` → `compose_proto_prompt(...)`: arma los bloques.
-- `backend/services/gemini_live.py`: carga los datos (student_types, levels, topic, app_config,
-  learner_state) y llama al composer; después abre el WS de voz.
-- Tablas: `student_types` (edad), `levels` (nivel), `topics` (tópico), `app_config` (reglas de voz),
-  y el `learner_state` (post-clase, hoy vacío).
+El código real está en **`algoritmos/`** (copia congelada; no hace falta el repo):
+- **`algoritmos/composer_proto.py`** → `compose_proto_prompt(...)`: arma los bloques (los 9 pasos),
+  el orden, el fail-fast, y qué bloque depende de qué pilar. **Es el corazón.**
+- **`algoritmos/gemini_live_engine.py`**: la infra de la conversación (WebSocket a Gemini Live, `setup`
+  del modelo/voz, resampleo a 16 kHz, RMS, VAD/turnos). Acá viven las particularidades de §9 y §10.
+- Datos que consume (tablas): `student_types` (edad), `levels` (nivel), `topics` (tópico), `app_config`
+  (reglas de voz) y `learner_state` (post-clase, hoy vacío).
 
 ## 8. Cómo se arma el prompt, en concreto — y sus peculiaridades
 
