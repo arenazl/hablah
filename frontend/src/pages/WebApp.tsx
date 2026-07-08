@@ -1210,6 +1210,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
 
   const live = useLiveVoice({
     onAudioLevel: onAudioLevelTick,
+    onMicLevel: onAudioLevelTick,   // feedback en vivo: la aura también reacciona a la voz del ALUMNO
     onAudioFrequencies: (bins) => {
       freqBinsRef.current = bins
       // throttle re-render a ~30fps para que las barras animen sin matar perf
