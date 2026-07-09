@@ -113,7 +113,12 @@ class Topic(Base):
     slug = Column(String(120), unique=True, nullable=False, index=True)
     title = Column(String(200), nullable=False)
     category = Column(String(80), nullable=False, default="general")  # tech, arte, lifestyle, diseno, negocios, kids
+    # FOSIL: el motor no lee este campo (composer_proto usa keywords[:6] y generated_vocab).
+    # No borrar la columna/dato — legacy de una generación previa del catálogo.
     seed_prompts = Column(JSON, nullable=False, default=dict)  # { "A2": "...", "B2": "...", "C1": "..." } o { "mini": "...", "junior": "...", "tween": "..." }
+    # VIVO, pero PARCIAL: composer_proto solo consume keywords[:6] (ver services/composer_proto.py).
+    # keywords[6:] queda cargado en varios tópicos y no llega nunca al prompt — no es fósil (SÍ se
+    # lee), pero cualquier keyword más allá de la 6ª es dato muerto en la práctica.
     keywords = Column(JSON, nullable=False, default=list)      # ["two-step", "sub-bass", ...]
     levels = Column(JSON, nullable=False, default=list)        # ["A2", "B1", "B2", "C1"]
     is_hot = Column(Boolean, nullable=False, default=False)

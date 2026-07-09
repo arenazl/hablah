@@ -16,8 +16,18 @@ equivalentes) va con el patrón: **dry-run por defecto → diff visible → back
 `--apply` escribe.** Referencia viva: `apply_v3_topics.py`. Nunca escribir directo sin ese
 circuito — un batch malo sin backup ya corrompió `student_types` una vez (2026-06-24).
 
+**Cambiaste catálogo → corré `snapshot_catalogo.py` y commiteá `data/catalogo/`.** Es el paso
+final de CUALQUIER cambio a `student_types`/`levels`/`topics`/`app_config` (aplicado el `--apply`
+del script que corresponda): correr `python scripts/snapshot_catalogo.py` (desde `backend/`) y
+commitear el JSON resultante. El diff de `git diff data/catalogo/` es el diff real del dato —
+sin esto, un batch malo vuelve a corromper el catálogo sin rastro (WO F0-05).
+
 ## Catálogo / curación de tópicos (la curación v3 vigente, 94 tópicos activos)
 
+- `snapshot_catalogo.py` — **(WO F0-05)** exporta `student_types`/`levels`/`topics`/`app_config`
+  READ-ONLY a `data/catalogo/*.json` (orden estable, claves ordenadas, UTF-8). Correrlo después de
+  cualquier `--apply` de catálogo y commitear el JSON (regla arriba). Verificado determinístico:
+  2 corridas seguidas dan diff vacío.
 - `inspect_topics_before_v3.py` — inspecciona el estado de `topics` antes de aplicar una
   curación nueva (read-only).
 - `sanity_check_topics.py` — chequeos de sanidad post-curación (cobertura, duplicados, campos
@@ -97,9 +107,9 @@ circuito — un batch malo sin backup ya corrompió `student_types` una vez (202
 - `snapshot_catalog.py` — snapshot histórico de las tablas-molde del motor v3
   (`age_band`, `level`, `tutor_identity`, `pedagogy`, `band_policy`, `behavioral_guard`,
   `trigger_template`, etc.) a la tabla `catalog_snapshot`, con `restore N`. **OJO:** es distinto
-  del `snapshot_catalogo.py` que trae el WO F0-05 (ese exporta `student_types`/`levels`/
-  `topics`/`app_config` a JSON versionado en `data/catalogo/` — cuando exista, usar ESE para el
-  catálogo de producción; este acá sigue siendo válido para las tablas del editor `/motor`).
+  de `snapshot_catalogo.py` (WO F0-05, listado arriba en "Catálogo / curación de tópicos") — ESE
+  es el vigente para el catálogo de producción (`student_types`/`levels`/`topics`/`app_config` a
+  JSON en `data/catalogo/`); este acá sigue siendo válido solo para las tablas del editor `/motor`.
 
 ## Smoke de producción
 
