@@ -21,6 +21,7 @@ from sqlalchemy import select
 from models.template import Session as SessionModel, Template, Topic, template_voice_for_lang
 from models.user import User
 from services.super_prompt import build_super_prompt
+from services.composer_proto import MotorDataMissing
 from services.voice_engine import VoiceEngineContext, get_engine
 
 log = logging.getLogger(__name__)
@@ -270,7 +271,17 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: st
         await ws.close(code=4001)
         return
 
-    ctx_dict = await _load_session_context(session_id)
+    # F3-01 (adelantado): el composer hace fail-fast (MotorDataMissing) si falta un dato del
+    # catálogo — p.ej. app_config.universal_conversation_rules. Sin este borde la excepción
+    # se propagaba sin handler y tumbaba la voz (outage silencioso). Mismo blindaje que
+    # api/voice.py y api/orchestrator.py: log ERROR con el campo faltante + cierre limpio del
+    # WS (1011). NO cambia el flujo feliz: si el dato ESTÁ, arma el prompt igual que antes.
+    try:
+        ctx_dict = await _load_session_context(session_id)
+    except MotorDataMissing as e:
+        log.error("voice_proxy: prompt NO armable por dato faltante (session=%s): %s", session_id, e)
+        await ws.close(code=1011)
+        return
     if not ctx_dict or ctx_dict["user_id"] != user_id:
         await ws.close(code=4004)
         return
