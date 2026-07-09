@@ -26,7 +26,21 @@ F4-05 (dirección visual), F4-06 (momento de arranque), F5-04 (mensaje de marca)
 de dos cosas: **contexto chico** (1 WO = 1 sesión nueva; no encadenar WOs en la misma conversación
 salvo los pares marcados) y **modelo elegido por riesgo del WO**, no por fase.
 
-### Prompt de disparo (copiar/pegar en una sesión nueva, cambiando el ID)
+### Disparo — MODO ORQUESTADOR (estándar: el dueño no cambia de modelo a mano)
+
+Una sesión con **Opus**, un solo prompt; el orquestador delega cada WO a un subagente con el
+modelo de la tabla de abajo y no implementa nada él mismo:
+
+> Sos el ORQUESTADOR. Leé `docs/03-rework/02-hoja-de-ruta.md` completo — REGLAS GLOBALES, tablero
+> y WOs. Ejecutá los WOs pendientes EN ORDEN (respetando dependencias y los pares marcados
+> "juntos"), delegando cada uno a un subagente con el modelo de la tabla de ruteo del README
+> (model: sonnet u opus). A cada subagente pasale el texto completo de su WO + las REGLAS
+> GLOBALES + la instrucción de devolver un reporte contra los criterios de aceptación. Vos NO
+> implementás: revisás cada reporte, relanzás si falla, actualizás el tablero, commiteás por WO,
+> y seguís. En los GATES del dueño: frená y preguntame. WOs de motor/dato: smoke antes de pushear
+> (el push deploya). Si un WO contradice la realidad del código: frenalo y preguntame.
+
+### Modo manual (alternativa: un WO por sesión, cambiando el ID)
 
 > Leé `docs/03-rework/02-hoja-de-ruta.md` — primero las REGLAS GLOBALES completas, después el
 > **WO <ID>**. Ejecutá SOLO ese WO. No re-analices contexto ni lógica: el análisis ya está hecho
