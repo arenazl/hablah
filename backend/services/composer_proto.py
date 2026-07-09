@@ -13,6 +13,21 @@ dato o el fallback. Mejor explotar y saber qué falta.
 Bloques opcionales (se omiten si no hay dato, NO son fallbacks): learner_state e
 interaction_state (memoria/estado vivo, se llenan post-clase), output_rules (config),
 story_timeline (narrativa curada por tópico, cuando exista).
+
+LEY DE ASIGNACIÓN — test de las 3 preguntas (docs/03-rework/01-analisis-integral.md §4).
+Antes de escribir CUALQUIER regla en el catálogo, preguntar: "si cambio la EDAD del alumno,
+¿esta regla debe cambiar? ¿y si cambio el NIVEL? ¿y con la HISTORIA?".
+  · No cambia con nada  -> UNIVERSAL (pedagogía básica de conversación): app_config
+                          'universal_conversation_rules', bloque <universal_conversation_rules>
+                          (F1-01). Ej.: recast en vez de corregir en seco · variá, no repitas
+                          fórmulas · seguí el interés del alumno · la estructura es vehículo,
+                          no guion · honestidad conversacional (no inventar hechos vividos).
+  · Solo con EDAD       -> student_types (el CÓMO social/afectivo): tono, juego, forma del turno.
+  · Solo con NIVEL      -> levels (el QUÉ lingüístico): % ES/EN, gramática, producción esperada.
+  · Con el alumno       -> learner_state / perfil (error a vigilar, intereses, dominado).
+  · Con el TÓPICO       -> topics (SOLO léxico: keywords[:6] + frases-ancla). Jamás conducta.
+La ley no se sostiene con disciplina sino con herramienta: el barrido de duplicados de F1-01
+(misma oración en 2 capas = bug) + la invariante del smoke F1-03 (bloques únicos).
 """
 from __future__ import annotations
 
@@ -101,7 +116,12 @@ def _get_student_profile(user, std: dict, ctx: str) -> str:
 
 
 def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
-    """Bloque 6 — los rieles, APILANDO los 2 ejes (nunca cruzados, sin fallback)."""
+    """Bloque 6 — los rieles, APILANDO los 2 ejes (nunca cruzados, sin fallback).
+
+    F1-02 (jerarquía semántica / recency bias): la Expected_Production va envuelta en
+    <critical_objective> con una línea imperativa para forzar atención SIN depender del
+    orden del stack (recomendación de Gemini, dueño del modelo de voz). Solo estructura
+    XML: el contenido del preset (levels.expected_production) NO se toca."""
     lang = _req(lv.get("language_rule"), "levels.language_rule", ctx)
     grammar = _req(lv.get("curriculum_grammar"), "levels.curriculum_grammar", ctx)
     prod = _req(lv.get("expected_production"), "levels.expected_production", ctx)
@@ -110,9 +130,31 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
         f"<behavioral_guards>\n"
         f"  Language_Rule (nivel): {lang.strip()}\n"
         f"  Level_Target (nivel): {grammar.strip()}\n"
-        f"  Expected_Production (nivel): {prod.strip()}\n"
+        f"  <critical_objective>\n"
+        f"    HIGHEST PRIORITY — this is exactly what the student must produce this class; "
+        f"follow it above every other block:\n"
+        f"    Expected_Production (nivel): {prod.strip()}\n"
+        f"  </critical_objective>\n"
         f"  Form_Rules (segmento): {form.strip()}\n"
         f"</behavioral_guards>"
+    )
+
+
+def _get_universal_rules(app_config: Optional[dict], ctx: str) -> str:
+    """Capa UNIVERSAL anti-robot (F1-01) — el CÓMO se conversa, transversal a TODA clase.
+
+    Test de las 3 preguntas (ver cabecera del módulo): estas reglas NO cambian con la edad,
+    ni con el nivel, ni con la historia → viven en UNA sola capa (dato en app_config,
+    clave 'universal_conversation_rules') y el composer las apila SIEMPRE, cerca del final
+    del stack (recency bias). NO es opcional como output_rules: fail-fast si la clave falta
+    (una regla, una capa — el barrido de F1-01 saca las copias de seeds/form_rules)."""
+    cfg = _req(app_config, "app_config (necesita universal_conversation_rules)", ctx)
+    rules = _req(cfg.get("universal_conversation_rules"),
+                 "app_config.universal_conversation_rules", ctx)
+    return (
+        f"<universal_conversation_rules>\n"
+        f"{rules.strip()}\n"
+        f"</universal_conversation_rules>"
     )
 
 
@@ -296,6 +338,7 @@ def compose_proto_prompt(
         _get_output_rules(app_config),              # opcional (config runtime)
         _get_vocabulary_block(topic, topic_content, ctx, lv.get("vocab_depth")),
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
+        _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
         _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), ctx),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
         _get_interaction_state(interaction_state),  # opcional (estado vivo)
