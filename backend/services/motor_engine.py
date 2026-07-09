@@ -83,7 +83,11 @@ def _resolve_sync(band_code, level_code, topic_id, student_id, test_overrides) -
 async def resolve(band_code: str, level_code: str, topic_id: Optional[int] = None,
                   student_id: Optional[int] = None,
                   test_overrides: Optional[list[dict[str, Any]]] = None) -> dict:
-    """Playground: arma el prompt JIT para (banda, nivel, tópico) con overrides en memoria."""
+    """JUBILADO (motor v3) — NO cablear superficies nuevas acá; usar resolve_v2 (motor v2 =
+    producción). Producción corre v2 (composer_proto vía gemini_live). v3 quedó vivo SOLO en el
+    back-office de guards (/admin/reglas-motor). Se conserva el código, no se extiende.
+
+    Playground: arma el prompt JIT para (banda, nivel, tópico) con overrides en memoria."""
     return await asyncio.to_thread(
         _resolve_sync, band_code, level_code, topic_id, student_id, test_overrides)
 

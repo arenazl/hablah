@@ -1,12 +1,15 @@
 """Consola /finaltest — circuito ENTERO de prueba de clases REALES por voz.
 
-El usuario elige banda(perfil) × nivel × tópico, arranca una clase por voz (mic + Gemini Live,
-vía el WS /voice/ws_orchestration que resuelve el motor v3 con ESE student_id para tener historia),
-y al terminar se guarda la transcripción: se puntúa con el juez SLA (Gemini, rúbrica calibrada),
-se escribe un .md en la carpeta raíz `finaltest_clases/`, se sube la escalera SRS (train_apply) para
-que la próxima clase del mismo perfil tenga historia, y queda en BD para el tab de Análisis.
+MOTOR ÚNICO v2 (compose_proto) — el MISMO que produce (F0-01). El usuario elige perfil(edad =
+age_group) × nivel × tópico, arranca una clase por voz (mic + Gemini Live, vía el WS
+/voice/ws_mini que resuelve por motor_engine.resolve_v2), y al terminar se guarda la
+transcripción: se puntúa con el panel de jueces SLA, se escribe un .md en la carpeta raíz
+`finaltest_clases/` y queda en BD para el tab de Análisis.
 
-Todo real, en el server. Sin login (banco de prueba aislado, como /llm y /probar-orq).
+La HISTORIA v2 (learner_state) todavía no se persiste (pendiente F2-01): por ahora la clase corre
+sin historia, igual que /mini-test. La escalera SRS de v3 (train_apply) se retiró al re-cablear.
+
+Todo real, en el server. Sin login (banco de prueba aislado, como /llm y /mini-test).
 """
 from __future__ import annotations
 
@@ -27,7 +30,8 @@ router = APIRouter()
 
 _ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _MD_DIR = os.path.join(_ROOT, "finaltest_clases")
-_BAND_AGE = {"early_child": 5, "child": 8, "teen": 13, "adult": 30}
+# age_group (slug de student_types) -> segmento de topics. Solo 'adult' difiere ('adultos').
+_SEG_BY_AGE = {"mini": "mini", "junior": "junior", "teen": "teen", "adult": "adultos"}
 
 # Juez SLA con escala ANCLADA (misma vara calibrada del circuito de validación).
 _RUBRIC = (
@@ -104,62 +108,25 @@ def _ensure_schema_sync(db) -> None:
     db.conn.commit()
 
 
-def _student_sync(band: str, level: str) -> dict:
+def _topics_sync(age_group: str) -> list[dict]:
+    """Tópicos v2 del segmento (edad). is_active=1. El nivel NO filtra acá (el motor v2 arma la
+    clase para cualquier nivel; el combo de nivel es libre)."""
     db = motor_engine._connect()
     try:
-        key = f"ft_{band[:2]}_{level}"[:20]
-        row = db.q1("SELECT student_id FROM student WHERE profile_key=%s", (key,))
-        if row:
-            sid = row["student_id"]
-        else:
-            with db.conn.cursor() as cur:
-                cur.execute("INSERT INTO student (name, profile_key, age, level_code) VALUES (%s,%s,%s,%s)",
-                            (f"finaltest {band} {level}", key, _BAND_AGE.get(band, 12), level))
-                sid = cur.lastrowid
-            db.conn.commit()
-        o = db.q1("SELECT COUNT(*) c FROM learner_objective WHERE student_id=%s", (sid,))["c"]
-        it = db.q1("SELECT COUNT(*) c FROM learner_item WHERE student_id=%s", (sid,))["c"]
-        return {"student_id": sid, "hist_obj": o, "hist_items": it}
-    finally:
-        db.conn.close()
-
-
-def _reset_sync(student_id: int) -> None:
-    db = motor_engine._connect()
-    try:
-        with db.conn.cursor() as cur:
-            cur.execute("DELETE FROM learner_objective WHERE student_id=%s", (student_id,))
-            cur.execute("DELETE FROM learner_item WHERE student_id=%s", (student_id,))
-        db.conn.commit()
-    finally:
-        db.conn.close()
-
-
-def _topics_sync(band: str) -> list[dict]:
-    db = motor_engine._connect()
-    try:
-        rows = db.q("""SELECT t.topic_id, t.title FROM topic t
-            JOIN topic_suggested_band tsb ON tsb.topic_id=t.topic_id
-            JOIN age_band ab ON ab.band_id=tsb.band_id WHERE ab.code=%s ORDER BY t.title LIMIT 200""", (band,))
-        return [{"id": r["topic_id"], "title": r["title"]} for r in rows]
+        seg = _SEG_BY_AGE.get(age_group, age_group)
+        rows = db.q("SELECT id, title FROM topics WHERE segmento=%s AND is_active=1 ORDER BY title LIMIT 300", (seg,))
+        return [{"id": r["id"], "title": r["title"]} for r in rows]
     finally:
         db.conn.close()
 
 
 def _options_sync() -> dict:
+    """Combos del motor v2: edades = student_types (slug), niveles = levels (CEFR)."""
     db = motor_engine._connect()
     try:
-        bands = db.q("SELECT code, label FROM age_band ORDER BY band_id")
-        levels = db.q("SELECT level_code FROM `level` ORDER BY sort_order")
-        return {"bands": bands, "levels": [r["level_code"] for r in levels]}
-    finally:
-        db.conn.close()
-
-
-def _objectives_sync(level: str) -> list[dict]:
-    db = motor_engine._connect()
-    try:
-        return db.q("SELECT objective_id, code, description FROM language_objective WHERE cefr_level=%s ORDER BY sort_order", (level,))
+        bands = db.q("SELECT slug AS code, name AS label FROM student_types WHERE active=1 ORDER BY sort_order")
+        levels = db.q("SELECT code FROM levels ORDER BY sort_order")
+        return {"bands": bands, "levels": [r["code"] for r in levels]}
     finally:
         db.conn.close()
 
@@ -241,31 +208,6 @@ async def _judge(level: str, title: str, transcript: list[dict]) -> dict:
     return out
 
 
-async def _derive(level: str, transcript: list[dict]) -> dict:
-    objs = await asyncio.to_thread(_objectives_sync, level)
-    if not objs:
-        return {"objectives": [], "items": []}
-    listado = "\n".join(f'{o["objective_id"]}\t{o["code"]}\t{o["description"]}' for o in objs)
-    raw = await mp._gemini(
-        "Evaluador SLA. De la TRANSCRIPCION marca qué objetivos se practicaron y con qué desempeño "
-        "(good/partial/fail). Ignora los que no aparecieron.\n"
-        f"OBJETIVOS:\n{listado}\n\nTRANSCRIPCION:\n{_convo_text(transcript)}\n\n"
-        'SOLO JSON: {"objectives":[{"id":1,"score":"good"}],"items":[{"type":"word","value":"x","score":"partial"}],"errors":["..."]}')
-    p = mp._parse_json(raw or "") or {}
-    valid = {o["objective_id"] for o in objs}
-    objectives = [(int(o["id"]), o["score"]) for o in p.get("objectives", [])
-                  if o.get("id") in valid and o.get("score") in ("good", "partial", "fail")]
-    allowed = {"word", "phrase", "error"}
-    items: list[tuple] = []
-    for it in p.get("items", []):
-        if it.get("value"):
-            typ = it.get("type") if it.get("type") in allowed else "word"
-            sc = it.get("score") if it.get("score") in ("good", "partial", "fail") else "partial"
-            items.append((typ, str(it["value"])[:110], sc))
-    items += [("error", str(e)[:110], "fail") for e in p.get("errors", []) if e]
-    return {"objectives": objectives, "items": items}
-
-
 def _write_md(payload: dict, ev: dict) -> str:
     os.makedirs(_MD_DIR, exist_ok=True)
     ts = payload["ts"]
@@ -325,47 +267,40 @@ async def topics(band: str):
 
 @router.post("/resolve")
 async def resolve(body: ResolveBody):
-    """Crea/recupera el student de prueba del perfil (para historia), resuelve el prompt del
-    motor y devuelve la orquestación (para el panel colapsable) + la historia actual."""
-    st = await asyncio.to_thread(_student_sync, body.band_code, body.level_code)
+    """Motor ÚNICO v2 (compose_proto) — el MISMO que produce. `band_code` == age_group (slug de
+    student_types: mini/junior/teen/adult). La historia v2 (learner_state) es F2-01: por ahora
+    la clase corre sin historia (=/mini-test)."""
     try:
-        res = await motor_engine.resolve(body.band_code, body.level_code, body.topic_id or None, st["student_id"], None)
-        prompt, meta = res["prompt"], res.get("meta", {})
+        res = await motor_engine.resolve_v2(body.band_code, body.level_code, body.topic_id or None)
+        return {"prompt": res["prompt"], "meta": res.get("meta", {}),
+                "student_id": 0, "hist_obj": 0, "hist_items": 0}
     except Exception as e:
-        return {"error": str(e), **st}
-    return {"prompt": prompt, "meta": meta, **st}
+        return {"error": str(e), "student_id": 0, "hist_obj": 0, "hist_items": 0}
 
 
 @router.post("/reset")
 async def reset(body: ResetBody):
-    st = await asyncio.to_thread(_student_sync, body.band_code, body.level_code)
-    await asyncio.to_thread(_reset_sync, st["student_id"])
-    return {"ok": True, "student_id": st["student_id"], "hist_obj": 0, "hist_items": 0}
+    """La historia v2 (learner_state) todavía no se persiste (F2-01), así que no hay SRS que
+    resetear. Se conserva el endpoint/botón; hoy es no-op (0/0)."""
+    return {"ok": True, "student_id": 0, "hist_obj": 0, "hist_items": 0}
 
 
 @router.post("/save")
 async def save(body: SaveBody):
-    """Cierre de clase: juzga (Gemini SLA), escribe .md, sube la escalera SRS (historia) y persiste."""
+    """Cierre de clase: juzga (panel SLA), escribe .md y persiste. La escalera SRS de v3 se
+    retiró al re-cablear a v2; la historia v2 (learner_state) llega en F2-01."""
     transcript = [t for t in body.transcript if t.get("text")]
-    st = await asyncio.to_thread(_student_sync, body.band_code, body.level_code)
     ev = await _judge(body.level_code, body.topic_title or body.level_code, transcript)
     ev["verdict"] = (ev.get("verdict") or "") + f"  ·  juez: {ev.get('judge_model', '?')}"
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     payload = {"band_code": body.band_code, "level_code": body.level_code, "topic_id": body.topic_id,
-               "topic_title": body.topic_title, "student_id": st["student_id"],
-               "hist_obj": st["hist_obj"], "hist_items": st["hist_items"], "transcript": transcript, "ts": ts}
+               "topic_title": body.topic_title, "student_id": body.student_id or 0,
+               "hist_obj": 0, "hist_items": 0, "transcript": transcript, "ts": ts}
     md_path = _write_md(payload, ev)
     dims = {k: ev.get(k) for k in ("naturalidad", "afecto", "i1", "reciclado", "recast", "continuity")}
     dims["panel"] = ev.get("panel", [])
     rid = await asyncio.to_thread(_save_row_sync, {
         **payload, "score": ev.get("score"), "verdict": ev.get("verdict") or "", "dims": dims, "md_path": md_path})
-    # historia: best-effort, no rompe el guardado si falla
-    try:
-        derived = await _derive(body.level_code, transcript)
-        if derived["objectives"] or derived["items"]:
-            await motor_engine.train_apply(st["student_id"], derived)
-    except Exception:
-        pass
     return {"id": rid, "score": ev.get("score"), "verdict": ev.get("verdict"), "dims": dims, "md_path": md_path}
 
 

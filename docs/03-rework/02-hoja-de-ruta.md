@@ -36,7 +36,7 @@
 
 | WO | Título | Estado |
 |---|---|---|
-| F0-01 | Un solo motor en todas las superficies de test | pendiente |
+| F0-01 | Un solo motor en todas las superficies de test | hecho (2026-07-09) — /finaltest re-cablado a v2; paneles v3 retirados; duda abierta: motor.py:205 (back-office guards /admin/reglas-motor) sigue v3 |
 | F0-02 | Inventario y retiro de servicios/scripts fósiles | pendiente |
 | F0-03 | ESLint + gate de calidad frontend | pendiente |
 | F0-04 | Laboratorio separado del producto (`/lab/*`) | pendiente |

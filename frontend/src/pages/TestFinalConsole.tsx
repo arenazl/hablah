@@ -1,17 +1,17 @@
 /* TestFinalConsole — Consola /finaltest: circuito ENTERO de clase REAL por voz.
  *
- * El usuario elige perfil(banda) × nivel × tópico, arranca una clase HABLANDO al coach
- * (mic + Gemini Live, vía /voice/ws_orchestration con el motor v3 real y la historia del
- * perfil). Va mostrando lo que dice cada parte. Al terminar: se puntúa con el juez SLA,
- * se genera un .md y queda en el tab "Análisis" con su score. Escenario productivo, todo
- * en los servers. Reusa el hook useLiveVoice de /llm.
+ * MOTOR ÚNICO v2 (compose_proto) — el MISMO que produce (F0-01). El usuario elige perfil(edad =
+ * age_group) × nivel × tópico, arranca una clase HABLANDO al coach (mic + Gemini Live, vía
+ * /voice/ws_mini → motor_engine.resolve_v2). Al terminar: se puntúa con el panel de jueces SLA,
+ * se genera un .md y queda en el tab "Análisis" con su score. La historia v2 (learner_state) llega
+ * en F2-01 — hoy la clase corre sin historia, igual que /mini-test. Reusa useLiveVoice de /llm.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Mic, Square, RotateCcw, ChevronDown, ChevronRight, FileText, Loader2, History } from 'lucide-react'
 
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import {
-  buildOrchestrationWsUrl, finaltestAPI,
+  buildMiniWsUrl, finaltestAPI,
   type FtBand, type FtTopic, type FtClassRow, type FtClassDetail, type FtDims, type FtPanelVote,
 } from '../services/api'
 
@@ -140,14 +140,15 @@ export function TestFinalConsole() {
   useEffect(() => { refreshList() }, [refreshList])
 
   const startClass = useCallback(async () => {
-    if (!topicId || !studentId) return
+    if (!topicId) return
     setErr(''); setLastResult(null)
-    const url = buildOrchestrationWsUrl({
-      band_code: band, level_code: level, topic_id: topicId, student_id: studentId,
+    // Motor v2: age_group (= band, slug de student_types) + nivel + tópico. Sin student/historia (F2-01).
+    const url = buildMiniWsUrl({
+      age_group: band, level_code: level, topic_id: topicId,
       engine: 'gemini_live', model: 'models/gemini-3.1-flash-live-preview', voice: 'Aoede',
     })
     await live.start(0, undefined, 'Aoede', url)
-  }, [live, band, level, topicId, studentId])
+  }, [live, band, level, topicId])
 
   const endClass = useCallback(async () => {
     const transcript = live.transcript.map((l) => ({ who: l.who, text: l.text }))

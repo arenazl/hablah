@@ -25,11 +25,11 @@ const AudioTuningPage = lazy(() =>
 )
 const GuestRoom = lazy(() => import('./pages/GuestRoom').then(m => ({ default: m.GuestRoom })))
 const LlmTestPage = lazy(() => import('./pages/LlmTestPage').then(m => ({ default: m.LlmTestPage })))
-const TrainingPanel = lazy(() => import('./pages/TrainingPanel'))
-const ProbarOrquestacion = lazy(() => import('./pages/ProbarOrquestacion'))
-const MotorPlaygroundPanel = lazy(() => import('./pages/MotorPlaygroundPanel'))
+// F0-01: rutas públicas de test del motor v3 RETIRADAS (/motor, /training, /probar-orq,
+// /orquestacion). El motor de test es v2 (/finaltest, /mini-test). ProbarOrquestacion y
+// OrquestacionPanel se archivaron en pages/_attic/; MotorPlaygroundPanel y TrainingPanel
+// siguen SOLO bajo /admin (back-office v3, ver Backoffice.tsx).
 const AuditoriaPanel = lazy(() => import('./pages/AuditoriaPanel'))
-const OrquestacionPanel = lazy(() => import('./pages/OrquestacionPanel'))
 const ComparacionPanel = lazy(() => import('./pages/ComparacionPanel'))
 const TranscripcionesPanel = lazy(() => import('./pages/TranscripcionesPanel'))
 const KidsKitPanel = lazy(() => import('./pages/kids/KidsKitPanel'))
@@ -141,13 +141,8 @@ export default function App() {
           <Route path="/llm" element={<LlmTestPage />} />
           <Route path="/finaltest" element={<TestFinalConsole />} />
           <Route path="/mini-test" element={<MiniTestPanel />} />
-          <Route path="/training" element={<TrainingPanel />} />
-          <Route path="/probar-orq" element={<ProbarOrquestacion />} />
-          <Route path="/motor" element={<MotorPlaygroundPanel />} />
           <Route path="/auditoria" element={<AuditoriaPanel />} />
           <Route path="/auditoría" element={<AuditoriaPanel />} />
-          <Route path="/orquestacion" element={<OrquestacionPanel />} />
-          <Route path="/orquestación" element={<OrquestacionPanel />} />
           <Route path="/comparacion" element={<ComparacionPanel />} />
           <Route path="/comparación" element={<ComparacionPanel />} />
           <Route path="/transcripciones" element={<TranscripcionesPanel />} />

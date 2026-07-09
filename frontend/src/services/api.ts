@@ -455,8 +455,6 @@ export const motorAPI = {
     api.post<{ proposal_id: number; status: string }>(`/motor/catalog-proposals/${id}/decide`, { action }).then((r) => r.data),
   comparison: () => api.get<{ combos: CompareCombo[] }>('/motor/comparison').then((r) => r.data),
   transcripts: () => api.get<{ antes: ClassTranscript[]; despues: ClassTranscript[] }>('/motor/transcripts').then((r) => r.data),
-  kidsClassDemo: (body: { band?: string; level?: string; topic_id?: number | null; vocab?: string[] }) =>
-    api.post<{ turns: { text: string; show: string | null }[] }>('/motor/kids-class-demo', body).then((r) => r.data),
   kidsVocab: () => api.get<KidsVocabItem[]>('/motor/kids-vocab').then((r) => r.data),
   kidsTopicVocab: () => api.get<KidsTopicVocab[]>('/motor/kids-topic-vocab').then((r) => r.data),
   vocabTranscripts: () => api.get<{ profiles: VocabTranscriptProfile[] }>('/motor/vocab-transcripts').then((r) => r.data),
@@ -588,15 +586,6 @@ export function buildLlmTestWsUrl(params: Record<string, string | number>): stri
   const sp = new URLSearchParams()
   for (const [k, v] of Object.entries(params)) sp.set(k, String(v))
   return `${wsBase}/voice/ws_llm_test?${sp.toString()}`
-}
-
-/** URL del WS de orquestación v3 COMPLETA (banda×nivel×tópico + student para historia).
- * Va DIRECTO al backend (no via Netlify) para que el WS upgrade funcione. Sin JWT. */
-export function buildOrchestrationWsUrl(params: Record<string, string | number>): string {
-  const wsBase = buildWsBase()
-  const sp = new URLSearchParams()
-  for (const [k, v] of Object.entries(params)) sp.set(k, String(v))
-  return `${wsBase}/voice/ws_orchestration?${sp.toString()}`
 }
 
 /** URL del WS del MOTOR ÚNICO (v2/compose_proto) — el MISMO que produce: 3 pilares

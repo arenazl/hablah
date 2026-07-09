@@ -197,8 +197,10 @@ class ResolveIn(BaseModel):
 
 @router.post("/resolve")
 async def resolve(payload: ResolveIn):
-    """Arma el prompt JIT. test_overrides = jugar con guards en memoria (no persiste).
-    Sin auth: lo usa el probador público (/motor)."""
+    """MOTOR v3 (JUBILADO) — se conserva SOLO para el back-office de guards /admin/reglas-motor,
+    que muestra el prompt v3 mientras se editan los behavioral_guard. Las superficies de TEST
+    (/finaltest, /mini-test) corren el motor v2 (resolve_v2). NO cablear superficies nuevas acá.
+    test_overrides = jugar con guards en memoria (no persiste)."""
     try:
         return await motor_engine.resolve(
             payload.band_code, payload.level_code, payload.topic_id,
@@ -337,33 +339,8 @@ async def transcripts(db: AsyncSession = Depends(get_db)):
     return json.loads(rows[0]["data"]) if rows else {"antes": [], "despues": []}
 
 
-class KidsDemoIn(BaseModel):
-    band: str = "early_child"
-    level: str = "A1"
-    topic_id: Optional[int] = None
-    vocab: list[str] = ["dog", "cat", "lion", "bear", "rabbit"]   # vocab que SÍ tiene imagen
-
-
-@router.post("/kids-class-demo")
-async def kids_class_demo(payload: KidsDemoIn):
-    """Genera una mini-clase visual de kids: el coach (motor) improvisa pero SOLO con el
-    vocab que tiene imagen, y marca qué mostrar en cada turno. Dinámico (cada vez distinto)."""
-    try:
-        res = await motor_engine.resolve(payload.band, payload.level, payload.topic_id, None, None)
-        coach = res.get("prompt", "")
-        prompt = (coach + "\n\n--- MODO CLASE VISUAL (kids) ---\n"
-                  f"Tenemos imágenes SOLO para este vocabulario: {', '.join(payload.vocab)}.\n"
-                  "Dá una mini-clase dinámica de ~7 turnos sobre animales, usando SOLO ese vocabulario "
-                  "(elegí vos el orden y cómo). En cada turno que enseñes un animal, indicá cuál en 'show' "
-                  "(una de esas palabras EXACTAS, en minúscula). Turnos de apertura/cierre con show=null. "
-                  "Estilo nene A1: español de apoyo + la palabra en inglés, cálido y simple.\n"
-                  "Devolvé SOLO JSON: {\"turns\":[{\"text\":\"...\",\"show\":\"dog\"},{\"text\":\"...\",\"show\":null}]}")
-        raw = await motor_protocol._run_llm(prompt, "claude")
-        parsed = motor_protocol._parse_json(raw or "") or {}
-        turns = [t for t in parsed.get("turns", []) if isinstance(t, dict) and t.get("text")]
-        return {"turns": turns}
-    except Exception as e:
-        raise HTTPException(400, f"{type(e).__name__}: {e}")
+# NOTA (F0-01): el endpoint /kids-class-demo (motor v3, sin consumidor frontend) se RETIRÓ. Era
+# el único otro llamador de motor_engine.resolve (v3) fuera del back-office de guards.
 
 
 @router.get("/kids-vocab")

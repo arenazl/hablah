@@ -17,5 +17,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
+  "exclude": ["src/pages/_attic"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
