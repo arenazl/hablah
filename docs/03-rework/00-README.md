@@ -35,22 +35,16 @@ salvo los pares marcados) y **modelo elegido por riesgo del WO**, no por fase.
 > aceptación uno por uno, actualizá el tablero a `hecho`, y commiteá (sin pushear si tocaste motor:
 > primero el smoke).
 
-### Ruteo de modelos (regla simple + excepciones)
+### Ruteo de modelos por fase (estándar permanente — `base-compartida/12` §7)
 
-**Default: Sonnet, effort estándar** — mejor código por dólar en tareas bien especificadas, y estos
-WOs lo están (F0-02/03/04/05/06, F1-03, F3-01/02/03/04, F4-02/04, F5-01/02/03).
-
-**Opus + extended thinking** para lo que toca el motor o tiene riesgo de rotura sutil — ahí el
-costo extra es más barato que un bug en producción:
-- F0-01 (recablear el test al motor v2 — plumbing del motor)
-- F1-01 + F1-02 **juntos en una sesión** (capa universal + jerarquía XML: mismos archivos, un solo
-  paquete de validación por voz)
-- F1-05 (spike de modelos — es análisis comparativo)
-- F2-01 + F2-02 **juntos** (loop de historia end-to-end)
-- F2-03 (rotación de semilla — determinismo del composer)
-- F4-01 (partir WebApp.tsx de 3.744 líneas — el refactor de mayor riesgo mecánico del plan)
-- F4-03 / F4-05 / F4-06 (producto y dirección visual — criterio y gusto)
-- F5-04 (branding — calidad de escritura)
+| Fase | Modelo | WOs de este proyecto |
+|---|---|---|
+| **F0 Consolidación** | **Sonnet** | F0-02, F0-03, F0-04, F0-05, F0-06 — **excepto F0-01 → Opus** (recablea plumbing del motor) |
+| **F1 Motor/actor** | **Opus + extended thinking** | F0-01 hecho antes; F1-01 + F1-02 **juntos en una sesión** (mismos archivos, un paquete de voz); F1-05 — **excepto F1-03 → Sonnet** (tooling de smoke) |
+| **F2 Historia** | **Opus + extended thinking** | F2-01 + F2-02 **juntos**; F2-03 |
+| **F3 Robustez** | **Sonnet** | F3-01, F3-02, F3-03, F3-04 |
+| **F4 Producto/UX** | **Opus** | F4-01 (refactor de 3.744 líneas), F4-03, F4-05, F4-06 — **excepto F4-02 y F4-04 → Sonnet** (checklist viewport, feature acotada) |
+| **F5 Growth** | **Sonnet** | F5-01, F5-02, F5-03 — **excepto F5-04 → Opus** (copy de marca) |
 
 **Fable (el caro): NO se usa para implementar.** Se lo llama solo cuando: (a) un WO choca con la
 realidad del código y el implementador frenó, (b) el dueño trae un insight de campo nuevo (síntoma
