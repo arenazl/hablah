@@ -160,7 +160,7 @@ export default function AdminConsolaPanel() {
             <div style={CARD}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <div style={LBL}>Prompt final (lo que recibe el modelo)</div>
-                <a href="/llm" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#22c55e', textDecoration: 'none' }}>Probar en /llm ↗</a>
+                <a href="/lab/llm" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#22c55e', textDecoration: 'none' }}>Probar en /lab/llm ↗</a>
               </div>
               <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11.5, lineHeight: 1.5, color: '#cbd5e1', maxHeight: 460, overflowY: 'auto', fontFamily: 'monospace' }}>
                 {res.prompt}

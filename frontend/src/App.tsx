@@ -20,25 +20,15 @@ const TopicDetail = lazy(() =>
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })))
 const WebApp = lazy(() => import('./pages/WebApp').then(m => ({ default: m.WebApp })))
 const Backoffice = lazy(() => import('./pages/Backoffice').then(m => ({ default: m.Backoffice })))
-const AudioTuningPage = lazy(() =>
-  import('./pages/AudioTuningPage').then(m => ({ default: m.AudioTuningPage })),
-)
 const GuestRoom = lazy(() => import('./pages/GuestRoom').then(m => ({ default: m.GuestRoom })))
-const LlmTestPage = lazy(() => import('./pages/LlmTestPage').then(m => ({ default: m.LlmTestPage })))
 // F0-01: rutas públicas de test del motor v3 RETIRADAS (/motor, /training, /probar-orq,
 // /orquestacion). El motor de test es v2 (/finaltest, /mini-test). ProbarOrquestacion y
 // OrquestacionPanel se archivaron en pages/_attic/; MotorPlaygroundPanel y TrainingPanel
 // siguen SOLO bajo /admin (back-office v3, ver Backoffice.tsx).
-const AuditoriaPanel = lazy(() => import('./pages/AuditoriaPanel'))
-const ComparacionPanel = lazy(() => import('./pages/ComparacionPanel'))
-const TranscripcionesPanel = lazy(() => import('./pages/TranscripcionesPanel'))
-const KidsKitPanel = lazy(() => import('./pages/kids/KidsKitPanel'))
-const KidsGaleriaPanel = lazy(() => import('./pages/kids/KidsGaleriaPanel'))
-const KidsCurarPanel = lazy(() => import('./pages/kids/KidsCurarPanel'))
-const InfraTestPanel = lazy(() => import('./pages/InfraTestPanel'))
-const TranscripcionesVocabPanel = lazy(() => import('./pages/TranscripcionesVocabPanel'))
-const TestFinalConsole = lazy(() => import('./pages/TestFinalConsole'))
-const MiniTestPanel = lazy(() => import('./pages/MiniTestPanel'))
+// F0-04: TODO el laboratorio (/llm, /finaltest, /mini-test, /auditoria, /comparacion,
+// /transcripciones*, /infra, /tune, /kids/kit, /kids/galeria, /kids/curar) vive ahora en UN
+// solo arbol lazy montado en /lab/* (ver pages/lab/LabRoutes.tsx) — no se importa acá.
+const LabRoutes = lazy(() => import('./pages/lab/LabRoutes'))
 const KidsHome = lazy(() => import('./pages/kids/KidsHome').then(m => ({ default: m.KidsHome })))
 const KidsAgeSelect = lazy(() =>
   import('./pages/kids/KidsAgeSelect').then(m => ({ default: m.KidsAgeSelect })),
@@ -122,6 +112,7 @@ export default function App() {
     <>
       <Suspense fallback={null}>
         <Routes>
+          {/* ═══ PRODUCTO ═══ */}
           <Route path="/" element={<RootRedirect />} />
           <Route path="/como-funciona" element={<HowItWorks />} />
           <Route path="/tutores" element={<Tutors />} />
@@ -138,29 +129,6 @@ export default function App() {
           <Route path="/kids/sesion/:topicId" element={<KidsProvider><KidsSession /></KidsProvider>} />
           <Route path="/kids/*" element={<KidsProvider><KidsHome /></KidsProvider>} />
           <Route path="/charla/:token" element={<GuestRoom />} />
-          <Route path="/llm" element={<LlmTestPage />} />
-          <Route path="/finaltest" element={<TestFinalConsole />} />
-          <Route path="/mini-test" element={<MiniTestPanel />} />
-          <Route path="/auditoria" element={<AuditoriaPanel />} />
-          <Route path="/auditoría" element={<AuditoriaPanel />} />
-          <Route path="/comparacion" element={<ComparacionPanel />} />
-          <Route path="/comparación" element={<ComparacionPanel />} />
-          <Route path="/transcripciones" element={<TranscripcionesPanel />} />
-          <Route path="/kids/kit" element={<KidsKitPanel />} />
-          <Route path="/kids/galeria" element={<KidsGaleriaPanel />} />
-          <Route path="/kids/galería" element={<KidsGaleriaPanel />} />
-          <Route path="/kids/curar" element={<KidsCurarPanel />} />
-          <Route path="/infra" element={<InfraTestPanel />} />
-          <Route path="/transcripciones-vocab" element={<TranscripcionesVocabPanel />} />
-          <Route path="/transcripciones-vocab/" element={<TranscripcionesVocabPanel />} />
-          <Route
-            path="/tune"
-            element={
-              <AuthGate>
-                <AudioTuningPage />
-              </AuthGate>
-            }
-          />
           <Route path="/login" element={<Login />} />
           <Route
             path="/app/*"
@@ -178,6 +146,46 @@ export default function App() {
               </AuthGate>
             }
           />
+
+          {/* ═══ LABORATORIO (/lab/*) ═══
+              Mesa de trabajo del motor (probar clases, ver el prompt armado, comparar modelos,
+              curar vocab visual). Separado del producto: un solo arbol lazy (no entra al bundle
+              inicial) + un solo guard de sesión (AuthGate, igual mecanismo que /admin/*) — sin
+              login redirige a /login, nunca 404. Ver pages/lab/LabRoutes.tsx. */}
+          <Route
+            path="/lab/*"
+            element={
+              <AuthGate>
+                <LabRoutes />
+              </AuthGate>
+            }
+          />
+
+          {/* Redirects de bookmarks viejos (rutas top-level pre-F0-04) → su equivalente /lab/*.
+              Publicas a propósito: el redirect en sí no exige sesión, pero el destino /lab/* sí
+              (AuthGate arriba), así que sin login terminan igual en /login. */}
+          <Route path="/llm" element={<Navigate to="/lab/llm" replace />} />
+          <Route path="/finaltest" element={<Navigate to="/lab/finaltest" replace />} />
+          <Route path="/mini-test" element={<Navigate to="/lab/mini-test" replace />} />
+          <Route path="/auditoria" element={<Navigate to="/lab/auditoria" replace />} />
+          <Route path="/auditoría" element={<Navigate to="/lab/auditoria" replace />} />
+          <Route path="/comparacion" element={<Navigate to="/lab/comparacion" replace />} />
+          <Route path="/comparación" element={<Navigate to="/lab/comparacion" replace />} />
+          <Route path="/transcripciones" element={<Navigate to="/lab/transcripciones" replace />} />
+          <Route
+            path="/transcripciones-vocab"
+            element={<Navigate to="/lab/transcripciones-vocab" replace />}
+          />
+          <Route
+            path="/transcripciones-vocab/"
+            element={<Navigate to="/lab/transcripciones-vocab" replace />}
+          />
+          <Route path="/infra" element={<Navigate to="/lab/infra" replace />} />
+          <Route path="/tune" element={<Navigate to="/lab/tune" replace />} />
+          <Route path="/kids/kit" element={<Navigate to="/lab/kids/kit" replace />} />
+          <Route path="/kids/galeria" element={<Navigate to="/lab/kids/galeria" replace />} />
+          <Route path="/kids/galería" element={<Navigate to="/lab/kids/galeria" replace />} />
+          <Route path="/kids/curar" element={<Navigate to="/lab/kids/curar" replace />} />
         </Routes>
       </Suspense>
       <ThemedToaster />

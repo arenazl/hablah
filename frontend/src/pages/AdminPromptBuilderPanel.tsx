@@ -261,7 +261,7 @@ export default function AdminPromptBuilderPanel() {
             <div style={COL}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={LBL}>Prompt en vivo</div>
-                <a href="/llm" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: '#22c55e', textDecoration: 'none' }}>Probar ↗</a>
+                <a href="/lab/llm" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: '#22c55e', textDecoration: 'none' }}>Probar ↗</a>
               </div>
               <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11, lineHeight: 1.5, color: '#cbd5e1', maxHeight: 560, overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>
                 {res ? res.prompt : '(armá la clase para ver el prompt)'}

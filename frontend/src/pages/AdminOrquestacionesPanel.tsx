@@ -163,7 +163,7 @@ export default function AdminOrquestacionesPanel() {
             <div style={{ position: isMobile ? 'static' : 'sticky', top: 14, background: '#11151d', border: '1px solid #232936', borderRadius: 12, padding: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: 1, color: '#9aa3af', fontWeight: 700 }}>Prompt · {res?.banda} · {res?.nivel}</div>
-                <a href="/llm" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: '#22c55e', textDecoration: 'none' }}>Probar ↗</a>
+                <a href="/lab/llm" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: '#22c55e', textDecoration: 'none' }}>Probar ↗</a>
               </div>
               <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 10.5, lineHeight: 1.5, color: '#cbd5e1', maxHeight: '76vh', overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>{res?.prompt || '(resolviendo…)'}</pre>
             </div>

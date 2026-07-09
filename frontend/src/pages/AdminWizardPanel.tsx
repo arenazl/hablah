@@ -213,7 +213,7 @@ export default function AdminWizardPanel() {
                 <div style={{ fontSize: 12, color: '#9aa3af' }}>
                   {res.resolved.student_type} · {res.resolved.level} · {res.resolved.topic ?? 'sin tópico'} — cargados <b style={{ color: '#22c55e' }}>{res.loaded_count}</b>/{res.total}
                 </div>
-                <a href="/llm" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#22c55e', textDecoration: 'none' }}>Probar en /llm ↗</a>
+                <a href="/lab/llm" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#22c55e', textDecoration: 'none' }}>Probar en /lab/llm ↗</a>
               </div>
               <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12, lineHeight: 1.55, color: '#cbd5e1', background: '#0b0e14', border: '1px solid #1c2230', borderRadius: 10, padding: 12, maxHeight: 460, overflowY: 'auto', fontFamily: 'monospace' }}>
                 {res.prompt}

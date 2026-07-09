@@ -221,7 +221,7 @@ export default function AdminRulesPanel() {
               <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: C.dim, fontWeight: 700 }}>
                 Prompt armado ({band?.code} · {level})
               </div>
-              <a href="/llm" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: C.green, textDecoration: 'none' }}>Probar ↗</a>
+              <a href="/lab/llm" target="_blank" rel="noreferrer" style={{ fontSize: 11, color: C.green, textDecoration: 'none' }}>Probar ↗</a>
             </div>
             <div style={{ fontSize: 11, color: C.faint, marginBottom: 8 }}>Mirá el bloque <code style={{ color: C.nivel }}>&lt;behavioral_guards&gt;</code> — es lo que estás editando.</div>
             <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11, lineHeight: 1.5, color: '#cbd5e1', maxHeight: '72vh', overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>
