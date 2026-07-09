@@ -35,7 +35,7 @@ salvo los pares marcados) y **modelo elegido por riesgo del WO**, no por fase.
 > aceptación uno por uno, actualizá el tablero a `hecho`, y commiteá (sin pushear si tocaste motor:
 > primero el smoke).
 
-### Ruteo de modelos por fase (estándar permanente — `base-compartida/12` §7)
+### Ruteo de modelos por fase (estándar permanente — `base-compartida/13` §7)
 
 | Fase | Modelo | WOs de este proyecto |
 |---|---|---|
@@ -48,7 +48,7 @@ salvo los pares marcados) y **modelo elegido por riesgo del WO**, no por fase.
 
 **Fable (el caro): NO se usa para implementar.** Se lo llama solo cuando: (a) un WO choca con la
 realidad del código y el implementador frenó, (b) el dueño trae un insight de campo nuevo (síntoma
-→ diagnóstico → capa → WO, ver §6 del protocolo `base-compartida/12`), (c) hay que re-decidir algo
+→ diagnóstico → capa → WO, ver §6 del protocolo `base-compartida/13`), (c) hay que re-decidir algo
 de arquitectura. **Haiku: no usar en este repo** (el motor es sutil; el ahorro no paga el riesgo).
 
 ### Higiene de sesión (lo que protege la calidad)
