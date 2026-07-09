@@ -10077,7 +10077,9 @@
   "levels": [
    "A0",
    "A1",
-   "A2"
+   "A2",
+   "B1",
+   "B2"
   ],
   "mastery_criteria": null,
   "pinned_vocabulary": null,
@@ -10090,7 +10092,7 @@
   "target_structure": null,
   "target_structure_es": null,
   "title": "Viajes y culturas",
-  "updated_at": "2026-06-16T01:12:32",
+  "updated_at": "2026-07-09T19:11:12",
   "usage_count": 0
  },
  {
@@ -10289,7 +10291,9 @@
   "levels": [
    "A0",
    "A1",
-   "A2"
+   "A2",
+   "B1",
+   "B2"
   ],
   "mastery_criteria": null,
   "pinned_vocabulary": null,
@@ -10302,7 +10306,7 @@
   "target_structure": null,
   "target_structure_es": null,
   "title": "Decir lo que pensás",
-  "updated_at": "2026-06-16T01:12:33",
+  "updated_at": "2026-07-09T19:11:12",
   "usage_count": 0
  },
  {
@@ -10812,6 +10816,250 @@
   "target_structure_es": null,
   "title": "Suscripciones gaming y juego en la nube",
   "updated_at": "2026-07-09T00:05:36",
+  "usage_count": 0
+ },
+ {
+  "appropriate_bands": null,
+  "audience": "kid",
+  "category": "kids",
+  "category_id": null,
+  "created_at": "2026-07-09T19:11:12",
+  "generated_vocab": [
+   "still figuring myself out",
+   "everyone's trying to fit in somehow",
+   "comparing myself to people online",
+   "it's okay to be different",
+   "pressure to look a certain way",
+   "finding what actually makes me happy",
+   "I used to care so much what people thought",
+   "growing into who I am",
+   "labels don't really define me",
+   "confidence comes and goes",
+   "trying not to just copy everyone else"
+  ],
+  "id": 182,
+  "is_active": true,
+  "is_curriculum": false,
+  "is_hot": false,
+  "keywords": [
+   "identity",
+   "comparison",
+   "pressure",
+   "authentic",
+   "confidence",
+   "insecure"
+  ],
+  "kid_age_group": "tween",
+  "levels": [
+   "B1",
+   "B2"
+  ],
+  "mastery_criteria": null,
+  "pinned_vocabulary": null,
+  "seed_prompts": {},
+  "segmento": "teen",
+  "slug": "quien-soy-y-quien-quiero-ser",
+  "subcategory_id": null,
+  "target_structure": null,
+  "target_structure_es": null,
+  "title": "Quién soy y quién quiero ser",
+  "updated_at": "2026-07-09T19:11:12",
+  "usage_count": 0
+ },
+ {
+  "appropriate_bands": null,
+  "audience": "kid",
+  "category": "tech",
+  "category_id": null,
+  "created_at": "2026-07-09T19:11:12",
+  "generated_vocab": [
+   "the algorithm knows me a little too well",
+   "everyone's highlight reel, not real life",
+   "chasing likes gets exhausting",
+   "comparing my life to a filtered version",
+   "I deleted the app for a week",
+   "it's designed to keep you scrolling",
+   "validation from strangers online",
+   "social media anxiety is real",
+   "curating the perfect feed takes way too much effort",
+   "sometimes I just need to log off",
+   "cancel culture moves so fast",
+   "influencers make it look effortless"
+  ],
+  "id": 183,
+  "is_active": true,
+  "is_curriculum": false,
+  "is_hot": false,
+  "keywords": [
+   "algorithm",
+   "comparison",
+   "screen time",
+   "validation",
+   "burnout",
+   "filter"
+  ],
+  "kid_age_group": "tween",
+  "levels": [
+   "B1",
+   "B2"
+  ],
+  "mastery_criteria": null,
+  "pinned_vocabulary": null,
+  "seed_prompts": {},
+  "segmento": "teen",
+  "slug": "redes-sociales-el-lado-b",
+  "subcategory_id": null,
+  "target_structure": null,
+  "target_structure_es": null,
+  "title": "Redes sociales: el lado B",
+  "updated_at": "2026-07-09T19:11:12",
+  "usage_count": 0
+ },
+ {
+  "appropriate_bands": null,
+  "audience": "kid",
+  "category": "kids",
+  "category_id": null,
+  "created_at": "2026-07-09T19:11:13",
+  "generated_vocab": [
+   "everything's changing so fast",
+   "hard to plan when the world keeps shifting",
+   "my parents had it so different",
+   "AI is going to change everything",
+   "sometimes it feels overwhelming",
+   "trying to stay optimistic about it",
+   "adults don't always have the answers either",
+   "we'll figure it out as we go",
+   "the world our parents grew up in is basically gone",
+   "adapting is basically a life skill now",
+   "nobody really knows what's coming",
+   "focusing on what I can actually control"
+  ],
+  "id": 184,
+  "is_active": true,
+  "is_curriculum": false,
+  "is_hot": false,
+  "keywords": [
+   "change",
+   "uncertain",
+   "technology",
+   "generation",
+   "adapt",
+   "overwhelming"
+  ],
+  "kid_age_group": "tween",
+  "levels": [
+   "B1",
+   "B2"
+  ],
+  "mastery_criteria": null,
+  "pinned_vocabulary": null,
+  "seed_prompts": {},
+  "segmento": "teen",
+  "slug": "crecer-en-un-mundo-que-cambia-rapido",
+  "subcategory_id": null,
+  "target_structure": null,
+  "target_structure_es": null,
+  "title": "Crecer en un mundo que cambia rápido",
+  "updated_at": "2026-07-09T19:11:13",
+  "usage_count": 0
+ },
+ {
+  "appropriate_bands": null,
+  "audience": "kid",
+  "category": "kids",
+  "category_id": null,
+  "created_at": "2026-07-09T19:11:13",
+  "generated_vocab": [
+   "something I actually care about",
+   "raising awareness helps more than people think",
+   "it's not fair and I want to do something",
+   "small actions add up to real change",
+   "using my voice for something that matters",
+   "feels like one person can't change much sometimes",
+   "signing a petition is a start, not the end",
+   "educating myself before speaking up",
+   "standing up for what's right isn't always easy",
+   "my generation actually cares about this stuff",
+   "it's bigger than just me",
+   "actions speak louder than a hashtag"
+  ],
+  "id": 185,
+  "is_active": true,
+  "is_curriculum": false,
+  "is_hot": false,
+  "keywords": [
+   "cause",
+   "awareness",
+   "injustice",
+   "activism",
+   "change",
+   "voice"
+  ],
+  "kid_age_group": "tween",
+  "levels": [
+   "B1",
+   "B2"
+  ],
+  "mastery_criteria": null,
+  "pinned_vocabulary": null,
+  "seed_prompts": {},
+  "segmento": "teen",
+  "slug": "causas-que-me-importan",
+  "subcategory_id": null,
+  "target_structure": null,
+  "target_structure_es": null,
+  "title": "Causas que me importan",
+  "updated_at": "2026-07-09T19:11:13",
+  "usage_count": 0
+ },
+ {
+  "appropriate_bands": null,
+  "audience": "kid",
+  "category": "kids",
+  "category_id": null,
+  "created_at": "2026-07-09T19:11:13",
+  "generated_vocab": [
+   "they still treat me like I'm twelve",
+   "earning more freedom takes time",
+   "we don't always see eye to eye",
+   "I get why they worry",
+   "just want a bit more independence",
+   "the rules feel unfair sometimes",
+   "trust goes both ways",
+   "picking my battles with them",
+   "they actually had a point",
+   "growing up means more responsibility too",
+   "it's not rebellion, I just want some space",
+   "we talked it out eventually"
+  ],
+  "id": 186,
+  "is_active": true,
+  "is_curriculum": false,
+  "is_hot": false,
+  "keywords": [
+   "curfew",
+   "trust",
+   "independence",
+   "rules",
+   "privacy",
+   "argument"
+  ],
+  "kid_age_group": "tween",
+  "levels": [
+   "B1",
+   "B2"
+  ],
+  "mastery_criteria": null,
+  "pinned_vocabulary": null,
+  "seed_prompts": {},
+  "segmento": "teen",
+  "slug": "libertad-y-limites-con-mis-padres",
+  "subcategory_id": null,
+  "target_structure": null,
+  "target_structure_es": null,
+  "title": "Libertad y límites con mis padres",
+  "updated_at": "2026-07-09T19:11:13",
   "usage_count": 0
  }
 ]

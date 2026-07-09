@@ -41,7 +41,7 @@
 | F0-03 | ESLint + gate de calidad frontend | hecho (2026-07-09) — eslint9+react-hooks; 0 errores de hooks; 11 warnings anotados |
 | F0-04 | Laboratorio separado del producto (`/lab/*`) | hecho (2026-07-09) — 12 rutas a /lab/* con guard AuthGate + lazy; redirects de las viejas |
 | F0-05 | El dato como código: snapshot versionado + limpieza de campos fósiles | hecho (2026-07-09) — snapshot_catalogo.py + data/catalogo/*.json; seed_prompts marcado fósil |
-| F0-06 | Cobertura mínima de tópicos por celda segmento×nivel | **propuesta lista (dry-run), ESPERA OK del dueño para --apply** — 5 tópicos teen B1/B2 nuevos + 2 extensiones (script apply_teen_b1b2.py) |
+| F0-06 | Cobertura mínima de tópicos por celda segmento×nivel | hecho (2026-07-09) — Fable aprobó pedagógicamente; aplicado: teen 11→16 activos, B1/B2 cubierto (9 tópicos); snapshot actualizado |
 | F1-01 | Capa universal anti-robot (con barrido de duplicados) | pendiente |
 | F1-02 | Jerarquía semántica del prompt (recency bias) | pendiente |
 | F1-03 | Smoke textual de invariantes del prompt | pendiente |
