@@ -42,10 +42,11 @@
 | F0-04 | Laboratorio separado del producto (`/lab/*`) | hecho (2026-07-09) — 12 rutas a /lab/* con guard AuthGate + lazy; redirects de las viejas |
 | F0-05 | El dato como código: snapshot versionado + limpieza de campos fósiles | hecho (2026-07-09) — snapshot_catalogo.py + data/catalogo/*.json; seed_prompts marcado fósil |
 | F0-06 | Cobertura mínima de tópicos por celda segmento×nivel | hecho (2026-07-09) — Fable aprobó pedagógicamente; aplicado: teen 11→16 activos, B1/B2 cubierto (9 tópicos); snapshot actualizado |
-| F1-01 | Capa universal anti-robot (con barrido de duplicados) | pendiente |
-| F1-02 | Jerarquía semántica del prompt (recency bias) | pendiente |
-| F1-03 | Smoke textual de invariantes del prompt | pendiente |
-| F1-04 | Validación por voz del paquete F1 (runbook 5×4) | pendiente |
+| F1-01 | Capa universal anti-robot (con barrido de duplicados) | **implementado + verificado (adversarial + hardening), SIN DEPLOY** — código commiteado; directiva en app_config (inerte); barrido listo pero NO aplicado; espera validación por voz |
+| F1-02 | Jerarquía semántica del prompt (recency bias) | implementado (en el mismo commit que F1-01): `<critical_objective>` envuelve Expected_Production |
+| F1-03 | Smoke textual de invariantes del prompt | hecho — 28/28 PASS (18 frases de duplicados); creado `smoke_prompt_invariants.py` |
+| F1-04 | Validación por voz del paquete F1 (runbook 5×4) | **PENDIENTE — GATE DEL DUEÑO (micrófono)**: deploy coordinado (push + barrido juntos) y validar |
+| F3-01 | Regresión + fail-fast de `app_config` | parcial (adelantado con F1): blindaje MotorDataMissing en `voice_proxy`; falta el test de regresión |
 | F1-05 | Spike: modelo más fuerte para el rol de coach (gate del dueño) | pendiente |
 | F2-01 | Post-clase escribe `learner_state` (top-1, ultra liviano) | pendiente |
 | F2-02 | El composer usa la historia (y se puede ver en el test) | pendiente |
