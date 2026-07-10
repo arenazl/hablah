@@ -5,10 +5,60 @@ POST-CLASE (módulo futuro) las ESCRIBE; el camino de la ida persiste el crudo e
 `sessions.raw_session_data` para alimentarlas. Hoy se crean vacías: estructura
 lista para cuando se construya el post-clase. Ver docs/BLUEPRINT_modelo_y_seed.md §8.
 """
-from sqlalchemy import Boolean, Column, Date, DateTime, Float, Integer, String, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, Float, Integer, JSON, String, Text
 from sqlalchemy.sql import func
 
 from core.database import Base
+
+
+class LearnerState(Base):
+    """HISTORIA del alumno — el 3er pilar del motor, ULTRA LIVIANO (una fila por alumno).
+
+    Lo ESCRIBE el post-clase (F2-01, `services.learner_state_writer`) destilando el
+    transcript con UNA llamada batch a Gemini; lo LEE el composer (F2-02) para armar el
+    bloque 6 (`<learner_state>`). Diseño settled: NO se vuelca el JSON entero de errores —
+    solo lo accionable para que la clase 2 no repita la clase 1, sin engordar el contexto.
+
+    ══════════════════════════════════════════════════════════════════════════════════
+    CONTRATO DEL FORMATO (lo que F2-02 va a LEER — tiene que calzar EXACTO)
+    ══════════════════════════════════════════════════════════════════════════════════
+    La representación canónica en memoria es un dict (lo devuelve `load_learner_state_lite`
+    y lo consume/escribe `merge_learner_state`). TODO el texto va en INGLÉS, lenguaje de
+    profe, frases cortas (son directivas para el coach, no prosa):
+
+        {
+          "top_error":  str,        # 1 solo. El error MÁS accionable a vigilar. "" si no hay.
+                                    #   ej: "drops articles: 'I have dog'"
+          "interests":  list[str],  # ≤ 3. De qué le gusta hablar. Se ACUMULAN (cap 3).
+                                    #   ej: ["dinosaurs", "space", "soccer"]
+          "mastered":   list[str],  # ≤ 3. Lo que ya maneja (no re-enseñar; usar de ancla). ROTA.
+                                    #   ej: ["greetings", "colors"]
+          "review":     str,        # ≤ 1. La única cosa a repasar la próxima. "" si no hay.
+                                    #   ej: "past simple: 'went' not 'goed'"
+        }
+
+    Reglas de MERGE al hacer upsert (una fila por `student_id`):
+      · top_error → el nuevo REEMPLAZA (si vuelve a aparecer, refresca el slot); si el
+        destilado no trae uno, se conserva el previo.
+      · interests → se ACUMULAN con dedup case-insensitive, los más recientes primero, tope 3.
+      · mastered  → ROTA: los nuevos entran adelante, los viejos salen, tope 3.
+      · review    → el nuevo REEMPLAZA; si no hay nuevo, se conserva el previo.
+
+    Prioridad de truncado (para F2-02, si hubiera que recortar el bloque):
+        top_error > review > interests > mastered.
+
+    Columnas persistidas: top_error/review como String (frase corta), interests/mastered
+    como JSON (lista de strings). `updated_at` para auditoría.
+    """
+    __tablename__ = "learner_state"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, nullable=False, unique=True, index=True)  # una fila por alumno
+    top_error = Column(String(255), nullable=False, default="")       # 1 · lenguaje de profe, EN
+    interests = Column(JSON, nullable=False, default=list)             # ≤3 · acumula (cap 3)
+    mastered = Column(JSON, nullable=False, default=list)              # ≤3 · rota
+    review = Column(String(255), nullable=False, default="")          # ≤1 · reemplaza
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
 class VocabProgress(Base):

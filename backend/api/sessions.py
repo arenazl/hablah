@@ -171,12 +171,16 @@ async def end_session(
     await db.commit()
     await db.refresh(s)
 
-    # Dispatch post-sesión (asíncrono, no bloquea): reporte + MEMORIA del alumno.
+    # Dispatch post-sesión (asíncrono, no bloquea): reporte + MEMORIA del alumno + HISTORIA.
+    # Los tres son fail-soft: la clase ya cerró (commit de arriba); si un destilador falla,
+    # loggea y sigue — nunca rompe el cierre.
     from services.session_analyzer import analyze_session_safe
     from services.memory_analyzer import analyze_memory_safe
+    from services.learner_state_writer import distill_learner_state_safe
     import asyncio
     asyncio.create_task(analyze_session_safe(session_id))
     asyncio.create_task(analyze_memory_safe(session_id))
+    asyncio.create_task(distill_learner_state_safe(session_id))  # F2-01: pilar HISTORIA
 
     return _serialize(s)
 
