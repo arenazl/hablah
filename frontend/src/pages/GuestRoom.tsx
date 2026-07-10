@@ -197,8 +197,9 @@ export function GuestRoom() {
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         // 16kHz: probamos 8kHz pero rompio la captura (Gemini no transcribia
-        // los turnos del user). Volvemos a 16kHz estable.
-        audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
+        // los turnos del user). Volvemos a 16kHz estable. Constraints
+        // completas (F3-03, deuda tecnica #1): AGC sumado a AEC/NS.
+        audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       })
     } catch {
       setError('Necesitamos acceso al microfono')

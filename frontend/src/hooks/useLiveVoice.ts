@@ -71,6 +71,17 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
    * actualiza con eventos participant_joined / participant_left del backend. */
   const [participants, setParticipants] = useState<LiveParticipant[]>([])
 
+  // Dispositivos de entrada de audio (deuda técnica #1, robustez de mic
+  // iOS/Android/tablet — docs/01-recuperacion-motor/02-deudas-tecnicas.md §1).
+  // `micDevices` recién se puebla con labels reales DESPUÉS de que el user dio
+  // permiso de mic (antes el browser los devuelve vacíos por privacidad).
+  // El selector que consume esto (MicSelector.tsx) se OCULTA en iOS —
+  // WebKit no deja elegir dispositivo, un <select> ahí no tendría efecto.
+  const [micDevices, setMicDevices] = useState<MediaDeviceInfo[]>([])
+  /** Label de la entrada activa ahora mismo (MediaStreamTrack.label), para
+   * mostrar en la UI "qué mic estás usando". */
+  const [activeMicLabel, setActiveMicLabel] = useState<string | null>(null)
+
   // ── Circuitería de voz CENTRALIZADA (un solo lugar) ──────────────────────────
   // Un único `audioLevel` (mic del alumno + voz del coach), con throttle ~20fps + decay.
   // Antes cada pantalla replicaba este bloque; ahora vive acá y TODAS leen `live.audioLevel`
@@ -188,6 +199,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     playQueueRef.current = []
     playingRef.current = false
     setStatus('ended')
+    setActiveMicLabel(null)
   }, [])
 
   useEffect(() => () => stop(), [stop])
@@ -369,6 +381,100 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     [playNextChunk, ensureAnalyser],
   )
 
+  // Re-escanea los dispositivos de entrada de audio (enumerateDevices,
+  // filtrado a audioinput). Los labels solo vienen poblados una vez que el
+  // browser ya otorgó permiso de mic — antes de eso vienen vacíos.
+  const refreshMicDevices = useCallback(async () => {
+    try {
+      const list = await navigator.mediaDevices.enumerateDevices()
+      setMicDevices(list.filter((d) => d.kind === 'audioinput'))
+    } catch {
+      // enumerateDevices puede fallar sin permiso previo — no es fatal, el
+      // selector simplemente no lista nada hasta que haya una sesión activa.
+    }
+  }, [])
+
+  // Reemplaza el stream de captura EN VIVO sin cortar la sesión (WS y
+  // AudioContext se mantienen intactos). La usan switchMic (el usuario elige
+  // otro mic a mano) y el recovery de `devicechange` (el SO cambió de ruta —
+  // p.ej. AirPods se desconectó — y el track activo murió). Solo reconecta
+  // el grafo de audio: el AudioWorkletNode/ScriptProcessor ya creado sigue
+  // mandando PCM al WS igual que antes, cambia únicamente de dónde lo toma.
+  const swapMicStream = useCallback(async (audioConstraints: MediaTrackConstraints): Promise<boolean> => {
+    if (!audioCtxRef.current) return false
+    let newStream: MediaStream
+    try {
+      newStream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints })
+    } catch {
+      return false
+    }
+    const oldStream = streamRef.current
+    const oldSource = sourceRef.current
+    try { oldSource?.disconnect() } catch {}
+    oldStream?.getTracks().forEach((t) => { try { t.stop() } catch {} })
+    const newSource = audioCtxRef.current.createMediaStreamSource(newStream)
+    if (workletNodeRef.current) {
+      try { newSource.connect(workletNodeRef.current) } catch {}
+    } else if (procRef.current) {
+      try { newSource.connect(procRef.current) } catch {}
+    }
+    sourceRef.current = newSource
+    streamRef.current = newStream
+    setActiveMicLabel(newStream.getAudioTracks()[0]?.label || 'Micrófono')
+    return true
+  }, [])
+
+  /** El usuario elige explícitamente otro mic desde el selector. Solo tiene
+   * efecto real en Android/desktop — en iOS el selector que llama a esto
+   * está oculto (MicSelector.tsx), porque WebKit ignora deviceId. */
+  const switchMic = useCallback(async (deviceId: string) => {
+    const settingsNow = loadAudioSettings()
+    const ok = await swapMicStream({
+      deviceId: { exact: deviceId },
+      channelCount: 1,
+      sampleRate: settingsNow.captureSampleRate,
+      echoCancellation: settingsNow.echoCancellation,
+      noiseSuppression: settingsNow.noiseSuppression,
+      autoGainControl: settingsNow.autoGainControl,
+    })
+    if (!ok) {
+      optsRef.current.onError?.(new Error('No pudimos cambiar de micrófono'))
+    } else {
+      trace('audio.mic.switched', activeSessionIdRef.current)
+      refreshMicDevices()
+    }
+  }, [swapMicStream, refreshMicDevices])
+
+  // Reintento automático de ruta de audio: si el SO cambia de dispositivo
+  // (conectar/desconectar Bluetooth, AirPods) el track activo puede morir
+  // (readyState 'ended') sin que el usuario toque nada. Sin este listener la
+  // sesión quedaba con el alumno mudo hasta reiniciar a mano. Corre en TODAS
+  // las plataformas (incluido iOS: ahí no hay selector, pero SÍ necesitamos
+  // sobrevivir el cambio de ruta que decide el SO).
+  useEffect(() => {
+    const handleDeviceChange = () => {
+      refreshMicDevices()
+      const track = streamRef.current?.getAudioTracks()[0]
+      if (!track || track.readyState !== 'ended' || !audioCtxRef.current) return
+      const settingsNow = loadAudioSettings()
+      swapMicStream({
+        channelCount: 1,
+        sampleRate: settingsNow.captureSampleRate,
+        echoCancellation: settingsNow.echoCancellation,
+        noiseSuppression: settingsNow.noiseSuppression,
+        autoGainControl: settingsNow.autoGainControl,
+      }).then((ok) => {
+        if (ok) {
+          trace('audio.mic.route_recovered', activeSessionIdRef.current)
+        } else {
+          optsRef.current.onError?.(new Error('Se desconectó el micrófono. Revisá tus auriculares o el mic.'))
+        }
+      })
+    }
+    navigator.mediaDevices?.addEventListener?.('devicechange', handleDeviceChange)
+    return () => navigator.mediaDevices?.removeEventListener?.('devicechange', handleDeviceChange)
+  }, [refreshMicDevices, swapMicStream])
+
   const start = useCallback(
     async (sessionId: number, explicitToken?: string, voice?: string, wsUrlOverride?: string, audioOverride?: Partial<AudioSettings>) => {
       activeSessionIdRef.current = sessionId
@@ -396,6 +502,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         return
       }
       streamRef.current = stream
+      setActiveMicLabel(stream.getAudioTracks()[0]?.label || 'Micrófono')
+      refreshMicDevices()
 
       // Override global de voz desde settings (para probar voces de Gemini).
       // Vacio = usar la del personaje/param que vino por argumento.
@@ -510,7 +618,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
       attachWsHandlers(ws)
     },
-    [pushAudioFromTutor, cancelTutorPlayback],
+    [pushAudioFromTutor, cancelTutorPlayback, refreshMicDevices],
   )
 
   // Wrapper de setStatus que skipea cuando el valor ya es el deseado.
@@ -740,6 +848,8 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         return
       }
       streamRef.current = stream
+      setActiveMicLabel(stream.getAudioTracks()[0]?.label || 'Micrófono')
+      refreshMicDevices()
 
       const ws = new WebSocket(buildRoomWsUrl(roomToken, hostPid, lang))
       wsRef.current = ws
@@ -836,8 +946,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
       attachWsHandlers(ws)
     },
-    [attachWsHandlers],
+    [attachWsHandlers, refreshMicDevices],
   )
 
-  return { start, stop, status, transcript, audioLevel, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants }
+  return {
+    start, stop, status, transcript, audioLevel, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants,
+    micDevices, activeMicLabel, switchMic,
+  }
 }

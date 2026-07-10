@@ -17,6 +17,7 @@ import { toast } from 'sonner'
 import confetti from 'canvas-confetti'
 import { useLiveVoice } from '../../hooks/useLiveVoice'
 import LiveSubtitle from '../../components/LiveSubtitle'
+import { MicSelector } from '../../components/MicSelector'
 import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
 import { InviteFriendButton } from '../../components/InviteFriendButton'
 import { BuddyPicker } from '../../components/kids/BuddyPicker'
@@ -480,6 +481,15 @@ export function KidsSession() {
                 </span>
                 <span className="lbl">{micLevel >= 0.06 ? '¡Te oigo!' : 'Te escucho…'}</span>
               </div>
+            )}
+
+            {isActive && (
+              <MicSelector
+                devices={live.micDevices}
+                activeLabel={live.activeMicLabel}
+                onSelect={live.switchMic}
+                style={{ fontSize: 11, color: 'rgba(255,255,255,.4)' }}
+              />
             )}
 
             {live.status === 'idle' && topic?.keywords && topic.keywords.length > 0 && (

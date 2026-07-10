@@ -21,6 +21,7 @@ import confetti from 'canvas-confetti'
 import { Gate, useFeatureFlag, type FeatureKey } from '../hooks/useFeatureFlag'
 import { KidsParentSwitch } from './kids/KidsParentSwitch'
 import { InviteFriendButton } from '../components/InviteFriendButton'
+import { MicSelector } from '../components/MicSelector'
 
 function KidsParentSwitchLazy() {
   return <KidsParentSwitch />
@@ -1584,9 +1585,12 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               })
             })()}
           </div>
-          <div style={{ fontSize: 12, color: 'rgba(232,236,234,.6)', flexShrink: 0 }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: live.status === 'listening' ? '#E5484D' : '#9CA3AF', display: 'inline-block', marginRight: 6 }} />
-            {live.status === 'listening' ? 'GRABANDO' : live.status.toUpperCase()}
+          <div style={{ fontSize: 12, color: 'rgba(232,236,234,.6)', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: live.status === 'listening' ? '#E5484D' : '#9CA3AF', display: 'inline-block', marginRight: 6 }} />
+              {live.status === 'listening' ? 'GRABANDO' : live.status.toUpperCase()}
+            </span>
+            <MicSelector devices={live.micDevices} activeLabel={live.activeMicLabel} onSelect={live.switchMic} />
           </div>
         </div>
       </div>
