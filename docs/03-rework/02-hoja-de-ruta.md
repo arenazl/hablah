@@ -391,6 +391,14 @@ poder validar que el coach lo USA.
 omite (sin inventar); el visor lo muestra; smoke actualizado en verde. La validación de que el
 coach la USA (clase 2 ≠ clase 1) es por voz — anotar en el runbook F1-04 como caso extra.
 
+> **PUNTO DE RETOME (2026-07-10):** el CORE ya está HECHO y deployado — el composer renderiza el
+> shape liviano vía `backend/services/learner_state_writer.py::load_learner_state_lite`, bloque 6
+> ≤5 líneas, se omite si None; smoke con la invariante en verde. **Falta SOLO el punto 2**: la UI
+> del visor en `/lab/mini-test` (mostrar el bloque historia + control setear/limpiar la historia
+> del alumno de prueba). El contrato del formato está documentado en `backend/models/learner_state.py`.
+> El backend del visor (`api/finaltest.py`) ya expone el desglose; el trabajo restante es
+> mayormente `frontend/src/pages/MiniTestPanel.tsx`. Es chico y sin dependencias abiertas.
+
 ---
 
 ## WO F2-03 — Rotación de semilla por sesión (variedad por construcción)
@@ -425,6 +433,15 @@ composer → proponer el diff y esperar OK (regla global 5).
 (arranque, frase-ancla); mismo seed dos veces → prompt idéntico byte a byte; smoke en verde;
 validación final por voz (runbook): dos clases seguidas del mismo nene con dinosaurios NO abren
 igual ni apuntan a la misma frase.
+
+> **PUNTO DE RETOME (2026-07-10):** el CORE ya está HECHO y deployado — el composer rota la
+> frase-ancla por `session_seed` (no más `phrases[:1]` fijo); mismo seed = mismo prompt, seed
+> distinto = frase distinta; smoke en verde. **Falta SOLO el punto 3**: cargar 3-4 variantes de
+> arranque por edad en `student_types` (script tipo `apply_arranque_variants.py`, dry-run/backup,
+> aplicar-verificar-revertir como F1; el deploy coordinado lo hace el orquestador). La **REDACCIÓN
+> de las variantes es GATE DEL DUEÑO** (pedagógico): proponer y esperar OK. Mientras no haya
+> variantes cargadas, el composer rota solo la frase-ancla (una sola variante de arranque = las
+> clases abren igual). Es lo único que falta para cerrar la variedad de apertura.
 
 ---
 
@@ -628,6 +645,15 @@ visual 3-4 s con animación suave; cero cambios al prompt ni al motor.
 **Aceptación:** en una clase kids real, cuando el coach dice "lion" aparece el león; si el coach no
 nombra vocab visual, la pantalla no fuerza nada; latencia de aparición < 1 s desde la
 transcripción; el prompt no cambió (diff vacío en motor/dato).
+
+> **PUNTO DE RETOME (2026-07-10):** no empezado, pero autocontenido y sin bloqueo duro.
+> **La biblioteca visual YA EXISTE** (memoria del proyecto `project_kids_visual_vocab` /
+> `project_kids_kit_prototipo`): tabla `kids_visual_vocab` (126 vocab con imágenes por nivel), panel
+> `/lab/kids/galeria`, assets Lottie/SVG. **La dependencia de F4-05 es BLANDA:** se puede
+> implementar sobre la piel kids ACTUAL (el visual reactivo NO toca el prompt/motor, solo agrega
+> una capa a `KidsSession`; cuando llegue la nueva piel, se re-estiliza). El slice mínimo del WO es
+> autocontenido: precarga assets del tópico → listener sobre la transcripción del coach →
+> match palabra→asset → mostrar 3-4 s. Empezable cuando quieras, sin esperar el gate de diseño.
 
 ---
 
