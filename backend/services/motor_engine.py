@@ -152,9 +152,32 @@ def _json_list(v) -> list[str]:
     return []
 
 
-def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None) -> dict:
+def _load_lite_state_sync(db, student_id) -> Optional[dict]:
+    """HISTORIA (F2-02) — estado LIVIANO del alumno desde learner_state (mismo contrato que
+    services.learner_state_writer.load_learner_state_lite, pero por la conexión sync del motor).
+    Fail-safe: si la tabla falta o no hay fila -> None (el composer omite el bloque, no inventa)."""
+    if not student_id:
+        return None
+    try:
+        r = db.q1("SELECT top_error, interests, mastered, review FROM learner_state WHERE student_id=%s",
+                  (student_id,))
+    except Exception:
+        return None
+    if not r:
+        return None
+    state = {
+        "top_error": r.get("top_error") or "",
+        "interests": _json_list(r.get("interests")),
+        "mastered": _json_list(r.get("mastered")),
+        "review": r.get("review") or "",
+    }
+    return state if any(state.values()) else None
+
+
+def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, student_id=None, session_seed=None) -> dict:
+    import datetime as _dt
     from types import SimpleNamespace
-    from services.composer_proto import compose_proto_prompt
+    from services.composer_proto import compose_proto_prompt, _session_seed
     db = _connect()
     try:
         std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))
@@ -162,6 +185,9 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None) -> dic
         if not std or not lv:
             raise ValueError(f"falta preset: age_group={age_group} / level={level_code}")
         tp = db.q1("SELECT * FROM topics WHERE id=%s", (topic_id,)) if topic_id else None
+        # HISTORIA: si no vino explícita y hay alumno de prueba, cargar el estado liviano de la BD.
+        if learner_state is None and student_id:
+            learner_state = _load_lite_state_sync(db, student_id)
         level_data = {
             "language_rule": lv.get("language_rule"),
             "curriculum_grammar": lv.get("curriculum_grammar"),
@@ -173,37 +199,52 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None) -> dic
                    for r in db.q("SELECT config_key, config_value FROM app_config")} or None
         except Exception:
             cfg = None
-        user = SimpleNamespace(nombre="Alumno", cefr_level=level_code, age_group=age_group,
+        user = SimpleNamespace(id=student_id, nombre="Alumno", cefr_level=level_code, age_group=age_group,
                                target_language="en", base_language="es")
         topic = None
         if tp:
             topic = SimpleNamespace(
+                id=tp.get("id"),
                 title=tp.get("title"),
                 pinned_vocabulary=_json_list(tp.get("pinned_vocabulary")),
                 keywords=_json_list(tp.get("keywords")),
                 generated_vocab=_json_list(tp.get("generated_vocab")),
             )
+        # F2-03: semilla de sesión determinística. Si no vino explícita, deriva de (alumno, tópico,
+        # HOY) -> mismo cruce el mismo día = MISMO prompt; día distinto = arranque/frase-ancla distintos.
+        if session_seed is None:
+            session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat())
         prompt = compose_proto_prompt(
             user=user, topic=topic, topic_content=None,
             student_type_data=std, level_data=level_data,
-            app_config=cfg, learner_state=learner_state)
+            app_config=cfg, learner_state=learner_state, session_seed=session_seed)
         return {"prompt": prompt, "meta": {
             "engine": "compose_proto (v2)", "age_group": age_group, "level": level_code,
-            "topic_title": tp.get("title") if tp else None}}
+            "topic_title": tp.get("title") if tp else None, "session_seed": session_seed,
+            "has_history": bool(learner_state)}}
     finally:
         db.conn.close()
 
 
 async def resolve_v2(age_group: str, level_code: str, topic_id: Optional[int] = None,
-                     learner_state: Optional[dict] = None) -> dict:
-    """Motor ÚNICO para el test: 3 pilares edad+nivel+(tópico)+historia, generado al vuelo."""
-    return await asyncio.to_thread(_resolve_v2_sync, age_group, level_code, topic_id, learner_state)
+                     learner_state: Optional[dict] = None, student_id: Optional[int] = None,
+                     session_seed: Optional[int] = None) -> dict:
+    """Motor ÚNICO para el test: 3 pilares edad+nivel+(tópico)+HISTORIA, generado al vuelo.
+
+    student_id (opcional) -> carga el learner_state LIVIANO de la BD (F2-02) si no se pasa uno
+    explícito. session_seed (opcional, F2-03) -> fija la rotación; default = (alumno, tópico, hoy)."""
+    return await asyncio.to_thread(_resolve_v2_sync, age_group, level_code, topic_id,
+                                   learner_state, student_id, session_seed)
 
 
-def _resolve_v2_breakdown_sync(age_group, level_code, topic_id) -> dict:
+def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None) -> dict:
     """Desglose de la orquestación POR CAMPO de la base (no por bloque renderizado): cada entrada
     trae su FUENTE (tabla.columna) y su DUEÑO (de qué pilar depende). Deja ver que NO es un registro
-    único: el composer apila campos separados de student_types(edad) + levels(nivel) + topics(tópico)."""
+    único: el composer apila campos separados de student_types(edad) + levels(nivel) + topics(tópico)
+    + learner_state(historia). F2-02/F2-03: muestra el bloque HISTORIA (si el alumno de prueba tiene
+    estado) y refleja la selección POR SEMILLA del día (frase-ancla + variante de arranque rotadas)."""
+    import datetime as _dt
+    from services.composer_proto import _session_seed, _derive, _pick, _rotate, _opening_variants
     db = _connect()
     try:
         std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))
@@ -211,12 +252,25 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id) -> dict:
         if not std or not lv:
             raise ValueError(f"falta preset: age_group={age_group} / level={level_code}")
         tp = db.q1("SELECT * FROM topics WHERE id=%s", (topic_id,)) if topic_id else None
+        hist = _load_lite_state_sync(db, student_id) if student_id else None
+        session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat())
+        seed_phrase = _derive(session_seed, "phrase")
+
         words = _json_list(tp.get("pinned_vocabulary")) if tp else []
         if not words and tp:
             words = _json_list(tp.get("keywords"))[:6]
         phrases = _json_list(tp.get("generated_vocab")) if tp else []
-        if (lv.get("vocab_depth") in ("basic", "minimal")) and phrases:
-            phrases = phrases[:1]
+        # F2-03: reflejar en el visor la MISMA selección por semilla que arma la clase.
+        if (lv.get("vocab_depth") == "basic") and phrases:
+            phrases = [_pick(phrases, seed_phrase)]
+        elif phrases:
+            phrases = _rotate(phrases, seed_phrase)
+
+        # Arranque: si opening_seed trae varias variantes (JSON array), mostrar la ELEGIDA por semilla.
+        variants = _opening_variants(std.get("opening_seed"))
+        opening_body = _pick(variants, _derive(session_seed, "open")) if variants else std.get("opening_seed")
+        if len(variants) > 1:
+            opening_body = f"[{len(variants)} variantes · rota por día] {opening_body}"
 
         def e(label, source, dueno, body):
             body = (body or "").strip() if isinstance(body, str) else body
@@ -225,6 +279,17 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id) -> dict:
         def step(name, entries):
             es = [x for x in entries if x]
             return {"step": name, "entries": es} if es else None
+
+        hist_entries = []
+        if hist:
+            hist_entries = [
+                e("A vigilar (error top-1)", "learner_state.top_error", "HISTORIA", hist.get("top_error")),
+                e("A repasar la próxima", "learner_state.review", "HISTORIA", hist.get("review")),
+                e("Le gusta hablar de", "learner_state.interests", "HISTORIA",
+                  ", ".join(hist.get("interests") or []) or None),
+                e("Ya domina (usar de ancla)", "learner_state.mastered", "HISTORIA",
+                  ", ".join(hist.get("mastered") or []) or None),
+            ]
 
         steps = [s for s in [
             step("Contexto", [e("Idioma / dispositivo", "runtime", "estático",
@@ -236,6 +301,7 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id) -> dict:
             ]),
             step("Método", [e("Pedagogía", "student_types.pedagogy", "EDAD", std.get("pedagogy"))]),
             step("Juego", [e("Foco de sesión", "student_types.session_focus", "EDAD", std.get("session_focus"))]),
+            step("Memoria del alumno", hist_entries),  # HISTORIA (F2-02): vacío -> el paso se omite
             step("Rieles", [
                 e("Language_Rule", "levels.language_rule", "NIVEL", lv.get("language_rule")),
                 e("Level_Target", "levels.curriculum_grammar", "NIVEL", lv.get("curriculum_grammar")),
@@ -244,23 +310,27 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id) -> dict:
             ]),
             step("Tema (vocab)", [
                 e("Words", "topics.keywords", "TÓPICO", ", ".join(words) if words else None),
-                e("Target_Phrases", "topics.generated_vocab", "TÓPICO", ", ".join(phrases) if phrases else None),
+                e("Target_Phrases (rota por semilla)", "topics.generated_vocab", "TÓPICO",
+                  ", ".join(phrases) if phrases else None),
             ]),
-            step("Arranque", [e("Opening_Seed", "student_types.opening_seed", "EDAD + NIVEL", std.get("opening_seed"))]),
+            step("Arranque", [e("Opening_Seed", "student_types.opening_seed", "EDAD + NIVEL", opening_body)]),
             step("Turno", [
                 e("Continuation_Seed", "student_types.continuation_seed", "EDAD (+universal)", std.get("continuation_seed")),
                 e("Closing_Seed", "student_types.closing_seed", "EDAD", std.get("closing_seed")),
             ]),
         ] if s]
         return {"steps": steps, "meta": {"engine": "compose_proto (v2)", "age_group": age_group,
-                                         "level": level_code, "topic_title": tp.get("title") if tp else None}}
+                                         "level": level_code, "topic_title": tp.get("title") if tp else None,
+                                         "session_seed": session_seed, "has_history": bool(hist)}}
     finally:
         db.conn.close()
 
 
-async def resolve_v2_breakdown(age_group: str, level_code: str, topic_id: Optional[int] = None) -> dict:
-    """Desglose por campo (tabla.columna + dueño) de la orquestación v2 — para el visor de los pasos."""
-    return await asyncio.to_thread(_resolve_v2_breakdown_sync, age_group, level_code, topic_id)
+async def resolve_v2_breakdown(age_group: str, level_code: str, topic_id: Optional[int] = None,
+                               student_id: Optional[int] = None) -> dict:
+    """Desglose por campo (tabla.columna + dueño) de la orquestación v2 — para el visor de los pasos.
+    student_id (opcional): incluye el paso HISTORIA (learner_state liviano) del alumno de prueba."""
+    return await asyncio.to_thread(_resolve_v2_breakdown_sync, age_group, level_code, topic_id, student_id)
 
 
 # ── /training · ciclo de aprendizaje por alumno (sin session) ──

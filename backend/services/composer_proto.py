@@ -32,6 +32,8 @@ La ley no se sostiene con disciplina sino con herramienta: el barrido de duplica
 from __future__ import annotations
 
 import datetime
+import hashlib
+import json
 from typing import Optional
 
 _LANG = {"en": "English", "pt": "Portuguese", "it": "Italian", "es": "Spanish", "fr": "French", "de": "German"}
@@ -39,6 +41,56 @@ _LANG_ES = {"es": "español", "en": "inglés", "pt": "portugués", "it": "italia
 
 _SEGMENT_LABEL = {"mini": "Mini (4-7 años)", "junior": "Junior (8-12 años)",
                   "tween": "Tween (13-17 años)", "adult": "Adulto"}
+
+
+# ── F2-03 · Rotación de semilla por sesión (variedad POR CONSTRUCCIÓN) ─────────────────────
+# La variedad NO puede descansar en la estocasticidad del modelo (colapsa al drill): sale del
+# MOTOR, muestreando dentro del catálogo curado. Determinístico y auditable: mismo (alumno,
+# tópico, día) = misma semilla = MISMO prompt byte a byte; día distinto = selección distinta.
+# NO es un if/parche ni fuerza vocab: rota lo que YA está cargado.
+def _session_seed(student_id, topic_id, day_iso: str) -> int:
+    """Semilla estable ENTRE procesos (hashlib, NO hash() que va salado por PYTHONHASHSEED)."""
+    key = f"{student_id or 0}|{topic_id or 0}|{day_iso}"
+    return int(hashlib.sha256(key.encode("utf-8")).hexdigest()[:12], 16)
+
+
+def _derive(seed: int, salt: str) -> int:
+    """Sub-semilla por propósito, para decorrelar las selecciones (frase-ancla vs arranque)."""
+    return int(hashlib.sha256(f"{int(seed)}:{salt}".encode("utf-8")).hexdigest()[:12], 16)
+
+
+def _pick(items: list, seed: int):
+    """Elemento elegido determinísticamente por semilla (rota entre los N, no siempre el 1º)."""
+    return items[seed % len(items)] if items else None
+
+
+def _rotate(items: list, seed: int) -> list:
+    """Mismo contenido, punto de entrada rotado por semilla (varía el orden/énfasis)."""
+    if len(items) <= 1:
+        return list(items)
+    k = seed % len(items)
+    return list(items[k:]) + list(items[:k])
+
+
+def _opening_variants(raw) -> list[str]:
+    """El arranque puede venir como 1 string o como JSON array de variantes (F2-03: 3-4 por edad
+    en student_types.opening_seed). Devuelve la lista (≥1); el composer rota por semilla. Si es un
+    string común, es la única 'variante'. Robusto: nunca lanza (dato malformado -> string crudo)."""
+    if isinstance(raw, list):
+        return [str(v).strip() for v in raw if str(v).strip()]
+    if isinstance(raw, str):
+        s = raw.strip()
+        if s.startswith("[") and s.endswith("]"):
+            try:
+                arr = json.loads(s)
+                if isinstance(arr, list):
+                    vs = [str(v).strip() for v in arr if str(v).strip()]
+                    if vs:
+                        return vs
+            except Exception:
+                pass
+        return [raw] if raw.strip() else []
+    return []
 
 
 class MotorDataMissing(Exception):
@@ -177,16 +229,22 @@ def _get_vocabulary(topic, topic_content: Optional[dict]) -> tuple[str, list[str
     return title, vocab, phrases
 
 
-def _get_vocabulary_block(topic, topic_content: Optional[dict], ctx: str, vocab_depth: Optional[str]) -> str:
+def _get_vocabulary_block(topic, topic_content: Optional[dict], ctx: str, vocab_depth: Optional[str],
+                          session_seed: int = 0) -> str:
     title, vocab, phrases = _get_vocabulary(topic, topic_content)
     _req(title, "tópico (sequencer no resolvió un tópico)", ctx)
     # El bloque 7 necesita contenido léxico: palabras (Words) O frases-ancla (Target_Phrases).
     # Un tópico de charla adulta puede no tener palabras sueltas y sí frases (generated_vocab).
     _req(vocab or phrases, "vocab/frases del tópico (pinned_vocabulary/keywords/generated_vocab)", ctx)
-    # Sector 2 (biblia): la PROFUNDIDAD escala por nivel. basic (A0-A2) = solo la 1ª frase; full = todas.
+    # Sector 2 (biblia): la PROFUNDIDAD escala por nivel. basic (A0-A2) = solo 1 frase; full = todas.
+    # F2-03: la frase-ancla ROTA por semilla (no phrases[:1] fijo -> cada día una distinta de las N);
+    # en full, mismo set con orden rotado (varía el énfasis sin forzar vocab nuevo).
     depth = _req(vocab_depth, "levels.vocab_depth", ctx)
+    seed_phrase = _derive(session_seed, "phrase")
     if depth == "basic" and phrases:
-        phrases = phrases[:1]
+        phrases = [_pick(phrases, seed_phrase)]
+    elif phrases:
+        phrases = _rotate(phrases, seed_phrase)
     block = f"<current_lesson_vocabulary>\n  Topic: {title}\n"
     if vocab:
         block += f"  Words: {', '.join(vocab)}\n"
@@ -215,8 +273,15 @@ def _interp(s: str, name: str, topic_title: str, first_word: str) -> str:
 
 
 def _get_start_trigger(topic, topic_content: Optional[dict], name: str, first_word: str,
-                       opening_seed: Optional[str], ctx: str) -> str:
-    seed = opening_seed or (topic_content or {}).get("start_trigger")
+                       opening_seed: Optional[str], ctx: str, session_seed: int = 0) -> str:
+    # F2-03: opening_seed puede traer varias variantes de arranque (JSON array). Se ELIGE una por
+    # semilla -> dos clases del mismo cruce en días distintos NO abren igual (la repetición más
+    # audible). Si es un solo string, esa es la única variante. Fallback a topic_content.start_trigger.
+    variants = _opening_variants(opening_seed)
+    if variants:
+        seed = _pick(variants, _derive(session_seed, "open"))
+    else:
+        seed = (topic_content or {}).get("start_trigger")
     _req(seed, "student_types.opening_seed (o topic_content.start_trigger)", ctx)
     topic_title = getattr(topic, "title", None) or "el tema de hoy"
     return (
@@ -237,32 +302,40 @@ def _get_session_actions(continuation_seed: Optional[str], closing_seed: Optiona
     )
 
 
-def _fmt_items(items) -> str:
-    out = []
-    for it in items or []:
-        if isinstance(it, dict):
-            item, seen, ok = it.get("item", ""), it.get("seen"), it.get("ok")
-            out.append(f"{item}(seen:{seen or 0}, ok:{ok or 0})" if (seen is not None or ok is not None) else str(item))
-        else:
-            out.append(str(it))
-    return ", ".join(out)
-
-
 def _get_learner_state(learner_state: Optional[dict]) -> str:
-    """Bloque 10 — memoria del alumno. OPCIONAL (la llena el post-clase; vacío hoy)."""
+    """Bloque 6 — memoria del alumno (HISTORIA), CONTRATO LIVIANO (F2-02).
+
+    Shape liviano (services.learner_state_writer.load_learner_state_lite):
+        {top_error: str, interests: list[str]≤3, mastered: list[str]≤3, review: str}
+    Render imperativo y ≤5 LÍNEAS SIEMPRE (1 encabezado + ≤4 campos). Si el dato viene más gordo,
+    se recorta por PRIORIDAD: top_error > review > interests > mastered (los de menor prioridad se
+    caen para no pasar de 5). OPCIONAL: sin historia (None/vacío) el bloque se OMITE — nunca se
+    inventa. El post-clase (F2-01) es quien lo escribe; la clase 2 no debe repetir la clase 1."""
     if not learner_state:
         return ""
-    rows = [("Mastered", learner_state.get("mastered")), ("Learning", learner_state.get("learning")),
-            ("Due_For_Review", learner_state.get("due_for_review")), ("Recent_Errors", learner_state.get("recent_errors")),
-            ("Interests", learner_state.get("interests")), ("Traits", learner_state.get("traits"))]
-    lines = [f"  {label}: [{_fmt_items(vals)}]" for label, vals in rows if vals]
-    if not lines:
+    top_error = str(learner_state.get("top_error") or "").strip()
+    review = str(learner_state.get("review") or "").strip()
+    interests = [str(x).strip() for x in (learner_state.get("interests") or []) if str(x).strip()][:3]
+    mastered = [str(x).strip() for x in (learner_state.get("mastered") or []) if str(x).strip()][:3]
+
+    # Campos en ORDEN DE PRIORIDAD (top_error > review > interests > mastered); tope 4 -> ≤5 líneas.
+    fields = []
+    if top_error:
+        fields.append(f"  · watch for (recast it, don't lecture): {top_error}")
+    if review:
+        fields.append(f"  · revisit this class: {review}")
+    if interests:
+        fields.append(f"  · likes talking about: {', '.join(interests)} — theme the class around it")
+    if mastered:
+        fields.append(f"  · already knows: {', '.join(mastered)} — use as anchor, don't re-teach")
+    if not fields:
         return ""
+    fields = fields[:4]
     return (
-        f"<learner_state>\n" + "\n".join(lines) + "\n"
-        f"  Reglas: repasá lo Due_For_Review y re-targeteá los Recent_Errors. NO re-enseñes lo "
-        f"Mastered (usalo como ancla). Tematizá con los Interests para que la clase no se repita.\n"
-        f"</learner_state>"
+        "<learner_state>\n"
+        "  Student memory — build on the last class, don't repeat it:\n"
+        + "\n".join(fields) + "\n"
+        "</learner_state>"
     )
 
 
@@ -312,20 +385,32 @@ def compose_proto_prompt(
     app_config: Optional[dict] = None,
     learner_state: Optional[dict] = None,
     interaction_state: Optional[dict] = None,
+    session_seed: Optional[int] = None,
 ) -> str:
     """Arma el prompt apilando los 2 ejes + tópico. FAIL-FAST: si falta un dato de
-    catálogo lanza MotorDataMissing (no hay fallback)."""
+    catálogo lanza MotorDataMissing (no hay fallback).
+
+    session_seed (F2-03): semilla determinística de la sesión para MUESTREAR (no siempre lo
+    primero) frase-ancla, orden de frases y variante de arranque -> variedad por construcción,
+    NO por el humor del modelo. Si es None se deriva de (user.id, topic.id, HOY): mismo cruce el
+    mismo día = MISMO prompt (auditable); día distinto = selección distinta."""
     std = _req(student_type_data, "student_type_data (eje EDAD — student_types)")
     lv = _req(level_data, "level_data (eje NIVEL — levels)")
     slug = std.get("slug") or getattr(user, "age_group", None) or "?"
     cefr = getattr(user, "cefr_level", None) or "?"
     ctx = f"segmento={slug}, nivel={cefr}"
 
+    if session_seed is None:
+        session_seed = _session_seed(getattr(user, "id", None), getattr(topic, "id", None),
+                                     datetime.date.today().isoformat())
+
     user_name = _req(getattr(user, "nombre", None), "user.nombre", ctx)
     _, vocab, phrases = _get_vocabulary(topic, topic_content)
     _req(topic, "tópico (sequencer)", ctx)
     _req(vocab or phrases, "vocab/frases del tópico (pinned_vocabulary/keywords/generated_vocab)", ctx)
-    first_word = (vocab or phrases)[0]   # ancla para el trigger: 1ª palabra, o 1ª frase si no hay palabras
+    # Ancla del arranque: rota por semilla entre las palabras (o frases si no hay palabras). Con la
+    # misma semilla, coincide con la frase-ancla elegida en el bloque de vocab (ambas usan 'phrase').
+    first_word = _pick(vocab or phrases, _derive(session_seed, "phrase"))
 
     blocks = [
         _get_runtime_context(user),
@@ -336,10 +421,10 @@ def compose_proto_prompt(
         _get_learner_state(learner_state),          # opcional (memoria, post-clase)
         _get_behavioral_guards(std, lv, ctx),
         _get_output_rules(app_config),              # opcional (config runtime)
-        _get_vocabulary_block(topic, topic_content, ctx, lv.get("vocab_depth")),
+        _get_vocabulary_block(topic, topic_content, ctx, lv.get("vocab_depth"), session_seed),
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
         _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
-        _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), ctx),
+        _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
         _get_interaction_state(interaction_state),  # opcional (estado vivo)
     ]

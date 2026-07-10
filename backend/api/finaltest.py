@@ -33,6 +33,17 @@ _MD_DIR = os.path.join(_ROOT, "finaltest_clases")
 # age_group (slug de student_types) -> segmento de topics. Solo 'adult' difiere ('adultos').
 _SEG_BY_AGE = {"mini": "mini", "junior": "junior", "teen": "teen", "adult": "adultos"}
 
+# HISTORIA (F2-02): alumno SINTÉTICO del laboratorio (/lab/mini-test). NO es un usuario real —
+# es un id alto para poder SETEAR/LIMPIAR una fila learner_state de prueba y validar por voz que
+# el coach usa la memoria (la clase 2 no repite la clase 1). El botón "Limpiar" borra la fila.
+TEST_STUDENT_ID = 990001
+_SAMPLE_HISTORY = {
+    "top_error": "drops the verb 'to be': 'she happy' → 'she IS happy'",
+    "interests": ["dinosaurs", "soccer", "space"],
+    "mastered": ["greetings", "colors", "numbers 1-10"],
+    "review": "plural -s: 'two dog' → 'two dogs'",
+}
+
 # Juez SLA con escala ANCLADA (misma vara calibrada del circuito de validación).
 _RUBRIC = (
     "SOS ESPECIALISTA EN ADQUISICIÓN DE SEGUNDAS LENGUAS (SLA), evaluando una clase de inglés para un "
@@ -372,10 +383,85 @@ async def mini_topics():
 
 
 @router.get("/mini/preview")
-async def mini_preview(age_group: str = "mini", level: str = "A0", topic_id: int = 0):
+async def mini_preview(age_group: str = "mini", level: str = "A0", topic_id: int = 0, student_id: int = 0):
     """Desglose de la orquestación POR CAMPO de la base: cada entrada con su fuente (tabla.columna)
-    y su dueño (de qué pilar depende). Deja ver que NO es un registro único — se apilan campos sueltos."""
+    y su dueño (de qué pilar depende). Deja ver que NO es un registro único — se apilan campos sueltos.
+    student_id (F2-02): incluye el paso HISTORIA (learner_state) del alumno de prueba si tiene estado."""
     try:
-        return await motor_engine.resolve_v2_breakdown(age_group, level, topic_id or None)
+        return await motor_engine.resolve_v2_breakdown(age_group, level, topic_id or None, student_id or None)
     except Exception as e:
         return {"error": str(e)}
+
+
+# ───────────── HISTORIA del alumno de prueba (F2-02) — setear/leer/limpiar learner_state ─────────────
+def _hist_get_sync() -> Optional[dict]:
+    db = motor_engine._connect()
+    try:
+        r = db.q1("SELECT top_error, interests, mastered, review, updated_at "
+                  "FROM learner_state WHERE student_id=%s", (TEST_STUDENT_ID,))
+        if not r:
+            return None
+        return {"top_error": r.get("top_error") or "",
+                "interests": motor_engine._json_list(r.get("interests")),
+                "mastered": motor_engine._json_list(r.get("mastered")),
+                "review": r.get("review") or ""}
+    finally:
+        db.conn.close()
+
+
+def _hist_set_sync(state: dict) -> dict:
+    st = {"top_error": (str(state.get("top_error") or ""))[:255],
+          "interests": [str(x) for x in (state.get("interests") or []) if str(x).strip()][:3],
+          "mastered": [str(x) for x in (state.get("mastered") or []) if str(x).strip()][:3],
+          "review": (str(state.get("review") or ""))[:255]}
+    db = motor_engine._connect()
+    try:
+        with db.conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO learner_state (student_id, top_error, interests, mastered, review) "
+                "VALUES (%s,%s,%s,%s,%s) "
+                "ON DUPLICATE KEY UPDATE top_error=VALUES(top_error), interests=VALUES(interests), "
+                "mastered=VALUES(mastered), review=VALUES(review)",
+                (TEST_STUDENT_ID, st["top_error"], json.dumps(st["interests"], ensure_ascii=False),
+                 json.dumps(st["mastered"], ensure_ascii=False), st["review"]))
+        db.conn.commit()
+        return st
+    finally:
+        db.conn.close()
+
+
+def _hist_clear_sync() -> None:
+    db = motor_engine._connect()
+    try:
+        with db.conn.cursor() as cur:
+            cur.execute("DELETE FROM learner_state WHERE student_id=%s", (TEST_STUDENT_ID,))
+        db.conn.commit()
+    finally:
+        db.conn.close()
+
+
+class HistoryBody(BaseModel):
+    state: Optional[dict[str, Any]] = None  # None -> usa la historia de muestra
+
+
+@router.get("/mini/history")
+async def mini_history():
+    """Estado LIVIANO (learner_state) del alumno de prueba, o null. El front lo muestra en el visor
+    y pasa student_id al WS/preview para que la clase use la memoria."""
+    state = await asyncio.to_thread(_hist_get_sync)
+    return {"student_id": TEST_STUDENT_ID, "state": state}
+
+
+@router.post("/mini/history/set")
+async def mini_history_set(body: HistoryBody):
+    """Setea la historia del alumno de prueba (o la de muestra si no viene una). Reusa el patrón de
+    reset de la consola: escribe una fila learner_state para poder validar por voz que el coach la usa."""
+    st = await asyncio.to_thread(_hist_set_sync, body.state or _SAMPLE_HISTORY)
+    return {"student_id": TEST_STUDENT_ID, "state": st}
+
+
+@router.post("/mini/history/clear")
+async def mini_history_clear():
+    """Limpia la historia del alumno de prueba (borra la fila). Vuelve al caso 'sin historia'."""
+    await asyncio.to_thread(_hist_clear_sync)
+    return {"student_id": TEST_STUDENT_ID, "state": None}

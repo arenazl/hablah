@@ -272,6 +272,7 @@ async def voice_ws_mini(
     age_group: str = Query("mini"),
     level_code: str = Query("A0"),
     topic_id: int = Query(0),
+    student_id: int = Query(0),
     engine: str = Query("gemini_live"),
     model: str = Query("models/gemini-3.1-flash-live-preview"),
     voice: str = Query("Aoede"),
@@ -279,13 +280,15 @@ async def voice_ws_mini(
     """Prueba de clase REAL por el MOTOR ÚNICO (v2 / compose_proto) — el MISMO que produce.
 
     3 pilares: EDAD (age_group → student_types) + NIVEL (level_code → levels) + TÓPICO
-    (topic_id → topics)  (+ HISTORIA/learner_state cuando el test tenga alumno). Determinístico,
-    genera el prompt al vuelo (no persiste orquestación). Sin login / sin BD persistida.
+    (topic_id → topics) + HISTORIA (learner_state del alumno de prueba, si student_id trae
+    estado — F2-02: se valida por voz que el coach usa la memoria). Determinístico, genera el
+    prompt al vuelo (no persiste orquestación). Sin login.
     """
     await websocket.accept()
     safe_voice = voice if voice in _LLM_VALID_VOICES else "Aoede"
     try:
-        res = await motor_engine.resolve_v2(age_group, level_code, topic_id or None)
+        res = await motor_engine.resolve_v2(age_group, level_code, topic_id or None,
+                                            student_id=student_id or None)
         super_prompt = res["prompt"]
     except Exception as e:
         log.warning("voice_ws_mini resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)

@@ -153,11 +153,14 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"motor pedagógico: level_data/app_config no disponible ({e})")
 
-        # Memoria del alumno (post-clase) — el composer la inyecta en el bloque 5b si hay datos.
+        # Memoria del alumno (HISTORIA) — el composer inyecta el bloque 6 si hay datos.
+        # F2-02: shape LIVIANO nuevo (learner_state_writer, lo escribe el post-clase F2-01),
+        # NO el pesado viejo (memory_analyzer.load_learner_state) — el composer renderiza el
+        # contrato liviano {top_error, interests, mastered, review}.
         learner_state = None
         try:
-            from services.memory_analyzer import load_learner_state
-            learner_state = await load_learner_state(db, user.id)
+            from services.learner_state_writer import load_learner_state_lite
+            learner_state = await load_learner_state_lite(db, user.id)
         except Exception as e:
             log.warning(f"learner_state no disponible ({e})")
 
