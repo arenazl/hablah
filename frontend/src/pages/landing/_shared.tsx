@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ShieldCheck } from 'lucide-react'
+import faqData from '../../data/faq.json'
 
 export const LANDING_CSS = `
 .landing-root {
@@ -270,10 +271,48 @@ function setCanonical(url: string): { restore: () => void } {
   }
 }
 
+// hreflang self-referencing: cada ruta tiene que apuntarse a SI MISMA (es / es-AR /
+// x-default), no siempre a "/" — bug real: index.html trae 3 <link rel="alternate">
+// fijos para "/" y como el SPA sirve el mismo index.html para cada ruta, sin esto
+// TODAS las paginas quedaban con hreflang apuntando al home. Unico sitio en un solo
+// idioma (es-AR) asi que las 3 variantes son autoreferenciales a la misma URL.
+const HREFLANG_VARIANTS = ['es', 'es-AR', 'x-default'] as const
+
+function setHreflangAlternates(url: string): { restore: () => void } {
+  const entries = HREFLANG_VARIANTS.map((lang) => {
+    let link = document.querySelector<HTMLLinkElement>(`link[rel="alternate"][hreflang="${lang}"]`)
+    const prev = link?.getAttribute('href') ?? null
+    if (!link) {
+      link = document.createElement('link')
+      link.rel = 'alternate'
+      link.setAttribute('hreflang', lang)
+      document.head.appendChild(link)
+    }
+    link.setAttribute('href', url)
+    return { link, prev }
+  })
+  return {
+    restore: () => {
+      for (const { link, prev } of entries) {
+        if (prev !== null) link.setAttribute('href', prev)
+      }
+    },
+  }
+}
+
 export interface PageMeta {
   title: string
   description: string
   path: string
+}
+
+// Netlify sirve las rutas con barra final (la version sin barra hace 301 -> con
+// barra — mismo criterio que prerender.mjs::canonicalForRoute). canonical, og:url,
+// hreflang y las URLs de JSON-LD tienen que apuntar TODOS a la URL que responde 200,
+// no a la que redirige.
+export function canonicalUrl(routePath: string): string {
+  if (routePath === '/') return 'https://hablah.com.ar/'
+  return `https://hablah.com.ar${routePath}/`
 }
 
 export function usePageMeta(meta: PageMeta) {
@@ -289,7 +328,7 @@ export function usePageMeta(meta: PageMeta) {
       if (tag) created.push(tag)
     }
 
-    const url = `https://hablah.com.ar${meta.path}`
+    const url = canonicalUrl(meta.path)
 
     setMeta('description', meta.description)
     push(setMeta('og:title', meta.title, 'property'))
@@ -300,12 +339,14 @@ export function usePageMeta(meta: PageMeta) {
     push(setMeta('twitter:description', meta.description))
 
     const canonical = setCanonical(url)
+    const hreflang = setHreflangAlternates(url)
 
     return () => {
       document.title = prevTitle
       if (prevDescription !== null) setMeta('description', prevDescription)
       created.forEach((tag) => tag.remove())
       canonical.restore()
+      hreflang.restore()
     }
   }, [meta.title, meta.description, meta.path])
 }
@@ -338,7 +379,7 @@ export function breadcrumbList(crumbs: ReadonlyArray<{ name: string; path: strin
       '@type': 'ListItem',
       position: i + 1,
       name: c.name,
-      item: `https://hablah.com.ar${c.path}`,
+      item: canonicalUrl(c.path),
     })),
   }
 }
@@ -349,7 +390,7 @@ export function webPageSchema(meta: PageMeta) {
     '@type': 'WebPage',
     name: meta.title,
     description: meta.description,
-    url: `https://hablah.com.ar${meta.path}`,
+    url: canonicalUrl(meta.path),
     inLanguage: 'es-AR',
     isPartOf: {
       '@type': 'WebSite',
@@ -365,36 +406,10 @@ export interface FaqEntry {
   a: string
 }
 
-export const FAQ_ITEMS: ReadonlyArray<FaqEntry> = [
-  {
-    q: '¿Cómo decide mi nivel sin un examen?',
-    a: 'Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas) y precisión fonética. En 2 a 3 minutos te ubica en el marco CEFR (A1 a C2). Sin opción múltiple, sin presión.',
-  },
-  {
-    q: '¿Qué idiomas están disponibles?',
-    a: 'Hoy: inglés (US y UK), portugués (BR y PT) e italiano. Próximamente francés y alemán. Como alumno base aceptamos español (todas las variantes), portugués e inglés.',
-  },
-  {
-    q: '¿Necesito buena conexión?',
-    a: 'Funciona con 3G estable. El audio se procesa en streaming. Si la conexión se cae, la sesión guarda lo hablado y reanuda al volver.',
-  },
-  {
-    q: '¿Qué pasa con mi audio? ¿Lo guardan?',
-    a: 'Por defecto se borra a los 30 días. Podés cambiarlo a "borrar después de cada sesión" en tu perfil. Nunca lo usamos para entrenar modelos sin tu consentimiento explícito.',
-  },
-  {
-    q: '¿Puedo cancelar Pro cuando quiera?',
-    a: 'Sí, desde la app, en un toque. No hay permanencia. Si cancelás, mantenés tu nivel y rachas, solo pasás al plan Free.',
-  },
-  {
-    q: '¿Sirve para certificaciones (TOEFL, IELTS, Cambridge)?',
-    a: 'Sirve para llegar al nivel, pero no entrena formato de examen. Para eso usamos Bootcamp con coach humano, que arma simulacros específicos.',
-  },
-  {
-    q: '¿Y si soy ultra principiante (A0)?',
-    a: 'The Coach está pensado para vos. Las primeras semanas son híbridas: la IA te tira frases simples, vas repitiendo y construyendo. Al mes ya hacés charlas reales cortas.',
-  },
-]
+// Fuente unica: src/data/faq.json. La consume esta pagina (schema FAQPage de /faq),
+// llms.txt/llms-full.txt (scripts/gen-llms.mjs) y el runbook de contenido — un solo
+// lugar para editar preguntas frecuentes, nada de copias que se desincronizan.
+export const FAQ_ITEMS: ReadonlyArray<FaqEntry> = faqData
 
 export interface NavLink {
   to: string

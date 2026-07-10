@@ -8,6 +8,7 @@ import {
   webPageSchema,
   type PageMeta,
 } from './_shared'
+import { TOPICS_COUNT } from './topicsCount.generated'
 
 const META: PageMeta = {
   title: 'Cómo funciona Habláh · Aprender un idioma sin exámenes con IA',
@@ -68,6 +69,11 @@ const PAGE_CSS = `
 .landing-root .mock-report .body .feed .good { background: var(--primary-tint); color: #024E36; }
 .landing-root .mock-report .body .feed .listen { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; background: var(--primary-dark); color: white; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
 
+.landing-root .qa-section .container { max-width: 800px; }
+.landing-root .qa-list { display: flex; flex-direction: column; gap: 28px; }
+.landing-root .qa-item h3 { font-size: var(--t-lg); font-weight: 700; letter-spacing: -.01em; margin: 0 0 8px; color: var(--fg-1); }
+.landing-root .qa-item p { font-size: 15px; color: var(--fg-3); line-height: 1.6; margin: 0; }
+
 .landing-root .related-grid { padding-top: 0; }
 @media (max-width: 880px) {
   .landing-root .how-grid { grid-template-columns: 1fr; gap: 16px; }
@@ -75,6 +81,46 @@ const PAGE_CSS = `
   .landing-root .feature-grid { grid-template-columns: 1fr; gap: 40px; }
 }
 `
+
+// Formato pregunta -> respuesta directa (WO F5-03): los asistentes de IA extraen
+// mejor contenido explicito en Q&A que prosa narrativa. Los hechos acá son los
+// mismos que ya estan en el resto del sitio (index.html, /faq, llms.txt) — no se
+// inventa nada nuevo, solo se reformula en formato extraible.
+interface DirectQA {
+  q: string
+  a: string
+}
+
+const DIRECT_QA: ReadonlyArray<DirectQA> = [
+  {
+    q: '¿Habláh es una app de ejercicios o de conversación real?',
+    a: 'Conversación real. No hay ejercicios de completar espacios ni de elegir la respuesta correcta: cada sesión es una charla de voz con un tutor de IA que responde en tiempo real.',
+  },
+  {
+    q: '¿Cómo decide qué tan difícil hacer la clase?',
+    a: 'Un motor pedagógico arma cada clase según tu edad y tu nivel real en el marco CEFR (A1 a C2), medido mientras conversás — sin examen de opción múltiple.',
+  },
+  {
+    q: '¿El tutor se acuerda de mí entre una clase y la siguiente?',
+    a: 'Sí. Guarda tu error más frecuente, tus temas de interés y lo que ya dominás, y usa eso para armar la próxima clase — la clase 2 no repite la clase 1.',
+  },
+  {
+    q: '¿Es seguro para chicos?',
+    a: 'El módulo kids tiene un flujo separado del de adultos, con gate parental obligatorio antes de configurar o empezar cualquier sesión, y tópicos curados por edad.',
+  },
+  {
+    q: '¿Necesito saber inglés para empezar?',
+    a: 'No. El nivel A0 arranca con frases guiadas y una "frase-puente" que te lleva de a poco a producir inglés real, sin exigirte una base previa.',
+  },
+  {
+    q: '¿Cuánto dura una clase?',
+    a: 'Entre 5 y 10 minutos por día. Está pensado para sostener el hábito diario, no para maratones de estudio.',
+  },
+  {
+    q: '¿Qué pasa si me equivoco al hablar?',
+    a: 'El tutor tiene prohibido interrumpirte. Corrige tu lenguaje (nunca tus hechos) y guarda todo el feedback para el final: 1 elogio y hasta 3 puntos a pulir, con la frase exacta que dijiste al lado de la versión natural.',
+  },
+]
 
 export function HowItWorks() {
   return (
@@ -193,6 +239,24 @@ export function HowItWorks() {
         </div>
       </section>
 
+      <section className="qa-section" style={{ background: 'var(--bg-2)' }}>
+        <div className="container">
+          <div className="sec-head fade-on-scroll">
+            <span className="eyebrow">Preguntas directas</span>
+            <h2>Lo que realmente nos preguntan.</h2>
+            <p>Sin vueltas: pregunta, respuesta. Lo mismo que contestamos por privado, en texto.</p>
+          </div>
+          <div className="qa-list fade-stagger">
+            {DIRECT_QA.map((item) => (
+              <article className="qa-item" key={item.q}>
+                <h3>{item.q}</h3>
+                <p>{item.a}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="related">
         <div className="container">
           <div className="sec-head fade-on-scroll">
@@ -200,7 +264,7 @@ export function HowItWorks() {
           </div>
           <div className="related-grid fade-stagger">
             <RelatedCard to="/tutores" eyebrow="Personalidades" title="Conocé los 3 tutores" description="The Coach, The Sincerist y The Arcade — cada uno con tono, rigurosidad y velocidad distintos." />
-            <RelatedCard to="/topicos" eyebrow="Contenido" title="Tópicos disponibles" description="Más de 75 tópicos curados que alimentan tus conversaciones diarias." />
+            <RelatedCard to="/topicos" eyebrow="Contenido" title="Tópicos disponibles" description={`${TOPICS_COUNT} tópicos curados que alimentan tus conversaciones diarias.`} />
             <RelatedCard to="/precios" eyebrow="Planes" title="Precios" description="Free, Pro o Bootcamp con coach humano. 14 días Pro sin tarjeta." />
           </div>
         </div>

@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:client": "tsc -b && vite build",
-    "build": "tsc -b && vite build && node prerender.mjs",
+    "gen:seo": "node scripts/gen-topics-catalog.mjs && node scripts/gen-sitemap.mjs && node scripts/gen-llms.mjs",
+    "build:client": "npm run gen:seo && tsc -b && vite build",
+    "build": "npm run gen:seo && tsc -b && vite build && node prerender.mjs",
     "prerender": "node prerender.mjs",
     "smoke": "node smoke-test.mjs",
     "preview": "vite preview",

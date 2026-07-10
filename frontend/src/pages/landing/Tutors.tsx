@@ -8,6 +8,7 @@ import {
   webPageSchema,
   type PageMeta,
 } from './_shared'
+import { TOPICS_COUNT } from './topicsCount.generated'
 
 const META: PageMeta = {
   title: 'Tutores de IA · Coach, Sincerist o Arcade · Habláh',
@@ -163,7 +164,7 @@ export function Tutors() {
           </div>
           <div className="related-grid fade-stagger">
             <RelatedCard to="/como-funciona" eyebrow="Metodología" title="Cómo funciona" description="El pipeline de diagnóstico, el marco CEFR y el feedback sincerista al final de cada sesión." />
-            <RelatedCard to="/topicos" eyebrow="Contenido" title="Tópicos disponibles" description="Los tutores conversan sobre lo que te interesa. Más de 75 tópicos curados." />
+            <RelatedCard to="/topicos" eyebrow="Contenido" title="Tópicos disponibles" description={`Los tutores conversan sobre lo que te interesa. ${TOPICS_COUNT} tópicos curados.`} />
             <RelatedCard to="/precios" eyebrow="Planes" title="Precios" description="Free trae solo The Coach. Pro y Bootcamp habilitan los 3 tutores." />
           </div>
         </div>

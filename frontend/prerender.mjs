@@ -13,40 +13,29 @@ import fs from 'node:fs'
 
 const PORT = 4199
 const HOST = '127.0.0.1'
-// Slugs derivados de los titulos de topicos (deben mantenerse en sync con la
-// data en backend / src/pages/landing/Topics.tsx). La helper usada para generar:
-//   title.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
-//        .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
-const TOPIC_SLUGS = [
-  'musica-electronica-uk-garage',
-  'arquitectura-de-software',
-  'produccion-musical-ableton',
-  'ia-generativa-etica',
-  'entrenamiento-de-fuerza-powerlifting',
-  'metodologias-agiles-retrospectivas',
-  'cine-de-los-90-tarantino',
-  'anecdotas-de-aeropuertos',
-  'futbol-mundiales-y-selecciones',
-  'basquet-nba-y-leyendas',
-  'running-entrenamiento-y-maratones',
-  'tenis-grand-slam-y-rivalidades',
-  'formula-1-y-automovilismo',
-  'cocina-italiana-pasta-y-vinos',
-  'asado-argentino-tecnica-y-rituales',
-  'cafe-de-especialidad-v60-espresso',
-  'espacio-astronomia-y-misiones',
-  'cambio-climatico-ciencia-y-politicas',
-  'biologia-evolucion-y-genetica',
-  'series-de-streaming-drama-prestigio',
-  'videojuegos-indie-y-aaa',
-  'rock-clasico-70s-a-90s',
-  'stand-up-comediantes-y-especiales',
-  'meditacion-y-mindfulness',
-  'nutricion-dietas-y-mitos',
-  'moda-streetwear-y-sneakers',
-  'trabajo-remoto-nomade-digital',
-  'entrevistas-tecnicas-system-design',
-]
+
+// Slugs leidos EN VIVO del catalogo real (data/catalogo/topics.json, snapshot F0-05) —
+// asi el prerender siempre cubre TODOS los topicos activos, sin una lista hardcodeada
+// que se desincroniza cada vez que se cura el catalogo (era el caso hasta WO F5-02:
+// 28 topicos fijos de un snapshot viejo, cuando la DB ya tenia ~99 activos).
+function loadTopicSlugs() {
+  try {
+    const dataPath = path.resolve(process.cwd(), '../data/catalogo/topics.json')
+    const topics = JSON.parse(fs.readFileSync(dataPath, 'utf8'))
+    const slugs = topics
+      .filter((t) => t.is_active && t.slug)
+      .sort((a, b) => a.id - b.id)
+      .map((t) => t.slug)
+    if (slugs.length === 0) throw new Error('catalogo sin topicos activos')
+    return slugs
+  } catch (err) {
+    console.warn(
+      `[prerender] No se pudo leer data/catalogo/topics.json (${err && err.message ? err.message : err}); prerender de /topicos/:slug salteado.`,
+    )
+    return []
+  }
+}
+const TOPIC_SLUGS = loadTopicSlugs()
 const ROUTES = [
   '/',
   '/como-funciona',

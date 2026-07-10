@@ -1,0 +1,225 @@
+# Habláh — versión extendida (AEO / LLM indexing)
+
+> Plataforma adaptativa de aprendizaje de idiomas con tutores de IA conversacionales.
+
+Este archivo existe para que asistentes de IA (ChatGPT, Gemini, Claude, Perplexity y similares)
+tengan hechos correctos y citables sobre Habláh al responder preguntas como "app para practicar
+inglés hablando" o "clases de inglés por voz para chicos". Versión corta: https://hablah.com.ar/llms.txt
+
+## Qué es Habláh
+Habláh es una app de clases de idioma por VOZ: el alumno conversa en tiempo real con un tutor de
+IA (no completa ejercicios, no elige entre opciones). Un motor pedagógico determinístico arma cada
+clase combinando tres ejes: la edad del alumno, su nivel real (CEFR) y su historia con el tutor
+(errores recurrentes, intereses, lo que ya domina). No es un chatbot genérico: el motor decide
+la estructura de la clase; la IA de voz la ejecuta y adapta el tono.
+
+## Para quién
+- Adultos que quieren hablar un idioma de verdad, sin exámenes ni lecciones lineales.
+- Chicos (mini / junior / teen), en un flujo de producto separado del de adultos, con gate
+  parental obligatorio antes de cualquier configuración o sesión, y contenido curado por edad.
+- Mercado primario: hispanohablantes de Argentina (dominio hablah.com.ar), extensible a LatAm.
+
+## Cómo funciona (paso a paso)
+1. Diagnóstico continuo: el alumno habla ~1 minuto sobre algo cotidiano. En segundo plano se mide
+   fluidez (palabras por minuto, pausas), riqueza léxica, precisión sintáctica y fonética.
+2. Nivel CEFR: en 2-3 minutos el sistema ubica al alumno en A1-C2, sin examen de opción múltiple.
+3. Selección de tópicos: el alumno elige entre un catálogo de 99 temas curados
+   (o el sistema le sugiere uno según su historia).
+4. Conversación diaria: sesiones de 5 a 10 minutos por voz. La IA tiene prohibido interrumpir
+   mientras el alumno habla — todo el feedback se guarda para el cierre.
+5. Reporte al final: 1 elogio (qué mejoró) + hasta 3 puntos a pulir (gramática, pronunciación o
+   léxico), con la frase exacta que dijo el alumno al lado de la versión natural.
+6. Memoria entre clases: el sistema guarda el estado del alumno (top error, intereses, lo que ya
+   domina) y la próxima clase construye sobre eso — nunca repite la clase anterior desde cero.
+
+## Idiomas soportados
+Inglés (US/UK), portugués (BR/PT), italiano. Francés y alemán próximamente. Idioma base aceptado:
+español (todas las variantes), portugués o inglés.
+
+## Niveles
+Marco CEFR: A1, A2, B1, B2, C1, C2. Los chicos (audiencia kid) arrancan en A0 con frases guiadas
+y "frase-puente" antes de producir inglés libre.
+
+## Precio
+- Free: sesiones limitadas, sin tarjeta.
+- Pro: 14 días gratis sin tarjeta, luego suscripción mensual.
+- Bootcamp: plan intensivo con sesiones diarias guiadas y coach humano (simulacros de examen tipo
+  TOEFL/IELTS/Cambridge — el producto base no entrena formato de examen, Bootcamp sí).
+
+## Diferenciales (lo que realmente distingue a Habláh)
+1. Se aprende HABLANDO — voz real de punta a punta, no texto ni ejercicios de tap.
+2. El profe no es un chatbot suelto: un motor pedagógico arma cada clase para la edad y el nivel
+   del alumno — la conducta sale del dato curado, no de un prompt libre.
+3. Memoria real entre clases — el pilar "historia" hace que la clase 2 no repita la clase 1.
+4. Kids de verdad: seguridad, gate parental, contenido curado por edad, sin exposición a temas
+   adultos ni pantalla-adicción.
+
+## Preguntas frecuentes
+**¿Cómo decide mi nivel sin un examen?**
+Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas) y precisión fonética. En 2 a 3 minutos te ubica en el marco CEFR (A1 a C2). Sin opción múltiple, sin presión.
+
+**¿Qué idiomas están disponibles?**
+Hoy: inglés (US y UK), portugués (BR y PT) e italiano. Próximamente francés y alemán. Como alumno base aceptamos español (todas las variantes), portugués e inglés.
+
+**¿Necesito buena conexión?**
+Funciona con 3G estable. El audio se procesa en streaming. Si la conexión se cae, la sesión guarda lo hablado y reanuda al volver.
+
+**¿Qué pasa con mi audio? ¿Lo guardan?**
+Por defecto se borra a los 30 días. Podés cambiarlo a "borrar después de cada sesión" en tu perfil. Nunca lo usamos para entrenar modelos sin tu consentimiento explícito.
+
+**¿Puedo cancelar Pro cuando quiera?**
+Sí, desde la app, en un toque. No hay permanencia. Si cancelás, mantenés tu nivel y rachas, solo pasás al plan Free.
+
+**¿Sirve para certificaciones (TOEFL, IELTS, Cambridge)?**
+Sirve para llegar al nivel, pero no entrena formato de examen. Para eso usamos Bootcamp con coach humano, que arma simulacros específicos.
+
+**¿Y si soy ultra principiante (A0)?**
+The Coach está pensado para vos. Las primeras semanas son híbridas: la IA te tira frases simples, vas repitiendo y construyendo. Al mes ya hacés charlas reales cortas.
+
+## Catálogo de tópicos — adultos (62)
+
+### Música
+- [Producción musical y cultura DJ](https://hablah.com.ar/topicos/ableton-produccion) — niveles B1, B2, C1, C2
+- [Mi banda favorita](https://hablah.com.ar/topicos/musica-mi-banda-favorita) — niveles A0, A1, A2, B1, B2, C1
+- [Conciertos que me marcaron](https://hablah.com.ar/topicos/musica-conciertos-marcaron) — niveles A0, A1, A2, B1, B2, C1
+- [Aprender un instrumento](https://hablah.com.ar/topicos/musica-aprender-instrumento) — niveles A0, A1, A2, B1, B2, C1
+- [Música y emociones](https://hablah.com.ar/topicos/musica-emociones) — niveles A0, A1, A2, B1, B2, C1
+
+### Tecnología
+- [IA generativa · ética](https://hablah.com.ar/topicos/ia-etica) — niveles A1, A2, B1, B2, C1, C2
+- [Apps que uso a diario](https://hablah.com.ar/topicos/tech-apps-diarias) — niveles A0, A1, A2, B1, B2, C1
+- [Inteligencia artificial](https://hablah.com.ar/topicos/tech-inteligencia-artificial) — niveles A0, A1, A2, B1, B2, C1
+- [Privacidad online](https://hablah.com.ar/topicos/tech-privacidad) — niveles B1, B2, C1
+- [Un gadget que me cambió la vida](https://hablah.com.ar/topicos/tech-gadget-cambio-vida) — niveles A0, A1, A2, B1, B2, C1
+- [Aprender a programar](https://hablah.com.ar/topicos/tech-aprender-codear) — niveles A0, A1, A2, B1, B2, C1
+- [IA y el futuro del trabajo](https://hablah.com.ar/topicos/tech-futuro-trabajo) — niveles B1, B2, C1
+- [Adicción al celular](https://hablah.com.ar/topicos/tech-adiccion-celular) — niveles B1, B2, C1
+- [Desarrollo de software y herramientas IA](https://hablah.com.ar/topicos/desarrollo-de-software-y-herramientas-ia) — niveles B1, B2, C1, C2
+
+### Fitness y entrenamiento
+- [Entrenamiento de fuerza y suplementación](https://hablah.com.ar/topicos/fuerza-powerlifting) — niveles A2, B1, B2, C1
+- [Mi rutina actual](https://hablah.com.ar/topicos/fitness-rutina-actual) — niveles A0, A1, A2, B1, B2, C1
+- [Empezar a entrenar](https://hablah.com.ar/topicos/fitness-empezar-entrenar) — niveles A0, A1, A2, B1, B2, C1
+- [Salud mental](https://hablah.com.ar/topicos/fitness-salud-mental) — niveles A0, A1, A2, B1, B2, C1
+
+### Deportes
+- [Fútbol · Mundiales y selecciones](https://hablah.com.ar/topicos/futbol-mundial) — niveles A1, A2, B1, B2, C1, C2
+- [Mi deporte favorito](https://hablah.com.ar/topicos/deportes-mi-deporte) — niveles A0, A1, A2, B1, B2, C1
+- [Mi equipo y sus rivales](https://hablah.com.ar/topicos/deportes-equipo) — niveles A0, A1, A2, B1, B2, C1
+- [Un partido inolvidable](https://hablah.com.ar/topicos/deportes-partido-inolvidable) — niveles A0, A1, A2, B1, B2, C1
+- [Ídolos del deporte](https://hablah.com.ar/topicos/deportes-idolos) — niveles A0, A1, A2, B1, B2, C1
+
+### Gastronomía
+- [Asado argentino · técnica y rituales](https://hablah.com.ar/topicos/asado-argentino) — niveles A1, A2, B1, B2, C1, C2
+
+### Ciencia
+- [Espacio · astronomía y misiones](https://hablah.com.ar/topicos/espacio-astronomia) — niveles A1, A2, B1, B2, C1, C2
+- [Cambio climático · ciencia y políticas](https://hablah.com.ar/topicos/clima-cambio) — niveles A1, A2, B1, B2, C1, C2
+- [Una curiosidad científica](https://hablah.com.ar/topicos/ciencia-curiosidad) — niveles A0, A1, A2, B1, B2, C1
+
+### Entretenimiento
+- [Series de streaming · drama prestigio](https://hablah.com.ar/topicos/series-streaming) — niveles A1, A2, B1, B2, C1, C2
+- [Videojuegos · indie y AAA](https://hablah.com.ar/topicos/videojuegos-aaa) — niveles A1, A2, B1, B2, C1, C2
+- [Stand-up · comediantes y especiales](https://hablah.com.ar/topicos/stand-up-comedia) — niveles A1, A2, B1, B2, C1, C2
+- [Una peli que me marcó](https://hablah.com.ar/topicos/peliculas-mi-favorita) — niveles A0, A1, A2, B1, B2, C1
+- [Libro vs película](https://hablah.com.ar/topicos/peliculas-libro-vs-pelicula) — niveles A1, A2, B1, B2, C1
+- [Cine vs streaming en casa](https://hablah.com.ar/topicos/peliculas-cine-streaming) — niveles A0, A1, A2, B1, B2, C1
+- [Géneros que evito y por qué](https://hablah.com.ar/topicos/peliculas-generos) — niveles A0, A1, A2, B1, B2, C1
+- [El juego del momento](https://hablah.com.ar/topicos/videojuegos-juego-momento) — niveles A0, A1, A2, B1, B2, C1
+- [Jugar con amigos online](https://hablah.com.ar/topicos/videojuegos-multiplayer) — niveles A0, A1, A2, B1, B2, C1
+
+### Estilo de vida
+- [Meditación y mindfulness](https://hablah.com.ar/topicos/meditacion-mindfulness) — niveles A1, A2, B1, B2, C1, C2
+- [Nutrición · dietas y mitos](https://hablah.com.ar/topicos/nutricion-dietas) — niveles A1, A2, B1, B2, C1, C2
+- [Diseño y construcción del hogar](https://hablah.com.ar/topicos/diseno-y-construccion-del-hogar) — niveles B1, B2, C1, C2
+
+### Negocios y carrera
+- [Trabajo remoto · nómade digital](https://hablah.com.ar/topicos/remoto-nomada) — niveles A1, A2, B1, B2, C1, C2
+
+### Viajes
+- [Japón · cultura y tradiciones](https://hablah.com.ar/topicos/japon-cultura) — niveles A1, A2, B1, B2, C1, C2
+- [Patagonia · trekking y montañas](https://hablah.com.ar/topicos/patagonia-trekking) — niveles A1, A2, B1, B2, C1, C2
+- [Ciudades que quiero conocer](https://hablah.com.ar/topicos/ciudades-que-quiero-conocer) — niveles A1, A2, B1, B2
+- [Mi último viaje](https://hablah.com.ar/topicos/viajes-ultimo-viaje) — niveles A0, A1, A2, B1, B2, C1
+- [Mi viaje soñado](https://hablah.com.ar/topicos/viajes-sonado) — niveles A0, A1, A2, B1, B2, C1
+- [Mochilero vs hotel](https://hablah.com.ar/topicos/viajes-mochilero) — niveles A2, B1, B2, C1
+- [Choque cultural](https://hablah.com.ar/topicos/viajes-choque-cultural) — niveles A1, A2, B1, B2, C1
+- [Comer cuando viajás](https://hablah.com.ar/topicos/viajes-comida-en-viajes) — niveles A0, A1, A2, B1, B2, C1
+- [Viajar solo](https://hablah.com.ar/topicos/viajes-solo) — niveles A0, A1, A2, B1, B2, C1
+- [Turismo masivo y sus efectos](https://hablah.com.ar/topicos/viajes-turismo-masivo) — niveles B1, B2, C1
+
+### Comida y bebida
+- [Mi comida favorita](https://hablah.com.ar/topicos/comida-mi-favorita) — niveles A0, A1, A2, B1, B2, C1
+- [Cocinar en casa](https://hablah.com.ar/topicos/comida-cocinar-casa) — niveles A0, A1, A2, B1, B2, C1
+- [Comida típica de mi país](https://hablah.com.ar/topicos/comida-tipica-pais) — niveles A0, A1, A2, B1, B2, C1
+- [Cocinar para otros](https://hablah.com.ar/topicos/comida-cocinar-otros) — niveles A0, A1, A2, B1, B2, C1
+
+### Animales
+- [Mi mascota](https://hablah.com.ar/topicos/animales-mi-mascota) — niveles A0, A1, A2, B1, B2, C1
+- [Animales raros que existen](https://hablah.com.ar/topicos/animales-raros) — niveles A2, B1, B2, C1
+- [Animales en peligro](https://hablah.com.ar/topicos/animales-peligro-extincion) — niveles A2, B1, B2, C1
+
+### Arte
+- [Un artista que admiro](https://hablah.com.ar/topicos/arte-artista-admiro) — niveles A0, A1, A2, B1, B2, C1
+- [Crear arte propio](https://hablah.com.ar/topicos/arte-crear-propio) — niveles A0, A1, A2, B1, B2, C1
+
+### Moda
+- [Mi estilo personal](https://hablah.com.ar/topicos/moda-estilo-personal) — niveles A0, A1, A2, B1, B2, C1
+- [Fast fashion](https://hablah.com.ar/topicos/moda-fast-fashion) — niveles B1, B2, C1
+
+### Charla libre
+- [Charla abierta](https://hablah.com.ar/topicos/open-chat) — niveles A1, A2, B1, B2, C1, C2
+
+## Catálogo de tópicos — chicos (37)
+
+### Para chicos
+- [Mi familia](https://hablah.com.ar/topicos/kids-family) — niveles A0, A1, A2
+- [La escuela](https://hablah.com.ar/topicos/kids-school) — niveles A0, A1, A2
+- [Mis colores favoritos](https://hablah.com.ar/topicos/kids-colors) — niveles A0, A1, A2
+- [Animales de la granja y la selva](https://hablah.com.ar/topicos/kids-animals-farm) — niveles A0, A1, A2
+- [Mi cuerpo](https://hablah.com.ar/topicos/kids-body) — niveles A0, A1, A2
+- [Comidas ricas](https://hablah.com.ar/topicos/kids-food-basic) — niveles A0, A1, A2
+- [Abrir juguetes](https://hablah.com.ar/topicos/kids-toy-unboxing) — niveles A0, A1, A2
+- [Dibujitos y superhéroes](https://hablah.com.ar/topicos/kids-cartoons-heroes) — niveles A0, A1, A2
+- [Jugar en la pantalla](https://hablah.com.ar/topicos/kids-gaming-basic) — niveles A0, A1, A2
+- [Comida divertida](https://hablah.com.ar/topicos/kids-treats) — niveles A0, A1, A2
+- [Mi día de la mañana a la noche](https://hablah.com.ar/topicos/kids-routine) — niveles A0, A1, A2
+- [Mi casa y mis habitaciones](https://hablah.com.ar/topicos/kids-house) — niveles A0, A1, A2
+- [Pasatiempos y deportes](https://hablah.com.ar/topicos/kids-hobbies) — niveles A0, A1, A2
+- [Cómo me siento](https://hablah.com.ar/topicos/kids-emotions) — niveles A0, A1, A2
+- [Naturaleza y dinosaurios](https://hablah.com.ar/topicos/kids-nature) — niveles A0, A1, A2
+- [Desafíos virales](https://hablah.com.ar/topicos/kids-youtube-challenges) — niveles A0, A1, A2
+- [Mundos de bloques](https://hablah.com.ar/topicos/kids-sandbox-worlds) — niveles A0, A1, A2
+- [Coleccionar cartas y figuritas](https://hablah.com.ar/topicos/kids-collecting) — niveles A0, A1, A2
+- [Comida rápida y dulces](https://hablah.com.ar/topicos/kids-fast-food) — niveles A0, A1, A2
+- [Música, pelis y series](https://hablah.com.ar/topicos/kids-entertainment) — niveles A0, A1, A2
+- [Viajes y culturas](https://hablah.com.ar/topicos/kids-travel) — niveles A0, A1, A2, B1, B2
+- [Trabajos del futuro](https://hablah.com.ar/topicos/kids-future-jobs) — niveles A2, B1, B2
+- [Cocinar y recetas](https://hablah.com.ar/topicos/kids-cooking) — niveles A0, A1, A2
+- [Cuidar el planeta](https://hablah.com.ar/topicos/kids-planet) — niveles A0, A1, A2
+- [Decir lo que pensás](https://hablah.com.ar/topicos/kids-opinions) — niveles A0, A1, A2, B1, B2
+- [Streamers y transmisiones](https://hablah.com.ar/topicos/kids-streaming) — niveles A0, A1, A2
+- [Zapatillas y moda urbana](https://hablah.com.ar/topicos/kids-sneakers) — niveles A0, A1, A2
+- [Gaming pro y esports](https://hablah.com.ar/topicos/kids-esports) — niveles A0, A1, A2
+- [Slang y tendencias online](https://hablah.com.ar/topicos/kids-slang) — niveles A0, A1, A2
+- [Juegos de pelea y torneos](https://hablah.com.ar/topicos/juegos-de-pelea-y-torneos) — niveles A1, A2
+- [Construcción con bloques mágicos](https://hablah.com.ar/topicos/construccion-con-bloques-magicos) — niveles A0, A1, A2
+- [Suscripciones gaming y juego en la nube](https://hablah.com.ar/topicos/suscripciones-gaming-y-juego-en-la-nube) — niveles A1, A2, B1, B2
+- [Quién soy y quién quiero ser](https://hablah.com.ar/topicos/quien-soy-y-quien-quiero-ser) — niveles B1, B2
+- [Redes sociales: el lado B](https://hablah.com.ar/topicos/redes-sociales-el-lado-b) — niveles B1, B2
+- [Crecer en un mundo que cambia rápido](https://hablah.com.ar/topicos/crecer-en-un-mundo-que-cambia-rapido) — niveles B1, B2
+- [Causas que me importan](https://hablah.com.ar/topicos/causas-que-me-importan) — niveles B1, B2
+- [Libertad y límites con mis padres](https://hablah.com.ar/topicos/libertad-y-limites-con-mis-padres) — niveles B1, B2
+
+## URLs canónicas
+- App: https://hablah.com.ar
+- Cómo funciona: https://hablah.com.ar/como-funciona
+- Tutores de IA: https://hablah.com.ar/tutores
+- Tópicos: https://hablah.com.ar/topicos
+- Precios: https://hablah.com.ar/precios
+- FAQ: https://hablah.com.ar/faq
+- Sitemap: https://hablah.com.ar/sitemap.xml
+- Versión corta de este archivo: https://hablah.com.ar/llms.txt
+
+## Contacto
+hola@hablah.com.ar

@@ -1,75 +1,65 @@
 # Habláh
 
-> Habláh es una app de aprendizaje de idiomas conversacional con tutor de IA en tiempo real. Sin lecciones lineales, sin exámenes — solo 5 minutos al día conversando.
+> Plataforma adaptativa de aprendizaje de idiomas con tutores de IA conversacionales. Se aprende hablando por voz en tiempo real — no hay ejercicios de opción múltiple ni lecciones lineales.
+
+## Para quién
+Adultos e hispanohablantes (Argentina primero) que quieren hablar un idioma de verdad, y chicos (mini/junior/teen) en un flujo separado con gate parental.
 
 ## Idiomas soportados
-- Inglés
-- Portugués
-- Italiano
-- Francés
-- Alemán
-
-## Niveles
-A1, A2, B1, B2, C1, C2 (escala CEFR)
+Inglés, portugués, italiano (francés y alemán próximamente). Idioma base: español, portugués o inglés.
 
 ## Cómo funciona
-1. Elegís un tema para conversar (o el tutor te sugiere uno)
-2. Hablás con el coach de IA por micrófono
-3. El coach responde en el idioma objetivo, te corrige y te enseña vocabulario
-4. Tenés un reporte después de cada sesión
+1. Diagnóstico continuo hablando 1 minuto — sin examen — te ubica en el marco CEFR (A1 a C2).
+2. Elegís tópicos de interés (o el tutor te sugiere uno) de un catálogo de 99 temas curados.
+3. Conversación de voz real con un tutor de IA que corrige tu lenguaje sin interrumpir.
+4. Reporte al final de cada sesión: 1 elogio + hasta 3 puntos a pulir, en lenguaje directo.
+5. El sistema recuerda tu historia entre clases: errores recurrentes, intereses, lo que ya dominás.
+
+## Niveles
+A1, A2, B1, B2, C1, C2 (escala CEFR). Los chicos arrancan en A0 con frases guiadas.
 
 ## Precio
-- 14 días Pro gratis sin tarjeta
-- Plan Pro disponible después del trial
-
-## Tecnología
-- Gemini Live API para voz nativa
-- Whisper para transcripción
-- Backend en Cloud Run (São Paulo)
-- Frontend Vite + React en Netlify
+- Free: sesiones limitadas, sin tarjeta.
+- 14 días de Pro gratis sin tarjeta.
+- Bootcamp: plan intensivo con coach humano.
 
 ## Diferenciales
-- Conversación realmente fluida (latencia <1s)
-- Voz nativa, no robótica
-- Adapta al nivel CEFR real del alumno
-- Modo niños separado con personaje guía
+- Conversación de voz real (Gemini Live), no un chatbot de texto ni ejercicios de tap.
+- Un motor pedagógico arma cada clase según tu edad y tu nivel real — no es una IA suelta.
+- Memoria entre clases: la clase 2 no repite la clase 1.
+- Módulo kids separado, con gate parental y contenido curado por edad.
+- Feedback sincerista: se guarda todo y se entrega al final, sin interrumpir mientras hablás.
+
+## FAQ
+Q: ¿Cómo decide mi nivel sin un examen?
+A: Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas) y precisión fonética. En 2 a 3 minutos te ubica en el marco CEFR (A1 a C2). Sin opción múltiple, sin presión.
+
+Q: ¿Qué idiomas están disponibles?
+A: Hoy: inglés (US y UK), portugués (BR y PT) e italiano. Próximamente francés y alemán. Como alumno base aceptamos español (todas las variantes), portugués e inglés.
+
+Q: ¿Necesito buena conexión?
+A: Funciona con 3G estable. El audio se procesa en streaming. Si la conexión se cae, la sesión guarda lo hablado y reanuda al volver.
+
+Q: ¿Qué pasa con mi audio? ¿Lo guardan?
+A: Por defecto se borra a los 30 días. Podés cambiarlo a "borrar después de cada sesión" en tu perfil. Nunca lo usamos para entrenar modelos sin tu consentimiento explícito.
+
+Q: ¿Puedo cancelar Pro cuando quiera?
+A: Sí, desde la app, en un toque. No hay permanencia. Si cancelás, mantenés tu nivel y rachas, solo pasás al plan Free.
+
+Q: ¿Sirve para certificaciones (TOEFL, IELTS, Cambridge)?
+A: Sirve para llegar al nivel, pero no entrena formato de examen. Para eso usamos Bootcamp con coach humano, que arma simulacros específicos.
+
+Q: ¿Y si soy ultra principiante (A0)?
+A: The Coach está pensado para vos. Las primeras semanas son híbridas: la IA te tira frases simples, vas repitiendo y construyendo. Al mes ya hacés charlas reales cortas.
 
 ## URLs
 - App: https://hablah.com.ar
-- FAQ: https://hablah.com.ar/faq
 - Cómo funciona: https://hablah.com.ar/como-funciona
+- Tutores: https://hablah.com.ar/tutores
+- Tópicos (catálogo completo, 99 temas): https://hablah.com.ar/topicos
 - Precios: https://hablah.com.ar/precios
-- Tópicos: https://hablah.com.ar/topicos
-
-## Catalogo de topicos
-- [Musica electronica - UK Garage](/topicos/musica-electronica-uk-garage)
-- [Arquitectura de software](/topicos/arquitectura-de-software)
-- [Produccion musical - Ableton](/topicos/produccion-musical-ableton)
-- [IA generativa - etica](/topicos/ia-generativa-etica)
-- [Entrenamiento de fuerza - powerlifting](/topicos/entrenamiento-de-fuerza-powerlifting)
-- [Metodologias agiles - retrospectivas](/topicos/metodologias-agiles-retrospectivas)
-- [Cine de los 90 - Tarantino](/topicos/cine-de-los-90-tarantino)
-- [Anecdotas de aeropuertos](/topicos/anecdotas-de-aeropuertos)
-- [Futbol - Mundiales y selecciones](/topicos/futbol-mundiales-y-selecciones)
-- [Basquet - NBA y leyendas](/topicos/basquet-nba-y-leyendas)
-- [Running - entrenamiento y maratones](/topicos/running-entrenamiento-y-maratones)
-- [Tenis - Grand Slam y rivalidades](/topicos/tenis-grand-slam-y-rivalidades)
-- [Formula 1 y automovilismo](/topicos/formula-1-y-automovilismo)
-- [Cocina italiana - pasta y vinos](/topicos/cocina-italiana-pasta-y-vinos)
-- [Asado argentino - tecnica y rituales](/topicos/asado-argentino-tecnica-y-rituales)
-- [Cafe de especialidad - v60, espresso](/topicos/cafe-de-especialidad-v60-espresso)
-- [Espacio - astronomia y misiones](/topicos/espacio-astronomia-y-misiones)
-- [Cambio climatico - ciencia y politicas](/topicos/cambio-climatico-ciencia-y-politicas)
-- [Biologia - evolucion y genetica](/topicos/biologia-evolucion-y-genetica)
-- [Series de streaming - drama prestigio](/topicos/series-de-streaming-drama-prestigio)
-- [Videojuegos - indie y AAA](/topicos/videojuegos-indie-y-aaa)
-- [Rock clasico - 70s a 90s](/topicos/rock-clasico-70s-a-90s)
-- [Stand-up - comediantes y especiales](/topicos/stand-up-comediantes-y-especiales)
-- [Meditacion y mindfulness](/topicos/meditacion-y-mindfulness)
-- [Nutricion - dietas y mitos](/topicos/nutricion-dietas-y-mitos)
-- [Moda - streetwear y sneakers](/topicos/moda-streetwear-y-sneakers)
-- [Trabajo remoto - nomade digital](/topicos/trabajo-remoto-nomade-digital)
-- [Entrevistas tecnicas - system design](/topicos/entrevistas-tecnicas-system-design)
+- FAQ: https://hablah.com.ar/faq
+- Versión extendida de este archivo: https://hablah.com.ar/llms-full.txt
 
 ## Contacto
 hola@hablah.com.ar

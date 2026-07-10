@@ -1,0 +1,30 @@
+[
+  {
+    "q": "¿Cómo decide mi nivel sin un examen?",
+    "a": "Mientras conversás, un pipeline analiza riqueza léxica, precisión sintáctica, fluidez (palabras por minuto y pausas) y precisión fonética. En 2 a 3 minutos te ubica en el marco CEFR (A1 a C2). Sin opción múltiple, sin presión."
+  },
+  {
+    "q": "¿Qué idiomas están disponibles?",
+    "a": "Hoy: inglés (US y UK), portugués (BR y PT) e italiano. Próximamente francés y alemán. Como alumno base aceptamos español (todas las variantes), portugués e inglés."
+  },
+  {
+    "q": "¿Necesito buena conexión?",
+    "a": "Funciona con 3G estable. El audio se procesa en streaming. Si la conexión se cae, la sesión guarda lo hablado y reanuda al volver."
+  },
+  {
+    "q": "¿Qué pasa con mi audio? ¿Lo guardan?",
+    "a": "Por defecto se borra a los 30 días. Podés cambiarlo a \"borrar después de cada sesión\" en tu perfil. Nunca lo usamos para entrenar modelos sin tu consentimiento explícito."
+  },
+  {
+    "q": "¿Puedo cancelar Pro cuando quiera?",
+    "a": "Sí, desde la app, en un toque. No hay permanencia. Si cancelás, mantenés tu nivel y rachas, solo pasás al plan Free."
+  },
+  {
+    "q": "¿Sirve para certificaciones (TOEFL, IELTS, Cambridge)?",
+    "a": "Sirve para llegar al nivel, pero no entrena formato de examen. Para eso usamos Bootcamp con coach humano, que arma simulacros específicos."
+  },
+  {
+    "q": "¿Y si soy ultra principiante (A0)?",
+    "a": "The Coach está pensado para vos. Las primeras semanas son híbridas: la IA te tira frases simples, vas repitiendo y construyendo. Al mes ya hacés charlas reales cortas."
+  }
+]
