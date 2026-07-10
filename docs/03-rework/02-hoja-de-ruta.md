@@ -48,23 +48,23 @@
 | F1-04 | Validación por voz del paquete F1 (runbook 5×4) | **PENDIENTE — GATE DEL DUEÑO (micrófono)**: deploy coordinado (push + barrido juntos) y validar |
 | F3-01 | Regresión + fail-fast de `app_config` | parcial (adelantado con F1): blindaje MotorDataMissing en `voice_proxy`; falta el test de regresión |
 | F1-05 | Spike: modelo más fuerte para el rol de coach (gate del dueño) | pendiente |
-| F2-01 | Post-clase escribe `learner_state` (top-1, ultra liviano) | pendiente |
-| F2-02 | El composer usa la historia (y se puede ver en el test) | pendiente |
-| F2-03 | Rotación de semilla por sesión (variedad por construcción) | pendiente |
-| F3-01 | Regresión + fail-fast de `app_config` | pendiente |
-| F3-02 | Push-to-talk opcional para niveles bajos | pendiente |
-| F3-03 | Robustez de micrófono (iOS/Android/tablet) | pendiente |
-| F3-04 | Flags de Cloud Run fijados declarativamente (con Infra) | pendiente |
-| F4-01 | Partir `WebApp.tsx` (3.744 líneas) en módulos | pendiente |
-| F4-02 | Estándar viewport/safe-area en todas las superficies | pendiente |
-| F4-03 | Flujo de pantallas del producto (IA de navegación) | pendiente |
-| F4-04 | Post-clase visible: reporte + progreso ("tu profe se acuerda") | pendiente |
-| F4-05 | Sistema de diseño y dirección visual (gate del dueño) | pendiente |
-| F4-06 | Circuito visual reactivo kids (direccional, opt-in) | pendiente |
-| F5-01 | SEO técnico (prerender, sitemap, metadata, schema) | pendiente |
-| F5-02 | SEO de contenido: los 94 tópicos como páginas | pendiente |
-| F5-03 | LLM indexing / AEO (llms.txt, FAQ, datos estructurados) | pendiente |
-| F5-04 | Branding y mensaje (gate del dueño) | pendiente |
+| F2-01 | Post-clase escribe `learner_state` (top-1, ultra liviano) | hecho — writer fail-soft + tabla creada |
+| F2-02 | El composer usa la historia (y se puede ver en el test) | core hecho (composer usa shape liviano) — falta UI del visor /lab/mini-test |
+| F2-03 | Rotación de semilla por sesión (variedad por construcción) | core hecho (rota frase-ancla por session_seed) — falta cargar variantes de arranque en student_types |
+| F3-01 | Regresión + fail-fast de `app_config` | parcial — blindaje MotorDataMissing hecho; falta el test de regresión |
+| F3-02 | Push-to-talk opcional para niveles bajos | hecho |
+| F3-03 | Robustez de micrófono (iOS/Android/tablet) | hecho |
+| F3-04 | Flags de Cloud Run fijados declarativamente (con Infra) | hecho — service.yaml + check + pedido en CANAL_AGENTES |
+| F4-01 | Partir `WebApp.tsx` (3.744 líneas) en módulos | **PENDIENTE** (refactor grande, no hecho en esta ronda por riesgo de corte) |
+| F4-02 | Estándar viewport/safe-area en todas las superficies | hecho |
+| F4-03 | Flujo de pantallas del producto (IA de navegación) | **propuesta lista (gate)** → `docs/03-rework/propuestas/01-flujo-pantallas.md` |
+| F4-04 | Post-clase visible: reporte + progreso ("tu profe se acuerda") | hecho |
+| F4-05 | Sistema de diseño y dirección visual (gate del dueño) | **propuesta + 3 maquetas HTML (gate)** → `docs/03-rework/propuestas/02-sistema-diseno.md` |
+| F4-06 | Circuito visual reactivo kids (direccional, opt-in) | **PENDIENTE** (depende de F4-05 elegido) |
+| F5-01 | SEO técnico (prerender, sitemap, metadata, schema) | hecho |
+| F5-02 | SEO de contenido: los 99 tópicos como páginas | hecho (99 páginas, 750+ palabras c/u) |
+| F5-03 | LLM indexing / AEO (llms.txt, FAQ, datos estructurados) | hecho |
+| F5-04 | Branding y mensaje (gate del dueño) | **propuesta lista (gate)** → `docs/03-rework/propuestas/03-branding-mensaje.md` |
 
 **Orden de ejecución:** F0 completo → F1 → F2 → F3 (F3 puede solaparse con F2) → F4 → F5.
 Dentro de cada fase, el orden listado. No arrancar una fase sin cerrar los WO bloqueantes de la
