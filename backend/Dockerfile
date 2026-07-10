@@ -42,7 +42,6 @@ RUN DB_HOST=x DB_PORT=1 DB_USER=x DB_PASSWORD=x DB_NAME=x SECRET_KEY=x \
 import services.voice_engines.gemini_live_engine; \
 import services.voice_engine; \
 import services.super_prompt; \
-import services.runtime_prompt; \
 print('[import-check] critical voice modules OK')"
 
 # Cloud Run inyecta PORT en runtime (default 8080).
