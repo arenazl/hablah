@@ -250,6 +250,12 @@ export function KidsSession() {
   }
 
   const [showSuccess, setShowSuccess] = useState(false)
+  // F4-04: badge visual minimo ("suma a la coleccion") — cantidad REAL de
+  // clases terminadas de este nene. Sale de /api/sessions/ (mismo endpoint
+  // que usa el adulto, ya funciona con el kid_token porque get_current_user
+  // resuelve por sub del JWT sea cual sea el perfil). Fail-soft: si falla,
+  // el overlay de exito se muestra igual, solo sin el numero.
+  const [starsCount, setStarsCount] = useState<number | null>(null)
   const endSession = async () => {
     live.stop()
     const kidsToken = localStorage.getItem(KIDS_TOKEN_KEY)
@@ -260,6 +266,15 @@ export function KidsSession() {
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${kidsToken}` },
           body: JSON.stringify({ transcript: live.transcript }),
         })
+      } catch {}
+      try {
+        const res = await fetch('/api/sessions/', { headers: { Authorization: `Bearer ${kidsToken}` } })
+        if (res.ok) {
+          const list = await res.json()
+          if (Array.isArray(list)) {
+            setStarsCount(list.filter((s: { status?: string }) => s.status && s.status !== 'active').length)
+          }
+        }
       } catch {}
     }
     // Mostramos overlay de exito con confetti kid-style antes de volver.
@@ -339,6 +354,21 @@ export function KidsSession() {
             </svg>
             Terminaste la clase. ¡Sos un crack!
           </div>
+          {starsCount !== null && (
+            <div style={{
+              marginTop: 20, display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '9px 20px', borderRadius: 999,
+              background: 'rgba(255,255,255,.14)', border: '1px solid rgba(255,255,255,.22)',
+              animation: 'kidsuccess-pop .8s cubic-bezier(.34,1.56,.64,1) .15s both',
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFC83D" stroke="none" aria-hidden>
+                <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/>
+              </svg>
+              <span style={{ color: 'white', fontWeight: 800, fontSize: 16 }}>
+                {starsCount} estrella{starsCount === 1 ? '' : 's'}
+              </span>
+            </div>
+          )}
         </div>
       )}
 

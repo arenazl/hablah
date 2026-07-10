@@ -673,6 +673,15 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   // In-context prompts según el foco del día
   const focusKeyword = (firstInterest as any)?.keywords?.[0] || 'nevertheless'
 
+  // MEMORIA — "tu profe se acuerda" (F4-04): la clase más reciente ya
+  // analizada, si dejó un consejo puntual para la próxima (report.next_session_tip,
+  // ya lo escribe el post-clase). Se omite si el rescue de abajo está activo
+  // (errores repetidos 3+ veces) para no mostrar dos avisos que compiten.
+  const lastAnalyzed = recent.find((s) => s.status === 'analyzed' && (s.report as any)?.next_session_tip)
+  const memoryTip: string | null = !today?.rescue?.active && lastAnalyzed
+    ? ((lastAnalyzed.report as any).next_session_tip as string)
+    : null
+
   // ─── MODO ONBOARDING: 0 sesiones ─────────────────────────────────
   // Para el primer ingreso del user (sin sesiones todavia), reemplazamos
   // toda la home complicada por un CTA gigante sin distracciones.
@@ -695,6 +704,12 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
           Tu tutor activo es <b>{tutorName}</b>. Foco del día: <b>{topicTitle}</b>
           {topicCategory ? <> · {topicCategory}</> : null}.
         </p>
+        {memoryTip && (
+          <div className="hp-memory">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7c.6.4 1 1.2 1 2.05V17h6v-2.25c0-.85.4-1.65 1-2.05A7 7 0 0 0 12 2Z" /><path d="M9 18h6" /><path d="M10 22h4" /></svg>
+            <span><b>Tu profe se acuerda:</b> {memoryTip}</span>
+          </div>
+        )}
       </section>
 
       <div className="hp-grid">
@@ -2173,7 +2188,7 @@ function SessionReport({ sessionId, initial, actions }: SessionReportProps) {
                         background: '#FCE8E9', color: '#5A1F22', marginBottom: 6,
                         display: 'flex', gap: 8, alignItems: 'flex-start',
                       }}>
-                        <span style={{ fontWeight: 800 }}>✕</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 2 }}><path d="M18 6 6 18" /><path d="M6 6l12 12" /></svg>
                         <span>"{fb.snippet_wrong}"</span>
                       </div>
                     )}
@@ -2183,13 +2198,14 @@ function SessionReport({ sessionId, initial, actions }: SessionReportProps) {
                         background: 'var(--primary-tint)', color: '#024E36', marginBottom: fb.why ? 8 : 0,
                         display: 'flex', gap: 8, alignItems: 'flex-start',
                       }}>
-                        <span style={{ fontWeight: 800 }}>✓</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}><polyline points="20 6 9 17 4 12" /></svg>
                         <span>"{fb.snippet_correct}"</span>
                       </div>
                     )}
                     {fb.why && (
-                      <div style={{ fontSize: 12, color: 'var(--fg-3)', fontStyle: 'italic', paddingLeft: 4 }}>
-                        💡 {fb.why}
+                      <div style={{ fontSize: 12, color: 'var(--fg-3)', fontStyle: 'italic', paddingLeft: 4, display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}><path d="M9 18h6" /><path d="M10 22h4" /><path d="M12 2a7 7 0 0 0-4 12.7c.6.4 1 1.2 1 2.05V17h6v-2.25c0-.85.4-1.65 1-2.05A7 7 0 0 0 12 2Z" /></svg>
+                        <span>{fb.why}</span>
                       </div>
                     )}
                   </div>
@@ -2260,8 +2276,9 @@ function SessionReport({ sessionId, initial, actions }: SessionReportProps) {
                       </div>
                     )}
                     {p.tip && (
-                      <div style={{ fontSize: 12, color: 'var(--fg-2)', marginTop: 4 }}>
-                        💡 {p.tip}
+                      <div style={{ fontSize: 12, color: 'var(--fg-2)', marginTop: 4, display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}><path d="M9 18h6" /><path d="M10 22h4" /><path d="M12 2a7 7 0 0 0-4 12.7c.6.4 1 1.2 1 2.05V17h6v-2.25c0-.85.4-1.65 1-2.05A7 7 0 0 0 12 2Z" /></svg>
+                        <span>{p.tip}</span>
                       </div>
                     )}
                   </div>
@@ -3317,7 +3334,7 @@ function AddInterestCard({ profile, onChange }: { profile: MeProfile; onChange: 
         style={{
           width: '100%', padding: '10px 12px', borderRadius: 10,
           border: '1px solid var(--border-2)', background: 'var(--surface)',
-          color: 'var(--fg-1)', fontSize: 13, marginBottom: 12, outline: 'none',
+          color: 'var(--fg-1)', fontSize: 16, marginBottom: 12, outline: 'none',
         }}
       />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto' }}>

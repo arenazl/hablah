@@ -143,6 +143,15 @@
 }
 
 html, body, #root { height: 100%; }
+html, body {
+  /* F4-02 (viewport/safe-area estandar): sin scroll/movimiento horizontal en
+     ninguna superficie — corta rubber-band y pull-to-refresh. Ningun elemento
+     de producto debe exceder el ancho del viewport (ver base-compartida/11). */
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  width: 100%;
+  max-width: 100%;
+}
 body {
   margin: 0;
   font-family: var(--font-sans);
@@ -152,6 +161,10 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+/* F4-02: inputs a 16px minimo — iOS hace auto-zoom si un input enfocado
+   tiene font-size < 16px. Los tamaños visuales puntuales (13-15px) que pisan
+   esto se corrigieron caso por caso; este piso es la red de seguridad. */
+input, select, textarea { font-size: 16px; }
 
 /* Utilidades tipográficas editoriales CB */
 .font-serif-display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.01em; }

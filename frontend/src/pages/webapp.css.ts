@@ -185,7 +185,7 @@ export const WEBAPP_CSS = `
 .webapp-root .topbar .search input {
   width: 100%; height: 38px; padding: 0 14px 0 36px;
   border-radius: 999px; border: 1px solid var(--border-2);
-  background: var(--surface); font: inherit; font-size: 13px; color: var(--fg-1);
+  background: var(--surface); font: inherit; font-size: 16px; color: var(--fg-1);
 }
 .webapp-root .topbar .search input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-tint); }
 .webapp-root .topbar .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--fg-3); }
@@ -590,7 +590,7 @@ export const WEBAPP_CSS = `
 .webapp-root .history-controls input {
   width: 100%; height: 38px; padding: 0 14px 0 36px;
   border-radius: 10px; border: 1px solid var(--border-2);
-  background: var(--surface); font: inherit; font-size: 13px;
+  background: var(--surface); font: inherit; font-size: 16px;
 }
 .webapp-root .history-controls input:focus { outline: none; border-color: var(--primary); }
 .webapp-root .history-controls .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--fg-3); }

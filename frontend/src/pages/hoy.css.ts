@@ -60,6 +60,14 @@ export const HOY_CSS = `
 .hoy-page .hp-sub{color:var(--hp-fg-2);font-size:14.5px;max-width:760px;margin:0}
 .hoy-page .hp-sub b{color:var(--hp-fg-1);font-weight:600}
 
+/* MEMORIA — "tu profe se acuerda" (F4-04). Linea liviana, solo cuando hay
+   historia real (sale de report.next_session_tip de la ultima clase
+   analizada). Si ademas hay rescue activo, el rescue ya cubre esto y esta
+   linea no se muestra (una sola voz, no compiten). */
+.hoy-page .hp-memory{display:flex;align-items:flex-start;gap:9px;margin-top:12px;padding:11px 14px;border-radius:12px;background:var(--hp-bg-2);border:1px solid var(--hp-border-1);font-size:13px;line-height:1.45;color:var(--hp-fg-2);max-width:760px}
+.hoy-page .hp-memory svg{flex-shrink:0;margin-top:2px;color:var(--hp-green-700)}
+.hoy-page .hp-memory b{color:var(--hp-fg-1);font-weight:700}
+
 .hoy-page .hp-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px}
 @media (max-width:1200px){ .hoy-page .hp-grid{grid-template-columns:1fr} }
 .hoy-page .hp-col-l{display:flex;flex-direction:column;gap:20px;min-width:0}

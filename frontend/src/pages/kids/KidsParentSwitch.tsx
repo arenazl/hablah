@@ -59,7 +59,7 @@ const PAGE_CSS = `
 .parent-kid-form { background:#fff; border:1px solid rgba(13,20,18,.08); border-radius:20px; padding:24px; margin-top:24px; max-width:520px; }
 .parent-kid-form h2 { font-family:'Sora',sans-serif; font-weight:800; font-size:20px; margin:0 0 16px; }
 .parent-kid-form label { display:block; font-size:12px; color:#5A625F; margin-bottom:6px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; }
-.parent-kid-form input { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(13,20,18,.14); font-size:15px; font-family:inherit; outline:none; transition:border .15s; }
+.parent-kid-form input { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(13,20,18,.14); font-size:16px; font-family:inherit; outline:none; transition:border .15s; }
 .parent-kid-form input:focus { border-color:#00B37E; box-shadow:0 0 0 3px rgba(0,179,126,.16); }
 .parent-kid-form .field { margin-bottom:14px; }
 .parent-kid-form .colors { display:flex; gap:8px; flex-wrap:wrap; }

@@ -64,7 +64,7 @@ export function Login() {
       {/* DERECHA: form */}
       <div
         className="flex-1 lg:flex-none lg:w-[480px] xl:w-[520px] flex items-center justify-center p-6"
-        style={{ background: '#FAFBFA' }}
+        style={{ background: '#FAFBFA', paddingTop: 'max(env(safe-area-inset-top), 24px)' }}
       >
         <div className="w-full max-w-sm animate-fade-in-up">
           {/* Logo mobile */}
@@ -110,7 +110,7 @@ export function Login() {
                   borderColor: 'rgba(13,20,18,.14)',
                   background: 'white',
                   color: '#0D1412',
-                  fontSize: 15,
+                  fontSize: 16,
                   outline: 'none',
                 }}
                 onFocus={(e) => {
@@ -141,7 +141,7 @@ export function Login() {
                   borderColor: 'rgba(13,20,18,.14)',
                   background: 'white',
                   color: '#0D1412',
-                  fontSize: 15,
+                  fontSize: 16,
                   outline: 'none',
                 }}
                 onFocus={(e) => {

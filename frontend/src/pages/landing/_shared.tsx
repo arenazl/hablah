@@ -100,6 +100,9 @@ export const LANDING_CSS = `
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border-bottom: 1px solid var(--border-1);
+  /* F4-02: notch/Dynamic Island del iPhone — el nav es sticky al tope del
+     documento, sin esto el logo queda tapado por la status bar. */
+  padding-top: max(env(safe-area-inset-top), 12px);
 }
 .landing-root .nav-inner { display: flex; align-items: center; gap: 24px; height: 64px; }
 .landing-root .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; letter-spacing: -.01em; }

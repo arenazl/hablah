@@ -126,7 +126,7 @@ export const KIDS_CSS = `
   .kids-main { padding:0 16px 24px; max-width:100%; }
   .kids-topbar { display:none; }
 
-  .kids-m-topbar { display:flex; align-items:center; gap:8px; padding:12px 14px; position:sticky; top:0; z-index:30; background:var(--bg-1); border-bottom:1px solid var(--border-1); }
+  .kids-m-topbar { display:flex; align-items:center; gap:8px; padding:max(env(safe-area-inset-top),12px) 14px 12px; position:sticky; top:0; z-index:30; background:var(--bg-1); border-bottom:1px solid var(--border-1); }
   .kids-m-menu { width:38px; height:38px; border-radius:12px; display:grid; place-items:center; color:var(--fg-1); background:transparent; flex-shrink:0; padding:0; border:0; cursor:pointer; }
   .kids-m-menu:active { background:var(--bg-2); }
   .kids-m-title { font-family:var(--font-display); font-weight:800; font-size:15px; letter-spacing:-0.01em; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
