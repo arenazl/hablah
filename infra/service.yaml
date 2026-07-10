@@ -1,0 +1,151 @@
+# infra/service.yaml — fuente de verdad de la config de Cloud Run para hablah-api
+# ============================================================================
+# WO F3-04 (docs/03-rework/02-hoja-de-ruta.md). Contexto completo:
+# docs/02-infra/01-contexto-infra-y-migracion.md (sección "Decisiones técnicas
+# del cutover", puntos 1-4 = OBLIGATORIOS, punto 8 = el riesgo que esto ataca).
+#
+# EL PROBLEMA QUE ESTO RESUELVE (riesgo #1 de Infra, 2026-07-08):
+# el trigger `deploy-hablah-api` dispara `gcloud run deploy --source backend
+# --region us-east4 --quiet` en cada push a main (patrón estándar del
+# ecosistema, ver skill gcp-infra). Un `--source` deploy que NO re-pasa los
+# flags de runtime **resetea** min/max-instances, cpu-throttling, timeout y
+# concurrency a los defaults de Cloud Run en CADA push. Para la mayoría de las
+# apps del ecosistema (CRUD sin estado) eso es inofensivo. Para hablah-api es
+# fatal: el coach se muere en el próximo deploy (ver el porqué de cada flag
+# abajo).
+#
+# CÓMO SE APLICA (dos caminos válidos — Infra elige):
+#
+# (A) Flags explícitos en el `gcloud run deploy` del step de Cloud Build
+#     (cb-hablah-api.yaml / inline-config del trigger). Es el camino que
+#     encaja con el mecanismo actual (`--source`, build-on-push). Copiar
+#     LITERAL en el step de deploy:
+#
+#       gcloud run deploy hablah-api \
+#         --source backend \
+#         --region us-east4 \
+#         --project hablah-prod \
+#         --min-instances=1 \
+#         --max-instances=1 \
+#         --no-cpu-throttling \
+#         --timeout=3600 \
+#         --concurrency=100 \
+#         --memory=512Mi \
+#         --cpu=1 \
+#         --port=8080 \
+#         --quiet
+#
+#     Repasar esos flags EXPLÍCITOS en el comando es lo que los hace
+#     sobrevivir al próximo `--source` build — un `gcloud run deploy --source`
+#     sin re-pasarlos cae en los defaults de Cloud Run (min=0, max=100,
+#     throttling ON, timeout=300s), que es exactamente el bug que mata al
+#     coach.
+#
+# (B) Este mismo archivo, aplicado con `gcloud run services replace` en vez de
+#     `deploy --source`. Requiere que el step de build empuje antes una imagen
+#     a Artifact Registry y sustituya `image:` acá abajo con el tag real
+#     (por eso queda como TODO — el pipeline hoy es source-based, no
+#     image-based; si Infra migra a esta forma, hay que resolver ese paso).
+#
+# El export real y actualizado de la config VIVA se puede comparar contra
+# este archivo con:
+#   gcloud run services describe hablah-api --region us-east4 \
+#     --project hablah-prod --format export > /tmp/live.yaml
+#   diff /tmp/live.yaml infra/service.yaml   (ignorar metadata/status runtime)
+#
+# O, más simple y automatizable: infra/check_cloudrun_config.py (mismo repo)
+# valida por gcloud los 4 campos que importan y falla si hay drift.
+# ============================================================================
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: hablah-api
+  # namespace = project number/id — lo completa gcloud al leer/aplicar.
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        # --- OBLIGATORIO #1: 1 instancia fija, min=max=1 --------------------
+        # Por qué: las "rooms" de voz viven en memoria del proceso
+        # (rooms_registry, RoomAudioPump._pumps — backend/services/
+        # voice_room_engine.py) sobre gunicorn -w1 (backend/Dockerfile,
+        # backend/Procfile: `gunicorn main:app -w 1 -k
+        # uvicorn.workers.UvicornWorker`). Con min/max > 1 o autoscaling,
+        # Cloud Run puede repartir a dos participantes de la MISMA sala en
+        # DOS instancias distintas → el mixer de audio de una nunca ve al
+        # otro → la sala se rompe. Session affinity de Cloud Run NO alcanza:
+        # el mixer necesita TODOS los WS de la sala en el mismo proceso.
+        # Palanca futura (no hoy): mover el estado de salas a Redis/pub-sub
+        # para poder escalar horizontal; sin eso, min=max=1 es un REQUISITO
+        # de correctitud, no de costo.
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "1"
+
+        # --- OBLIGATORIO #2: CPU siempre asignada (sin throttling) ---------
+        # Por qué: entre mensajes de WebSocket la app corre tasks async que
+        # NO son parte de un request HTTP: el mixer de audio (tick cada
+        # 60ms, RoomAudioPump._run) y los watchdogs (session_watchdog,
+        # coach_watchdog, renew_watchdog). El default de Cloud Run solo
+        # asigna CPU DURANTE un request; en los silencios entre requests esos
+        # loops se congelan y el coach "se muere". `cpu-throttling: "false"`
+        # (= flag `--no-cpu-throttling`) mantiene el event loop vivo siempre.
+        # Es la causa directa citada por Infra para el riesgo #1: si este
+        # flag se resetea, el síntoma es "el coach se queda mudo en las
+        # pausas" — el bug más caro de detectar porque no tira error, solo
+        # deja de responder.
+        run.googleapis.com/cpu-throttling: "false"
+    spec:
+      # --- OBLIGATORIO #3: timeout largo para WS de sesiones de voz --------
+      # Por qué: una clase por voz es un WebSocket largo (varios minutos).
+      # El código ya renueva la sesión de Gemini Live cada ~10 min (límite
+      # propio de esa API) SIN cortar el WS del cliente — es compatible con
+      # timeouts largos, pero el default de Cloud Run (300s = 5 min) corta
+      # la conexión de golpe a mitad de una clase. 3600s = techo máximo que
+      # permite Cloud Run; cubre cualquier clase real con margen.
+      timeoutSeconds: 3600
+
+      # --- Concurrency: I/O-bound, no CPU-bound -----------------------------
+      # Por qué 100 (rango recomendado por Infra: ~80-250): cada sesión pasa
+      # la mayor parte del tiempo esperando a Gemini Live (I/O), no quemando
+      # CPU; un worker async aguanta varias sesiones en paralelo en la misma
+      # instancia sin degradar. El techo real de cuántas sesiones aguanta lo
+      # pone CPU/memoria, no este número — no es el riesgo #1, pero si el CD
+      # lo resetea al default (80) tampoco rompe nada, así que se fija igual
+      # por consistencia y para no depender del default silencioso.
+      containerConcurrency: 100
+      containers:
+        - image: PLACEHOLDER  # inyectada por el build (source-based); no se fija a mano acá
+          ports:
+            - containerPort: 8080  # matches Dockerfile ENV PORT=8080
+          resources:
+            limits:
+              # --- Memoria: 512Mi de base, 1Gi como palanca medida --------
+              # Por qué 512Mi y NO copiar el 2Gi/1Gi de otras apps del
+              # ecosistema (Fenix, munify, eventmarker): el driver de RAM de
+              # esas apps es distinto (bulk insert / footprint de arranque
+              # con gunicorn -w2). hablah-api corre gunicorn -w1 (mitad del
+              # footprint de baseline de una app -w2) y su riesgo de RAM es
+              # RUNTIME (buffers PCM del mixer + resampler × N sesiones), no
+              # arranque. Con 1 instancia y poco tráfico, 512Mi debería
+              # sobrar. Si aparece OOM con salas de varios participantes
+              # simultáneos, subir a 1Gi es un cambio de un solo flag — NO
+              # subir "por las dudas" sin medir primero (ver
+              # docs/02-infra/01-contexto-infra-y-migracion.md punto 5).
+              memory: 512Mi
+              # CPU: 1 vCPU. No es parte del riesgo #1 (el riesgo es
+              # throttling ON/OFF, no la cantidad de cores) — se deja
+              # explícito para no depender del default y porque el workload
+              # es I/O-bound (ver containerConcurrency arriba). Si Infra mide
+              # saturación de CPU con salas concurrentes, subir es otro
+              # cambio de un flag.
+              cpu: "1"
+      # Secrets/env vars (GEMINI_LIVE_MODEL, DB_*, etc.) quedan FUERA de este
+      # archivo a propósito: no es el riesgo que ataca F3-04 (ver
+      # docs/02-infra/01-contexto-infra-y-migracion.md punto 6, gestión de
+      # secrets) y no hay que hardcodear nombres/valores sin confirmarlos con
+      # Infra. Ver el episodio ya vivido de un env var mal seteado post-CD:
+      # base-compartida/CANAL_AGENTES.md MSG-20260708-1908-01
+      # (GEMINI_LIVE_MODEL sin prefijo `models/` tiró el voice).
