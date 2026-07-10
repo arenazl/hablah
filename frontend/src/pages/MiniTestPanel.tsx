@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Mic, Square, CheckCircle, Layers } from 'lucide-react'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { buildMiniWsUrl, finaltestAPI, miniAPI, type MiniTopic, type MiniStep } from '../services/api'
+import { PushToTalkControl } from '../components/PushToTalkControl'
 
 const AGES: { slug: string; label: string }[] = [
   { slug: 'mini', label: 'Mini (4-7)' },
@@ -189,6 +190,19 @@ export default function MiniTestPanel() {
             )}
             {isLive && <span style={{ color: '#22c55e', fontSize: 13 }}>{live.status === 'connecting' ? 'Conectando…' : live.status === 'speaking' ? 'Coach hablando…' : 'Escuchando…'}</span>}
             {saving && <span style={{ color: '#fbbf24', fontSize: 13 }}>Puntuando…</span>}
+          </div>
+
+          {/* Push-to-talk (F3-02): toggle + botón grande, visible solo A0-A2. */}
+          <div style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }}>
+            <PushToTalkControl
+              level={level}
+              isSessionActive={isLive}
+              pttHeld={live.pttHeld}
+              onSetMode={live.setPushToTalk}
+              onPress={live.pttPress}
+              onRelease={live.pttRelease}
+              variant="dark"
+            />
           </div>
         </div>
 

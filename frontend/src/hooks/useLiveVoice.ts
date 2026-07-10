@@ -103,6 +103,72 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     return () => clearInterval(id)
   }, [])
 
+  // ── Push-to-talk (F3-02) ──────────────────────────────────────────────────
+  // Fallback de UI para A0-A2 que NO depende de que el VAD de Gemini detecte
+  // el ARRANQUE de la voz del alumno (el VAD basado en amplitud falla con
+  // monosílabos <1s — "yes", "no", "cat"). En este modo el alumno marca su
+  // turno con un gesto explícito (mantener apretado): mientras está
+  // apretado mandamos audio real, sin ambigüedad de si "eso fue habla o
+  // ruido". Al SOLTAR no cortamos en seco (eso dejaría el turno colgado: el
+  // backend YA depende de recibir audio real, incluso silencio, para que el
+  // VAD de Gemini pueda medir cuánto silencio pasó y cerrar el turno — ver
+  // el comentario "SIEMPRE mandar el PCM" más abajo). En cambio seguimos
+  // mandando el audio real que el mismo pipeline sigue capturando (ya
+  // silencio, porque el alumno soltó) durante un colchón de PTT_FLUSH_MS,
+  // elegido a propósito por encima del tope server-side de
+  // silenceDurationMs (2000ms, ver gemini_live_engine.py) para garantizar
+  // que el VAD de Gemini cierre el turno solo dentro de esa ventana —
+  // recién ahí cortamos el envío. Fuera de ese colchón no mandamos nada: la
+  // señal de inicio/fin de turno la da el gesto del alumno, no la amplitud
+  // que Gemini decide adivinar.
+  //
+  // Modo VAD (default): shouldForwardAudio() siempre da true → cero cambio
+  // de comportamiento respecto de antes de este WO.
+  const PTT_FLUSH_MS = 2200
+  const pushToTalkRef = useRef(false)
+  const pttHeldRef = useRef(false)
+  const pttFlushUntilRef = useRef(0)
+  const [pttHeld, setPttHeldState] = useState(false)
+
+  /** Prende/apaga el modo push-to-talk para la sesión activa. La UI que
+   * llama esto es dueña de persistir la preferencia (localStorage). */
+  const setPushToTalk = useCallback((enabled: boolean) => {
+    pushToTalkRef.current = enabled
+    if (!enabled) {
+      // Si se apaga el modo con el botón todavía "apretado", no dejamos el
+      // gate trabado -- volvemos a mandar siempre (comportamiento VAD).
+      pttHeldRef.current = false
+      pttFlushUntilRef.current = 0
+      setPttHeldState(false)
+    }
+  }, [])
+
+  /** El alumno apreta el botón grande: arranca el envío de audio real. */
+  const pttPress = useCallback(() => {
+    if (!pushToTalkRef.current) return
+    pttHeldRef.current = true
+    pttFlushUntilRef.current = 0
+    setPttHeldState(true)
+  }, [])
+
+  /** El alumno suelta: seguimos mandando el audio real (ya silencio) por
+   * PTT_FLUSH_MS para que el VAD de Gemini cierre el turno con datos
+   * reales, después cortamos. */
+  const pttRelease = useCallback(() => {
+    if (!pushToTalkRef.current) return
+    pttHeldRef.current = false
+    pttFlushUntilRef.current = performance.now() + PTT_FLUSH_MS
+    setPttHeldState(false)
+  }, [])
+
+  // Gate único, compartido entre start() y startInRoom(): decide si un
+  // chunk de audio capturado se manda al WS o no.
+  const shouldForwardAudio = useCallback(() => {
+    if (!pushToTalkRef.current) return true
+    if (pttHeldRef.current) return true
+    return performance.now() < pttFlushUntilRef.current
+  }, [])
+
   // Estabilizamos opts en un ref: el caller pasa literales nuevos cada render
   // pero los callbacks adentro del hook usan optsRef.current para no
   // invalidar dependencias y causar re-renders en loop (React error #310).
@@ -198,6 +264,12 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     }
     playQueueRef.current = []
     playingRef.current = false
+    // Push-to-talk: limpiamos SOLO el estado transitorio (apretado / colchón
+    // de cierre) -- el modo elegido (pushToTalkRef) persiste para la
+    // próxima sesión de este mismo hook, igual que el resto de preferencias.
+    pttHeldRef.current = false
+    pttFlushUntilRef.current = 0
+    setPttHeldState(false)
     setStatus('ended')
     setActiveMicLabel(null)
   }, [])
@@ -545,6 +617,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           const _lvlMic = Math.min(1, rms * 4)
           optsRef.current.onMicLevel?.(_lvlMic)
           pushLevel(_lvlMic)   // circuitería central
+          if (!shouldForwardAudio()) return  // push-to-talk: soltado y fuera del colchón de cierre
           const bytes = new Uint8Array(pcmBuf)
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
@@ -618,7 +691,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
       attachWsHandlers(ws)
     },
-    [pushAudioFromTutor, cancelTutorPlayback, refreshMicDevices],
+    [pushAudioFromTutor, cancelTutorPlayback, refreshMicDevices, shouldForwardAudio],
   )
 
   // Wrapper de setStatus que skipea cuando el valor ya es el deseado.
@@ -880,6 +953,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           const liveWs = wsRef.current
           if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return
           optsRef.current.onAudioLevel?.(Math.min(1, rms * 4))
+          if (!shouldForwardAudio()) return  // push-to-talk: soltado y fuera del colchón de cierre
           const bytes = new Uint8Array(pcmBuf)
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
@@ -946,11 +1020,14 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
       attachWsHandlers(ws)
     },
-    [attachWsHandlers, refreshMicDevices],
+    [attachWsHandlers, refreshMicDevices, shouldForwardAudio],
   )
 
   return {
     start, stop, status, transcript, audioLevel, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants,
     micDevices, activeMicLabel, switchMic,
+    // Push-to-talk (F3-02): setPushToTalk prende/apaga el modo; pttPress/
+    // pttRelease los dispara el botón; pttHeld es reactivo para la UI.
+    setPushToTalk, pttPress, pttRelease, pttHeld,
   }
 }

@@ -18,6 +18,7 @@ import confetti from 'canvas-confetti'
 import { useLiveVoice } from '../../hooks/useLiveVoice'
 import LiveSubtitle from '../../components/LiveSubtitle'
 import { MicSelector } from '../../components/MicSelector'
+import { PushToTalkControl } from '../../components/PushToTalkControl'
 import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
 import { InviteFriendButton } from '../../components/InviteFriendButton'
 import { BuddyPicker } from '../../components/kids/BuddyPicker'
@@ -40,6 +41,14 @@ function colorForTopic(topicId: number): `#${string}` {
   const idx = Math.abs((topicId * 2654435761) >>> 0) % SESSION_PALETTE.length
   return SESSION_PALETTE[idx] as `#${string}`
 }
+
+// F3-02 (push-to-talk): /api/kids/me hoy NO expone el cefr_level del nene
+// (solo age_group). El catálogo kids está topeado por diseño en A2 (mini
+// 4-7 / junior 8-12 no suben a B1+ — ver docs/motor-catalogo), así que
+// TODO alumno kids cae dentro del rango A0-A2 donde push-to-talk aplica.
+// Si en el futuro el back expone el nivel real del nene acá, reemplazar
+// este valor fijo por el dato real.
+const KIDS_ASSUMED_LEVEL = 'A2'
 
 const CSS = `
 .kids-session-root { height:100vh; height:100dvh; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
@@ -491,6 +500,18 @@ export function KidsSession() {
                 style={{ fontSize: 11, color: 'rgba(255,255,255,.4)' }}
               />
             )}
+
+            {/* Push-to-talk (F3-02): fallback de UI que no depende del VAD
+                de Gemini para el fin de turno. Kids siempre cae en A0-A2. */}
+            <PushToTalkControl
+              level={KIDS_ASSUMED_LEVEL}
+              isSessionActive={isActive}
+              pttHeld={live.pttHeld}
+              onSetMode={live.setPushToTalk}
+              onPress={live.pttPress}
+              onRelease={live.pttRelease}
+              variant="dark"
+            />
 
             {live.status === 'idle' && topic?.keywords && topic.keywords.length > 0 && (
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 480 }}>

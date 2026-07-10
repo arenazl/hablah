@@ -22,6 +22,7 @@ import { Gate, useFeatureFlag, type FeatureKey } from '../hooks/useFeatureFlag'
 import { KidsParentSwitch } from './kids/KidsParentSwitch'
 import { InviteFriendButton } from '../components/InviteFriendButton'
 import { MicSelector } from '../components/MicSelector'
+import { PushToTalkControl } from '../components/PushToTalkControl'
 
 function KidsParentSwitchLazy() {
   return <KidsParentSwitch />
@@ -1592,6 +1593,20 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
             </span>
             <MicSelector devices={live.micDevices} activeLabel={live.activeMicLabel} onSelect={live.switchMic} />
           </div>
+        </div>
+
+        {/* Push-to-talk (F3-02): fallback de UI para A0-A2, no depende del
+            VAD de Gemini para el fin de turno. Oculto en B1+. */}
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '4px 0 14px' }}>
+          <PushToTalkControl
+            level={profile?.user?.cefr_level}
+            isSessionActive={live.status === 'listening' || live.status === 'speaking' || live.status === 'connecting'}
+            pttHeld={live.pttHeld}
+            onSetMode={live.setPushToTalk}
+            onPress={live.pttPress}
+            onRelease={live.pttRelease}
+            variant="dark"
+          />
         </div>
       </div>
 
