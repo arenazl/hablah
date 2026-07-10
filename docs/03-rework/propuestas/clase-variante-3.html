@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Habláh — Clase · Variante 3: Presencia</title>
+<style>
+  :root {
+    --font-sans: -apple-system, 'Trebuchet MS', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --bg: oklch(96.5% 0.014 90);
+    --surface: oklch(99.3% 0.006 90);
+    --surface-2: oklch(93% 0.02 90);
+    --ink: oklch(24% 0.03 40);
+    --ink-soft: oklch(44% 0.035 45);
+    --ink-faint: oklch(60% 0.03 50);
+    --border: oklch(88% 0.02 70);
+    --primary: oklch(70% 0.145 163);
+    --primary-dark: oklch(52% 0.11 163);
+    --warm: oklch(80% 0.14 70);
+    --warm-dark: oklch(62% 0.15 45);
+    --radius-lg: 32px;
+    --radius-pill: 999px;
+    --dur-slow: 9s;
+    --dur-fast: 180ms;
+    --ease: cubic-bezier(.22,.85,.32,1);
+  }
+  :root[data-theme="dark"] {
+    --bg: oklch(17% 0.025 50);
+    --surface: oklch(21% 0.025 50);
+    --surface-2: oklch(25% 0.03 50);
+    --ink: oklch(95% 0.012 80);
+    --ink-soft: oklch(78% 0.02 75);
+    --ink-faint: oklch(58% 0.02 70);
+    --border: oklch(32% 0.03 55);
+    --primary: oklch(75% 0.15 163);
+    --primary-dark: oklch(58% 0.13 163);
+    --warm: oklch(78% 0.15 72);
+    --warm-dark: oklch(66% 0.16 50);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: oklch(17% 0.025 50); --surface: oklch(21% 0.025 50); --surface-2: oklch(25% 0.03 50);
+      --ink: oklch(95% 0.012 80); --ink-soft: oklch(78% 0.02 75); --ink-faint: oklch(58% 0.02 70);
+      --border: oklch(32% 0.03 55); --primary: oklch(75% 0.15 163); --primary-dark: oklch(58% 0.13 163);
+      --warm: oklch(78% 0.15 72); --warm-dark: oklch(66% 0.16 50);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; overflow-x: hidden; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--font-sans);
+    min-height: 100vh; transition: background 300ms var(--ease), color 300ms var(--ease);
+  }
+
+  .demo-strip {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 8px 16px; font-size: 11px; letter-spacing: .01em; color: var(--ink-faint);
+    border-bottom: 1px dashed var(--border); background: var(--surface-2); flex-wrap: wrap;
+  }
+  .demo-strip b { color: var(--ink-soft); }
+  .demo-strip .ctrls { display: flex; gap: 6px; flex-wrap: wrap; }
+  .demo-btn {
+    font-family: var(--font-sans); font-size: 11px; padding: 6px 12px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink-soft); font-weight: 600;
+    cursor: pointer; transition: all var(--dur-fast) var(--ease);
+  }
+  .demo-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+  .demo-btn:hover { border-color: var(--primary); }
+
+  .stage-outer { padding: 18px; min-height: calc(100vh - 40px); display: flex; }
+  .stage {
+    flex: 1; border-radius: var(--radius-lg); background: var(--surface);
+    box-shadow: 0 30px 70px -30px oklch(0% 0 0 / 22%);
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 26px 22px calc(26px + env(safe-area-inset-bottom, 0px));
+    position: relative; overflow: hidden;
+  }
+  .stage::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(900px 420px at 50% 108%, oklch(80% 0.14 70 / 14%) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .top-row { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: space-between; z-index: 1; }
+  .topic-chip { display: flex; flex-direction: column; gap: 2px; }
+  .topic-eyebrow { font-size: 11px; font-weight: 700; color: var(--warm-dark); }
+  .topic-title { font-size: 19px; font-weight: 800; letter-spacing: -.01em; color: var(--ink); }
+
+  .exit-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; border-radius: 14px;
+    border: none; background: var(--surface-2); color: var(--ink-soft);
+    cursor: pointer; transition: all var(--dur-fast) var(--ease);
+  }
+  .exit-btn:hover { background: var(--border); color: var(--ink); }
+
+  .aura-zone { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; z-index: 1; }
+
+  .blob-wrap { position: relative; width: 260px; height: 260px; display: grid; place-items: center; }
+  .blob {
+    /* Sin mix-blend-mode a propósito: multiply se ve bien en fondo claro pero apaga
+       el color casi a negro en el tema oscuro. Blur + opacity da el mismo halo organico
+       y funciona igual en las dos pieles. */
+    position: absolute; border-radius: 50%; filter: blur(20px);
+    opacity: .55;
+  }
+  .blob-a { width: 200px; height: 200px; background: var(--primary); animation: drift-a var(--dur-slow) ease-in-out infinite; }
+  .blob-b { width: 160px; height: 160px; background: var(--warm); animation: drift-b calc(var(--dur-slow) * 1.2) ease-in-out infinite; }
+  .core-presence {
+    position: relative; width: 132px; height: 132px; border-radius: 50%;
+    background: radial-gradient(circle at 36% 30%, oklch(88% 0.09 130) 0%, var(--primary) 45%, var(--primary-dark) 100%);
+    box-shadow: 0 20px 44px -16px var(--primary-dark);
+    animation: presence-breathe 4.5s ease-in-out infinite;
+  }
+  .glint { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: oklch(98% 0.02 100 / 70%); top: 26%; left: 30%; filter: blur(2px); animation: glint-move 6s ease-in-out infinite; }
+
+  @keyframes drift-a { 0%,100% { transform: translate(-18px,-6px) scale(1); } 50% { transform: translate(14px,10px) scale(1.08); } }
+  @keyframes drift-b { 0%,100% { transform: translate(20px,10px) scale(1); } 50% { transform: translate(-16px,-12px) scale(1.06); } }
+  @keyframes presence-breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+  @keyframes glint-move { 0%,100% { transform: translate(0,0); opacity: .7; } 50% { transform: translate(6px,4px); opacity: .95; } }
+
+  .blob-wrap[data-state="pensando"] .core-presence { background: radial-gradient(circle at 36% 30%, oklch(92% 0.08 90) 0%, var(--warm) 45%, var(--warm-dark) 100%); animation-duration: 2.6s; }
+  .blob-wrap[data-state="pensando"] .blob-a, .blob-wrap[data-state="pensando"] .blob-b { animation-duration: 2.6s; }
+  .blob-wrap[data-state="hablando"] .core-presence { animation-duration: 1.3s; }
+  .blob-wrap[data-state="hablando"] .glint { animation-duration: 1.3s; }
+
+  .state-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--ink-soft); }
+  .state-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+
+  .prompt-line {
+    max-width: 440px; text-align: center; font-size: 17px; font-weight: 500;
+    line-height: 1.5; color: var(--ink); padding: 14px 20px; border-radius: 20px;
+    background: var(--surface-2);
+  }
+
+  .bottom-row { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: center; gap: 16px; z-index: 1; }
+  .mic-btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px; border-radius: var(--radius-pill);
+    background: var(--primary); color: white; border: none;
+    font-family: var(--font-sans); font-size: 15px; font-weight: 800;
+    cursor: pointer; transition: transform var(--dur-fast) var(--ease); box-shadow: 0 12px 28px -10px var(--primary-dark);
+  }
+  .mic-btn:hover { transform: translateY(-2px) scale(1.02); }
+  .transcript-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: var(--radius-pill);
+    background: var(--surface-2); border: none; color: var(--ink-soft);
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: all var(--dur-fast) var(--ease);
+  }
+  .transcript-btn:hover { background: var(--border); color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob-a, .blob-b, .core-presence, .glint { animation: none !important; }
+  }
+  @media (max-width: 480px) {
+    .blob-wrap { width: 210px; height: 210px; }
+    .core-presence { width: 106px; height: 106px; }
+    .topic-title { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="demo-strip">
+    <span><b>MAQUETA · Variante 3</b> — Presencia / retrato abstracto. Estática, no requiere micrófono.</span>
+    <div class="ctrls">
+      <button class="demo-btn active" data-state-btn="escuchando">Escuchando</button>
+      <button class="demo-btn" data-state-btn="pensando">Pensando</button>
+      <button class="demo-btn" data-state-btn="hablando">Hablando</button>
+      <button class="demo-btn" id="theme-toggle">Tema: claro</button>
+    </div>
+  </div>
+
+  <div class="stage-outer">
+    <div class="stage">
+      <div class="top-row">
+        <div class="topic-chip">
+          <span class="topic-eyebrow">Hoy con Coach</span>
+          <span class="topic-title">Tu primer día en la oficina</span>
+        </div>
+        <button class="exit-btn" aria-label="Salir de la clase" title="Salir">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="aura-zone">
+        <div class="blob-wrap" data-state="escuchando" id="aura">
+          <div class="blob blob-a"></div>
+          <div class="blob blob-b"></div>
+          <div class="core-presence"><div class="glint"></div></div>
+        </div>
+        <div class="state-label"><span class="state-dot"></span><span id="state-text">Te estoy escuchando</span></div>
+        <p class="prompt-line" id="prompt-line">"Contame — ¿cómo te fue en tu primer día?"</p>
+      </div>
+
+      <div class="bottom-row">
+        <button class="transcript-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Transcripción
+        </button>
+        <button class="mic-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+          Mantené para hablar
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  var states = {
+    escuchando: { text: 'Te estoy escuchando', prompt: '"Contame — ¿cómo te fue en tu primer día?"' },
+    pensando:   { text: 'Pensando la respuesta', prompt: '…' },
+    hablando:   { text: 'Hablando', prompt: '"Qué bueno que pudiste presentarte — contame algo más del equipo."' }
+  };
+  var aura = document.getElementById('aura');
+  var stateText = document.getElementById('state-text');
+  var promptLine = document.getElementById('prompt-line');
+  document.querySelectorAll('[data-state-btn]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('[data-state-btn]').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var s = btn.getAttribute('data-state-btn');
+      aura.setAttribute('data-state', s);
+      stateText.textContent = states[s].text;
+      promptLine.textContent = states[s].prompt;
+    });
+  });
+  var themeBtn = document.getElementById('theme-toggle');
+  themeBtn.addEventListener('click', function () {
+    var root = document.documentElement;
+    var isDark = root.getAttribute('data-theme') === 'dark';
+    root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeBtn.textContent = 'Tema: ' + (isDark ? 'claro' : 'oscuro');
+  });
+</script>
+</body>
+</html>
