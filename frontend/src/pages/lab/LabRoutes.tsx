@@ -22,6 +22,7 @@ const InfraTestPanel = lazy(() => import('../InfraTestPanel'))
 const AudioTuningPage = lazy(() =>
   import('../AudioTuningPage').then(m => ({ default: m.AudioTuningPage })),
 )
+const LabClase = lazy(() => import('./LabClase'))
 const KidsKitPanel = lazy(() => import('../kids/KidsKitPanel'))
 const KidsGaleriaPanel = lazy(() => import('../kids/KidsGaleriaPanel'))
 const KidsCurarPanel = lazy(() => import('../kids/KidsCurarPanel'))
@@ -40,6 +41,7 @@ export default function LabRoutes() {
       <Route path="transcripciones-vocab" element={<TranscripcionesVocabPanel />} />
       <Route path="infra" element={<InfraTestPanel />} />
       <Route path="tune" element={<AudioTuningPage />} />
+      <Route path="clase" element={<LabClase />} />
       <Route path="kids/kit" element={<KidsKitPanel />} />
       <Route path="kids/galeria" element={<KidsGaleriaPanel />} />
       <Route path="kids/curar" element={<KidsCurarPanel />} />
