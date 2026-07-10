@@ -78,9 +78,10 @@ El gate del modelo más fuerte para el coach sigue disponible (banco `/lab/llm`)
 | Pendiente | Por qué quedó | Prioridad |
 |---|---|---|
 | **F4-01** Partir `WebApp.tsx` (3.744 líneas) | Refactor grande; se evitó por riesgo de corte de sesión dejando el producto roto. Refactor puro, sin cambio de comportamiento. | Media (deuda interna) |
-| **F2 remanente**: UI del visor de historia en `/lab/mini-test` + cargar variantes de arranque en `student_types` | El subagente se cortó por límite de sesión tras hacer el core. El motor ya usa la historia; falta la herramienta de test y más variedad de apertura. | Media |
-| **F4-06** Visual reactivo kids | Depende de que elijas la dirección visual (F4-05). | Baja (tras F4-05) |
+| **F2 remanente**: UI del visor de historia en `/lab/mini-test` + cargar variantes de arranque en `student_types` | El subagente se cortó por límite de sesión tras hacer el core. El motor ya usa la historia; falta la herramienta de test y más variedad de apertura. Punto de retome en el WO. | Media |
 | **F3-01** test de regresión de `app_config` | El blindaje ya está; falta el test que lo proteja. | Baja |
+
+**F4-06 (visual reactivo kids): HECHO** (2026-07-10) — reactivo sobre la piel actual, cero overhead en la conversación (no toca motor/audio; cache Lottie en memoria).
 
 ---
 

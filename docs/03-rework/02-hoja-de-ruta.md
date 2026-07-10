@@ -60,7 +60,7 @@
 | F4-03 | Flujo de pantallas del producto (IA de navegación) | **propuesta lista (gate)** → `docs/03-rework/propuestas/01-flujo-pantallas.md` |
 | F4-04 | Post-clase visible: reporte + progreso ("tu profe se acuerda") | hecho |
 | F4-05 | Sistema de diseño y dirección visual (gate del dueño) | **propuesta + 3 maquetas HTML (gate)** → `docs/03-rework/propuestas/02-sistema-diseno.md` |
-| F4-06 | Circuito visual reactivo kids (direccional, opt-in) | **PENDIENTE** (depende de F4-05 elegido) |
+| F4-06 | Circuito visual reactivo kids (direccional, opt-in) | hecho (2026-07-10) — reactivo sobre la piel actual; cero overhead en la conversación (no toca motor/audio, cache Lottie en memoria) |
 | F5-01 | SEO técnico (prerender, sitemap, metadata, schema) | hecho |
 | F5-02 | SEO de contenido: los 99 tópicos como páginas | hecho (99 páginas, 750+ palabras c/u) |
 | F5-03 | LLM indexing / AEO (llms.txt, FAQ, datos estructurados) | hecho |

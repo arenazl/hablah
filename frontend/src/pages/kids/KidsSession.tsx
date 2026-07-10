@@ -10,7 +10,7 @@
  *
  * Si no hay kids_token (modo demo) muestra mensaje pidiendo al padre crear perfil.
  */
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { ArrowLeft, Mic, RefreshCw, Square, Lock } from 'lucide-react'
 import { toast } from 'sonner'
@@ -24,6 +24,10 @@ import { InviteFriendButton } from '../../components/InviteFriendButton'
 import { BuddyPicker } from '../../components/kids/BuddyPicker'
 import { KidsBuddy } from '../../components/kids/KidsBuddy'
 import { getBuddyById, getSavedBuddyId, saveBuddyId } from '../../components/kids/kidsBuddies'
+import {
+  KidsVisualCueOverlay, preloadVisualCueAssets, singularizeEnglish, type VisualCueItem,
+} from '../../components/kids/KidsVisualCue'
+import { motorAPI } from '../../services/api'
 
 interface TopicData {
   id: number
@@ -195,6 +199,102 @@ export function KidsSession() {
   const topicNumericId = topic?.id ?? (topicId ? parseInt(topicId, 10) : 1)
   const color = colorForTopic(isNaN(topicNumericId) ? 1 : topicNumericId)
 
+  // ── F4-06: circuito visual REACTIVO (slice mínimo) ─────────────────────
+  // Precarga los assets de kids_visual_vocab que aplican a ESTE tópico, y
+  // escucha la transcripción del coach (ya la expone useLiveVoice en
+  // live.transcript) para mostrar el visual cuando el coach nombra la
+  // palabra. Nunca al revés: si no la nombra, no aparece nada. Cero
+  // cambios al prompt/motor -- esto es puro listener sobre texto ya emitido.
+  const vocabMapRef = useRef<Map<string, VisualCueItem>>(new Map())
+  const [cue, setCue] = useState<{ item: VisualCueItem; leaving: boolean } | null>(null)
+  const cueQueueRef = useRef<VisualCueItem[]>([])
+  const cueBusyRef = useRef(false)
+  const cueTimeoutsRef = useRef<number[]>([])
+  const CUE_SHOW_MS = 3600
+  const CUE_EXIT_MS = 300
+
+  const advanceCueQueue = useCallback(() => {
+    if (cueBusyRef.current) return
+    const next = cueQueueRef.current.shift()
+    if (!next) return
+    cueBusyRef.current = true
+    setCue({ item: next, leaving: false })
+    const hideAt = window.setTimeout(() => {
+      setCue((c) => (c ? { ...c, leaving: true } : c))
+      const clearAt = window.setTimeout(() => {
+        setCue(null)
+        cueBusyRef.current = false
+        advanceCueQueue()
+      }, CUE_EXIT_MS)
+      cueTimeoutsRef.current.push(clearAt)
+    }, CUE_SHOW_MS)
+    cueTimeoutsRef.current.push(hideAt)
+  }, [])
+
+  const enqueueVisual = useCallback((item: VisualCueItem) => {
+    if (cueQueueRef.current.length >= 4) return  // cola chica: evita saturar si el coach nombra varias seguidas
+    cueQueueRef.current.push(item)
+    advanceCueQueue()
+  }, [advanceCueQueue])
+
+  // Carga + precarga del vocab visual del tópico (topic_kids_vocab join
+  // kids_visual_vocab, endpoint ya existente -- ver KidsGaleriaPanel).
+  useEffect(() => {
+    vocabMapRef.current = new Map()
+    if (isFree || !topic?.id) return  // tema libre: no hay tópico curado con vocab, no forzamos nada
+    let cancelled = false
+    motorAPI.kidsTopicVocab()
+      .then((all) => {
+        if (cancelled) return
+        const mine = all.find((t) => t.topic_id === topic.id)
+        if (!mine || mine.vocab.length === 0) return
+        const map = new Map<string, VisualCueItem>()
+        for (const v of mine.vocab) map.set(v.word_en.toLowerCase(), v)
+        vocabMapRef.current = map
+        preloadVisualCueAssets(mine.vocab)
+      })
+      .catch(() => {})  // fail-soft: sin vocab precargado, la clase sigue igual (solo sin visual reactivo)
+    return () => { cancelled = true }
+  }, [isFree, topic?.id])
+
+  // Listener sobre la transcripción del coach (live.transcript, acumulada por
+  // useLiveVoice desde los transcript_chunk que manda el backend). Re-tokeniza
+  // SIEMPRE el texto completo del turno AI actual (no solo lo nuevo) porque
+  // los chunks pueden cortar una palabra a la mitad -- así nunca se pierde un
+  // match por el corte. matchedInLineRef cuenta ocurrencias ya disparadas
+  // para no re-mostrar la misma mención mientras el texto sigue creciendo.
+  const prevTranscriptLenRef = useRef(0)
+  const matchedInLineRef = useRef<Map<string, number>>(new Map())
+  useEffect(() => {
+    const arr = live.transcript
+    if (arr.length !== prevTranscriptLenRef.current) {
+      prevTranscriptLenRef.current = arr.length
+      matchedInLineRef.current = new Map()  // arrancó una línea nueva -> reiniciar conteo
+    }
+    const last = arr[arr.length - 1]
+    if (!last || last.who !== 'ai') return
+    const vocabMap = vocabMapRef.current
+    if (vocabMap.size === 0) return
+    const tokens = last.text.toLowerCase().match(/[a-z']+/g) || []
+    const seenThisPass = new Map<string, number>()
+    for (const tok of tokens) {
+      const canon = vocabMap.has(tok) ? tok : singularizeEnglish(tok)
+      if (!vocabMap.has(canon)) continue
+      const n = (seenThisPass.get(canon) ?? 0) + 1
+      seenThisPass.set(canon, n)
+      if (n > (matchedInLineRef.current.get(canon) ?? 0)) {
+        matchedInLineRef.current.set(canon, n)
+        enqueueVisual(vocabMap.get(canon)!)
+      }
+    }
+  }, [live.transcript, enqueueVisual])
+
+  // Limpieza de timers pendientes al desmontar (no es el cleanup de la
+  // sesión de voz -- ese ya existe más abajo).
+  useEffect(() => {
+    return () => { cueTimeoutsRef.current.forEach((id) => window.clearTimeout(id)); cueTimeoutsRef.current = [] }
+  }, [])
+
   // Si no vino del state (deeplink), fetchear topico
   useEffect(() => {
     if (topic || !topicId || topicId === 'free') return
@@ -311,6 +411,8 @@ export function KidsSession() {
   return (
     <div className="kids-session-root">
       <style>{CSS}</style>
+
+      <KidsVisualCueOverlay item={cue?.item ?? null} leaving={cue?.leaving ?? false} />
 
       {showSuccess && (
         <div style={{
