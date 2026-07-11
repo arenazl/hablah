@@ -2,7 +2,7 @@
   "name": "Habláh",
   "short_name": "Habláh",
   "description": "Plataforma adaptativa de aprendizaje de idiomas con IA",
-  "start_url": "/",
+  "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
