@@ -20,7 +20,7 @@ from core.config import settings  # noqa: E402
 
 APPLY = "--apply" in sys.argv
 OUT_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "public", "emoji-svg"))
-PREFIXES = ["twemoji", "fluent-emoji-flat", "noto"]
+PREFIXES = ["twemoji", "fluent-emoji-flat", "noto", "emojione", "openmoji", "streamline-emojis"]
 
 
 def fetch_svg(word: str) -> str | None:

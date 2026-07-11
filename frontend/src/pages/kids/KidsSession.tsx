@@ -131,7 +131,10 @@ const CSS = `
 .kids-talk-fab[data-state="coach"] { background:linear-gradient(180deg,#FFC93D,#F09D00); box-shadow:0 12px 30px rgba(240,157,0,.4); animation:kids-fab-breathe 2.6s ease-in-out infinite; }
 .kids-talk-fab[data-state="your-turn"] { background:linear-gradient(180deg,#34E38A,#17B569); box-shadow:0 12px 30px rgba(23,181,105,.5); animation:kids-fab-breathe 1.2s ease-in-out infinite; }
 .kids-talk-fab[data-state="your-turn"]::before { content:""; position:absolute; inset:0; border-radius:50%; box-shadow:0 0 0 0 rgba(52,227,138,.6); animation:kids-fab-ping 1.2s ease-out infinite; }
-.kids-talk-fab[data-state="talking"] { background:linear-gradient(180deg,#34E38A,#17B569); box-shadow:0 0 34px rgba(52,227,138,.65); }
+/* TALKING = feedback INSTANTÁNEO al toque: pop + queda OUTLINED (vacío con borde verde).
+   El nene ve al instante que ya lo tocó — no hace falta dejarlo apretado. */
+.kids-talk-fab[data-state="talking"] { background:rgba(52,227,138,.1); border:4px solid #34E38A; color:#34E38A; box-shadow:0 0 22px rgba(52,227,138,.35); animation:kids-fab-pop .3s cubic-bezier(.2,.8,.2,1); }
+@keyframes kids-fab-pop { 0%{ transform:scale(.86) } 55%{ transform:scale(1.1) } 100%{ transform:scale(1) } }
 .kids-talk-fab[data-state="connecting"] { background:rgba(255,255,255,.14); color:rgba(255,255,255,.7); animation:kids-fab-breathe 1.6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce){ .kids-start-fab, .kids-start-fab::before, .kids-talk-fab, .kids-talk-fab::before { animation:none !important; } }
 
