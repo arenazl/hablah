@@ -46,7 +46,19 @@ function colorForTopic(topicId: number): `#${string}` {
 
 
 const CSS = `
-.kids-session-root { height:100vh; height:100dvh; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
+.kids-session-root { position:relative; height:100vh; height:100dvh; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
+
+/* Ambiente colorido en los costados: blobs difusos PRECARGADOS (CSS puro, cero red),
+   con drift lento compositor-friendly. El color principal sale del tópico. */
+.kids-amb { position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none; z-index:0; will-change:transform; }
+.kids-amb-a { left:-120px; top:14%; width:400px; height:400px; opacity:.5; animation:kids-amb-a 8s ease-in-out infinite; }
+.kids-amb-b { right:-120px; top:40%; width:360px; height:360px; opacity:.44; background:#7C5CFF; animation:kids-amb-b 10s ease-in-out infinite; }
+.kids-amb-c { left:28%; bottom:-130px; width:340px; height:340px; opacity:.34; background:#22D3EE; animation:kids-amb-c 12s ease-in-out infinite; }
+@keyframes kids-amb-a { 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(34px,-26px) scale(1.12) } }
+@keyframes kids-amb-b { 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(-30px,24px) scale(1.09) } }
+@keyframes kids-amb-c { 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(26px,-18px) scale(1.07) } }
+@media (prefers-reduced-motion: reduce){ .kids-amb { animation:none !important; } }
+.kids-session-top, .kids-session-content, .kids-start-bar { position:relative; z-index:1; }
 .kids-session-top { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; }
 .kids-session-back { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:99px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); color:#fff; font-size:13px; font-weight:700; backdrop-filter:blur(8px); cursor:pointer; }
 .kids-session-back:hover { background:rgba(255,255,255,.16); }
@@ -75,7 +87,7 @@ const CSS = `
 .kids-end-btn:hover { transform:translateY(-1px); background:rgba(239,68,68,.26); }
 
 /* Inicio kids: palabras del día en card */
-.kids-words-card { display:flex; flex-direction:column; align-items:center; gap:10px; padding:14px 18px; border-radius:20px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); max-width:440px; }
+.kids-words-card { display:flex; flex-direction:column; align-items:center; gap:10px; padding:14px 18px; border-radius:20px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.16); max-width:440px; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 14px 40px rgba(0,0,0,.25); }
 .kids-words-card .wc-title { font-family:'JetBrains Mono',ui-monospace,monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:rgba(232,236,234,.55); }
 .kids-words-card .wc-chips { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
 .kids-word-chip { font-size:13px; padding:6px 14px; border-radius:99px; background:rgba(0,179,126,.14); border:1px solid rgba(0,179,126,.3); color:#9CFCD2; font-weight:700; }
@@ -123,7 +135,7 @@ const CSS = `
 .kids-mic-big .lbl { font-size:14px; font-weight:700; color:rgba(255,255,255,.55); transition:color .25s; white-space:nowrap; }
 .kids-mic-big.live .lbl { color:#22C55E; }
 
-.kids-transcript { width:100%; max-width:680px; padding:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px; display:flex; flex-direction:column; gap:6px; }
+.kids-transcript { width:100%; max-width:680px; padding:12px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.16); border-radius:20px; display:flex; flex-direction:column; gap:6px; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 14px 40px rgba(0,0,0,.25); }
 .kids-transcript-line { font-size:14px; line-height:1.45; padding:6px 12px; border-radius:10px; max-width:90%; }
 .kids-transcript-line.ai { align-self:flex-start; background:rgba(0,179,126,.18); color:#9CFCD2; }
 .kids-transcript-line.user { align-self:flex-end; background:rgba(255,255,255,.08); color:#fff; }
@@ -462,6 +474,11 @@ export function KidsSession() {
   return (
     <div className="kids-session-root">
       <style>{CSS}</style>
+
+      {/* Ambiente colorido precargado (CSS puro): el blob principal toma el color del tópico */}
+      <div className="kids-amb kids-amb-a" style={{ background: color }} aria-hidden />
+      <div className="kids-amb kids-amb-b" aria-hidden />
+      <div className="kids-amb kids-amb-c" aria-hidden />
 
       <KidsVisualCueOverlay item={cue?.item ?? null} leaving={cue?.leaving ?? false} />
 
