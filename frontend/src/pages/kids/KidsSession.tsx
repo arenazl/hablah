@@ -300,11 +300,13 @@ export function KidsSession() {
     vocabMapRef.current = new Map()
     let cancelled = false
     // Biblioteca COMPLETA (~1000 palabras) + vocab del tópico (solo para priorizar flotantes).
+    // Fallback: si el endpoint nuevo aún no está deployado, se arma del endpoint por-tópico.
     Promise.all([
-      motorAPI.kidsVisualVocabAll(),
+      motorAPI.kidsVisualVocabAll().catch(() => null),
       motorAPI.kidsTopicVocab().catch(() => []),
     ])
-      .then(([library, byTopic]) => {
+      .then(([libraryOrNull, byTopic]) => {
+        const library = libraryOrNull ?? byTopic.flatMap((t) => t.vocab)
         if (cancelled || library.length === 0) return
         const map = new Map<string, VisualCueItem>()
         for (const v of library) {
