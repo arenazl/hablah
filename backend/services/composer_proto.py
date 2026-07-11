@@ -267,6 +267,29 @@ def _get_story_spine(topic, topic_content: Optional[dict]) -> str:
     return ""
 
 
+def _get_narrative_style(std: dict, app_config: Optional[dict], session_seed: int) -> str:
+    """Bloque 8b — TIPO de narrativa: catálogo chico (~10 estilos: cuentito, misión, misterio,
+    charla informal, pseudo-terapia...) gateado por EDAD y rotado por semilla (mecanismo F2-03).
+    Inyecta el CÓMO-de-hoy del tejido; la LEY de tejer vive en la capa universal (11-12) y la
+    historia concreta la GENERA el modelo en vivo (anti-goal: no persistir cuentos por tópico).
+    OPCIONAL: sin catálogo en app_config.lesson_approaches, se omite — cero acople."""
+    raw = (app_config or {}).get("lesson_approaches")
+    if not raw:
+        return ""
+    try:
+        import json as _json
+        styles = _json.loads(raw) if isinstance(raw, str) else raw
+    except Exception:
+        return ""
+    slug = (std.get("slug") or "").lower()
+    apt = [s for s in styles if not s.get("bands") or slug in [str(b).lower() for b in s["bands"]]]
+    if not apt:
+        return ""
+    pick = _pick(apt, _derive(session_seed, "narrative"))
+    return (f"<lesson_approach>\n  Style: {pick.get('key')}\n"
+            f"  Directive: {pick.get('directive')}\n</lesson_approach>")
+
+
 def _interp(s: str, name: str, topic_title: str, first_word: str) -> str:
     return (s.replace("{name}", name).replace("{topic}", topic_title)
              .replace("{first_vocab}", first_word).replace("{word}", first_word))
@@ -423,6 +446,7 @@ def compose_proto_prompt(
         _get_output_rules(app_config),              # opcional (config runtime)
         _get_vocabulary_block(topic, topic_content, ctx, lv.get("vocab_depth"), session_seed),
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
+        _get_narrative_style(std, app_config, session_seed),  # opcional: TIPO de narrativa (rota por semilla, gateado por edad)
         _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
         _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
