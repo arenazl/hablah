@@ -9,7 +9,7 @@ import json
 import urllib.request
 import urllib.error
 
-API = "https://hablah-api-abcaf6c43a5d.herokuapp.com/api"
+API = "https://hablah-api-685973917497.us-east4.run.app/api"
 FRONT = "https://hablah.com.ar"
 USERS = {
     "lucas": ("lucas@hablah.app", "123"),

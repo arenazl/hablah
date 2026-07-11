@@ -15,8 +15,8 @@ import wave
 
 import websockets
 
-BASE = "wss://hablah-api-abcaf6c43a5d.herokuapp.com/api/voice/ws_llm_test?age_group=mini&level=A0&voice=Aoede"
-RESULT_URL = "https://hablah-api-abcaf6c43a5d.herokuapp.com/api/motor/infra-result"
+BASE = "wss://hablah-api-685973917497.us-east4.run.app/api/voice/ws_llm_test?age_group=mini&level=A0&voice=Aoede"
+RESULT_URL = "https://hablah-api-685973917497.us-east4.run.app/api/motor/infra-result"
 TARGET = 10          # 10 turnos MEDIDOS por combo (robusto vs microcortes)
 PER_SESSION = 7      # turnos por sesión WS (1 descartado + ~6); evita el límite ~90s de Gemini
 MAX_SESSIONS = 4     # reconexiones máximas por combo

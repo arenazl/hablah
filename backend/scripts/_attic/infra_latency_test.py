@@ -18,11 +18,11 @@ import wave
 import websockets
 
 HOSTS = {
-    "heroku": "wss://hablah-api-abcaf6c43a5d.herokuapp.com/api",
+    "useast4": "wss://hablah-api-685973917497.us-east4.run.app/api",
     "gcloud": "wss://hablah-api-test-233354572460.us-central1.run.app/api",
 }
 WS_PATH = "/voice/ws_llm_test?age_group=mini&level=A0&voice=Aoede"
-RESULT_URL = "https://hablah-api-abcaf6c43a5d.herokuapp.com/api/motor/infra-result"
+RESULT_URL = "https://hablah-api-685973917497.us-east4.run.app/api/motor/infra-result"
 TURNS = 6            # se descarta el #1 -> 5 medidos
 RESP_TIMEOUT = 18
 CTX = ssl.create_default_context(); CTX.check_hostname = False; CTX.verify_mode = ssl.CERT_NONE

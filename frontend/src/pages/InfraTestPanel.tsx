@@ -1,4 +1,4 @@
-/* /infra — prueba de cañerías Heroku vs Google Cloud usando el MOTOR REAL.
+/* /infra — prueba de cañerías us-east4 vs us-central1 usando el MOTOR REAL.
  *
  * Grabás tu voz UNA vez. Cada botón abre una sesión de voz real (/voice/ws_llm_test,
  * sin auth, prompt real del motor + Gemini Live) contra ese host, reproduce tu clip
@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { motorAPI, type InfraSummary } from '../services/api'
 
 const HOSTS: Record<string, { label: string; wss: string }> = {
-  heroku: { label: 'Heroku', wss: 'wss://hablah-api-abcaf6c43a5d.herokuapp.com/api' },
+  useast4: { label: 'Google us-east4 (prod)', wss: 'wss://hablah-api-685973917497.us-east4.run.app/api' },
   gcloud: { label: 'Google Cloud', wss: 'wss://hablah-api-test-233354572460.us-central1.run.app/api' },
 }
 const WS_PATH = '/voice/ws_llm_test?age_group=mini&level=A0&voice=Aoede'
@@ -131,7 +131,7 @@ export default function InfraTestPanel() {
       <div style={{ maxWidth: 880, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 18 }}>
         <div>
           <h1 style={{ fontSize: 26, fontWeight: 900, margin: '0 0 4px' }}>Prueba de infra — latencia del motor real</h1>
-          <p style={{ color: '#9aa6e0', margin: 0 }}>Heroku vs Google Cloud · mismo clip, mismo motor, mismo Gemini · {TURNS - 1} turnos medidos (se descarta el #1)</p>
+          <p style={{ color: '#9aa6e0', margin: 0 }}>us-east4 vs us-central1 · mismo clip, mismo motor, mismo Gemini · {TURNS - 1} turnos medidos (se descarta el #1)</p>
         </div>
 
         {/* 1. grabar */}

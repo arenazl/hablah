@@ -555,7 +555,7 @@ export interface MotorPresetRun {
 
 /* ────────────── VOICE WS ────────────── */
 /** Base de WS apuntando al backend real (no via proxy de Netlify, que rompe
- * el WebSocket upgrade y devuelve 404). Ej: wss://hablah-api-XXX.herokuapp.com/api */
+ * el WebSocket upgrade y devuelve 404). Ej: wss://hablah-api-685973917497.us-east4.run.app/api */
 export function buildWsBase(): string {
   const httpBase = API_URL.replace(/\/$/, '')
   const fullBase = httpBase.startsWith('/') ? `${window.location.origin}${httpBase}` : httpBase

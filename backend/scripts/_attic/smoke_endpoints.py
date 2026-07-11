@@ -4,7 +4,7 @@ Recorre los 43 endpoints, los llama en orden con auth real, y reporta
 cuáles devuelven status esperado vs cuáles fallan.
 
 Uso:
-    python scripts/smoke_endpoints.py [--base https://hablah-api-...herokuapp.com]
+    python scripts/smoke_endpoints.py [--base https://hablah-api-685973917497.us-east4.run.app]
 """
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from typing import Any, Optional
 
 import httpx
 
-DEFAULT_BASE = "https://hablah-api-abcaf6c43a5d.herokuapp.com"
+DEFAULT_BASE = "https://hablah-api-685973917497.us-east4.run.app"
 ADMIN_EMAIL = "admin@hablah.app"
 ADMIN_PASSWORD = "admin123"
 STUDENT_EMAIL = "demo@hablah.app"

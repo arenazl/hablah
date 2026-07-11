@@ -1,8 +1,8 @@
 """Test por la INFRA ENTERA (no simulación local): habla con el backend real.
 
-Corre EN Heroku. Para cada tópico:
+Corre contra el backend real (Cloud Run us-east4). Para cada tópico:
   1. POST /api/sessions/start (mide el setup real + trae el prompt de prod).
-  2. Abre el WS de voz REAL (wss .../api/voice/ws) — toda la infra: router Heroku
+  2. Abre el WS de voz REAL (wss .../api/voice/ws) — toda la infra: router de Cloud Run
      + proxy + Gemini Live.
   3. Maneja la charla por TEXTO ({"type":"say"}) — obviando el audio pero pasando
      por todo el pipeline. Mide la LATENCIA real por turno (round-trip).
@@ -11,7 +11,7 @@ Corre EN Heroku. Para cada tópico:
 El alumno (turnos del nene) se simula con un Gemini aparte (solo para empujar la
 charla; lo que se MIDE es el coach por la infra real).
 
-Uso: heroku run "python scripts/test_infra_real.py 1"   # nro de tópicos (default 1)
+Uso: python scripts/test_infra_real.py 1   # nro de tópicos (default 1); pega al backend real via APP_HOST (default us-east4)
 """
 import sys, os, asyncio, json, time
 if sys.platform == "win32":
@@ -27,7 +27,7 @@ from core.security import create_access_token
 from models.user import User
 from models.template import Topic
 
-APP = os.getenv("APP_HOST", "hablah-api-abcaf6c43a5d.herokuapp.com")
+APP = os.getenv("APP_HOST", "hablah-api-685973917497.us-east4.run.app")
 BASE = f"https://{APP}"
 WS = f"wss://{APP}/api/voice/ws"
 TURNS = 20
