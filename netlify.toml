@@ -12,7 +12,7 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "https://hablah-api-abcaf6c43a5d.herokuapp.com/api/:splat"
+  to = "https://hablah-api-685973917497.us-east4.run.app/api/:splat"
   status = 200
   force = true
 
