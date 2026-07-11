@@ -17,8 +17,6 @@ import { toast } from 'sonner'
 import confetti from 'canvas-confetti'
 import { useLiveVoice } from '../../hooks/useLiveVoice'
 import LiveSubtitle from '../../components/LiveSubtitle'
-import { MicSelector } from '../../components/MicSelector'
-import { PushToTalkControl } from '../../components/PushToTalkControl'
 import { useKid, KIDS_TOKEN_KEY } from './KidsContext'
 import { InviteFriendButton } from '../../components/InviteFriendButton'
 import { BuddyPicker } from '../../components/kids/BuddyPicker'
@@ -46,13 +44,6 @@ function colorForTopic(topicId: number): `#${string}` {
   return SESSION_PALETTE[idx] as `#${string}`
 }
 
-// F3-02 (push-to-talk): /api/kids/me hoy NO expone el cefr_level del nene
-// (solo age_group). El catálogo kids está topeado por diseño en A2 (mini
-// 4-7 / junior 8-12 no suben a B1+ — ver docs/motor-catalogo), así que
-// TODO alumno kids cae dentro del rango A0-A2 donde push-to-talk aplica.
-// Si en el futuro el back expone el nivel real del nene acá, reemplazar
-// este valor fijo por el dato real.
-const KIDS_ASSUMED_LEVEL = 'A2'
 
 const CSS = `
 .kids-session-root { height:100vh; height:100dvh; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
@@ -426,8 +417,12 @@ export function KidsSession() {
     live.status === 'speaking'
       ? Math.max(0.5, audioLevel)
       : live.status === 'listening'
-      ? Math.max(0.15, audioLevel * 1.4) // amplificamos un poco la voz del chico
+      ? Math.max(0.12, micLevel * 1.6) // voz REAL del nene (RMS del mic)
       : 0.15
+
+  // Quién tiene el turno de voz → color del aro del león (ámbar Habi / verde nene).
+  const speaker: 'coach' | 'kid' | 'none' =
+    live.status === 'speaking' ? 'coach' : live.status === 'listening' ? 'kid' : 'none'
 
   const isActive = live.status === 'listening' || live.status === 'speaking' || live.status === 'connecting'
 
@@ -554,10 +549,8 @@ export function KidsSession() {
               )}
               {live.status === 'listening' && (
                 <>
-                  <span className="kids-mic-wave" style={{ '--lvl': String(Math.min(1, audioLevel)) } as Record<string, string>}>
-                    <i /><i /><i /><i /><i />
-                  </span>
-                  Te escucho — seguí hablando
+                  <span className="pulse" />
+                  Es tu turno — hablá
                 </>
               )}
               {live.status === 'speaking' && (
@@ -632,43 +625,16 @@ export function KidsSession() {
                   buddy={getBuddyById(buddyId)}
                   status={orbStatus}
                   audioLevel={orbAudio}
+                  speaker={speaker}
                   size={240}
                 />
               </div>
             )}
 
-            {isActive && (
-              <div className={`kids-mic-big ${micLevel >= 0.06 ? 'live' : ''}`} aria-label="Tu micrófono">
-                <Mic size={20} strokeWidth={2.4} color={micLevel >= 0.06 ? '#22C55E' : 'rgba(255,255,255,.5)'} />
-                <span className="bars" style={{ '--lvl': String(Math.min(1, micLevel)) } as Record<string, string>}>
-                  <i /><i /><i /><i /><i /><i /><i />
-                </span>
-                <span className="lbl">{micLevel >= 0.06 ? '¡Te oigo!' : 'Te escucho…'}</span>
-              </div>
-            )}
-
-            {isActive && (
-              <MicSelector
-                devices={live.micDevices}
-                activeLabel={live.activeMicLabel}
-                onSelect={live.switchMic}
-                style={{ fontSize: 11, color: 'rgba(255,255,255,.4)' }}
-              />
-            )}
-
-            {/* Push-to-talk (F3-02): SOLO durante la charla activa. En el inicio no
-                va — es un control técnico que rompe la escena. Configurable = pieza aparte. */}
-            {isActive && (
-              <PushToTalkControl
-                level={KIDS_ASSUMED_LEVEL}
-                isSessionActive={isActive}
-                pttHeld={live.pttHeld}
-                onSetMode={live.setPushToTalk}
-                onPress={live.pttPress}
-                onRelease={live.pttRelease}
-                variant="dark"
-              />
-            )}
+            {/* Charla 100% conversacional: sin controles sueltos afuera. El mic es
+                automático (default del OS) y el fin de turno lo maneja el VAD por
+                silencios. El aro bicolor del león da el feedback de quién habla.
+                (Push-to-talk quedó fuera de la escena; si se necesita, va en configuración.) */}
 
             {live.status === 'idle' && topic?.keywords && topic.keywords.length > 0 && (
               <div className="kids-words-card">
