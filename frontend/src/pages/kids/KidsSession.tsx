@@ -23,7 +23,7 @@ import { BuddyPicker } from '../../components/kids/BuddyPicker'
 import { KidsBuddy } from '../../components/kids/KidsBuddy'
 import { getBuddyById, getSavedBuddyId, saveBuddyId } from '../../components/kids/kidsBuddies'
 import {
-  KidsVisualCueOverlay, preloadVisualCueAssets, singularizeEnglish, type VisualCueItem,
+  KidsVisualCueOverlay, normalizeVisualWord, preloadVisualCueAssets, singularizeEnglish, type VisualCueItem,
 } from '../../components/kids/KidsVisualCue'
 import { motorAPI } from '../../services/api'
 
@@ -44,6 +44,14 @@ function colorForTopic(topicId: number): `#${string}` {
   return SESSION_PALETTE[idx] as `#${string}`
 }
 
+// Posiciones de los objetos flotantes: por los COSTADOS y esquinas, lejos del
+// centro (ahí vive el león). [left%, top%, width px]
+const FLOAT_SPOTS: Array<[number, number, number]> = [
+  [4, 14, 48], [88, 10, 42], [7, 42, 40], [90, 38, 50],
+  [3, 68, 44], [89, 64, 40], [12, 86, 42], [82, 84, 46],
+  [24, 6, 38], [68, 5, 40], [30, 90, 36], [58, 92, 38],
+]
+
 
 const CSS = `
 .kids-session-root { position:relative; height:100vh; height:100dvh; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
@@ -58,6 +66,13 @@ const CSS = `
 @keyframes kids-amb-b { 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(-30px,24px) scale(1.09) } }
 @keyframes kids-amb-c { 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(26px,-18px) scale(1.07) } }
 @media (prefers-reduced-motion: reduce){ .kids-amb { animation:none !important; } }
+
+/* Objetos de la colección flotando por la pantalla (precargados, solo SVG). */
+.kids-float { position:absolute; z-index:0; opacity:.55; pointer-events:none; filter:drop-shadow(0 6px 14px rgba(0,0,0,.35)); will-change:transform; animation:kids-float-1 20s ease-in-out infinite; }
+@keyframes kids-float-1 { 0%,100%{ transform:translate(0,0) rotate(-6deg) } 50%{ transform:translate(28px,-36px) rotate(9deg) } }
+@keyframes kids-float-2 { 0%,100%{ transform:translate(0,0) rotate(7deg) } 50%{ transform:translate(-32px,28px) rotate(-8deg) } }
+@keyframes kids-float-3 { 0%,100%{ transform:translate(0,0) rotate(-4deg) } 33%{ transform:translate(20px,24px) rotate(7deg) } 66%{ transform:translate(-22px,-20px) rotate(-9deg) } }
+@media (prefers-reduced-motion: reduce){ .kids-float { animation:none !important; } }
 .kids-session-top, .kids-session-content, .kids-start-bar { position:relative; z-index:1; }
 .kids-session-top { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; }
 .kids-session-back { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:99px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); color:#fff; font-size:13px; font-weight:700; backdrop-filter:blur(8px); cursor:pointer; }
@@ -275,21 +290,42 @@ export function KidsSession() {
     advanceCueQueue()
   }, [advanceCueQueue])
 
-  // Carga + precarga del vocab visual del tópico (topic_kids_vocab join
-  // kids_visual_vocab, endpoint ya existente -- ver KidsGaleriaPanel).
+  // Carga + precarga de TODA la biblioteca visual kids (no solo el tópico):
+  // no sabemos qué palabra va a nombrar el coach, así que cargamos todas de
+  // antemano y matcheamos en INGLÉS y en CASTELLANO (sin acentos). El texto
+  // de la transcripción llega antes que el audio termine de sonar, así el
+  // visual aparece justo cuando Habi lo dice.
+  const [floatItems, setFloatItems] = useState<VisualCueItem[]>([])
   useEffect(() => {
     vocabMapRef.current = new Map()
-    if (isFree || !topic?.id) return  // tema libre: no hay tópico curado con vocab, no forzamos nada
     let cancelled = false
     motorAPI.kidsTopicVocab()
       .then((all) => {
         if (cancelled) return
-        const mine = all.find((t) => t.topic_id === topic.id)
-        if (!mine || mine.vocab.length === 0) return
+        const everyVocab = all.flatMap((t) => t.vocab)
+        if (everyVocab.length === 0) return
         const map = new Map<string, VisualCueItem>()
-        for (const v of mine.vocab) map.set(v.word_en.toLowerCase(), v)
+        for (const v of everyVocab) {
+          const en = normalizeVisualWord(v.word_en)
+          const es = normalizeVisualWord(v.word_es || '')
+          if (en && !map.has(en)) map.set(en, v)
+          if (es && !map.has(es)) map.set(es, v)
+        }
         vocabMapRef.current = map
-        preloadVisualCueAssets(mine.vocab)
+        preloadVisualCueAssets(everyVocab)
+        // Flotantes de ambiente: primero los del tópico actual, se completa con el
+        // resto de la colección. Solo SVG (12 Lottie flotando queman CPU en mobile).
+        const pref = topic?.id ? (all.find((t) => t.topic_id === topic.id)?.vocab ?? []) : []
+        const seen = new Set<string>()
+        const pick: VisualCueItem[] = []
+        for (const v of [...pref, ...everyVocab]) {
+          if (pick.length >= 12) break
+          if (!v.asset_file || !v.asset_file.endsWith('.svg')) continue
+          if (seen.has(v.word_en)) continue
+          seen.add(v.word_en)
+          pick.push(v)
+        }
+        setFloatItems(pick)
       })
       .catch(() => {})  // fail-soft: sin vocab precargado, la clase sigue igual (solo sin visual reactivo)
     return () => { cancelled = true }
@@ -313,10 +349,15 @@ export function KidsSession() {
     if (!last || last.who !== 'ai') return
     const vocabMap = vocabMapRef.current
     if (vocabMap.size === 0) return
-    const tokens = last.text.toLowerCase().match(/[a-z']+/g) || []
+    // Normalizamos acentos/ñ ANTES de tokenizar: el coach habla castellano
+    // ("caramelo", "avión") y las keys del mapa ya están normalizadas.
+    const tokens = normalizeVisualWord(last.text).match(/[a-z']+/g) || []
     const seenThisPass = new Map<string, number>()
     for (const tok of tokens) {
-      const canon = vocabMap.has(tok) ? tok : singularizeEnglish(tok)
+      let canon = tok
+      if (!vocabMap.has(canon)) canon = singularizeEnglish(tok)
+      if (!vocabMap.has(canon) && tok.length > 4 && tok.endsWith('es')) canon = tok.slice(0, -2)  // plural es: flores->flor
+      if (!vocabMap.has(canon) && tok.length > 3 && tok.endsWith('s')) canon = tok.slice(0, -1)   // plural es: caramelos->caramelo
       if (!vocabMap.has(canon)) continue
       const n = (seenThisPass.get(canon) ?? 0) + 1
       seenThisPass.set(canon, n)
@@ -479,6 +520,25 @@ export function KidsSession() {
       <div className="kids-amb kids-amb-a" style={{ background: color }} aria-hidden />
       <div className="kids-amb kids-amb-b" aria-hidden />
       <div className="kids-amb kids-amb-c" aria-hidden />
+
+      {/* La colección flotando por los costados (precargada, nada se busca en vivo) */}
+      {floatItems.map((it, i) => (
+        <img
+          key={it.word_en}
+          src={it.asset_file!}
+          alt=""
+          aria-hidden
+          className="kids-float"
+          style={{
+            left: `${FLOAT_SPOTS[i % FLOAT_SPOTS.length][0]}%`,
+            top: `${FLOAT_SPOTS[i % FLOAT_SPOTS.length][1]}%`,
+            width: FLOAT_SPOTS[i % FLOAT_SPOTS.length][2],
+            animationName: `kids-float-${(i % 3) + 1}`,
+            animationDuration: `${14 + (i % 5) * 4}s`,
+            animationDelay: `${-(i * 2.7)}s`,
+          }}
+        />
+      ))}
 
       <KidsVisualCueOverlay item={cue?.item ?? null} leaving={cue?.leaving ?? false} />
 

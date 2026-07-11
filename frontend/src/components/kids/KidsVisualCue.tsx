@@ -43,6 +43,12 @@ export function preloadVisualCueAssets(items: VisualCueItem[]): void {
   }
 }
 
+/** Normaliza para matchear: minúsculas y SIN acentos/ñ (avión->avion). El coach
+ * habla en castellano — sin esto, "caramelo"/"avión" jamás matchean. */
+export function normalizeVisualWord(s: string): string {
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+}
+
 /** Singulariza en forma simple (match "exacto + plural simple" del WO):
  * cats->cat, foxes->fox, butterflies->butterfly. No pretende ser un
  * lematizador completo -- alcanza para el vocab concreto de 1-2 sílabas
