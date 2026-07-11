@@ -362,6 +362,17 @@ async def vocab_transcripts(db: AsyncSession = Depends(get_db)):
         return {"profiles": []}
 
 
+@router.get("/kids-visual-vocab")
+async def kids_visual_vocab_all(db: AsyncSession = Depends(get_db)):
+    """TODA la biblioteca visual kids (~1000 palabras, no solo lo linkeado a tópicos): el
+    front la precarga entera al entrar a la sesión — no sabemos qué palabra va a nombrar
+    el coach. Sin auth (es catálogo público de assets)."""
+    rows = _rows(await db.execute(text(
+        "SELECT word_en, word_es, emoji, asset_file FROM kids_visual_vocab")))
+    return [{"word_en": r["word_en"], "word_es": r["word_es"],
+             "emoji": r["emoji"], "asset_file": r["asset_file"]} for r in rows]
+
+
 @router.get("/kids-topic-vocab")
 async def kids_topic_vocab(db: AsyncSession = Depends(get_db)):
     """Cada tópico de kids con su vocab generado (palabra + visual + cobertura). Para curar. Sin auth."""

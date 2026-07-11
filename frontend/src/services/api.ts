@@ -457,6 +457,8 @@ export const motorAPI = {
   transcripts: () => api.get<{ antes: ClassTranscript[]; despues: ClassTranscript[] }>('/motor/transcripts').then((r) => r.data),
   kidsVocab: () => api.get<KidsVocabItem[]>('/motor/kids-vocab').then((r) => r.data),
   kidsTopicVocab: () => api.get<KidsTopicVocab[]>('/motor/kids-topic-vocab').then((r) => r.data),
+  /** TODA la biblioteca visual kids (~1000 palabras con asset), no solo lo linkeado a tópicos. */
+  kidsVisualVocabAll: () => api.get<KidsVisualVocabItem[]>('/motor/kids-visual-vocab').then((r) => r.data),
   vocabTranscripts: () => api.get<{ profiles: VocabTranscriptProfile[] }>('/motor/vocab-transcripts').then((r) => r.data),
   infraResult: (body: { server: string; turn_index: number; rtt_ms: number | null; ok: boolean; note?: string }) =>
     api.post('/motor/infra-result', body).then((r) => r.data),
@@ -482,6 +484,13 @@ export interface KidsTopicVocab {
   topic_id: number
   title: string
   vocab: { word_en: string; word_es: string; emoji: string; asset_file: string | null }[]
+}
+
+export interface KidsVisualVocabItem {
+  word_en: string
+  word_es: string
+  emoji: string
+  asset_file: string | null
 }
 
 export interface VocabCharla {

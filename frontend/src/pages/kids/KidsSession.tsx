@@ -299,26 +299,32 @@ export function KidsSession() {
   useEffect(() => {
     vocabMapRef.current = new Map()
     let cancelled = false
-    motorAPI.kidsTopicVocab()
-      .then((all) => {
-        if (cancelled) return
-        const everyVocab = all.flatMap((t) => t.vocab)
-        if (everyVocab.length === 0) return
+    // Biblioteca COMPLETA (~1000 palabras) + vocab del tópico (solo para priorizar flotantes).
+    Promise.all([
+      motorAPI.kidsVisualVocabAll(),
+      motorAPI.kidsTopicVocab().catch(() => []),
+    ])
+      .then(([library, byTopic]) => {
+        if (cancelled || library.length === 0) return
         const map = new Map<string, VisualCueItem>()
-        for (const v of everyVocab) {
+        for (const v of library) {
           const en = normalizeVisualWord(v.word_en)
           const es = normalizeVisualWord(v.word_es || '')
           if (en && !map.has(en)) map.set(en, v)
           if (es && !map.has(es)) map.set(es, v)
         }
         vocabMapRef.current = map
-        preloadVisualCueAssets(everyVocab)
+        // Precarga escalonada: el vocab del TÓPICO ya (es lo más probable que nombre
+        // primero); el resto de la biblioteca 2.5s después para no competir con el
+        // arranque del WebSocket de voz en mobile. Todo queda en memoria igual.
+        const pref = topic?.id ? (byTopic.find((t) => t.topic_id === topic.id)?.vocab ?? []) : []
+        preloadVisualCueAssets(pref)
+        window.setTimeout(() => { if (!cancelled) preloadVisualCueAssets(library) }, 2500)
         // Flotantes de ambiente: primero los del tópico actual, se completa con el
         // resto de la colección. Solo SVG (12 Lottie flotando queman CPU en mobile).
-        const pref = topic?.id ? (all.find((t) => t.topic_id === topic.id)?.vocab ?? []) : []
         const seen = new Set<string>()
         const pick: VisualCueItem[] = []
-        for (const v of [...pref, ...everyVocab]) {
+        for (const v of [...pref, ...library]) {
           if (pick.length >= 12) break
           if (!v.asset_file || !v.asset_file.endsWith('.svg')) continue
           if (seen.has(v.word_en)) continue
