@@ -1023,6 +1023,16 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     [attachWsHandlers, refreshMicDevices, shouldForwardAudio],
   )
 
+  // Flag global para el auto-refresh de la PWA (versionCheck): marca "clase activa" para que
+  // una actualización no recargue en medio de una charla y corte el WebSocket de voz.
+  useEffect(() => {
+    const busy = status === 'connecting' || status === 'listening' || status === 'speaking'
+    if (typeof window !== 'undefined') window.__hablahBusy = busy
+    return () => {
+      if (typeof window !== 'undefined') window.__hablahBusy = false
+    }
+  }, [status])
+
   return {
     start, stop, status, transcript, audioLevel, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants,
     micDevices, activeMicLabel, switchMic,
