@@ -120,7 +120,7 @@ export const KIDS_CSS = `
 .kids-m-topbar, .kids-m-tabbar, .kids-m-drawer, .kids-m-drawer-backdrop { display:none; }
 
 @media (max-width:900px) {
-  .kids-root { padding-bottom:88px; }
+  .kids-root { padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
   .kids-app { display:block; }
   .kids-sidebar { display:none; }
   .kids-main { padding:0 16px 24px; max-width:100%; }
