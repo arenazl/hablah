@@ -245,9 +245,16 @@ def _get_vocabulary_block(topic, topic_content: Optional[dict], ctx: str, vocab_
         phrases = [_pick(phrases, seed_phrase)]
     elif phrases:
         phrases = _rotate(phrases, seed_phrase)
+    # El vocab curado es DIVERSO (6 palabras inconexas no las hila nadie): por clase van
+    # MENOS palabras (4, rotadas por semilla — otro día, otras 4) y la instrucción es tejer
+    # solo las que entren natural. Anti-forzar: misma doctrina validada del visual reactivo.
+    if vocab:
+        vocab = _rotate(vocab, _derive(session_seed, "words"))[:4]
     block = f"<current_lesson_vocabulary>\n  Topic: {title}\n"
     if vocab:
-        block += f"  Words: {', '.join(vocab)}\n"
+        block += f"  Words_Available: {', '.join(vocab)}\n"
+        block += ("  Guidance: weave in only the words that fit the story NATURALLY — 2-3 done "
+                  "well beat forcing the whole list. Leave the rest for future classes.\n")
     if phrases:
         block += f"  Target_Phrases: {', '.join(phrases)}\n"
     block += "</current_lesson_vocabulary>"
