@@ -94,7 +94,19 @@ const CSS = `
 .kids-secondary-btn { display:inline-flex; flex-direction:column; align-items:center; gap:4px; padding:8px 10px; border:0; background:transparent; color:rgba(255,255,255,.72); font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; text-decoration:none; transition:color .15s; }
 .kids-secondary-btn:hover { color:#fff; }
 .kids-secondary-btn svg { width:24px; height:24px; }
-@media (prefers-reduced-motion: reduce){ .kids-start-fab, .kids-start-fab::before { animation:none !important; } }
+
+/* Botón-semáforo de la charla: el MISMO botón redondo, cambia de color según quién habla.
+   Ámbar = habla Habi (no hay que tocar). Verde TITILANDO = tu turno, tocalo y hablá.
+   Verde fijo = te está escuchando. Un TOQUE alcanza (mantener no hace nada extra). */
+.kids-talk-fab { position:relative; width:96px; height:96px; border-radius:50%; border:0; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; color:#0B1512; transition:background .25s, transform .15s, box-shadow .25s; }
+.kids-talk-fab:active { transform:scale(.94); }
+.kids-talk-fab svg { width:36px; height:36px; }
+.kids-talk-fab[data-state="coach"] { background:linear-gradient(180deg,#FFC93D,#F09D00); box-shadow:0 12px 30px rgba(240,157,0,.4); animation:kids-fab-breathe 2.6s ease-in-out infinite; }
+.kids-talk-fab[data-state="your-turn"] { background:linear-gradient(180deg,#34E38A,#17B569); box-shadow:0 12px 30px rgba(23,181,105,.5); animation:kids-fab-breathe 1.2s ease-in-out infinite; }
+.kids-talk-fab[data-state="your-turn"]::before { content:""; position:absolute; inset:0; border-radius:50%; box-shadow:0 0 0 0 rgba(52,227,138,.6); animation:kids-fab-ping 1.2s ease-out infinite; }
+.kids-talk-fab[data-state="talking"] { background:linear-gradient(180deg,#34E38A,#17B569); box-shadow:0 0 34px rgba(52,227,138,.65); }
+.kids-talk-fab[data-state="connecting"] { background:rgba(255,255,255,.14); color:rgba(255,255,255,.7); animation:kids-fab-breathe 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce){ .kids-start-fab, .kids-start-fab::before, .kids-talk-fab, .kids-talk-fab::before { animation:none !important; } }
 
 .kids-session-status { font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:rgba(232,236,234,.6); display:inline-flex; align-items:center; gap:8px; }
 .kids-session-status .pulse { width:8px; height:8px; border-radius:50%; background:#22C55E; box-shadow:0 0 0 0 rgba(34,197,94,.6); animation:kids-pulse 1.5s ease-out infinite; }
@@ -426,6 +438,27 @@ export function KidsSession() {
 
   const isActive = live.status === 'listening' || live.status === 'speaking' || live.status === 'connecting'
 
+  // TAP-to-talk (prueba mic inalámbrico que se come las primeras palabras): el modo PTT
+  // del hook gatea el envío de audio. Un TOQUE (pttPress) abre el gate; NUNCA llamamos
+  // pttRelease al soltar → el gate queda abierto y el VAD de Gemini cierra el turno por
+  // silencio (conversacional, no walkie-talkie). Cuando Habi arranca a hablar, rearmamos
+  // el gate (pttRelease) para que el próximo turno pida un toque fresco: así el primer
+  // audio que ve el VAD arranca justo cuando el nene tocó (onset limpio, mic despierto).
+  const setPushToTalk = live.setPushToTalk
+  const pttRelease = live.pttRelease
+  useEffect(() => {
+    setPushToTalk(isActive)
+    return () => setPushToTalk(false)
+  }, [isActive, setPushToTalk])
+  useEffect(() => {
+    if (live.status === 'speaking') pttRelease()
+  }, [live.status, pttRelease])
+
+  const talkState: 'coach' | 'your-turn' | 'talking' | 'connecting' =
+    live.status === 'speaking' ? 'coach'
+    : live.status === 'listening' ? (live.pttHeld ? 'talking' : 'your-turn')
+    : 'connecting'
+
   return (
     <div className="kids-session-root">
       <style>{CSS}</style>
@@ -547,12 +580,17 @@ export function KidsSession() {
                   Conectando con Habi...
                 </>
               )}
-              {live.status === 'listening' && (
+              {live.status === 'listening' && (live.pttHeld ? (
                 <>
                   <span className="pulse" />
-                  Es tu turno — hablá
+                  Te escucho — hablá tranquilo
                 </>
-              )}
+              ) : (
+                <>
+                  <span className="pulse" />
+                  Tu turno — tocá el botón verde y hablá
+                </>
+              ))}
               {live.status === 'speaking' && (
                 <>
                   <span className="pulse" />
@@ -658,7 +696,12 @@ export function KidsSession() {
                chat que scrollea y se pierde abajo: cuando llega texto nuevo, reemplaza. */}
             {live.transcript.length > 0 && (
               <div className="kids-transcript">
-                <LiveSubtitle transcript={live.transcript} aiLabel="Habi" minHeight={96} />
+                <LiveSubtitle
+                  transcript={live.transcript}
+                  aiLabel="Habi"
+                  minHeight={96}
+                  highlightWords={topic?.keywords ?? []}
+                />
               </div>
             )}
           </>
@@ -702,14 +745,16 @@ export function KidsSession() {
           </div>
         </div>
       )}
-      <div className="kids-session-actions">
-        {hasKidsToken && isActive && (
-          <>
+      {/* Charla activa: el mismo botón redondo, ahora semáforo del turno.
+          Ámbar = habla Habi · verde titilando = tu turno (tocá y hablá) · verde fijo = te escucho. */}
+      {hasKidsToken && isActive && (
+        <div className="kids-start-bar">
+          <div className="side-left">
             {topic && (
               <InviteFriendButton
                 topicId={topic.id}
                 variant="light"
-                label="Invitar amigo"
+                label="Invitar"
                 authToken={localStorage.getItem(KIDS_TOKEN_KEY) ?? undefined}
                 onRoomCreated={(roomToken, hostPid) => {
                   live.upgradeToRoom(roomToken, hostPid)
@@ -717,13 +762,23 @@ export function KidsSession() {
                 }}
               />
             )}
+          </div>
+          <button
+            className="kids-talk-fab"
+            data-state={talkState}
+            onClick={live.pttPress}
+            aria-label={talkState === 'your-turn' ? 'Tu turno: tocá y hablá' : talkState === 'coach' ? 'Habi está hablando' : 'Te escucho'}
+          >
+            <Mic strokeWidth={2.4} />
+          </button>
+          <div className="side-right">
             <button className="kids-end-btn" onClick={endSession}>
               <Square size={16} strokeWidth={2.4} fill="currentColor" />
-              Terminar charla
+              Terminar
             </button>
-          </>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
