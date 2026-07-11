@@ -100,6 +100,10 @@ const CSS = `
 .kids-cue .kids-cue-word-es { font-size:12px; color:rgba(255,255,255,.6); font-weight:600; }
 @keyframes kids-cue-in { from { opacity:0; transform:translateX(-50%) scale(.7); } to { opacity:1; transform:translateX(-50%) scale(1); } }
 @keyframes kids-cue-out { from { opacity:1; transform:translateX(-50%) scale(1); } to { opacity:0; transform:translateX(-50%) scale(.82); } }
+/* Movimiento para los assets ESTÁTICOS (svg/emoji): wiggle juguetón. Los Lottie ya se animan solos. */
+.kids-cue img, .kids-cue .kids-cue-static { animation: kids-cue-wiggle 1.4s ease-in-out infinite; transform-origin: 50% 85%; }
+@keyframes kids-cue-wiggle { 0%,100% { transform:rotate(-7deg) scale(1); } 25% { transform:rotate(5deg) scale(1.08); } 50% { transform:rotate(-4deg) scale(1.02); } 75% { transform:rotate(7deg) scale(1.1); } }
+@media (prefers-reduced-motion: reduce){ .kids-cue img, .kids-cue .kids-cue-static { animation:none !important; } }
 `
 
 /** Overlay fixed que muestra el vocab activo (o nada). `leaving=true` dispara
