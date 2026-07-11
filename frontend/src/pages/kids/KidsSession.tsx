@@ -54,7 +54,7 @@ const FLOAT_SPOTS: Array<[number, number, number]> = [
 
 
 const CSS = `
-.kids-session-root { position:relative; height:100vh; height:100dvh; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
+.kids-session-root { position:relative; height:100vh; height:100dvh; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 75%); color:#fff; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); font-family:'Sora',ui-sans-serif,system-ui,sans-serif; }
 
 /* Ambiente colorido en los costados: blobs difusos PRECARGADOS (CSS puro, cero red),
    con drift lento compositor-friendly. El color principal sale del tópico. */
@@ -80,13 +80,14 @@ const CSS = `
 .kids-session-topic-pill { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:99px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9CFCD2; }
 .kids-session-topic-pill .dot { width:8px; height:8px; border-radius:50%; }
 
-.kids-session-content { flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:safe center; padding:20px 24px 12px; text-align:center; gap:18px; }
+.kids-session-content { flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:safe center; padding:clamp(8px,1.6dvh,20px) 24px 12px; text-align:center; gap:clamp(8px,1.6dvh,18px); }
 .kids-session-h1 { font-weight:800; font-size:clamp(28px, 5vw, 44px); letter-spacing:-0.03em; line-height:1.05; margin:0; max-width:680px; }
 .kids-session-h1 em { font-style:normal; color:#9CFCD2; }
 .kids-session-sub { font-size:15px; color:rgba(255,255,255,.65); margin:0; max-width:520px; line-height:1.5; }
 .kids-session-sub b { color:#fff; font-weight:600; }
 
-.kids-orb-wrap { width:min(280px, 55vw); height:min(280px, 55vw); position:relative; display:grid; place-items:center; }
+.kids-orb-wrap { width:min(240px, 46vw, 30dvh); height:min(240px, 46vw, 30dvh); flex-shrink:0; position:relative; display:grid; place-items:center; }
+.kids-orb-wrap > * { max-width:100%; max-height:100%; }
 .kids-orb-wrap::before { content:""; position:absolute; inset:-20px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.06), transparent 65%); }
 
 .kids-session-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:16px 24px 24px; position:sticky; bottom:0; background:linear-gradient(180deg, transparent 0%, rgba(5,10,9,.85) 50%); backdrop-filter:blur(8px); z-index:5; }
