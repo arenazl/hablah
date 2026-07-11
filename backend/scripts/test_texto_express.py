@@ -16,9 +16,9 @@ from pymysql.cursors import DictCursor
 from core.config import settings
 
 PERSONAS = [
- ("REMADOR", "gpt-oss:120b", "un nene de 5 años charlatán: contesta LARGO, se va por las ramas con historias de su casa y su perro, casi todo en español, a veces mete la palabra en inglés"),
- ("TIMIDO", "gemma3:27b", "un nene de 5 años muy tímido: contesta con silencios ('...'), monosílabos o una sola palabrita, le cuesta animarse"),
- ("PREGUNTON", "qwen3-coder:480b", "un nene de 5 años preguntón: contesta casi siempre con preguntas ('¿por qué?', '¿y cómo se dice X?'), curioso incansable"),
+ ("REMADOR", "gpt-oss:120b", "un nene de 5 años A0 REAL: NO sabe inglés — a lo sumo repite (a veces mal dicha) la palabra inglesa que le acaban de enseñar. Habla español en frases cortitas y desordenadas de 3 a 10 palabras, se distrae con lo suyo. JAMAS arma oraciones en inglés."),
+ ("TIMIDO", "gemma3:27b", "un nene de 5 años muy tímido, A0: contesta '...' o UNA palabrita (a veces la palabra recién enseñada, bajito, a veces mal dicha)"),
+ ("PREGUNTON", "qwen3-coder:480b", "un nene de 5 años A0 REAL: pregunta cortito en español ('¿por qué?' '¿qué es eso?'), 2 a 6 palabras, a veces repite la palabra inglesa recién enseñada y ya. NO sabe inglés, JAMAS oraciones en inglés."),
 ]
 
 async def one(persona, model, who, tid, title):

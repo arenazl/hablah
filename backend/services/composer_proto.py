@@ -297,6 +297,28 @@ def _get_narrative_style(std: dict, app_config: Optional[dict], session_seed: in
             f"  Directive: {pick.get('directive')}\n</lesson_approach>")
 
 
+def _get_session_rails(std: dict, app_config: Optional[dict]) -> str:
+    """Bloque 8c — RIELES de la sesión: el arco de beats que la improvisación recorre (la
+    escena avanza, no loopea). El esqueleto es agnóstico; el CONTENIDO va por banda (edad)
+    en app_config.session_rails (JSON {band: [beats]}). OPCIONAL: sin catálogo se omite.
+    Los rieles NO son guion: dicen POR DÓNDE va la clase, jamás qué decir."""
+    raw = (app_config or {}).get("session_rails")
+    if not raw:
+        return ""
+    try:
+        import json as _json
+        rails = _json.loads(raw) if isinstance(raw, str) else raw
+    except Exception:
+        return ""
+    beats = rails.get((std.get("slug") or "").lower()) or rails.get("default")
+    if not beats:
+        return ""
+    lines = "\n".join(f"  {b}" for b in beats)
+    return (f"<session_rails>\n{lines}\n"
+            f"  Regla: un beat no se abandona hasta que el alumno PRODUJO; avanzá siempre, "
+            f"no rebobines ni repitas un beat ya cumplido.\n</session_rails>")
+
+
 def _interp(s: str, name: str, topic_title: str, first_word: str) -> str:
     return (s.replace("{name}", name).replace("{topic}", topic_title)
              .replace("{first_vocab}", first_word).replace("{word}", first_word))
@@ -454,6 +476,7 @@ def compose_proto_prompt(
         _get_vocabulary_block(topic, topic_content, ctx, lv.get("vocab_depth"), session_seed),
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
         _get_narrative_style(std, app_config, session_seed),  # opcional: TIPO de narrativa (rota por semilla, gateado por edad)
+        _get_session_rails(std, app_config),                  # opcional: RIELES (arco de beats por edad; avance, no loop)
         _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
         _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
