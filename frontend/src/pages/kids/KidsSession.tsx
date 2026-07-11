@@ -72,6 +72,7 @@ const CSS = `
 .kids-orb-wrap::before { content:""; position:absolute; inset:-20px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.06), transparent 65%); }
 
 .kids-session-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:16px 24px 24px; position:sticky; bottom:0; background:linear-gradient(180deg, transparent 0%, rgba(5,10,9,.85) 50%); backdrop-filter:blur(8px); z-index:5; }
+.kids-session-actions:empty { display:none; }
 .kids-session-btn-primary { display:inline-flex; align-items:center; gap:10px; padding:0 32px; height:64px; border-radius:99px; background:linear-gradient(180deg,#FFB800,#F09D00); color:#3A2A00; font-weight:800; font-size:17px; letter-spacing:-0.01em; box-shadow:0 12px 30px rgba(240,157,0,.45), 0 4px 12px rgba(0,0,0,.2); border:0; cursor:pointer; transition:transform .15s; font-family:inherit; }
 .kids-session-btn-primary:hover { transform:translateY(-2px) scale(1.02); }
 .kids-session-btn-primary:active { transform:scale(.97); }
@@ -81,6 +82,28 @@ const CSS = `
 .kids-session-btn-ghost:hover { background:rgba(255,255,255,.12); }
 .kids-end-btn { display:inline-flex; align-items:center; gap:8px; padding:0 18px; height:44px; border-radius:99px; background:rgba(239,68,68,.16); color:#FF9D9D; border:1px solid rgba(239,68,68,.45); font-family:inherit; font-weight:700; font-size:14px; cursor:pointer; transition:transform .15s, background .15s; }
 .kids-end-btn:hover { transform:translateY(-1px); background:rgba(239,68,68,.26); }
+
+/* Inicio kids: palabras del día en card */
+.kids-words-card { display:flex; flex-direction:column; align-items:center; gap:10px; padding:14px 18px; border-radius:20px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); max-width:440px; }
+.kids-words-card .wc-title { font-family:'JetBrains Mono',ui-monospace,monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:rgba(232,236,234,.55); }
+.kids-words-card .wc-chips { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.kids-word-chip { font-size:13px; padding:6px 14px; border-radius:99px; background:rgba(0,179,126,.14); border:1px solid rgba(0,179,126,.3); color:#9CFCD2; font-weight:700; }
+
+/* Inicio kids: bottom bar con FAB central titilante + secundarias a los lados */
+.kids-start-bar { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; padding:14px 20px calc(20px + env(safe-area-inset-bottom)); position:sticky; bottom:0; background:linear-gradient(180deg, transparent 0%, rgba(5,10,9,.9) 45%); backdrop-filter:blur(10px); z-index:5; }
+.kids-start-bar .side-left { justify-self:end; }
+.kids-start-bar .side-right { justify-self:start; }
+.kids-start-fab { position:relative; width:104px; height:104px; border-radius:50%; border:0; cursor:pointer; background:linear-gradient(180deg,#FFC93D,#F09D00); color:#3A2A00; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:0 14px 34px rgba(240,157,0,.5), 0 4px 12px rgba(0,0,0,.28); animation:kids-fab-breathe 1.7s ease-in-out infinite; transition:transform .15s; font-family:inherit; }
+.kids-start-fab::before { content:""; position:absolute; inset:0; border-radius:50%; box-shadow:0 0 0 0 rgba(255,201,61,.55); animation:kids-fab-ping 1.7s ease-out infinite; }
+.kids-start-fab:active { transform:scale(.94); }
+.kids-start-fab svg { width:38px; height:38px; }
+.kids-start-fab .fab-lbl { font-size:12px; font-weight:800; letter-spacing:-.01em; }
+@keyframes kids-fab-breathe { 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.06) } }
+@keyframes kids-fab-ping { 0%{ box-shadow:0 0 0 0 rgba(255,201,61,.55) } 70%,100%{ box-shadow:0 0 0 22px rgba(255,201,61,0) } }
+.kids-secondary-btn { display:inline-flex; flex-direction:column; align-items:center; gap:4px; padding:8px 10px; border:0; background:transparent; color:rgba(255,255,255,.72); font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; text-decoration:none; transition:color .15s; }
+.kids-secondary-btn:hover { color:#fff; }
+.kids-secondary-btn svg { width:24px; height:24px; }
+@media (prefers-reduced-motion: reduce){ .kids-start-fab, .kids-start-fab::before { animation:none !important; } }
 
 .kids-session-status { font-family:'JetBrains Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:rgba(232,236,234,.6); display:inline-flex; align-items:center; gap:8px; }
 .kids-session-status .pulse { width:8px; height:8px; border-radius:50%; background:#22C55E; box-shadow:0 0 0 0 rgba(34,197,94,.6); animation:kids-pulse 1.5s ease-out infinite; }
@@ -633,27 +656,28 @@ export function KidsSession() {
               />
             )}
 
-            {/* Push-to-talk (F3-02): fallback de UI que no depende del VAD
-                de Gemini para el fin de turno. Kids siempre cae en A0-A2. */}
-            <PushToTalkControl
-              level={KIDS_ASSUMED_LEVEL}
-              isSessionActive={isActive}
-              pttHeld={live.pttHeld}
-              onSetMode={live.setPushToTalk}
-              onPress={live.pttPress}
-              onRelease={live.pttRelease}
-              variant="dark"
-            />
+            {/* Push-to-talk (F3-02): SOLO durante la charla activa. En el inicio no
+                va — es un control técnico que rompe la escena. Configurable = pieza aparte. */}
+            {isActive && (
+              <PushToTalkControl
+                level={KIDS_ASSUMED_LEVEL}
+                isSessionActive={isActive}
+                pttHeld={live.pttHeld}
+                onSetMode={live.setPushToTalk}
+                onPress={live.pttPress}
+                onRelease={live.pttRelease}
+                variant="dark"
+              />
+            )}
 
             {live.status === 'idle' && topic?.keywords && topic.keywords.length > 0 && (
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 480 }}>
-                {topic.keywords.slice(0, 5).map((k) => (
-                  <span key={k} style={{
-                    fontSize: 12, padding: '5px 12px', borderRadius: 99,
-                    background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.14)',
-                    color: '#9CFCD2', fontWeight: 600,
-                  }}>{k}</span>
-                ))}
+              <div className="kids-words-card">
+                <span className="wc-title">Hoy vas a practicar</span>
+                <div className="wc-chips">
+                  {topic.keywords.slice(0, 5).map((k) => (
+                    <span key={k} className="kids-word-chip">{k}</span>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -675,22 +699,22 @@ export function KidsSession() {
         )}
       </div>
 
-      <div className="kids-session-actions">
-        {hasKidsToken && !isActive && (
-          <>
-            <button className="kids-session-btn-primary" onClick={beginSession}>
-              <Mic size={22} strokeWidth={2.4} />
-              ¡Empezar a hablar!
-            </button>
-            <Link to="/kids/topicos" className="kids-session-btn-ghost">
-              <RefreshCw size={16} strokeWidth={2.2} />
-              Cambiar tema
-            </Link>
+      {hasKidsToken && !isActive && (
+        <div className="kids-start-bar">
+          <Link to="/kids/topicos" className="kids-secondary-btn side-left">
+            <RefreshCw size={22} strokeWidth={2.2} />
+            Cambiar tema
+          </Link>
+          <button className="kids-start-fab" onClick={beginSession} aria-label="Empezar a hablar con Habi">
+            <Mic size={38} strokeWidth={2.4} />
+            <span className="fab-lbl">¡Hablar!</span>
+          </button>
+          <div className="side-right">
             {topic && (
               <InviteFriendButton
                 topicId={topic.id}
                 variant="light"
-                label="Invitar amigo"
+                label="Invitar"
                 authToken={localStorage.getItem(KIDS_TOKEN_KEY) ?? undefined}
                 onBeforeCreate={async () => {
                   // Antes de crear la room, arrancamos la sesion Live y esperamos
@@ -709,8 +733,10 @@ export function KidsSession() {
                 }}
               />
             )}
-          </>
-        )}
+          </div>
+        </div>
+      )}
+      <div className="kids-session-actions">
         {hasKidsToken && isActive && (
           <>
             {topic && (
