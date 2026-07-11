@@ -457,21 +457,6 @@ const MOCK_STICKERS: StickerSlot[] = [
   { locked: true, bg: '', label: 'Bloqueado', icon: <svg viewBox="0 0 24 24" fill="none" stroke="#98A19D" strokeWidth="2" strokeLinecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> },
 ]
 
-const STYLE_VARIANTS: { id: number; name: string }[] = [
-  { id: 1, name: 'Acuarela' },
-  { id: 2, name: 'Cristal' },
-  { id: 3, name: 'Papel Crema' },
-  { id: 4, name: 'Jardín' },
-  { id: 5, name: 'Bento' },
-  { id: 6, name: 'Arcilla' },
-  { id: 7, name: 'Neón Tenue' },
-  { id: 8, name: 'Riso Print' },
-  { id: 9, name: 'Crepúsculo' },
-  { id: 10, name: 'Sketch' },
-]
-
-const KIDS_STYLE_KEY = 'kids-style-variant'
-
 function baseColor(bg: string): string {
   const match = bg.match(/#[0-9A-Fa-f]{6}/)
   return match ? match[0] : '#00B37E'
@@ -482,16 +467,8 @@ export function KidsHome() {
   const { kid: profile } = useKid()
   const [topics, setTopics] = useState<KidsTopic[]>([])
   const ageGroup = profile.age_group
-  const [styleVariant, setStyleVariant] = useState<number>(() => {
-    if (typeof window === 'undefined') return 1
-    const stored = window.localStorage.getItem(KIDS_STYLE_KEY)
-    const n = stored ? parseInt(stored, 10) : 1
-    return Number.isFinite(n) && n >= 1 && n <= 10 ? n : 1
-  })
-
-  useEffect(() => {
-    window.localStorage.setItem(KIDS_STYLE_KEY, String(styleVariant))
-  }, [styleVariant])
+  // Estilo de las cartas fijo (Crepúsculo · v9). Antes había un selector de 10 variantes.
+  const styleVariant = 9
 
   useEffect(() => {
     const stored = localStorage.getItem(KIDS_AGE_KEY) as KidsAgeGroup | null
@@ -633,19 +610,6 @@ export function KidsHome() {
         <div>
           {/* TOPICS */}
           <div className={`kids-style-v${styleVariant}`}>
-            <div className="kids-style-picker">
-              <span className="ksp-label">Estilo</span>
-              {STYLE_VARIANTS.map((v) => (
-                <button
-                  key={v.id}
-                  className={`ksp-chip${styleVariant === v.id ? ' active' : ''}`}
-                  onClick={() => setStyleVariant(v.id)}
-                  title={`Variante ${v.id}: ${v.name}`}
-                >
-                  {v.id}. {v.name}
-                </button>
-              ))}
-            </div>
             <div className="kids-sh">
               <h3>¿De qué charlamos?</h3>
               <Link to="/kids/topicos" className="link">Ver todos →</Link>
@@ -658,14 +622,12 @@ export function KidsHome() {
               {topics.map((t, idx) => {
                 const conf = TOPIC_COLOR_MAP[t.slug] ?? { bg: 'linear-gradient(135deg,#00B37E,#008F63)', sublabel: '' }
                 const topicColor = baseColor(conf.bg)
-                const isRich = styleVariant === 0 // placeholder; variantes pintan ellas
                 return (
                   <button
                     key={t.id}
                     className="kids-topic"
                     style={{
                       ['--topic-color' as string]: topicColor,
-                      background: isRich ? conf.bg : undefined,
                     }}
                     onClick={() => navigate(`/kids/sesion/${t.id}`, { state: { topic: t } })}
                   >
