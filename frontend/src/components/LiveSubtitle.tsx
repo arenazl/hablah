@@ -46,6 +46,13 @@ function paintEnglish(text: string, words: string[]): React.ReactNode[] {
     const start = m.index + m[0].length - m[1].length
     ranges.push({ start, end: start + m[1].length })
   }
+  // Palabra suelta entre comillas ("burger", 'jungle'): en este contexto es casi
+  // siempre la palabra objetivo en inglés.
+  for (const m of text.matchAll(/["'“‘]([A-Za-z][A-Za-z'-]{1,24})["'”’]/g)) {
+    if (m.index === undefined) continue
+    const start = m.index + 1
+    ranges.push({ start, end: start + m[1].length })
+  }
   if (!ranges.length) return [text]
   ranges.sort((a, b) => a.start - b.start)
   const merged: typeof ranges = []
@@ -65,11 +72,21 @@ function paintEnglish(text: string, words: string[]): React.ReactNode[] {
   return out
 }
 
-/** Si termina en "..." separa la frase final (la que el nene tiene que decir). */
-function splitTurnPhrase(text: string): { before: string; turn: string | null } {
+/** Detecta el momento "le toca al nene". La transcripción de voz casi nunca escribe
+ * "..." — así que además de los puntos suspensivos, detectamos las SEÑALES habladas
+ * del coach ("repetí después de mí", "ahora vos", "decí conmigo", "tu turno"). */
+const TURN_CUES = /(repet[íi](?:lo)?(?:\s+(?:después|despues)\s+de\s+m[íi])?|dec[íi](?:lo)?(?:\s+conmigo)?|ahora\s+(?:vos|te\s+toca)|te\s+toca|tu\s+turno|prob[áa]\s+vos)/i
+
+function splitTurnPhrase(text: string): { before: string; turn: string | null; isTurn: boolean } {
+  // 1) Puntos suspensivos al final → la frase incompleta es la que hay que completar.
   const m = text.match(/([^.!?¡¿\n]{2,80}(?:\.\.\.|…))\s*$/)
-  if (!m || m.index === undefined) return { before: text, turn: null }
-  return { before: text.slice(0, m.index), turn: m[1] }
+  if (m && m.index !== undefined) return { before: text.slice(0, m.index), turn: m[1], isTurn: true }
+  // 2) Señal hablada de turno → marcamos desde la señal hasta el final.
+  const cue = text.match(TURN_CUES)
+  if (cue && cue.index !== undefined) {
+    return { before: text.slice(0, cue.index), turn: text.slice(cue.index), isTurn: true }
+  }
+  return { before: text, turn: null, isTurn: false }
 }
 
 function AiText({ text, words }: { text: string; words: string[] }) {
@@ -114,9 +131,13 @@ export default function LiveSubtitle({ transcript, aiLabel = 'Coach', minHeight 
   return (
     <div style={{ minHeight, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 10, textAlign: 'center', padding: '10px 8px' }}>
       {prev && (
-        <div style={{ opacity: 0.4, fontSize: 14, lineHeight: 1.35 }}>
+        <div style={{ opacity: prev.who === 'ai' ? 0.75 : 0.4, fontSize: prev.who === 'ai' ? 16 : 14, lineHeight: 1.4 }}>
           <span style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: color(prev.who), marginRight: 6 }}>{label(prev.who)}</span>
-          <span style={{ color: '#cbd5e1' }}>{prev.text}</span>
+          <span style={{ color: '#cbd5e1' }}>
+            {/* La línea de Habi se pinta SIEMPRE — también cuando quedó arriba porque
+               ahora habla el nene: es justo cuando necesita leer la frase a decir. */}
+            {prev.who === 'ai' ? <AiText text={prev.text} words={highlightWords} /> : prev.text}
+          </span>
         </div>
       )}
       <div>

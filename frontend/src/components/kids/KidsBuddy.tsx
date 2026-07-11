@@ -46,7 +46,8 @@ export function KidsBuddy({ buddy, status, audioLevel, speaker = 'none', size = 
   }, [talking, level, data])
 
   // El león pulsa con el volumen (siempre que alguien habla, no solo Habi).
-  const lionScale = talking ? 1 + level * 0.09 : 1
+  // Amplitud alta a propósito: sutil no sirve — el nene tiene que VER la reacción.
+  const lionScale = talking ? 1 + level * 0.16 : 1
 
   const buddyNode = (error || !data) ? (
     <div style={{ width: '84%', height: '84%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,.14), transparent 70%)' }} />
@@ -69,16 +70,16 @@ export function KidsBuddy({ buddy, status, audioLevel, speaker = 'none', size = 
           pointerEvents: 'none',
         }}
       />
-      {/* Aro/waveform que respira con el volumen */}
+      {/* Aro/waveform que respira con el volumen — amplitud ALTA, tiene que verse. */}
       <div
         aria-hidden
         style={{
           position: 'absolute', inset: '-4%', borderRadius: '50%',
-          border: `3px solid ${color}`,
-          opacity: talking ? 0.35 + level * 0.5 : 0.14,
-          transform: `scale(${1 + level * 0.13})`,
-          boxShadow: talking ? `0 0 ${18 + level * 42}px ${color}` : 'none',
-          transition: 'transform 80ms ease-out, opacity 120ms, border-color 220ms, box-shadow 120ms',
+          border: `${talking ? 4 + level * 5 : 3}px solid ${color}`,
+          opacity: talking ? 0.5 + level * 0.5 : 0.14,
+          transform: `scale(${1 + level * 0.28})`,
+          boxShadow: talking ? `0 0 ${26 + level * 70}px ${color}` : 'none',
+          transition: 'transform 70ms ease-out, opacity 100ms, border-color 220ms, box-shadow 100ms',
           pointerEvents: 'none',
         }}
       />
