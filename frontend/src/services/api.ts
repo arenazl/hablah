@@ -311,6 +311,10 @@ export interface AuditSessionDetail {
   transcript: AuditTurn[]
   metrics: Record<string, any>
   report: Record<string, any>
+  /** Cómo se armó la clase: circuito de reglas resueltas (qué aplicó el motor) + el
+   * systemInstruction exacto que recibió el coach. Persistido por clase en el WS de voz. */
+  prompt_circuit: Record<string, any> | null
+  prompt_final: string | null
   errors: AuditErrorRow[]
   turns: number
   user_turns: number

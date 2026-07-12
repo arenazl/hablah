@@ -1121,6 +1121,22 @@ function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
           <Meta label="Audio" value={d.audio_url ? <a href={d.audio_url} target="_blank" rel="noreferrer" style={{ color: 'var(--primary)' }}>escuchar</a> : '—'} />
         </div>
 
+        {/* Cómo se armó la clase: las reglas que el motor resolvió + el prompt final exacto que
+            recibió el coach. Es la fuente para diagnosticar por qué el coach hizo lo que hizo
+            (ej: pidió una palabra suelta en vez de la frase-puente). El WS de voz ya lo persiste. */}
+        <div className="card card-elev" style={{ padding: 16, marginTop: 14 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Reglas aplicadas (circuito del motor)</div>
+          {d.prompt_circuit
+            ? <JsonBlock data={d.prompt_circuit} />
+            : <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Sin circuito persistido (charla anterior a la instrumentación del prompt).</div>}
+        </div>
+        <div className="card card-elev" style={{ padding: 16, marginTop: 14 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Prompt final (lo que recibió el coach)</div>
+          {d.prompt_final
+            ? <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12, lineHeight: 1.5, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', color: 'var(--fg-1)', background: 'var(--bg-2)', border: '1px solid var(--border-1)', borderRadius: 8, padding: 12, maxHeight: 460, overflow: 'auto' }}>{d.prompt_final}</pre>
+            : <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Sin prompt persistido (charla anterior a la instrumentación del prompt).</div>}
+        </div>
+
         {/* Timeline unificado: conversación + eventos (desde Cloud Logging) */}
         <UnifiedTimeline d={d} />
 
