@@ -192,7 +192,6 @@ function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpe
   const user = profile?.user
   const initial = user?.nombre?.[0] || 'U'
   const pct = user?.cefr_level ? cefrPct(user.cefr_level) : 0
-  const isAdmin = user?.role === 'admin'
   return (
     <aside className={`sidebar${mobileOpen ? ' mobile-open' : ''}`}>
       <div className="brand">
@@ -209,31 +208,6 @@ function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpe
         <SidebarItem to="/app/kids" icon={<KidsIcon />} label="Modo Kids" badge="HABI" />
       </nav>
 
-      {isAdmin && (
-        <>
-          <div className="sidebar-section">Admin</div>
-          <nav className="sidebar-nav">
-            <NavLink to="/admin" className="nav-item" style={{ background: 'rgba(255,184,0,.12)', color: '#FFB800' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 3h7v7H3z" /><path d="M14 3h7v7h-7z" /><path d="M14 14h7v7h-7z" /><path d="M3 14h7v7H3z" />
-              </svg>
-              Backoffice
-            </NavLink>
-            <NavLink to="/app/qa" className="nav-item" style={{ background: 'rgba(124,92,255,.12)', color: '#A892FF' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>
-              </svg>
-              QA Harness
-            </NavLink>
-            <NavLink to="/app/admin/users" className="nav-item" style={{ background: 'rgba(59,130,246,.12)', color: '#3B82F6' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
-              Usuarios
-            </NavLink>
-          </nav>
-        </>
-      )}
       <div className="sidebar-section">Tu progreso</div>
       <div style={{ padding: '0 18px' }}>
         <div style={{ background: 'rgba(255,255,255,.04)', borderRadius: 12, padding: 14 }}>
@@ -355,17 +329,6 @@ function TopBar({ profile, onMenuClick, themeMode, onToggleTheme }: { profile: M
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
             )}
-          </button>
-          <button
-            className="settings-btn"
-            aria-label="Ajustes"
-            onClick={() => nav('/app/perfil')}
-            style={isDark ? { color: 'white' } : undefined}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="2.5" />
-              <path d="M12 3v2.2M12 18.8V21M21 12h-2.2M5.2 12H3M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6M18.4 18.4l-1.6-1.6M7.2 7.2L5.6 5.6"/>
-            </svg>
           </button>
           <div ref={menuRef} style={{ position: 'relative' }}>
             <button
@@ -3016,6 +2979,26 @@ function PerfilView({ profile, onChange }: { profile: MeProfile | null; onChange
             Cerrar sesión
           </button>
         </div>
+
+        {u.role === 'admin' && (
+          <div className="profile-card">
+            <h3>Back office</h3>
+            <div className="settings-list">
+              <Link to="/admin" className="settings-row" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/></svg></div>
+                <div className="body"><div className="l">Backoffice</div><div className="s">Panel de administración</div></div>
+              </Link>
+              <Link to="/app/qa" className="settings-row" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+                <div className="body"><div className="l">QA Harness</div><div className="s">Pruebas y evaluación</div></div>
+              </Link>
+              <Link to="/app/admin/users" className="settings-row" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                <div className="body"><div className="l">Usuarios</div><div className="s">Gestión de cuentas</div></div>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
