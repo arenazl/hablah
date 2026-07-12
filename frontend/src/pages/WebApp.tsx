@@ -374,16 +374,6 @@ function TopBar({ profile, onMenuClick, themeMode, onToggleTheme }: { profile: M
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
                   Mi perfil
                 </button>
-                {user?.role === 'admin' && (
-                  <button
-                    onClick={() => { setMenuOpen(false); nav('/admin') }}
-                    style={menuItemStyle}
-                    role="menuitem"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/></svg>
-                    Backoffice
-                  </button>
-                )}
                 <div style={{ height: 1, background: 'var(--border-1)', margin: '4px 0' }} />
                 <button
                   onClick={() => { localStorage.clear(); window.location.href = '/login' }}
