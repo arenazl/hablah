@@ -42,7 +42,6 @@ export const HOY_CSS = `
   --hp-font-display:'Sora',var(--hp-font-sans);
 
   padding: 8px 32px 56px;
-  max-width:1440px;
   background:var(--hp-bg-1);
   color:var(--hp-fg-1);
   font-family:var(--hp-font-sans);

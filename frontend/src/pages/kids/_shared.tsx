@@ -106,7 +106,7 @@ export const KIDS_CSS = `
 .kids-parental-link .pt { flex:1; }
 .kids-parental-link .pt b { display:block; color:#fff; font-weight:600; font-size:13px; margin-bottom:1px; }
 
-.kids-main { padding:0 32px 56px; max-width:1440px; min-width:0; }
+.kids-main { padding:0 32px 56px; min-width:0; }
 .kids-topbar { display:flex; align-items:center; justify-content:space-between; padding:18px 0 6px; position:sticky; top:0; background:var(--bg-1); z-index:10; }
 .kids-crumbs { font-family:var(--font-display); font-weight:700; font-size:20px; letter-spacing:-0.01em; }
 .kids-crumbs .day { color:var(--fg-4); font-weight:500; font-size:15px; margin-left:6px; }
