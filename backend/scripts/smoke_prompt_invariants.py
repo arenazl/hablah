@@ -50,7 +50,12 @@ from services.composer_proto import MotorDataMissing
 # student_types.slug (edad) -> topics.segmento (adultos != adult)
 SEG_TO_TOPIC_SEG = {"mini": "mini", "junior": "junior", "teen": "teen", "adult": "adultos"}
 LEVELS = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"]
-PLACEHOLDERS = ["{topic}", "{first_vocab}", "{name}", "{word}"]
+PLACEHOLDERS = [
+    "{topic}", "{first_vocab}", "{name}", "{word}",
+    "{expected_production}", "{language_rule}", "{curriculum_grammar}",
+    "{tutor_mascot}", "{tutor}", "{tutor_identity}", "{tutor_tonal_rules}",
+    "{pedagogical_rules}", "{universal_closing_rule}"
+]
 
 # F2-02: historia LIVIANA de muestra (contrato learner_state). Sirve para la invariante "si hay
 # learner_state, el bloque aparece UNA vez y ≤5 líneas". Frases sin placeholders ni frases barridas.

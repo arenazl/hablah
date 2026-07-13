@@ -446,9 +446,9 @@ def compose_proto_prompt(
     primero) frase-ancla, orden de frases y variante de arranque -> variedad por construcción,
     NO por el humor del modelo. Si es None se deriva de (user.id, topic.id, HOY): mismo cruce el
     mismo día = MISMO prompt (auditable); día distinto = selección distinta."""
-    std = _req(student_type_data, "student_type_data (eje EDAD — student_types)")
-    lv = _req(level_data, "level_data (eje NIVEL — levels)")
-    slug = std.get("slug") or getattr(user, "age_group", None) or "?"
+    raw_std = _req(student_type_data, "student_type_data (eje EDAD — student_types)")
+    raw_lv = _req(level_data, "level_data (eje NIVEL — levels)")
+    slug = raw_std.get("slug") or getattr(user, "age_group", None) or "?"
     cefr = getattr(user, "cefr_level", None) or "?"
     ctx = f"segmento={slug}, nivel={cefr}"
 
@@ -463,6 +463,56 @@ def compose_proto_prompt(
     # Ancla del arranque: rota por semilla entre las palabras (o frases si no hay palabras). Con la
     # misma semilla, coincide con la frase-ancla elegida en el bloque de vocab (ambas usan 'phrase').
     first_word = _pick(vocab or phrases, _derive(session_seed, "phrase"))
+
+    # Copias mutables para la interpolación JIT de plantillas
+    std = dict(raw_std)
+    lv = dict(raw_lv)
+    cfg = dict(app_config) if app_config else {}
+
+    topic_title = getattr(topic, "title", None) or "el tema de hoy"
+    expected_prod = lv.get("expected_production") or ""
+    lang_rule = lv.get("language_rule") or ""
+    grammar = lv.get("curriculum_grammar") or ""
+    tutor = std.get("tutor_mascot") or "HABI"
+    identity = std.get("tutor_identity") or ""
+    tonal = std.get("tutor_tonal_rules") or ""
+    pedagogy = std.get("pedagogy") or ""
+    universal_closing = cfg.get("universal_closing_rule") or "La clase la cierra el adulto con el botón: NUNCA te despidas."
+
+    def interpolate(s: str) -> str:
+        if not s:
+            return ""
+        return (
+            s.replace("{name}", user_name)
+             .replace("{topic}", topic_title)
+             .replace("{first_vocab}", first_word)
+             .replace("{word}", first_word)
+             .replace("{expected_production}", expected_prod.strip())
+             .replace("{language_rule}", lang_rule.strip())
+             .replace("{curriculum_grammar}", grammar.strip())
+             .replace("{tutor_mascot}", tutor)
+             .replace("{tutor}", tutor)
+             .replace("{tutor_identity}", identity.strip())
+             .replace("{tutor_tonal_rules}", tonal.strip())
+             .replace("{pedagogical_rules}", pedagogy.strip())
+             .replace("{universal_closing_rule}", universal_closing.strip())
+        )
+
+    # Aplicar interpolación JIT a todas las cadenas del catálogo
+    for k, v in std.items():
+        if isinstance(v, str):
+            std[k] = interpolate(v)
+    for k, v in lv.items():
+        if isinstance(v, str):
+            lv[k] = interpolate(v)
+    if app_config:
+        cfg_interpolated = {}
+        for k, v in app_config.items():
+            if isinstance(v, str):
+                cfg_interpolated[k] = interpolate(v)
+            else:
+                cfg_interpolated[k] = v
+        app_config = cfg_interpolated
 
     blocks = [
         _get_runtime_context(user),
