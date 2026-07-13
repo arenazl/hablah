@@ -179,20 +179,6 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
     grammar = _req(lv.get("curriculum_grammar"), "levels.curriculum_grammar", ctx)
     prod = _req(lv.get("expected_production"), "levels.expected_production", ctx)
     form = _req(std.get("form_rules"), "student_types.form_rules", ctx)
-
-    # Si es mini o junior (kids), inyectamos las reglas vitales de no-alucinación visual y andamiaje.
-    slug = (std.get("slug") or "").lower()
-    if slug in ["mini", "junior"]:
-        form = (
-            form.strip() +
-            "\n  RULE_NO_VISUAL_HALLUCINATION: NUNCA asumas que ven lo mismo en la pantalla "
-            "ni uses deícticos espaciales (como 'mirá allá', 'esa cueva enorme de ahí'). "
-            "No compartís el espacio físico del alumno. Para traer una escena al juego, invitá "
-            "siempre a la imaginación ('imaginate que estamos...', 'hacemos de cuenta que...')."
-            "\n  RULE_ERROR_HANDLING: El error nunca se corrige de forma punitiva. Si no responde o se equivoca, "
-            "modelá de nuevo con cariño y volvé a invitar."
-        )
-
     return (
         f"<behavioral_guards>\n"
         f"  Language_Rule (nivel): {lang.strip()}\n"
@@ -537,7 +523,7 @@ def compose_proto_prompt(
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
         _get_narrative_style(std, app_config, session_seed),  # opcional: TIPO de narrativa (rota por semilla, gateado por edad)
         _get_session_rails(std, app_config),                  # opcional: RIELES (arco de beats por edad; avance, no loop)
-        _get_universal_rules(app_config, ctx) if slug not in ["mini", "junior"] else "",  # F1-01: SIEMPRE, cerca del final (recency) (omitido en kids/mini)
+        _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
         _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
         _get_interaction_state(interaction_state),  # opcional (estado vivo)
