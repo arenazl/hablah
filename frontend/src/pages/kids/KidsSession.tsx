@@ -263,35 +263,26 @@ export function KidsSession() {
   // cambios al prompt/motor -- esto es puro listener sobre texto ya emitido.
   const vocabMapRef = useRef<Map<string, VisualCueItem>>(new Map())
   const [cue, setCue] = useState<{ item: VisualCueItem; leaving: boolean } | null>(null)
-  const cueQueueRef = useRef<VisualCueItem[]>([])
-  const cueBusyRef = useRef(false)
   const cueTimeoutsRef = useRef<number[]>([])
-  const CUE_SHOW_MS = 3600
+  const CUE_SHOW_MS = 2800
   const CUE_EXIT_MS = 300
 
-  const advanceCueQueue = useCallback(() => {
-    if (cueBusyRef.current) return
-    const next = cueQueueRef.current.shift()
-    if (!next) return
-    cueBusyRef.current = true
-    setCue({ item: next, leaving: false })
+  // El dibujo sigue a la ÚLTIMA palabra que el coach nombra: cada mención nueva
+  // REEMPLAZA la anterior (corta y muestra la nueva) en vez de encolarse. Antes era
+  // una cola que mostraba cada imagen 3.6s en fila -> si el coach nombraba varias
+  // palabras seguidas se iban atrasando (aparecía "púrpura" cuando ya hablaba de otra
+  // cosa). Reemplazar mantiene el dibujo sincronizado con lo que el coach dice AHORA.
+  const showVisual = useCallback((item: VisualCueItem) => {
+    cueTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
+    cueTimeoutsRef.current = []
+    setCue({ item, leaving: false })
     const hideAt = window.setTimeout(() => {
       setCue((c) => (c ? { ...c, leaving: true } : c))
-      const clearAt = window.setTimeout(() => {
-        setCue(null)
-        cueBusyRef.current = false
-        advanceCueQueue()
-      }, CUE_EXIT_MS)
+      const clearAt = window.setTimeout(() => setCue(null), CUE_EXIT_MS)
       cueTimeoutsRef.current.push(clearAt)
     }, CUE_SHOW_MS)
     cueTimeoutsRef.current.push(hideAt)
   }, [])
-
-  const enqueueVisual = useCallback((item: VisualCueItem) => {
-    if (cueQueueRef.current.length >= 4) return  // cola chica: evita saturar si el coach nombra varias seguidas
-    cueQueueRef.current.push(item)
-    advanceCueQueue()
-  }, [advanceCueQueue])
 
   // Carga + precarga de TODA la biblioteca visual kids (no solo el tópico):
   // no sabemos qué palabra va a nombrar el coach, así que cargamos todas de
@@ -374,10 +365,10 @@ export function KidsSession() {
       seenThisPass.set(canon, n)
       if (n > (matchedInLineRef.current.get(canon) ?? 0)) {
         matchedInLineRef.current.set(canon, n)
-        enqueueVisual(vocabMap.get(canon)!)
+        showVisual(vocabMap.get(canon)!)
       }
     }
-  }, [live.transcript, enqueueVisual])
+  }, [live.transcript, showVisual])
 
   // Limpieza de timers pendientes al desmontar (no es el cleanup de la
   // sesión de voz -- ese ya existe más abajo).
