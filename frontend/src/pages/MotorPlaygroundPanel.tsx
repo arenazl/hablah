@@ -32,17 +32,7 @@ const C = {
 
 const NAT = { fijo: '#9aa3af', edad: '#fbbf24', nivel: '#7dd3fc', dinamico: '#818cf8' }
 
-const PLACEHOLDER_SOURCES: Record<string, { table: string; field: string; label: string }> = {
-  expected_production: { table: 'levels', field: 'expected_production', label: 'Producción Esperada (del Nivel)' },
-  language_rule: { table: 'levels', field: 'language_rule', label: 'Regla de Idioma (del Nivel)' },
-  curriculum_grammar: { table: 'levels', field: 'curriculum_grammar', label: 'Gramática (del Nivel)' },
-  tutor_mascot: { table: 'student_types', field: 'tutor_mascot', label: 'Nombre de Mascota (de la Edad)' },
-  tutor: { table: 'student_types', field: 'tutor_mascot', label: 'Nombre de Mascota (de la Edad)' },
-  tutor_identity: { table: 'student_types', field: 'tutor_identity', label: 'Identidad del Tutor (de la Edad)' },
-  tutor_tonal_rules: { table: 'student_types', field: 'tutor_tonal_rules', label: 'Reglas de Tono (de la Edad)' },
-  pedagogical_rules: { table: 'student_types', field: 'pedagogy', label: 'Reglas Pedagógicas (de la Edad)' },
-  universal_closing_rule: { table: 'app_config', field: 'universal_closing_rule', label: 'Regla de Cierre Universal (Config)' },
-}
+// Los placeholders se resuelven dinámicamente inspeccionando las propiedades del catálogo cargado.
 
 const Ico = ({ d, size = 16 }: { d: string; size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
@@ -271,11 +261,41 @@ export default function MotorPlaygroundPanel() {
   }
 
   const handlePlaceholderClick = (ph: string) => {
-    const src = PLACEHOLDER_SOURCES[ph]
-    if (src) {
-      startEditField(src.table, src.field)
+    // 1. Mapear alias comunes a nombres reales de columnas/campos de BD
+    let field = ph
+    if (ph === 'tutor') field = 'tutor_mascot'
+    if (ph === 'pedagogical_rules') field = 'pedagogy'
+
+    // 2. Inspeccionar dinámicamente si el campo pertenece a alguna tabla del catálogo
+    const hasInStudentTypes = studentTypesRows.length > 0 && field in studentTypesRows[0]
+    if (hasInStudentTypes) {
+      startEditField('student_types', field)
+      return
+    }
+
+    const hasInLevels = levelsRows.length > 0 && field in levelsRows[0]
+    if (hasInLevels) {
+      startEditField('levels', field)
+      return
+    }
+
+    const hasInTopics = topicsRows.length > 0 && field in topicsRows[0]
+    if (hasInTopics) {
+      startEditField('topics', field)
+      return
+    }
+
+    const hasInConfig = appConfigRows.some(r => r.key === ph || r.key === field)
+    if (hasInConfig) {
+      startEditField('app_config', field)
+      return
+    }
+
+    // 3. Fallback para variables de contexto dinámico (no editables en BD)
+    if (['name', 'topic', 'first_vocab', 'word'].includes(ph)) {
+      toast.info(`El placeholder {${ph}} se calcula dinámicamente en tiempo de ejecución para cada sesión.`)
     } else {
-      toast.error(`Placeholder {${ph}} no mapeable a un campo de base directo`)
+      toast.error(`El placeholder {${ph}} no coincide con ningún campo editable en la base de datos.`)
     }
   }
 
@@ -306,7 +326,7 @@ export default function MotorPlaygroundPanel() {
   // Renderizador JIT de texto con resaltado e interacción de placeholders
   const renderBodyWithPlaceholders = (text: string) => {
     if (!text) return null
-    const regex = /(\{expected_production\}|\{tutor_mascot\}|\{tutor\}|\{universal_closing_rule\}|\{tutor_identity\}|\{tutor_tonal_rules\}|\{pedagogical_rules\})/g
+    const regex = /(\{[a-zA-Z0-9_-]+\})/g
     const parts = text.split(regex)
     return parts.map((part, i) => {
       const isPh = part.startsWith('{') && part.endsWith('}')
