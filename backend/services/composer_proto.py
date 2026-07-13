@@ -230,27 +230,9 @@ def _get_vocabulary(topic, topic_content: Optional[dict]) -> tuple[str, list[str
     return title, vocab, phrases
 
 
-def _get_vocabulary_block(topic, topic_content: Optional[dict], ctx: str, vocab_depth: Optional[str],
-                          session_seed: int = 0) -> str:
-    title, vocab, phrases = _get_vocabulary(topic, topic_content)
+def _get_vocabulary_block(title: str, vocab: list[str], phrases: list[str], ctx: str) -> str:
     _req(title, "tópico (sequencer no resolvió un tópico)", ctx)
-    # El bloque 7 necesita contenido léxico: palabras (Words) O frases-ancla (Target_Phrases).
-    # Un tópico de charla adulta puede no tener palabras sueltas y sí frases (generated_vocab).
     _req(vocab or phrases, "vocab/frases del tópico (pinned_vocabulary/keywords/generated_vocab)", ctx)
-    # Sector 2 (biblia): la PROFUNDIDAD escala por nivel. basic (A0-A2) = solo 1 frase; full = todas.
-    # F2-03: la frase-ancla ROTA por semilla (no phrases[:1] fijo -> cada día una distinta de las N);
-    # en full, mismo set con orden rotado (varía el énfasis sin forzar vocab nuevo).
-    depth = _req(vocab_depth, "levels.vocab_depth", ctx)
-    seed_phrase = _derive(session_seed, "phrase")
-    if depth == "basic" and phrases:
-        phrases = [_pick(phrases, seed_phrase)]
-    elif phrases:
-        phrases = _rotate(phrases, seed_phrase)
-    # El vocab curado es DIVERSO (6 palabras inconexas no las hila nadie): por clase van
-    # MENOS palabras (4, rotadas por semilla — otro día, otras 4) y la instrucción es tejer
-    # solo las que entren natural. Anti-forzar: misma doctrina validada del visual reactivo.
-    if vocab:
-        vocab = _rotate(vocab, _derive(session_seed, "words"))[:4]
     block = f"<current_lesson_vocabulary>\n  Topic: {title}\n"
     if vocab:
         block += f"  Words_Available: {', '.join(vocab)}\n"
@@ -458,12 +440,25 @@ def compose_proto_prompt(
                                      datetime.date.today().isoformat())
 
     user_name = _req(getattr(user, "nombre", None), "user.nombre", ctx)
-    _, vocab, phrases = _get_vocabulary(topic, topic_content)
+    title, raw_vocab, raw_phrases = _get_vocabulary(topic, topic_content)
     _req(topic, "tópico (sequencer)", ctx)
-    _req(vocab or phrases, "vocab/frases del tópico (pinned_vocabulary/keywords/generated_vocab)", ctx)
-    # Ancla del arranque: rota por semilla entre las palabras (o frases si no hay palabras). Con la
-    # misma semilla, coincide con la frase-ancla elegida en el bloque de vocab (ambas usan 'phrase').
-    first_word = _pick(vocab or phrases, _derive(session_seed, "phrase"))
+    _req(raw_vocab or raw_phrases, "vocab/frases del tópico (pinned_vocabulary/keywords/generated_vocab)", ctx)
+
+    # 1. Rotar y acotar palabras para esta sesión (máx 4 para kids)
+    vocab = _rotate(raw_vocab, _derive(session_seed, "words"))[:4] if raw_vocab else []
+
+    # 2. Rotar y acotar frases-ancla según nivel
+    depth = _req(raw_lv.get("vocab_depth"), "levels.vocab_depth", ctx)
+    seed_phrase = _derive(session_seed, "phrase")
+    if depth == "basic" and raw_phrases:
+        phrases = [_pick(raw_phrases, seed_phrase)]
+    elif raw_phrases:
+        phrases = _rotate(raw_phrases, seed_phrase)
+    else:
+        phrases = []
+
+    # 3. Elegir la palabra/frase de ancla del arranque (first_word) de la lista acotada de hoy
+    first_word = _pick(vocab or phrases, seed_phrase)
 
     # Copias mutables para la interpolación JIT de plantillas
     std = dict(raw_std)
@@ -497,7 +492,7 @@ def compose_proto_prompt(
              .replace("{tutor_tonal_rules}", tonal.strip())
              .replace("{pedagogical_rules}", pedagogy.strip())
              .replace("{universal_closing_rule}", universal_closing.strip())
-        )
+         )
 
     # Aplicar interpolación JIT a todas las cadenas del catálogo
     for k, v in std.items():
@@ -524,11 +519,11 @@ def compose_proto_prompt(
         _get_learner_state(learner_state),          # opcional (memoria, post-clase)
         _get_behavioral_guards(std, lv, ctx),
         _get_output_rules(app_config),              # opcional (config runtime)
-        _get_vocabulary_block(topic, topic_content, ctx, lv.get("vocab_depth"), session_seed),
+        _get_vocabulary_block(title, vocab, phrases, ctx),
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
         _get_narrative_style(std, app_config, session_seed),  # opcional: TIPO de narrativa (rota por semilla, gateado por edad)
         _get_session_rails(std, app_config),                  # opcional: RIELES (arco de beats por edad; avance, no loop)
-        _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
+        _get_universal_rules(app_config, ctx) if slug not in ["mini", "junior"] else "",  # F1-01: SIEMPRE, cerca del final (recency) (omitido en kids/mini)
         _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
         _get_interaction_state(interaction_state),  # opcional (estado vivo)

@@ -54,3 +54,5 @@ tmp_seo/
 backend/.ollama_key
 # Backups and temporary scripts
 backend/scripts/_backup_*
+scratch/
+backend/scratch/
