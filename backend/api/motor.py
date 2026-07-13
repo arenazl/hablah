@@ -169,25 +169,50 @@ async def delete_row(table: str, payload: dict = Body(...), db: AsyncSession = D
 # ════════════════════════════ Playground (orquestación JIT) ════════════════════════════
 @router.get("/dimensions")
 async def dimensions(db: AsyncSession = Depends(get_db)):
-    """Selectores del playground: bandas, niveles, catálogo cat→subcat→tópicos, alumnos.
-    Sin auth: lo consume el probador/training de prueba (como /llm)."""
-    bands = _rows(await db.execute(text(
-        "SELECT band_id, code, label, min_age, max_age, phase_group, max_level_order FROM age_band ORDER BY band_id")))
+    """Selectores del playground: bandas (student_types), niveles (levels), catálogo de tópicos, alumnos (users)."""
+    # 1. Bandas de edad (student_types)
+    raw_bands = _rows(await db.execute(text(
+        "SELECT id AS band_id, slug AS code, name AS label, age_min AS min_age, age_max AS max_age FROM student_types ORDER BY id")))
+    bands = []
+    for b in raw_bands:
+        code = b["code"]
+        phase_group = "kid" if code in ["mini", "junior"] else "adult"
+        max_level_order = 3 if code == "mini" else 5 if code == "junior" else 99
+        bands.append({**b, "phase_group": phase_group, "max_level_order": max_level_order})
+
+    # 2. Niveles (levels)
     levels = _rows(await db.execute(text(
-        "SELECT level_code, label, sort_order FROM `level` ORDER BY sort_order")))
-    cats = _rows(await db.execute(text("SELECT category_id, name FROM category ORDER BY name")))
-    subs = _rows(await db.execute(text("SELECT subcategory_id, category_id, name FROM subcategory ORDER BY name")))
-    topics = _rows(await db.execute(text("SELECT topic_id, subcategory_id, title FROM topic ORDER BY title")))
+        "SELECT code AS level_code, friendly_name AS label, id AS sort_order FROM levels ORDER BY id")))
+
+    # 3. Tópicos (topics)
+    db_topics = _rows(await db.execute(text(
+        "SELECT id AS topic_id, title, segmento FROM topics WHERE is_active=1 ORDER BY title")))
+
+    # 4. Alumnos (users)
     students = _rows(await db.execute(text(
-        "SELECT student_id, name, age, level_code FROM student ORDER BY name")))
-    tbs = _rows(await db.execute(text("SELECT topic_id, band_id FROM topic_suggested_band")))
-    topics_by_sub: dict[int, list] = {}
-    for t in topics:
-        topics_by_sub.setdefault(t["subcategory_id"], []).append(t)
-    subs_by_cat: dict[int, list] = {}
-    for s in subs:
-        subs_by_cat.setdefault(s["category_id"], []).append({**s, "topics": topics_by_sub.get(s["subcategory_id"], [])})
-    catalog = [{**c, "subcategories": subs_by_cat.get(c["category_id"], [])} for c in cats]
+        "SELECT id AS student_id, nombre AS name, cefr_level AS level_code FROM users ORDER BY nombre")))
+
+    # Relación tópicos-bandas sugeridas
+    tbs = []
+    for t in db_topics:
+        # Mapear sugerencia según el segmento del tópico
+        seg = t.get("segmento") or "adult"
+        band_row = next((b for b in bands if b["code"] == seg), None)
+        if band_row:
+            tbs.append({"topic_id": t["topic_id"], "band_id": band_row["band_id"]})
+
+    # Catálogo estructurado mockeado (para compatibilidad de interfaz con un solo grupo plano)
+    catalog = [{
+        "category_id": 1,
+        "name": "Todos los Tópicos",
+        "subcategories": [{
+            "subcategory_id": 1,
+            "category_id": 1,
+            "name": "General",
+            "topics": db_topics
+        }]
+    }]
+
     return {"bands": bands, "levels": levels, "catalog": catalog, "students": students,
             "topic_suggested_band": tbs}
 
