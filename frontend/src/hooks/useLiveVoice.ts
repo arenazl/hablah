@@ -1033,11 +1033,21 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     }
   }, [status])
 
+  // Backlog de la cola de playback: cuánto audio del coach falta por reproducir (ms). Es la
+  // "verdad" de la línea de tiempo del audio -> el visual reactivo de kids lo usa para caer
+  // junto a lo que el nene ESCUCHA (no con el texto, que llega adelantado del audio).
+  const getAudioBacklogMs = useCallback(() => {
+    const pctx = playCtxRef.current
+    if (!pctx) return 0
+    return Math.max(0, Math.round((nextStartTimeRef.current - pctx.currentTime) * 1000))
+  }, [])
+
   return {
     start, stop, status, transcript, audioLevel, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants,
     micDevices, activeMicLabel, switchMic,
     // Push-to-talk (F3-02): setPushToTalk prende/apaga el modo; pttPress/
     // pttRelease los dispara el botón; pttHeld es reactivo para la UI.
     setPushToTalk, pttPress, pttRelease, pttHeld,
+    getAudioBacklogMs,
   }
 }

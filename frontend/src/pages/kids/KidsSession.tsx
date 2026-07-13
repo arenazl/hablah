@@ -265,22 +265,25 @@ export function KidsSession() {
   const [cue, setCue] = useState<{ item: VisualCueItem; leaving: boolean } | null>(null)
   const cueTimeoutsRef = useRef<number[]>([])
   const pendingShowRef = useRef<number | null>(null)
-  const CUE_SHOW_MS = 2800
+  // La imagen se queda hasta que aparece la PRÓXIMA palabra (reemplazo). En iniciales hay una
+  // palabra por turno, así que acompaña todo el ciclo (coach enseña -> nene dice -> próxima).
+  // CUE_SHOW_MS es solo el colchón de seguridad por si la clase se frena (que no quede pegada).
+  const CUE_SHOW_MS = 12000
   const CUE_EXIT_MS = 300
   // El TEXTO del coach (transcripción) llega ANTES de que su AUDIO suene, porque el
   // playback va con buffering. Por eso el dibujo se adelantaba. Lo retrasamos un toque
   // para alinearlo con lo que el nene ESCUCHA. Tuneable: si sigue adelantado, subir;
   // si queda atrasado, bajar. (El de INPUT "se come la 1ra palabra" es otro tema.)
-  // DEV (temporal): sync + prefix calibrables desde el panel de abajo. syncDelayRef lo lee
-  // showVisual sin recrear el callback; los sliders persisten en localStorage y "Aplicar"
-  // reinicia la charla. Sacar el panel + estas líneas cuando esté calibrado.
-  const syncDelayRef = useRef<number>(Number(localStorage.getItem('kids_sync_delay_ms')) || 900)
-  const [syncSlider, setSyncSlider] = useState<number>(Number(localStorage.getItem('kids_sync_delay_ms')) || 900)
+  // DEV (temporal): OFFSET de sync + prefix, calibrables desde el panel de abajo. El offset
+  // corrige un desfase crónico SOBRE el delay dinámico (backlog del audio): 0 = sin corrección,
+  // negativo = imagen más temprano, positivo = más tarde. Se aplica en vivo. Sacar cuando calibre.
+  const syncOffsetRef = useRef<number>(Number(localStorage.getItem('kids_sync_offset_ms')) || 0)
+  const [syncSlider, setSyncSlider] = useState<number>(Number(localStorage.getItem('kids_sync_offset_ms')) || 0)
   const [prefixSlider, setPrefixSlider] = useState<number>(Number(localStorage.getItem('kids_prefix_ms')) || 700)
 
   // Cada palabra nueva REEMPLAZA a la anterior (la última que dice el coach manda), y
   // recién aparece VISUAL_SYNC_DELAY_MS después para caer junto al audio.
-  const showVisual = useCallback((item: VisualCueItem) => {
+  const showVisual = useCallback((item: VisualCueItem, delayMs: number) => {
     cueTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
     cueTimeoutsRef.current = []
     if (pendingShowRef.current) window.clearTimeout(pendingShowRef.current)
@@ -293,7 +296,7 @@ export function KidsSession() {
         cueTimeoutsRef.current.push(clearAt)
       }, CUE_SHOW_MS)
       cueTimeoutsRef.current.push(hideAt)
-    }, syncDelayRef.current)
+    }, delayMs)
   }, [])
 
   // Carga + precarga de TODA la biblioteca visual kids (no solo el tópico):
@@ -351,36 +354,45 @@ export function KidsSession() {
   // los chunks pueden cortar una palabra a la mitad -- así nunca se pierde un
   // match por el corte. matchedInLineRef cuenta ocurrencias ya disparadas
   // para no re-mostrar la misma mención mientras el texto sigue creciendo.
+  // >>> DISPARADOR REDISEÑADO — filtro semántico + delay dinámico <<<
+  // (1) FILTRO: muestra SOLO la palabra que la coach está ENSEÑANDO, detectada por el patrón
+  //     "<algo> se dice <word>" (el mismo del Expected_Production A0 y del subtítulo). Antes
+  //     disparaba con CUALQUIER palabra del vocab -> si decía "mundo" en la clase de colores,
+  //     aparecía un mundo. Ahora solo aparece lo que el nene tiene que DECIR = asistencia, no ruido.
+  // (2) SYNC: el delay lo da el backlog REAL del audio (cuánto falta por sonar), no un número
+  //     fijo. El slider de sync queda como OFFSET global (corrige un desfase crónico de la charla).
   const prevTranscriptLenRef = useRef(0)
   const matchedInLineRef = useRef<Map<string, number>>(new Map())
+  const liveTranscript = live.transcript
+  const getAudioBacklogMs = live.getAudioBacklogMs
   useEffect(() => {
-    const arr = live.transcript
+    const arr = liveTranscript
     if (arr.length !== prevTranscriptLenRef.current) {
       prevTranscriptLenRef.current = arr.length
-      matchedInLineRef.current = new Map()  // arrancó una línea nueva -> reiniciar conteo
+      matchedInLineRef.current = new Map()  // turno nuevo -> reiniciar conteo
     }
     const last = arr[arr.length - 1]
     if (!last || last.who !== 'ai') return
     const vocabMap = vocabMapRef.current
     if (vocabMap.size === 0) return
-    // Normalizamos acentos/ñ ANTES de tokenizar: el coach habla castellano
-    // ("caramelo", "avión") y las keys del mapa ya están normalizadas.
-    const tokens = normalizeVisualWord(last.text).match(/[a-z']+/g) || []
-    const seenThisPass = new Map<string, number>()
-    for (const tok of tokens) {
-      let canon = tok
-      if (!vocabMap.has(canon)) canon = singularizeEnglish(tok)
-      if (!vocabMap.has(canon) && tok.length > 4 && tok.endsWith('es')) canon = tok.slice(0, -2)  // plural es: flores->flor
-      if (!vocabMap.has(canon) && tok.length > 3 && tok.endsWith('s')) canon = tok.slice(0, -1)   // plural es: caramelos->caramelo
+    // Texto normalizado (sin acentos) para matchear con las keys del vocabMap.
+    const norm = normalizeVisualWord(last.text)
+    // Palabra objetivo = la que sigue a "se dice" (ej: "elefante se dice elephant" -> elephant).
+    const re = /se dice\s+([a-z'’-]+)/g
+    let m: RegExpExecArray | null
+    while ((m = re.exec(norm)) !== null) {
+      let canon = m[1].replace(/['’-]+$/, '')
+      if (!vocabMap.has(canon)) canon = singularizeEnglish(canon)
+      if (!vocabMap.has(canon) && canon.length > 3 && canon.endsWith('s')) canon = canon.slice(0, -1)
       if (!vocabMap.has(canon)) continue
-      const n = (seenThisPass.get(canon) ?? 0) + 1
-      seenThisPass.set(canon, n)
-      if (n > (matchedInLineRef.current.get(canon) ?? 0)) {
-        matchedInLineRef.current.set(canon, n)
-        showVisual(vocabMap.get(canon)!)
-      }
+      if ((matchedInLineRef.current.get(canon) ?? 0) > 0) continue  // ya disparada este turno
+      matchedInLineRef.current.set(canon, 1)
+      // Delay dinámico: espera lo que falta de audio + el offset del slider (0 = sin corrección).
+      const backlog = getAudioBacklogMs ? getAudioBacklogMs() : 0
+      const delay = Math.max(0, backlog + syncOffsetRef.current)
+      showVisual(vocabMap.get(canon)!, delay)
     }
-  }, [live.transcript, showVisual])
+  }, [liveTranscript, getAudioBacklogMs, showVisual])
 
   // Limpieza de timers pendientes al desmontar (no es el cleanup de la
   // sesión de voz -- ese ya existe más abajo).
@@ -449,9 +461,9 @@ export function KidsSession() {
     window.setTimeout(() => { beginSession() }, 350)
   }
   const applySync = () => {
-    localStorage.setItem('kids_sync_delay_ms', String(syncSlider))
-    syncDelayRef.current = syncSlider
-    restartCharla()
+    // El offset se aplica EN VIVO (no reinicia): la próxima imagen ya usa el valor nuevo.
+    localStorage.setItem('kids_sync_offset_ms', String(syncSlider))
+    syncOffsetRef.current = syncSlider
   }
   const applyPrefix = () => {
     localStorage.setItem('kids_prefix_ms', String(prefixSlider))
@@ -581,9 +593,9 @@ export function KidsSession() {
       <div style={{ position: 'fixed', bottom: 8, left: 8, zIndex: 9999, background: 'rgba(0,0,0,.82)', color: '#fff', padding: '9px 11px', borderRadius: 10, fontSize: 11, fontFamily: 'ui-monospace, monospace', display: 'flex', flexDirection: 'column', gap: 8, width: 258 }}>
         <div style={{ opacity: .55, letterSpacing: .5 }}>DEV · calibración (temporal)</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ width: 58, flexShrink: 0 }}>Sync img</span>
-          <input type="range" min={100} max={900} step={50} value={syncSlider} onChange={(e) => setSyncSlider(Number(e.target.value))} style={{ flex: 1, minWidth: 0 }} />
-          <span style={{ width: 40, textAlign: 'right', flexShrink: 0 }}>{syncSlider}</span>
+          <span style={{ width: 58, flexShrink: 0 }}>Offset img</span>
+          <input type="range" min={-1500} max={1500} step={50} value={syncSlider} onChange={(e) => setSyncSlider(Number(e.target.value))} style={{ flex: 1, minWidth: 0 }} />
+          <span style={{ width: 44, textAlign: 'right', flexShrink: 0 }}>{syncSlider > 0 ? '+' : ''}{syncSlider}</span>
           <button onClick={applySync} style={{ padding: '2px 7px', borderRadius: 5, border: '1px solid #4ade80', background: 'transparent', color: '#4ade80', cursor: 'pointer', fontSize: 10, flexShrink: 0 }}>OK</button>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -592,7 +604,7 @@ export function KidsSession() {
           <span style={{ width: 40, textAlign: 'right', flexShrink: 0 }}>{prefixSlider}</span>
           <button onClick={applyPrefix} style={{ padding: '2px 7px', borderRadius: 5, border: '1px solid #fbbf24', background: 'transparent', color: '#fbbf24', cursor: 'pointer', fontSize: 10, flexShrink: 0 }}>OK</button>
         </div>
-        <div style={{ opacity: .4, fontSize: 9 }}>OK reinicia la charla.</div>
+        <div style={{ opacity: .4, fontSize: 9 }}>Offset img: en vivo · Prefix: reinicia.</div>
       </div>
 
       {showSuccess && (
