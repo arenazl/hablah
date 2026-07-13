@@ -4,1574 +4,1574 @@
     "title": "Arquitectura de software",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una sala de reuniones llena de diagramas borroneados en un pizarrón",
+    "narrative_conflict": "decidir si reconstruir todo el sistema desde cero o parchear el código viejo",
+    "narrative_role": "somos líderes técnicos tomando una decisión difícil antes del lanzamiento"
   },
   {
     "id": 3,
     "title": "Producción musical y cultura DJ",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un estudio de grabación oscuro a las 3 de la mañana",
+    "narrative_conflict": "encontrar ese sonido perfecto que falta para terminar la pista antes del amanecer",
+    "narrative_role": "somos productores musicales probando ideas y buscando inspiración"
   },
   {
     "id": 4,
     "title": "IA generativa · ética",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un panel de debate en una cumbre de tecnología frente a mil personas",
+    "narrative_conflict": "discutir dónde dibujar la línea de los límites éticos de las máquinas",
+    "narrative_role": "somos expertos en inteligencia artificial debatiendo el futuro"
   },
   {
     "id": 5,
     "title": "Entrenamiento de fuerza y suplementación",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el área de pesas libres de un gimnasio viejo y ruidoso",
+    "narrative_conflict": "armar una nueva estrategia porque nos estancamos y no podemos levantar más peso",
+    "narrative_role": "somos compañeros de entrenamiento descansando entre series pesadas"
   },
   {
     "id": 6,
     "title": "Metodologías ágiles · retrospectivas",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una ronda de sillas con café frío y la pared llena de post-its",
+    "narrative_conflict": "analizar sin echar culpas por qué el último proyecto se retrasó tanto",
+    "narrative_role": "somos desarrolladores haciendo autocrítica del equipo"
   },
   {
     "id": 7,
     "title": "Cine de los 90 · Tarantino",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los pasillos polvorientos de un videoclub de barrio que está por cerrar",
+    "narrative_conflict": "elegir la mejor película clásica de la historia para ver esta noche",
+    "narrative_role": "somos cinéfilos apasionados buscando joyas ocultas"
   },
   {
     "id": 8,
     "title": "Anécdotas de aeropuertos",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la sala de espera del aeropuerto con los ojos cansados porque nuestro vuelo se retrasó de nuevo",
+    "narrative_conflict": "pasar el tiempo compartiendo las peores y más graciosas historias de viajes",
+    "narrative_role": "somos dos viajeros cansados charlando para no dormirnos"
   },
   {
     "id": 9,
     "title": "Fútbol · Mundiales y selecciones",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la tribuna popular vacía un par de horas antes del clásico",
+    "narrative_conflict": "intentar ponernos de acuerdo sobre quién es el mejor jugador de la historia",
+    "narrative_role": "somos fanáticos del fútbol discutiendo de táctica"
   },
   {
     "id": 10,
     "title": "Básquet · NBA y leyendas",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una cancha de cemento en el parque mientras el sol se pone",
+    "narrative_conflict": "recordar las jugadas imposibles que marcaron una época en el deporte",
+    "narrative_role": "somos jugadores amateur hidratándonos después de jugar"
   },
   {
     "id": 11,
     "title": "Running · entrenamiento y maratones",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el arco de llegada cruzando la línea después de correr cuarenta kilómetros",
+    "narrative_conflict": "analizar qué falló en el entrenamiento de los últimos meses para la próxima carrera",
+    "narrative_role": "somos corredores agotados charlando mientras estiramos"
   },
   {
     "id": 12,
     "title": "Tenis · Grand Slam y rivalidades",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las butacas de la cancha principal bajo el sol del mediodía",
+    "narrative_conflict": "analizar la estrategia mental que está usando el jugador para ganar este partido eterno",
+    "narrative_role": "somos entrenadores analizando el juego desde la tribuna"
   },
   {
     "id": 13,
     "title": "Fórmula 1 y automovilismo",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el pit lane rodeados del ruido ensordecedor de los motores",
+    "narrative_conflict": "tomar la decisión de cambiar los neumáticos antes de que empiece a llover de verdad",
+    "narrative_role": "somos ingenieros de carrera calculando la estrategia ganadora"
   },
   {
     "id": 14,
     "title": "Cocina italiana · pasta y vinos",
     "category": "gastronomia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cocina llena de vapor de un pequeño restaurante en Nápoles",
+    "narrative_conflict": "terminar el menú perfecto justo antes de que abran las puertas al público",
+    "narrative_role": "somos chefs discutiendo sobre los secretos de la receta tradicional"
   },
   {
     "id": 15,
     "title": "Asado argentino · técnica y rituales",
     "category": "gastronomia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un patio trasero frente a una parrilla que empieza a largar chispas",
+    "narrative_conflict": "controlar los tiempos del fuego para que la comida no se arruine mientras llegan los invitados",
+    "narrative_role": "somos los asadores a cargo de que todo salga perfecto"
   },
   {
     "id": 16,
     "title": "Café de especialidad · v60, espresso",
     "category": "gastronomia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una cafetería moderna rodeados de máquinas complejas y olor a granos",
+    "narrative_conflict": "encontrar el método de preparación exacto para extraer el mejor sabor",
+    "narrative_role": "somos baristas calibrando los equipos de la mañana"
   },
   {
     "id": 17,
     "title": "Espacio · astronomía y misiones",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el centro de control de misiones frente a pantallas gigantes llenas de números",
+    "narrative_conflict": "monitorear el aterrizaje de una sonda en un lugar desconocido",
+    "narrative_role": "somos científicos de la agencia espacial controlando la tensión"
   },
   {
     "id": 18,
     "title": "Cambio climático · ciencia y políticas",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los pasillos de una convención internacional sobre el medio ambiente",
+    "narrative_conflict": "debatir si las soluciones que proponemos son reales o solo promesas vacías",
+    "narrative_role": "somos investigadores preocupados buscando respuestas urgentes"
   },
   {
     "id": 19,
     "title": "Biología · evolución y genética",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un laboratorio blanco impecable llenos de microscopios",
+    "narrative_conflict": "analizar el misterio de por qué esta especie cambió tan rápido de repente",
+    "narrative_role": "somos biólogos asombrados por un descubrimiento nuevo"
   },
   {
     "id": 20,
     "title": "Series de streaming · drama prestigio",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el sillón de casa un domingo por la tarde con el control remoto en la mano",
+    "narrative_conflict": "intentar ponernos de acuerdo sobre qué mirar sin discutir dos horas",
+    "narrative_role": "somos dos amigos buscando la serie perfecta para engancharnos"
   },
   {
     "id": 21,
     "title": "Videojuegos · indie y AAA",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los pasillos ruidosos de una convención gigante de tecnología",
+    "narrative_conflict": "analizar si el dinero de las grandes empresas arruinó la creatividad de la industria",
+    "narrative_role": "somos periodistas especializados debatiendo el estado del arte"
   },
   {
     "id": 22,
     "title": "Rock clásico · 70s a 90s",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el garaje de una casa rodeados de cables, micrófonos y guitarras viejas",
+    "narrative_conflict": "intentar definir cuál fue la banda que realmente cambió la historia de la música",
+    "narrative_role": "somos músicos recordando la época dorada"
   },
   {
     "id": 23,
     "title": "Stand-up · comediantes y especiales",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el camarín de un teatro diez minutos antes de subir al escenario",
+    "narrative_conflict": "analizar por qué algunos chistes funcionan y otros nos hacen pasar vergüenza",
+    "narrative_role": "somos comediantes repasando la rutina con nervios"
   },
   {
     "id": 24,
     "title": "Meditación y mindfulness",
     "category": "lifestyle",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un salón silencioso con luz tenue y olor a madera",
+    "narrative_conflict": "intentar apagar el ruido de la cabeza después de un día caótico de trabajo",
+    "narrative_role": "somos estudiantes de meditación buscando calmar la mente"
   },
   {
     "id": 25,
     "title": "Nutrición · dietas y mitos",
     "category": "lifestyle",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el pasillo del supermercado leyendo las etiquetas de todos los paquetes",
+    "narrative_conflict": "descifrar qué comidas son realmente saludables y cuáles son una estafa del marketing",
+    "narrative_role": "somos amigos intentando hacer una compra inteligente para comer mejor"
   },
   {
     "id": 26,
     "title": "Moda · streetwear y sneakers",
     "category": "lifestyle",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la fila en la calle esperando horas a que abran el local exclusivo",
+    "narrative_conflict": "explicar la locura de por qué vale la pena pagar tanto por este diseño único",
+    "narrative_role": "somos coleccionistas fanáticos esperando un lanzamiento"
   },
   {
     "id": 27,
     "title": "Trabajo remoto · nómade digital",
     "category": "negocios",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una cafetería en la playa rodeados de cables y laptops abiertas",
+    "narrative_conflict": "discutir si esta forma de vivir es la libertad absoluta o una trampa solitaria",
+    "narrative_role": "somos freelancers reflexionando sobre nuestra rutina de vida"
   },
   {
     "id": 28,
     "title": "Entrevistas técnicas · system design",
     "category": "negocios",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una sala de estudio universitaria frente a un tablero lleno de diagramas complejos",
+    "narrative_conflict": "prepararnos para la prueba más difícil intentando resolver un problema imposible",
+    "narrative_role": "somos ingenieros practicando bajo presión para el trabajo de nuestros sueños"
   },
   {
     "id": 29,
     "title": "Emprender · early-stage startup",
     "category": "negocios",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el living de un departamento que usamos como oficina provisoria llena de cajas",
+    "narrative_conflict": "decidir si pedimos más dinero a los inversores o cambiamos todo el modelo de negocio",
+    "narrative_role": "somos los fundadores de una empresa en un momento de crisis total"
   },
   {
     "id": 30,
     "title": "Japón · cultura y tradiciones",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un vagón de tren bala viajando a toda velocidad mirando por la ventana",
+    "narrative_conflict": "intentar entender las reglas sociales silenciosas para no faltarle el respeto a nadie",
+    "narrative_role": "somos turistas asombrados tratando de adaptarnos"
   },
   {
     "id": 31,
     "title": "Patagonia · trekking y montañas",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el balcón de un refugio de montaña con las piernas destruidas por caminar",
+    "narrative_conflict": "recordar lo difícil que fue la subida y si el paisaje hizo que valiera la pena",
+    "narrative_role": "somos mochileros compartiendo la experiencia del cansancio"
   },
   {
     "id": 32,
     "title": "Ciudades que quiero conocer",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la mesa de un bar con un mapa mundial gigante desplegado",
+    "narrative_conflict": "planear las próximas vacaciones intentando coincidir en el destino perfecto",
+    "narrative_role": "somos amigos armando la lista de sueños para viajar"
   },
   {
     "id": 33,
     "title": "Mi banda favorita",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cabina de una camioneta viajando en la ruta con la música a todo volumen",
+    "narrative_conflict": "defender a muerte por qué nuestro grupo es mejor que todo lo demás",
+    "narrative_role": "somos fanáticos discutiendo apasionadamente en un viaje largo"
   },
   {
     "id": 34,
     "title": "Conciertos que me marcaron",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la barra de un bar rodeados de posters de bandas viejas",
+    "narrative_conflict": "recordar esa noche épica donde la música sonó tan fuerte que nos cambió la vida",
+    "narrative_role": "somos melómanos nostálgicos compartiendo anécdotas"
   },
   {
     "id": 35,
     "title": "Música para entrenar",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las colchonetas del gimnasio completamente agotados mirando el techo",
+    "narrative_conflict": "analizar cómo el ritmo correcto de una canción te puede hacer correr más rápido",
+    "narrative_role": "somos deportistas obsesionados con encontrar la playlist perfecta"
   },
   {
     "id": 36,
     "title": "Aprender un instrumento",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un cuarto pequeño insonorizado intentando tocar una misma nota una y otra vez",
+    "narrative_conflict": "vencer la frustración de cuando las manos no se mueven como la cabeza quiere",
+    "narrative_role": "somos aprendices tercos que no se van a rendir hoy"
   },
   {
     "id": 37,
     "title": "Géneros que descubrí",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una tienda de discos revisando bateas llenas de vinilos polvorientos",
+    "narrative_conflict": "explicar la locura de esos ritmos raros que nadie más parece entender",
+    "narrative_role": "somos coleccionistas buscando sonidos nuevos para recomendar"
   },
   {
     "id": 38,
     "title": "Un álbum entero, no playlists",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el sillón de casa sentados al lado del tocadiscos escuchando con atención",
+    "narrative_conflict": "descifrar la historia oculta que el artista quiso contar conectando las canciones",
+    "narrative_role": "somos puristas de la música analizando la obra de principio a fin"
   },
   {
     "id": 39,
     "title": "Música y emociones",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el balcón de un departamento mirando la ciudad de noche",
+    "narrative_conflict": "entender por qué una simple melodía nos puede poner tristes o súper alegres de repente",
+    "narrative_role": "somos amigos en una charla profunda a la madrugada"
   },
   {
     "id": 40,
     "title": "Streaming vs comprar música",
     "category": "musica",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una feria de tecnología antigua rodeados de cds y reproductores digitales",
+    "narrative_conflict": "discutir si tener todo gratis en el teléfono mató el valor de las canciones",
+    "narrative_role": "somos críticos debatiendo el impacto de la tecnología en el arte"
   },
   {
     "id": 41,
     "title": "Una peli que me marcó",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la salida del cine caminando todavía impactados por lo que acabamos de ver",
+    "narrative_conflict": "intentar poner en palabras por qué esa historia nos voló la cabeza",
+    "narrative_role": "somos espectadores emocionados compartiendo la sensación"
   },
   {
     "id": 42,
     "title": "Una serie que no pude parar",
     "category": "peliculas",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la máquina de café de la oficina a primera hora de la mañana",
+    "narrative_conflict": "convencer al otro de que empiece a mirar la historia sin contarle el final arruinándolo",
+    "narrative_role": "somos compañeros de trabajo compartiendo recomendaciones fanáticas"
   },
   {
     "id": 43,
     "title": "Personajes inolvidables",
     "category": "peliculas",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la mesa de un café temático de cine lleno de figuras de acción",
+    "narrative_conflict": "analizar la psicología de los villanos que en el fondo tenían razón",
+    "narrative_role": "somos fanáticos diseccionando las motivaciones de los protagonistas"
   },
   {
     "id": 44,
     "title": "Libro vs película",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los pasillos silenciosos de una biblioteca enorme",
+    "narrative_conflict": "quejarnos amargamente de cómo los directores de cine arruinan las historias originales",
+    "narrative_role": "somos lectores puristas e indignados con la adaptación"
   },
   {
     "id": 45,
     "title": "Spoilers y cómo manejarlos",
     "category": "peliculas",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un grupo de chat de voz donde estamos hablando en código para no arruinar nada",
+    "narrative_conflict": "intentar discutir el gran secreto del final esquivando decir las palabras clave",
+    "narrative_role": "somos amigos paranoicos cuidando que a nadie se le escape un detalle"
   },
   {
     "id": 46,
     "title": "Cine vs streaming en casa",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las butacas rojas de un cine clásico a punto de ser demolido",
+    "narrative_conflict": "reflexionar si la magia de ver cosas en gigante con extraños va a desaparecer para siempre",
+    "narrative_role": "somos amantes del séptimo arte melancólicos por el cambio"
   },
   {
     "id": 47,
     "title": "Géneros que evito y por qué",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el living escroleando infinitamente los menús de la tele sin elegir nada",
+    "narrative_conflict": "explicar por qué ciertas temáticas como el terror o el romance nos aburren profundamente",
+    "narrative_role": "somos espectadores intentando buscar algo neutral para ver"
   },
   {
     "id": 48,
     "title": "Premios y críticos: ¿importan?",
     "category": "peliculas",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el comedor viendo la ceremonia de los premios por televisión",
+    "narrative_conflict": "indignarnos por cómo la industria siempre elige las historias más aburridas para premiar",
+    "narrative_role": "somos críticos aficionados enojados con los resultados"
   },
   {
     "id": 49,
     "title": "Mi deporte favorito",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la barra de un bar deportivo rodeados de televisores con partidos",
+    "narrative_conflict": "explicar la complejidad táctica que los que no saben jugar nunca van a entender",
+    "narrative_role": "somos apasionados defendiendo la superioridad de nuestro juego"
   },
   {
     "id": 50,
     "title": "Mi equipo y sus rivales",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las calles llenas de gente caminando hacia el estadio el día de la final",
+    "narrative_conflict": "analizar los miedos, la historia y la táctica para ganar este partido imposible",
+    "narrative_role": "somos hinchas nerviosos y supersticiosos camino a la tribuna"
   },
   {
     "id": 51,
     "title": "Un partido inolvidable",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los vestuarios todavía llenos de barro celebrando como locos",
+    "narrative_conflict": "repasar minuto a minuto cómo dimos vuelta el resultado mágico en el último segundo",
+    "narrative_role": "somos compañeros de equipo reviviendo la gloria de la victoria"
   },
   {
     "id": 52,
     "title": "Ídolos del deporte",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las vitrinas iluminadas del salón de la fama viendo los trofeos antiguos",
+    "narrative_conflict": "intentar descubrir qué tienen en la cabeza esos genios para no sentir presión jamás",
+    "narrative_role": "somos admiradores analizando la mente de los grandes atletas"
   },
   {
     "id": 53,
     "title": "Hacer deporte vs mirarlo",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el sofá de casa tapados con una manta",
+    "narrative_conflict": "buscar la fuerza de voluntad para salir a transpirar en lugar de prender la tele",
+    "narrative_role": "somos sedentarios intentando motivarnos mutuamente"
   },
   {
     "id": 54,
     "title": "Reglas raras o injustas",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cabina de transmisión repasando el video de la jugada polémica",
+    "narrative_conflict": "debatir si la tecnología mejoró la justicia o si arruinó la emoción del momento",
+    "narrative_role": "somos analistas de la televisión intentando entender la sanción"
   },
   {
     "id": 55,
     "title": "Doping y ética",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la sala de espera del comité médico con todos los expedientes en la mesa",
+    "narrative_conflict": "reflexionar sobre por qué la competencia lleva a la gente a hacer trampa y destruirse",
+    "narrative_role": "somos investigadores del comité de ética preocupados por el juego limpio"
   },
   {
     "id": 56,
     "title": "El negocio del deporte",
     "category": "deportes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una sala de juntas revisando los millones gastados en contratos",
+    "narrative_conflict": "entender si los sueldos ridículos están arruinando el espíritu del juego para siempre",
+    "narrative_role": "somos periodistas de economía analizando el mercado de pases"
   },
   {
     "id": 57,
     "title": "El juego del momento",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el grupo de chat del celular viendo capturas de pantalla a cada rato",
+    "narrative_conflict": "intentar descubrir el truco para pasar ese nivel donde todos nos quedamos trabados",
+    "narrative_role": "somos jugadores obsesionados intercambiando estrategias"
   },
   {
     "id": 58,
     "title": "Console wars",
     "category": "videojuegos",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los pasillos de la tienda de tecnología probando los joysticks nuevos",
+    "narrative_conflict": "discutir por qué pagar por una máquina más potente no sirve si no hay buenos juegos",
+    "narrative_role": "somos consumidores analizando qué caja de plástico comprar este año"
   },
   {
     "id": 59,
     "title": "Jugar con amigos online",
     "category": "entretenimiento",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la sala de espera virtual con los micrófonos abiertos",
+    "narrative_conflict": "coordinar un plan de ataque decente para que no nos destruyan en cinco minutos como siempre",
+    "narrative_role": "somos un escuadrón de amigos armando la táctica antes de saltar al campo"
   },
   {
     "id": 60,
     "title": "Speedruns y secretos",
     "category": "videojuegos",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el cuarto frente al monitor revisando el código del juego paso por paso",
+    "narrative_conflict": "encontrar esa falla exacta en la pared que nos permite saltarnos la mitad del nivel",
+    "narrative_role": "somos hackers rompiendo el juego para hacerlo más rápido"
   },
   {
     "id": 61,
     "title": "Indies vs AAA",
     "category": "videojuegos",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un rincón de una exposición probando proyectos raros de creadores solitarios",
+    "narrative_conflict": "criticar cómo las superproducciones multimillonarias son todas iguales y aburridas",
+    "narrative_role": "somos fanáticos buscando experiencias originales y arriesgadas"
   },
   {
     "id": 62,
     "title": "Historias en videojuegos",
     "category": "videojuegos",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "mirando la pantalla en silencio mientras corren los créditos finales",
+    "narrative_conflict": "procesar el impacto de la decisión durísima que el juego nos obligó a tomar solos",
+    "narrative_role": "somos jugadores emocionados analizando el peso de las acciones"
   },
   {
     "id": 63,
     "title": "Esports: ¿deporte real?",
     "category": "videojuegos",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el estadio lleno de luces láser viendo a los jugadores concentrados en las pantallas",
+    "narrative_conflict": "explicarle a un escéptico los reflejos y el desgaste físico que requiere jugar así de rápido",
+    "narrative_role": "somos espectadores defendiendo la profesionalización de nuestra pasión"
   },
   {
     "id": 64,
     "title": "Videojuegos como arte",
     "category": "videojuegos",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los salones de una galería moderna rodeados de cuadros digitales",
+    "narrative_conflict": "argumentar que diseñar un mundo interactivo es más difícil que pintar un lienzo clásico",
+    "narrative_role": "somos curadores de arte analizando la estética de las máquinas"
   },
   {
     "id": 65,
     "title": "Mi comida favorita",
     "category": "comida",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la mesa del comedor de la infancia con los platos calientes humeando",
+    "narrative_conflict": "describir el secreto exacto de ese sabor que ningún restaurante logró igualar jamás",
+    "narrative_role": "somos familiares compartiendo la receta de la memoria"
   },
   {
     "id": 66,
     "title": "Cocinar en casa",
     "category": "comida",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cocina toda desordenada con tres ollas ensuciadas",
+    "narrative_conflict": "improvisar una cena con las cuatro cosas que quedaron perdidas en la heladera",
+    "narrative_role": "somos cocineros amateur intentando salvar la comida antes del desastre"
   },
   {
     "id": 67,
     "title": "Una receta que aprendí",
     "category": "comida",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la mesada cubierta de harina amasando con fuerza",
+    "narrative_conflict": "recordar el paso secreto y el truco fundamental para que la masa no quede como una piedra",
+    "narrative_role": "somos aprendices compartiendo los errores que cometimos antes de que saliera bien"
   },
   {
     "id": 68,
     "title": "Restaurantes memorables",
     "category": "comida",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la mesa más exclusiva probando un plato minúsculo y rarísimo",
+    "narrative_conflict": "analizar sin prejuicios si esta experiencia carísima realmente vale lo que cuesta pagar la cuenta",
+    "narrative_role": "somos críticos intentando entender la propuesta de los grandes chefs"
   },
   {
     "id": 69,
     "title": "Comida típica de mi país",
     "category": "comida",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las calles de un festival de comida paseando entre los puestos llenos de humo",
+    "narrative_conflict": "explicar la historia de por qué comemos las cosas que comemos y sus ingredientes",
+    "narrative_role": "somos embajadores orgullosos de nuestra cultura frente a alguien de afuera"
   },
   {
     "id": 70,
     "title": "Dietas y modas",
     "category": "comida",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el consultorio del médico leyendo panfletos de restricciones milagrosas",
+    "narrative_conflict": "quejarnos de cómo siempre aparece un gurú nuevo que prohíbe comer cosas deliciosas",
+    "narrative_role": "somos personas confundidas con tanta información falsa y reglas estrictas"
   },
   {
     "id": 71,
     "title": "Cocinar para otros",
     "category": "comida",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el comedor media hora antes de que lleguen quince personas",
+    "narrative_conflict": "gestionar el estrés total de que todos los platos lleguen calientes a la mesa al mismo tiempo",
+    "narrative_role": "somos anfitriones nerviosos coordinando el último esfuerzo para lucirnos"
   },
   {
     "id": 72,
     "title": "Sostenibilidad y comida",
     "category": "comida",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la feria del barrio hablando con los productores directo de la tierra",
+    "narrative_conflict": "reflexionar sobre la culpa de cuánto plástico e impacto generan las cosas que compramos en el supermercado",
+    "narrative_role": "somos consumidores intentando cambiar nuestros hábitos para dañar menos"
   },
   {
     "id": 73,
     "title": "Mi mascota",
     "category": "animales",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el parque a la tarde viendo cómo corren libres rompiendo todo a su paso",
+    "narrative_conflict": "compartir la historia más ridícula de los desastres que hicieron en la casa cuando los dejamos solos",
+    "narrative_role": "somos dueños riéndonos de nuestra paciencia infinita"
   },
   {
     "id": 74,
     "title": "Animales raros que existen",
     "category": "animales",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el túnel oscuro del acuario gigante rodeados de peceras iluminadas",
+    "narrative_conflict": "maravillarnos con lo extremas que son las criaturas que viven donde no hay luz",
+    "narrative_role": "somos observadores curiosos admirando los trucos locos de la biología"
   },
   {
     "id": 75,
     "title": "Tener mascota: ¿sí o no?",
     "category": "animales",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el patio del refugio llenos de cachorros saltando por todos lados",
+    "narrative_conflict": "evaluar fríamente si tenemos el tiempo y el dinero antes de tomar una decisión que nos cambia la vida",
+    "narrative_role": "somos adoptantes dudando sobre la enorme responsabilidad"
   },
   {
     "id": 76,
     "title": "Animales en peligro",
     "category": "animales",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el puesto de control en medio de la selva escuchando ruidos lejanos",
+    "narrative_conflict": "debatir qué hacer para frenar la destrucción de los hábitats antes de que sea demasiado tarde",
+    "narrative_role": "somos guardabosques discutiendo soluciones contra la deforestación"
   },
   {
     "id": 77,
     "title": "Inteligencia animal",
     "category": "animales",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el santuario de primates detrás de los cristales protectores",
+    "narrative_conflict": "analizar cómo los monos resuelven herramientas de la misma forma que lo hacemos nosotros",
+    "narrative_role": "somos etólogos observando comportamientos súper complejos"
   },
   {
     "id": 78,
     "title": "Mascotas exóticas: ¿está bien?",
     "category": "animales",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la sala de espera del veterinario de especies raras",
+    "narrative_conflict": "criticar la locura de querer tener animales peligrosos en el living por ego",
+    "narrative_role": "somos dueños responsables debatiendo los límites de domesticar salvajes"
   },
   {
     "id": 79,
     "title": "Bienestar animal",
     "category": "animales",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las oficinas llenas de carteles de una ONG protectora",
+    "narrative_conflict": "armar una campaña de concientización para cambiar las leyes de las fábricas de comida",
+    "narrative_role": "somos activistas buscando estrategias legales efectivas"
   },
   {
     "id": 80,
     "title": "Animales en la ciencia",
     "category": "animales",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los pasillos helados del laboratorio de experimentación",
+    "narrative_conflict": "enfrentar el dilema ético de si probar medicinas salva humanos pero destruye a otras especies",
+    "narrative_role": "somos investigadores científicos buscando alternativas al uso tradicional"
   },
   {
     "id": 81,
     "title": "Mi último viaje",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la sala esperando buscar las valijas llenas de polvo",
+    "narrative_conflict": "resumir el choque brutal con la realidad de volver a la rutina después de tanta aventura",
+    "narrative_role": "somos viajeros cansados regresando a casa"
   },
   {
     "id": 82,
     "title": "Mi viaje soñado",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la computadora llena de pestañas abiertas buscando pasajes carísimos",
+    "narrative_conflict": "planificar la ruta perfecta para el día que ganemos la lotería",
+    "narrative_role": "somos soñadores armando el itinerario que parece imposible"
   },
   {
     "id": 83,
     "title": "Mochilero vs hotel",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el lobby ruidoso de un hostal rodeados de mochilas inmensas",
+    "narrative_conflict": "discutir si ahorrar dinero durmiendo mal vale más que la comodidad del silencio",
+    "narrative_role": "somos aventureros jóvenes negociando prioridades y presupuestos"
   },
   {
     "id": 84,
     "title": "Choque cultural",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el mercado callejero gritando para entendernos en un idioma desconocido",
+    "narrative_conflict": "intentar descifrar las reglas raras del país para dejar de pasar vergüenza",
+    "narrative_role": "somos turistas desorientados tratando de encajar rápido"
   },
   {
     "id": 85,
     "title": "Comer cuando viajás",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la mesita de plástico del callejón mirando un plato rarísimo lleno de colores",
+    "narrative_conflict": "juntar fuerzas para probar esa comida exótica asumiendo el riesgo",
+    "narrative_role": "somos valientes exploradores de los sabores locales"
   },
   {
     "id": 86,
     "title": "Viajar solo",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "un tren cruzando las montañas en completo silencio y mirando por la ventana",
+    "narrative_conflict": "reflexionar sobre la libertad absoluta de no tener que preguntarle a nadie qué quiere hacer hoy",
+    "narrative_role": "somos lobos solitarios encontrándonos con nosotros mismos"
   },
   {
     "id": 87,
     "title": "Turismo masivo y sus efectos",
     "category": "viajes",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la plaza histórica intentando sacar una foto sin que aparezcan quinientas personas",
+    "narrative_conflict": "criticar cómo nuestra presencia está arruinando la esencia original de estos lugares mágicos",
+    "narrative_role": "somos viajeros preocupados por la gentrificación que nosotros mismos causamos"
   },
   {
     "id": 88,
     "title": "Apps que uso a diario",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el transporte público mirando obsesivamente la pantalla encendida",
+    "narrative_conflict": "analizar nuestra esclavitud y cómo organizar la vida si se cae el sistema mañana",
+    "narrative_role": "somos ciudadanos híper conectados y algo dependientes del teléfono"
   },
   {
     "id": 89,
     "title": "Inteligencia artificial",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la oficina moderna leyendo reportes de productividad",
+    "narrative_conflict": "evaluar si usar la máquina nos hace más rápidos o si a la larga nos vuelve mediocres e inútiles",
+    "narrative_role": "somos profesionales asustados y fascinados por el cambio de paradigma"
   },
   {
     "id": 90,
     "title": "Privacidad online",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el sillón revisando las configuraciones bloqueando rastreadores",
+    "narrative_conflict": "discutir por qué el micrófono nos escucha y cómo evitar ser un producto para las empresas",
+    "narrative_role": "somos usuarios paranoicos protegiendo nuestros datos personales"
   },
   {
     "id": 91,
     "title": "Un gadget que me cambió la vida",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el escritorio del trabajo presumiendo la caja de la nueva compra",
+    "narrative_conflict": "convencer al otro de que esta máquina carísima realmente vale la pena la inversión",
+    "narrative_role": "somos evangelizadores tecnológicos recomendando chiches nuevos"
   },
   {
     "id": 92,
     "title": "Aprender a programar",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el cuarto a oscuras intentando encontrar un error en la línea cien",
+    "narrative_conflict": "vencer la frustración gigante de cuando el código se rompe por una sola letra mal escrita",
+    "narrative_role": "somos estudiantes de tecnología desesperados buscando el error"
   },
   {
     "id": 93,
     "title": "IA y el futuro del trabajo",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la máquina de café charlando de los rumores de despidos",
+    "narrative_conflict": "adivinar qué tipo de trabajos se van a salvar y cómo tenemos que adaptarnos rápido",
+    "narrative_role": "somos oficinistas trazando estrategias de supervivencia laboral"
   },
   {
     "id": 94,
     "title": "Adicción al celular",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la mesa del restaurante donde nadie levanta la cabeza de la pantalla",
+    "narrative_conflict": "intentar cumplir la promesa durísima de apagar las notificaciones por todo el fin de semana",
+    "narrative_role": "somos amigos dándonos cuenta del problema gigante de dopamina"
   },
   {
     "id": 95,
     "title": "Ética en tecnología",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las oficinas centrales de la red social debatiendo las reglas",
+    "narrative_conflict": "decidir si tenemos el derecho o la obligación de censurar cosas peligrosas en internet",
+    "narrative_role": "somos ejecutivos trazando la fina línea entre la libertad y el caos"
   },
   {
     "id": 96,
     "title": "Una curiosidad científica",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los pasillos del museo de ciencias leyendo carteles informativos",
+    "narrative_conflict": "explicar cómo es posible que la física rompa todas las leyes de la lógica del sentido común",
+    "narrative_role": "somos mentes curiosas asombradas por lo raro que es el universo"
   },
   {
     "id": 97,
     "title": "El espacio",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el techo de casa mirando hacia arriba con un telescopio enorme",
+    "narrative_conflict": "maravillarnos con lo pequeñitos e insignificantes que somos en el vacío absoluto",
+    "narrative_role": "somos astrónomos aficionados reflexionando sobre las estrellas"
   },
   {
     "id": 98,
     "title": "El cuerpo humano",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el consultorio mirando cómo funciona el modelo del esqueleto",
+    "narrative_conflict": "entender la locura de que nuestro sistema se arregla solo todo el tiempo",
+    "narrative_role": "somos biólogos admirando la ingeniería de la máquina perfecta de carne"
   },
   {
     "id": 99,
     "title": "Cambio climático",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el dique roto mirando cómo el agua sube de forma alarmante",
+    "narrative_conflict": "debatir si la tecnología nos va a salvar a tiempo o si ya cruzamos el límite de no retorno",
+    "narrative_role": "somos ingenieros ambientales buscando una solución límite"
   },
   {
     "id": 100,
     "title": "Inventos que cambiaron todo",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el taller lleno de polvo repasando planos antiguos",
+    "narrative_conflict": "elegir la herramienta fundamental que sacó a la humanidad de la oscuridad y cambió la historia",
+    "narrative_role": "somos historiadores debatiendo el avance de la civilización"
   },
   {
     "id": 101,
     "title": "Vida en otros planetas",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la base de radio satelital gigante esperando escuchar algún ruido raro",
+    "narrative_conflict": "teorizar sobre por qué el universo es tan grande pero nadie todavía nos respondió el teléfono",
+    "narrative_role": "somos investigadores del cielo buscando la verdad afuera"
   },
   {
     "id": 102,
     "title": "Genética y ética",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el laboratorio blanco brillante decodificando las cadenas del adn",
+    "narrative_conflict": "discutir el enorme peligro moral de empezar a diseñar a las personas por computadora",
+    "narrative_role": "somos genetistas advirtiendo sobre cruzar los límites naturales"
   },
   {
     "id": 103,
     "title": "Pseudociencia vs ciencia",
     "category": "ciencia",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el estudio de radio desenmascarando mitos en vivo al aire",
+    "narrative_conflict": "luchar con la paciencia para explicarle a la gente por qué las teorías conspirativas son falsas",
+    "narrative_role": "somos defensores de los datos duros debatiendo contra la locura"
   },
   {
     "id": 104,
     "title": "Un artista que admiro",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el lobby del museo grande esperando ver la exhibición principal",
+    "narrative_conflict": "explicar cómo las pinceladas y la visión de este genio cambiaron nuestra perspectiva para siempre",
+    "narrative_role": "somos admiradores asombrados esperando ver los cuadros originales"
   },
   {
     "id": 105,
     "title": "Visitar museos",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el salón interminable caminando con los pies completamente destrozados",
+    "narrative_conflict": "gestionar el cansancio extremo para poder absorber tantas obras maestras sin enloquecer",
+    "narrative_role": "somos turistas luchando contra la sobrecarga de información estética"
   },
   {
     "id": 106,
     "title": "Arte digital vs tradicional",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el estudio de diseño frente a los monitores llenos de luces brillantes",
+    "narrative_conflict": "debatir a muerte si una pintura hecha con una computadora requiere tanto talento como la pintura real",
+    "narrative_role": "somos ilustradores modernos comparando técnicas y filosofías"
   },
   {
     "id": 107,
     "title": "Arte callejero",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el callejón abandonado admirando un mural gigante de colores vibrantes",
+    "narrative_conflict": "discutir el borde fino de la ley entre lo que es vandalismo y lo que es un mensaje importante",
+    "narrative_role": "somos caminantes urbanos analizando el impacto social del grafiti"
   },
   {
     "id": 108,
     "title": "Crear arte propio",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el atril lleno de lienzos en blanco y pintura manchada en el piso",
+    "narrative_conflict": "superar el terror gigante de no saber cómo empezar y el miedo a hacer algo feo",
+    "narrative_role": "somos aprendices luchando contra la frustración de la hoja en blanco"
   },
   {
     "id": 109,
     "title": "Arte y dinero",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el salón exclusivo de subastas viendo los precios subir a millones",
+    "narrative_conflict": "intentar entender la locura de que un lienzo pintado de negro cueste más que una casa",
+    "narrative_role": "somos espectadores normales indignados con la economía del coleccionismo"
   },
   {
     "id": 110,
     "title": "NFTs y arte digital",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los foros de tecnología leyendo gráficas de precios que caen",
+    "narrative_conflict": "analizar fríamente si comprar imágenes raras fue la peor estafa de la década o el futuro",
+    "narrative_role": "somos analistas discutiendo el valor real de ser dueño de un píxel"
   },
   {
     "id": 111,
     "title": "Censura en el arte",
     "category": "arte",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la entrada de la galería protestando porque obligaron a quitar una obra polémica",
+    "narrative_conflict": "defender a los gritos el derecho de los artistas a incomodar y provocar a la gente",
+    "narrative_role": "somos defensores de la libertad de expresión discutiendo los límites"
   },
   {
     "id": 112,
     "title": "Mi rutina actual",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el vestuario con los bolsos preparados armando el día",
+    "narrative_conflict": "encontrar la fuerza mágica para mantener la constancia los días que odiamos el gimnasio",
+    "narrative_role": "somos compañeros compartiendo las rutinas que nos salvan del sedentarismo"
   },
   {
     "id": 113,
     "title": "Empezar a entrenar",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la puerta del gimnasio llenos de vergüenza mirando para adentro",
+    "narrative_conflict": "vencer la intimidación paralizante de que todo el mundo nos va a juzgar por no saber usar las máquinas",
+    "narrative_role": "somos principiantes juntando coraje para dar el primer paso"
   },
   {
     "id": 114,
     "title": "Yoga y meditación",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el salón de piso de madera intentando alcanzar la postura imposible",
+    "narrative_conflict": "dominar la respiración para no caernos al piso frente a todos de forma ridícula",
+    "narrative_role": "somos practicantes buscando el equilibrio físico y mental"
   },
   {
     "id": 115,
     "title": "Nutrición básica",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cocina un domingo preparando los contenedores de plástico para la semana",
+    "narrative_conflict": "planificar la comida matemáticamente para tener fuerza sin caer en comer mal por falta de tiempo",
+    "narrative_role": "somos oficinistas intentando organizarnos para no arruinar el trabajo del gimnasio"
   },
   {
     "id": 116,
     "title": "Salud mental",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el pasillo al aire libre caminando despacio y respirando aire puro",
+    "narrative_conflict": "aceptar que bajar la velocidad y descansar el cerebro es obligatorio para no quemarnos vivos",
+    "narrative_role": "somos amigos confesando el estrés y buscando formas de sanar"
   },
   {
     "id": 117,
     "title": "Running para principiantes",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la primera vuelta a la plaza respirando agitados agarrándonos las rodillas",
+    "narrative_conflict": "aprender a controlar el ritmo del oxígeno para no rendirnos de forma miserable en los primeros metros",
+    "narrative_role": "somos novatos del trote intentando sobrevivir el dolor inicial"
   },
   {
     "id": 118,
     "title": "Suplementos: ¿sí o no?",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el pasillo de la tienda mirando tarros gigantes de proteínas de todos los colores",
+    "narrative_conflict": "descifrar qué polvo sirve de verdad para los músculos y cuál es puro marketing falso",
+    "narrative_role": "somos deportistas leyendo letras chiquitas intentando mejorar nuestro rendimiento"
   },
   {
     "id": 119,
     "title": "Cuerpo ideal y presión social",
     "category": "fitness",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el espejo cruel de los probadores bajo las luces blancas terribles",
+    "narrative_conflict": "intentar dejar de castigarnos comparándonos con las mentiras perfectas que vemos editadas en internet",
+    "narrative_role": "somos personas reales luchando contra las inseguridades estéticas"
   },
   {
     "id": 120,
     "title": "Mi estilo personal",
     "category": "moda",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el armario tirando toda la ropa encima de la cama en pánico",
+    "narrative_conflict": "encontrar esa combinación mágica de prendas que nos haga sentir seguros y blindados",
+    "narrative_role": "somos asesores desesperados tratando de armar un buen conjunto"
   },
   {
     "id": 121,
     "title": "Marcas favoritas",
     "category": "moda",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "las vidrieras carísimas del shopping admirando la ropa intocable",
+    "narrative_conflict": "discutir por qué el cerebro nos engaña para querer pagar el triple solo por un logo chiquito cosido",
+    "narrative_role": "somos amantes del diseño debatiendo sobre el consumismo"
   },
   {
     "id": 122,
     "title": "Sneakers",
     "category": "moda",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la convención enorme llena de cajas y gente limpiando el calzado",
+    "narrative_conflict": "justificar la locura obsesiva de pagar el valor de un auto usado por un par de zapatillas",
+    "narrative_role": "somos coleccionistas fanáticos cuidando obsesivamente que el zapato no se doble"
   },
   {
     "id": 123,
     "title": "Comprar moda online",
     "category": "moda",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el living de casa abriendo paquetes recién llegados con tijeras",
+    "narrative_conflict": "lidiar con la tremenda desilusión de que la ropa no se ve en nosotros como se veía en la foto falsa",
+    "narrative_role": "somos compradores frustrados preparándonos para hacer las devoluciones"
   },
   {
     "id": 124,
     "title": "Vintage vs moderno",
     "category": "moda",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la feria del usado escarbando entre montañas de ropa antigua",
+    "narrative_conflict": "encontrar esa chaqueta increíble de los noventa que nos diferencia del resto de la masa",
+    "narrative_role": "somos cazadores de estilos retro buscando el tesoro"
   },
   {
     "id": 125,
     "title": "Fast fashion",
     "category": "moda",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la tienda de saldos gigantes donde la ropa vale dos monedas",
+    "narrative_conflict": "criticar la locura de que compramos remeras que se rompen en dos semanas para tirarlas",
+    "narrative_role": "somos consumidores analizando la culpa de contribuir a la basura mundial"
   },
   {
     "id": 126,
     "title": "Moda sostenible",
     "category": "moda",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el taller ecológico analizando hilos y algodones naturales",
+    "narrative_conflict": "entender si estamos dispuestos a pagar carísimo por ropa ética para salvar al mundo de a poco",
+    "narrative_role": "somos diseñadores conscientes discutiendo el impacto en el medio ambiente"
   },
   {
     "id": 127,
     "title": "Moda y género",
     "category": "moda",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el desfile extraño y rupturista donde los modelos rompen todas las reglas",
+    "narrative_conflict": "analizar con la mente abierta cómo la ropa por fin dejó de etiquetar a la gente",
+    "narrative_role": "somos observadores modernos celebrando la evolución de la expresión libre"
   },
   {
     "id": 128,
     "title": "Dinosaurios",
     "category": "kids-deprecated",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "una jungla de hojas enormes en la prehistoria",
+    "narrative_conflict": "ayudar al dinosaurio a buscar hojas frescas para el almuerzo antes de que caiga el meteorito",
+    "narrative_role": "somos exploradores del tiempo viajando entre monstruos amigables"
   },
   {
     "id": 129,
     "title": "Espacio",
     "category": "kids-deprecated",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cabina brillante del cohete que viaja a la luna",
+    "narrative_conflict": "recolectar rocas lunares brillantes para poder volver a casa",
+    "narrative_role": "somos astronautas muy valientes con cascos mágicos"
   },
   {
     "id": 130,
     "title": "Mar y animales",
     "category": "kids-deprecated",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el fondo del mar adentro de un submarino de cristal transparente",
+    "narrative_conflict": "buscar el tesoro del pirata que los cangrejos escondieron en la arena",
+    "narrative_role": "somos buzos buscando criaturas amigables bajo el agua"
   },
   {
     "id": 131,
     "title": "Mi deporte",
     "category": "kids-deprecated",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el estadio lleno de banderas de colores para la gran final",
+    "narrative_conflict": "ganar el trofeo dorado anotando el punto mágico en el último segundo",
+    "narrative_role": "somos los capitanes heroicos del equipo estrella"
   },
   {
     "id": 132,
     "title": "Dibujar y crear",
     "category": "kids-deprecated",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el taller mágico de los duendes de los colores",
+    "narrative_conflict": "pintar el arcoíris gigante que perdió sus colores por la lluvia",
+    "narrative_role": "somos artistas magos con pinceles que vuelan"
   },
   {
     "id": 133,
     "title": "Música y canciones",
     "category": "kids-deprecated",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el escenario gigante donde los parlantes tienen formas locas",
+    "narrative_conflict": "tocar la guitarra invisible para que todos los alienígenas empiecen a bailar",
+    "narrative_role": "somos las estrellas de rock del universo"
   },
   {
     "id": 134,
     "title": "Mascotas",
     "category": "kids-deprecated",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el parque de diversiones secreto exclusivo para los animales",
+    "narrative_conflict": "rescatar los juguetes que el perrito travieso escondió debajo de la tierra",
+    "narrative_role": "somos los detectives cuidadores de las mascotas perdidas"
   },
   {
     "id": 135,
     "title": "Mi familia",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la casa del árbol más alta del mundo",
+    "narrative_conflict": "organizar la mejor fiesta sorpresa antes de que los abuelos lleguen a la puerta",
+    "narrative_role": "somos los agentes secretos armando el festejo gigante"
   },
   {
     "id": 136,
     "title": "Cómo me siento",
     "category": "kids-deprecated",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el consultorio seguro y tranquilo con un cuaderno en las manos",
+    "narrative_conflict": "intentar ponerle palabras reales a la emoción complicada que nos traba la cabeza",
+    "narrative_role": "somos analizantes buscando la paz y entendiendo nuestro corazón"
   },
   {
     "id": 137,
     "title": "La escuela",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el patio de la escuela espacial que flota entre los asteroides",
+    "narrative_conflict": "encontrar la mochila perdida con las tareas importantes antes de que suene la campana cósmica",
+    "narrative_role": "somos alumnos súper listos investigando el recreo"
   },
   {
     "id": 138,
     "title": "Mis colores favoritos",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el reino oscuro que se volvió blanco y negro",
+    "narrative_conflict": "disparar los pomos de pintura mágica para que las casas y las flores vuelvan a brillar",
+    "narrative_role": "somos los guerreros del color salvando la alegría"
   },
   {
     "id": 139,
     "title": "Animales de la granja y la selva",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la granja loca donde los animales cambiaron de voces por error",
+    "narrative_conflict": "ayudar a los animales a encontrar su lugar correcto antes de que el granjero se despierte",
+    "narrative_role": "somos los ayudantes que hablan el idioma secreto de los animales"
   },
   {
     "id": 140,
     "title": "Contar del 1 al 10",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el tren mágico que viaja saltando por encima de las nubes",
+    "narrative_conflict": "subir a todos los pasajeros brillantes contando muy fuerte para que el tren no se detenga",
+    "narrative_role": "somos los maquinistas llevando la carga de estrellas"
   },
   {
     "id": 141,
     "title": "Mi cuerpo",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la fábrica robótica de las piezas mecánicas",
+    "narrative_conflict": "juntar y acomodar las piezas del cuerpo del robot para que pueda volver a caminar feliz",
+    "narrative_role": "somos los doctores mecánicos arreglando a los robots"
   },
   {
     "id": 142,
     "title": "Comidas ricas",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cocina de las nubes de algodón de azúcar",
+    "narrative_conflict": "armar la torta más gigante del planeta buscando los ingredientes mágicos perdidos",
+    "narrative_role": "somos chefs voladores cocinando platos locos"
   },
   {
     "id": 143,
     "title": "Abrir juguetes",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la caja sorpresa infinita que brilla con luces",
+    "narrative_conflict": "descubrir qué juguete misterioso hace falta para calmar al personaje que está triste",
+    "narrative_role": "somos abridores de regalos buscando el juguete perfecto"
   },
   {
     "id": 144,
     "title": "Dibujitos y superhéroes",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el rascacielos de colores de la ciudad de los cómics",
+    "narrative_conflict": "usar nuestro poder secreto para atrapar a la máquina de hacer cosquillas que se volvió loca",
+    "narrative_role": "somos los superhéroes novatos salvando el día"
   },
   {
     "id": 145,
     "title": "Jugar en la pantalla",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el mundo adentro de la consola donde todo está hecho de cuadraditos brillantes",
+    "narrative_conflict": "saltar los obstáculos con precisión para destrabar el candado del nivel final",
+    "narrative_role": "somos los personajes principales cruzando la pantalla"
   },
   {
     "id": 146,
     "title": "Comida divertida",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el cine de los monstruos amigables que tienen mucho apetito",
+    "narrative_conflict": "repartir los paquetes de golosinas antes de que empiece la función de la película de risa",
+    "narrative_role": "somos los despachantes rápidos del cine gigante"
   },
   {
     "id": 147,
     "title": "Mi día de la mañana a la noche",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el reloj de arena mágico que hace que salga el sol y la luna",
+    "narrative_conflict": "ordenar las tareas diarias cantando para que el sol no se quede dormido en el cielo",
+    "narrative_role": "somos los guardianes del tiempo y las rutinas divertidas"
   },
   {
     "id": 148,
     "title": "Mi casa y mis habitaciones",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la mansión embrujada llena de puertas que se abren solas",
+    "narrative_conflict": "encontrar la llave dorada resolviendo las pistas en cada habitación misteriosa",
+    "narrative_role": "somos detectives valientes explorando rincones extraños"
   },
   {
     "id": 149,
     "title": "Pasatiempos y deportes",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el castillo inflable que rebota hasta el techo",
+    "narrative_conflict": "probar todos los juegos rebotando para elegir cuál es el deporte más divertido",
+    "narrative_role": "somos los probadores oficiales de las canchas elásticas"
   },
   {
     "id": 150,
     "title": "Cómo me siento",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el bosque donde los árboles cambian de forma según tu humor",
+    "narrative_conflict": "ayudar a la nube gruñona a entender por qué llueve para que pueda salir el arcoíris",
+    "narrative_role": "somos los abrazadores mágicos arreglando el día"
   },
   {
     "id": 151,
     "title": "Naturaleza y dinosaurios",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la montaña de los volcanes de plastilina",
+    "narrative_conflict": "buscar las hojas más verdes para alimentar al dinosaurio que se perdió de la manada",
+    "narrative_role": "somos los guardabosques de las criaturas antiguas"
   },
   {
     "id": 152,
     "title": "Desafíos virales",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el set brillante de televisión de los retos extremos",
+    "narrative_conflict": "hacer la prueba más difícil del mundo sin reírnos ni una sola vez para ganar el premio de diamantes",
+    "narrative_role": "somos los concursantes divertidos aguantando la risa"
   },
   {
     "id": 153,
     "title": "Mundos de bloques",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el terreno vacío donde todas las rocas son perfectamente cuadradas",
+    "narrative_conflict": "construir el puente de madera antes de que llegue la tormenta de los zombis cuadriculados",
+    "narrative_role": "somos los arquitectos rápidos construyendo refugios"
   },
   {
     "id": 154,
     "title": "Coleccionar cartas y figuritas",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el cofre dorado secreto debajo del mercado de intercambios",
+    "narrative_conflict": "encontrar la figurita holográfica rarísima para que no la atrape el villano",
+    "narrative_role": "somos los buscadores de las colecciones perdidas"
   },
   {
     "id": 155,
     "title": "Comida rápida y dulces",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la pista de carreras hecha de chocolate derretido y gomitas",
+    "narrative_conflict": "conducir el auto dulce muy rápido atrapando la energía para ganar la copa de helado",
+    "narrative_role": "somos los pilotos hambrientos de los autos golosos"
   },
   {
     "id": 156,
     "title": "Música, pelis y series",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la alfombra roja llena de destellos de los premios espaciales",
+    "narrative_conflict": "adivinar qué estrella secreta está escondida bajo el disfraz frente a todas las cámaras",
+    "narrative_role": "somos los entrevistadores curiosos descubriendo secretos"
   },
   {
     "id": 157,
     "title": "Viajes y culturas",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la canasta del globo aerostático volando por encima de las montañas nevadas",
+    "narrative_conflict": "usar el mapa brillante para encontrar la pirámide misteriosa guiando al piloto",
+    "narrative_role": "somos exploradores leyendo las estrellas para no perdernos"
   },
   {
     "id": 158,
     "title": "Trabajos del futuro",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la ciudad suspendida en el aire del año tres mil",
+    "narrative_conflict": "reparar los tubos de la máquina del clima que se rompió usando las herramientas láser",
+    "narrative_role": "somos los trabajadores inteligentes solucionando problemas del futuro"
   },
   {
     "id": 159,
     "title": "Cocinar y recetas",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cocina mágica donde las ollas cantan al hervir",
+    "narrative_conflict": "mezclar las pócimas de comida exactas para que la torta crezca hasta el techo",
+    "narrative_role": "somos los aprendices del chef haciendo hechizos deliciosos"
   },
   {
     "id": 160,
     "title": "Cuidar el planeta",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la playa sucia rodeada de pájaros que no pueden volar bien",
+    "narrative_conflict": "juntar toda la basura brillante para que el agua vuelva a ser de color cristalino",
+    "narrative_role": "somos los superhéroes de la tierra limpiando los daños"
   },
   {
     "id": 161,
     "title": "Decir lo que pensás",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el castillo del rey terco que quiere pintar todo el reino de gris",
+    "narrative_conflict": "usar las palabras valientes para convencerlo de que todos los colores son importantes",
+    "narrative_role": "somos los consejeros sabios hablando con la verdad"
   },
   {
     "id": 162,
     "title": "Streamers y transmisiones",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el cuarto genial lleno de monitores y luces de neón parpadeantes",
+    "narrative_conflict": "hacer la jugada más divertida del mundo en vivo para que suba el número de seguidores",
+    "narrative_role": "somos los locutores famosos emocionando a la gente en internet"
   },
   {
     "id": 163,
     "title": "Zapatillas y moda urbana",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la rampa de salto del parque donde los zapatos flotan",
+    "narrative_conflict": "armar la combinación de zapatillas más rápida y genial para ganar el concurso de estilo veloz",
+    "narrative_role": "somos los corredores presumiendo nuestros modelos únicos"
   },
   {
     "id": 164,
     "title": "Gaming pro y esports",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cabina a prueba de sonido en medio del estadio gigante",
+    "narrative_conflict": "jugar concentrados sin mirar atrás para destruir al equipo malvado de los robots",
+    "narrative_role": "somos los campeones defendiendo el título del planeta"
   },
   {
     "id": 165,
     "title": "Slang y tendencias online",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la pista de baile secreta adentro de los teléfonos celulares",
+    "narrative_conflict": "descubrir el paso de baile misterioso y las palabras raras para destrabar la barrera de seguridad",
+    "narrative_role": "somos los hackers del ritmo navegando las olas digitales"
   },
   {
     "id": 166,
     "title": "Charla abierta",
     "category": "general",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "los sillones profundos de la cafetería con el ruido de las tazas y la lluvia afuera",
+    "narrative_conflict": "relajarnos, compartir cómo fue la semana y hablar sin miedo a ser evaluados",
+    "narrative_role": "somos buenos amigos disfrutando de la compañía para desconectar de los problemas"
   },
   {
     "id": 177,
     "title": "Desarrollo de software y herramientas IA",
     "category": "tech",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la llamada grupal del equipo de ingeniería un viernes antes de que termine el día",
+    "narrative_conflict": "intentar arreglar la arquitectura que rompió el nuevo modelo de inteligencia sin tirar el servidor",
+    "narrative_role": "somos programadores cansados colaborando para apagar el incendio del código"
   },
   {
     "id": 178,
     "title": "Diseño y construcción del hogar",
     "category": "lifestyle",
     "audience": "adult",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el terreno lleno de bolsas de cemento caminando sobre los cimientos marcados",
+    "narrative_conflict": "recortar cosas de los planos porque el presupuesto se descontroló y la cocina no se puede pagar",
+    "narrative_role": "somos dueños y arquitectos en plena tensión negociando las terminaciones"
   },
   {
     "id": 179,
     "title": "Juegos de pelea y torneos",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el ring iluminado con rayos láser flotando en medio del universo",
+    "narrative_conflict": "apretar los botones exactos en el momento justo para soltar el súper ataque de luz y ganar",
+    "narrative_role": "somos los luchadores heroicos desafiando a las sombras"
   },
   {
     "id": 180,
     "title": "Construcción con bloques mágicos",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el pozo gigante donde las cajas rojas flotan buscando armar cosas altas",
+    "narrative_conflict": "encontrar la pieza fuerte para sostener la torre gigante y que no se derrumbe encima de todo",
+    "narrative_role": "somos los creadores pacientes armando la defensa"
   },
   {
     "id": 181,
     "title": "Suscripciones gaming y juego en la nube",
     "category": "videojuegos",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la bóveda infinita llena de cartuchos que nunca termina",
+    "narrative_conflict": "elegir rápido a cuál de los mil portales mágicos saltar para no aburrirnos hoy",
+    "narrative_role": "somos los exploradores eligiendo el próximo desafío en las nubes"
   },
   {
     "id": 182,
     "title": "Quién soy y quién quiero ser",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el pasillo de los espejos que devuelven imágenes distintas",
+    "narrative_conflict": "elegir cuál es la máscara del disfraz que mejor muestra nuestros poderes reales",
+    "narrative_role": "somos buscadores del destino eligiendo qué clase de héroes seremos"
   },
   {
     "id": 183,
     "title": "Redes sociales: el lado B",
     "category": "tech",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "el estudio secreto detrás de escena donde guardan el maquillaje",
+    "narrative_conflict": "descubrir que los monstruos no son feos de verdad, sino que usan filtros para engañarnos",
+    "narrative_role": "somos los detectives de la verdad descubriendo el truco"
   },
   {
     "id": 184,
     "title": "Crecer en un mundo que cambia rápido",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cinta rápida de la fábrica del mañana que no tiene frenos",
+    "narrative_conflict": "agarrarnos fuerte a los juguetes seguros antes de que la máquina corra a súper velocidad",
+    "narrative_role": "somos los pilotos adaptándonos a la curva veloz del futuro"
   },
   {
     "id": 185,
     "title": "Causas que me importan",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la cabina gigante del control de los defensores de los justos",
+    "narrative_conflict": "gritar juntos por el micrófono para asustar al villano que está lastimando las plantas tiernas",
+    "narrative_role": "somos los voceros fuertes exigiendo cambiar las cosas malas"
   },
   {
     "id": 186,
     "title": "Libertad y límites con mis padres",
     "category": "kids",
     "audience": "kid",
-    "narrative_setting": "",
-    "narrative_conflict": "",
-    "narrative_role": ""
+    "narrative_setting": "la frontera del castillo del rey y la reina estricta",
+    "narrative_conflict": "usar palabras elegantes y portarnos bien para que los guardias nos dejen salir al bosque a jugar",
+    "narrative_role": "somos los príncipes rebeldes buscando permiso inteligentemente"
   }
 ]

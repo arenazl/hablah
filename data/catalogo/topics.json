@@ -73,9 +73,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "decidir si reconstruir todo el sistema desde cero o parchear el código viejo",
+  "narrative_role": "somos líderes técnicos tomando una decisión difícil antes del lanzamiento",
+  "narrative_setting": "una sala de reuniones llena de diagramas borroneados en un pizarrón",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Alguna vez pensaste cómo funciona una aplicación como un banco online?'. Si dice que sí, pregúntale: '¿Crees que el banco online es una sola cosa o tiene diferentes \"partes\" que trabajan juntas?'",
@@ -180,9 +180,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar ese sonido perfecto que falta para terminar la pista antes del amanecer",
+  "narrative_role": "somos productores musicales probando ideas y buscando inspiración",
+  "narrative_setting": "un estudio de grabación oscuro a las 3 de la mañana",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta escuchar música o preferís hacerla vos mismo/a?'. Si dice 'escuchar', preguntale: '¿Qué tipo de música te gusta más?'. Si dice 'hacerla', preguntale: '¿Conocés algún programa para hacer música como Ableton?'",
@@ -293,9 +293,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir dónde dibujar la línea de los límites éticos de las máquinas",
+  "narrative_role": "somos expertos en inteligencia artificial debatiendo el futuro",
+  "narrative_setting": "un panel de debate en una cumbre de tecnología frente a mil personas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Usas alguna aplicación de IA como ChatGPT o un generador de imágenes?'. Si dice que sí, pivotea a: '¿Te parece buena o mala esa aplicación?' Si dice que no, pivotea a: '¿Te gustaría probar una?'",
@@ -404,9 +404,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "armar una nueva estrategia porque nos estancamos y no podemos levantar más peso",
+  "narrative_role": "somos compañeros de entrenamiento descansando entre series pesadas",
+  "narrative_setting": "el área de pesas libres de un gimnasio viejo y ruidoso",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta levantar pesas o prefieres hacer otro tipo de ejercicio?'. Si dice 'levantar pesas', preguntale: '¿Qué ejercicio con pesas te gusta más?'. Si dice 'otro tipo', preguntale: '¿Qué otro ejercicio te gusta hacer?'",
@@ -517,9 +517,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar sin echar culpas por qué el último proyecto se retrasó tanto",
+  "narrative_role": "somos desarrolladores haciendo autocrítica del equipo",
+  "narrative_setting": "una ronda de sillas con café frío y la pared llena de post-its",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: 'En tu trabajo o estudio, ¿te gusta hablar de lo que salió bien o mal en un proyecto?'. Si dice que sí, pivotea a: '¿Te gusta más hablar de lo bueno o de lo malo?'. Si dice que no, pivotea a: '¿Por qué no te gusta hablar de eso?'.",
@@ -628,9 +628,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "elegir la mejor película clásica de la historia para ver esta noche",
+  "narrative_role": "somos cinéfilos apasionados buscando joyas ocultas",
+  "narrative_setting": "los pasillos polvorientos de un videoclub de barrio que está por cerrar",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Viste alguna película de Quentin Tarantino, como Pulp Fiction o Kill Bill?'. Si responde que sí, preguntale: '¿Te gustó?'. Si responde que no, preguntale: '¿Te gusta ver películas de acción o de suspenso?'",
@@ -711,9 +711,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "pasar el tiempo compartiendo las peores y más graciosas historias de viajes",
+  "narrative_role": "somos dos viajeros cansados charlando para no dormirnos",
+  "narrative_setting": "la sala de espera del aeropuerto con los ojos cansados porque nuestro vuelo se retrasó de nuevo",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cosa rara o caótica en un aeropuerto. Vuelo perdido, equipaje desaparecido, hijo que se escapó. Anécdota."
@@ -801,9 +801,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar ponernos de acuerdo sobre quién es el mejor jugador de la historia",
+  "narrative_role": "somos fanáticos del fútbol discutiendo de táctica",
+  "narrative_setting": "la tribuna popular vacía un par de horas antes del clásico",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta el fútbol?'. Si responde que sí, preguntale: '¿Miraste el último Mundial de fútbol, el de Qatar 2022?'",
@@ -911,9 +911,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "recordar las jugadas imposibles que marcaron una época en el deporte",
+  "narrative_role": "somos jugadores amateur hidratándonos después de jugar",
+  "narrative_setting": "una cancha de cemento en el parque mientras el sol se pone",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta mirar partidos de básquet?'. Si dice que sí, preguntale: '¿Preferís ver partidos de la NBA o de otro torneo?'",
@@ -1024,9 +1024,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar qué falló en el entrenamiento de los últimos meses para la próxima carrera",
+  "narrative_role": "somos corredores agotados charlando mientras estiramos",
+  "narrative_setting": "el arco de llegada cruzando la línea después de correr cuarenta kilómetros",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta correr?'. Si dice que sí, preguntale: '¿Corrés seguido?'. Si dice que no, preguntale: '¿Te gusta ver maratones por televisión?'",
@@ -1133,9 +1133,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar la estrategia mental que está usando el jugador para ganar este partido eterno",
+  "narrative_role": "somos entrenadores analizando el juego desde la tribuna",
+  "narrative_setting": "las butacas de la cancha principal bajo el sol del mediodía",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta ver partidos de tenis?'. Si responde que sí, pivotea a: '¿Prefieres ver partidos de hombres o de mujeres?'. Si responde que no, pregúntale: '¿Hay algún otro deporte que te guste ver?'",
@@ -1244,9 +1244,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "tomar la decisión de cambiar los neumáticos antes de que empiece a llover de verdad",
+  "narrative_role": "somos ingenieros de carrera calculando la estrategia ganadora",
+  "narrative_setting": "el pit lane rodeados del ruido ensordecedor de los motores",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta ver la Fórmula 1 o prefieres otros deportes de autos?'. Si dice que sí, preguntale: '¿Conocés algún piloto famoso como Lewis Hamilton o Max Verstappen?'",
@@ -1357,9 +1357,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "terminar el menú perfecto justo antes de que abran las puertas al público",
+  "narrative_role": "somos chefs discutiendo sobre los secretos de la receta tradicional",
+  "narrative_setting": "la cocina llena de vapor de un pequeño restaurante en Nápoles",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta comer pasta o pizza?'. Si responde pasta, pivotea a: '¿Cuál es tu color de pasta favorito: roja (con tomate), blanca (con queso) o verde (con espinaca)?'. Si responde pizza, pivotea a: '¿Te gusta la pizza con mucho queso?'",
@@ -1470,9 +1470,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "controlar los tiempos del fuego para que la comida no se arruine mientras llegan los invitados",
+  "narrative_role": "somos los asadores a cargo de que todo salga perfecto",
+  "narrative_setting": "un patio trasero frente a una parrilla que empieza a largar chispas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta el asado argentino?'. Si responde que sí, pivotea a: '¿Qué es lo que más te gusta del asado: la carne, el momento con amigos o el fuego?'. Si responde que no, pregúntale: '¿Hay alguna comida especial en tu país que se cocine al aire libre?'",
@@ -1579,9 +1579,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar el método de preparación exacto para extraer el mejor sabor",
+  "narrative_role": "somos baristas calibrando los equipos de la mañana",
+  "narrative_setting": "una cafetería moderna rodeados de máquinas complejas y olor a granos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta el café?'. Si dice que sí, preguntale: '¿Preferís el café de filtro (como el de casa) o el espresso (el de la cafetería)?'",
@@ -1692,9 +1692,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "monitorear el aterrizaje de una sonda en un lugar desconocido",
+  "narrative_role": "somos científicos de la agencia espacial controlando la tensión",
+  "narrative_setting": "el centro de control de misiones frente a pantallas gigantes llenas de números",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta mirar las estrellas por la noche o preferís ver películas sobre el espacio?'. Si dice que le gusta mirar las estrellas, pivotea a: '¿Alguna vez viste la luna llena o muchas estrellas?'",
@@ -1805,9 +1805,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "debatir si las soluciones que proponemos son reales o solo promesas vacías",
+  "narrative_role": "somos investigadores preocupados buscando respuestas urgentes",
+  "narrative_setting": "los pasillos de una convención internacional sobre el medio ambiente",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te preocupa el cambio climático, sí o no?'. Si dice que sí, preguntale: '¿Qué es lo que más te preocupa?' Si dice que no, preguntale: '¿Por qué no te preocupa?'",
@@ -1918,9 +1918,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar el misterio de por qué esta especie cambió tan rápido de repente",
+  "narrative_role": "somos biólogos asombrados por un descubrimiento nuevo",
+  "narrative_setting": "un laboratorio blanco impecable llenos de microscopios",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Crees que los hijos se parecen a sus padres?'. Si dice que sí, pregúntale: '¿Tienes hermanos? ¿Se parecen a ti?'. Si dice que no, pregúntale: '¿Conoces a alguien que se parezca mucho a un familiar?'.",
@@ -2031,9 +2031,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar ponernos de acuerdo sobre qué mirar sin discutir dos horas",
+  "narrative_role": "somos dos amigos buscando la serie perfecta para engancharnos",
+  "narrative_setting": "el sillón de casa un domingo por la tarde con el control remoto en la mano",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta mirar series de drama en plataformas como Netflix o HBO Max?'. Si dice que sí, pivotea a: '¿Preferís las que tienen muchos capítulos o las que son más cortitas?'",
@@ -2144,9 +2144,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar si el dinero de las grandes empresas arruinó la creatividad de la industria",
+  "narrative_role": "somos periodistas especializados debatiendo el estado del arte",
+  "narrative_setting": "los pasillos ruidosos de una convención gigante de tecnología",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta jugar videojuegos?'. Si dice que sí, preguntale: '¿Preferís juegos que parecen películas grandes o juegos más pequeños con dibujos especiales?'",
@@ -2257,9 +2257,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar definir cuál fue la banda que realmente cambió la historia de la música",
+  "narrative_role": "somos músicos recordando la época dorada",
+  "narrative_setting": "el garaje de una casa rodeados de cables, micrófonos y guitarras viejas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta escuchar rock clásico, como Soda Stereo o Queen?'. Si responde que sí, preguntale: '¿Cuál de esas dos bandas te gusta más?'. Si responde que no, preguntale: '¿Qué tipo de música te gusta más escuchar?'",
@@ -2370,9 +2370,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar por qué algunos chistes funcionan y otros nos hacen pasar vergüenza",
+  "narrative_role": "somos comediantes repasando la rutina con nervios",
+  "narrative_setting": "el camarín de un teatro diez minutos antes de subir al escenario",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta ver shows de stand-up? ¿Sí o no?'. Si dice que sí, preguntale: '¿Preferís verlos en vivo o en la tele/internet?'",
@@ -2482,9 +2482,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar apagar el ruido de la cabeza después de un día caótico de trabajo",
+  "narrative_role": "somos estudiantes de meditación buscando calmar la mente",
+  "narrative_setting": "un salón silencioso con luz tenue y olor a madera",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Para relajarte, prefieres hacer algo tranquilo como escuchar música o algo más activo como caminar?'. Si dice tranquilo, pivotea a: '¿Alguna vez probaste algo como la meditación o respirar lento para calmarte?'",
@@ -2594,9 +2594,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "descifrar qué comidas son realmente saludables y cuáles son una estafa del marketing",
+  "narrative_role": "somos amigos intentando hacer una compra inteligente para comer mejor",
+  "narrative_setting": "el pasillo del supermercado leyendo las etiquetas de todos los paquetes",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta comer frutas y verduras?'. Si dice que sí, pivotea a: '¿Cuál es tu fruta favorita?'. Si dice que no, pivotea a: '¿Qué comida saludable te gusta?'",
@@ -2707,9 +2707,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "explicar la locura de por qué vale la pena pagar tanto por este diseño único",
+  "narrative_role": "somos coleccionistas fanáticos esperando un lanzamiento",
+  "narrative_setting": "la fila en la calle esperando horas a que abran el local exclusivo",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustan las zapatillas deportivas (sneakers) o preferís usar zapatos más clásicos?'. Si dice que le gustan las zapatillas, preguntale: '¿Qué color de zapatillas te gusta más?'. Si prefiere zapatos clásicos, preguntale: '¿Qué tipo de zapatos usás más seguido?'",
@@ -2820,9 +2820,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir si esta forma de vivir es la libertad absoluta o una trampa solitaria",
+  "narrative_role": "somos freelancers reflexionando sobre nuestra rutina de vida",
+  "narrative_setting": "una cafetería en la playa rodeados de cables y laptops abiertas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustaría trabajar desde tu casa o prefieres ir a una oficina?'. Si dice 'desde casa', preguntale: '¿Por qué te gustaría trabajar desde casa?'. Si dice 'oficina', preguntale: '¿Por qué te gusta ir a la oficina?'.",
@@ -2933,9 +2933,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "prepararnos para la prueba más difícil intentando resolver un problema imposible",
+  "narrative_role": "somos ingenieros practicando bajo presión para el trabajo de nuestros sueños",
+  "narrative_setting": "una sala de estudio universitaria frente a un tablero lleno de diagramas complejos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Usás apps como WhatsApp o Instagram?'. Si responde que sí, pivotea a: '¿Te gusta que funcionen rápido o lento?'. Si responde que no, pivotea a: '¿Qué tipo de apps usás más en tu teléfono?'",
@@ -3046,9 +3046,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "decidir si pedimos más dinero a los inversores o cambiamos todo el modelo de negocio",
+  "narrative_role": "somos los fundadores de una empresa en un momento de crisis total",
+  "narrative_setting": "el living de un departamento que usamos como oficina provisoria llena de cajas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustaría tener tu propio negocio o preferís trabajar para otra persona?'. Si dice que sí a su propio negocio, preguntale: '¿Qué tipo de negocio te gustaría tener?'. Si dice que prefiere trabajar para otro, preguntale: '¿Por qué preferís trabajar para otra persona?'.",
@@ -3156,9 +3156,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar entender las reglas sociales silenciosas para no faltarle el respeto a nadie",
+  "narrative_role": "somos turistas asombrados tratando de adaptarnos",
+  "narrative_setting": "un vagón de tren bala viajando a toda velocidad mirando por la ventana",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustaría visitar Japón, sí o no?'. Si dice que sí, pivotea a: '¿Te gustaría más ver templos antiguos o ciudades modernas como Tokio?'",
@@ -3269,9 +3269,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "recordar lo difícil que fue la subida y si el paisaje hizo que valiera la pena",
+  "narrative_role": "somos mochileros compartiendo la experiencia del cansancio",
+  "narrative_setting": "el balcón de un refugio de montaña con las piernas destruidas por caminar",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustan más las montañas o la playa para tus vacaciones?'. Si dice montañas, pivotea a: '¿Conocés la Patagonia argentina o chilena?'",
@@ -3339,9 +3339,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "planear las próximas vacaciones intentando coincidir en el destino perfecto",
+  "narrative_role": "somos amigos armando la lista de sueños para viajar",
+  "narrative_setting": "la mesa de un bar con un mapa mundial gigante desplegado",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "adultos",
@@ -3397,9 +3397,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "defender a muerte por qué nuestro grupo es mejor que todo lo demás",
+  "narrative_role": "somos fanáticos discutiendo apasionadamente en un viaje largo",
+  "narrative_setting": "la cabina de una camioneta viajando en la ruta con la música a todo volumen",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El alumno va a contar sobre su banda o artista favorito. Empezá preguntando '¿Cuál es esa banda que volverías a ver mil veces? ¿Cómo la descubriste?'. Pedile que describa el sonido, qué le hace sentir, y un momento específico que escuchó una de sus canciones."
@@ -3457,9 +3457,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "recordar esa noche épica donde la música sonó tan fuerte que nos cambió la vida",
+  "narrative_role": "somos melómanos nostálgicos compartiendo anécdotas",
+  "narrative_setting": "la barra de un bar rodeados de posters de bandas viejas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Charla sobre el primer concierto del alumno o el más memorable. Preguntá cuándo fue, con quién fue, qué sintió cuando salió la banda al escenario. Buscá que use palabras como 'crowd', 'energy', 'lights'."
@@ -3517,9 +3517,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar cómo el ritmo correcto de una canción te puede hacer correr más rápido",
+  "narrative_role": "somos deportistas obsesionados con encontrar la playlist perfecta",
+  "narrative_setting": "las colchonetas del gimnasio completamente agotados mirando el techo",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Vocabulario práctico: música como herramienta. Preguntá qué playlist usa para entrenar, correr, o concentrarse. Pedile que diga 3 canciones específicas y por qué cada una."
@@ -3577,9 +3577,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "vencer la frustración de cuando las manos no se mueven como la cabeza quiere",
+  "narrative_role": "somos aprendices tercos que no se van a rendir hoy",
+  "narrative_setting": "un cuarto pequeño insonorizado intentando tocar una misma nota una y otra vez",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Alguna vez intentó aprender un instrumento? Si sí, contarlo: cuál, cuánto duró, qué tan lejos llegó. Si no, cuál le gustaría aprender y por qué. Practicá past simple y vocabulario de proceso."
@@ -3637,9 +3637,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "explicar la locura de esos ritmos raros que nadie más parece entender",
+  "narrative_role": "somos coleccionistas buscando sonidos nuevos para recomendar",
+  "narrative_setting": "una tienda de discos revisando bateas llenas de vinilos polvorientos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Géneros nuevos en su vida. Preguntá si hay algún género al que llegó tarde o por accidente. Cómo cambió su gusto musical en los últimos 5 años. Buscá conectores: 'although', 'until I heard', 'eventually'."
@@ -3697,9 +3697,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "descifrar la historia oculta que el artista quiso contar conectando las canciones",
+  "narrative_role": "somos puristas de la música analizando la obra de principio a fin",
+  "narrative_setting": "el sillón de casa sentados al lado del tocadiscos escuchando con atención",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Análisis: la diferencia entre escuchar un álbum completo vs. tirar shuffle. Preguntá si tiene un álbum del primer-track-al-último que le parezca obra maestra. Vocabulario de estructura."
@@ -3757,9 +3757,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "entender por qué una simple melodía nos puede poner tristes o súper alegres de repente",
+  "narrative_role": "somos amigos en una charla profunda a la madrugada",
+  "narrative_setting": "el balcón de un departamento mirando la ciudad de noche",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Charla más íntima: qué canción lo hace llorar, cuál lo lleva instantáneo a un recuerdo, qué le pone a las 3am cuando no puede dormir. Empujá vocabulario emocional ('nostalgic', 'overwhelming', 'cathartic')."
@@ -3817,9 +3817,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir si tener todo gratis en el teléfono mató el valor de las canciones",
+  "narrative_role": "somos críticos debatiendo el impacto de la tecnología en el arte",
+  "narrative_setting": "una feria de tecnología antigua rodeados de cds y reproductores digitales",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Debate: ¿el streaming arruinó a la música o la democratizó? Cómo cambiaron los hábitos del alumno. Si tiene vinilos o si compra música. Vocabulario de industria."
@@ -3877,9 +3877,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar poner en palabras por qué esa historia nos voló la cabeza",
+  "narrative_role": "somos espectadores emocionados compartiendo la sensación",
+  "narrative_setting": "la salida del cine caminando todavía impactados por lo que acabamos de ver",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El alumno va a contar de UNA película que le dejó algo. No 'qué pasa' — sino cómo se sintió. Preguntá qué escena se le quedó. Practicar past simple narrativo."
@@ -3937,9 +3937,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "convencer al otro de que empiece a mirar la historia sin contarle el final arruinándolo",
+  "narrative_role": "somos compañeros de trabajo compartiendo recomendaciones fanáticas",
+  "narrative_setting": "la máquina de café de la oficina a primera hora de la mañana",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Charla sobre 'binge watching'. ¿Cuándo fue la última vez que vio una serie entera en 2-3 días? Cuál y por qué. Vocabulario de streaming."
@@ -3999,9 +3999,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar la psicología de los villanos que en el fondo tenían razón",
+  "narrative_role": "somos fanáticos diseccionando las motivaciones de los protagonistas",
+  "narrative_setting": "la mesa de un café temático de cine lleno de figuras de acción",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hablar de UN personaje (no la película entera) que sentís que conocés. ¿Quién? ¿Por qué te conectaste con él/ella? Empujá adjetivos descriptivos profundos."
@@ -4057,9 +4057,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "quejarnos amargamente de cómo los directores de cine arruinan las historias originales",
+  "narrative_role": "somos lectores puristas e indignados con la adaptación",
+  "narrative_setting": "los pasillos silenciosos de una biblioteca enorme",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Adaptaciones: alguna vez leíste el libro PRIMERO y después viste la película. Cómo te decepcionó o sorprendió. Practicar comparaciones complejas."
@@ -4117,9 +4117,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar discutir el gran secreto del final esquivando decir las palabras clave",
+  "narrative_role": "somos amigos paranoicos cuidando que a nadie se le escape un detalle",
+  "narrative_setting": "un grupo de chat de voz donde estamos hablando en código para no arruinar nada",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Tema cotidiano: cuándo es válido contar un spoiler. ¿El alumno se enojó alguna vez? Tiene reglas con sus amigos. Vocabulario informal y opiniones."
@@ -4178,9 +4178,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "reflexionar si la magia de ver cosas en gigante con extraños va a desaparecer para siempre",
+  "narrative_role": "somos amantes del séptimo arte melancólicos por el cambio",
+  "narrative_setting": "las butacas rojas de un cine clásico a punto de ser demolido",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Ya casi nadie va al cine. ¿El alumno sí? ¿Para qué pelis? Comparar la experiencia. Practicar comparativos y preferencias."
@@ -4239,9 +4239,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "explicar por qué ciertas temáticas como el terror o el romance nos aburren profundamente",
+  "narrative_role": "somos espectadores intentando buscar algo neutral para ver",
+  "narrative_setting": "el living escroleando infinitamente los menús de la tele sin elegir nada",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Géneros: cuáles ama, cuáles odia, cuáles considera 'guilty pleasure'. ¿Hay alguno que NUNCA mira? Por qué."
@@ -4300,9 +4300,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "indignarnos por cómo la industria siempre elige las historias más aburridas para premiar",
+  "narrative_role": "somos críticos aficionados enojados con los resultados",
+  "narrative_setting": "el comedor viendo la ceremonia de los premios por televisión",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Debate: ¿el Oscar significa algo? ¿Hay una peli ganadora que le pareció sobrevalorada? Y una que perdió que merecía. Vocabulario de juicio crítico."
@@ -4361,9 +4361,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "explicar la complejidad táctica que los que no saben jugar nunca van a entender",
+  "narrative_role": "somos apasionados defendiendo la superioridad de nuestro juego",
+  "narrative_setting": "la barra de un bar deportivo rodeados de televisores con partidos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cuál es su deporte: para mirar, para practicar, o ambos. Cómo empezó. Frecuencia. Vocabulario de actividad recurrente."
@@ -4422,9 +4422,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar los miedos, la historia y la táctica para ganar este partido imposible",
+  "narrative_role": "somos hinchas nerviosos y supersticiosos camino a la tribuna",
+  "narrative_setting": "las calles llenas de gente caminando hacia el estadio el día de la final",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Equipo del corazón. Por qué ese (familia, ciudad, momento). Quién es el clásico rival. Anécdota del último partido visto en vivo."
@@ -4483,9 +4483,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "repasar minuto a minuto cómo dimos vuelta el resultado mágico en el último segundo",
+  "narrative_role": "somos compañeros de equipo reviviendo la gloria de la victoria",
+  "narrative_setting": "los vestuarios todavía llenos de barro celebrando como locos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Narrativa: un partido específico. Año, qué pasaba, quién jugaba. Empujá past continuous + past simple ('I was watching when...')."
@@ -4544,9 +4544,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar descubrir qué tienen en la cabeza esos genios para no sentir presión jamás",
+  "narrative_role": "somos admiradores analizando la mente de los grandes atletas",
+  "narrative_setting": "las vitrinas iluminadas del salón de la fama viendo los trofeos antiguos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Quién es el GOAT del deporte para el alumno. ¿Por qué? ¿Hay deportistas que admira fuera del juego también? Vocabulario de carrera."
@@ -4604,9 +4604,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "buscar la fuerza de voluntad para salir a transpirar en lugar de prender la tele",
+  "narrative_role": "somos sedentarios intentando motivarnos mutuamente",
+  "narrative_setting": "el sofá de casa tapados con una manta",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿El alumno es más espectador o practicante? Cómo cambió eso con la edad. Vocabulario de identidad ('I'm more of a...')."
@@ -4664,9 +4664,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "debatir si la tecnología mejoró la justicia o si arruinó la emoción del momento",
+  "narrative_role": "somos analistas de la televisión intentando entender la sanción",
+  "narrative_setting": "la cabina de transmisión repasando el video de la jugada polémica",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hay reglas que generan polémica en cada deporte. ¿Hay alguna que el alumno cambiaría? Por qué. Debate liviano."
@@ -4725,9 +4725,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "reflexionar sobre por qué la competencia lleva a la gente a hacer trampa y destruirse",
+  "narrative_role": "somos investigadores del comité de ética preocupados por el juego limpio",
+  "narrative_setting": "la sala de espera del comité médico con todos los expedientes en la mesa",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Atletas que cayeron por doping. ¿Es siempre trampa? ¿Y los casos médicos? Debate más complejo. Vocabulario ético."
@@ -4786,9 +4786,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "entender si los sueldos ridículos están arruinando el espíritu del juego para siempre",
+  "narrative_role": "somos periodistas de economía analizando el mercado de pases",
+  "narrative_setting": "una sala de juntas revisando los millones gastados en contratos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Sueldos millonarios, equipos de jeques, ligas cerradas. ¿Está rota la economía del deporte? Charla más analítica."
@@ -4844,9 +4844,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar descubrir el truco para pasar ese nivel donde todos nos quedamos trabados",
+  "narrative_role": "somos jugadores obsesionados intercambiando estrategias",
+  "narrative_setting": "el grupo de chat del celular viendo capturas de pantalla a cada rato",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Qué está jugando AHORA o lo último que jugó intenso. Cuántas horas le metió. Si lo terminó o lo dejó."
@@ -4903,9 +4903,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir por qué pagar por una máquina más potente no sirve si no hay buenos juegos",
+  "narrative_role": "somos consumidores analizando qué caja de plástico comprar este año",
+  "narrative_setting": "los pasillos de la tienda de tecnología probando los joysticks nuevos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿PlayStation, Xbox, Switch, PC? Por qué. ¿Cambió de equipo alguna vez? Vocabulario comparativo + opinión."
@@ -4962,9 +4962,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "coordinar un plan de ataque decente para que no nos destruyan en cinco minutos como siempre",
+  "narrative_role": "somos un escuadrón de amigos armando la táctica antes de saltar al campo",
+  "narrative_setting": "la sala de espera virtual con los micrófonos abiertos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Juega online? ¿Con desconocidos o con amigos del trabajo/colegio? Vocabulario social digital."
@@ -5021,9 +5021,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar esa falla exacta en la pared que nos permite saltarnos la mitad del nivel",
+  "narrative_role": "somos hackers rompiendo el juego para hacerlo más rápido",
+  "narrative_setting": "el cuarto frente al monitor revisando el código del juego paso por paso",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Vio alguna vez un speedrun en YouTube? Esa gente que termina Zelda en 25 minutos. Charla sobre obsesión + comunidad."
@@ -5080,9 +5080,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "criticar cómo las superproducciones multimillonarias son todas iguales y aburridas",
+  "narrative_role": "somos fanáticos buscando experiencias originales y arriesgadas",
+  "narrative_setting": "un rincón de una exposición probando proyectos raros de creadores solitarios",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Juegos chicos hechos por 1-2 personas vs juegos de 200M de presupuesto. ¿Le interesa la escena indie? Vocabulario de producción."
@@ -5139,9 +5139,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "procesar el impacto de la decisión durísima que el juego nos obligó a tomar solos",
+  "narrative_role": "somos jugadores emocionados analizando el peso de las acciones",
+  "narrative_setting": "mirando la pantalla en silencio mientras corren los créditos finales",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hay juegos donde la historia te marca. ¿Alguna lo hizo llorar? ¿O que los personajes le importaron más que en una peli?"
@@ -5198,9 +5198,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "explicarle a un escéptico los reflejos y el desgaste físico que requiere jugar así de rápido",
+  "narrative_role": "somos espectadores defendiendo la profesionalización de nuestra pasión",
+  "narrative_setting": "el estadio lleno de luces láser viendo a los jugadores concentrados en las pantallas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Carreras pro de jugadores. Mirá tournaments. ¿Esto es deporte o no? Tema controversial. Debate."
@@ -5257,9 +5257,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "argumentar que diseñar un mundo interactivo es más difícil que pintar un lienzo clásico",
+  "narrative_role": "somos curadores de arte analizando la estética de las máquinas",
+  "narrative_setting": "los salones de una galería moderna rodeados de cuadros digitales",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Debate: el cine es arte, los libros son arte, ¿los videojuegos también? Si sí, cuál sería el 'Citizen Kane' de los juegos. Charla intelectual."
@@ -5317,9 +5317,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "describir el secreto exacto de ese sabor que ningún restaurante logró igualar jamás",
+  "narrative_role": "somos familiares compartiendo la receta de la memoria",
+  "narrative_setting": "la mesa del comedor de la infancia con los platos calientes humeando",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Plato favorito (no genérico — uno específico). Quién lo cocina mejor en su familia. Cuándo lo come usualmente."
@@ -5377,9 +5377,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "improvisar una cena con las cuatro cosas que quedaron perdidas en la heladera",
+  "narrative_role": "somos cocineros amateur intentando salvar la comida antes del desastre",
+  "narrative_setting": "la cocina toda desordenada con tres ollas ensuciadas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Cocina o no? Si sí, qué tan a menudo y qué le sale bien. Si no, por qué (tiempo, miedo, no le interesa). Vocabulario de cocina."
@@ -5437,9 +5437,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "recordar el paso secreto y el truco fundamental para que la masa no quede como una piedra",
+  "narrative_role": "somos aprendices compartiendo los errores que cometimos antes de que saliera bien",
+  "narrative_setting": "la mesada cubierta de harina amasando con fuerza",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Receta que dominó: de quién la aprendió, cuántas veces salió mal antes de salir bien. Past simple narrativo + secuencia."
@@ -5497,9 +5497,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar sin prejuicios si esta experiencia carísima realmente vale lo que cuesta pagar la cuenta",
+  "narrative_role": "somos críticos intentando entender la propuesta de los grandes chefs",
+  "narrative_setting": "la mesa más exclusiva probando un plato minúsculo y rarísimo",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El mejor restaurante donde comió. Por qué. Lo que pidió. Si fue caro y si valió la pena. Vocabulario de experiencia gastronómica."
@@ -5557,9 +5557,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "explicar la historia de por qué comemos las cosas que comemos y sus ingredientes",
+  "narrative_role": "somos embajadores orgullosos de nuestra cultura frente a alguien de afuera",
+  "narrative_setting": "las calles de un festival de comida paseando entre los puestos llenos de humo",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cómo le explica a un extranjero qué comer si visita su país. Plato no obvio + plato turístico. Vocabulario cultural."
@@ -5617,9 +5617,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "quejarnos de cómo siempre aparece un gurú nuevo que prohíbe comer cosas deliciosas",
+  "narrative_role": "somos personas confundidas con tanta información falsa y reglas estrictas",
+  "narrative_setting": "el consultorio del médico leyendo panfletos de restricciones milagrosas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Hizo alguna dieta? ¿Le funcionó? ¿Qué piensa de las modas (keto, ayuno, vegano)? Vocabulario de hábito."
@@ -5679,9 +5679,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "gestionar el estrés total de que todos los platos lleguen calientes a la mesa al mismo tiempo",
+  "narrative_role": "somos anfitriones nerviosos coordinando el último esfuerzo para lucirnos",
+  "narrative_setting": "el comedor media hora antes de que lleguen quince personas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cocinar para alguien (pareja, familia, amigos). El stress, las restricciones, la presentación. Anécdota de algo que salió mal."
@@ -5741,9 +5741,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "reflexionar sobre la culpa de cuánto plástico e impacto generan las cosas que compramos en el supermercado",
+  "narrative_role": "somos consumidores intentando cambiar nuestros hábitos para dañar menos",
+  "narrative_setting": "la feria del barrio hablando con los productores directo de la tierra",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Carne de laboratorio, comer local, desperdicio. ¿Cambió hábitos por sostenibilidad? Vocabulario más técnico."
@@ -5803,9 +5803,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "compartir la historia más ridícula de los desastres que hicieron en la casa cuando los dejamos solos",
+  "narrative_role": "somos dueños riéndonos de nuestra paciencia infinita",
+  "narrative_setting": "el parque a la tarde viendo cómo corren libres rompiendo todo a su paso",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Tiene mascota o tuvo. Nombre, edad, raza. Personalidad. Una manía o cosa rara que hace. Vocabulario afectivo."
@@ -5863,9 +5863,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "maravillarnos con lo extremas que son las criaturas que viven donde no hay luz",
+  "narrative_role": "somos observadores curiosos admirando los trucos locos de la biología",
+  "narrative_setting": "el túnel oscuro del acuario gigante rodeados de peceras iluminadas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Vió algún animal en un documental que le parezca de otro planeta. Pulpo, axolotl, platypus. ¿Cuál más raro?"
@@ -5925,9 +5925,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "evaluar fríamente si tenemos el tiempo y el dinero antes de tomar una decisión que nos cambia la vida",
+  "narrative_role": "somos adoptantes dudando sobre la enorme responsabilidad",
+  "narrative_setting": "el patio del refugio llenos de cachorros saltando por todos lados",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Debate suave: ¿es para todo el mundo? Costo, tiempo, viajes. ¿Por qué decidió tener (o no tener)?"
@@ -5985,9 +5985,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "debatir qué hacer para frenar la destrucción de los hábitats antes de que sea demasiado tarde",
+  "narrative_role": "somos guardabosques discutiendo soluciones contra la deforestación",
+  "narrative_setting": "el puesto de control en medio de la selva escuchando ruidos lejanos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Especies en peligro. ¿Qué le importa? ¿Le interesan iniciativas tipo WWF? Vocabulario ecológico."
@@ -6043,9 +6043,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar cómo los monos resuelven herramientas de la misma forma que lo hacemos nosotros",
+  "narrative_role": "somos etólogos observando comportamientos súper complejos",
+  "narrative_setting": "el santuario de primates detrás de los cristales protectores",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Pulpos resolviendo puzzles, cuervos usando herramientas. ¿Qué animal lo sorprende? Tema más reflexivo."
@@ -6101,9 +6101,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "criticar la locura de querer tener animales peligrosos en el living por ego",
+  "narrative_role": "somos dueños responsables debatiendo los límites de domesticar salvajes",
+  "narrative_setting": "la sala de espera del veterinario de especies raras",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Gente que tiene serpientes, monos, hasta tigres. ¿Está bien? ¿Dónde está la línea entre 'rara pero ok' y 'maltrato'?"
@@ -6159,9 +6159,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "armar una campaña de concientización para cambiar las leyes de las fábricas de comida",
+  "narrative_role": "somos activistas buscando estrategias legales efectivas",
+  "narrative_setting": "las oficinas llenas de carteles de una ONG protectora",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cría industrial, etiquetas 'cage free', vegan por ética. ¿Cambió hábitos? ¿Le importa? Debate ético."
@@ -6217,9 +6217,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "enfrentar el dilema ético de si probar medicinas salva humanos pero destruye a otras especies",
+  "narrative_role": "somos investigadores científicos buscando alternativas al uso tradicional",
+  "narrative_setting": "los pasillos helados del laboratorio de experimentación",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Investigación con animales: ¿necesario o cruel? ¿Dónde está la línea? Tema controversial. Vocabulario académico."
@@ -6275,9 +6275,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "resumir el choque brutal con la realidad de volver a la rutina después de tanta aventura",
+  "narrative_role": "somos viajeros cansados regresando a casa",
+  "narrative_setting": "la sala esperando buscar las valijas llenas de polvo",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Último viaje (cerca o lejos). A dónde, con quién, qué hicieron. Lo mejor y lo peor. Past simple narrativo."
@@ -6333,9 +6333,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "planificar la ruta perfecta para el día que ganemos la lotería",
+  "narrative_role": "somos soñadores armando el itinerario que parece imposible",
+  "narrative_setting": "la computadora llena de pestañas abiertas buscando pasajes carísimos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El viaje que SUEÑA pero todavía no hizo. Adónde, por qué, qué lo está frenando (plata, tiempo, miedo). Futuro condicional."
@@ -6389,9 +6389,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir si ahorrar dinero durmiendo mal vale más que la comodidad del silencio",
+  "narrative_role": "somos aventureros jóvenes negociando prioridades y presupuestos",
+  "narrative_setting": "el lobby ruidoso de un hostal rodeados de mochilas inmensas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Tipo de viajero que es. ¿Hostel o resort? Probó ambos. Pros y contras. Comparativo."
@@ -6446,9 +6446,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar descifrar las reglas raras del país para dejar de pasar vergüenza",
+  "narrative_role": "somos turistas desorientados tratando de encajar rápido",
+  "narrative_setting": "el mercado callejero gritando para entendernos en un idioma desconocido",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Algo que en otro país lo dejó descolocado. Costumbre rara, comida, formas de saludar. Vocabulario cultural."
@@ -6504,9 +6504,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "juntar fuerzas para probar esa comida exótica asumiendo el riesgo",
+  "narrative_role": "somos valientes exploradores de los sabores locales",
+  "narrative_setting": "la mesita de plástico del callejón mirando un plato rarísimo lleno de colores",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Se anima a la comida callejera? ¿Algo extremo que probó? ¿Algo que le hizo mal? Lo más rico que comió en un viaje."
@@ -6562,9 +6562,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "reflexionar sobre la libertad absoluta de no tener que preguntarle a nadie qué quiere hacer hoy",
+  "narrative_role": "somos lobos solitarios encontrándonos con nosotros mismos",
+  "narrative_setting": "un tren cruzando las montañas en completo silencio y mirando por la ventana",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Viajó solo alguna vez? Si sí, cómo fue. Si no, ¿lo haría? Pros y contras. Vocabulario de experiencia personal."
@@ -6617,9 +6617,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "criticar cómo nuestra presencia está arruinando la esencia original de estos lugares mágicos",
+  "narrative_role": "somos viajeros preocupados por la gentrificación que nosotros mismos causamos",
+  "narrative_setting": "la plaza histórica intentando sacar una foto sin que aparezcan quinientas personas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Lugares destruidos por turismo (Venice, Barcelona, Machu Picchu). ¿Tiene que limitarse? Debate complejo."
@@ -6677,9 +6677,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar nuestra esclavitud y cómo organizar la vida si se cae el sistema mañana",
+  "narrative_role": "somos ciudadanos híper conectados y algo dependientes del teléfono",
+  "narrative_setting": "el transporte público mirando obsesivamente la pantalla encendida",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Las 3 apps más usadas del teléfono del alumno. Por qué. ¿Cuál borraría sin pensarlo? Vocabulario digital."
@@ -6737,9 +6737,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "evaluar si usar la máquina nos hace más rápidos o si a la larga nos vuelve mediocres e inútiles",
+  "narrative_role": "somos profesionales asustados y fascinados por el cambio de paradigma",
+  "narrative_setting": "la oficina moderna leyendo reportes de productividad",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Usa ChatGPT o similar. Para qué. ¿Le da miedo que reemplace su trabajo? ¿Cambió cómo hace algo concreto?"
@@ -6794,9 +6794,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir por qué el micrófono nos escucha y cómo evitar ser un producto para las empresas",
+  "narrative_role": "somos usuarios paranoicos protegiendo nuestros datos personales",
+  "narrative_setting": "el sillón revisando las configuraciones bloqueando rastreadores",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Te muestran ads de algo que comentaste hablado. ¿Cuán cuidadoso es? ¿Usa VPN, ad-blockers? Vocabulario técnico."
@@ -6854,9 +6854,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "convencer al otro de que esta máquina carísima realmente vale la pena la inversión",
+  "narrative_role": "somos evangelizadores tecnológicos recomendando chiches nuevos",
+  "narrative_setting": "el escritorio del trabajo presumiendo la caja de la nueva compra",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Aparato que compró y no se imagina sin él. Auriculares noise-cancelling, smartwatch, e-reader, lo que sea. Por qué."
@@ -6914,9 +6914,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "vencer la frustración gigante de cuando el código se rompe por una sola letra mal escrita",
+  "narrative_role": "somos estudiantes de tecnología desesperados buscando el error",
+  "narrative_setting": "el cuarto a oscuras intentando encontrar un error en la línea cien",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Intentó aprender a programar? Si sí, hasta dónde llegó. Si no, ¿le interesa? ¿Es necesario hoy? Vocabulario de proceso."
@@ -6971,9 +6971,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "adivinar qué tipo de trabajos se van a salvar y cómo tenemos que adaptarnos rápido",
+  "narrative_role": "somos oficinistas trazando estrategias de supervivencia laboral",
+  "narrative_setting": "la máquina de café charlando de los rumores de despidos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Qué trabajos van a desaparecer. Cuáles van a aparecer. ¿El suyo está en riesgo? Debate del futuro."
@@ -7028,9 +7028,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar cumplir la promesa durísima de apagar las notificaciones por todo el fin de semana",
+  "narrative_role": "somos amigos dándonos cuenta del problema gigante de dopamina",
+  "narrative_setting": "la mesa del restaurante donde nadie levanta la cabeza de la pantalla",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cuánto tiempo de pantalla por día. ¿Le preocupa? ¿Intentó alguna vez una 'detox' digital? Vocabulario emocional sobre tech."
@@ -7088,9 +7088,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "decidir si tenemos el derecho o la obligación de censurar cosas peligrosas en internet",
+  "narrative_role": "somos ejecutivos trazando la fina línea entre la libertad y el caos",
+  "narrative_setting": "las oficinas centrales de la red social debatiendo las reglas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Big Tech con poder enorme. Censura, deepfakes, monopolios. ¿Hay que regular más? Tema de debate denso."
@@ -7148,9 +7148,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "explicar cómo es posible que la física rompa todas las leyes de la lógica del sentido común",
+  "narrative_role": "somos mentes curiosas asombradas por lo raro que es el universo",
+  "narrative_setting": "los pasillos del museo de ciencias leyendo carteles informativos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Algún dato que el alumno leyó/escuchó y le voló la cabeza. Sobre ciencia, naturaleza, cuerpo, lo que sea. Contarlo."
@@ -7208,9 +7208,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "maravillarnos con lo pequeñitos e insignificantes que somos en el vacío absoluto",
+  "narrative_role": "somos astrónomos aficionados reflexionando sobre las estrellas",
+  "narrative_setting": "el techo de casa mirando hacia arriba con un telescopio enorme",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Le fascina el espacio? Marte, agujeros negros, vida en otros planetas. Qué le impresiona más. Vocabulario astronómico."
@@ -7268,9 +7268,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "entender la locura de que nuestro sistema se arregla solo todo el tiempo",
+  "narrative_role": "somos biólogos admirando la ingeniería de la máquina perfecta de carne",
+  "narrative_setting": "el consultorio mirando cómo funciona el modelo del esqueleto",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Algo del cuerpo humano que le parezca increíble. Cerebro, sistema inmune, microbioma. Cómo se sorprende."
@@ -7328,9 +7328,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "debatir si la tecnología nos va a salvar a tiempo o si ya cruzamos el límite de no retorno",
+  "narrative_role": "somos ingenieros ambientales buscando una solución límite",
+  "narrative_setting": "el dique roto mirando cómo el agua sube de forma alarmante",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Qué opina del cambio climático. ¿Es optimista o pesimista? ¿Hace algo en su vida diaria? Debate serio."
@@ -7388,9 +7388,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "elegir la herramienta fundamental que sacó a la humanidad de la oscuridad y cambió la historia",
+  "narrative_role": "somos historiadores debatiendo el avance de la civilización",
+  "narrative_setting": "el taller lleno de polvo repasando planos antiguos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Top 3 inventos que cambiaron la humanidad para el alumno. ¿Por qué? Pensamiento histórico + comparativo."
@@ -7448,9 +7448,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "teorizar sobre por qué el universo es tan grande pero nadie todavía nos respondió el teléfono",
+  "narrative_role": "somos investigadores del cielo buscando la verdad afuera",
+  "narrative_setting": "la base de radio satelital gigante esperando escuchar algún ruido raro",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Cree que hay vida afuera? ¿Por qué no nos contactaron todavía? La 'paradoja de Fermi' simple. Especulación."
@@ -7510,9 +7510,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir el enorme peligro moral de empezar a diseñar a las personas por computadora",
+  "narrative_role": "somos genetistas advirtiendo sobre cruzar los límites naturales",
+  "narrative_setting": "el laboratorio blanco brillante decodificando las cadenas del adn",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Editar genes, bebés a medida, curar enfermedades hereditarias. ¿Hasta dónde? Bioética accesible."
@@ -7572,9 +7572,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "luchar con la paciencia para explicarle a la gente por qué las teorías conspirativas son falsas",
+  "narrative_role": "somos defensores de los datos duros debatiendo contra la locura",
+  "narrative_setting": "el estudio de radio desenmascarando mitos en vivo al aire",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Astrología, homeopatía, tierra plana. ¿Inofensivo o dañino? ¿Cómo le explicaría a alguien que cree firmemente en eso?"
@@ -7634,9 +7634,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "explicar cómo las pinceladas y la visión de este genio cambiaron nuestra perspectiva para siempre",
+  "narrative_role": "somos admiradores asombrados esperando ver los cuadros originales",
+  "narrative_setting": "el lobby del museo grande esperando ver la exhibición principal",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Pintor, escultor, fotógrafo o lo que sea. Quién. Por qué. Una obra específica que le marcó."
@@ -7696,9 +7696,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "gestionar el cansancio extremo para poder absorber tantas obras maestras sin enloquecer",
+  "narrative_role": "somos turistas luchando contra la sobrecarga de información estética",
+  "narrative_setting": "el salón interminable caminando con los pies completamente destrozados",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Va a museos? ¿Por gusto o turista? Estrategia: leer todo o caminar y absorber. Vocabulario de experiencia."
@@ -7756,9 +7756,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "debatir a muerte si una pintura hecha con una computadora requiere tanto talento como la pintura real",
+  "narrative_role": "somos ilustradores modernos comparando técnicas y filosofías",
+  "narrative_setting": "el estudio de diseño frente a los monitores llenos de luces brillantes",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hacer arte con iPad. ¿Es igual de válido que con pintura? Debate generacional."
@@ -7816,9 +7816,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir el borde fino de la ley entre lo que es vandalismo y lo que es un mensaje importante",
+  "narrative_role": "somos caminantes urbanos analizando el impacto social del grafiti",
+  "narrative_setting": "el callejón abandonado admirando un mural gigante de colores vibrantes",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Graffiti = vandalismo? Banksy. Murales en el barrio del alumno. Vocabulario urbano."
@@ -7876,9 +7876,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "superar el terror gigante de no saber cómo empezar y el miedo a hacer algo feo",
+  "narrative_role": "somos aprendices luchando contra la frustración de la hoja en blanco",
+  "narrative_setting": "el atril lleno de lienzos en blanco y pintura manchada en el piso",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Hace alguna forma de arte (escribir, dibujar, fotos, música)? ¿Lo comparte? ¿Por qué sí o por qué no?"
@@ -7936,9 +7936,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar entender la locura de que un lienzo pintado de negro cueste más que una casa",
+  "narrative_role": "somos espectadores normales indignados con la economía del coleccionismo",
+  "narrative_setting": "el salón exclusivo de subastas viendo los precios subir a millones",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Un Basquiat vendido a 100 millones. Artistas pobres. ¿El precio refleja el valor? ¿Banksy cuando trituró su cuadro?"
@@ -7996,9 +7996,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar fríamente si comprar imágenes raras fue la peor estafa de la década o el futuro",
+  "narrative_role": "somos analistas discutiendo el valor real de ser dueño de un píxel",
+  "narrative_setting": "los foros de tecnología leyendo gráficas de precios que caen",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El boom y la caída de los NFTs. ¿Fue arte o scam? ¿Hay algo rescatable? Tema reciente."
@@ -8056,9 +8056,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "defender a los gritos el derecho de los artistas a incomodar y provocar a la gente",
+  "narrative_role": "somos defensores de la libertad de expresión discutiendo los límites",
+  "narrative_setting": "la entrada de la galería protestando porque obligaron a quitar una obra polémica",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Obras canceladas, libros prohibidos, películas re-editadas. ¿Cuándo se justifica? Debate libertad vs respeto."
@@ -8116,9 +8116,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar la fuerza mágica para mantener la constancia los días que odiamos el gimnasio",
+  "narrative_role": "somos compañeros compartiendo las rutinas que nos salvan del sedentarismo",
+  "narrative_setting": "el vestuario con los bolsos preparados armando el día",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cómo se mueve hoy. Gym, correr, yoga, nada. Cuántos días por semana. Sincero. Vocabulario de hábito."
@@ -8176,9 +8176,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "vencer la intimidación paralizante de que todo el mundo nos va a juzgar por no saber usar las máquinas",
+  "narrative_role": "somos principiantes juntando coraje para dar el primer paso",
+  "narrative_setting": "la puerta del gimnasio llenos de vergüenza mirando para adentro",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Si alguien arranca de cero. Qué consejos le daría. Errores que cometió cuando empezó él. Vocabulario práctico."
@@ -8236,9 +8236,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "dominar la respiración para no caernos al piso frente a todos de forma ridícula",
+  "narrative_role": "somos practicantes buscando el equilibrio físico y mental",
+  "narrative_setting": "el salón de piso de madera intentando alcanzar la postura imposible",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Probó yoga, meditación, breathwork? Si sí, lo siguió o lo dejó. Cómo se sintió. Vocabulario de bienestar."
@@ -8296,9 +8296,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "planificar la comida matemáticamente para tener fuerza sin caer en comer mal por falta de tiempo",
+  "narrative_role": "somos oficinistas intentando organizarnos para no arruinar el trabajo del gimnasio",
+  "narrative_setting": "la cocina un domingo preparando los contenedores de plástico para la semana",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Cuida lo que come? ¿Cuenta macros o sigue intuición? Vocabulario nutricional simple."
@@ -8356,9 +8356,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "aceptar que bajar la velocidad y descansar el cerebro es obligatorio para no quemarnos vivos",
+  "narrative_role": "somos amigos confesando el estrés y buscando formas de sanar",
+  "narrative_setting": "el pasillo al aire libre caminando despacio y respirando aire puro",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Ya es OK hablar de esto. ¿Va a terapia? ¿Cómo lidia con stress? Tema más sensible. Vocabulario emocional."
@@ -8418,9 +8418,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "aprender a controlar el ritmo del oxígeno para no rendirnos de forma miserable en los primeros metros",
+  "narrative_role": "somos novatos del trote intentando sobrevivir el dolor inicial",
+  "narrative_setting": "la primera vuelta a la plaza respirando agitados agarrándonos las rodillas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Correr: ¿lo odia o lo ama? ¿Probó alguna vez constante? Vocabulario específico."
@@ -8480,9 +8480,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "descifrar qué polvo sirve de verdad para los músculos y cuál es puro marketing falso",
+  "narrative_role": "somos deportistas leyendo letras chiquitas intentando mejorar nuestro rendimiento",
+  "narrative_setting": "el pasillo de la tienda mirando tarros gigantes de proteínas de todos los colores",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Toma proteína, creatina, vitaminas? ¿O cree que con buena dieta alcanza? Debate."
@@ -8542,9 +8542,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar dejar de castigarnos comparándonos con las mentiras perfectas que vemos editadas en internet",
+  "narrative_role": "somos personas reales luchando contra las inseguridades estéticas",
+  "narrative_setting": "el espejo cruel de los probadores bajo las luces blancas terribles",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Instagram y los cuerpos perfectos. ¿Le afecta? ¿Cómo cambió el ideal en 20 años? Tema profundo."
@@ -8602,9 +8602,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar esa combinación mágica de prendas que nos haga sentir seguros y blindados",
+  "narrative_role": "somos asesores desesperados tratando de armar un buen conjunto",
+  "narrative_setting": "el armario tirando toda la ropa encima de la cama en pánico",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cómo describiría su estilo. Tres palabras. ¿Tiene 'uniforme'? ¿Cómo lo definiría comparado a sus amigos?"
@@ -8662,9 +8662,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "discutir por qué el cerebro nos engaña para querer pagar el triple solo por un logo chiquito cosido",
+  "narrative_role": "somos amantes del diseño debatiendo sobre el consumismo",
+  "narrative_setting": "las vidrieras carísimas del shopping admirando la ropa intocable",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Marcas en las que confía. Algo en lo que gasta más. Algo en lo que ahorra. Vocabulario de consumo."
@@ -8724,9 +8724,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "justificar la locura obsesiva de pagar el valor de un auto usado por un par de zapatillas",
+  "narrative_role": "somos coleccionistas fanáticos cuidando obsesivamente que el zapato no se doble",
+  "narrative_setting": "la convención enorme llena de cajas y gente limpiando el calzado",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Tiene zapatillas que le importan? ¿Cuántos pares? ¿Es de los que las cuida o las usa hasta destrozar?"
@@ -8786,9 +8786,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "lidiar con la tremenda desilusión de que la ropa no se ve en nosotros como se veía en la foto falsa",
+  "narrative_role": "somos compradores frustrados preparándonos para hacer las devoluciones",
+  "narrative_setting": "el living de casa abriendo paquetes recién llegados con tijeras",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Comprar ropa online. ¿Le sale bien o todo le queda mal? Devuelve. ¿Qué app/sitio prefiere?"
@@ -8847,9 +8847,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar esa chaqueta increíble de los noventa que nos diferencia del resto de la masa",
+  "narrative_role": "somos cazadores de estilos retro buscando el tesoro",
+  "narrative_setting": "la feria del usado escarbando entre montañas de ropa antigua",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Ropa de segunda mano, vintage, ferias. ¿Se anima? ¿Encontró algo épico alguna vez?"
@@ -8905,9 +8905,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "criticar la locura de que compramos remeras que se rompen en dos semanas para tirarlas",
+  "narrative_role": "somos consumidores analizando la culpa de contribuir a la basura mundial",
+  "narrative_setting": "la tienda de saldos gigantes donde la ropa vale dos monedas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Shein, Zara, ropa que sale y se descarta rápido. ¿Le importa la ética detrás? Debate."
@@ -8966,9 +8966,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "entender si estamos dispuestos a pagar carísimo por ropa ética para salvar al mundo de a poco",
+  "narrative_role": "somos diseñadores conscientes discutiendo el impacto en el medio ambiente",
+  "narrative_setting": "el taller ecológico analizando hilos y algodones naturales",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Alternativas: comprar menos, comprar mejor, reparar. ¿Le interesa? ¿Es accesible o solo para ricos?"
@@ -9026,9 +9026,9 @@
    "C1"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "analizar con la mente abierta cómo la ropa por fin dejó de etiquetar a la gente",
+  "narrative_role": "somos observadores modernos celebrando la evolución de la expresión libre",
+  "narrative_setting": "el desfile extraño y rupturista donde los modelos rompen todas las reglas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hombres con polleras, mujeres con trajes, moda no binaria. ¿Cómo se siente con esto? ¿Cambió en los últimos años?"
@@ -9068,9 +9068,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "ayudar al dinosaurio a buscar hojas frescas para el almuerzo antes de que caiga el meteorito",
+  "narrative_role": "somos exploradores del tiempo viajando entre monstruos amigables",
+  "narrative_setting": "una jungla de hojas enormes en la prehistoria",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Welcome explorer! Dinosaurs lived millions of years ago. Tell me your favorite one and what made it special.",
@@ -9111,9 +9111,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "recolectar rocas lunares brillantes para poder volver a casa",
+  "narrative_role": "somos astronautas muy valientes con cascos mágicos",
+  "narrative_setting": "la cabina brillante del cohete que viaja a la luna",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Space is huge! Eight planets, billions of stars. If you traveled to space, where would you go first and why?",
@@ -9154,9 +9154,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "buscar el tesoro del pirata que los cangrejos escondieron en la arena",
+  "narrative_role": "somos buzos buscando criaturas amigables bajo el agua",
+  "narrative_setting": "el fondo del mar adentro de un submarino de cristal transparente",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Oceans cover most of Earth! Whales, sharks, octopus, jellyfish. Tell me which sea animal you find coolest.",
@@ -9197,9 +9197,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "ganar el trofeo dorado anotando el punto mágico en el último segundo",
+  "narrative_role": "somos los capitanes heroicos del equipo estrella",
+  "narrative_setting": "el estadio lleno de banderas de colores para la gran final",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Sports are awesome! Soccer, basketball, swimming, tennis. Which one do you play or watch? What's your team?",
@@ -9241,9 +9241,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "pintar el arcoíris gigante que perdió sus colores por la lluvia",
+  "narrative_role": "somos artistas magos con pinceles que vuelan",
+  "narrative_setting": "el taller mágico de los duendes de los colores",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Art is magic! Painting, drawing, sculpture, crafts. Tell me what you create and what colors you choose.",
@@ -9284,9 +9284,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "tocar la guitarra invisible para que todos los alienígenas empiecen a bailar",
+  "narrative_role": "somos las estrellas de rock del universo",
+  "narrative_setting": "el escenario gigante donde los parlantes tienen formas locas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Music is everywhere. Songs, instruments, dancing. What's your favorite song or band? Do you play any instrument?",
@@ -9328,9 +9328,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "rescatar los juguetes que el perrito travieso escondió debajo de la tierra",
+  "narrative_role": "somos los detectives cuidadores de las mascotas perdidas",
+  "narrative_setting": "el parque de diversiones secreto exclusivo para los animales",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Pets are family! Dogs, cats, hamsters, fish. Tell me about your pet — or the one you wish you had.",
@@ -9384,9 +9384,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "organizar la mejor fiesta sorpresa antes de que los abuelos lleguen a la puerta",
+  "narrative_role": "somos los agentes secretos armando el festejo gigante",
+  "narrative_setting": "la casa del árbol más alta del mundo",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Who lives with you? Mom? Dad? Brother? Sister? Tell me one name!"
@@ -9427,9 +9427,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar ponerle palabras reales a la emoción complicada que nos traba la cabeza",
+  "narrative_role": "somos analizantes buscando la paz y entendiendo nuestro corazón",
+  "narrative_setting": "el consultorio seguro y tranquilo con un cuaderno en las manos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Feelings are important. Happy, sad, angry, scared, excited. Tell me one moment today when you felt strong about something.",
@@ -9483,9 +9483,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar la mochila perdida con las tareas importantes antes de que suene la campana cósmica",
+  "narrative_role": "somos alumnos súper listos investigando el recreo",
+  "narrative_setting": "el patio de la escuela espacial que flota entre los asteroides",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "School day! Who's your teacher? What's your favorite subject? Tell me one thing that happened today."
@@ -9538,9 +9538,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "disparar los pomos de pintura mágica para que las casas y las flores vuelvan a brillar",
+  "narrative_role": "somos los guerreros del color salvando la alegría",
+  "narrative_setting": "el reino oscuro que se volvió blanco y negro",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Hi! What's your favorite color? Mine is green! Look around — what's red? What's blue?"
@@ -9593,9 +9593,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "ayudar a los animales a encontrar su lugar correcto antes de que el granjero se despierte",
+  "narrative_role": "somos los ayudantes que hablan el idioma secreto de los animales",
+  "narrative_setting": "la granja loca donde los animales cambiaron de voces por error",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Animals! A cow says moo. A dog says woof. What's your favorite animal? What sound does it make?"
@@ -9635,9 +9635,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "subir a todos los pasajeros brillantes contando muy fuerte para que el tren no se detenga",
+  "narrative_role": "somos los maquinistas llevando la carga de estrellas",
+  "narrative_setting": "el tren mágico que viaja saltando por encima de las nubes",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Let's count! One, two, three... how many fingers do you have? Count with me!"
@@ -9690,9 +9690,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "juntar y acomodar las piezas del cuerpo del robot para que pueda volver a caminar feliz",
+  "narrative_role": "somos los doctores mecánicos arreglando a los robots",
+  "narrative_setting": "la fábrica robótica de las piezas mecánicas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Touch your head! Now your nose. Now your feet. What can you do with your hands?"
@@ -9745,9 +9745,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "armar la torta más gigante del planeta buscando los ingredientes mágicos perdidos",
+  "narrative_role": "somos chefs voladores cocinando platos locos",
+  "narrative_setting": "la cocina de las nubes de algodón de azúcar",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Food time! Do you like apples? Bread? Milk? What did you eat today?"
@@ -9797,9 +9797,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "descubrir qué juguete misterioso hace falta para calmar al personaje que está triste",
+  "narrative_role": "somos abridores de regalos buscando el juguete perfecto",
+  "narrative_setting": "la caja sorpresa infinita que brilla con luces",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Imagine you got a big box today. A surprise! What's inside? A toy car? A doll? Tell me what you'd open!"
@@ -9850,9 +9850,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "usar nuestro poder secreto para atrapar a la máquina de hacer cosquillas que se volvió loca",
+  "narrative_role": "somos los superhéroes novatos salvando el día",
+  "narrative_setting": "el rascacielos de colores de la ciudad de los cómics",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Do you watch cartoons? Tell me your favorite character! Are they fast? Strong? Funny? Do they fly?"
@@ -9903,9 +9903,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "saltar los obstáculos con precisión para destrabar el candado del nivel final",
+  "narrative_role": "somos los personajes principales cruzando la pantalla",
+  "narrative_setting": "el mundo adentro de la consola donde todo está hecho de cuadraditos brillantes",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Do you play games on a tablet or phone? What do you do in the game? Run? Jump? Win?"
@@ -9955,9 +9955,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "repartir los paquetes de golosinas antes de que empiece la función de la película de risa",
+  "narrative_role": "somos los despachantes rápidos del cine gigante",
+  "narrative_setting": "el cine de los monstruos amigables que tienen mucho apetito",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Yummy treats! Do you like nuggets? Fries? Burgers? Popcorn? What's your favorite?"
@@ -10007,9 +10007,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "ordenar las tareas diarias cantando para que el sol no se quede dormido en el cielo",
+  "narrative_role": "somos los guardianes del tiempo y las rutinas divertidas",
+  "narrative_setting": "el reloj de arena mágico que hace que salga el sol y la luna",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Walk me through your day. When do you wake up? Breakfast? School? After school? Bedtime?"
@@ -10059,9 +10059,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar la llave dorada resolviendo las pistas en cada habitación misteriosa",
+  "narrative_role": "somos detectives valientes explorando rincones extraños",
+  "narrative_setting": "la mansión embrujada llena de puertas que se abren solas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Tell me about your home. How many rooms? Where do you sleep? What's your favorite room and why?"
@@ -10112,9 +10112,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "probar todos los juegos rebotando para elegir cuál es el deporte más divertido",
+  "narrative_role": "somos los probadores oficiales de las canchas elásticas",
+  "narrative_setting": "el castillo inflable que rebota hasta el techo",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "What do you do after school? Sports? Music? Drawing? Tell me what you love doing the most."
@@ -10165,9 +10165,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "ayudar a la nube gruñona a entender por qué llueve para que pueda salir el arcoíris",
+  "narrative_role": "somos los abrazadores mágicos arreglando el día",
+  "narrative_setting": "el bosque donde los árboles cambian de forma según tu humor",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "How are you feeling today? Tell me one moment when you felt really happy. Or a moment when something bothered you."
@@ -10219,9 +10219,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "buscar las hojas más verdes para alimentar al dinosaurio que se perdió de la manada",
+  "narrative_role": "somos los guardabosques de las criaturas antiguas",
+  "narrative_setting": "la montaña de los volcanes de plastilina",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Nature is amazing! Forests, oceans, mountains, dinosaurs, jungles. Tell me what fascinates you most."
@@ -10273,9 +10273,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "hacer la prueba más difícil del mundo sin reírnos ni una sola vez para ganar el premio de diamantes",
+  "narrative_role": "somos los concursantes divertidos aguantando la risa",
+  "narrative_setting": "el set brillante de televisión de los retos extremos",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "If you had a YouTube channel, what challenge would you create? Eating something weird? A prank? A reaction? Tell me!"
@@ -10327,9 +10327,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "construir el puente de madera antes de que llegue la tormenta de los zombis cuadriculados",
+  "narrative_role": "somos los arquitectos rápidos construyendo refugios",
+  "narrative_setting": "el terreno vacío donde todas las rocas son perfectamente cuadradas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Imagine you can build any world with blocks. What would you build? A house? A castle? An entire city?"
@@ -10381,9 +10381,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar la figurita holográfica rarísima para que no la atrape el villano",
+  "narrative_role": "somos los buscadores de las colecciones perdidas",
+  "narrative_setting": "el cofre dorado secreto debajo del mercado de intercambios",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Do you collect anything? Cards? Stickers? Figures? What's the rarest one you have? Would you trade it?"
@@ -10435,9 +10435,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "conducir el auto dulce muy rápido atrapando la energía para ganar la copa de helado",
+  "narrative_role": "somos los pilotos hambrientos de los autos golosos",
+  "narrative_setting": "la pista de carreras hecha de chocolate derretido y gomitas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Imagine you're ordering at a fast food place. What combo do you want? Burger? Fries? Soda? Ice cream after?"
@@ -10489,9 +10489,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "adivinar qué estrella secreta está escondida bajo el disfraz frente a todas las cámaras",
+  "narrative_role": "somos los entrevistadores curiosos descubriendo secretos",
+  "narrative_setting": "la alfombra roja llena de destellos de los premios espaciales",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "What music do you listen to? What's the last series you binged? Any movie you've watched ten times?"
@@ -10547,9 +10547,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "usar el mapa brillante para encontrar la pirámide misteriosa guiando al piloto",
+  "narrative_role": "somos exploradores leyendo las estrellas para no perdernos",
+  "narrative_setting": "la canasta del globo aerostático volando por encima de las montañas nevadas",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "If you could go anywhere tomorrow, where? What's a country you want to visit one day and why?"
@@ -10603,9 +10603,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "reparar los tubos de la máquina del clima que se rompió usando las herramientas láser",
+  "narrative_role": "somos los trabajadores inteligentes solucionando problemas del futuro",
+  "narrative_setting": "la ciudad suspendida en el aire del año tres mil",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "What do you want to be when you grow up? It can be anything — even a job that doesn't exist yet."
@@ -10659,9 +10659,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "mezclar las pócimas de comida exactas para que la torta crezca hasta el techo",
+  "narrative_role": "somos los aprendices del chef haciendo hechizos deliciosos",
+  "narrative_setting": "la cocina mágica donde las ollas cantan al hervir",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Have you ever cooked something? Walk me through a recipe — even a simple sandwich counts!"
@@ -10715,9 +10715,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "juntar toda la basura brillante para que el agua vuelva a ser de color cristalino",
+  "narrative_role": "somos los superhéroes de la tierra limpiando los daños",
+  "narrative_setting": "la playa sucia rodeada de pájaros que no pueden volar bien",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "What worries you about the planet? Pollution? Animals? Climate? What's one small thing you do that helps?"
@@ -10773,9 +10773,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "usar las palabras valientes para convencerlo de que todos los colores son importantes",
+  "narrative_role": "somos los consejeros sabios hablando con la verdad",
+  "narrative_setting": "el castillo del rey terco que quiere pintar todo el reino de gris",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Give me your honest opinion: is school useful? Do you agree with screen time limits? Why?"
@@ -10830,9 +10830,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "hacer la jugada más divertida del mundo en vivo para que suba el número de seguidores",
+  "narrative_role": "somos los locutores famosos emocionando a la gente en internet",
+  "narrative_setting": "el cuarto genial lleno de monitores y luces de neón parpadeantes",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Do you watch live streamers? What makes a streamer fun? The game? The chat? The community? Would you stream?"
@@ -10886,9 +10886,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "armar la combinación de zapatillas más rápida y genial para ganar el concurso de estilo veloz",
+  "narrative_role": "somos los corredores presumiendo nuestros modelos únicos",
+  "narrative_setting": "la rampa de salto del parque donde los zapatos flotan",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Are you into sneakers or streetwear? What's the best pair you own? What would you save up for?"
@@ -10942,9 +10942,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "jugar concentrados sin mirar atrás para destruir al equipo malvado de los robots",
+  "narrative_role": "somos los campeones defendiendo el título del planeta",
+  "narrative_setting": "la cabina a prueba de sonido en medio del estadio gigante",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Do you follow any pro gaming teams? What game do you play competitively? What rank are you?"
@@ -10997,9 +10997,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "descubrir el paso de baile misterioso y las palabras raras para destrabar la barrera de seguridad",
+  "narrative_role": "somos los hackers del ritmo navegando las olas digitales",
+  "narrative_setting": "la pista de baile secreta adentro de los teléfonos celulares",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Teach me a slang word you and your friends use. What does it mean? Use it in a sentence!"
@@ -11046,9 +11046,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "relajarnos, compartir cómo fue la semana y hablar sin miedo a ser evaluados",
+  "narrative_role": "somos buenos amigos disfrutando de la compañía para desconectar de los problemas",
+  "narrative_setting": "los sillones profundos de la cafetería con el ruido de las tazas y la lluvia afuera",
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Greet the student warmly and casually. In ONE sentence, ask them what they feel like talking about today — anything goes, a hobby, something that happened, an idea bouncing in their head. KEEP THE GREETING SHORT (1-2 sentences max). When they answer with a topic, immediately dive in: react with genuine interest, drop a specific angle or anecdote, then push the conversation forward with a follow-up question. Stay 100% on whatever they pick. Never suggest topics yourself — let them choose.",
@@ -11107,9 +11107,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "intentar arreglar la arquitectura que rompió el nuevo modelo de inteligencia sin tirar el servidor",
+  "narrative_role": "somos programadores cansados colaborando para apagar el incendio del código",
+  "narrative_setting": "la llamada grupal del equipo de ingeniería un viernes antes de que termine el día",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "adultos",
@@ -11161,9 +11161,9 @@
    "C2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "recortar cosas de los planos porque el presupuesto se descontroló y la cocina no se puede pagar",
+  "narrative_role": "somos dueños y arquitectos en plena tensión negociando las terminaciones",
+  "narrative_setting": "el terreno lleno de bolsas de cemento caminando sobre los cimientos marcados",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "adultos",
@@ -11211,9 +11211,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "apretar los botones exactos en el momento justo para soltar el súper ataque de luz y ganar",
+  "narrative_role": "somos los luchadores heroicos desafiando a las sombras",
+  "narrative_setting": "el ring iluminado con rayos láser flotando en medio del universo",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "junior",
@@ -11262,9 +11262,9 @@
    "A2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "encontrar la pieza fuerte para sostener la torre gigante y que no se derrumbe encima de todo",
+  "narrative_role": "somos los creadores pacientes armando la defensa",
+  "narrative_setting": "el pozo gigante donde las cajas rojas flotan buscando armar cosas altas",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "mini",
@@ -11314,9 +11314,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "elegir rápido a cuál de los mil portales mágicos saltar para no aburrirnos hoy",
+  "narrative_role": "somos los exploradores eligiendo el próximo desafío en las nubes",
+  "narrative_setting": "la bóveda infinita llena de cartuchos que nunca termina",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -11365,9 +11365,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "elegir cuál es la máscara del disfraz que mejor muestra nuestros poderes reales",
+  "narrative_role": "somos buscadores del destino eligiendo qué clase de héroes seremos",
+  "narrative_setting": "el pasillo de los espejos que devuelven imágenes distintas",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -11417,9 +11417,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "descubrir que los monstruos no son feos de verdad, sino que usan filtros para engañarnos",
+  "narrative_role": "somos los detectives de la verdad descubriendo el truco",
+  "narrative_setting": "el estudio secreto detrás de escena donde guardan el maquillaje",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -11469,9 +11469,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "agarrarnos fuerte a los juguetes seguros antes de que la máquina corra a súper velocidad",
+  "narrative_role": "somos los pilotos adaptándonos a la curva veloz del futuro",
+  "narrative_setting": "la cinta rápida de la fábrica del mañana que no tiene frenos",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -11521,9 +11521,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "gritar juntos por el micrófono para asustar al villano que está lastimando las plantas tiernas",
+  "narrative_role": "somos los voceros fuertes exigiendo cambiar las cosas malas",
+  "narrative_setting": "la cabina gigante del control de los defensores de los justos",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -11573,9 +11573,9 @@
    "B2"
   ],
   "mastery_criteria": null,
-  "narrative_conflict": null,
-  "narrative_role": null,
-  "narrative_setting": null,
+  "narrative_conflict": "usar palabras elegantes y portarnos bien para que los guardias nos dejen salir al bosque a jugar",
+  "narrative_role": "somos los príncipes rebeldes buscando permiso inteligentemente",
+  "narrative_setting": "la frontera del castillo del rey y la reina estricta",
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
