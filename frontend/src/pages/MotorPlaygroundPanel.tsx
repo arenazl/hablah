@@ -108,6 +108,7 @@ export default function MotorPlaygroundPanel() {
   // Simulación Gemini Real
   const [simulatingGemini, setSimulatingGemini] = useState(false)
   const [geminiStartResponse, setGeminiStartResponse] = useState<string | null>(null)
+  const [geminiClosingResponse, setGeminiClosingResponse] = useState<string | null>(null)
 
   useEffect(() => { try { localStorage.setItem('motorTheme', theme) } catch {} }, [theme])
 
@@ -210,19 +211,25 @@ export default function MotorPlaygroundPanel() {
     } catch { toast.error('No se pudo procesar la clase') } finally { setRunning(false) }
   }
 
-  const handleSimulateGeminiStart = async () => {
+  const handleSimulateGemini = async (mode: 'start' | 'closing') => {
     if (!res?.prompt) {
       toast.error('No hay prompt compilado para simular')
       return
     }
     setSimulatingGemini(true)
-    setGeminiStartResponse(null)
+    if (mode === 'start') setGeminiStartResponse(null)
+    else setGeminiClosingResponse(null)
+    
     try {
-      const data = await motorAPI.simulatePreview(res.prompt)
-      setGeminiStartResponse(data.response)
+      const data = await motorAPI.simulatePreview(res.prompt, mode)
+      if (mode === 'start') {
+        setGeminiStartResponse(data.response)
+      } else {
+        setGeminiClosingResponse(data.response)
+      }
       toast.success('Respuesta de Gemini recibida')
     } catch (e: any) {
-      toast.error(e?.response?.data?.detail || 'No se pudo simular el inicio con Gemini')
+      toast.error(e?.response?.data?.detail || `No se pudo simular con Gemini (${mode})`)
     } finally {
       setSimulatingGemini(false)
     }
@@ -553,7 +560,7 @@ export default function MotorPlaygroundPanel() {
               )}
             </div>
 
-            {/* Col 2: Gemini real start simulator */}
+            {/* Col 2: Gemini real start/closing simulator */}
             <div style={{ borderLeft: isMobile ? 'none' : `1px dashed ${C.border}`, paddingLeft: isMobile ? 0 : 20, paddingTop: isMobile ? 20 : 0 }}>
               <style>{`
                 @keyframes spin {
@@ -562,28 +569,47 @@ export default function MotorPlaygroundPanel() {
               `}</style>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                 <span style={{ width: 9, height: 9, borderRadius: 999, background: C.accent }} />
-                <div style={{ fontSize: 14, fontWeight: 800 }}>Simulador de Inicio de Clase (Gemini Real)</div>
+                <div style={{ fontSize: 14, fontWeight: 800 }}>Simulador de la Charla (Gemini Real)</div>
               </div>
               <div style={{ fontSize: 11.5, color: C.dim, marginBottom: 12 }}>
-                Envía el prompt compilado a Gemini (2.5 Flash) para generar la frase de bienvenida e introducción real de la clase.
+                Envía el prompt a Gemini para generar la frase de bienvenida inicial o el resumen y feedback de cierre de la clase.
               </div>
               
-              <button 
-                onClick={handleSimulateGeminiStart} 
-                disabled={simulatingGemini || !res?.prompt}
-                style={{ 
-                  background: C.accent, border: 0, color: C.bg, borderRadius: 8, 
-                  fontSize: 12.5, fontWeight: 700, padding: '8px 18px', cursor: 'pointer',
-                  display: 'inline-flex', alignItems: 'center', gap: 6
-                }}
-              >
-                {simulatingGemini ? (
-                  <>
-                    <span style={{ border: `2px solid ${C.bg}`, borderTopColor: 'transparent', borderRadius: '50%', width: 12, height: 12, display: 'inline-block', animation: 'spin 1s linear infinite' }} />
-                    Llamando a Gemini…
-                  </>
-                ) : '▶ Simular Inicio / Introducción'}
-              </button>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+                <button 
+                  onClick={() => handleSimulateGemini('start')} 
+                  disabled={simulatingGemini || !res?.prompt}
+                  style={{ 
+                    background: C.accent, border: 0, color: C.bg, borderRadius: 8, 
+                    fontSize: 12, fontWeight: 700, padding: '8px 16px', cursor: 'pointer',
+                    display: 'inline-flex', alignItems: 'center', gap: 6
+                  }}
+                >
+                  {simulatingGemini ? (
+                    <>
+                      <span style={{ border: `2px solid ${C.bg}`, borderTopColor: 'transparent', borderRadius: '50%', width: 12, height: 12, display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                      Cargando…
+                    </>
+                  ) : '▶ Simular Inicio / Bienvenida'}
+                </button>
+
+                <button 
+                  onClick={() => handleSimulateGemini('closing')} 
+                  disabled={simulatingGemini || !res?.prompt}
+                  style={{ 
+                    background: 'none', border: `1px solid #10b981`, color: '#10b981', borderRadius: 8, 
+                    fontSize: 12, fontWeight: 700, padding: '8px 16px', cursor: 'pointer',
+                    display: 'inline-flex', alignItems: 'center', gap: 6
+                  }}
+                >
+                  {simulatingGemini ? (
+                    <>
+                      <span style={{ border: `2px solid #10b981`, borderTopColor: 'transparent', borderRadius: '50%', width: 12, height: 12, display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                      Cargando…
+                    </>
+                  ) : '⏹ Simular Cierre / Wrap-up'}
+                </button>
+              </div>
 
               {geminiStartResponse && (
                 <div style={{ marginTop: 12 }}>
@@ -593,6 +619,18 @@ export default function MotorPlaygroundPanel() {
                     fontSize: 13, lineHeight: 1.5, color: C.fg, whiteSpace: 'pre-wrap', fontStyle: 'italic'
                   }}>
                     {geminiStartResponse}
+                  </div>
+                </div>
+              )}
+
+              {geminiClosingResponse && (
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.dim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Cierre / Resumen de clase generado:</div>
+                  <div style={{ 
+                    background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, padding: 12,
+                    fontSize: 13, lineHeight: 1.5, color: C.fg, whiteSpace: 'pre-wrap', fontStyle: 'italic'
+                  }}>
+                    {geminiClosingResponse}
                   </div>
                 </div>
               )}

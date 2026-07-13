@@ -469,11 +469,12 @@ async def mini_history_clear():
 
 class SimulateStartBody(BaseModel):
     system_instruction: str
+    mode: str = "start"  # "start" o "closing"
 
 
 @router.post("/mini/preview/simulate")
 async def simulate_preview_start(body: SimulateStartBody):
-    """Llama a Gemini de verdad pasando el systemInstruction compilado y devuelve la respuesta inicial."""
+    """Llama a Gemini de verdad pasando el systemInstruction compilado y devuelve la respuesta inicial o de cierre."""
     from core.config import settings
     key = settings.GEMINI_API_KEY
     if not key:
@@ -482,8 +483,13 @@ async def simulate_preview_start(body: SimulateStartBody):
     model = settings.GEMINI_MODEL or "gemini-2.5-flash"
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
     
+    if body.mode == "closing":
+        user_message = "El alumno completó todas las tareas de la sesión. CERRÁ LA SESIÓN AHORA."
+    else:
+        user_message = "INICIA LA SESIÓN AHORA."
+        
     payload = {
-        "contents": [{"role": "user", "parts": [{"text": "INICIA LA SESIÓN AHORA."}]}],
+        "contents": [{"role": "user", "parts": [{"text": user_message}]}],
         "systemInstruction": {"parts": [{"text": body.system_instruction}]},
         "generationConfig": {
             "temperature": 0.7,
