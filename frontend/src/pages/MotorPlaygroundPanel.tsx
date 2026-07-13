@@ -166,14 +166,17 @@ export default function MotorPlaygroundPanel() {
       .sort((a, b) => a.title.localeCompare(b.title))
   }, [catalog, band])
 
-  // Al cambiar la banda de edad (band), seleccionar automáticamente el primer tópico de esa nueva banda
+  // Al cambiar la banda de edad (band) o el nivel, verificar si el tópico sigue siendo válido o seleccionar el primero
   useEffect(() => {
     if (topics.length) {
-      setTopicId(topics[0].topic_id)
+      const exists = topics.some((t) => t.topic_id === topicId)
+      if (!exists) {
+        setTopicId(topics[0].topic_id)
+      }
     } else {
       setTopicId(undefined)
     }
-  }, [band, topics])
+  }, [band, level, topics, topicId])
 
   const levelsForBand = useMemo(() => {
     const mx = bands.find((b) => b.code === band)?.max_level_order ?? 99
