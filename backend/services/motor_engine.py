@@ -202,9 +202,15 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
         student_name = "Alumno"
         if student_id:
             try:
-                st_row = db.q1("SELECT name FROM student WHERE student_id=%s", (student_id,))
-                if st_row and st_row.get("name"):
-                    student_name = st_row.get("name")
+                # 1. ¿Es un usuario/alumno real del dropdown?
+                user_row = db.q1("SELECT nombre FROM users WHERE id=%s", (student_id,))
+                if user_row and user_row.get("nombre"):
+                    student_name = user_row.get("nombre")
+                else:
+                    # 2. ¿Es un perfil-molde del simulador?
+                    st_row = db.q1("SELECT name FROM student WHERE student_id=%s", (student_id,))
+                    if st_row and st_row.get("name"):
+                        student_name = st_row.get("name")
             except Exception:
                 pass
         user = SimpleNamespace(id=student_id, nombre=student_name, cefr_level=level_code, age_group=age_group,
