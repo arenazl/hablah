@@ -135,6 +135,9 @@ class TopicBase(BaseModel):
     segmento: Optional[str] = None                       # mini | junior | tween | adultos
     appropriate_bands: Optional[list[str]] = None        # [mini,junior,tween,adult] o null = sin restricción
     generated_vocab: Optional[list[str]] = None          # frases-ancla (batch, revisables)
+    narrative_setting: Optional[str] = None
+    narrative_conflict: Optional[str] = None
+    narrative_role: Optional[str] = None
 
 
 class TopicCreate(TopicBase):
@@ -153,6 +156,9 @@ class TopicUpdate(BaseModel):
     segmento: Optional[str] = None
     appropriate_bands: Optional[list[str]] = None
     generated_vocab: Optional[list[str]] = None
+    narrative_setting: Optional[str] = None
+    narrative_conflict: Optional[str] = None
+    narrative_role: Optional[str] = None
 
 
 class TopicResponse(TopicBase):

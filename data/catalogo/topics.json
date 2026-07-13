@@ -73,6 +73,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Alguna vez pensaste cómo funciona una aplicación como un banco online?'. Si dice que sí, pregúntale: '¿Crees que el banco online es una sola cosa o tiene diferentes \"partes\" que trabajan juntas?'",
@@ -177,6 +180,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta escuchar música o preferís hacerla vos mismo/a?'. Si dice 'escuchar', preguntale: '¿Qué tipo de música te gusta más?'. Si dice 'hacerla', preguntale: '¿Conocés algún programa para hacer música como Ableton?'",
@@ -287,6 +293,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Usas alguna aplicación de IA como ChatGPT o un generador de imágenes?'. Si dice que sí, pivotea a: '¿Te parece buena o mala esa aplicación?' Si dice que no, pivotea a: '¿Te gustaría probar una?'",
@@ -395,6 +404,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta levantar pesas o prefieres hacer otro tipo de ejercicio?'. Si dice 'levantar pesas', preguntale: '¿Qué ejercicio con pesas te gusta más?'. Si dice 'otro tipo', preguntale: '¿Qué otro ejercicio te gusta hacer?'",
@@ -505,6 +517,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: 'En tu trabajo o estudio, ¿te gusta hablar de lo que salió bien o mal en un proyecto?'. Si dice que sí, pivotea a: '¿Te gusta más hablar de lo bueno o de lo malo?'. Si dice que no, pivotea a: '¿Por qué no te gusta hablar de eso?'.",
@@ -613,6 +628,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Viste alguna película de Quentin Tarantino, como Pulp Fiction o Kill Bill?'. Si responde que sí, preguntale: '¿Te gustó?'. Si responde que no, preguntale: '¿Te gusta ver películas de acción o de suspenso?'",
@@ -693,6 +711,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cosa rara o caótica en un aeropuerto. Vuelo perdido, equipaje desaparecido, hijo que se escapó. Anécdota."
@@ -780,6 +801,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta el fútbol?'. Si responde que sí, preguntale: '¿Miraste el último Mundial de fútbol, el de Qatar 2022?'",
@@ -887,6 +911,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta mirar partidos de básquet?'. Si dice que sí, preguntale: '¿Preferís ver partidos de la NBA o de otro torneo?'",
@@ -997,6 +1024,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta correr?'. Si dice que sí, preguntale: '¿Corrés seguido?'. Si dice que no, preguntale: '¿Te gusta ver maratones por televisión?'",
@@ -1103,6 +1133,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta ver partidos de tenis?'. Si responde que sí, pivotea a: '¿Prefieres ver partidos de hombres o de mujeres?'. Si responde que no, pregúntale: '¿Hay algún otro deporte que te guste ver?'",
@@ -1211,6 +1244,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta ver la Fórmula 1 o prefieres otros deportes de autos?'. Si dice que sí, preguntale: '¿Conocés algún piloto famoso como Lewis Hamilton o Max Verstappen?'",
@@ -1321,6 +1357,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta comer pasta o pizza?'. Si responde pasta, pivotea a: '¿Cuál es tu color de pasta favorito: roja (con tomate), blanca (con queso) o verde (con espinaca)?'. Si responde pizza, pivotea a: '¿Te gusta la pizza con mucho queso?'",
@@ -1431,6 +1470,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta el asado argentino?'. Si responde que sí, pivotea a: '¿Qué es lo que más te gusta del asado: la carne, el momento con amigos o el fuego?'. Si responde que no, pregúntale: '¿Hay alguna comida especial en tu país que se cocine al aire libre?'",
@@ -1537,6 +1579,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta el café?'. Si dice que sí, preguntale: '¿Preferís el café de filtro (como el de casa) o el espresso (el de la cafetería)?'",
@@ -1647,6 +1692,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta mirar las estrellas por la noche o preferís ver películas sobre el espacio?'. Si dice que le gusta mirar las estrellas, pivotea a: '¿Alguna vez viste la luna llena o muchas estrellas?'",
@@ -1757,6 +1805,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te preocupa el cambio climático, sí o no?'. Si dice que sí, preguntale: '¿Qué es lo que más te preocupa?' Si dice que no, preguntale: '¿Por qué no te preocupa?'",
@@ -1867,6 +1918,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Crees que los hijos se parecen a sus padres?'. Si dice que sí, pregúntale: '¿Tienes hermanos? ¿Se parecen a ti?'. Si dice que no, pregúntale: '¿Conoces a alguien que se parezca mucho a un familiar?'.",
@@ -1977,6 +2031,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta mirar series de drama en plataformas como Netflix o HBO Max?'. Si dice que sí, pivotea a: '¿Preferís las que tienen muchos capítulos o las que son más cortitas?'",
@@ -2087,6 +2144,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta jugar videojuegos?'. Si dice que sí, preguntale: '¿Preferís juegos que parecen películas grandes o juegos más pequeños con dibujos especiales?'",
@@ -2197,6 +2257,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta escuchar rock clásico, como Soda Stereo o Queen?'. Si responde que sí, preguntale: '¿Cuál de esas dos bandas te gusta más?'. Si responde que no, preguntale: '¿Qué tipo de música te gusta más escuchar?'",
@@ -2307,6 +2370,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta ver shows de stand-up? ¿Sí o no?'. Si dice que sí, preguntale: '¿Preferís verlos en vivo o en la tele/internet?'",
@@ -2416,6 +2482,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Para relajarte, prefieres hacer algo tranquilo como escuchar música o algo más activo como caminar?'. Si dice tranquilo, pivotea a: '¿Alguna vez probaste algo como la meditación o respirar lento para calmarte?'",
@@ -2525,6 +2594,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gusta comer frutas y verduras?'. Si dice que sí, pivotea a: '¿Cuál es tu fruta favorita?'. Si dice que no, pivotea a: '¿Qué comida saludable te gusta?'",
@@ -2635,6 +2707,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustan las zapatillas deportivas (sneakers) o preferís usar zapatos más clásicos?'. Si dice que le gustan las zapatillas, preguntale: '¿Qué color de zapatillas te gusta más?'. Si prefiere zapatos clásicos, preguntale: '¿Qué tipo de zapatos usás más seguido?'",
@@ -2745,6 +2820,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustaría trabajar desde tu casa o prefieres ir a una oficina?'. Si dice 'desde casa', preguntale: '¿Por qué te gustaría trabajar desde casa?'. Si dice 'oficina', preguntale: '¿Por qué te gusta ir a la oficina?'.",
@@ -2855,6 +2933,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Usás apps como WhatsApp o Instagram?'. Si responde que sí, pivotea a: '¿Te gusta que funcionen rápido o lento?'. Si responde que no, pivotea a: '¿Qué tipo de apps usás más en tu teléfono?'",
@@ -2965,6 +3046,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustaría tener tu propio negocio o preferís trabajar para otra persona?'. Si dice que sí a su propio negocio, preguntale: '¿Qué tipo de negocio te gustaría tener?'. Si dice que prefiere trabajar para otro, preguntale: '¿Por qué preferís trabajar para otra persona?'.",
@@ -3072,6 +3156,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustaría visitar Japón, sí o no?'. Si dice que sí, pivotea a: '¿Te gustaría más ver templos antiguos o ciudades modernas como Tokio?'",
@@ -3182,6 +3269,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Arranca preguntando: '¿Te gustan más las montañas o la playa para tus vacaciones?'. Si dice montañas, pivotea a: '¿Conocés la Patagonia argentina o chilena?'",
@@ -3249,6 +3339,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "adultos",
@@ -3304,6 +3397,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El alumno va a contar sobre su banda o artista favorito. Empezá preguntando '¿Cuál es esa banda que volverías a ver mil veces? ¿Cómo la descubriste?'. Pedile que describa el sonido, qué le hace sentir, y un momento específico que escuchó una de sus canciones."
@@ -3361,6 +3457,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Charla sobre el primer concierto del alumno o el más memorable. Preguntá cuándo fue, con quién fue, qué sintió cuando salió la banda al escenario. Buscá que use palabras como 'crowd', 'energy', 'lights'."
@@ -3418,6 +3517,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Vocabulario práctico: música como herramienta. Preguntá qué playlist usa para entrenar, correr, o concentrarse. Pedile que diga 3 canciones específicas y por qué cada una."
@@ -3475,6 +3577,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Alguna vez intentó aprender un instrumento? Si sí, contarlo: cuál, cuánto duró, qué tan lejos llegó. Si no, cuál le gustaría aprender y por qué. Practicá past simple y vocabulario de proceso."
@@ -3532,6 +3637,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Géneros nuevos en su vida. Preguntá si hay algún género al que llegó tarde o por accidente. Cómo cambió su gusto musical en los últimos 5 años. Buscá conectores: 'although', 'until I heard', 'eventually'."
@@ -3589,6 +3697,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Análisis: la diferencia entre escuchar un álbum completo vs. tirar shuffle. Preguntá si tiene un álbum del primer-track-al-último que le parezca obra maestra. Vocabulario de estructura."
@@ -3646,6 +3757,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Charla más íntima: qué canción lo hace llorar, cuál lo lleva instantáneo a un recuerdo, qué le pone a las 3am cuando no puede dormir. Empujá vocabulario emocional ('nostalgic', 'overwhelming', 'cathartic')."
@@ -3703,6 +3817,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Debate: ¿el streaming arruinó a la música o la democratizó? Cómo cambiaron los hábitos del alumno. Si tiene vinilos o si compra música. Vocabulario de industria."
@@ -3760,6 +3877,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El alumno va a contar de UNA película que le dejó algo. No 'qué pasa' — sino cómo se sintió. Preguntá qué escena se le quedó. Practicar past simple narrativo."
@@ -3817,6 +3937,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Charla sobre 'binge watching'. ¿Cuándo fue la última vez que vio una serie entera en 2-3 días? Cuál y por qué. Vocabulario de streaming."
@@ -3876,6 +3999,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hablar de UN personaje (no la película entera) que sentís que conocés. ¿Quién? ¿Por qué te conectaste con él/ella? Empujá adjetivos descriptivos profundos."
@@ -3931,6 +4057,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Adaptaciones: alguna vez leíste el libro PRIMERO y después viste la película. Cómo te decepcionó o sorprendió. Practicar comparaciones complejas."
@@ -3988,6 +4117,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Tema cotidiano: cuándo es válido contar un spoiler. ¿El alumno se enojó alguna vez? Tiene reglas con sus amigos. Vocabulario informal y opiniones."
@@ -4046,6 +4178,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Ya casi nadie va al cine. ¿El alumno sí? ¿Para qué pelis? Comparar la experiencia. Practicar comparativos y preferencias."
@@ -4104,6 +4239,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Géneros: cuáles ama, cuáles odia, cuáles considera 'guilty pleasure'. ¿Hay alguno que NUNCA mira? Por qué."
@@ -4162,6 +4300,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Debate: ¿el Oscar significa algo? ¿Hay una peli ganadora que le pareció sobrevalorada? Y una que perdió que merecía. Vocabulario de juicio crítico."
@@ -4220,6 +4361,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cuál es su deporte: para mirar, para practicar, o ambos. Cómo empezó. Frecuencia. Vocabulario de actividad recurrente."
@@ -4278,6 +4422,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Equipo del corazón. Por qué ese (familia, ciudad, momento). Quién es el clásico rival. Anécdota del último partido visto en vivo."
@@ -4336,6 +4483,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Narrativa: un partido específico. Año, qué pasaba, quién jugaba. Empujá past continuous + past simple ('I was watching when...')."
@@ -4394,6 +4544,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Quién es el GOAT del deporte para el alumno. ¿Por qué? ¿Hay deportistas que admira fuera del juego también? Vocabulario de carrera."
@@ -4451,6 +4604,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿El alumno es más espectador o practicante? Cómo cambió eso con la edad. Vocabulario de identidad ('I'm more of a...')."
@@ -4508,6 +4664,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hay reglas que generan polémica en cada deporte. ¿Hay alguna que el alumno cambiaría? Por qué. Debate liviano."
@@ -4566,6 +4725,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Atletas que cayeron por doping. ¿Es siempre trampa? ¿Y los casos médicos? Debate más complejo. Vocabulario ético."
@@ -4624,6 +4786,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Sueldos millonarios, equipos de jeques, ligas cerradas. ¿Está rota la economía del deporte? Charla más analítica."
@@ -4679,6 +4844,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Qué está jugando AHORA o lo último que jugó intenso. Cuántas horas le metió. Si lo terminó o lo dejó."
@@ -4735,6 +4903,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿PlayStation, Xbox, Switch, PC? Por qué. ¿Cambió de equipo alguna vez? Vocabulario comparativo + opinión."
@@ -4791,6 +4962,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Juega online? ¿Con desconocidos o con amigos del trabajo/colegio? Vocabulario social digital."
@@ -4847,6 +5021,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Vio alguna vez un speedrun en YouTube? Esa gente que termina Zelda en 25 minutos. Charla sobre obsesión + comunidad."
@@ -4903,6 +5080,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Juegos chicos hechos por 1-2 personas vs juegos de 200M de presupuesto. ¿Le interesa la escena indie? Vocabulario de producción."
@@ -4959,6 +5139,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hay juegos donde la historia te marca. ¿Alguna lo hizo llorar? ¿O que los personajes le importaron más que en una peli?"
@@ -5015,6 +5198,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Carreras pro de jugadores. Mirá tournaments. ¿Esto es deporte o no? Tema controversial. Debate."
@@ -5071,6 +5257,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Debate: el cine es arte, los libros son arte, ¿los videojuegos también? Si sí, cuál sería el 'Citizen Kane' de los juegos. Charla intelectual."
@@ -5128,6 +5317,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Plato favorito (no genérico — uno específico). Quién lo cocina mejor en su familia. Cuándo lo come usualmente."
@@ -5185,6 +5377,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Cocina o no? Si sí, qué tan a menudo y qué le sale bien. Si no, por qué (tiempo, miedo, no le interesa). Vocabulario de cocina."
@@ -5242,6 +5437,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Receta que dominó: de quién la aprendió, cuántas veces salió mal antes de salir bien. Past simple narrativo + secuencia."
@@ -5299,6 +5497,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El mejor restaurante donde comió. Por qué. Lo que pidió. Si fue caro y si valió la pena. Vocabulario de experiencia gastronómica."
@@ -5356,6 +5557,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cómo le explica a un extranjero qué comer si visita su país. Plato no obvio + plato turístico. Vocabulario cultural."
@@ -5413,6 +5617,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Hizo alguna dieta? ¿Le funcionó? ¿Qué piensa de las modas (keto, ayuno, vegano)? Vocabulario de hábito."
@@ -5472,6 +5679,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cocinar para alguien (pareja, familia, amigos). El stress, las restricciones, la presentación. Anécdota de algo que salió mal."
@@ -5531,6 +5741,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Carne de laboratorio, comer local, desperdicio. ¿Cambió hábitos por sostenibilidad? Vocabulario más técnico."
@@ -5590,6 +5803,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Tiene mascota o tuvo. Nombre, edad, raza. Personalidad. Una manía o cosa rara que hace. Vocabulario afectivo."
@@ -5647,6 +5863,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Vió algún animal en un documental que le parezca de otro planeta. Pulpo, axolotl, platypus. ¿Cuál más raro?"
@@ -5706,6 +5925,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Debate suave: ¿es para todo el mundo? Costo, tiempo, viajes. ¿Por qué decidió tener (o no tener)?"
@@ -5763,6 +5985,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Especies en peligro. ¿Qué le importa? ¿Le interesan iniciativas tipo WWF? Vocabulario ecológico."
@@ -5818,6 +6043,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Pulpos resolviendo puzzles, cuervos usando herramientas. ¿Qué animal lo sorprende? Tema más reflexivo."
@@ -5873,6 +6101,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Gente que tiene serpientes, monos, hasta tigres. ¿Está bien? ¿Dónde está la línea entre 'rara pero ok' y 'maltrato'?"
@@ -5928,6 +6159,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cría industrial, etiquetas 'cage free', vegan por ética. ¿Cambió hábitos? ¿Le importa? Debate ético."
@@ -5983,6 +6217,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Investigación con animales: ¿necesario o cruel? ¿Dónde está la línea? Tema controversial. Vocabulario académico."
@@ -6038,6 +6275,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Último viaje (cerca o lejos). A dónde, con quién, qué hicieron. Lo mejor y lo peor. Past simple narrativo."
@@ -6093,6 +6333,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El viaje que SUEÑA pero todavía no hizo. Adónde, por qué, qué lo está frenando (plata, tiempo, miedo). Futuro condicional."
@@ -6146,6 +6389,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Tipo de viajero que es. ¿Hostel o resort? Probó ambos. Pros y contras. Comparativo."
@@ -6200,6 +6446,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Algo que en otro país lo dejó descolocado. Costumbre rara, comida, formas de saludar. Vocabulario cultural."
@@ -6255,6 +6504,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Se anima a la comida callejera? ¿Algo extremo que probó? ¿Algo que le hizo mal? Lo más rico que comió en un viaje."
@@ -6310,6 +6562,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Viajó solo alguna vez? Si sí, cómo fue. Si no, ¿lo haría? Pros y contras. Vocabulario de experiencia personal."
@@ -6362,6 +6617,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Lugares destruidos por turismo (Venice, Barcelona, Machu Picchu). ¿Tiene que limitarse? Debate complejo."
@@ -6419,6 +6677,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Las 3 apps más usadas del teléfono del alumno. Por qué. ¿Cuál borraría sin pensarlo? Vocabulario digital."
@@ -6476,6 +6737,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Usa ChatGPT o similar. Para qué. ¿Le da miedo que reemplace su trabajo? ¿Cambió cómo hace algo concreto?"
@@ -6530,6 +6794,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Te muestran ads de algo que comentaste hablado. ¿Cuán cuidadoso es? ¿Usa VPN, ad-blockers? Vocabulario técnico."
@@ -6587,6 +6854,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Aparato que compró y no se imagina sin él. Auriculares noise-cancelling, smartwatch, e-reader, lo que sea. Por qué."
@@ -6644,6 +6914,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Intentó aprender a programar? Si sí, hasta dónde llegó. Si no, ¿le interesa? ¿Es necesario hoy? Vocabulario de proceso."
@@ -6698,6 +6971,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Qué trabajos van a desaparecer. Cuáles van a aparecer. ¿El suyo está en riesgo? Debate del futuro."
@@ -6752,6 +7028,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cuánto tiempo de pantalla por día. ¿Le preocupa? ¿Intentó alguna vez una 'detox' digital? Vocabulario emocional sobre tech."
@@ -6809,6 +7088,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Big Tech con poder enorme. Censura, deepfakes, monopolios. ¿Hay que regular más? Tema de debate denso."
@@ -6866,6 +7148,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Algún dato que el alumno leyó/escuchó y le voló la cabeza. Sobre ciencia, naturaleza, cuerpo, lo que sea. Contarlo."
@@ -6923,6 +7208,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Le fascina el espacio? Marte, agujeros negros, vida en otros planetas. Qué le impresiona más. Vocabulario astronómico."
@@ -6980,6 +7268,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Algo del cuerpo humano que le parezca increíble. Cerebro, sistema inmune, microbioma. Cómo se sorprende."
@@ -7037,6 +7328,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Qué opina del cambio climático. ¿Es optimista o pesimista? ¿Hace algo en su vida diaria? Debate serio."
@@ -7094,6 +7388,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Top 3 inventos que cambiaron la humanidad para el alumno. ¿Por qué? Pensamiento histórico + comparativo."
@@ -7151,6 +7448,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Cree que hay vida afuera? ¿Por qué no nos contactaron todavía? La 'paradoja de Fermi' simple. Especulación."
@@ -7210,6 +7510,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Editar genes, bebés a medida, curar enfermedades hereditarias. ¿Hasta dónde? Bioética accesible."
@@ -7269,6 +7572,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Astrología, homeopatía, tierra plana. ¿Inofensivo o dañino? ¿Cómo le explicaría a alguien que cree firmemente en eso?"
@@ -7328,6 +7634,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Pintor, escultor, fotógrafo o lo que sea. Quién. Por qué. Una obra específica que le marcó."
@@ -7387,6 +7696,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Va a museos? ¿Por gusto o turista? Estrategia: leer todo o caminar y absorber. Vocabulario de experiencia."
@@ -7444,6 +7756,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hacer arte con iPad. ¿Es igual de válido que con pintura? Debate generacional."
@@ -7501,6 +7816,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Graffiti = vandalismo? Banksy. Murales en el barrio del alumno. Vocabulario urbano."
@@ -7558,6 +7876,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Hace alguna forma de arte (escribir, dibujar, fotos, música)? ¿Lo comparte? ¿Por qué sí o por qué no?"
@@ -7615,6 +7936,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Un Basquiat vendido a 100 millones. Artistas pobres. ¿El precio refleja el valor? ¿Banksy cuando trituró su cuadro?"
@@ -7672,6 +7996,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "El boom y la caída de los NFTs. ¿Fue arte o scam? ¿Hay algo rescatable? Tema reciente."
@@ -7729,6 +8056,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Obras canceladas, libros prohibidos, películas re-editadas. ¿Cuándo se justifica? Debate libertad vs respeto."
@@ -7786,6 +8116,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cómo se mueve hoy. Gym, correr, yoga, nada. Cuántos días por semana. Sincero. Vocabulario de hábito."
@@ -7843,6 +8176,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Si alguien arranca de cero. Qué consejos le daría. Errores que cometió cuando empezó él. Vocabulario práctico."
@@ -7900,6 +8236,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Probó yoga, meditación, breathwork? Si sí, lo siguió o lo dejó. Cómo se sintió. Vocabulario de bienestar."
@@ -7957,6 +8296,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Cuida lo que come? ¿Cuenta macros o sigue intuición? Vocabulario nutricional simple."
@@ -8014,6 +8356,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Ya es OK hablar de esto. ¿Va a terapia? ¿Cómo lidia con stress? Tema más sensible. Vocabulario emocional."
@@ -8073,6 +8418,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Correr: ¿lo odia o lo ama? ¿Probó alguna vez constante? Vocabulario específico."
@@ -8132,6 +8480,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Toma proteína, creatina, vitaminas? ¿O cree que con buena dieta alcanza? Debate."
@@ -8191,6 +8542,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Instagram y los cuerpos perfectos. ¿Le afecta? ¿Cómo cambió el ideal en 20 años? Tema profundo."
@@ -8248,6 +8602,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Cómo describiría su estilo. Tres palabras. ¿Tiene 'uniforme'? ¿Cómo lo definiría comparado a sus amigos?"
@@ -8305,6 +8662,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Marcas en las que confía. Algo en lo que gasta más. Algo en lo que ahorra. Vocabulario de consumo."
@@ -8364,6 +8724,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "¿Tiene zapatillas que le importan? ¿Cuántos pares? ¿Es de los que las cuida o las usa hasta destrozar?"
@@ -8423,6 +8786,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Comprar ropa online. ¿Le sale bien o todo le queda mal? Devuelve. ¿Qué app/sitio prefiere?"
@@ -8481,6 +8847,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Ropa de segunda mano, vintage, ferias. ¿Se anima? ¿Encontró algo épico alguna vez?"
@@ -8536,6 +8905,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Shein, Zara, ropa que sale y se descarta rápido. ¿Le importa la ética detrás? Debate."
@@ -8594,6 +8966,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Alternativas: comprar menos, comprar mejor, reparar. ¿Le interesa? ¿Es accesible o solo para ricos?"
@@ -8651,6 +9026,9 @@
    "C1"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "es": "Hombres con polleras, mujeres con trajes, moda no binaria. ¿Cómo se siente con esto? ¿Cambió en los últimos años?"
@@ -8690,6 +9068,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Welcome explorer! Dinosaurs lived millions of years ago. Tell me your favorite one and what made it special.",
@@ -8730,6 +9111,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Space is huge! Eight planets, billions of stars. If you traveled to space, where would you go first and why?",
@@ -8770,6 +9154,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Oceans cover most of Earth! Whales, sharks, octopus, jellyfish. Tell me which sea animal you find coolest.",
@@ -8810,6 +9197,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Sports are awesome! Soccer, basketball, swimming, tennis. Which one do you play or watch? What's your team?",
@@ -8851,6 +9241,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Art is magic! Painting, drawing, sculpture, crafts. Tell me what you create and what colors you choose.",
@@ -8891,6 +9284,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Music is everywhere. Songs, instruments, dancing. What's your favorite song or band? Do you play any instrument?",
@@ -8932,6 +9328,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Pets are family! Dogs, cats, hamsters, fish. Tell me about your pet — or the one you wish you had.",
@@ -8985,6 +9384,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Who lives with you? Mom? Dad? Brother? Sister? Tell me one name!"
@@ -9025,6 +9427,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Feelings are important. Happy, sad, angry, scared, excited. Tell me one moment today when you felt strong about something.",
@@ -9078,6 +9483,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "School day! Who's your teacher? What's your favorite subject? Tell me one thing that happened today."
@@ -9130,6 +9538,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Hi! What's your favorite color? Mine is green! Look around — what's red? What's blue?"
@@ -9182,6 +9593,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Animals! A cow says moo. A dog says woof. What's your favorite animal? What sound does it make?"
@@ -9221,6 +9635,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Let's count! One, two, three... how many fingers do you have? Count with me!"
@@ -9273,6 +9690,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Touch your head! Now your nose. Now your feet. What can you do with your hands?"
@@ -9325,6 +9745,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Food time! Do you like apples? Bread? Milk? What did you eat today?"
@@ -9374,6 +9797,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Imagine you got a big box today. A surprise! What's inside? A toy car? A doll? Tell me what you'd open!"
@@ -9424,6 +9850,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Do you watch cartoons? Tell me your favorite character! Are they fast? Strong? Funny? Do they fly?"
@@ -9474,6 +9903,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Do you play games on a tablet or phone? What do you do in the game? Run? Jump? Win?"
@@ -9523,6 +9955,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "mini": "Yummy treats! Do you like nuggets? Fries? Burgers? Popcorn? What's your favorite?"
@@ -9572,6 +10007,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Walk me through your day. When do you wake up? Breakfast? School? After school? Bedtime?"
@@ -9621,6 +10059,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Tell me about your home. How many rooms? Where do you sleep? What's your favorite room and why?"
@@ -9671,6 +10112,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "What do you do after school? Sports? Music? Drawing? Tell me what you love doing the most."
@@ -9721,6 +10165,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "How are you feeling today? Tell me one moment when you felt really happy. Or a moment when something bothered you."
@@ -9772,6 +10219,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Nature is amazing! Forests, oceans, mountains, dinosaurs, jungles. Tell me what fascinates you most."
@@ -9823,6 +10273,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "If you had a YouTube channel, what challenge would you create? Eating something weird? A prank? A reaction? Tell me!"
@@ -9874,6 +10327,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Imagine you can build any world with blocks. What would you build? A house? A castle? An entire city?"
@@ -9925,6 +10381,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Do you collect anything? Cards? Stickers? Figures? What's the rarest one you have? Would you trade it?"
@@ -9976,6 +10435,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "junior": "Imagine you're ordering at a fast food place. What combo do you want? Burger? Fries? Soda? Ice cream after?"
@@ -10027,6 +10489,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "What music do you listen to? What's the last series you binged? Any movie you've watched ten times?"
@@ -10082,6 +10547,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "If you could go anywhere tomorrow, where? What's a country you want to visit one day and why?"
@@ -10135,6 +10603,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "What do you want to be when you grow up? It can be anything — even a job that doesn't exist yet."
@@ -10188,6 +10659,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Have you ever cooked something? Walk me through a recipe — even a simple sandwich counts!"
@@ -10241,6 +10715,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "What worries you about the planet? Pollution? Animals? Climate? What's one small thing you do that helps?"
@@ -10296,6 +10773,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Give me your honest opinion: is school useful? Do you agree with screen time limits? Why?"
@@ -10350,6 +10830,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Do you watch live streamers? What makes a streamer fun? The game? The chat? The community? Would you stream?"
@@ -10403,6 +10886,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Are you into sneakers or streetwear? What's the best pair you own? What would you save up for?"
@@ -10456,6 +10942,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Do you follow any pro gaming teams? What game do you play competitively? What rank are you?"
@@ -10508,6 +10997,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "tween": "Teach me a slang word you and your friends use. What does it mean? Use it in a sentence!"
@@ -10554,6 +11046,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {
    "A1": "Greet the student warmly and casually. In ONE sentence, ask them what they feel like talking about today — anything goes, a hobby, something that happened, an idea bouncing in their head. KEEP THE GREETING SHORT (1-2 sentences max). When they answer with a topic, immediately dive in: react with genuine interest, drop a specific angle or anecdote, then push the conversation forward with a follow-up question. Stay 100% on whatever they pick. Never suggest topics yourself — let them choose.",
@@ -10612,6 +11107,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "adultos",
@@ -10663,6 +11161,9 @@
    "C2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "adultos",
@@ -10710,6 +11211,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "junior",
@@ -10758,6 +11262,9 @@
    "A2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "mini",
@@ -10807,6 +11314,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -10855,6 +11365,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -10904,6 +11417,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -10953,6 +11469,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -11002,6 +11521,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",
@@ -11051,6 +11573,9 @@
    "B2"
   ],
   "mastery_criteria": null,
+  "narrative_conflict": null,
+  "narrative_role": null,
+  "narrative_setting": null,
   "pinned_vocabulary": null,
   "seed_prompts": {},
   "segmento": "teen",

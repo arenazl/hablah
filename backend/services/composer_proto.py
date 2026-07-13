@@ -308,20 +308,55 @@ def _interp(s: str, name: str, topic_title: str, first_word: str) -> str:
 
 
 def _get_start_trigger(topic, topic_content: Optional[dict], name: str, first_word: str,
-                       opening_seed: Optional[str], ctx: str, session_seed: int = 0) -> str:
-    # F2-03: opening_seed puede traer varias variantes de arranque (JSON array). Se ELIGE una por
-    # semilla -> dos clases del mismo cruce en días distintos NO abren igual (la repetición más
-    # audible). Si es un solo string, esa es la única variante. Fallback a topic_content.start_trigger.
-    variants = _opening_variants(opening_seed)
-    if variants:
-        seed = _pick(variants, _derive(session_seed, "open"))
-    else:
-        seed = (topic_content or {}).get("start_trigger")
-    _req(seed, "student_types.opening_seed (o topic_content.start_trigger)", ctx)
+                       opening_seed: Optional[str], age_group: str, ctx: str, session_seed: int = 0) -> str:
+    # 1. Cargar las semillas narrativas desde el objeto topic con fallbacks en Python
+    narrative_role = getattr(topic, "narrative_role", None) or ""
+    narrative_setting = getattr(topic, "narrative_setting", None) or ""
+    narrative_conflict = getattr(topic, "narrative_conflict", None) or ""
+    
     topic_title = getattr(topic, "title", None) or "el tema de hoy"
+    
+    # Si alguno está vacío, aplicar el default seguro según el grupo de edad (CÓMO)
+    if not narrative_role or not narrative_setting or not narrative_conflict:
+        if age_group == "mini":
+            narrative_role = "amigos explorando el mundo de las palabras"
+            narrative_setting = f"un lugar mágico relacionado con {topic_title}"
+            narrative_conflict = f"jugar a descubrir cosas nuevas sobre {topic_title}"
+        elif age_group == "junior":
+            narrative_role = "dos héroes exploradores en una misión secreta"
+            narrative_setting = f"una expedición emocionante sobre {topic_title}"
+            narrative_conflict = f"completar desafíos y resolver misterios del tema {topic_title}"
+        elif age_group == "teen":
+            narrative_role = "dos amigos conversando en tono relajado de igual a igual"
+            narrative_setting = f"un espacio de debate de ideas sobre {topic_title}"
+            narrative_conflict = f"resolver un challenge interesante y compartir perspectivas de {topic_title}"
+        else: # adult
+            narrative_role = "dos profesionales o adultos conversando relajadamente"
+            narrative_setting = f"una videollamada interactiva de práctica de inglés sobre {topic_title}"
+            narrative_conflict = f"compartir opiniones, experiencias y debatir sobre {topic_title}"
+
+    # Interpolar placeholders en las semillas narrativas
+    narrative_role = _interp(narrative_role, name, topic_title, first_word)
+    narrative_setting = _interp(narrative_setting, name, topic_title, first_word)
+    narrative_conflict = _interp(narrative_conflict, name, topic_title, first_word)
+
+    # Construir el start_execution_command según el diseño de Narrative Seeds
+    command_text = (
+        f"Saludá a {name} con mucha energía. Presentá la aventura de hoy basada en el tema {topic_title}.\n\n"
+        f"  <narrative_anchors>\n"
+        f"    Regla: Para crear la historia, NO uses elementos genéricos (como naves espaciales o gigantes) a menos que se indique aquí. Usa EXCLUSIVAMENTE esta configuración narrativa para situar la escena:\n"
+        f"    - Rol: {narrative_role}\n"
+        f"    - Escenario: {narrative_setting}\n"
+        f"    - Misión/Conflicto: {narrative_conflict}\n"
+        f"  </narrative_anchors>\n\n"
+        f"  Dedicá exactamente UNA oración imaginativa usando 'Imaginate que...' para pintar esta escena e introducir la primera palabra clave ({first_word}).\n"
+        f"  Está estrictamente PROHIBIDO usar verbos de visión conjunta o deícticos espaciales (como 'mirá', 'ves', 'mirá allá').\n"
+        f"  Cerrá el turno aplicando el Call_to_Action_Format de Expected_Production. Esperá la respuesta del alumno."
+    )
+
     return (
         f"<start_execution_command>\n"
-        f"  Command: {_interp(seed, name, topic_title, first_word)}\n"
+        f"  Command: {command_text}\n"
         f"</start_execution_command>"
     )
 
@@ -524,7 +559,7 @@ def compose_proto_prompt(
         _get_narrative_style(std, app_config, session_seed),  # opcional: TIPO de narrativa (rota por semilla, gateado por edad)
         _get_session_rails(std, app_config),                  # opcional: RIELES (arco de beats por edad; avance, no loop)
         _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
-        _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), ctx, session_seed),
+        _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), slug, ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
         _get_interaction_state(interaction_state),  # opcional (estado vivo)
     ]

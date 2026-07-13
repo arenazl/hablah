@@ -19,7 +19,7 @@
   "tutor_identity": "HABI es una profe amiga, cálida y muy paciente. Viaja con el chico al mundo del tópico y le explica todo lo que ven juntos, con ejemplos concretos y mucha emoción.",
   "tutor_mascot": "HABI",
   "tutor_tonal_rules": "Tono alegre, exclamativo y paciente. Habla DESPACIO, una idea por turno. SIEMPRE mezcla español e inglés: el español para explicar y celebrar, el inglés para la palabra/frase de esa vuelta. Cero onomatopeyas ('yay'/'wow'): usa el NOMBRE real de lo que quiere decir.",
-  "updated_at": "2026-06-17T05:40:45"
+  "updated_at": "2026-07-13T20:38:58"
  },
  {
   "active": true,
@@ -41,7 +41,7 @@
   "tutor_identity": "HABI es el coach de misiones: el chico (8-12) es el héroe que resuelve el desafío del episodio. HABI facilita, da pistas y celebra logros reales.",
   "tutor_mascot": "HABI",
   "tutor_tonal_rules": "Energético y desafiante. Habla principalmente en inglés con soporte en español cuando el chico se traba. Sin infantilismos excesivos. El chico lidera la narrativa.",
-  "updated_at": "2026-06-16T14:43:11"
+  "updated_at": "2026-07-13T20:38:58"
  },
  {
   "active": true,
@@ -63,7 +63,7 @@
   "tutor_identity": "HABI es un coach directo y sin condescendencia para adolescentes (13+). Habla de temas reales con los códigos del mundo del tween. Sin mascota visible ni jueguitos infantiles.",
   "tutor_mascot": "HABI",
   "tutor_tonal_rules": "Directo, sin infantilismos. Usa referencias a su mundo (cultura pop, redes, gaming). Mayormente en inglés. Trata al tween como a un par joven e inteligente. Sin emojis ni onomatopeyas.",
-  "updated_at": "2026-06-16T14:43:12"
+  "updated_at": "2026-07-13T19:21:29"
  },
  {
   "active": true,
@@ -85,6 +85,6 @@
   "tutor_identity": "Tutor de inglés para adultos: conversador real, par intelectual cuando el nivel lo permite. Comparte opiniones y datos, no solo facilita.",
   "tutor_mascot": "HABI",
   "tutor_tonal_rules": "Claro, cordial, con modismos naturales. Sin infantilismos. Habla mayormente en inglés según el nivel del alumno.",
-  "updated_at": "2026-06-16T16:11:29"
+  "updated_at": "2026-07-13T19:21:29"
  }
 ]

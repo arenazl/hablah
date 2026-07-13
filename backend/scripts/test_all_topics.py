@@ -38,7 +38,8 @@ async def main() -> None:
     async with AsyncSessionLocal() as db:
         sts = {s.slug: s for s in (await db.execute(select(StudentType))).scalars().all()}
         lvs = {l.code: l for l in (await db.execute(select(Level))).scalars().all()}
-        app_config = {c.key: c.value for c in (await db.execute(select(AppConfig))).scalars().all()}
+        from sqlalchemy import text as _sqltext
+        app_config = {r[0]: r[1] for r in (await db.execute(_sqltext("SELECT config_key, config_value FROM app_config"))).all()}
         topics = (await db.execute(select(Topic).where(Topic.is_active.is_(True)))).scalars().all()
 
         fails = []

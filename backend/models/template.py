@@ -154,6 +154,11 @@ class Topic(Base):
     # son anclas conversacionales naturales para guiar la charla. Ver doctrina 05.
     generated_vocab = Column(JSON, nullable=True)
 
+    # ─── Semillas Narrativas (Narrative Seeds) ───
+    narrative_setting = Column(Text, nullable=True)
+    narrative_conflict = Column(Text, nullable=True)
+    narrative_role = Column(Text, nullable=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
