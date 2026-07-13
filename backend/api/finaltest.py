@@ -487,7 +487,7 @@ async def simulate_preview_start(body: SimulateStartBody):
         "systemInstruction": {"parts": [{"text": body.system_instruction}]},
         "generationConfig": {
             "temperature": 0.7,
-            "maxOutputTokens": 200
+            "maxOutputTokens": 1000
         }
     }
     
