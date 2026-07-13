@@ -264,24 +264,31 @@ export function KidsSession() {
   const vocabMapRef = useRef<Map<string, VisualCueItem>>(new Map())
   const [cue, setCue] = useState<{ item: VisualCueItem; leaving: boolean } | null>(null)
   const cueTimeoutsRef = useRef<number[]>([])
+  const pendingShowRef = useRef<number | null>(null)
   const CUE_SHOW_MS = 2800
   const CUE_EXIT_MS = 300
+  // El TEXTO del coach (transcripción) llega ANTES de que su AUDIO suene, porque el
+  // playback va con buffering. Por eso el dibujo se adelantaba. Lo retrasamos un toque
+  // para alinearlo con lo que el nene ESCUCHA. Tuneable: si sigue adelantado, subir;
+  // si queda atrasado, bajar. (El de INPUT "se come la 1ra palabra" es otro tema.)
+  const VISUAL_SYNC_DELAY_MS = 900
 
-  // El dibujo sigue a la ÚLTIMA palabra que el coach nombra: cada mención nueva
-  // REEMPLAZA la anterior (corta y muestra la nueva) en vez de encolarse. Antes era
-  // una cola que mostraba cada imagen 3.6s en fila -> si el coach nombraba varias
-  // palabras seguidas se iban atrasando (aparecía "púrpura" cuando ya hablaba de otra
-  // cosa). Reemplazar mantiene el dibujo sincronizado con lo que el coach dice AHORA.
+  // Cada palabra nueva REEMPLAZA a la anterior (la última que dice el coach manda), y
+  // recién aparece VISUAL_SYNC_DELAY_MS después para caer junto al audio.
   const showVisual = useCallback((item: VisualCueItem) => {
     cueTimeoutsRef.current.forEach((id) => window.clearTimeout(id))
     cueTimeoutsRef.current = []
-    setCue({ item, leaving: false })
-    const hideAt = window.setTimeout(() => {
-      setCue((c) => (c ? { ...c, leaving: true } : c))
-      const clearAt = window.setTimeout(() => setCue(null), CUE_EXIT_MS)
-      cueTimeoutsRef.current.push(clearAt)
-    }, CUE_SHOW_MS)
-    cueTimeoutsRef.current.push(hideAt)
+    if (pendingShowRef.current) window.clearTimeout(pendingShowRef.current)
+    pendingShowRef.current = window.setTimeout(() => {
+      pendingShowRef.current = null
+      setCue({ item, leaving: false })
+      const hideAt = window.setTimeout(() => {
+        setCue((c) => (c ? { ...c, leaving: true } : c))
+        const clearAt = window.setTimeout(() => setCue(null), CUE_EXIT_MS)
+        cueTimeoutsRef.current.push(clearAt)
+      }, CUE_SHOW_MS)
+      cueTimeoutsRef.current.push(hideAt)
+    }, VISUAL_SYNC_DELAY_MS)
   }, [])
 
   // Carga + precarga de TODA la biblioteca visual kids (no solo el tópico):
@@ -373,7 +380,7 @@ export function KidsSession() {
   // Limpieza de timers pendientes al desmontar (no es el cleanup de la
   // sesión de voz -- ese ya existe más abajo).
   useEffect(() => {
-    return () => { cueTimeoutsRef.current.forEach((id) => window.clearTimeout(id)); cueTimeoutsRef.current = [] }
+    return () => { cueTimeoutsRef.current.forEach((id) => window.clearTimeout(id)); cueTimeoutsRef.current = []; if (pendingShowRef.current) window.clearTimeout(pendingShowRef.current) }
   }, [])
 
   // Si no vino del state (deeplink), fetchear topico
