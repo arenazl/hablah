@@ -144,8 +144,22 @@ export default function MotorPlaygroundPanel() {
 
   // Lista filtrada de tópicos sugeridos para el segmento actual
   const topics = useMemo<Topic[]>(() => {
-    const list = catalog[0]?.subcategories[0]?.topics || []
-    return list.filter((t: any) => !t.segmento || t.segmento === band)
+    const allTopics: Topic[] = []
+    catalog.forEach((cat: any) => {
+      cat.subcategories?.forEach((sub: any) => {
+        sub.topics?.forEach((t: any) => {
+          allTopics.push({
+            topic_id: t.id || t.topic_id,
+            title: t.title,
+            segmento: t.segmento
+          })
+        })
+      })
+    })
+    // Filtrar por segmento y ordenar alfabéticamente
+    return allTopics
+      .filter((t: any) => !t.segmento || t.segmento === band)
+      .sort((a, b) => a.title.localeCompare(b.title))
   }, [catalog, band])
 
   useEffect(() => {
