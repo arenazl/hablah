@@ -77,10 +77,10 @@ export default function MotorPlaygroundPanel() {
   const [topicsRows, setTopicsRows] = useState<any[]>([])
   const [appConfigRows, setAppConfigRows] = useState<any[]>([])
 
-  const [band, setBand] = useState('adult')
-  const [level, setLevel] = useState('B2')
+  const [band, setBand] = useState('mini')
+  const [level, setLevel] = useState('A0')
   const [topicId, setTopicId] = useState<number | undefined>()
-  const [studentId, setStudentId] = useState<number | undefined>()
+  const [studentId, setStudentId] = useState<number | undefined>(14)
   const [profile, setProfile] = useState<{ student_id: number; name: string } | null>(null)
 
   const [res, setRes] = useState<any>(null)
