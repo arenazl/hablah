@@ -471,7 +471,7 @@ export default function MotorPlaygroundPanel() {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {presets.map((p, idx) => (
                       <span key={idx} style={{ fontSize: 10.5, background: C.soft, border: `1px solid ${C.border}`, color: C.fg, padding: '2px 6px', borderRadius: 6 }}>
-                        {p.kind}: <b>{p.body}</b> ({p.strength})
+                        {p.kind}: <b>{p.label}</b> ({p.occurrences} obs)
                       </span>
                     ))}
                   </div>
@@ -526,7 +526,7 @@ export default function MotorPlaygroundPanel() {
                 {analysis.length === 0 && <span style={{ color: C.faint, fontSize: 11.5 }}>Sin análisis aún.</span>}
                 {analysis.map((a, i) => (
                   <div key={i} style={{ fontSize: 11, borderBottom: `1px solid ${C.border}`, paddingBottom: 4 }}>
-                    <span style={{ color: C.accent, fontWeight: 700 }}>{a.preset_type}</span>: {a.text}
+                    <span style={{ color: C.accent, fontWeight: 700 }}>{a.name}</span>: {a.note}
                   </div>
                 ))}
               </div>
