@@ -265,7 +265,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         }
 
 
-async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: str | None = None) -> None:
+async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: str | None = None, prefix_ms: int | None = None) -> None:
     # Validar JWT
     try:
         payload = decode_token(token)
@@ -307,6 +307,9 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: st
         target_language=ctx_dict["target_language"],
         silence_tolerance_ms=ctx_dict.get("silence_tolerance_ms", 800),
         interruption_allowed=ctx_dict.get("interruption_allowed", False),
+        # DEV (temporal): override del prefix padding desde el panel de calibración de kids
+        # (query param prefix_ms). Si no viene, el engine usa su default (700 kids / 200 adulto).
+        prefix_padding_override=(int(min(max(prefix_ms, 0), 1000)) if prefix_ms is not None else None),
     )
 
     engine_name = os.environ.get("VOICE_ENGINE", "gemini_live")

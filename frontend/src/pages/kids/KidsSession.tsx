@@ -271,7 +271,12 @@ export function KidsSession() {
   // playback va con buffering. Por eso el dibujo se adelantaba. Lo retrasamos un toque
   // para alinearlo con lo que el nene ESCUCHA. Tuneable: si sigue adelantado, subir;
   // si queda atrasado, bajar. (El de INPUT "se come la 1ra palabra" es otro tema.)
-  const VISUAL_SYNC_DELAY_MS = 900
+  // DEV (temporal): sync + prefix calibrables desde el panel de abajo. syncDelayRef lo lee
+  // showVisual sin recrear el callback; los sliders persisten en localStorage y "Aplicar"
+  // reinicia la charla. Sacar el panel + estas líneas cuando esté calibrado.
+  const syncDelayRef = useRef<number>(Number(localStorage.getItem('kids_sync_delay_ms')) || 900)
+  const [syncSlider, setSyncSlider] = useState<number>(Number(localStorage.getItem('kids_sync_delay_ms')) || 900)
+  const [prefixSlider, setPrefixSlider] = useState<number>(Number(localStorage.getItem('kids_prefix_ms')) || 700)
 
   // Cada palabra nueva REEMPLAZA a la anterior (la última que dice el coach manda), y
   // recién aparece VISUAL_SYNC_DELAY_MS después para caer junto al audio.
@@ -288,7 +293,7 @@ export function KidsSession() {
         cueTimeoutsRef.current.push(clearAt)
       }, CUE_SHOW_MS)
       cueTimeoutsRef.current.push(hideAt)
-    }, VISUAL_SYNC_DELAY_MS)
+    }, syncDelayRef.current)
   }, [])
 
   // Carga + precarga de TODA la biblioteca visual kids (no solo el tópico):
@@ -437,6 +442,22 @@ export function KidsSession() {
     }
   }
 
+  // DEV (temporal): "Aplicar" del panel reinicia la charla para tomar los valores nuevos.
+  const restartCharla = () => {
+    try { live.stop() } catch {}
+    startedRef.current = false
+    window.setTimeout(() => { beginSession() }, 350)
+  }
+  const applySync = () => {
+    localStorage.setItem('kids_sync_delay_ms', String(syncSlider))
+    syncDelayRef.current = syncSlider
+    restartCharla()
+  }
+  const applyPrefix = () => {
+    localStorage.setItem('kids_prefix_ms', String(prefixSlider))
+    restartCharla()
+  }
+
   const [showSuccess, setShowSuccess] = useState(false)
   // F4-04: badge visual minimo ("suma a la coleccion") — cantidad REAL de
   // clases terminadas de este nene. Sale de /api/sessions/ (mismo endpoint
@@ -555,6 +576,24 @@ export function KidsSession() {
       ))}
 
       <KidsVisualCueOverlay item={cue?.item ?? null} leaving={cue?.leaving ?? false} />
+
+      {/* DEV (temporal): panel de calibración — sacar cuando esté ajustado. */}
+      <div style={{ position: 'fixed', bottom: 8, left: 8, zIndex: 9999, background: 'rgba(0,0,0,.82)', color: '#fff', padding: '9px 11px', borderRadius: 10, fontSize: 11, fontFamily: 'ui-monospace, monospace', display: 'flex', flexDirection: 'column', gap: 8, width: 258 }}>
+        <div style={{ opacity: .55, letterSpacing: .5 }}>DEV · calibración (temporal)</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ width: 58, flexShrink: 0 }}>Sync img</span>
+          <input type="range" min={100} max={900} step={50} value={syncSlider} onChange={(e) => setSyncSlider(Number(e.target.value))} style={{ flex: 1, minWidth: 0 }} />
+          <span style={{ width: 40, textAlign: 'right', flexShrink: 0 }}>{syncSlider}</span>
+          <button onClick={applySync} style={{ padding: '2px 7px', borderRadius: 5, border: '1px solid #4ade80', background: 'transparent', color: '#4ade80', cursor: 'pointer', fontSize: 10, flexShrink: 0 }}>OK</button>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ width: 58, flexShrink: 0 }}>Prefix 1ª</span>
+          <input type="range" min={100} max={1000} step={50} value={prefixSlider} onChange={(e) => setPrefixSlider(Number(e.target.value))} style={{ flex: 1, minWidth: 0 }} />
+          <span style={{ width: 40, textAlign: 'right', flexShrink: 0 }}>{prefixSlider}</span>
+          <button onClick={applyPrefix} style={{ padding: '2px 7px', borderRadius: 5, border: '1px solid #fbbf24', background: 'transparent', color: '#fbbf24', cursor: 'pointer', fontSize: 10, flexShrink: 0 }}>OK</button>
+        </div>
+        <div style={{ opacity: .4, fontSize: 9 }}>OK reinicia la charla.</div>
+      </div>
 
       {showSuccess && (
         <div style={{
