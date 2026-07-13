@@ -318,7 +318,12 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                     # con 60 chunks de audio). El silenceDurationMs=2000 capped evita
                     # que pise al alumno cuando hace pausa corta.
                     "endOfSpeechSensitivity": (_end_sens or "END_SENSITIVITY_HIGH"),
-                    "prefixPaddingMs": (_prefix_ms if _prefix_ms is not None else 200),
+                    # Kids: prefix generoso (700ms) para recuperar el arranque suave de la
+                    # primera palabra sin subir la sensibilidad (recomendación del dueño del
+                    # modelo). Es audio del PASADO del buffer -> no agrega latencia a la
+                    # respuesta. Half-cascade necesita más certeza fonética para disparar el
+                    # start-of-speech, así que el padding largo es obligatorio acá.
+                    "prefixPaddingMs": (_prefix_ms if _prefix_ms is not None else (700 if is_kid else 200)),
                     "silenceDurationMs": (
                         int(min(max(_silence_ms, 0), 2000)) if _silence_ms is not None
                         # Adultos: piso 600ms; Kids: piso 1500ms; cap 2000ms (API rechaza >2000 con 1007).
