@@ -56,6 +56,11 @@ ABM_REGISTRY: dict[str, dict[str, str]] = {
     "topic": {"group": "Tópicos", "label": "Tópicos"},
     "topic_lexis": {"group": "Tópicos", "label": "Léxico por nivel"},
     "topic_suggested_band": {"group": "Tópicos", "label": "Tópico → bandas sugeridas"},
+    # Catálogo Dinámico (V2)
+    "student_types": {"group": "Catálogo Dinámico (V2)", "label": "Edades (CÓMO)"},
+    "levels": {"group": "Catálogo Dinámico (V2)", "label": "Niveles (QUÉ)"},
+    "topics": {"group": "Catálogo Dinámico (V2)", "label": "Tópicos (LÉXICO)"},
+    "templates": {"group": "Catálogo Dinámico (V2)", "label": "Personalidad del Coach"},
 }
 
 
