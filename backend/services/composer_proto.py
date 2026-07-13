@@ -31,6 +31,7 @@ La ley no se sostiene con disciplina sino con herramienta: el barrido de duplica
 """
 from __future__ import annotations
 
+
 import datetime
 import hashlib
 import json

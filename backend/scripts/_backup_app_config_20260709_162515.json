@@ -1,0 +1,22 @@
+[
+ {
+  "config_key": "current_date_source",
+  "config_value": "inyectado por la app en cada sesión"
+ },
+ {
+  "config_key": "interface_mode",
+  "config_value": "Realtime Multimodal Voice Session"
+ },
+ {
+  "config_key": "native_language",
+  "config_value": "Spanish (es-AR, Rioplatense)"
+ },
+ {
+  "config_key": "target_language",
+  "config_value": "English"
+ },
+ {
+  "config_key": "voice_output_rule",
+  "config_value": "El texto hablado va LIMPIO y PLANO: solo lo que el profe DICE, sin JSON, sin campos, sin estructura. NUNCA uses emojis ni onomatopeyas escritas: hablas, no escribis."
+ }
+]
