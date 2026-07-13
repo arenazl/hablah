@@ -199,7 +199,15 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
                    for r in db.q("SELECT config_key, config_value FROM app_config")} or None
         except Exception:
             cfg = None
-        user = SimpleNamespace(id=student_id, nombre="Alumno", cefr_level=level_code, age_group=age_group,
+        student_name = "Alumno"
+        if student_id:
+            try:
+                st_row = db.q1("SELECT name FROM student WHERE student_id=%s", (student_id,))
+                if st_row and st_row.get("name"):
+                    student_name = st_row.get("name")
+            except Exception:
+                pass
+        user = SimpleNamespace(id=student_id, nombre=student_name, cefr_level=level_code, age_group=age_group,
                                target_language="en", base_language="es")
         topic = None
         if tp:

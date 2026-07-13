@@ -489,7 +489,18 @@ export default function MotorPlaygroundPanel() {
               {/* Presets activos del alumno */}
               {effStudent && presets.length > 0 && (
                 <div style={{ marginTop: 14, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12 }}>
-                  <div style={{ fontSize: 11.5, fontWeight: 800, color: C.dim, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Memoria del Alumno (SRS)</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <div style={{ fontSize: 11.5, fontWeight: 800, color: C.dim, textTransform: 'uppercase', letterSpacing: 0.5 }}>Memoria del Alumno (SRS)</div>
+                    <button 
+                      onClick={wipeProfile}
+                      style={{ 
+                        background: 'none', border: `1px solid ${C.red}`, color: C.red, 
+                        borderRadius: 6, fontSize: 10, fontWeight: 700, padding: '2px 8px', cursor: 'pointer' 
+                      }}
+                    >
+                      Borrar Memoria
+                    </button>
+                  </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {presets.map((p, idx) => (
                       <span key={idx} style={{ fontSize: 10.5, background: C.soft, border: `1px solid ${C.border}`, color: C.fg, padding: '2px 6px', borderRadius: 6 }}>

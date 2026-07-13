@@ -479,7 +479,7 @@ async def simulate_preview_start(body: SimulateStartBody):
     if not key:
         return {"response": "[Error: GEMINI_API_KEY no configurado en settings]"}
         
-    model = "gemini-2.5-flash"
+    model = settings.GEMINI_MODEL or "gemini-2.5-flash"
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
     
     payload = {
