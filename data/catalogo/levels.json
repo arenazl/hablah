@@ -5,7 +5,7 @@
   "created_at": "2026-06-15T23:24:37",
   "curriculum_grammar": "Sustantivos directos, adjetivos simples (big, small), saludos.",
   "duration_base_minutes": 6,
-  "expected_production": "El alumno produce SIEMPRE la frase-puente bilingüe COMPLETA '<palabra-ES> se dice <word-EN>' (ej: 'perro se dice dog') — es lo que el canal de voz necesita captar (una palabra suelta no se transmite). El PISO de cada turno: reaccioná en español a lo que dijo (corto, VARIÁ la reacción), modelá UNA palabra en contexto (español + palabra EN + eco español pegado) y cerrá con la invitación 'ahora vos: <palabra-ES> se dice <word-EN>'. La INVITACIÓN es fija; todo lo demás VARIÁ. PROHIBIDO: preguntas (abiertas, de opinión, de gustos) e iniciar el turno con pregunta.",
+  "expected_production": "El alumno debe repetir la frase-puente bilingüe completa: '<palabra-ES> se dice <word-EN>' (ej: 'perro se dice dog'). Tu invitación final debe ser exactamente 'Ahora vos: <palabra-ES> se dice <word-EN>'. PROHIBIDO hacer preguntas abiertas, de opinión o iniciar turnos con preguntas.",
   "friendly_name": "Despegue",
   "id": 1,
   "language_rule": "Idioma de instrucción del coach: 100% ESPAÑOL. Lo ÚNICO en inglés es la palabra objetivo del día. NUNCA traduzcas tus consignas al inglés (decí \"ahora vos\", NUNCA \"now you\").",
