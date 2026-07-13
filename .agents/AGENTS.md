@@ -21,7 +21,7 @@ Este archivo contiene el contexto del proyecto, reglas de arquitectura, convenci
   - **IMPORTANTE**: La configuración de despliegue en `structure/cloudbuild/cb-hablah-api.yaml` **debe** incluir los flags: `--min-instances=1 --max-instances=1 --no-cpu-throttling`. El estado de las salas de voz vive en la memoria del proceso, y desactivar el throttling de CPU evita que los watchdogs y mezcladores se congelen.
 - **Frontend**: Alojado en **Netlify** (`hablah-app`). Configurado a través de `netlify.toml` en la raíz (hace redirect de `/api/*` al backend).
 - **Flujo de Deploy**: Automatizado al hacer push a la rama `main` de GitHub. Un solo `git push origin main` actualiza tanto frontend como backend.
-- **REGLA DE TRABAJO (Mandatoria):** Dado que el proyecto no se ejecuta localmente y depende 100% de despliegues en la nube, **todo trabajo/tarea completada por el agente debe terminar ejecutando un `git push origin main`** para desplegar los cambios automáticamente.
+- **REGLA DE TRABAJO (Mandatoria):** Dado que el proyecto no se ejecuta localmente y depende 100% de despliegues en la nube, **todo trabajo/tarea completada por el agente debe terminar ejecutando un `git push` al branch/ambiente correspondiente en el que esté posicionado el workspace actual** para desplegar los cambios automáticamente.
 
 ---
 
