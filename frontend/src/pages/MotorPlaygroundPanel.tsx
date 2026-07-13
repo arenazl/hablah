@@ -158,7 +158,11 @@ export default function MotorPlaygroundPanel() {
     })
     // Filtrar por segmento y ordenar alfabéticamente
     return allTopics
-      .filter((t: any) => !t.segmento || t.segmento === band)
+      .filter((t: any) => {
+        if (!t.segmento) return true
+        const normSegmento = t.segmento === 'adultos' ? 'adult' : t.segmento
+        return normSegmento === band
+      })
       .sort((a, b) => a.title.localeCompare(b.title))
   }, [catalog, band])
 
