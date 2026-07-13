@@ -1,0 +1,5 @@
+Deploy trigger — prueba del monitor de infra (2026-07-13, ART).
+
+Este archivo solo existe para forzar un rebuild del backend: el trigger de Cloud Build
+filtra por cambios en backend/**, así que un push que toque este archivo dispara el
+deploy del back (Cloud Run us-east4). Se puede borrar sin problema.
