@@ -319,7 +319,15 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
                 e("Closing_Seed", "student_types.closing_seed", "EDAD", std.get("closing_seed")),
             ]),
         ] if s]
-        return {"steps": steps, "meta": {"engine": "compose_proto (v2)", "age_group": age_group,
+        # Compilar también el prompt completo real para el visor XML
+        prompt_str = ""
+        try:
+            prompt_res = _resolve_v2_sync(age_group, level_code, topic_id, None, student_id, session_seed)
+            prompt_str = prompt_res.get("prompt") or ""
+        except Exception:
+            pass
+
+        return {"steps": steps, "prompt": prompt_str, "meta": {"engine": "compose_proto (v2)", "age_group": age_group,
                                          "level": level_code, "topic_title": tp.get("title") if tp else None,
                                          "session_seed": session_seed, "has_history": bool(hist)}}
     finally:
