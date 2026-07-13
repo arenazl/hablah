@@ -439,6 +439,7 @@ export const motorAPI = {
   previewV2: (params: {
     age_group: string; level: string; topic_id?: number | null; student_id?: number | null
   }) => api.get<any>('/finaltest/mini/preview', { params: { ...params, _t: Date.now() } }).then((r) => r.data),
+  simulatePreview: (systemInstruction: string) => api.post<any>('/finaltest/mini/preview/simulate', { system_instruction: systemInstruction }).then((r) => r.data),
   trainState: (studentId: number) => api.get(`/motor/train/state/${studentId}`).then((r) => r.data),
   trainApply: (body: { student_id: number; outcomes: { objectives?: [number, string][]; items?: [string, string, string][] } }) =>
     api.post('/motor/train/apply', body).then((r) => r.data),

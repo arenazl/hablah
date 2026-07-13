@@ -465,3 +465,41 @@ async def mini_history_clear():
     """Limpia la historia del alumno de prueba (borra la fila). Vuelve al caso 'sin historia'."""
     await asyncio.to_thread(_hist_clear_sync)
     return {"student_id": TEST_STUDENT_ID, "state": None}
+
+
+class SimulateStartBody(BaseModel):
+    system_instruction: str
+
+
+@router.post("/mini/preview/simulate")
+async def simulate_preview_start(body: SimulateStartBody):
+    """Llama a Gemini de verdad pasando el systemInstruction compilado y devuelve la respuesta inicial."""
+    from core.config import settings
+    key = settings.GEMINI_API_KEY
+    if not key:
+        return {"response": "[Error: GEMINI_API_KEY no configurado en settings]"}
+        
+    model = "gemini-2.5-flash"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+    
+    payload = {
+        "contents": [{"role": "user", "parts": [{"text": "INICIA LA SESIÓN AHORA."}]}],
+        "systemInstruction": {"parts": [{"text": body.system_instruction}]},
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 200
+        }
+    }
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as cli:
+            r = await cli.post(url, json=payload)
+            r.raise_for_status()
+            data = r.json()
+            
+        raw = "".join(p.get("text", "") for c in data.get("candidates", [])
+                      for p in (c.get("content") or {}).get("parts", []))
+        return {"response": raw.strip() or "(vacío)"}
+    except Exception as e:
+        return {"response": f"[Error de comunicación con Gemini: {str(e)}]"}
+

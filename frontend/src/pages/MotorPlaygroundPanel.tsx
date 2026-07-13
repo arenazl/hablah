@@ -105,6 +105,10 @@ export default function MotorPlaygroundPanel() {
   const [lastRun, setLastRun] = useState<string | null>(null)
   const [analysis, setAnalysis] = useState<MotorStageNote[]>([])
 
+  // Simulación Gemini Real
+  const [simulatingGemini, setSimulatingGemini] = useState(false)
+  const [geminiStartResponse, setGeminiStartResponse] = useState<string | null>(null)
+
   useEffect(() => { try { localStorage.setItem('motorTheme', theme) } catch {} }, [theme])
 
   // Carga de dimensiones iniciales
@@ -204,6 +208,24 @@ export default function MotorPlaygroundPanel() {
       if (effStudent) motorAPI.studentPresets(effStudent).then((pr) => setPresets(pr.presets || []))
       toast.success('Clase procesada · la memoria cambió')
     } catch { toast.error('No se pudo procesar la clase') } finally { setRunning(false) }
+  }
+
+  const handleSimulateGeminiStart = async () => {
+    if (!res?.prompt) {
+      toast.error('No hay prompt compilado para simular')
+      return
+    }
+    setSimulatingGemini(true)
+    setGeminiStartResponse(null)
+    try {
+      const data = await motorAPI.simulatePreview(res.prompt)
+      setGeminiStartResponse(data.response)
+      toast.success('Respuesta de Gemini recibida')
+    } catch (e: any) {
+      toast.error(e?.response?.data?.detail || 'No se pudo simular el inicio con Gemini')
+    } finally {
+      setSimulatingGemini(false)
+    }
   }
 
   // JIT Editor: arrancar edición de una celda
@@ -484,16 +506,16 @@ export default function MotorPlaygroundPanel() {
 
         {/* Loop de Aprendizaje */}
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14, marginTop: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <span style={{ width: 9, height: 9, borderRadius: 999, background: NAT.dinamico }} />
-            <div style={{ fontSize: 14, fontWeight: 800 }}>Simulación y Loop de Aprendizaje</div>
-          </div>
-          <div style={{ fontSize: 11.5, color: C.dim, marginBottom: 12 }}>
-            Simulá observaciones en texto libre para esta clase. La IA mapeará la observación a presets en la memoria (SRS) del alumno.
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 340px', gap: 14, alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 20 }}>
+            {/* Col 1: Loop de aprendizaje (SRS) */}
             <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <span style={{ width: 9, height: 9, borderRadius: 999, background: NAT.dinamico }} />
+                <div style={{ fontSize: 14, fontWeight: 800 }}>Simulación y Loop de Aprendizaje (SRS)</div>
+              </div>
+              <div style={{ fontSize: 11.5, color: C.dim, marginBottom: 12 }}>
+                Simulá observaciones en texto libre para esta clase. La IA mapeará la observación a presets en la memoria (SRS) del alumno.
+              </div>
               <textarea 
                 value={obsText} 
                 onChange={(e) => setObsText(e.target.value)} 
@@ -520,10 +542,57 @@ export default function MotorPlaygroundPanel() {
               )}
             </div>
 
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: C.dim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Análisis de la simulación</div>
+            {/* Col 2: Gemini real start simulator */}
+            <div style={{ borderLeft: isMobile ? 'none' : `1px dashed ${C.border}`, paddingLeft: isMobile ? 0 : 20, paddingTop: isMobile ? 20 : 0 }}>
+              <style>{`
+                @keyframes spin {
+                  to { transform: rotate(360deg); }
+                }
+              `}</style>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <span style={{ width: 9, height: 9, borderRadius: 999, background: C.accent }} />
+                <div style={{ fontSize: 14, fontWeight: 800 }}>Simulador de Inicio de Clase (Gemini Real)</div>
+              </div>
+              <div style={{ fontSize: 11.5, color: C.dim, marginBottom: 12 }}>
+                Envía el prompt compilado a Gemini (2.5 Flash) para generar la frase de bienvenida e introducción real de la clase.
+              </div>
+              
+              <button 
+                onClick={handleSimulateGeminiStart} 
+                disabled={simulatingGemini || !res?.prompt}
+                style={{ 
+                  background: C.accent, border: 0, color: C.bg, borderRadius: 8, 
+                  fontSize: 12.5, fontWeight: 700, padding: '8px 18px', cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', gap: 6
+                }}
+              >
+                {simulatingGemini ? (
+                  <>
+                    <span style={{ border: `2px solid ${C.bg}`, borderTopColor: 'transparent', borderRadius: '50%', width: 12, height: 12, display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                    Llamando a Gemini…
+                  </>
+                ) : '▶ Simular Inicio / Introducción'}
+              </button>
+
+              {geminiStartResponse && (
+                <div style={{ marginTop: 12 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.dim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Frase de bienvenida generada:</div>
+                  <div style={{ 
+                    background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, padding: 12,
+                    fontSize: 13, lineHeight: 1.5, color: C.fg, whiteSpace: 'pre-wrap', fontStyle: 'italic'
+                  }}>
+                    {geminiStartResponse}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Fila de análisis de SRS */}
+          {analysis.length > 0 && (
+            <div style={{ marginTop: 14, borderTop: `1px solid ${C.border}`, paddingTop: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.dim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Análisis de la simulación de memoria</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 150, overflowY: 'auto', background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: 8 }}>
-                {analysis.length === 0 && <span style={{ color: C.faint, fontSize: 11.5 }}>Sin análisis aún.</span>}
                 {analysis.map((a, i) => (
                   <div key={i} style={{ fontSize: 11, borderBottom: `1px solid ${C.border}`, paddingBottom: 4 }}>
                     <span style={{ color: C.accent, fontWeight: 700 }}>{a.name}</span>: {a.note}
@@ -531,7 +600,7 @@ export default function MotorPlaygroundPanel() {
                 ))}
               </div>
             </div>
-          </div>
+          )}
         </div>
 
       </div>
