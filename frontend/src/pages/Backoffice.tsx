@@ -61,23 +61,9 @@ export function Backoffice() {
             <Route path="/alumnos" element={<AlumnosView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/auditoria" element={<AuditoriaView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/auditoria/:id" element={<AuditoriaDetailView onMenu={() => setMenuOpen(true)} />} />
-            <Route path="/metodologia" element={<AdminMetodologiaPanel />} />
-            <Route path="/consola" element={<AdminConsolaPanel />} />
             <Route path="/abms" element={<AdminAbmsPanel />} />
             <Route path="/usuarios" element={<AdminUsersPanel />} />
-            <Route path="/reglas" element={<AdminReglasPanel />} />
-            <Route path="/kits" element={<AdminKitsPanel />} />
-            <Route path="/orquestador" element={<AdminPromptBuilderPanel />} />
-            <Route path="/wizard" element={<AdminWizardPanel />} />
-            <Route path="/timeline" element={<AdminTimelinePanel />} />
-            <Route path="/reglas-motor" element={<AdminRulesPanel />} />
-            <Route path="/orquestaciones" element={<AdminOrquestacionesPanel />} />
             <Route path="/motor" element={<MotorPlaygroundPanel />} />
-            <Route path="/training" element={<TrainingPanel />} />
-            <Route path="/motor-abms" element={<MotorAbmPanel />} />
-            <Route path="/flujo" element={<AdminFlowPanel />} />
-            <Route path="/post-clase" element={<AdminPostClasePanel />} />
-            <Route path="/memoria" element={<AdminMemoriaPanel />} />
           </Routes>
         </main>
       </div>
@@ -113,21 +99,22 @@ function BoSidebar({ open }: { open: boolean }) {
         </NavLink>
       </div>
 
-      <div className="sidebar-section">Motor de 9 capas (modelo v3)</div>
+      <div className="sidebar-section">Orquestación y Pruebas</div>
       <nav className="sidebar-nav">
-        <SidebarItem to="/admin/motor" label="Probador de orquestación" />
-        <SidebarItem to="/admin/training" label="Training (ciclo de aprendizaje)" />
-        <SidebarItem to="/admin/reglas-motor" label="Reglas del coach (edad × nivel)" />
-        <SidebarItem to="/admin/motor-abms" label="Tags del modelo (ABM)" />
+        <SidebarItem to="/admin/motor" label="Probador de clases" />
+        <SidebarItem to="/admin/auditoria" label="Auditoría de sesiones" />
       </nav>
-      <div className="sidebar-section">Operación · trabajás con alumnos</div>
+      <div className="sidebar-section">Catálogo de Plantillas</div>
       <nav className="sidebar-nav">
-        <SidebarItem to="/admin" exact label="Resumen" />
+        <SidebarItem to="/admin/abms" label="Edades y Niveles" />
+        <SidebarItem to="/admin/templates" label="Personalidades" />
+        <SidebarItem to="/admin/topicos" label="Tópicos" />
+      </nav>
+      <div className="sidebar-section">Operación</div>
+      <nav className="sidebar-nav">
+        <SidebarItem to="/admin" exact label="Resumen general" />
         <SidebarItem to="/admin/alumnos" label="Alumnos" />
         <SidebarItem to="/admin/usuarios" label="Usuarios" />
-        <SidebarItem to="/admin/post-clase" label="Post-clase" />
-        <SidebarItem to="/admin/memoria" label="Memoria alumno" />
-        <SidebarItem to="/admin/auditoria" label="Auditoría" />
       </nav>
       <div className="sidebar-foot">
         <div className="user-card">
