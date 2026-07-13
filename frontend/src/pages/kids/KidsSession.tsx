@@ -508,15 +508,20 @@ export function KidsSession() {
   // silencio (conversacional, no walkie-talkie). Cuando Habi arranca a hablar, rearmamos
   // el gate (pttRelease) para que el próximo turno pida un toque fresco: así el primer
   // audio que ve el VAD arranca justo cuando el nene tocó (onset limpio, mic despierto).
+  // Push-to-talk DESACTIVADO a propósito → las clases kids corren en modo VAD
+  // conversacional (Gemini cierra el turno por el silencio del alumno), IGUAL que la
+  // app adulta, que funciona. Estaba prendido pero sin el gesto que abre el gate
+  // (pttPress no se llamaba nunca) y con el flush de cierre armado al EMPEZAR a hablar
+  // el coach; para cuando le tocaba al nene el gate ya estaba cerrado y su voz no
+  // llegaba a Gemini (por eso el coach no respondía). El PTT sigue implementado en
+  // useLiveVoice + PushToTalkControl como alternativa (mics BT que comen las primeras
+  // palabras). Reactivarlo = volver a setPushToTalk(isActive) + conectar pttPress a un
+  // botón. DEUDA TÉCNICA (hacerlo ajustable por config): docs/05-deuda-tecnica/01-push-to-talk-kids.md
   const setPushToTalk = live.setPushToTalk
-  const pttRelease = live.pttRelease
   useEffect(() => {
-    setPushToTalk(isActive)
+    setPushToTalk(false)
     return () => setPushToTalk(false)
-  }, [isActive, setPushToTalk])
-  useEffect(() => {
-    if (live.status === 'speaking') pttRelease()
-  }, [live.status, pttRelease])
+  }, [setPushToTalk])
 
   const talkState: 'coach' | 'your-turn' | 'talking' | 'connecting' =
     live.status === 'speaking' ? 'coach'
