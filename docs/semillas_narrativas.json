@@ -1,0 +1,1577 @@
+[
+  {
+    "id": 2,
+    "title": "Arquitectura de software",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 3,
+    "title": "Producción musical y cultura DJ",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 4,
+    "title": "IA generativa · ética",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 5,
+    "title": "Entrenamiento de fuerza y suplementación",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 6,
+    "title": "Metodologías ágiles · retrospectivas",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 7,
+    "title": "Cine de los 90 · Tarantino",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 8,
+    "title": "Anécdotas de aeropuertos",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 9,
+    "title": "Fútbol · Mundiales y selecciones",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 10,
+    "title": "Básquet · NBA y leyendas",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 11,
+    "title": "Running · entrenamiento y maratones",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 12,
+    "title": "Tenis · Grand Slam y rivalidades",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 13,
+    "title": "Fórmula 1 y automovilismo",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 14,
+    "title": "Cocina italiana · pasta y vinos",
+    "category": "gastronomia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 15,
+    "title": "Asado argentino · técnica y rituales",
+    "category": "gastronomia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 16,
+    "title": "Café de especialidad · v60, espresso",
+    "category": "gastronomia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 17,
+    "title": "Espacio · astronomía y misiones",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 18,
+    "title": "Cambio climático · ciencia y políticas",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 19,
+    "title": "Biología · evolución y genética",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 20,
+    "title": "Series de streaming · drama prestigio",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 21,
+    "title": "Videojuegos · indie y AAA",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 22,
+    "title": "Rock clásico · 70s a 90s",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 23,
+    "title": "Stand-up · comediantes y especiales",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 24,
+    "title": "Meditación y mindfulness",
+    "category": "lifestyle",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 25,
+    "title": "Nutrición · dietas y mitos",
+    "category": "lifestyle",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 26,
+    "title": "Moda · streetwear y sneakers",
+    "category": "lifestyle",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 27,
+    "title": "Trabajo remoto · nómade digital",
+    "category": "negocios",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 28,
+    "title": "Entrevistas técnicas · system design",
+    "category": "negocios",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 29,
+    "title": "Emprender · early-stage startup",
+    "category": "negocios",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 30,
+    "title": "Japón · cultura y tradiciones",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 31,
+    "title": "Patagonia · trekking y montañas",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 32,
+    "title": "Ciudades que quiero conocer",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 33,
+    "title": "Mi banda favorita",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 34,
+    "title": "Conciertos que me marcaron",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 35,
+    "title": "Música para entrenar",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 36,
+    "title": "Aprender un instrumento",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 37,
+    "title": "Géneros que descubrí",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 38,
+    "title": "Un álbum entero, no playlists",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 39,
+    "title": "Música y emociones",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 40,
+    "title": "Streaming vs comprar música",
+    "category": "musica",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 41,
+    "title": "Una peli que me marcó",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 42,
+    "title": "Una serie que no pude parar",
+    "category": "peliculas",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 43,
+    "title": "Personajes inolvidables",
+    "category": "peliculas",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 44,
+    "title": "Libro vs película",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 45,
+    "title": "Spoilers y cómo manejarlos",
+    "category": "peliculas",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 46,
+    "title": "Cine vs streaming en casa",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 47,
+    "title": "Géneros que evito y por qué",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 48,
+    "title": "Premios y críticos: ¿importan?",
+    "category": "peliculas",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 49,
+    "title": "Mi deporte favorito",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 50,
+    "title": "Mi equipo y sus rivales",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 51,
+    "title": "Un partido inolvidable",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 52,
+    "title": "Ídolos del deporte",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 53,
+    "title": "Hacer deporte vs mirarlo",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 54,
+    "title": "Reglas raras o injustas",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 55,
+    "title": "Doping y ética",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 56,
+    "title": "El negocio del deporte",
+    "category": "deportes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 57,
+    "title": "El juego del momento",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 58,
+    "title": "Console wars",
+    "category": "videojuegos",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 59,
+    "title": "Jugar con amigos online",
+    "category": "entretenimiento",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 60,
+    "title": "Speedruns y secretos",
+    "category": "videojuegos",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 61,
+    "title": "Indies vs AAA",
+    "category": "videojuegos",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 62,
+    "title": "Historias en videojuegos",
+    "category": "videojuegos",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 63,
+    "title": "Esports: ¿deporte real?",
+    "category": "videojuegos",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 64,
+    "title": "Videojuegos como arte",
+    "category": "videojuegos",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 65,
+    "title": "Mi comida favorita",
+    "category": "comida",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 66,
+    "title": "Cocinar en casa",
+    "category": "comida",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 67,
+    "title": "Una receta que aprendí",
+    "category": "comida",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 68,
+    "title": "Restaurantes memorables",
+    "category": "comida",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 69,
+    "title": "Comida típica de mi país",
+    "category": "comida",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 70,
+    "title": "Dietas y modas",
+    "category": "comida",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 71,
+    "title": "Cocinar para otros",
+    "category": "comida",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 72,
+    "title": "Sostenibilidad y comida",
+    "category": "comida",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 73,
+    "title": "Mi mascota",
+    "category": "animales",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 74,
+    "title": "Animales raros que existen",
+    "category": "animales",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 75,
+    "title": "Tener mascota: ¿sí o no?",
+    "category": "animales",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 76,
+    "title": "Animales en peligro",
+    "category": "animales",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 77,
+    "title": "Inteligencia animal",
+    "category": "animales",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 78,
+    "title": "Mascotas exóticas: ¿está bien?",
+    "category": "animales",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 79,
+    "title": "Bienestar animal",
+    "category": "animales",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 80,
+    "title": "Animales en la ciencia",
+    "category": "animales",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 81,
+    "title": "Mi último viaje",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 82,
+    "title": "Mi viaje soñado",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 83,
+    "title": "Mochilero vs hotel",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 84,
+    "title": "Choque cultural",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 85,
+    "title": "Comer cuando viajás",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 86,
+    "title": "Viajar solo",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 87,
+    "title": "Turismo masivo y sus efectos",
+    "category": "viajes",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 88,
+    "title": "Apps que uso a diario",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 89,
+    "title": "Inteligencia artificial",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 90,
+    "title": "Privacidad online",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 91,
+    "title": "Un gadget que me cambió la vida",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 92,
+    "title": "Aprender a programar",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 93,
+    "title": "IA y el futuro del trabajo",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 94,
+    "title": "Adicción al celular",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 95,
+    "title": "Ética en tecnología",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 96,
+    "title": "Una curiosidad científica",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 97,
+    "title": "El espacio",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 98,
+    "title": "El cuerpo humano",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 99,
+    "title": "Cambio climático",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 100,
+    "title": "Inventos que cambiaron todo",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 101,
+    "title": "Vida en otros planetas",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 102,
+    "title": "Genética y ética",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 103,
+    "title": "Pseudociencia vs ciencia",
+    "category": "ciencia",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 104,
+    "title": "Un artista que admiro",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 105,
+    "title": "Visitar museos",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 106,
+    "title": "Arte digital vs tradicional",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 107,
+    "title": "Arte callejero",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 108,
+    "title": "Crear arte propio",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 109,
+    "title": "Arte y dinero",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 110,
+    "title": "NFTs y arte digital",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 111,
+    "title": "Censura en el arte",
+    "category": "arte",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 112,
+    "title": "Mi rutina actual",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 113,
+    "title": "Empezar a entrenar",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 114,
+    "title": "Yoga y meditación",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 115,
+    "title": "Nutrición básica",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 116,
+    "title": "Salud mental",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 117,
+    "title": "Running para principiantes",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 118,
+    "title": "Suplementos: ¿sí o no?",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 119,
+    "title": "Cuerpo ideal y presión social",
+    "category": "fitness",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 120,
+    "title": "Mi estilo personal",
+    "category": "moda",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 121,
+    "title": "Marcas favoritas",
+    "category": "moda",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 122,
+    "title": "Sneakers",
+    "category": "moda",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 123,
+    "title": "Comprar moda online",
+    "category": "moda",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 124,
+    "title": "Vintage vs moderno",
+    "category": "moda",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 125,
+    "title": "Fast fashion",
+    "category": "moda",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 126,
+    "title": "Moda sostenible",
+    "category": "moda",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 127,
+    "title": "Moda y género",
+    "category": "moda",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 128,
+    "title": "Dinosaurios",
+    "category": "kids-deprecated",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 129,
+    "title": "Espacio",
+    "category": "kids-deprecated",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 130,
+    "title": "Mar y animales",
+    "category": "kids-deprecated",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 131,
+    "title": "Mi deporte",
+    "category": "kids-deprecated",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 132,
+    "title": "Dibujar y crear",
+    "category": "kids-deprecated",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 133,
+    "title": "Música y canciones",
+    "category": "kids-deprecated",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 134,
+    "title": "Mascotas",
+    "category": "kids-deprecated",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 135,
+    "title": "Mi familia",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 136,
+    "title": "Cómo me siento",
+    "category": "kids-deprecated",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 137,
+    "title": "La escuela",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 138,
+    "title": "Mis colores favoritos",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 139,
+    "title": "Animales de la granja y la selva",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 140,
+    "title": "Contar del 1 al 10",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 141,
+    "title": "Mi cuerpo",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 142,
+    "title": "Comidas ricas",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 143,
+    "title": "Abrir juguetes",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 144,
+    "title": "Dibujitos y superhéroes",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 145,
+    "title": "Jugar en la pantalla",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 146,
+    "title": "Comida divertida",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 147,
+    "title": "Mi día de la mañana a la noche",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 148,
+    "title": "Mi casa y mis habitaciones",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 149,
+    "title": "Pasatiempos y deportes",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 150,
+    "title": "Cómo me siento",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 151,
+    "title": "Naturaleza y dinosaurios",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 152,
+    "title": "Desafíos virales",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 153,
+    "title": "Mundos de bloques",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 154,
+    "title": "Coleccionar cartas y figuritas",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 155,
+    "title": "Comida rápida y dulces",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 156,
+    "title": "Música, pelis y series",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 157,
+    "title": "Viajes y culturas",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 158,
+    "title": "Trabajos del futuro",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 159,
+    "title": "Cocinar y recetas",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 160,
+    "title": "Cuidar el planeta",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 161,
+    "title": "Decir lo que pensás",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 162,
+    "title": "Streamers y transmisiones",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 163,
+    "title": "Zapatillas y moda urbana",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 164,
+    "title": "Gaming pro y esports",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 165,
+    "title": "Slang y tendencias online",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 166,
+    "title": "Charla abierta",
+    "category": "general",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 177,
+    "title": "Desarrollo de software y herramientas IA",
+    "category": "tech",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 178,
+    "title": "Diseño y construcción del hogar",
+    "category": "lifestyle",
+    "audience": "adult",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 179,
+    "title": "Juegos de pelea y torneos",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 180,
+    "title": "Construcción con bloques mágicos",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 181,
+    "title": "Suscripciones gaming y juego en la nube",
+    "category": "videojuegos",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 182,
+    "title": "Quién soy y quién quiero ser",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 183,
+    "title": "Redes sociales: el lado B",
+    "category": "tech",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 184,
+    "title": "Crecer en un mundo que cambia rápido",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 185,
+    "title": "Causas que me importan",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  },
+  {
+    "id": 186,
+    "title": "Libertad y límites con mis padres",
+    "category": "kids",
+    "audience": "kid",
+    "narrative_setting": "",
+    "narrative_conflict": "",
+    "narrative_role": ""
+  }
+]
