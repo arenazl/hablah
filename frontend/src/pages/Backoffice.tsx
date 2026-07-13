@@ -1061,15 +1061,64 @@ function AuditoriaView({ onMenu }: { onMenu: () => void }) {
 function JsonBlock({ data }: { data: Record<string, any> }) {
   const isEmpty = !data || Object.keys(data).length === 0
   if (isEmpty) return <div style={{ fontSize: 13, color: 'var(--fg-3)', padding: 8 }}>Sin datos.</div>
+  
+  const str = JSON.stringify(data, null, 2)
+  const parts = str.split(/(".*?"\s*:|"(?:[^"\\]|\\.)*"|\btrue\b|\bfalse\b|\bnull\b|\b\d+\b)/g)
+
   return (
     <pre style={{
       margin: 0, padding: 14, background: 'var(--bg-2)', borderRadius: 10,
       fontSize: 12, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1.5,
       overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'var(--fg-1)',
     }}>
-      {JSON.stringify(data, null, 2)}
+      {parts.map((part, i) => {
+        if (part.endsWith(':')) {
+          return <span key={i} style={{ color: '#818cf8', fontWeight: 600 }}>{part}</span>
+        }
+        if (part.startsWith('"') && part.endsWith('"')) {
+          return <span key={i} style={{ color: '#34d399' }}>{part}</span>
+        }
+        if (part === 'true' || part === 'false') {
+          return <span key={i} style={{ color: '#fbbf24', fontWeight: 600 }}>{part}</span>
+        }
+        if (part === 'null') {
+          return <span key={i} style={{ color: '#f87171', fontWeight: 600 }}>{part}</span>
+        }
+        if (/^\b\d+\b$/.test(part)) {
+          return <span key={i} style={{ color: '#38bdf8' }}>{part}</span>
+        }
+        return part
+      })}
     </pre>
   )
+}
+
+function highlightPromptFinal(text: string) {
+  if (!text) return null
+  const regex = /(<[^>]+>|\{[a-zA-Z_]+\})/g
+  const parts = text.split(regex)
+  return parts.map((part, i) => {
+    if (part.startsWith('<') && part.endsWith('>')) {
+      return <span key={i} style={{ color: '#ec4899', fontWeight: 600, fontFamily: 'monospace' }}>{part}</span>
+    }
+    if (part.startsWith('{') && part.endsWith('}')) {
+      return (
+        <span key={i} style={{
+          background: 'rgba(56,189,248,0.15)',
+          color: '#38bdf8',
+          padding: '1px 5px',
+          borderRadius: 4,
+          fontWeight: 700,
+          border: '1px solid rgba(56,189,248,0.3)',
+          fontSize: '11px',
+          fontFamily: 'monospace'
+        }}>
+          {part}
+        </span>
+      )
+    }
+    return part
+  })
 }
 
 function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
@@ -1086,6 +1135,57 @@ function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
       .catch(() => { setLoading(false); toast.error('No se pudo cargar la sesión') })
   }, [id])
 
+  const exportToMarkdown = () => {
+    if (!d) return
+    let md = `# Auditoría de Sesión #${d.id}\n\n`
+    md += `**Usuario:** ${d.user.name} (${d.user.email || 'sin email'})\n`
+    md += `**Tutor:** ${d.template?.name || 'sin tutor'}\n`
+    md += `**Tema:** ${d.topic?.title || 'tema libre'}\n`
+    md += `**Estado:** ${d.status}\n`
+    md += `**Inicio:** ${fmtDateTime(d.started_at)}\n`
+    md += `**Fin:** ${fmtDateTime(d.ended_at)}\n`
+    md += `**Duración:** ${fmtDuration(d.duration_seconds)}\n`
+    md += `**Turnos:** ${d.turns} (alumno ${d.user_turns} / coach ${d.ai_turns})\n`
+    md += `**Nivel inicio:** ${d.cefr_at_start}\n`
+    md += `**Score:** ${d.score != null ? d.score : '—'}\n\n`
+
+    md += `## Reglas Aplicadas (Circuito del Motor)\n`
+    md += `\`\`\`json\n${JSON.stringify(d.prompt_circuit || {}, null, 2)}\n\`\`\`\n\n`
+
+    md += `## Prompt Final (Lo que recibió el coach)\n`
+    md += `\`\`\`xml\n${d.prompt_final || 'Sin prompt persistido'}\n\`\`\`\n\n`
+
+    md += `## Conversación / Transcripción\n\n`
+    if (d.transcript && d.transcript.length > 0) {
+      d.transcript.forEach((t) => {
+        const who = t.who === 'ai' ? 'COACH' : 'ALUMNO'
+        md += `**[${who}]:** ${t.text}\n\n`
+      })
+    } else {
+      md += `Sin transcripción disponible.\n`
+    }
+
+    md += `\n## Errores Detectados\n\n`
+    if (d.errors && d.errors.length > 0) {
+      d.errors.forEach((e) => {
+        md += `- **[${e.kind}]** ${e.label}\n`
+        if (e.snippet_wrong) md += `  - *Incorrecto:* ${e.snippet_wrong}\n`
+        if (e.snippet_correct) md += `  - *Correcto:* ${e.snippet_correct}\n`
+      })
+    } else {
+      md += `Sin errores registrados.\n`
+    }
+
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `auditoria_sesion_${d.id}.md`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   if (loading) return <><PageHead eyebrow="Auditoría · Charla" title="Cargando…" onMenu={onMenu} /></>
   if (!d) return <><PageHead eyebrow="Auditoría · Charla" title="No encontrada" onMenu={onMenu}
     actions={<button className="btn btn-ghost btn-sm" onClick={() => nav('/admin/auditoria')}>← Volver</button>} /></>
@@ -1094,7 +1194,17 @@ function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
     <>
       <PageHead eyebrow={`Charla #${d.id}`} title={`${d.user.name}`} onMenu={onMenu}
         sub={`${d.template?.name || 'sin tutor'} · ${d.topic?.title || 'tema libre'} · ${d.user.email || ''}`}
-        actions={<button className="btn btn-ghost btn-sm" onClick={() => nav('/admin/auditoria')}>← Volver</button>} />
+        actions={
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-primary btn-sm" onClick={exportToMarkdown} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+              Exportar Markdown (.md)
+            </button>
+            <button className="btn btn-ghost btn-sm" onClick={() => nav('/admin/auditoria')}>← Volver</button>
+          </div>
+        } />
       <div className="view">
         {/* Metadata */}
         <div className="card card-elev" style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 14 }}>
@@ -1108,9 +1218,7 @@ function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
           <Meta label="Audio" value={d.audio_url ? <a href={d.audio_url} target="_blank" rel="noreferrer" style={{ color: 'var(--primary)' }}>escuchar</a> : '—'} />
         </div>
 
-        {/* Cómo se armó la clase: las reglas que el motor resolvió + el prompt final exacto que
-            recibió el coach. Es la fuente para diagnosticar por qué el coach hizo lo que hizo
-            (ej: pidió una palabra suelta en vez de la frase-puente). El WS de voz ya lo persiste. */}
+        {/* Cómo se armó la clase */}
         <div className="card card-elev" style={{ padding: 16, marginTop: 14 }}>
           <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Reglas aplicadas (circuito del motor)</div>
           {d.prompt_circuit
@@ -1120,11 +1228,13 @@ function AuditoriaDetailView({ onMenu }: { onMenu: () => void }) {
         <div className="card card-elev" style={{ padding: 16, marginTop: 14 }}>
           <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 12 }}>Prompt final (lo que recibió el coach)</div>
           {d.prompt_final
-            ? <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12, lineHeight: 1.5, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', color: 'var(--fg-1)', background: 'var(--bg-2)', border: '1px solid var(--border-1)', borderRadius: 8, padding: 12, maxHeight: 460, overflow: 'auto' }}>{d.prompt_final}</pre>
+            ? <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12, lineHeight: 1.5, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', color: 'var(--fg-1)', background: 'var(--bg-2)', border: '1px solid var(--border-1)', borderRadius: 8, padding: 12, maxHeight: 460, overflow: 'auto' }}>
+                {highlightPromptFinal(d.prompt_final)}
+              </pre>
             : <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Sin prompt persistido (charla anterior a la instrumentación del prompt).</div>}
         </div>
 
-        {/* Timeline unificado: conversación + eventos (desde Cloud Logging) */}
+        {/* Timeline unificado: conversación + eventos */}
         <UnifiedTimeline d={d} />
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14, marginTop: 14 }}>
@@ -1270,7 +1380,7 @@ function UnifiedTimeline({ d }: { d: AuditSessionDetail }) {
                   <span style={{ flexShrink: 0, marginTop: 2, padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700, background: isAi ? 'rgba(99,102,241,.14)' : 'rgba(0,179,126,.14)', color: isAi ? '#4f46e5' : '#00875f', minWidth: 56, textAlign: 'center' }}>
                     {isAi ? 'COACH' : 'ALUMNO'}
                   </span>
-                  <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-1)', flex: 1 }}>
+                  <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-1)', flex: 1, whiteSpace: 'pre-wrap' }}>
                     {(turn.text || '').trim() || <span style={{ color: 'var(--fg-3)', fontStyle: 'italic' }}>(vacío)</span>}
                   </div>
                 </div>
@@ -1329,7 +1439,7 @@ function TimelineRow({ it }: { it: TimelineItem }) {
         {isAi ? 'COACH' : 'ALUMNO'}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-1)' }}>{it.text}</div>
+        <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-1)', whiteSpace: 'pre-wrap' }}>{it.text}</div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 2, flexWrap: 'wrap' }}>
           {isAi && it.latencyMs != null && (
             <span style={{ fontSize: 10, color: 'var(--fg-3)' }}>respondió en {(it.latencyMs / 1000).toFixed(1)}s</span>
