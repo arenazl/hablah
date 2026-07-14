@@ -46,7 +46,7 @@ async def main():
         levels_current = {row.code: dict(row._mapping) for row in res.fetchall()}
         
         # Backup students
-        res = await session.execute(text("SELECT slug, tutor_identity, form_rules, tutor_tonal_rules, opening_seed, continuation_seed FROM student_types"))
+        res = await session.execute(text("SELECT slug, tutor_identity, tutor_mascot, form_rules, tutor_tonal_rules, opening_seed, continuation_seed FROM student_types"))
         students_current = {row.slug: dict(row._mapping) for row in res.fetchall()}
 
         backup_file = os.path.join(BACKUPS_DIR, f"pre_refactor_arquitectura_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
@@ -73,7 +73,7 @@ async def main():
         for slug, curr in students_current.items():
             if slug in students_target:
                 tgt = students_target[slug]
-                fields = ["tutor_identity", "form_rules", "tutor_tonal_rules", "opening_seed", "continuation_seed"]
+                fields = ["tutor_identity", "tutor_mascot", "form_rules", "tutor_tonal_rules", "opening_seed", "continuation_seed"]
                 diffs = []
                 for field in fields:
                     if curr[field] != tgt[field]:
@@ -100,6 +100,7 @@ async def main():
                     text("""
                         UPDATE student_types 
                         SET tutor_identity = :id, 
+                            tutor_mascot = :tm,
                             form_rules = :fr, 
                             tutor_tonal_rules = :ttr, 
                             opening_seed = :os, 
@@ -108,6 +109,7 @@ async def main():
                     """),
                     {
                         "id": tgt["tutor_identity"],
+                        "tm": tgt["tutor_mascot"],
                         "fr": tgt["form_rules"],
                         "ttr": tgt["tutor_tonal_rules"],
                         "os": tgt["opening_seed"],

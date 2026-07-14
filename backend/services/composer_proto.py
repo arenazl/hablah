@@ -380,18 +380,19 @@ def _get_start_trigger(topic, topic_content: Optional[dict], name: str, first_wo
     narrative_setting = _interp(narrative_setting, name, topic_title, first_word)
     narrative_conflict = _interp(narrative_conflict, name, topic_title, first_word)
 
-    # Construir el start_execution_command según el diseño de Narrative Seeds
+    # Construir el start_execution_command integrando el opening_seed dinámico del catálogo
+    base_opening = (opening_seed or "").strip()
+    if not base_opening:
+        base_opening = f"Saludá a {name} con mucha energía. Presentá el tema {topic_title} e introducí la palabra {first_word}."
+
     command_text = (
-        f"Saludá a {name} con mucha energía. Presentá la aventura de hoy basada en el tema {topic_title}.\n\n"
+        f"{base_opening}\n\n"
         f"  <narrative_anchors>\n"
-        f"    Regla: Para crear la historia, NO uses elementos genéricos (como naves espaciales o gigantes) a menos que se indique aquí. Usa EXCLUSIVAMENTE esta configuración narrativa para situar la escena:\n"
+        f"    Regla: Para crear la historia, NO uses elementos genéricos a menos que se indique aquí. Usa EXCLUSIVAMENTE esta configuración narrativa para situar la escena:\n"
         f"    - Rol: {narrative_role}\n"
         f"    - Escenario: {narrative_setting}\n"
         f"    - Misión/Conflicto: {narrative_conflict}\n"
-        f"  </narrative_anchors>\n\n"
-        f"  Dedicá exactamente UNA oración imaginativa usando 'Imaginate que...' para pintar esta escena e introducir la primera palabra clave ({first_word}).\n"
-        f"  Está estrictamente PROHIBIDO usar verbos de visión conjunta o deícticos espaciales (como 'mirá', 'ves', 'mirá allá').\n"
-        f"  Cerrá el turno aplicando el Call_to_Action_Format de Expected_Production. Esperá la respuesta del alumno."
+        f"  </narrative_anchors>"
     )
 
     return (
