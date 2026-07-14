@@ -250,17 +250,26 @@ def _assemble(db: MotorDB, ctx: dict) -> dict:
     # presets dinámicos del alumno (estado, no texto libre): errores a vigilar / chunks a reforzar.
     # Es lo que hace que la MISMA clase cambie cuando el alumno deja huella. Tolerante a que la
     # tabla no exista todavía (deploy viejo).
+    # learned_state RUTEADO a su etapa: comportamiento->3 (cómo enseña), motivación->4
+    # (la dinámica), error/chunk->5 (memoria). Cada uno con polaridad (+/-) y directiva.
+    behavior_dirs, motiv_dirs = [], []
+    learner = list(learner)
     try:
         _lp = db.q("""SELECT lp.kind, lp.label, lp.polarity, lp.directive, lpe.state
                       FROM learner_preset lpe JOIN learned_preset lp ON lp.preset_id=lpe.preset_id
                       WHERE lpe.student_id=%s ORDER BY lpe.occurrences DESC, lpe.last_seen DESC""", (sid,))
-        learner = list(learner)
         for p in _lp:
             sign = "+" if p.get("polarity") == "positive" else "-" if p.get("polarity") == "negative" else "·"
-            val = f"{sign} {p['label']}"
+            line = f"{sign} {p['label']}"
             if p.get("directive"):
-                val += f" -> {p['directive']}"   # la DIRECTIVA accionable entra a la orquestación
-            learner.append({"item_type": p["kind"], "item_value": val, "status": p["state"]})
+                line += f" -> {p['directive']}"
+            k = p["kind"]
+            if k == "comportamiento":
+                behavior_dirs.append(line)
+            elif k == "motivacion":
+                motiv_dirs.append(line)
+            else:
+                learner.append({"item_type": k, "item_value": line, "status": p["state"]})
     except Exception:
         pass
     guards = resolve_guards(db, ctx)
@@ -277,10 +286,11 @@ def _assemble(db: MotorDB, ctx: dict) -> dict:
         "runtime_context": cfg,
         "tutor_identity": tutor,
         "pedagogical_framework": {"methodology": pedagogy["methodology"] if pedagogy else "",
-                                  "policies": band_pol},
+                                  "policies": band_pol, "student_adaptations": behavior_dirs},
         "lesson_focus": {"activity": activity["description"] if activity else "",
                          "reward": reward["description"] if reward else "",
-                         "objective": topic["objective"] if topic else ""},
+                         "objective": topic["objective"] if topic else "",
+                         "student_motivation": motiv_dirs},
         "student_profile": {"name": ctx["student"]["name"], "age": ctx["student"]["age"],
                             "level": level["level_code"], "interests": interests},
         "learner_state": learner,
@@ -319,11 +329,13 @@ def render_prompt(stack: dict) -> str:
                              f"Tone: {t['tone']}."] if t else [])
     pf = stack["pedagogical_framework"]
     block("pedagogical_framework",
-          [f"Methodology: {pf['methodology']}"] + [f"{p['kind']}: {p['body']}" for p in pf["policies"]])
+          [f"Methodology: {pf['methodology']}"] + [f"{p['kind']}: {p['body']}" for p in pf["policies"]]
+          + [f"Student adaptation: {d}" for d in pf.get("student_adaptations", [])])
     lf = stack["lesson_focus"]
     block("lesson_focus_engagement",
           [f"Gamification: {lf['activity']}", f"Reward: {lf['reward']}",
-           f"Target Objective: {lf['objective']}"])
+           f"Target Objective: {lf['objective']}"]
+          + [f"Student motivation: {d}" for d in lf.get("student_motivation", [])])
     sp = stack["student_profile"]
     block("student_profile", [f"Name: {sp['name']}", f"Age: {sp['age']}",
                               f"Language Level: {sp['level']}",
