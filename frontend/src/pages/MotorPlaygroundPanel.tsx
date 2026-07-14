@@ -470,23 +470,37 @@ export default function MotorPlaygroundPanel() {
               <button onClick={() => setShowXml((v) => !v)} style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.accent, borderRadius: 7, fontSize: 11, padding: '3px 9px', cursor: 'pointer' }}>{showXml ? 'ver capas' : 'ver XML final'}</button>
             </div>
             {showXml ? (
-              <pre style={{ margin: 0, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11, lineHeight: 1.55, color: C.dim, maxHeight: '74vh', overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>
-                {(() => {
-                  const prompt = res?.prompt || ''
-                  if (!prompt) return '(vacío)'
-                  const regex = /(<\/?[a-zA-Z0-9_]+>|[a-zA-Z0-9_-]+:)/g
-                  const parts = prompt.split(regex)
-                  return parts.map((part: string, idx: number) => {
-                    if (part.startsWith('<') && part.endsWith('>')) {
-                      return <span key={idx} style={{ color: '#38bdf8', fontWeight: 700 }}>{part}</span>
-                    }
-                    if (part.endsWith(':') && part.length > 2 && !part.startsWith('http') && !part.startsWith('file')) {
-                      return <span key={idx} style={{ color: '#fbbf24', fontWeight: 600 }}>{part}</span>
-                    }
-                    return part
-                  })
-                })()}
-              </pre>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <pre style={{ margin: 0, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11, lineHeight: 1.55, color: C.dim, maxHeight: '55vh', overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>
+                  {(() => {
+                    const prompt = res?.prompt || ''
+                    if (!prompt) return '(vacío)'
+                    const regex = /(<\/?[a-zA-Z0-9_]+>|[a-zA-Z0-9_-]+:)/g
+                    const parts = prompt.split(regex)
+                    return parts.map((part: string, idx: number) => {
+                      if (part.startsWith('<') && part.endsWith('>')) {
+                        return <span key={idx} style={{ color: '#38bdf8', fontWeight: 700 }}>{part}</span>
+                      }
+                      if (part.endsWith(':') && part.length > 2 && !part.startsWith('http') && !part.startsWith('file')) {
+                        return <span key={idx} style={{ color: '#fbbf24', fontWeight: 600 }}>{part}</span>
+                      }
+                      return part
+                    })
+                  })()}
+                </pre>
+                
+                {/* Nodo final en la vista XML */}
+                <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10, borderLeft: `3px solid ${C.accent}` }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: C.fg, marginBottom: 4 }}>
+                    <span style={{ color: '#38bdf8', fontWeight: 700 }}>&lt;final_prompt&gt;</span>
+                    <span>Resultado de la Orquestación</span>
+                    <span style={{ color: '#38bdf8', fontWeight: 700 }}>&lt;/final_prompt&gt;</span>
+                  </div>
+                  <div style={{ fontSize: 11.5, color: C.dim, maxHeight: 120, overflowY: 'auto', background: C.soft, padding: 8, borderRadius: 6, whiteSpace: 'pre-wrap', fontFamily: 'ui-monospace, monospace' }}>
+                    {res?.prompt || '(vacío)'}
+                  </div>
+                </div>
+              </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {steps.map((st: any, i: number) => {
@@ -555,6 +569,33 @@ export default function MotorPlaygroundPanel() {
                     </div>
                   )
                 })}
+              </div>
+            )}
+            
+            {/* Prompt final compilado abajo de las capas */}
+            {res?.prompt && (
+              <div style={{ marginTop: 20, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ width: 9, height: 9, borderRadius: 999, background: C.accent }} />
+                    <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>Prompt Final Compilado (Gemini Live)</div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(res.prompt)
+                      toast.success('Prompt copiado al portapapeles')
+                    }}
+                    style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.accent, borderRadius: 7, fontSize: 11, padding: '3px 9px', cursor: 'pointer' }}
+                  >
+                    Copiar Prompt
+                  </button>
+                </div>
+                <textarea 
+                  readOnly 
+                  value={res.prompt} 
+                  rows={12}
+                  style={{ width: '100%', background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '8px 10px', fontSize: 12, lineHeight: 1.5, fontFamily: 'ui-monospace, monospace', resize: 'vertical', boxSizing: 'border-box' }}
+                />
               </div>
             )}
           </div>
