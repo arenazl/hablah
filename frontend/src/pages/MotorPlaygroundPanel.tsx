@@ -470,11 +470,37 @@ export default function MotorPlaygroundPanel() {
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10, paddingTop: 10, borderTop: `1px solid ${C.soft}` }}>
                             {st.entries.map((ent: any, j: number) => (
                               <div key={j} style={{ background: C.soft, border: `1px solid ${C.border}`, borderRadius: 8, padding: '8px 10px', position: 'relative' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6, flexWrap: 'wrap', gap: 6 }}>
                                   <span style={{ fontSize: 11, fontWeight: 800, color: C.accent }}>{ent.label}</span>
-                                  <span style={{ fontSize: 9.5, color: C.faint }}>{ent.source}</span>
+                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                                    <span style={{ fontSize: 9.5, color: C.faint, fontFamily: 'monospace' }}>{ent.source}</span>
+                                    {(() => {
+                                      const src = ent.source || ''
+                                      let coupling = ''
+                                      let color = C.faint
+                                      if (src.startsWith('topics.')) {
+                                        coupling = `Acoplamiento: TÓPICO ("${res?.meta?.topic_title || 'este tópico'}")`
+                                        color = '#818cf8'
+                                      } else if (src.startsWith('student_types.')) {
+                                        coupling = `Acoplamiento: EDAD ("${band.toUpperCase()}")`
+                                        color = '#fbbf24'
+                                      } else if (src.startsWith('levels.')) {
+                                        coupling = `Acoplamiento: NIVEL ("${level}")`
+                                        color = '#7dd3fc'
+                                      } else if (src.startsWith('app_config.')) {
+                                        coupling = 'Acoplamiento: GLOBAL (Toda la app)'
+                                        color = '#f87171'
+                                      }
+                                      if (!coupling) return null
+                                      return (
+                                        <span style={{ fontSize: 8.5, fontWeight: 800, color: color, background: 'rgba(255,255,255,0.03)', border: `1px solid ${color}33`, padding: '1px 4px', borderRadius: 4, textTransform: 'uppercase' }}>
+                                          {coupling}
+                                        </span>
+                                      )
+                                    })()}
+                                  </div>
                                 </div>
-                                <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
+                                <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.55, whiteSpace: 'pre-wrap', paddingRight: 16 }}>
                                   {renderBodyWithPlaceholders(ent.body)}
                                 </div>
                                 <button 
@@ -507,6 +533,49 @@ export default function MotorPlaygroundPanel() {
                   </div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: C.fg, marginBottom: 4 }}>{editLabel}</div>
                   <div style={{ fontSize: 10, color: C.faint, marginBottom: 12 }}>Origen: <code style={{ background: C.soft, padding: '2px 4px', borderRadius: 4 }}>{editTable}.{editField}</code></div>
+                  
+                  {/* Indicador de acoplamiento dinámico */}
+                  {(() => {
+                    let typeLabel = ''
+                    let desc = ''
+                    let badgeBg = ''
+                    let badgeFg = ''
+                    
+                    if (editTable === 'topics') {
+                      typeLabel = 'Tópico'
+                      desc = `Afecta únicamente al tópico seleccionado: "${res?.meta?.topic_title || 'este tópico'}"`
+                      badgeBg = 'rgba(129,140,248,0.15)'
+                      badgeFg = '#818cf8'
+                    } else if (editTable === 'student_types') {
+                      typeLabel = 'Segmento de Edad'
+                      desc = `Afecta a todos los alumnos del segmento de edad: "${band.toUpperCase()}"`
+                      badgeBg = 'rgba(251,191,36,0.15)'
+                      badgeFg = '#fbbf24'
+                    } else if (editTable === 'levels') {
+                      typeLabel = 'Nivel de Idioma'
+                      desc = `Afecta a todas las clases del nivel de idioma: "${level}"`
+                      badgeBg = 'rgba(125,211,252,0.15)'
+                      badgeFg = '#7dd3fc'
+                    } else if (editTable === 'app_config') {
+                      typeLabel = 'Configuración Global'
+                      desc = 'Afecta de forma cruzada a toda la aplicación independientemente de la edad o el nivel'
+                      badgeBg = 'rgba(248,113,113,0.15)'
+                      badgeFg = '#f87171'
+                    }
+                    
+                    if (!typeLabel) return null
+                    
+                    return (
+                      <div style={{ background: C.soft, borderLeft: `3px solid ${badgeFg}`, padding: '8px 10px', borderRadius: '4px 8px 8px 4px', marginBottom: 12, fontSize: 11.5 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                          <span style={{ fontSize: 9.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: badgeFg, background: badgeBg, padding: '1px 5px', borderRadius: 4 }}>
+                            Acoplamiento: {typeLabel}
+                          </span>
+                        </div>
+                        <div style={{ color: C.dim, lineHeight: 1.4 }}>{desc}</div>
+                      </div>
+                    )
+                  })()}
                   
                   <textarea 
                     value={editVal} 
