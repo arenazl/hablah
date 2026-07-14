@@ -40,8 +40,8 @@ from typing import Optional
 _LANG = {"en": "English", "pt": "Portuguese", "it": "Italian", "es": "Spanish", "fr": "French", "de": "German"}
 _LANG_ES = {"es": "español", "en": "inglés", "pt": "portugués", "it": "italiano"}
 
-_SEGMENT_LABEL = {"mini": "Mini (4-7 años)", "junior": "Junior (8-12 años)",
-                  "tween": "Tween (13-17 años)", "adult": "Adulto"}
+_SEGMENT_LABEL = {"mini": "Mini (4-7 years old)", "junior": "Junior (8-12 years old)",
+                  "tween": "Tween (13-17 years old)", "adult": "Adult"}
 
 
 # ── F2-03 · Rotación de semilla por sesión (variedad POR CONSTRUCCIÓN) ─────────────────────
@@ -181,14 +181,14 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
     form = _req(std.get("form_rules"), "student_types.form_rules", ctx)
     return (
         f"<behavioral_guards>\n"
-        f"  Language_Rule (nivel): {lang.strip()}\n"
-        f"  Level_Target (nivel): {grammar.strip()}\n"
+        f"  Language_Rule (level): {lang.strip()}\n"
+        f"  Level_Target (level): {grammar.strip()}\n"
         f"  <critical_objective>\n"
         f"    HIGHEST PRIORITY — this is exactly what the student must produce this class; "
         f"follow it above every other block:\n"
-        f"    Expected_Production (nivel): {prod.strip()}\n"
+        f"    Expected_Production (level): {prod.strip()}\n"
         f"  </critical_objective>\n"
-        f"  Form_Rules (segmento): {form.strip()}\n"
+        f"  Form_Rules (segment): {form.strip()}\n"
         f"</behavioral_guards>"
     )
 
@@ -338,8 +338,8 @@ def _get_session_rails(std: dict, app_config: Optional[dict]) -> str:
         return ""
     lines = "\n".join(f"  {b}" for b in beats)
     return (f"<session_rails>\n{lines}\n"
-            f"  Regla: un beat no se abandona hasta que el alumno PRODUJO; avanzá siempre, "
-            f"no rebobines ni repitas un beat ya cumplido.\n</session_rails>")
+            f"  Rule: do not abandon a beat until the student has PRODUCED; always move forward, "
+            f"do not rewind or repeat a completed beat.\n</session_rails>")
 
 
 def _interp(s: str, name: str, topic_title: str, first_word: str) -> str:
@@ -354,26 +354,26 @@ def _get_start_trigger(topic, topic_content: Optional[dict], name: str, first_wo
     narrative_setting = getattr(topic, "narrative_setting", None) or ""
     narrative_conflict = getattr(topic, "narrative_conflict", None) or ""
     
-    topic_title = getattr(topic, "title", None) or "el tema de hoy"
+    topic_title = getattr(topic, "title", None) or "today's topic"
     
     # Si alguno está vacío, aplicar el default seguro según el grupo de edad (CÓMO)
     if not narrative_role or not narrative_setting or not narrative_conflict:
         if age_group == "mini":
-            narrative_role = "amigos explorando el mundo de las palabras"
-            narrative_setting = f"un lugar mágico relacionado con {topic_title}"
-            narrative_conflict = f"jugar a descubrir cosas nuevas sobre {topic_title}"
+            narrative_role = "friends exploring the world of words"
+            narrative_setting = f"a magical place related to {topic_title}"
+            narrative_conflict = f"playing to discover new things about {topic_title}"
         elif age_group == "junior":
-            narrative_role = "dos héroes exploradores en una misión secreta"
-            narrative_setting = f"una expedición emocionante sobre {topic_title}"
-            narrative_conflict = f"completar desafíos y resolver misterios del tema {topic_title}"
+            narrative_role = "two hero explorers on a secret mission"
+            narrative_setting = f"an exciting expedition about {topic_title}"
+            narrative_conflict = f"completing challenges and solving mysteries about {topic_title}"
         elif age_group == "teen":
-            narrative_role = "dos amigos conversando en tono relajado de igual a igual"
-            narrative_setting = f"un espacio de debate de ideas sobre {topic_title}"
-            narrative_conflict = f"resolver un challenge interesante y compartir perspectivas de {topic_title}"
+            narrative_role = "two friends talking in a relaxed, peer-to-peer tone"
+            narrative_setting = f"a space for debating ideas about {topic_title}"
+            narrative_conflict = f"solving an interesting challenge and sharing perspectives about {topic_title}"
         else: # adult
-            narrative_role = "dos profesionales o adultos conversando relajadamente"
-            narrative_setting = f"una videollamada interactiva de práctica de inglés sobre {topic_title}"
-            narrative_conflict = f"compartir opiniones, experiencias y debatir sobre {topic_title}"
+            narrative_role = "two professionals or adults conversing casually"
+            narrative_setting = f"an interactive video call to practice English about {topic_title}"
+            narrative_conflict = f"sharing opinions, experiences, and debating about {topic_title}"
 
     # Interpolar placeholders en las semillas narrativas
     narrative_role = _interp(narrative_role, name, topic_title, first_word)
@@ -383,15 +383,15 @@ def _get_start_trigger(topic, topic_content: Optional[dict], name: str, first_wo
     # Construir el start_execution_command integrando el opening_seed dinámico del catálogo
     base_opening = (opening_seed or "").strip()
     if not base_opening:
-        base_opening = f"Saludá a {name} con mucha energía. Presentá el tema {topic_title} e introducí la palabra {first_word}."
+        base_opening = f"Greet {name} with high energy. Introduce today's topic ({topic_title}) and introduce the first keyword ({first_word})."
 
     command_text = (
         f"{base_opening}\n\n"
         f"  <narrative_anchors>\n"
-        f"    Regla: Para crear la historia, NO uses elementos genéricos a menos que se indique aquí. Usa EXCLUSIVAMENTE esta configuración narrativa para situar la escena:\n"
-        f"    - Rol: {narrative_role}\n"
-        f"    - Escenario: {narrative_setting}\n"
-        f"    - Misión/Conflicto: {narrative_conflict}\n"
+        f"    Rule: To create the story, DO NOT use generic elements unless indicated here. Use EXCLUSIVELY this narrative configuration to set the scene:\n"
+        f"    - Role: {narrative_role}\n"
+        f"    - Setting: {narrative_setting}\n"
+        f"    - Mission/Conflict: {narrative_conflict}\n"
         f"  </narrative_anchors>"
     )
 
@@ -461,8 +461,8 @@ def _get_interaction_state(interaction_state: Optional[dict]) -> str:
         return ""
     return (
         f"<interaction_state>\n" + "\n".join(lines) + "\n"
-        f"  Reglas: Attempts_On_Target >= 3 -> simplificá y dejá el ítem para después. "
-        f"Signal=struggling -> más andamiaje. Signal=flowing -> próximo ítem.\n"
+        f"  Rules: Attempts_On_Target >= 3 -> simplify and leave the item for later. "
+        f"Signal=struggling -> more scaffolding. Signal=flowing -> next item.\n"
         f"</interaction_state>"
     )
 
@@ -473,15 +473,15 @@ def _get_output_rules(app_config: Optional[dict]) -> str:
         return ""
     lines = []
     if app_config.get("voice_emojis_screen_only") == "true":
-        lines.append("  Voice_Output: el texto al TTS va limpio; emojis y onomatopeyas SOLO a pantalla.")
+        lines.append("  Voice_Output: the text to the TTS must be clean; emojis and onomatopoeias to the screen only.")
     if app_config.get("asr_low_confidence_retry") == "true":
-        lines.append("  ASR_Tolerance: ante baja confianza del reconocimiento, pedí repetir; no lo cuentes como error.")
+        lines.append("  ASR_Tolerance: in case of low speech recognition confidence, ask to repeat; do not count it as an error.")
     if app_config.get("kid_safety_guard") == "true":
-        lines.append("  Kid_Safety: nunca pidas datos personales ni propongas secretos/encuentros; redirigí fuera de la lección.")
+        lines.append("  Kid_Safety: never ask for personal data or propose secrets/meetings; redirect out of the lesson.")
     if app_config.get("adult_stay_on_frame") == "true":
-        lines.append("  Stay_On_Frame: si deriva fuera del marco de la clase, redirigí con suavidad.")
+        lines.append("  Stay_On_Frame: if the conversation drifts out of the lesson framework, redirect gently.")
     if app_config.get("closing_no_new_content") == "true":  # Sector 3 (biblia): closing trigger universal
-        lines.append("  Closing_Trigger: si la fase actual es la de cierre, ejecutá el cierre; NO abras contenido nuevo.")
+        lines.append("  Closing_Trigger: if the current phase is closing, execute the closure; DO NOT open new content.")
     return ("<output_rules>\n" + "\n".join(lines) + "\n</output_rules>") if lines else ""
 
 
@@ -549,7 +549,7 @@ def compose_proto_prompt(
     identity = std.get("tutor_identity") or ""
     tonal = std.get("tutor_tonal_rules") or ""
     pedagogy = std.get("pedagogy") or ""
-    universal_closing = cfg.get("universal_closing_rule") or "La clase la cierra el adulto con el botón: NUNCA te despidas."
+    universal_closing = cfg.get("universal_closing_rule") or "The session is closed by the user with the button: NEVER say goodbye."
 
     def interpolate(s: str) -> str:
         if not s:
