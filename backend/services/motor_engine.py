@@ -258,7 +258,7 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
     + learner_state(historia). F2-02/F2-03: muestra el bloque HISTORIA (si el alumno de prueba tiene
     estado) y refleja la selección POR SEMILLA del día (frase-ancla + variante de arranque rotadas)."""
     import datetime as _dt
-    from services.composer_proto import _session_seed, _derive, _pick, _rotate, _opening_variants
+    from services.composer_proto import _session_seed, _derive, _pick, _rotate, _opening_variants, _get_universal_rules
     db = _connect()
     try:
         std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))
