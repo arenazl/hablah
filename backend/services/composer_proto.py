@@ -193,56 +193,30 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
     )
 
 
-def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = "?", level_code: str = "?") -> str:
-    """Capa UNIVERSAL anti-robot (F1-01) con acoplamiento por edad y nivel (Bloque A vs Bloque B).
-    
-    Aplica las reglas universales filtradas y reenumeradas.
+def _get_conversation_rules(std: dict, lv: dict) -> str:
+    """Combina las reglas dinámicas de Vínculo (student_types) y Andamiaje (levels)
+    en el contenedor <conversation_rules>.
     """
-    raw_rules = _req(app_config.get("universal_conversation_rules"), "app_config.universal_conversation_rules", ctx)
+    rules = []
     
-    parsed_rules = {}
-    current_num = None
-    current_text = []
+    # 1. Reglas de Vínculo/Tono (Edad)
+    tonal = std.get("tutor_tonal_rules") or ""
+    form = std.get("form_rules") or ""
     
-    for line in raw_rules.split("\n"):
-        line_stripped = line.strip()
-        if not line_stripped:
-            continue
-        import re
-        m = re.match(r"^(\d+)\.\s*(.*)$", line_stripped)
-        if m:
-            if current_num is not None:
-                parsed_rules[current_num] = "\n".join(current_text).strip()
-            current_num = int(m.group(1))
-            current_text = [m.group(2)]
-        else:
-            if current_num is not None:
-                current_text.append(line_stripped)
-                
-    if current_num is not None:
-        parsed_rules[current_num] = "\n".join(current_text).strip()
-
-    age_slug = str(age_group).lower()
-    level_slug = str(level_code).lower()
+    # 2. Reglas de Andamiaje/Exigencia (Nivel)
+    expected = lv.get("expected_production") or ""
     
-    # Bloque A (Mini o Nivel A0/A1) vs Bloque B (Teens/Adultos/Niveles B1+)
-    if age_slug == "mini" or level_slug in ["a0", "a1"]:
-        target_ids = [1, 2, 3, 12, 16]
-    else:
-        target_ids = [1, 4, 13, 15, 16]
+    if tonal:
+        rules.append(tonal.strip())
+    if form:
+        rules.append(form.strip())
+    if expected:
+        rules.append(expected.strip())
         
-    rules_list = []
-    for idx, rule_id in enumerate(target_ids, 1):
-        body = parsed_rules.get(rule_id)
-        if body:
-            first_line, *rest = body.split("\n")
-            lines_str = "\n".join([f"  {idx}. {first_line}"] + [f"     {r}" for r in rest])
-            rules_list.append(lines_str)
-            
-    rules = "\n".join(rules_list)
+    rules_str = "\n\n".join(rules)
     return (
         f"<conversation_rules>\n"
-        f"{rules}\n"
+        f"{rules_str}\n"
         f"</conversation_rules>"
     )
 
@@ -595,7 +569,7 @@ def compose_proto_prompt(
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
         _get_narrative_style(std, app_config, session_seed),  # opcional: TIPO de narrativa (rota por semilla, gateado por edad)
         _get_session_rails(std, app_config),                  # opcional: RIELES (arco de beats por edad; avance, no loop)
-        _get_universal_rules(app_config, ctx, slug, cefr),       # F1-01: SIEMPRE, cerca del final (recency)
+        _get_conversation_rules(std, lv),       # F1-01: SIEMPRE, cerca del final (recency)
         _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), slug, ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
         _get_interaction_state(interaction_state),  # opcional (estado vivo)

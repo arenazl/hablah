@@ -74,7 +74,8 @@ class TestComposerProto(unittest.TestCase):
         self.assertIn("Lucas", prompt)  # Interpolated {name}
         self.assertIn("La Escuela", prompt)  # Interpolated {topic}
         self.assertIn("Finaliza SIEMPRE con una pregunta cerrada.", prompt) # Interpolated {expected_production}
-        self.assertIn("1. Keep the lesson structure invisible.", prompt) # Universal rules present
+        self.assertIn("Invisible Lesson: Todo es una misión o juego.", prompt) # Decoupled rules present
+        self.assertIn("Confidence First: Corregí exclusivamente mediante Recasting.", prompt)
         
         # Verify placeholders were removed
         self.assertNotIn("{name}", prompt)

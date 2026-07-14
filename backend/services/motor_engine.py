@@ -258,7 +258,7 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
     + learner_state(historia). F2-02/F2-03: muestra el bloque HISTORIA (si el alumno de prueba tiene
     estado) y refleja la selección POR SEMILLA del día (frase-ancla + variante de arranque rotadas)."""
     import datetime as _dt
-    from services.composer_proto import _session_seed, _derive, _pick, _rotate, _opening_variants, _get_universal_rules
+    from services.composer_proto import _session_seed, _derive, _pick, _rotate, _opening_variants, _get_conversation_rules
     db = _connect()
     try:
         std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))
@@ -358,8 +358,8 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
                 e("Rieles de Sesión", "app_config.session_rails", "EDAD", beats_str)
             ]),
             step("Reglas Universales", [
-                e("Conversation_Rules (JIT)", "app_config.universal_conversation_rules", "DINÁMICO", 
-                  _get_universal_rules(cfg, "preview", age_group, level_code))
+                 e("Conversation_Rules (JIT)", "student_types + levels", "DINÁMICO", 
+                  _get_conversation_rules(std, lv))
             ]),
             step("Arranque", [e("Opening_Seed", "student_types.opening_seed", "EDAD + NIVEL", opening_body)]),
             step("Turno", [
