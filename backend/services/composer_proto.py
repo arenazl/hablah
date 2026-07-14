@@ -226,7 +226,7 @@ def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = 
         parsed_rules[current_num] = "\n".join(current_text).strip()
 
     # Seleccionar las reglas según segmento
-    if age_group == "mini" or level_code in ["A0", "A1"]:
+    if str(age_group).lower() == "mini" or level_code in ["A0", "A1"]:
         # Bloque A: Niños o niveles iniciales (Reglas 1, 2, 3, 12, 16)
         target_ids = [1, 2, 3, 12, 16]
     else:
