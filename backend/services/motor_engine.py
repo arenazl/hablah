@@ -359,7 +359,7 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
             ]),
             step("Reglas Universales", [
                 e("Conversation_Rules (JIT)", "app_config.universal_conversation_rules", "DINÁMICO", 
-                  _get_universal_rules(cfg, "preview", age_group, level_code))
+                  _get_universal_rules(cfg, "preview"))
             ]),
             step("Arranque", [e("Opening_Seed", "student_types.opening_seed", "EDAD + NIVEL", opening_body)]),
             step("Turno", [
