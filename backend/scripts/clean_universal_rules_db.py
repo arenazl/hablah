@@ -4,6 +4,9 @@ import sys
 import json
 import dotenv
 
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 dotenv.load_dotenv(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env")))
 
@@ -18,20 +21,24 @@ async def main():
         catalog = json.load(f)
         
     rules_val = None
+    approaches_val = None
     for item in catalog:
         if item.get("config_key") == "universal_conversation_rules":
             rules_val = item.get("config_value")
-            break
+        elif item.get("config_key") == "lesson_approaches":
+            approaches_val = item.get("config_value")
             
-    if not rules_val:
-        print("[-] Error: universal_conversation_rules not found in catalog json!")
-        return
-        
     async with AsyncSessionLocal() as session:
-        await session.execute(
-            text("UPDATE app_config SET config_value = :val WHERE config_key = 'universal_conversation_rules'"),
-            {"val": rules_val}
-        )
+        if rules_val:
+            await session.execute(
+                text("UPDATE app_config SET config_value = :val WHERE config_key = 'universal_conversation_rules'"),
+                {"val": rules_val}
+            )
+        if approaches_val:
+            await session.execute(
+                text("UPDATE app_config SET config_value = :val WHERE config_key = 'lesson_approaches'"),
+                {"val": approaches_val}
+            )
         await session.commit()
         print("[+] DB updated successfully from catalog!")
 
