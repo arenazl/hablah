@@ -375,22 +375,40 @@ export function KidsSession() {
     if (!last || last.who !== 'ai') return
     const vocabMap = vocabMapRef.current
     if (vocabMap.size === 0) return
+
     // Texto normalizado (sin acentos) para matchear con las keys del vocabMap.
     const norm = normalizeVisualWord(last.text)
-    // Palabra objetivo = la que sigue a "se dice" (ej: "elefante se dice elephant" -> elephant).
-    const re = /se dice\s+([a-z'’-]+)/g
-    let m: RegExpExecArray | null
-    while ((m = re.exec(norm)) !== null) {
-      let canon = m[1].replace(/['’-]+$/, '')
+    
+    // Escaneo general de palabras en inglés del vocabulario presentes en la transcripción
+    const foundMatches: { canon: string; start: number }[] = []
+    const wordRegex = /[a-z'’-]+/g
+    let match: RegExpExecArray | null
+    while ((match = wordRegex.exec(norm)) !== null) {
+      let canon = match[0]
       if (!vocabMap.has(canon)) canon = singularizeEnglish(canon)
       if (!vocabMap.has(canon) && canon.length > 3 && canon.endsWith('s')) canon = canon.slice(0, -1)
-      if (!vocabMap.has(canon)) continue
-      if ((matchedInLineRef.current.get(canon) ?? 0) > 0) continue  // ya disparada este turno
-      matchedInLineRef.current.set(canon, 1)
-      // Delay dinámico: espera lo que falta de audio + el offset del slider (0 = sin corrección).
-      const backlog = getAudioBacklogMs ? getAudioBacklogMs() : 0
-      const delay = Math.max(0, backlog + syncOffsetRef.current)
-      showVisual(vocabMap.get(canon)!, delay)
+      
+      if (vocabMap.has(canon)) {
+        const item = vocabMap.get(canon)!
+        // Dispara SOLO si la palabra hablada matchea la palabra en inglés del vocabulario
+        if (normalizeVisualWord(item.word_en) === canon) {
+          foundMatches.push({ canon, start: match.index })
+        }
+      }
+    }
+
+    // Ordenar por aparición en la frase y espaciar los delays si hay múltiples palabras para evitar superposiciones
+    let incrementalDelay = 0
+    foundMatches.sort((a, b) => a.start - b.start)
+    for (const m of foundMatches) {
+      const occurrenceKey = `${m.canon}-${m.start}`
+      if (!matchedInLineRef.current.has(occurrenceKey)) {
+        matchedInLineRef.current.set(occurrenceKey, 1)
+        const backlog = getAudioBacklogMs ? getAudioBacklogMs() : 0
+        const delay = Math.max(0, backlog + syncOffsetRef.current + incrementalDelay)
+        showVisual(vocabMap.get(m.canon)!, delay)
+        incrementalDelay += 1500 // Espaciado de 1.5s entre palabras consecutivas en el mismo turno
+      }
     }
   }, [liveTranscript, getAudioBacklogMs, showVisual])
 
