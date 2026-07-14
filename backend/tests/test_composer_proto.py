@@ -9,8 +9,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from services.composer_proto import compose_proto_prompt, MotorDataMissing
 
 class TestComposerProto(unittest.TestCase):
-    def test_compose_proto_prompt_success(self):
-        # Mock User
+    def test_compose_proto_prompt_success_bloque_b(self):
+        # Mock User (Junior A2 -> Bloque B)
         user = SimpleNamespace(
             id=1,
             nombre="Lucas",
@@ -51,11 +51,17 @@ class TestComposerProto(unittest.TestCase):
             )
         }
         
-        # Mock App Config
+        # Mock App Config with all target rules to verify filtering & re-numbering
         app_config = {
             "universal_conversation_rules": (
                 "1. Keep the lesson structure invisible.\n"
-                "2. Never repeat your own phrasing."
+                "2. Never repeat your own phrasing.\n"
+                "3. Build each turn.\n"
+                "4. Make ONE conversational move.\n"
+                "12. Echo Protocol.\n"
+                "13. Make it PERSONAL.\n"
+                "15. Harvest, don't chase.\n"
+                "16. Correct native pronunciation."
             ),
             "universal_closing_rule": "La clase la cierra el adulto con el botón: NUNCA te despidas."
         }
@@ -81,10 +87,88 @@ class TestComposerProto(unittest.TestCase):
         self.assertNotIn("{name}", prompt)
         self.assertNotIn("{topic}", prompt)
 
+        # Verify JIT Bloque B filtering: target_ids = [1, 4, 13, 15, 16], re-indexed 1 to 5
+        self.assertIn("1. Keep the lesson structure invisible.", prompt)
+        self.assertIn("2. Make ONE conversational move.", prompt) # Originally 4
+        self.assertIn("3. Make it PERSONAL.", prompt) # Originally 13
+        self.assertIn("4. Harvest, don't chase.", prompt) # Originally 15
+        self.assertIn("5. Correct native pronunciation.", prompt) # Originally 16
+        # Rules 2, 3, 12 should NOT be in Bloque B output
+        self.assertNotIn("Never repeat your own phrasing.", prompt)
+        self.assertNotIn("Build each turn.", prompt)
+        self.assertNotIn("Echo Protocol.", prompt)
+
+    def test_compose_proto_prompt_bloque_a(self):
+        # Mock User (Mini A0 -> Bloque A)
+        user = SimpleNamespace(
+            id=2,
+            nombre="Timo",
+            age_group="mini",
+            cefr_level="A0"
+        )
+        topic = SimpleNamespace(
+            id=102,
+            title="Los Animales",
+            pinned_vocabulary=["dog", "cat"]
+        )
+        student_type_data = {
+            "slug": "mini",
+            "tutor_mascot": "Sparky",
+            "tutor_identity": "Coach lúdico.",
+            "tutor_tonal_rules": "Actitud entusiasta.",
+            "form_rules": "No baby talk.",
+            "pedagogy": "Juegos",
+            "session_focus": "Aventura",
+            "opening_seed": "Hola {name}!",
+            "continuation_seed": "Busca el {first_vocab}.",
+            "closing_seed": "Chao!"
+        }
+        level_data = {
+            "code": "A0",
+            "vocab_depth": "basic",
+            "language_rule": "100% español.",
+            "curriculum_grammar": "Sustantivos",
+            "expected_production": "Repetir la frase-puente."
+        }
+        app_config = {
+            "universal_conversation_rules": (
+                "1. Keep the lesson structure invisible.\n"
+                "2. Never repeat your own phrasing.\n"
+                "3. Build each turn.\n"
+                "4. Make ONE conversational move.\n"
+                "12. Echo Protocol.\n"
+                "13. Make it PERSONAL.\n"
+                "15. Harvest, don't chase.\n"
+                "16. Correct native pronunciation."
+            ),
+            "universal_closing_rule": "La clase la cierra el adulto con el botón."
+        }
+
+        # Act
+        prompt = compose_proto_prompt(
+            user=user,
+            topic=topic,
+            student_type_data=student_type_data,
+            level_data=level_data,
+            app_config=app_config
+        )
+
+        # Assert
+        self.assertIsInstance(prompt, str)
+        # Verify JIT Bloque A filtering: target_ids = [1, 2, 3, 12, 16], re-indexed 1 to 5
+        self.assertIn("1. Keep the lesson structure invisible.", prompt)
+        self.assertIn("2. Never repeat your own phrasing.", prompt) # Originally 2
+        self.assertIn("3. Build each turn.", prompt) # Originally 3
+        self.assertIn("4. Echo Protocol.", prompt) # Originally 12
+        self.assertIn("5. Correct native pronunciation.", prompt) # Originally 16
+        # Rules 4, 13, 15 should NOT be in Bloque A output
+        self.assertNotIn("Make ONE conversational move.", prompt)
+        self.assertNotIn("Make it PERSONAL.", prompt)
+        self.assertNotIn("Harvest, don't chase.", prompt)
+
     def test_compose_proto_prompt_missing_data(self):
         # Should raise MotorDataMissing if critical data is missing
         user = SimpleNamespace(id=1, nombre="Lucas", age_group="junior", cefr_level="A2")
-        # topic with no vocabulary
         topic = SimpleNamespace(id=101, title="La Escuela", pinned_vocabulary=[])
         
         with self.assertRaises(MotorDataMissing):
