@@ -262,6 +262,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             "target_language": user.target_language or "en",
             "silence_tolerance_ms": getattr(template, "silence_tolerance_ms", 800) if template else 800,
             "interruption_allowed": getattr(template, "interruption_allowed", False) if template else False,
+            "app_config": app_config,
         }
 
 
@@ -289,16 +290,47 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: st
         await ws.close(code=4004)
         return
 
+    is_kid = ctx_dict.get("is_kid", False)
     # Voz prebuilt elegida por el chico (Nivel 1 personajes). Whitelist defensiva:
     # voz desconocida -> None -> el engine cae a Kore (default).
     _VALID_VOICES = {"Puck", "Charon", "Kore", "Fenrir", "Aoede", "Leda", "Orus", "Zephyr"}
     safe_voice = voice_name if voice_name in _VALID_VOICES else None
 
+    # VAD settings from app_config dynamically
+    app_cfg = ctx_dict.get("app_config") or {}
+    
+    silence_key = "vad_silence_duration_ms_kid" if is_kid else "vad_silence_duration_ms_adult"
+    silence_val = app_cfg.get(silence_key)
+    db_silence = None
+    if silence_val is not None:
+        try:
+            db_silence = int(silence_val)
+        except ValueError:
+            pass
+
+    prefix_key = "vad_prefix_padding_ms_kid" if is_kid else "vad_prefix_padding_ms_adult"
+    prefix_val = app_cfg.get(prefix_key)
+    db_prefix = None
+    if prefix_val is not None:
+        try:
+            db_prefix = int(prefix_val)
+        except ValueError:
+            pass
+
+    start_key = "vad_start_sensitivity_kid" if is_kid else "vad_start_sensitivity_adult"
+    db_start_sens = app_cfg.get(start_key)
+
+    end_key = "vad_end_sensitivity_kid" if is_kid else "vad_end_sensitivity_adult"
+    db_end_sens = app_cfg.get(end_key)
+
+    activity_key = "vad_activity_handling"
+    db_activity = app_cfg.get(activity_key)
+
     ctx = VoiceEngineContext(
         session_id=ctx_dict["session_id"],
         user_id=ctx_dict["user_id"],
         user_name=ctx_dict.get("user_name"),
-        is_kid=ctx_dict.get("is_kid", False),
+        is_kid=is_kid,
         template_id=ctx_dict.get("template_id"),
         super_prompt=ctx_dict["super_prompt"],
         voice_id=ctx_dict["voice_id"],
@@ -307,9 +339,11 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: st
         target_language=ctx_dict["target_language"],
         silence_tolerance_ms=ctx_dict.get("silence_tolerance_ms", 800),
         interruption_allowed=ctx_dict.get("interruption_allowed", False),
-        # DEV (temporal): override del prefix padding desde el panel de calibración de kids
-        # (query param prefix_ms). Si no viene, el engine usa su default (700 kids / 200 adulto).
-        prefix_padding_override=(int(min(max(prefix_ms, 0), 1000)) if prefix_ms is not None else None),
+        prefix_padding_override=prefix_ms if prefix_ms is not None else db_prefix,
+        silence_ms_override=db_silence,
+        start_sensitivity_override=db_start_sens,
+        end_sensitivity_override=db_end_sens,
+        activity_handling_override=db_activity,
     )
 
     engine_name = os.environ.get("VOICE_ENGINE", "gemini_live")

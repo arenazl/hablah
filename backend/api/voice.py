@@ -93,8 +93,43 @@ async def voice_ws_room(
             user=host, template=template, topic=topic,
         )
 
+        # Load app_config inside voice_ws_room
+        from sqlalchemy import text as _sqltext
+        try:
+            app_cfg = {r[0]: r[1] for r in (await db.execute(_sqltext("SELECT config_key, config_value FROM app_config"))).all()}
+        except Exception:
+            app_cfg = {}
+
     is_kid_host = bool(getattr(host, "age_group", None)) or bool(getattr(host, "parent_user_id", None)) if host else False
     effective_lang = (lang if (lang and lang in ("en", "es", "pt", "it", "fr", "de")) else (host.target_language if host else "en"))
+
+    silence_key = "vad_silence_duration_ms_kid" if is_kid_host else "vad_silence_duration_ms_adult"
+    silence_val = app_cfg.get(silence_key)
+    db_silence = None
+    if silence_val is not None:
+        try:
+            db_silence = int(silence_val)
+        except ValueError:
+            pass
+
+    prefix_key = "vad_prefix_padding_ms_kid" if is_kid_host else "vad_prefix_padding_ms_adult"
+    prefix_val = app_cfg.get(prefix_key)
+    db_prefix = None
+    if prefix_val is not None:
+        try:
+            db_prefix = int(prefix_val)
+        except ValueError:
+            pass
+
+    start_key = "vad_start_sensitivity_kid" if is_kid_host else "vad_start_sensitivity_adult"
+    db_start_sens = app_cfg.get(start_key)
+
+    end_key = "vad_end_sensitivity_kid" if is_kid_host else "vad_end_sensitivity_adult"
+    db_end_sens = app_cfg.get(end_key)
+
+    activity_key = "vad_activity_handling"
+    db_activity = app_cfg.get(activity_key)
+
     ctx = VoiceEngineContext(
         session_id=vroom.session_id or 0,
         user_id=vroom.host_user_id,
@@ -107,6 +142,11 @@ async def voice_ws_room(
         target_language=effective_lang,
         silence_tolerance_ms=template.silence_tolerance_ms if template else 800,
         interruption_allowed=template.interruption_allowed if template else False,
+        prefix_padding_override=db_prefix,
+        silence_ms_override=db_silence,
+        start_sensitivity_override=db_start_sens,
+        end_sensitivity_override=db_end_sens,
+        activity_handling_override=db_activity,
     )
 
     room: Room = await get_or_create_room(room_token, ctx)
@@ -294,13 +334,54 @@ async def voice_ws_mini(
         log.warning("voice_ws_mini resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
         await websocket.close(code=1011)
         return
+
+    is_kid = age_group in ("mini", "junior")
+    async with AsyncSessionLocal() as db:
+        from sqlalchemy import text as _sqltext
+        try:
+            app_cfg = {r[0]: r[1] for r in (await db.execute(_sqltext("SELECT config_key, config_value FROM app_config"))).all()}
+        except Exception:
+            app_cfg = {}
+
+    silence_key = "vad_silence_duration_ms_kid" if is_kid else "vad_silence_duration_ms_adult"
+    silence_val = app_cfg.get(silence_key)
+    db_silence = None
+    if silence_val is not None:
+        try:
+            db_silence = int(silence_val)
+        except ValueError:
+            pass
+
+    prefix_key = "vad_prefix_padding_ms_kid" if is_kid else "vad_prefix_padding_ms_adult"
+    prefix_val = app_cfg.get(prefix_key)
+    db_prefix = None
+    if prefix_val is not None:
+        try:
+            db_prefix = int(prefix_val)
+        except ValueError:
+            pass
+
+    start_key = "vad_start_sensitivity_kid" if is_kid else "vad_start_sensitivity_adult"
+    db_start_sens = app_cfg.get(start_key)
+
+    end_key = "vad_end_sensitivity_kid" if is_kid else "vad_end_sensitivity_adult"
+    db_end_sens = app_cfg.get(end_key)
+
+    activity_key = "vad_activity_handling"
+    db_activity = app_cfg.get(activity_key)
+
     ctx = VoiceEngineContext(
         session_id=0, user_id=0, user_name="Alumno",
-        is_kid=age_group in ("mini", "junior"),
+        is_kid=is_kid,
         super_prompt=super_prompt, voice_id=None, voice_name=safe_voice,
         language="es", target_language="en",
         silence_tolerance_ms=1500, interruption_allowed=True,
         model_override=model or None,
+        prefix_padding_override=db_prefix,
+        silence_ms_override=db_silence,
+        start_sensitivity_override=db_start_sens,
+        end_sensitivity_override=db_end_sens,
+        activity_handling_override=db_activity,
     )
     engine_name = engine if engine in available_engines() else "gemini_live"
     log.info("voice_ws_mini: %s/%s topic=%s engine=%s voice=%s", age_group, level_code, topic_id, engine_name, safe_voice)
