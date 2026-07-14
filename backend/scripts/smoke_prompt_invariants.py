@@ -127,7 +127,7 @@ async def pick_topics() -> dict:
 
 def validate(prompt: str) -> dict:
     checks = {}
-    checks["universal_once"] = prompt.count("<universal_conversation_rules>") == 1
+    checks["universal_once"] = prompt.count("<conversation_rules>") == 1
     checks["critical_obj"] = "<critical_objective>" in prompt
     checks["no_placeholders"] = not any(p in prompt for p in PLACEHOLDERS)
     dupes = [ph for ph in SWEPT_PHRASES if ph in prompt]

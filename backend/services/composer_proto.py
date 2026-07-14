@@ -193,22 +193,37 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
     )
 
 
-def _get_universal_rules(app_config: Optional[dict], ctx: str) -> str:
-    """Capa UNIVERSAL anti-robot (F1-01) — el CÓMO se conversa, transversal a TODA clase.
-
-    Test de las 3 preguntas (ver cabecera del módulo): estas reglas NO cambian con la edad,
-    ni con el nivel, ni con la historia → viven en UNA sola capa (dato en app_config,
-    clave 'universal_conversation_rules') y el composer las apila SIEMPRE, cerca del final
-    del stack (recency bias). NO es opcional como output_rules: fail-fast si la clave falta
-    (una regla, una capa — el barrido de F1-01 saca las copias de seeds/form_rules)."""
+def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = "?", level_code: str = "?") -> str:
+    """Capa UNIVERSAL anti-robot (F1-01) refactorizada a Dynamic Conversation Rules.
+    
+    Filtra las reglas dinámicamente según la edad y nivel de la sesión para evitar Instruction Bloat.
+    Mantiene compatibilidad con la clave de base de datos 'universal_conversation_rules'.
+    """
     cfg = _req(app_config, "app_config (necesita universal_conversation_rules)", ctx)
-    rules = _req(cfg.get("universal_conversation_rules"),
-                 "app_config.universal_conversation_rules", ctx)
+    
+    # Bloque A: Niños o niveles iniciales (Mini o A0/A1)
+    if age_group == "mini" or level_code in ["A0", "A1"]:
+        rules = (
+            "  1. Invisible Lesson: Never announce objectives (\"Today we will learn...\"). The student experiences a natural, gamified conversation.\n"
+            "  2. The Echo Protocol: To make the student produce, plant the target word in the story context, and give a direct, simple command in Spanish (e.g., \"Decí conmigo: [word]\").\n"
+            "  3. Wait & Scaffold: After your command, WAIT in silence. If they stay silent, scaffold: repeat the key word slowly, stretched out, and wait again.\n"
+            "  4. Native Phonetics: When speaking Spanish, any English word MUST be pronounced with correct, native English phonetics (never spelled out with Spanish phonetics)."
+        )
+    # Bloque B: Adolescentes o Adultos en niveles intermedios/avanzados (B1+)
+    else:
+        rules = (
+            "  1. Invisible Lesson: Never announce objectives. The student only experiences a natural, mature conversation or debate.\n"
+            "  2. One Move Per Turn: Make ONE conversational move, then STOP. Never stack multiple questions or instructions.\n"
+            "  3. Harvest & Challenge: Build your turn strictly on what the student just said. React personally (your own opinions, surprise, humor), weave in the next target word, and throw the conversation back with a direct question or challenge.\n"
+            "  4. Native Phonetics & Recasting: Any English word used inside a Spanish sentence MUST have native pronunciation. Correct errors by recasting naturally, without stopping the flow to lecture."
+        )
+        
     return (
-        f"<universal_conversation_rules>\n"
-        f"{rules.strip()}\n"
-        f"</universal_conversation_rules>"
+        f"<conversation_rules>\n"
+        f"{rules}\n"
+        f"</conversation_rules>"
     )
+
 
 
 def _get_vocabulary(topic, topic_content: Optional[dict]) -> tuple[str, list[str], list[str]]:
@@ -558,7 +573,7 @@ def compose_proto_prompt(
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
         _get_narrative_style(std, app_config, session_seed),  # opcional: TIPO de narrativa (rota por semilla, gateado por edad)
         _get_session_rails(std, app_config),                  # opcional: RIELES (arco de beats por edad; avance, no loop)
-        _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
+        _get_universal_rules(app_config, ctx, slug, cefr),       # F1-01: SIEMPRE, cerca del final (recency)
         _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), slug, ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
         _get_interaction_state(interaction_state),  # opcional (estado vivo)
