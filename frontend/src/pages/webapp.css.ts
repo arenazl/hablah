@@ -71,6 +71,12 @@ export const WEBAPP_CSS = `
   -webkit-font-smoothing: antialiased;
   font-feature-settings: 'cv11','ss01','tnum';
   min-height: 100vh;
+  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 .webapp-root * { box-sizing: border-box; }
 .webapp-root button { font-family: inherit; cursor: pointer; }
@@ -108,7 +114,7 @@ export const WEBAPP_CSS = `
   text-transform: uppercase; color: var(--fg-3);
 }
 
-.webapp-root .shell { display: flex; min-height: calc(100vh - 64px); }
+.webapp-root .shell { display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
 .webapp-root .sidebar {
   width: var(--sidebar-w);
@@ -156,7 +162,7 @@ export const WEBAPP_CSS = `
 .webapp-root .user-card .name { color: white; font-size: 13px; font-weight: 600; }
 .webapp-root .user-card .meta { color: rgba(232,236,234,.55); font-size: 11px; }
 
-.webapp-root .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.webapp-root .main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
 .webapp-root .topbar {
   background: rgba(252,253,252,.78);
   backdrop-filter: blur(20px) saturate(180%);
@@ -696,6 +702,8 @@ export const WEBAPP_CSS = `
     transform: translateX(-100%);
     transition: transform .22s cubic-bezier(.2,.8,.2,1);
     box-shadow: 0 0 40px rgba(0,0,0,.3);
+    padding-top: env(safe-area-inset-top, 24px);
+    padding-bottom: env(safe-area-inset-bottom, 24px);
   }
   .webapp-root .sidebar.mobile-open { transform: translateX(0); }
   .webapp-root .drawer-backdrop {
@@ -704,7 +712,8 @@ export const WEBAPP_CSS = `
     animation: drawerFade .18s ease-out;
   }
   @keyframes drawerFade { from { opacity: 0 } to { opacity: 1 } }
-  .webapp-root .shell { display: block; min-height: 100vh; }
+  .webapp-root .shell { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+  .webapp-root .topbar { padding-top: env(safe-area-inset-top, 24px); }
   .webapp-root .topbar-inner { padding: 0 16px; gap: 10px; }
   .webapp-root .topbar h1 { font-size: 16px; }
   .webapp-root .topbar .search { max-width: none; }

@@ -23,8 +23,8 @@ import MotorPlaygroundPanel from './MotorPlaygroundPanel'
 import MotorAbmPanel from './MotorAbmPanel'
 import TrainingPanel from './TrainingPanel'
 import AdminFlowPanel from './AdminFlowPanel'
-import AdminPostClasePanel from './AdminPostClasePanel'
 import AdminMemoriaPanel from './AdminMemoriaPanel'
+import AdminVozPanel from './AdminVozPanel'
 
 function ensureFont() {
   if (document.getElementById('hablah-google-fonts')) return
@@ -64,6 +64,7 @@ export function Backoffice() {
             <Route path="/abms" element={<AdminAbmsPanel />} />
             <Route path="/usuarios" element={<AdminUsersPanel />} />
             <Route path="/motor" element={<MotorPlaygroundPanel />} />
+            <Route path="/voz" element={<AdminVozPanel />} />
           </Routes>
         </main>
       </div>
@@ -109,6 +110,7 @@ function BoSidebar({ open }: { open: boolean }) {
         <SidebarItem to="/admin/abms" label="Edades y Niveles" />
         <SidebarItem to="/admin/templates" label="Personalidades" />
         <SidebarItem to="/admin/topicos" label="Tópicos" />
+        <SidebarItem to="/admin/voz" label="Voz" />
       </nav>
       <div className="sidebar-section">Operación</div>
       <nav className="sidebar-nav">
