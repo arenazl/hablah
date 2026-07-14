@@ -476,7 +476,7 @@ export default function MotorPlaygroundPanel() {
                   if (!prompt) return '(vacío)'
                   const regex = /(<\/?[a-zA-Z0-9_]+>|[a-zA-Z0-9_-]+:)/g
                   const parts = prompt.split(regex)
-                  return parts.map((part, idx) => {
+                  return parts.map((part: string, idx: number) => {
                     if (part.startsWith('<') && part.endsWith('>')) {
                       return <span key={idx} style={{ color: '#38bdf8', fontWeight: 700 }}>{part}</span>
                     }
