@@ -449,7 +449,23 @@ export default function MotorPlaygroundPanel() {
               <button onClick={() => setShowXml((v) => !v)} style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.accent, borderRadius: 7, fontSize: 11, padding: '3px 9px', cursor: 'pointer' }}>{showXml ? 'ver capas' : 'ver XML final'}</button>
             </div>
             {showXml ? (
-              <pre style={{ margin: 0, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11, lineHeight: 1.55, color: C.dim, maxHeight: '74vh', overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>{res?.prompt || '(vacío)'}</pre>
+              <pre style={{ margin: 0, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 11, lineHeight: 1.55, color: C.dim, maxHeight: '74vh', overflowY: 'auto', fontFamily: 'ui-monospace, monospace' }}>
+                {(() => {
+                  const prompt = res?.prompt || ''
+                  if (!prompt) return '(vacío)'
+                  const regex = /(<\/?[a-zA-Z0-9_]+>|[a-zA-Z0-9_-]+:)/g
+                  const parts = prompt.split(regex)
+                  return parts.map((part, idx) => {
+                    if (part.startsWith('<') && part.endsWith('>')) {
+                      return <span key={idx} style={{ color: '#38bdf8', fontWeight: 700 }}>{part}</span>
+                    }
+                    if (part.endsWith(':') && part.length > 2 && !part.startsWith('http') && !part.startsWith('file')) {
+                      return <span key={idx} style={{ color: '#fbbf24', fontWeight: 600 }}>{part}</span>
+                    }
+                    return part
+                  })
+                })()}
+              </pre>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {steps.map((st: any, i: number) => {
