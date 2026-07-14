@@ -276,7 +276,7 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
         if not words and tp:
             words = _json_list(tp.get("keywords"))[:6]
         phrases = _json_list(tp.get("generated_vocab")) if tp else []
-        # F2-03: generar la misma selección por semilla
+        # F2-03: generar la misma selección por semilla (test deploy back)
         if (lv.get("vocab_depth") == "basic") and phrases:
             phrases = [_pick(phrases, seed_phrase)]
         elif phrases:
