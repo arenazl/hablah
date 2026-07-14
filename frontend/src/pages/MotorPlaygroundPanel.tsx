@@ -87,6 +87,7 @@ export default function MotorPlaygroundPanel() {
   const [editLabel, setEditLabel] = useState<string>('')
   const [editVal, setEditVal] = useState('')
   const [saving, setSaving] = useState(false)
+  const [editIsArray, setEditIsArray] = useState(false)
 
   // loop de aprendizaje
   const [presets, setPresets] = useState<MotorPreset[]>([])
@@ -252,7 +253,7 @@ export default function MotorPlaygroundPanel() {
   // JIT Editor: arrancar edición de una celda
   const startEditField = (table: string, field: string) => {
     let pk: any = null
-    let val = ''
+    let val: any = ''
     let label = `${table}.${field}`
 
     if (table === 'student_types') {
@@ -264,10 +265,18 @@ export default function MotorPlaygroundPanel() {
     } else if (table === 'topics') {
       pk = { id: topicId }
       val = topicsRows.find(r => r.id === topicId)?.[field] || ''
-      if (typeof val === 'object') val = JSON.stringify(val, null, 2)
     } else if (table === 'app_config') {
       pk = { key: field }
       val = appConfigRows.find(r => r.key === field)?.value || ''
+    }
+
+    // Si el valor original es un array de Strings o números, lo mostramos uno por línea para facilidad de edición
+    const isArr = Array.isArray(val)
+    setEditIsArray(isArr)
+    if (isArr) {
+      val = val.map((item: any) => typeof item === 'object' ? JSON.stringify(item) : String(item)).join('\n')
+    } else if (typeof val === 'object' && val !== null) {
+      val = JSON.stringify(val, null, 2)
     }
 
     setEditTable(table)
@@ -328,8 +337,20 @@ export default function MotorPlaygroundPanel() {
     setSaving(true)
     try {
       let finalVal: any = editVal
-      if (editTable === 'topics' && editField === 'keywords') {
-        try { finalVal = JSON.parse(editVal) } catch { finalVal = editVal.split(',').map(s => s.trim()).filter(Boolean) }
+      if (editIsArray) {
+        // Si el valor era originalmente un Array, convertimos cada línea en un elemento del Array
+        finalVal = editVal.split('\n').map(s => s.trim()).filter(Boolean)
+        finalVal = finalVal.map((item: string) => {
+          if (item.startsWith('{') || item.startsWith('[')) {
+            try { return JSON.parse(item) } catch { return item }
+          }
+          return item
+        })
+      } else {
+        // Fallbacks heredados
+        if (editTable === 'topics' && editField === 'keywords') {
+          try { finalVal = JSON.parse(editVal) } catch { finalVal = editVal.split(',').map(s => s.trim()).filter(Boolean) }
+        }
       }
       
       // Si editamos app_config, el campo destino es 'value'

@@ -265,6 +265,8 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
         lv = db.q1("SELECT * FROM levels WHERE code=%s", (level_code,))
         if not std or not lv:
             raise ValueError(f"falta preset: age_group={age_group} / level={level_code}")
+        cfg_rows = db.q("SELECT config_key, config_value FROM app_config")
+        cfg = {r["config_key"]: r["config_value"] for r in cfg_rows}
         tp = db.q1("SELECT * FROM topics WHERE id=%s", (topic_id,)) if topic_id else None
         hist = _load_lite_state_sync(db, student_id) if student_id else None
         session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat())
@@ -274,11 +276,30 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
         if not words and tp:
             words = _json_list(tp.get("keywords"))[:6]
         phrases = _json_list(tp.get("generated_vocab")) if tp else []
-        # F2-03: reflejar en el visor la MISMA selección por semilla que arma la clase.
+        # F2-03: generar la misma selección por semilla
         if (lv.get("vocab_depth") == "basic") and phrases:
             phrases = [_pick(phrases, seed_phrase)]
         elif phrases:
             phrases = _rotate(phrases, seed_phrase)
+
+        # Rieles de sesión (session_rails)
+        rails_raw = cfg.get("session_rails")
+        try:
+            rails_dict = json.loads(rails_raw) if isinstance(rails_raw, str) else rails_raw
+        except Exception:
+            rails_dict = {}
+        beats = rails_dict.get(age_group.lower()) or rails_dict.get("default") or []
+        beats_str = "\n".join(beats) if beats else None
+
+        # Estilo de narrativa (lesson_approaches)
+        style_raw = cfg.get("lesson_approaches")
+        try:
+            styles_list = json.loads(style_raw) if isinstance(style_raw, str) else style_raw
+        except Exception:
+            styles_list = []
+        apt_styles = [s for s in styles_list if not s.get("bands") or age_group.lower() in [str(b).lower() for b in s["bands"]]]
+        pick_style = _pick(apt_styles, _derive(session_seed, "narrative")) if apt_styles else None
+        style_str = f"Style: {pick_style.get('key')}\nDirective: {pick_style.get('directive')}" if pick_style else None
 
         # Arranque: si opening_seed trae varias variantes (JSON array), mostrar la ELEGIDA por semilla.
         variants = _opening_variants(std.get("opening_seed"))
@@ -306,8 +327,10 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
             ]
 
         steps = [s for s in [
-            step("Contexto", [e("Idioma / dispositivo", "runtime", "estático",
-                                "Target: English · Native: Spanish · Voz (mobile)")]),
+            step("Contexto", [
+                e("Idioma / dispositivo", "runtime", "estático", "Target: English · Native: Spanish · Voz (mobile)"),
+                e("Student_Profile", "runtime", "estático", f"Name: Alumno · Age_Group: {age_group} · Level: {level_code}")
+            ]),
             step("El profe", [
                 e("Mascota", "student_types.tutor_mascot", "EDAD", std.get("tutor_mascot")),
                 e("Identidad", "student_types.tutor_identity", "EDAD", std.get("tutor_identity")),
@@ -322,10 +345,20 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
                 e("Expected_Production", "levels.expected_production", "NIVEL", lv.get("expected_production")),
                 e("Form_Rules", "student_types.form_rules", "EDAD", std.get("form_rules")),
             ]),
+            step("Reglas de Salida", [
+                e("Voice_Output_Rule", "app_config.voice_output_rule", "GLOBAL", cfg.get("voice_output_rule"))
+            ]),
             step("Tema (vocab)", [
                 e("Words", "topics.keywords", "TÓPICO", ", ".join(words) if words else None),
                 e("Target_Phrases (rota por semilla)", "topics.generated_vocab", "TÓPICO",
                   ", ".join(phrases) if phrases else None),
+            ]),
+            step("Narrativa", [
+                e("Estilo de Narrativa", "app_config.lesson_approaches", "EDAD + SEMILLA", style_str),
+                e("Rieles de Sesión", "app_config.session_rails", "EDAD", beats_str)
+            ]),
+            step("Reglas Universales", [
+                e("Universal_Conversation_Rules", "app_config.universal_conversation_rules", "GLOBAL", cfg.get("universal_conversation_rules"))
             ]),
             step("Arranque", [e("Opening_Seed", "student_types.opening_seed", "EDAD + NIVEL", opening_body)]),
             step("Turno", [
