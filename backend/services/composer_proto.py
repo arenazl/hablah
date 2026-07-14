@@ -225,13 +225,20 @@ def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = 
     if current_num is not None:
         parsed_rules[current_num] = "\n".join(current_text).strip()
 
-    # Seleccionar las reglas según segmento
-    if str(age_group).lower() == "mini" or level_code in ["A0", "A1"]:
-        # Bloque A: Niños o niveles iniciales (Reglas 1, 2, 3, 12, 16)
+    # Seleccionar las reglas estrictamente según el grupo de edad (CÓMO - Vínculo)
+    age_slug = str(age_group).lower()
+    if age_slug == "mini":
+        # Mini (5-7 años): Reglas de andamiaje y contención lúdica (Reglas 1, 2, 3, 12, 16)
         target_ids = [1, 2, 3, 12, 16]
+    elif age_slug == "junior":
+        # Junior (8-12 años): Reglas de misión, andamiaje intermedio e incentivación (Reglas 1, 2, 5, 11, 16)
+        target_ids = [1, 2, 5, 11, 16]
+    elif age_slug == "teen":
+        # Teen (13-17 años): Reglas de debate de onda, retos y tono informal de igual a igual (Reglas 1, 4, 7, 13, 16)
+        target_ids = [1, 4, 7, 13, 16]
     else:
-        # Bloque B: Adolescentes o Adultos en niveles intermedios/avanzados B1+ (Reglas 1, 4, 13, 15, 16)
-        target_ids = [1, 4, 13, 15, 16]
+        # Adulto: Reglas profesionales, exigencia de opinión estructurada y debates (Reglas 1, 4, 5, 7, 10, 13, 15, 16)
+        target_ids = [1, 4, 5, 7, 10, 13, 15, 16]
         
     rules_list = []
     for idx, rule_id in enumerate(target_ids, 1):
