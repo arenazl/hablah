@@ -538,6 +538,9 @@ export default function MotorPlaygroundPanel() {
                                       } else if (src.startsWith('levels.')) {
                                         coupling = `Acoplamiento: NIVEL ("${level}")`
                                         color = '#7dd3fc'
+                                      } else if (src === 'app_config.universal_conversation_rules') {
+                                        coupling = 'Acoplamiento: EDAD / NIVEL (Filtro JIT)'
+                                        color = '#a855f7' // Purple / Dinámico
                                       } else if (src.startsWith('app_config.')) {
                                         coupling = 'Acoplamiento: GLOBAL (Toda la app)'
                                         color = '#f87171'
@@ -635,10 +638,17 @@ export default function MotorPlaygroundPanel() {
                       badgeBg = 'rgba(125,211,252,0.15)'
                       badgeFg = '#7dd3fc'
                     } else if (editTable === 'app_config') {
-                      typeLabel = 'Configuración Global'
-                      desc = 'Afecta de forma cruzada a toda la aplicación independientemente de la edad o el nivel'
-                      badgeBg = 'rgba(248,113,113,0.15)'
-                      badgeFg = '#f87171'
+                      if (editField === 'universal_conversation_rules') {
+                        typeLabel = 'EDAD / NIVEL (Filtro JIT)'
+                        desc = 'Se almacena globalmente pero se filtra y curte al vuelo dinámicamente según la edad y nivel del alumno.'
+                        badgeBg = 'rgba(168,85,247,0.15)'
+                        badgeFg = '#a855f7'
+                      } else {
+                        typeLabel = 'Configuración Global'
+                        desc = 'Afecta de forma cruzada a toda la aplicación independientemente de la edad o el nivel'
+                        badgeBg = 'rgba(248,113,113,0.15)'
+                        badgeFg = '#f87171'
+                      }
                     }
                     
                     if (!typeLabel) return null
