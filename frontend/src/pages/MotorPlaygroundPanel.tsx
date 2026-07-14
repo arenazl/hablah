@@ -541,6 +541,9 @@ export default function MotorPlaygroundPanel() {
                                       } else if (src === 'app_config.universal_conversation_rules') {
                                         coupling = 'Acoplamiento: EDAD / NIVEL (Filtro JIT)'
                                         color = '#a855f7' // Purple / Dinámico
+                                      } else if (src === 'composer_proto._get_behavioral_guards') {
+                                        coupling = 'Bloque Estructurado (No editable)'
+                                        color = '#a855f7'
                                       } else if (src.startsWith('app_config.')) {
                                         coupling = 'Acoplamiento: GLOBAL (Toda la app)'
                                         color = '#f87171'
@@ -557,13 +560,15 @@ export default function MotorPlaygroundPanel() {
                                 <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.55, whiteSpace: 'pre-wrap', paddingRight: 16 }}>
                                   {renderBodyWithPlaceholders(ent.body)}
                                 </div>
-                                <button 
-                                  onClick={(e) => { e.stopPropagation(); handleEditEntry(ent.source) }}
-                                  title="Editar esta regla en el catálogo"
-                                  style={{ position: 'absolute', right: 8, bottom: 6, background: 'none', border: 0, color: C.accent, cursor: 'pointer', opacity: 0.8 }}
-                                >
-                                  <Ico d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" size={13} />
-                                </button>
+                                {ent.source && ent.source.split('.').length === 2 && (
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); handleEditEntry(ent.source) }}
+                                    title="Editar esta regla en el catálogo"
+                                    style={{ position: 'absolute', right: 8, bottom: 6, background: 'none', border: 0, color: C.accent, cursor: 'pointer', opacity: 0.8 }}
+                                  >
+                                    <Ico d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" size={13} />
+                                  </button>
+                                )}
                               </div>
                             ))}
                           </div>
