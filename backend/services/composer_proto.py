@@ -193,66 +193,15 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
     )
 
 
-def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = "?", level_code: str = "?") -> str:
-    """Capa UNIVERSAL anti-robot (F1-01) refactorizada a Dynamic Conversation Rules.
+def _get_universal_rules(app_config: Optional[dict], ctx: str) -> str:
+    """Capa UNIVERSAL anti-robot (F1-01).
     
-    Filtra las reglas dinámicamente desde la base de datos (universal_conversation_rules)
-    según la edad y nivel de la sesión para evitar Instruction Bloat.
+    Aplica las reglas universales (transversales a toda clase) extraídas de la base de datos.
     """
     raw_rules = _req(app_config.get("universal_conversation_rules"), "app_config.universal_conversation_rules", ctx)
-    
-    # Parsear y separar las reglas del string original de la base de datos
-    parsed_rules = {}
-    current_num = None
-    current_text = []
-    
-    for line in raw_rules.split("\n"):
-        line_stripped = line.strip()
-        if not line_stripped:
-            continue
-        # Buscar patrones como "1. ", "10. ", etc.
-        import re
-        m = re.match(r"^(\d+)\.\s*(.*)$", line_stripped)
-        if m:
-            if current_num is not None:
-                parsed_rules[current_num] = "\n".join(current_text).strip()
-            current_num = int(m.group(1))
-            current_text = [m.group(2)]
-        else:
-            if current_num is not None:
-                current_text.append(line_stripped)
-                
-    if current_num is not None:
-        parsed_rules[current_num] = "\n".join(current_text).strip()
-
-    # Seleccionar las reglas estrictamente según el grupo de edad (CÓMO - Vínculo)
-    age_slug = str(age_group).lower()
-    if age_slug == "mini":
-        # Mini (5-7 años): Reglas de andamiaje y contención lúdica (Reglas 1, 2, 3, 12, 16)
-        target_ids = [1, 2, 3, 12, 16]
-    elif age_slug == "junior":
-        # Junior (8-12 años): Reglas de misión, andamiaje intermedio e incentivación (Reglas 1, 2, 5, 11, 16)
-        target_ids = [1, 2, 5, 11, 16]
-    elif age_slug == "teen":
-        # Teen (13-17 años): Reglas de debate de onda, retos y tono informal de igual a igual (Reglas 1, 4, 7, 13, 16)
-        target_ids = [1, 4, 7, 13, 16]
-    else:
-        # Adulto: Reglas profesionales, exigencia de opinión estructurada y debates (Reglas 1, 4, 5, 7, 10, 13, 15, 16)
-        target_ids = [1, 4, 5, 7, 10, 13, 15, 16]
-        
-    rules_list = []
-    for idx, rule_id in enumerate(target_ids, 1):
-        body = parsed_rules.get(rule_id)
-        if body:
-            # Reenumerar dinámicamente las reglas filtradas para mantener la correlatividad en el prompt
-            first_line, *rest = body.split("\n")
-            lines_str = "\n".join([f"  {idx}. {first_line}"] + [f"     {r}" for r in rest])
-            rules_list.append(lines_str)
-            
-    rules = "\n".join(rules_list)
     return (
         f"<conversation_rules>\n"
-        f"{rules}\n"
+        f"{raw_rules.strip()}\n"
         f"</conversation_rules>"
     )
 
@@ -605,7 +554,7 @@ def compose_proto_prompt(
         _get_story_spine(topic, topic_content),     # opcional (narrativa curada)
         _get_narrative_style(std, app_config, session_seed),  # opcional: TIPO de narrativa (rota por semilla, gateado por edad)
         _get_session_rails(std, app_config),                  # opcional: RIELES (arco de beats por edad; avance, no loop)
-        _get_universal_rules(app_config, ctx, slug, cefr),       # F1-01: SIEMPRE, cerca del final (recency)
+        _get_universal_rules(app_config, ctx),       # F1-01: SIEMPRE, cerca del final (recency)
         _get_start_trigger(topic, topic_content, user_name, first_word, std.get("opening_seed"), slug, ctx, session_seed),
         _get_session_actions(std.get("continuation_seed"), std.get("closing_seed"), ctx),
         _get_interaction_state(interaction_state),  # opcional (estado vivo)
