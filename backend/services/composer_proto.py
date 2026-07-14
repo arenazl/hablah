@@ -196,28 +196,53 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
 def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = "?", level_code: str = "?") -> str:
     """Capa UNIVERSAL anti-robot (F1-01) refactorizada a Dynamic Conversation Rules.
     
-    Filtra las reglas dinámicamente según la edad y nivel de la sesión para evitar Instruction Bloat.
-    Mantiene compatibilidad con la clave de base de datos 'universal_conversation_rules'.
+    Filtra las reglas dinámicamente desde la base de datos (universal_conversation_rules)
+    según la edad y nivel de la sesión para evitar Instruction Bloat.
     """
-    cfg = _req(app_config, "app_config (necesita universal_conversation_rules)", ctx)
+    raw_rules = _req(app_config.get("universal_conversation_rules"), "app_config.universal_conversation_rules", ctx)
     
-    # Bloque A: Niños o niveles iniciales (Mini o A0/A1)
+    # Parsear y separar las reglas del string original de la base de datos
+    parsed_rules = {}
+    current_num = None
+    current_text = []
+    
+    for line in raw_rules.split("\n"):
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+        # Buscar patrones como "1. ", "10. ", etc.
+        import re
+        m = re.match(r"^(\d+)\.\s*(.*)$", line_stripped)
+        if m:
+            if current_num is not None:
+                parsed_rules[current_num] = "\n".join(current_text).strip()
+            current_num = int(m.group(1))
+            current_text = [m.group(2)]
+        else:
+            if current_num is not None:
+                current_text.append(line_stripped)
+                
+    if current_num is not None:
+        parsed_rules[current_num] = "\n".join(current_text).strip()
+
+    # Seleccionar las reglas según segmento
     if age_group == "mini" or level_code in ["A0", "A1"]:
-        rules = (
-            "  1. Invisible Lesson: Never announce objectives (\"Today we will learn...\"). The student experiences a natural, gamified conversation.\n"
-            "  2. The Echo Protocol: To make the student produce, plant the target word in the story context, and give a direct, simple command in Spanish (e.g., \"Decí conmigo: [word]\").\n"
-            "  3. Wait & Scaffold: After your command, WAIT in silence. If they stay silent, scaffold: repeat the key word slowly, stretched out, and wait again.\n"
-            "  4. Native Phonetics: When speaking Spanish, any English word MUST be pronounced with correct, native English phonetics (never spelled out with Spanish phonetics)."
-        )
-    # Bloque B: Adolescentes o Adultos en niveles intermedios/avanzados (B1+)
+        # Bloque A: Niños o niveles iniciales (Reglas 1, 2, 3, 12, 16)
+        target_ids = [1, 2, 3, 12, 16]
     else:
-        rules = (
-            "  1. Invisible Lesson: Never announce objectives. The student only experiences a natural, mature conversation or debate.\n"
-            "  2. One Move Per Turn: Make ONE conversational move, then STOP. Never stack multiple questions or instructions.\n"
-            "  3. Harvest & Challenge: Build your turn strictly on what the student just said. React personally (your own opinions, surprise, humor), weave in the next target word, and throw the conversation back with a direct question or challenge.\n"
-            "  4. Native Phonetics & Recasting: Any English word used inside a Spanish sentence MUST have native pronunciation. Correct errors by recasting naturally, without stopping the flow to lecture."
-        )
+        # Bloque B: Adolescentes o Adultos en niveles intermedios/avanzados B1+ (Reglas 1, 4, 13, 15, 16)
+        target_ids = [1, 4, 13, 15, 16]
         
+    rules_list = []
+    for idx, rule_id in enumerate(target_ids, 1):
+        body = parsed_rules.get(rule_id)
+        if body:
+            # Reenumerar dinámicamente las reglas filtradas para mantener la correlatividad en el prompt
+            first_line, *rest = body.split("\n")
+            lines_str = "\n".join([f"  {idx}. {first_line}"] + [f"     {r}" for r in rest])
+            rules_list.append(lines_str)
+            
+    rules = "\n".join(rules_list)
     return (
         f"<conversation_rules>\n"
         f"{rules}\n"
