@@ -221,7 +221,7 @@ export function KidsSession() {
     onMicLevel: (lvl) => { pendingMicRef.current = Math.max(pendingMicRef.current, lvl) },
     onError: (e) => {
       console.error('[kids-voice]', e)
-      alert('Hubo un problema con el micrófono. Asegurate de permitir el acceso.')
+      toast.error('Hubo un problema con el micrófono. Asegurate de permitir el acceso.')
     },
     onSessionEndingSoon: ({ message }) => {
       setRenewBanner({ kind: 'warn', msg: message })
@@ -440,7 +440,7 @@ export function KidsSession() {
       })
       if (!res.ok) {
         const err = await res.text()
-        alert(`No pudimos arrancar la sesión: ${err}`)
+        toast.error(`No pudimos arrancar la sesión: ${err}`)
         startedRef.current = false
         return
       }
@@ -449,7 +449,7 @@ export function KidsSession() {
       await live.start(data.session_id, kidsToken, getBuddyById(buddyId).voice)
     } catch (e) {
       console.error(e)
-      alert('Error de conexión. Probá de nuevo.')
+      toast.error('Error de conexión. Probá de nuevo.')
       startedRef.current = false
     }
   }
@@ -779,7 +779,7 @@ export function KidsSession() {
 
             {live.status === 'idle' && (
               <p className="kids-session-sub">
-                Cuando estés <b>listo</b>, tocá el botón amarillo. Habi te va a escuchar y te responde en voz alta.
+                Cuando estés <b>listo</b>, tocá el botón amarillo. <b>Hablá despacio y pausado</b> para que Habi te escuche súper bien.
               </p>
             )}
 
@@ -836,15 +836,21 @@ export function KidsSession() {
                cerrar la clase para el reporte/analisis. */}
             {/* Subtítulo en vivo: el turno ACTUAL grande, el anterior tenue. No es un
                chat que scrollea y se pierde abajo: cuando llega texto nuevo, reemplaza. */}
-            {live.transcript.length > 0 && (
+            {live.transcript.length > 0 ? (
               <div className="kids-transcript">
                 <LiveSubtitle
                   transcript={live.transcript}
-                  aiLabel="Habi"
+                  aiLabel={getBuddyById(buddyId).label}
                   minHeight={96}
                   highlightWords={topic?.keywords ?? []}
                 />
               </div>
+            ) : (
+              isActive && (
+                <div className="kids-transcript" style={{ opacity: 0.85, fontSize: 18, fontWeight: 700, color: '#9CFCD2', animation: 'kids-fab-breathe 2s infinite', minHeight: 96, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {talkState === 'your-turn' ? '¡Tu turno! Hablá despacio y pausado 🎙️' : 'Escuchando a tu tutor...'}
+                </div>
+              )
             )}
           </>
         )}

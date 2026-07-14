@@ -12,6 +12,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Users, UserPlus, ArrowRight } from 'lucide-react'
+import { toast } from 'sonner'
 import { Habi } from './_shared'
 import { KIDS_TOKEN_KEY } from './KidsContext'
 import { KIDS_AGE_KEY } from './KidsAgeSelect'
@@ -135,7 +136,7 @@ export function KidsParentSwitch() {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) {
-        alert('No se pudo entrar como ese perfil')
+        toast.error('No se pudo entrar como ese perfil')
         return
       }
       const data = await res.json()
@@ -143,7 +144,7 @@ export function KidsParentSwitch() {
       localStorage.setItem(KIDS_AGE_KEY, data.profile.age_group)
       navigate('/kids')
     } catch {
-      alert('Error de red')
+      toast.error('Error de red')
     }
   }
 
