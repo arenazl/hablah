@@ -344,6 +344,16 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
                 e("Level_Target", "levels.curriculum_grammar", "NIVEL", lv.get("curriculum_grammar")),
                 e("Expected_Production", "levels.expected_production", "NIVEL", lv.get("expected_production")),
                 e("Form_Rules", "student_types.form_rules", "EDAD", std.get("form_rules")),
+                e("Behavioral_Guards (Compilado)", "composer_proto._get_behavioral_guards", "EDAD + NIVEL",
+                  f"<behavioral_guards>\n"
+                  f"  Language_Rule (nivel): {lv.get('language_rule', '').strip()}\n"
+                  f"  Level_Target (nivel): {lv.get('curriculum_grammar', '').strip()}\n"
+                  f"  <critical_objective>\n"
+                  f"    HIGHEST PRIORITY — this is exactly what the student must produce this class; follow it above every other block:\n"
+                  f"    Expected_Production (nivel): {lv.get('expected_production', '').strip()}\n"
+                  f"  </critical_objective>\n"
+                  f"  Form_Rules (segmento): {std.get('form_rules', '').strip()}\n"
+                  f"</behavioral_guards>"),
             ]),
             step("Reglas de Salida", [
                 e("Voice_Output_Rule", "app_config.voice_output_rule", "GLOBAL", cfg.get("voice_output_rule"))

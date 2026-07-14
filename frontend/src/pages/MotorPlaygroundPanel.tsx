@@ -266,8 +266,8 @@ export default function MotorPlaygroundPanel() {
       pk = { id: topicId }
       val = topicsRows.find(r => r.id === topicId)?.[field] || ''
     } else if (table === 'app_config') {
-      pk = { key: field }
-      val = appConfigRows.find(r => r.key === field)?.value || ''
+      pk = { config_key: field }
+      val = appConfigRows.find(r => r.config_key === field)?.config_value || ''
     }
 
     // Si el valor original es un array de Strings o números, lo mostramos uno por línea para facilidad de edición
@@ -318,7 +318,7 @@ export default function MotorPlaygroundPanel() {
       return
     }
 
-    const hasInConfig = appConfigRows.some(r => r.key === ph || r.key === field)
+    const hasInConfig = appConfigRows.some(r => r.config_key === ph || r.config_key === field)
     if (hasInConfig) {
       startEditField('app_config', field)
       return
@@ -353,8 +353,8 @@ export default function MotorPlaygroundPanel() {
         }
       }
       
-      // Si editamos app_config, el campo destino es 'value'
-      const updatePayload = editTable === 'app_config' ? { value: finalVal } : { [editField]: finalVal }
+      // Si editamos app_config, el campo destino es 'config_value'
+      const updatePayload = editTable === 'app_config' ? { config_value: finalVal } : { [editField]: finalVal }
       
       await motorAPI.update(editTable, editPk, updatePayload)
       toast.success('Plantilla del catálogo guardada con éxito')
