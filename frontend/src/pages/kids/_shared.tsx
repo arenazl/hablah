@@ -57,9 +57,9 @@ export const KIDS_CSS = `
 .kids-root button { font-family:inherit; cursor:pointer; border:0; background:none; color:inherit; }
 .kids-root a { color:inherit; text-decoration:none; }
 
-.kids-app { display:grid; grid-template-columns:256px 1fr; min-height:100vh; }
+.kids-app { display:grid; grid-template-columns:256px 1fr; min-height:100dvh; }
 
-.kids-sidebar { background:#062B25; color:#E6EAE7; display:flex; flex-direction:column; padding:20px 14px; gap:8px; position:sticky; top:0; height:100vh; overflow:hidden; }
+.kids-sidebar { background:#062B25; color:#E6EAE7; display:flex; flex-direction:column; padding:20px 14px; gap:8px; position:sticky; top:0; height:100dvh; overflow:hidden; }
 .kids-sidebar::before { content:""; position:absolute; right:-60px; top:30%; width:240px; height:240px; border-radius:50%; background:radial-gradient(circle,rgba(255,184,0,.10),transparent 70%); pointer-events:none; }
 .kids-brand { display:flex; align-items:center; gap:10px; padding:6px 8px 14px; position:relative; z-index:1; }
 .kids-brand-mark { width:32px; height:32px; border-radius:10px; background:var(--green); display:grid; place-items:center; color:#fff; font-family:var(--font-display); font-weight:800; font-size:17px; }

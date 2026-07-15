@@ -53,7 +53,7 @@ export function Login() {
 
   return (
     <div
-      className="h-screen w-full flex overflow-hidden"
+      className="h-[100dvh] w-full flex overflow-hidden"
       style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}
     >
       {/* IZQUIERDA: hero panel fijo (V5 Pulsos con slogan editorial) */}

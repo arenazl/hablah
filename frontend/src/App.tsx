@@ -61,7 +61,7 @@ function AuthGate({ children, allowKidMode = false }: { children: React.ReactNod
   if (isLoading) {
     return (
       <div
-        className="h-screen flex items-center justify-center"
+        className="h-[100dvh] flex items-center justify-center"
         style={{ backgroundColor: 'var(--bg-app)' }}
       >
         <div className="flex flex-col items-center gap-3 animate-fade-in-up">

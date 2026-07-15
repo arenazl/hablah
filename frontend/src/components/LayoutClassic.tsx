@@ -214,7 +214,7 @@ export function LayoutClassic({ children }: { children: ReactNode }) {
 
   return (
     <div
-      className="h-screen flex flex-col overflow-hidden"
+      className="h-[100dvh] flex flex-col overflow-hidden"
       style={{
         backgroundColor: 'var(--bg-app)',
         paddingTop: 'env(safe-area-inset-top)',

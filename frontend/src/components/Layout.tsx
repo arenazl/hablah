@@ -49,7 +49,7 @@ export function Layout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-[100dvh] flex flex-col overflow-hidden">
       <header
         className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 bg-[var(--bg-topbar)] border-b border-[var(--border-color)] z-30"
         style={{ paddingTop: 'env(safe-area-inset-top)', height: 'calc(4rem + env(safe-area-inset-top))' }}
