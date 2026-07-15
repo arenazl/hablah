@@ -719,6 +719,19 @@ export function KidsSession() {
               </span>
             </div>
           )}
+          {topicVocab.length > 0 && (
+            <div className="kids-words-card" style={{ marginTop: 32, animation: 'kidsuccess-pop .8s cubic-bezier(.34,1.56,.64,1) .3s both', background: 'rgba(0,0,0,0.3)', borderColor: 'rgba(255,255,255,0.1)' }}>
+              <span className="wc-title" style={{ color: 'rgba(255,255,255,0.6)' }}>Vocabulario de hoy</span>
+              <div className="wc-chips">
+                {topicVocab.map((v) => (
+                  <span key={v.word_en} className="kids-word-chip" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 16 }}>
+                    <span>{v.emoji || '✨'}</span>
+                    <span style={{ textTransform: 'capitalize' }}>{v.word_en}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
