@@ -223,6 +223,9 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
                 pinned_vocabulary=_json_list(tp.get("pinned_vocabulary")),
                 keywords=_json_list(tp.get("keywords")),
                 generated_vocab=_json_list(tp.get("generated_vocab")),
+                narrative_role=tp.get("narrative_role"),
+                narrative_setting=tp.get("narrative_setting"),
+                narrative_conflict=tp.get("narrative_conflict"),
             )
         # F2-03: semilla de sesión determinística. Si no vino explícita, deriva de (alumno, tópico,
         # HOY) -> mismo cruce el mismo día = MISMO prompt; día distinto = arranque/frase-ancla distintos.
