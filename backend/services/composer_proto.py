@@ -349,31 +349,12 @@ def _interp(s: str, name: str, topic_title: str, first_word: str) -> str:
 
 def _get_start_trigger(topic, topic_content: Optional[dict], name: str, first_word: str,
                        opening_seed: Optional[str], age_group: str, ctx: str, session_seed: int = 0) -> str:
-    # 1. Cargar las semillas narrativas desde el objeto topic con fallbacks en Python
-    narrative_role = getattr(topic, "narrative_role", None) or ""
-    narrative_setting = getattr(topic, "narrative_setting", None) or ""
-    narrative_conflict = getattr(topic, "narrative_conflict", None) or ""
+    # 1. Cargar las semillas narrativas desde el objeto topic (SIN FALLBACKS).
+    narrative_role = _req(getattr(topic, "narrative_role", None), "topics.narrative_role", ctx)
+    narrative_setting = _req(getattr(topic, "narrative_setting", None), "topics.narrative_setting", ctx)
+    narrative_conflict = _req(getattr(topic, "narrative_conflict", None), "topics.narrative_conflict", ctx)
     
     topic_title = getattr(topic, "title", None) or "today's topic"
-    
-    # Si alguno está vacío, aplicar el default seguro según el grupo de edad (CÓMO)
-    if not narrative_role or not narrative_setting or not narrative_conflict:
-        if age_group == "mini":
-            narrative_role = "friends exploring the world of words"
-            narrative_setting = f"a magical place related to {topic_title}"
-            narrative_conflict = f"playing to discover new things about {topic_title}"
-        elif age_group == "junior":
-            narrative_role = "two hero explorers on a secret mission"
-            narrative_setting = f"an exciting expedition about {topic_title}"
-            narrative_conflict = f"completing challenges and solving mysteries about {topic_title}"
-        elif age_group == "teen":
-            narrative_role = "two friends talking in a relaxed, peer-to-peer tone"
-            narrative_setting = f"a space for debating ideas about {topic_title}"
-            narrative_conflict = f"solving an interesting challenge and sharing perspectives about {topic_title}"
-        else: # adult
-            narrative_role = "two professionals or adults conversing casually"
-            narrative_setting = f"an interactive video call to practice English about {topic_title}"
-            narrative_conflict = f"sharing opinions, experiences, and debating about {topic_title}"
 
     # Interpolar placeholders en las semillas narrativas
     narrative_role = _interp(narrative_role, name, topic_title, first_word)
