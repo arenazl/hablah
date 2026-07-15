@@ -2,7 +2,7 @@
 // Fuente: data/catalogo/topics.json (snapshot F0-05, tabla `topics` real).
 // Regenerar: node scripts/gen-topics-catalog.mjs (desde frontend/), tras cambiar el catálogo,
 // y commitear el resultado — mismo criterio que el resto del catálogo-como-código.
-// Generado: 2026-07-14 · 99 tópicos activos.
+// Generado: 2026-07-15 · 99 tópicos activos.
 // Contenido COMPLETO (con prosa) — solo lo importa TopicDetail.tsx (lazy). NO importar desde paginas eager (Topics/Tutors/HowItWorks/Home) — usar topicsIndex.generated.ts o topicsCount.generated.ts para eso.
 
 export interface CatalogTopic {

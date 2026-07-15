@@ -305,6 +305,7 @@ export function KidsSession() {
   // de la transcripción llega antes que el audio termine de sonar, así el
   // visual aparece justo cuando Habi lo dice.
   const [floatItems, setFloatItems] = useState<VisualCueItem[]>([])
+  const [topicVocab, setTopicVocab] = useState<VisualCueItem[]>([])
   useEffect(() => {
     vocabMapRef.current = new Map()
     let cancelled = false
@@ -329,6 +330,7 @@ export function KidsSession() {
         // primero); el resto de la biblioteca 2.5s después para no competir con el
         // arranque del WebSocket de voz en mobile. Todo queda en memoria igual.
         const pref = topic?.id ? (byTopic.find((t) => t.topic_id === topic.id)?.vocab ?? []) : []
+        setTopicVocab(pref)
         preloadVisualCueAssets(pref)
         window.setTimeout(() => { if (!cancelled) preloadVisualCueAssets(library) }, 2500)
         // Flotantes de ambiente: primero los del tópico actual, se completa con el
@@ -637,6 +639,41 @@ export function KidsSession() {
             @keyframes kidsuccess-pop { 0%{transform:scale(0) rotate(-12deg);opacity:0} 60%{transform:scale(1.1) rotate(6deg);opacity:1} 100%{transform:scale(1) rotate(0);opacity:1} }
             @keyframes kidsuccess-wobble { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
           `}</style>
+          {topicVocab.length > 0 && (
+            <div style={{
+              display: 'flex',
+              gap: 16,
+              marginBottom: 36,
+              animation: 'kidsuccess-pop 0.6s cubic-bezier(.34,1.56,.64,1)',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexWrap: 'wrap'
+            }}>
+              {topicVocab.map((item) => (
+                <div key={item.word_en} style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.16)',
+                  borderRadius: 20,
+                  padding: '12px 18px',
+                  minWidth: 100,
+                  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.25)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)'
+                }}>
+                  {item.asset_file ? (
+                    <img src={item.asset_file} alt={item.word_en} style={{ width: 64, height: 64, marginBottom: 8, objectFit: 'contain' }} />
+                  ) : (
+                    <span style={{ fontSize: 36, marginBottom: 8 }}>{item.emoji || '⭐'}</span>
+                  )}
+                  <span style={{ fontSize: 14, fontWeight: 800, color: '#fff', textTransform: 'capitalize' }}>{item.word_en}</span>
+                  <span style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.5)' }}>{item.word_es}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <div style={{
             width: 140, height: 140, borderRadius: '50%',
             background: 'linear-gradient(135deg, #FFC83D 0%, #FF8A4C 60%, #FF5E7E 100%)',
