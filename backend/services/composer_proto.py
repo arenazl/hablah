@@ -229,9 +229,9 @@ def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = 
     
     # Bloque A (Mini o Nivel A0/A1) vs Bloque B (Teens/Adultos/Niveles B1+)
     if age_slug == "mini" or level_slug in ["a0", "a1"]:
-        target_ids = [1, 2, 3, 12, 16]
+        target_ids = [2, 3, 10, 12, 14, 16]
     else:
-        target_ids = [1, 4, 13, 15, 16]
+        target_ids = [1, 4, 5, 9, 10, 13, 14, 15, 16]
         
     rules_list = []
     for idx, rule_id in enumerate(target_ids, 1):

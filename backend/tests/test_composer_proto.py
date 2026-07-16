@@ -61,8 +61,12 @@ class TestComposerProto(unittest.TestCase):
                 "2. Never repeat your own phrasing.\n"
                 "3. Build each turn.\n"
                 "4. Make ONE conversational move.\n"
+                "5. Correct language by recasting.\n"
+                "9. Praise only what really happened.\n"
+                "10. End every turn.\n"
                 "12. Echo Protocol.\n"
                 "13. Make it PERSONAL.\n"
+                "14. Never claim to SEE.\n"
                 "15. Harvest, don't chase.\n"
                 "16. Correct native pronunciation."
             ),
@@ -90,12 +94,16 @@ class TestComposerProto(unittest.TestCase):
         self.assertNotIn("{name}", prompt)
         self.assertNotIn("{topic}", prompt)
 
-        # Verify JIT Bloque B filtering: target_ids = [1, 4, 13, 15, 16], re-indexed 1 to 5
+        # Verify JIT Bloque B filtering: target_ids = [1, 4, 5, 9, 10, 13, 14, 15, 16], re-indexed 1 to 9
         self.assertIn("1. Keep the lesson structure invisible.", prompt)
         self.assertIn("2. Make ONE conversational move.", prompt) # Originally 4
-        self.assertIn("3. Make it PERSONAL.", prompt) # Originally 13
-        self.assertIn("4. Harvest, don't chase.", prompt) # Originally 15
-        self.assertIn("5. Correct native pronunciation.", prompt) # Originally 16
+        self.assertIn("3. Correct language by recasting.", prompt) # Originally 5
+        self.assertIn("4. Praise only what really happened.", prompt) # Originally 9
+        self.assertIn("5. End every turn.", prompt) # Originally 10
+        self.assertIn("6. Make it PERSONAL.", prompt) # Originally 13
+        self.assertIn("7. Never claim to SEE.", prompt) # Originally 14
+        self.assertIn("8. Harvest, don't chase.", prompt) # Originally 15
+        self.assertIn("9. Correct native pronunciation.", prompt) # Originally 16
         # Rules 2, 3, 12 should NOT be in Bloque B output
         self.assertNotIn("Never repeat your own phrasing.", prompt)
         self.assertNotIn("Build each turn.", prompt)
@@ -142,8 +150,12 @@ class TestComposerProto(unittest.TestCase):
                 "2. Never repeat your own phrasing.\n"
                 "3. Build each turn.\n"
                 "4. Make ONE conversational move.\n"
+                "5. Correct language by recasting.\n"
+                "9. Praise only what really happened.\n"
+                "10. End every turn.\n"
                 "12. Echo Protocol.\n"
                 "13. Make it PERSONAL.\n"
+                "14. Never claim to SEE.\n"
                 "15. Harvest, don't chase.\n"
                 "16. Correct native pronunciation."
             ),
@@ -161,12 +173,14 @@ class TestComposerProto(unittest.TestCase):
 
         # Assert
         self.assertIsInstance(prompt, str)
-        # Verify JIT Bloque A filtering: target_ids = [1, 2, 3, 12, 16], re-indexed 1 to 5
-        self.assertIn("1. Keep the lesson structure invisible.", prompt)
-        self.assertIn("2. Never repeat your own phrasing.", prompt) # Originally 2
-        self.assertIn("3. Build each turn.", prompt) # Originally 3
+        # Verify JIT Bloque A filtering: target_ids = [2, 3, 10, 12, 14, 16], re-indexed 1 to 6
+        self.assertNotIn("Keep the lesson structure invisible.", prompt) # Rule 1 removed
+        self.assertIn("1. Never repeat your own phrasing.", prompt) # Originally 2
+        self.assertIn("2. Build each turn.", prompt) # Originally 3
+        self.assertIn("3. End every turn.", prompt) # Originally 10
         self.assertIn("4. Echo Protocol.", prompt) # Originally 12
-        self.assertIn("5. Correct native pronunciation.", prompt) # Originally 16
+        self.assertIn("5. Never claim to SEE.", prompt) # Originally 14
+        self.assertIn("6. Correct native pronunciation.", prompt) # Originally 16
         # Rules 4, 13, 15 should NOT be in Bloque A output
         self.assertNotIn("Make ONE conversational move.", prompt)
         self.assertNotIn("Make it PERSONAL.", prompt)
