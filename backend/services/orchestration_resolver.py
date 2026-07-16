@@ -119,8 +119,13 @@ def compose_from_template(
     tutor = std.get("tutor_mascot") or "Coach"
     topic_title = title or "today's topic"
 
-    # Anclas del TÓPICO (Role/Setting/Mission), interpoladas
+    # Anclas del TÓPICO (Role/Setting/Mission), interpoladas.
+    # Si la EDAD declara NO ROLEPLAY (teen/adult), NO se inyecta la escena del tópico: chocaría con
+    # el modo (una charla real no arma un role-play). Se pasa el tópico como ÁNGULO, no como escena.
     def _topic_anchors() -> str:
+        if "NO ROLEPLAY" in (std.get("anclas_narrativas") or "").upper():
+            return ("Real conversation about the topic — NOT a roleplay. Do not invent a shared scene, "
+                    "characters, or a physical setting; talk about the topic as two people would.")
         role = _interp(getattr(topic, "narrative_role", "") or "", user_name, topic_title, first_word)
         setting = _interp(getattr(topic, "narrative_setting", "") or "", user_name, topic_title, first_word)
         mission = _interp(getattr(topic, "narrative_conflict", "") or "", user_name, topic_title, first_word)
