@@ -22,7 +22,10 @@ class TestComposerProto(unittest.TestCase):
         topic = SimpleNamespace(
             id=101,
             title="La Escuela",
-            pinned_vocabulary=["book", "pencil"]
+            pinned_vocabulary=["book", "pencil"],
+            narrative_role="un maestro de escuela",
+            narrative_setting="el aula de clases",
+            narrative_conflict="encontrar la tiza perdida"
         )
         
         # Mock Student Type Data (Vínculo)
@@ -109,7 +112,10 @@ class TestComposerProto(unittest.TestCase):
         topic = SimpleNamespace(
             id=102,
             title="Los Animales",
-            pinned_vocabulary=["dog", "cat"]
+            pinned_vocabulary=["dog", "cat"],
+            narrative_role="un explorador de la selva",
+            narrative_setting="la selva tropical",
+            narrative_conflict="buscar un tesoro escondido"
         )
         student_type_data = {
             "slug": "mini",

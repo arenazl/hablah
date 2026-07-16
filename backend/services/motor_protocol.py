@@ -79,13 +79,18 @@ async def _gemini(prompt: str, timeout: float = 60.0) -> Optional[str]:
 
 
 async def _run_llm(prompt: str, provider: str) -> Optional[str]:
-    """provider: 'claude' (construcción local) · 'gemini' (app/prod) · 'auto' (claude→gemini)."""
+    """provider: 'claude' (construcción local) · 'gemini' (app/prod) · 'auto'."""
     if provider == "gemini":
         return await _gemini(prompt)
     if provider == "claude":
         return await _claude_headless(prompt)
-    # auto: probar Claude headless (construcción local); si no está el CLI, caer a Gemini (prod)
-    return (await _claude_headless(prompt)) or (await _gemini(prompt))
+    
+    # auto: probar primero el proveedor configurado, con fallback al otro
+    primary = os.getenv("ORCHESTRATOR_LLM_PROVIDER", "gemini").lower()
+    if primary == "claude":
+        return (await _claude_headless(prompt)) or (await _gemini(prompt))
+    else:
+        return (await _gemini(prompt)) or (await _claude_headless(prompt))
 
 
 # ───────────────────────── el protocolo ─────────────────────────

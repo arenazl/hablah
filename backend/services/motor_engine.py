@@ -9,6 +9,7 @@ Orquestación = JIT: se arma en el momento desde banda+nivel+tópico, no se pers
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import ssl
 import sys
@@ -304,6 +305,23 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
         pick_style = _pick(apt_styles, _derive(session_seed, "narrative")) if apt_styles else None
         style_str = f"Style: {pick_style.get('key')}\nDirective: {pick_style.get('directive')}" if pick_style else None
 
+        # Campos de narrativa del tópico interpolados
+        role_str = None
+        setting_str = None
+        conflict_str = None
+        if tp:
+            from services.composer_proto import _interp
+            first_word = ""
+            if words or phrases:
+                first_word = _pick(words or phrases, seed_phrase)
+            topic_title = tp.get("title") or "today's topic"
+            role_raw = tp.get("narrative_role") or ""
+            setting_raw = tp.get("narrative_setting") or ""
+            conflict_raw = tp.get("narrative_conflict") or ""
+            role_str = _interp(role_raw, "Alumno", topic_title, first_word) if role_raw else None
+            setting_str = _interp(setting_raw, "Alumno", topic_title, first_word) if setting_raw else None
+            conflict_str = _interp(conflict_raw, "Alumno", topic_title, first_word) if conflict_raw else None
+
         # Arranque: si opening_seed trae varias variantes (JSON array), mostrar la ELEGIDA por semilla.
         variants = _opening_variants(std.get("opening_seed"))
         opening_body = _pick(variants, _derive(session_seed, "open")) if variants else std.get("opening_seed")
@@ -357,6 +375,9 @@ def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None)
                   ", ".join(phrases) if phrases else None),
             ]),
             step("Narrativa", [
+                e("Rol de Narrativa", "topics.narrative_role", "TÓPICO", role_str),
+                e("Escenario de Narrativa", "topics.narrative_setting", "TÓPICO", setting_str),
+                e("Conflicto de Narrativa", "topics.narrative_conflict", "TÓPICO", conflict_str),
                 e("Estilo de Narrativa", "app_config.lesson_approaches", "EDAD + SEMILLA", style_str),
                 e("Rieles de Sesión", "app_config.session_rails", "EDAD", beats_str)
             ]),
