@@ -90,6 +90,7 @@ export default function MotorPlaygroundPanel() {
   const [editVal, setEditVal] = useState('')
   const [saving, setSaving] = useState(false)
   const [editIsArray, setEditIsArray] = useState(false)
+  const [editRuleId, setEditRuleId] = useState<number | null>(null)
 
   // loop de aprendizaje
   const [presets, setPresets] = useState<MotorPreset[]>([])
@@ -250,6 +251,78 @@ export default function MotorPlaygroundPanel() {
     }
   }
 
+  const parseAllUniversalRules = (rawText: string): Record<number, string> => {
+    if (!rawText) return {}
+    const cleanText = rawText.replace(/<\/?(conversation_rules)>/g, '').trim()
+    const parsed: Record<number, string> = {}
+    let currentNum: number | null = null
+    let currentText: string[] = []
+    
+    const lines = cleanText.split('\n')
+    for (let line of lines) {
+      const lineStripped = line.trim()
+      if (!lineStripped) continue
+      
+      const m = lineStripped.match(/^(\d+)\.\s*(.*)$/)
+      if (m) {
+        if (currentNum !== null) {
+          parsed[currentNum] = currentText.join('\n').trim()
+        }
+        currentNum = parseInt(m[1])
+        currentText = [m[2]]
+      } else {
+        if (currentNum !== null) {
+          currentText.push(lineStripped)
+        }
+      }
+    }
+    if (currentNum !== null) {
+      parsed[currentNum] = currentText.join('\n').trim()
+    }
+    return parsed
+  }
+
+  const reconstructUniversalRules = (rawText: string, ruleId: number, newBody: string): string => {
+    const parsed = parseAllUniversalRules(rawText)
+    parsed[ruleId] = newBody.trim()
+    
+    const keys = Object.keys(parsed).map(Number).sort((a, b) => a - b)
+    const maxKey = keys.length > 0 ? Math.max(...keys) : 16
+    
+    const lines: string[] = []
+    lines.push('<conversation_rules>')
+    for (let i = 1; i <= maxKey; i++) {
+      const body = parsed[i]
+      if (body) {
+        const bodyLines = body.split('\n')
+        const firstLine = bodyLines[0]
+        const restLines = bodyLines.slice(1)
+        lines.push(`  ${i}. ${firstLine}`)
+        for (let rl of restLines) {
+          lines.push(`     ${rl}`)
+        }
+      }
+    }
+    lines.push('</conversation_rules>')
+    return lines.join('\n')
+  }
+
+  const startEditUniversalRule = (ruleId: number) => {
+    const row = appConfigRows.find(r => r.config_key === 'universal_conversation_rules')
+    const rawRules = row ? row.config_value : ''
+    
+    const parsed = parseAllUniversalRules(rawRules)
+    const ruleBody = parsed[ruleId] || ''
+    
+    setEditTable('app_config')
+    setEditPk({ config_key: 'universal_conversation_rules' })
+    setEditField('universal_conversation_rules')
+    setEditRuleId(ruleId)
+    setEditLabel(`Regla Universal DB #${ruleId}`)
+    setEditVal(ruleBody)
+    setEditIsArray(false)
+  }
+
   // JIT Editor: arrancar edición de una celda
   const startEditField = (table: string, field: string) => {
     let pk: any = null
@@ -353,12 +426,20 @@ export default function MotorPlaygroundPanel() {
         }
       }
       
+      // Si editamos una regla universal individual, la reconstruimos en la cadena completa de la BD
+      if (editTable === 'app_config' && editField === 'universal_conversation_rules' && editRuleId !== null) {
+        const row = appConfigRows.find(r => r.config_key === 'universal_conversation_rules')
+        const currentRaw = row ? row.config_value : ''
+        finalVal = reconstructUniversalRules(currentRaw, editRuleId, editVal)
+      }
+
       // Si editamos app_config, el campo destino es 'config_value'
       const updatePayload = editTable === 'app_config' ? { config_value: finalVal } : { [editField]: finalVal }
       
       await motorAPI.update(editTable, editPk, updatePayload)
       toast.success('Plantilla del catálogo guardada con éxito')
       setEditTable(null)
+      setEditRuleId(null)
       loadCatalogData()
       resolve()
     } catch {
@@ -454,18 +535,29 @@ export default function MotorPlaygroundPanel() {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                   <span style={{ fontWeight: 800, color: 'var(--fg-1)', fontSize: 11.5 }}>Regla #{idx + 1} del prompt</span>
-                  <span style={{ 
-                    fontSize: 9.5, 
-                    fontWeight: 700, 
-                    background: 'rgba(255,255,255,0.04)', 
-                    border: '1px solid var(--border-2)', 
-                    padding: '1px 5px', 
-                    borderRadius: 4,
-                    color: 'var(--fg-2)',
-                    fontFamily: 'monospace'
-                  }}>
-                    Regla DB original: #{originalId}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ 
+                      fontSize: 9.5, 
+                      fontWeight: 700, 
+                      background: 'rgba(255,255,255,0.04)', 
+                      border: '1px solid var(--border-2)', 
+                      padding: '1px 5px', 
+                      borderRadius: 4,
+                      color: 'var(--fg-2)',
+                      fontFamily: 'monospace'
+                    }}>
+                      Regla DB original: #{originalId}
+                    </span>
+                    {typeof originalId === 'number' && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); startEditUniversalRule(originalId) }}
+                        title="Editar esta regla individual en el catálogo"
+                        style={{ background: 'none', border: 0, color: C.accent, cursor: 'pointer', opacity: 0.8, padding: '2px 4px', display: 'flex', alignItems: 'center' }}
+                      >
+                        <Ico d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" size={12} />
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div style={{ color: 'var(--fg-2)' }}>
                   {renderBodyWithPlaceholders(ruleText)}
@@ -757,7 +849,7 @@ export default function MotorPlaygroundPanel() {
 
                   <div style={{ display: 'flex', gap: 8, marginTop: 14, justifyContent: 'flex-end' }}>
                     <button 
-                      onClick={() => setEditTable(null)} 
+                      onClick={() => { setEditTable(null); setEditRuleId(null); }} 
                       style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.dim, borderRadius: 8, fontSize: 12, padding: '6px 12px', cursor: 'pointer' }}
                     >
                       Cancelar
