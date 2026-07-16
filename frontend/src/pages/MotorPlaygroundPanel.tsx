@@ -15,22 +15,25 @@ interface Level { level_code: string; label: string; sort_order: number }
 interface Topic { topic_id: number; title: string; segmento?: string }
 interface Student { student_id: number; name: string; age?: number; level_code: string }
 
-// Temas de interfaz
-const THEMES: Record<string, { bg: string; panel: string; border: string; soft: string; fg: string; dim: string; faint: string }> = {
-  dark: { bg: '#0b0e14', panel: '#11151d', border: '#232936', soft: '#1c2230', fg: '#e6e8ec', dim: '#9aa3af', faint: '#6b7686' },
-  azul: { bg: '#d4e6fb', panel: '#f3f9ff', border: '#a3c8ef', soft: '#c1ddfa', fg: '#13243c', dim: '#3f6190', faint: '#7295c2' },
-  ambar: { bg: '#fbecca', panel: '#fff9ee', border: '#e6c98c', soft: '#f6e2b4', fg: '#3a2a0d', dim: '#806a33', faint: '#b3934f' },
-}
-const themeVars = (t: string): React.CSSProperties => {
-  const p = THEMES[t] || THEMES.dark
-  return { '--m-bg': p.bg, '--m-panel': p.panel, '--m-border': p.border, '--m-soft': p.soft, '--m-fg': p.fg, '--m-dim': p.dim, '--m-faint': p.faint } as React.CSSProperties
-}
 const C = {
-  bg: 'var(--m-bg)', panel: 'var(--m-panel)', border: 'var(--m-border)', soft: 'var(--m-soft)',
-  fg: 'var(--m-fg)', dim: 'var(--m-dim)', faint: 'var(--m-faint)', accent: '#38bdf8', green: '#22c55e', red: '#f87171',
+  bg: 'var(--bg-1)',
+  panel: 'var(--surface)',
+  border: 'var(--border-2)',
+  soft: 'var(--bg-2)',
+  fg: 'var(--fg-1)',
+  dim: 'var(--fg-2)',
+  faint: 'var(--fg-3)',
+  accent: 'var(--primary)',
+  green: 'var(--primary)',
+  red: 'var(--danger)',
 }
 
-const NAT = { fijo: '#9aa3af', edad: '#fbbf24', nivel: '#7dd3fc', dinamico: '#818cf8' }
+const NAT = {
+  fijo: 'var(--fg-3)',
+  edad: 'var(--accent)',
+  nivel: 'var(--info)',
+  dinamico: 'var(--violet)'
+}
 
 // Los placeholders se resuelven dinámicamente inspeccionando las propiedades del catálogo cargado.
 
@@ -78,7 +81,6 @@ export default function MotorPlaygroundPanel() {
   const [err, setErr] = useState<string | null>(null)
   const [showXml, setShowXml] = useState(false)
   const [activeLayer, setActiveLayer] = useState('Contexto')
-  const [theme, setTheme] = useState<string>(() => (typeof localStorage !== 'undefined' && localStorage.getItem('motorTheme')) || 'dark')
   
   // Estado del JIT inline editor
   const [editTable, setEditTable] = useState<string | null>(null)
@@ -100,8 +102,6 @@ export default function MotorPlaygroundPanel() {
   const [simulatingGemini, setSimulatingGemini] = useState(false)
   const [geminiStartResponse, setGeminiStartResponse] = useState<string | null>(null)
   const [geminiClosingResponse, setGeminiClosingResponse] = useState<string | null>(null)
-
-  useEffect(() => { try { localStorage.setItem('motorTheme', theme) } catch {} }, [theme])
 
   // Carga de dimensiones iniciales
   const loadDimensions = useCallback(() => {
@@ -368,9 +368,15 @@ export default function MotorPlaygroundPanel() {
     }
   }
 
+  const cleanXmlTags = (text: string) => {
+    if (!text) return ''
+    return text.replace(/<\/?(conversation_rules|start_execution_command|behavioral_guards|session_actions|output_rules|learner_state|interaction_state|lesson_approach|session_rails)>/g, '').trim()
+  }
+
   // Renderizador JIT de texto con resaltado e interacción de placeholders
-  const renderBodyWithPlaceholders = (text: string) => {
-    if (!text) return null
+  const renderBodyWithPlaceholders = (rawText: string) => {
+    if (!rawText) return null
+    const text = cleanXmlTags(rawText)
     const regex = /(\{[a-zA-Z0-9_-]+\})/g
     const parts = text.split(regex)
     return parts.map((part, i) => {
@@ -414,7 +420,7 @@ export default function MotorPlaygroundPanel() {
   const steps = res?.steps || []
 
   return (
-    <div style={{ ...themeVars(theme), minHeight: '100vh', background: C.bg, color: C.fg, padding: '18px 16px 64px' }}>
+    <div style={{ minHeight: '100vh', background: C.bg, color: C.fg, padding: '18px 16px 64px' }}>
       <div style={{ maxWidth: 1340, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
           <div>
@@ -425,16 +431,9 @@ export default function MotorPlaygroundPanel() {
           </div>
           <div style={{ display: 'flex', gap: 5, flexShrink: 0, alignItems: 'center' }}>
             <button onClick={resolve} title="Recalcular orquestación desde los inputs actuales"
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, fontSize: 12.5, fontWeight: 800, cursor: 'pointer', border: `1px solid ${C.accent}`, background: 'rgba(56,189,248,0.14)', color: C.accent, marginRight: 6 }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, fontSize: 12.5, fontWeight: 800, cursor: 'pointer', border: `1px solid ${C.accent}`, background: 'rgba(0,179,126,0.14)', color: C.accent, marginRight: 6 }}>
               <Ico d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" size={13} /> Actualizar
             </button>
-            {([['dark', 'Oscuro'], ['azul', 'Azul'], ['ambar', 'Ámbar']] as const).map(([t, l]) => (
-              <button key={t} onClick={() => setTheme(t)}
-                style={{ padding: '6px 11px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                  border: `1px solid ${theme === t ? C.accent : C.border}`, background: theme === t ? 'rgba(56,189,248,0.12)' : C.panel, color: theme === t ? C.accent : C.dim }}>
-                {l}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -524,29 +523,39 @@ export default function MotorPlaygroundPanel() {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6, flexWrap: 'wrap', gap: 6 }}>
                                   <span style={{ fontSize: 11, fontWeight: 800, color: C.accent }}>{ent.label}</span>
                                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-                                    <span style={{ fontSize: 9.5, color: C.faint, fontFamily: 'monospace' }}>{ent.source}</span>
+                                    {ent.source && (() => {
+                                      const parts = ent.source.split('.')
+                                      if (parts.length === 2) {
+                                        return (
+                                          <div style={{ fontSize: 9.5, color: C.dim }}>
+                                            Tabla: <b style={{ fontFamily: 'monospace', color: C.fg }}>{parts[0]}</b> · Campo: <b style={{ fontFamily: 'monospace', color: C.fg }}>{parts[1]}</b>
+                                          </div>
+                                        )
+                                      }
+                                      return <span style={{ fontSize: 9.5, color: C.faint }}>{ent.source}</span>
+                                    })()}
                                     {(() => {
                                       const src = ent.source || ''
                                       let coupling = ''
                                       let color = C.faint
                                       if (src.startsWith('topics.')) {
                                         coupling = `Acoplamiento: TÓPICO ("${res?.meta?.topic_title || 'este tópico'}")`
-                                        color = '#818cf8'
+                                        color = 'var(--color-blue)'
                                       } else if (src.startsWith('student_types.')) {
                                         coupling = `Acoplamiento: EDAD ("${band.toUpperCase()}")`
-                                        color = '#fbbf24'
+                                        color = 'var(--color-warning)'
                                       } else if (src.startsWith('levels.')) {
                                         coupling = `Acoplamiento: NIVEL ("${level}")`
-                                        color = '#7dd3fc'
+                                        color = 'var(--color-accent)'
                                       } else if (src === 'app_config.universal_conversation_rules') {
                                         coupling = 'Acoplamiento: EDAD / NIVEL (Filtro JIT)'
-                                        color = '#a855f7' // Purple / Dinámico
+                                        color = 'var(--violet)'
                                       } else if (src === 'composer_proto._get_behavioral_guards') {
                                         coupling = 'Bloque Estructurado (No editable)'
-                                        color = '#a855f7'
+                                        color = 'var(--violet)'
                                       } else if (src.startsWith('app_config.')) {
                                         coupling = 'Acoplamiento: GLOBAL (Toda la app)'
-                                        color = '#f87171'
+                                        color = 'var(--danger)'
                                       }
                                       if (!coupling) return null
                                       return (
