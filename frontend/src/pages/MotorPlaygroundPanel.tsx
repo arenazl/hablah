@@ -411,6 +411,73 @@ export default function MotorPlaygroundPanel() {
     })
   }
 
+  const renderUniversalRules = (bodyText: string) => {
+    if (!bodyText) return null
+    const cleanText = bodyText.replace(/<\/?(conversation_rules)>/g, '').trim()
+    const isBloqueA = cleanText.includes("Never repeat your own phrasing") || cleanText.includes("Build each turn")
+    const targetIds = isBloqueA ? [1, 2, 3, 12, 16] : [1, 4, 13, 15, 16]
+    
+    const normalized = cleanText.replace(/(?:^|\n)\s*\d+\.\s*/g, "||RULE_SEP||")
+    const rules = normalized.split("||RULE_SEP||").map(r => r.trim()).filter(Boolean)
+    
+    const blockTitle = isBloqueA 
+      ? `Bloque A (Activo porque Edad es "Mini" o Nivel es "A0"/"A1")` 
+      : `Bloque B (Activo porque Edad es "${band.toUpperCase()}" y Nivel es "${level}" >= A2)`
+      
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 6 }}>
+        <div style={{ 
+          background: isBloqueA ? 'rgba(124,58,237,0.1)' : 'rgba(59,130,246,0.1)', 
+          border: `1px solid ${isBloqueA ? 'var(--violet)' : 'var(--info)'}33`,
+          borderRadius: 8, 
+          padding: '8px 12px', 
+          fontSize: 12, 
+          fontWeight: 700,
+          color: isBloqueA ? 'var(--violet)' : 'var(--info)'
+        }}>
+          {blockTitle}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {rules.map((ruleText, idx) => {
+            const originalId = targetIds[idx] || '?'
+            return (
+              <div key={idx} style={{ 
+                background: 'rgba(255,255,255,0.02)', 
+                borderLeft: `3px solid ${isBloqueA ? 'var(--violet)' : 'var(--info)'}`,
+                borderRight: '1px solid var(--border-2)',
+                borderTop: '1px solid var(--border-2)',
+                borderBottom: '1px solid var(--border-2)',
+                borderRadius: '0 8px 8px 0',
+                padding: '10px 12px',
+                fontSize: 12.5,
+                lineHeight: 1.5
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <span style={{ fontWeight: 800, color: 'var(--fg-1)', fontSize: 11.5 }}>Regla #{idx + 1} del prompt</span>
+                  <span style={{ 
+                    fontSize: 9.5, 
+                    fontWeight: 700, 
+                    background: 'rgba(255,255,255,0.04)', 
+                    border: '1px solid var(--border-2)', 
+                    padding: '1px 5px', 
+                    borderRadius: 4,
+                    color: 'var(--fg-2)',
+                    fontFamily: 'monospace'
+                  }}>
+                    Regla DB original: #{originalId}
+                  </span>
+                </div>
+                <div style={{ color: 'var(--fg-2)' }}>
+                  {renderBodyWithPlaceholders(ruleText)}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
   const sel: React.CSSProperties = {
     width: '100%', padding: '6px 8px', borderRadius: 8, background: C.panel, color: C.fg,
     border: `1px solid ${C.border}`, fontSize: 13, height: 34, outline: 'none'
@@ -567,7 +634,9 @@ export default function MotorPlaygroundPanel() {
                                   </div>
                                 </div>
                                 <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.55, whiteSpace: 'pre-wrap', paddingRight: 16 }}>
-                                  {renderBodyWithPlaceholders(ent.body)}
+                                  {ent.source === 'app_config.universal_conversation_rules'
+                                    ? renderUniversalRules(ent.body)
+                                    : renderBodyWithPlaceholders(ent.body)}
                                 </div>
                                 {ent.source && ent.source.split('.').length === 2 && (
                                   <button 
