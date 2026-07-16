@@ -232,7 +232,7 @@ def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = 
     if age_slug == "mini" or level_slug in ["a0", "a1"]:
         target_ids = [2, 3, 10, 12, 14, 16]
     else:
-        target_ids = [1, 4, 5, 9, 10, 13, 14, 15, 16]
+        target_ids = [1, 4, 5, 9, 10, 13, 14, 15]
         
     rules_list = []
     for idx, rule_id in enumerate(target_ids, 1):

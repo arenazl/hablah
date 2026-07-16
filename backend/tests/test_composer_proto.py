@@ -94,7 +94,7 @@ class TestComposerProto(unittest.TestCase):
         self.assertNotIn("{name}", prompt)
         self.assertNotIn("{topic}", prompt)
 
-        # Verify JIT Bloque B filtering: target_ids = [1, 4, 5, 9, 10, 13, 14, 15, 16], re-indexed 1 to 9
+        # Verify JIT Bloque B filtering: target_ids = [1, 4, 5, 9, 10, 13, 14, 15], re-indexed 1 to 8
         self.assertIn("1. Keep the lesson structure invisible.", prompt)
         self.assertIn("2. Make ONE conversational move.", prompt) # Originally 4
         self.assertIn("3. Correct language by recasting.", prompt) # Originally 5
@@ -103,11 +103,11 @@ class TestComposerProto(unittest.TestCase):
         self.assertIn("6. Make it PERSONAL.", prompt) # Originally 13
         self.assertIn("7. Never claim to SEE.", prompt) # Originally 14
         self.assertIn("8. Harvest, don't chase.", prompt) # Originally 15
-        self.assertIn("9. Correct native pronunciation.", prompt) # Originally 16
-        # Rules 2, 3, 12 should NOT be in Bloque B output
+        # Rules 2, 3, 12, 16 should NOT be in Bloque B output
         self.assertNotIn("Never repeat your own phrasing.", prompt)
         self.assertNotIn("Build each turn.", prompt)
         self.assertNotIn("Echo Protocol.", prompt)
+        self.assertNotIn("Correct native pronunciation.", prompt)
 
     def test_compose_proto_prompt_bloque_a(self):
         # Mock User (Mini A0 -> Bloque A)
