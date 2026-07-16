@@ -175,10 +175,12 @@ def _load_lite_state_sync(db, student_id) -> Optional[dict]:
     return state if any(state.values()) else None
 
 
-def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, student_id=None, session_seed=None) -> dict:
+def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student_id=None, session_seed=None) -> dict:
+    """Carga los kwargs del motor (EDAD+NIVEL+tópico+historia) — fuente ÚNICA para el prompt real y
+    el visor (breakdown), sin duplicar. Devuelve los kwargs de compose_from_template + _topic_title."""
     import datetime as _dt
     from types import SimpleNamespace
-    from services.composer_proto import compose_proto_prompt, _session_seed
+    from services.composer_proto import _session_seed
     db = _connect()
     try:
         std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))
@@ -186,7 +188,6 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
         if not std or not lv:
             raise ValueError(f"falta preset: age_group={age_group} / level={level_code}")
         tp = db.q1("SELECT * FROM topics WHERE id=%s", (topic_id,)) if topic_id else None
-        # HISTORIA: si no vino explícita y hay alumno de prueba, cargar el estado liviano de la BD.
         if learner_state is None and student_id:
             learner_state = _load_lite_state_sync(db, student_id)
         level_data = {
@@ -195,7 +196,7 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
             "expected_production": lv.get("expected_production"),
             "vocab_depth": lv.get("vocab_depth"),
         }
-        try:   # app_config real (tabla config_key/config_value) -> reglas de voz/seguridad
+        try:
             cfg = {r["config_key"]: r["config_value"]
                    for r in db.q("SELECT config_key, config_value FROM app_config")} or None
         except Exception:
@@ -203,12 +204,10 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
         student_name = "Alumno"
         if student_id:
             try:
-                # 1. ¿Es un usuario/alumno real del dropdown?
                 user_row = db.q1("SELECT nombre FROM users WHERE id=%s", (student_id,))
                 if user_row and user_row.get("nombre"):
                     student_name = user_row.get("nombre")
                 else:
-                    # 2. ¿Es un perfil-molde del simulador?
                     st_row = db.q1("SELECT name FROM student WHERE student_id=%s", (student_id,))
                     if st_row and st_row.get("name"):
                         student_name = st_row.get("name")
@@ -219,8 +218,7 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
         topic = None
         if tp:
             topic = SimpleNamespace(
-                id=tp.get("id"),
-                title=tp.get("title"),
+                id=tp.get("id"), title=tp.get("title"),
                 pinned_vocabulary=_json_list(tp.get("pinned_vocabulary")),
                 keywords=_json_list(tp.get("keywords")),
                 generated_vocab=_json_list(tp.get("generated_vocab")),
@@ -228,20 +226,23 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
                 narrative_setting=tp.get("narrative_setting"),
                 narrative_conflict=tp.get("narrative_conflict"),
             )
-        # F2-03: semilla de sesión determinística. Si no vino explícita, deriva de (alumno, tópico,
-        # HOY) -> mismo cruce el mismo día = MISMO prompt; día distinto = arranque/frase-ancla distintos.
         if session_seed is None:
             session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat())
-        prompt = compose_proto_prompt(
-            user=user, topic=topic, topic_content=None,
-            student_type_data=std, level_data=level_data,
-            app_config=cfg, learner_state=learner_state, session_seed=session_seed)
-        return {"prompt": prompt, "meta": {
-            "engine": "compose_proto (v2)", "age_group": age_group, "level": level_code,
-            "topic_title": tp.get("title") if tp else None, "session_seed": session_seed,
-            "has_history": bool(learner_state)}}
+        return {"user": user, "topic": topic, "topic_content": None, "student_type_data": std,
+                "level_data": level_data, "app_config": cfg, "learner_state": learner_state,
+                "session_seed": session_seed, "_topic_title": tp.get("title") if tp else None}
     finally:
         db.conn.close()
+
+
+def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, student_id=None, session_seed=None) -> dict:
+    from services.orchestration_resolver import compose_from_template
+    kw = _load_v2_kwargs(age_group, level_code, topic_id, learner_state, student_id, session_seed)
+    tt = kw.pop("_topic_title")
+    prompt = compose_from_template(**kw)
+    return {"prompt": prompt, "meta": {
+        "engine": "orchestration_resolver (template)", "age_group": age_group, "level": level_code,
+        "topic_title": tt, "session_seed": kw["session_seed"], "has_history": bool(kw["learner_state"])}}
 
 
 async def resolve_v2(age_group: str, level_code: str, topic_id: Optional[int] = None,
@@ -256,154 +257,17 @@ async def resolve_v2(age_group: str, level_code: str, topic_id: Optional[int] = 
 
 
 def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None) -> dict:
-    """Desglose de la orquestación POR CAMPO de la base (no por bloque renderizado): cada entrada
-    trae su FUENTE (tabla.columna) y su DUEÑO (de qué pilar depende). Deja ver que NO es un registro
-    único: el composer apila campos separados de student_types(edad) + levels(nivel) + topics(tópico)
-    + learner_state(historia). F2-02/F2-03: muestra el bloque HISTORIA (si el alumno de prueba tiene
-    estado) y refleja la selección POR SEMILLA del día (frase-ancla + variante de arranque rotadas)."""
-    import datetime as _dt
-    from services.composer_proto import _session_seed, _derive, _pick, _rotate, _opening_variants, _get_universal_rules
-    db = _connect()
-    try:
-        std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))
-        lv = db.q1("SELECT * FROM levels WHERE code=%s", (level_code,))
-        if not std or not lv:
-            raise ValueError(f"falta preset: age_group={age_group} / level={level_code}")
-        cfg_rows = db.q("SELECT config_key, config_value FROM app_config")
-        cfg = {r["config_key"]: r["config_value"] for r in cfg_rows}
-        tp = db.q1("SELECT * FROM topics WHERE id=%s", (topic_id,)) if topic_id else None
-        hist = _load_lite_state_sync(db, student_id) if student_id else None
-        session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat())
-        seed_phrase = _derive(session_seed, "phrase")
-
-        words = _json_list(tp.get("pinned_vocabulary")) if tp else []
-        if not words and tp:
-            words = _json_list(tp.get("keywords"))[:6]
-        phrases = _json_list(tp.get("generated_vocab")) if tp else []
-        # F2-03: generar la misma selección por semilla (test deploy back)
-        if (lv.get("vocab_depth") == "basic") and phrases:
-            phrases = [_pick(phrases, seed_phrase)]
-        elif phrases:
-            phrases = _rotate(phrases, seed_phrase)
-
-        # Rieles de sesión (session_rails)
-        rails_raw = cfg.get("session_rails")
-        try:
-            rails_dict = json.loads(rails_raw) if isinstance(rails_raw, str) else rails_raw
-        except Exception:
-            rails_dict = {}
-        beats = rails_dict.get(age_group.lower()) or rails_dict.get("default") or []
-        beats_str = "\n".join(beats) if beats else None
-
-        # Estilo de narrativa (lesson_approaches)
-        style_raw = cfg.get("lesson_approaches")
-        try:
-            styles_list = json.loads(style_raw) if isinstance(style_raw, str) else style_raw
-        except Exception:
-            styles_list = []
-        apt_styles = [s for s in styles_list if not s.get("bands") or age_group.lower() in [str(b).lower() for b in s["bands"]]]
-        pick_style = _pick(apt_styles, _derive(session_seed, "narrative")) if apt_styles else None
-        style_str = f"Style: {pick_style.get('key')}\nDirective: {pick_style.get('directive')}" if pick_style else None
-
-        # Campos de narrativa del tópico interpolados
-        role_str = None
-        setting_str = None
-        conflict_str = None
-        if tp:
-            from services.composer_proto import _interp
-            first_word = ""
-            if words or phrases:
-                first_word = _pick(words or phrases, seed_phrase)
-            topic_title = tp.get("title") or "today's topic"
-            role_raw = tp.get("narrative_role") or ""
-            setting_raw = tp.get("narrative_setting") or ""
-            conflict_raw = tp.get("narrative_conflict") or ""
-            role_str = _interp(role_raw, "Alumno", topic_title, first_word) if role_raw else None
-            setting_str = _interp(setting_raw, "Alumno", topic_title, first_word) if setting_raw else None
-            conflict_str = _interp(conflict_raw, "Alumno", topic_title, first_word) if conflict_raw else None
-
-        # Arranque: si opening_seed trae varias variantes (JSON array), mostrar la ELEGIDA por semilla.
-        variants = _opening_variants(std.get("opening_seed"))
-        opening_body = _pick(variants, _derive(session_seed, "open")) if variants else std.get("opening_seed")
-        if len(variants) > 1:
-            opening_body = f"[{len(variants)} variantes · rota por día] {opening_body}"
-
-        def e(label, source, dueno, body):
-            body = (body or "").strip() if isinstance(body, str) else body
-            return {"label": label, "source": source, "dueno": dueno, "body": body} if body else None
-
-        def step(name, entries):
-            es = [x for x in entries if x]
-            return {"step": name, "entries": es} if es else None
-
-        hist_entries = []
-        if hist:
-            hist_entries = [
-                e("A vigilar (error top-1)", "learner_state.top_error", "HISTORIA", hist.get("top_error")),
-                e("A repasar la próxima", "learner_state.review", "HISTORIA", hist.get("review")),
-                e("Le gusta hablar de", "learner_state.interests", "HISTORIA",
-                  ", ".join(hist.get("interests") or []) or None),
-                e("Ya domina (usar de ancla)", "learner_state.mastered", "HISTORIA",
-                  ", ".join(hist.get("mastered") or []) or None),
-            ]
-
-        steps = [s for s in [
-            step("Contexto", [
-                e("Idioma / dispositivo", "runtime", "estático", "Target: English · Native: Spanish · Voz (mobile)"),
-                e("Student_Profile", "runtime", "estático", f"Name: Alumno · Age_Group: {age_group} · Level: {level_code}")
-            ]),
-            step("El profe", [
-                e("Mascota", "student_types.tutor_mascot", "EDAD", std.get("tutor_mascot")),
-                e("Identidad", "student_types.tutor_identity", "EDAD", std.get("tutor_identity")),
-                e("Tono", "student_types.tutor_tonal_rules", "EDAD", std.get("tutor_tonal_rules")),
-            ]),
-            step("Método", [e("Pedagogía", "student_types.pedagogy", "EDAD", std.get("pedagogy"))]),
-            step("Juego", [e("Foco de sesión", "student_types.session_focus", "EDAD", std.get("session_focus"))]),
-            step("Memoria del alumno", hist_entries),  # HISTORIA (F2-02): vacío -> el paso se omite
-            step("Rieles", [
-                e("Language_Rule", "levels.language_rule", "NIVEL", lv.get("language_rule")),
-                e("Level_Target", "levels.curriculum_grammar", "NIVEL", lv.get("curriculum_grammar")),
-                e("Expected_Production", "levels.expected_production", "NIVEL", lv.get("expected_production")),
-                e("Form_Rules", "student_types.form_rules", "EDAD", std.get("form_rules")),
-            ]),
-            step("Reglas de Salida", [
-                e("Voice_Output_Rule", "app_config.voice_output_rule", "GLOBAL", cfg.get("voice_output_rule"))
-            ]),
-            step("Tema (vocab)", [
-                e("Words", "topics.keywords", "TÓPICO", ", ".join(words) if words else None),
-                e("Target_Phrases (rota por semilla)", "topics.generated_vocab", "TÓPICO",
-                  ", ".join(phrases) if phrases else None),
-            ]),
-            step("Narrativa", [
-                e("Rol de Narrativa", "topics.narrative_role", "TÓPICO", role_str),
-                e("Escenario de Narrativa", "topics.narrative_setting", "TÓPICO", setting_str),
-                e("Conflicto de Narrativa", "topics.narrative_conflict", "TÓPICO", conflict_str),
-                e("Estilo de Narrativa", "app_config.lesson_approaches", "EDAD + SEMILLA", style_str),
-                e("Rieles de Sesión", "app_config.session_rails", "EDAD", beats_str)
-            ]),
-            step("Reglas Universales", [
-                 e("Conversation_Rules (JIT)", "app_config.universal_conversation_rules", "ACOPLAMIENTO: EDAD / NIVEL (FILTRO JIT)", 
-                  _get_universal_rules(cfg, "preview", age_group, level_code))
-            ]),
-            step("Arranque", [e("Opening_Seed", "student_types.opening_seed", "EDAD + NIVEL", opening_body)]),
-            step("Turno", [
-                e("Continuation_Seed", "student_types.continuation_seed", "EDAD (+universal)", std.get("continuation_seed")),
-                e("Closing_Seed", "student_types.closing_seed", "EDAD", std.get("closing_seed")),
-            ]),
-        ] if s]
-        # Compilar también el prompt completo real para el visor XML
-        prompt_str = ""
-        try:
-            prompt_res = _resolve_v2_sync(age_group, level_code, topic_id, None, student_id, session_seed)
-            prompt_str = prompt_res.get("prompt") or ""
-        except Exception:
-            pass
-
-        return {"steps": steps, "prompt": prompt_str, "meta": {"engine": "compose_proto (v2)", "age_group": age_group,
-                                         "level": level_code, "topic_title": tp.get("title") if tp else None,
-                                         "session_seed": session_seed, "has_history": bool(hist)}}
-    finally:
-        db.conn.close()
+    """Visor del /motor FROM-TEMPLATE (F3): parsea el template activo y muestra cada placeholder con su
+    FUENTE (tabla.columna) y DUEÑO (prefijo). Reemplaza las ~150 líneas que re-implementaban el composer
+    y podían driftar. Dinámico: si cambia el template (orchestration_templates), el visor cambia solo."""
+    from services.orchestration_resolver import compose_breakdown
+    kw = _load_v2_kwargs(age_group, level_code, topic_id, None, student_id, None)
+    tt = kw.pop("_topic_title")
+    bd = compose_breakdown(**kw)
+    bd["meta"] = {"engine": "orchestration_resolver (template)", "age_group": age_group,
+                  "level": level_code, "topic_title": tt, "session_seed": kw["session_seed"],
+                  "has_history": bool(kw["learner_state"])}
+    return bd
 
 
 async def resolve_v2_breakdown(age_group: str, level_code: str, topic_id: Optional[int] = None,

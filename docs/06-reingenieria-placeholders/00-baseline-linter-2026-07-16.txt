@@ -1,0 +1,303 @@
+Picking active topics...
+Generating prompts for all 28 combinations and analyzing...
+
+--- RESULTS ---
+[FAIL] mini - A0: Found 3 issues.
+  - [CONTRADICTION]: The prompt contains contradictory instructions regarding the primary language for the coach's responses and instructions. One rule explicitly states 100% Spanish for instructions, while another demands responses in English and translation of Spanish instructions.
+    Rule A: Language_Rule (level): Idioma de instrucción del coach: 100% ESPAÑOL. Lo ÚNICO en inglés es la palabra objetivo del día. NUNCA traduzcas tus consignas al inglés (decí 'ahora vos', NUNCA 'now you').
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [CONTRADICTION]: Contradictory instructions on what the student should produce and what the coach should ask for. The `Acceptance_Rule` states that only the target word is a total success and the full phrase should never be requested, while `Call_to_Action_Format` instructs to invite the student to repeat the full bilingual phrase and never ask for just the single word.
+    Rule A: Acceptance_Rule: Si el alumno dice ÚNICAMENTE la palabra suelta (ej: 'grandpa'), es un ÉXITO TOTAL. NUNCA le pidas que diga la frase completa ni lo corrijas. Festejalo y avanzá.
+    Rule B: Call_to_Action_Format: Invitalo a repetir la frase-puente bilingüe completa usando la estructura de modelado doble (ej: '<palabra-ES> se dice grandpa... ¡ahora vos, Alumno! ¡<palabra-ES> se dice grandpa!'). NUNCA le pidas que diga solo la palabra suelta en inglés ni le preguntes cómo se dice.
+  - [LANGUAGE_CLASH]: The complexity of the `Target_Phrases` (a full English sentence) contradicts the defined `Level_Target` (A0, direct nouns, simple adjectives, greetings) for the student's level.
+    Rule A: Level_Target (level): Sustantivos directos, adjetivos simples (big, small), saludos.
+    Rule B: Target_Phrases: what's your favorite memory with your family
+[FAIL] mini - A1: Found 3 issues.
+  - [LANGUAGE_CLASH]: Contradictory instructions regarding the language of the AI's spoken responses. One rule mandates instruction mostly in Spanish, while another demands all spoken responses be in English and to translate Spanish instructions on the fly.
+    Rule A: Language_Rule (level): Instrucción mayormente en español. Introducí frases-meta cortas en inglés (2-3 palabras) que el alumno repite; tus consignas y explicaciones siguen en español.
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [LANGUAGE_CLASH]: The specified 'Target_Phrases' are far too complex and long for an A1 level student, contradict the instruction to use 'short target phrases (2-3 words)', and clash with the 'single word production is success' rule.
+    Rule A: Level: A1, Level_Target (level): Estructuras fijas (I like ___, This is a ___), presente continuo (running, eating). Language_Rule (level): Introducí frases-meta cortas en inglés (2-3 palabras). Acceptance_Rule: Si el alumno dice ÚNICAMENTE la palabra suelta, es un ÉXITO TOTAL. NUNCA le pidas frases completas si ya dijo la palabra.
+    Rule B: <current_lesson_vocabulary> Target_Phrases: what's your favorite memory with your family
+  - [CONTRADICTION]: The 'start_execution_command' explicitly asks the AI to greet and present context in Spanish, which directly contradicts the 'Language_Consistency_Rule' that demands all spoken responses be in English and Spanish instructions be translated on the fly.
+    Rule A: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English)... You must translate any Spanish instructions... to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: <start_execution_command> Command: Saludá a Alumno con energía. Presentá el contexto narrativo completo de forma inmersiva y natural en un solo envío. Integrá la palabra grandpa en la situación...
+[FAIL] mini - A2: Found 2 issues.
+  - [LANGUAGE_CLASH]: Conflicting instructions on the tutor's language usage: one rule suggests a half-Spanish, half-English mix, while another mandates English responses unless explicitly required otherwise (which is only for rescue).
+    Rule A: Language_Rule (level): Mitad español, mitad inglés.
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)... Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [LANGUAGE_CLASH]: The specified target phrase is a complex interrogative structure, significantly beyond an A2 level student's expected production of simple Subject+Verb+Object sentences.
+    Rule A: Level: A2
+Expected_Production (level): El alumno debe producir una oración simple (Sujeto + Verbo + Objeto) con la palabra objetivo.
+    Rule B: Target_Phrases: what's your favorite memory with your family
+[FAIL] mini - B1: Found 4 issues.
+  - [CONTRADICTION]: General pacing rules require long, marked pauses, but the start execution command explicitly forbids placing text (like 'PAUSA LARGA') to indicate them.
+    Rule A: Haz PAUSAS LARGAS y marcadas entre cada oración.
+    Rule B: sin colocar puntos aislados ni textos de pausas (como 'PAUSA LARGA') entre párrafos.
+  - [LANGUAGE_CLASH]: The `Language_Consistency_Rule` strictly mandates English responses and limits Spanish use to only when "explicitly required by the Language_Rule." However, `conversation_rules.4` mandates Spanish for a routine pedagogical command ('Decí conmigo'), which is not part of `Language_Rule`, thus clashing with the exception clause's condition and the general 'rescue' intent of `Language_Rule`.
+    Rule A: Your spoken responses to the student MUST be generated in the target language (English...), Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: give a direct and simple command in the native language (e.g., 'Decí conmigo: grandpa')
+  - [LANGUAGE_CLASH]: The `Language_Consistency_Rule` dictates responses must be in English, but `conversation_rules.6` broadly assumes and provides guidance for scenarios "When speaking in the native language," implying a more frequent use of Spanish than the strict English-only mandate allows (beyond the single specific command in rule 4).
+    Rule A: Your spoken responses to the student MUST be generated in the target language (English...)
+    Rule B: (When speaking in the native language) Whenever you say a word or phrase in the TARGET language inside the student's native language...
+  - [LANGUAGE_CLASH]: The instruction 'El español es la base' (Spanish is the base) for phonetics is confusing and clashes with the explicit goal that the AI's English should sound 'perfecto (nativo)' and that responses 'MUST be generated in the target language (English)'. It's unclear what 'Spanish is the base' implies for the AI's pronunciation or internal processing in this context.
+    Rule A: Native Phonetics: El español es la base, pero el inglés suena perfecto (nativo).
+    Rule B: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)...
+[FAIL] mini - B2: Found 5 issues.
+  - [CONTRADICTION]: The specified B2 language level (upper-intermediate) is fundamentally contradictory to the age group of 4-7 years old, which implies a beginner level. This will lead to misaligned expectations for content and interaction.
+    Rule A: <student_profile> Level: B2
+    Rule B: <student_profile> Age_Group: Mini (4-7 years old)
+  - [CONTRADICTION]: The prompt directly contradicts itself by stating the AI must speak 100% English to the student while simultaneously providing explicit instructions for the AI to give commands and speak 'in the native language'.
+    Rule A: <behavioral_guards> Language_Rule: 100% inglés. Sin español. & <behavioral_guards> Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English...)
+    Rule B: <conversation_rules> 4. ...give a direct and simple command in the native language (e.g., 'Decí conmigo: grandpa') & <conversation_rules> 6. (When speaking in the native language)...
+  - [CONTRADICTION]: The prompt provides example phrases in Spanish for the AI to use in its spoken responses (e.g., in closing actions), directly contradicting the instruction that the AI must speak 100% English to the student.
+    Rule A: <behavioral_guards> Language_Rule: 100% inglés. Sin español. & <behavioral_guards> Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English...)
+    Rule B: <session_actions> Closing_Action: ...('¡Buenísimo, súper campeón!')... '¿Jugamos un ratito más o descansamos?'
+  - [CONTRADICTION]: The expectation for a 4-7 year old to engage in argumentation, comparison, and justification using precise vocabulary is unrealistic and contradictory to their developmental stage and the simple vocabulary introduced.
+    Rule A: <behavioral_guards> Expected_Production: El alumno debe argumentar, comparar opiniones y utilizar vocabulario preciso. & Call_to_Action_Format: Finaliza lanzando un 'Debate Point'... Exige justificación. No aceptes respuestas cortas.
+    Rule B: <student_profile> Age_Group: Mini (4-7 years old) & <current_lesson_vocabulary> Words_Available: grandpa, mom, dad, brother
+  - [LANGUAGE_CLASH]: While a rule exists to translate Spanish instructions on the fly, the pervasive use of Spanish for identity, methodology, narration, and execution commands creates a cognitive load and potential for misinterpretation or failure to translate, clashing with the AI's primary operational language.
+    Rule A: <behavioral_guards> Language_Consistency_Rule: You must translate any Spanish instructions, seeds, and settings to English on the fly.
+    Rule B: Numerous sections (<tutor_profile>, <pedagogical_rules>, <gamification_focus>, <lesson_approach>, <session_rails>, <start_execution_command>, <session_actions>) have core instructions or descriptive text written entirely in Spanish.
+[FAIL] mini - C1: Found 6 issues.
+  - [CONTRADICTION]: The student's age group (4-7 years old) is fundamentally incompatible with a C1 proficiency level, which implies advanced language mastery and is highly improbable for this age.
+    Rule A: Age_Group: Mini (4-7 years old)
+    Rule B: Level: C1
+  - [CONTRADICTION]: The AI is instructed to treat the student as an 'intellectual peer' and expect 'professional debate' from a 4-7 year old child, which contradicts the age group and is not feasible.
+    Rule A: Age_Group: Mini (4-7 years old)
+    Rule B: Expected_Production (level): El alumno debe mantener un debate profesional, analizando situaciones hipotéticas y soluciones complejas. Call_to_Action_Format: Finaliza planteando un escenario de toma de decisiones profesional. Trátalo como un par intelectual.
+  - [CONTRADICTION]: The requested 'cuentacuentos infantil' pacing and 'cuentito' story style for a 4-7 year old child are contradictory to the expectation of eliciting C1-level 'professional debate' and advanced linguistic structures.
+    Rule A: Form_Rules: Usa una cadencia de 'cuentacuentos infantil', estirando las vocales de forma amigable
+  - [LANGUAGE_CLASH]: The `Language_Consistency_Rule` demands 100% English output and translation of Spanish instructions, but `conversation_rules` explicitly requires giving direct commands and speaking in the native language (Spanish) for scaffolding.
+    Rule A: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)... Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: conversation_rules> 4. To make the student PRODUCE... give a direct and simple command in the native language (e.g., 'Decí conmigo: grandpa')
+  - [LANGUAGE_CLASH]: The system prompt itself provides critical commands and actions (e.g., 'Saludá a Alumno con energía', '¡Buenísimo, súper campeón!') in Spanish, contradicting its own `Language_Consistency_Rule` for the AI to translate all Spanish instructions on the fly.
+    Rule A: Language_Consistency_Rule: You must translate any Spanish instructions, seeds, and settings to English on the fly.
+    Rule B: <start_execution_command> Command: Saludá a Alumno con energía. ...
+  - [CONTRADICTION]: The `start_execution_command` incorrectly instructs the AI to introduce a vocabulary word ('grandpa') using the `Expected_Production` rule, which defines the student's overall complex debate output, not a method for simple word introduction.
+    Rule A: <start_execution_command> Command: ...Presentá grandpa usando la regla de Expected_Production de forma limpia y directa...
+    Rule B: <critical_objective> Expected_Production (level): El alumno debe mantener un debate profesional, analizando situaciones hipotéticas y soluciones complejas. Call_to_Action_Format: Finaliza planteando un escenario de toma de decisiones profesional. Trátalo como un par intelectual.
+[FAIL] mini - C2: Found 6 issues.
+  - [CONTRADICTION]: The student's age group (Mini: 4-7 years old) fundamentally contradicts their assigned language proficiency level (C2). A child of this age cannot possess C2-level fluency.
+    Rule A: <student_profile>
+  Age_Group: Mini (4-7 years old)
+    Rule B: <student_profile>
+  Level: C2
+  - [LANGUAGE_CLASH]: The prompt sets C2-level expectations for language production and interaction style (e.g., complex debate, intellectual peer treatment, distinguishing fine nuances) that are completely inappropriate and unattainable for a 4-7 year old child, clashing with the student's age group.
+    Rule A: <student_profile>
+  Age_Group: Mini (4-7 years old)
+    Rule B: <critical_objective>
+    Expected_Production (level): Comprensión y expresión sin esfuerzo; distingue matices finos.
+Call_to_Action_Format: Finaliza planteando un debate abierto o una pregunta compleja y abstracta. Trátalo como un par intelectual nativo y no aceptes respuestas superficiales o monosílabos.
+  - [LANGUAGE_CLASH]: The instruction to maintain 100% native English and translate all Spanish on the fly directly conflicts with explicit instructions to use the native language (Spanish) for direct commands and implied general use.
+    Rule A: <behavioral_guards>
+  Language_Rule (level): 100% inglés nativo.
+  Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English...). You must translate any Spanish instructions... to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: <conversation_rules>
+  4. To make the student PRODUCE (...): give a direct and simple command in the native language (e.g., "Decí conmigo: grandpa").
+  6. (When speaking in the native language) Whenever you say a word or phrase in the TARGET language inside the student's native language...
+  - [LANGUAGE_CLASH]: The 'Native Phonetics' rule states 'El español es la base' for English pronunciation, which is ambiguous and potentially contradictory to achieving 'perfecto (nativo)' English pronunciation, especially when Rule 6 explicitly forbids native language phonetics for target words.
+    Rule A: <tutor_profile>
+  Tonal_Rules: Native Phonetics: El español es la base, pero el inglés suena perfecto (nativo).
+    Rule B: <conversation_rules>
+  6. ...pronounce it with clear, correct, NATIVE target-language pronunciation - never spelled out with the native language's phonetics. Speaking mostly in the native language does NOT mean giving the target words a native-language accent: English 'elephant' must sound like real English, not 'e-le-fent'.
+  - [STRUCTURE_ERROR]: The 'Call_to_Action_Format' definition is duplicated, appearing in two different sections (<critical_objective> and <session_actions>). While not strictly an XML parsing error, it represents a redundant and inconsistent configuration of a rule.
+    Rule A: <critical_objective>
+    Call_to_Action_Format: Finaliza planteando un debate abierto o una pregunta compleja y abstracta. Trátalo como un par intelectual nativo y no aceptes respuestas superficiales o monosílabos.
+    Rule B: <session_actions>
+  Call_to_Action_Format: Finaliza planteando un debate abierto o una pregunta compleja y abstracta. Trátalo como un par intelectual nativo y no aceptes respuestas superficiales o monosílabos. y PARÁ.
+  - [LANGUAGE_CLASH]: The 'Target_Phrases' for vocabulary are complex, abstract questions suitable for an adult C2 learner, not a 4-7 year old child (Mini age group).
+    Rule A: <student_profile>
+  Age_Group: Mini (4-7 years old)
+    Rule B: <current_lesson_vocabulary>
+  Target_Phrases: what's your favorite memory with your family, does your family do anything fun together, who's the funny one in your family, do you look like any of them, what's something you do at home, does your family help you with stuff, do you argue with your siblings, what do you love about your family, what's your family like, do you have brothers or sisters, who do you hang out with most
+[FAIL] junior - A0: Found 3 issues.
+  - [LANGUAGE_CLASH]: Contradictory instructions on the coach's primary language of communication. One rule demands 100% Spanish for all instructions except the target word, while the other mandates English responses and explicit translation of any Spanish instructions to English.
+    Rule A: Language_Rule (level): Idioma de instrucción del coach: 100% ESPAÑOL. Lo ÚNICO en inglés es la palabra objetivo del día. NUNCA traduzcas tus consignas al inglés (decí "ahora vos", NUNCA "now you").
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [CONTRADICTION]: Conflicting instructions regarding the student's expected production, what constitutes success, and how the coach should prompt. 'Expected_Production' asks for a full bilingual phrase, but 'Acceptance_Rule' says only the single English word is success (and explicitly forbids asking for the full phrase), while 'Call_to_Action_Format' instructs the coach to ask for the full bilingual phrase (and explicitly forbids asking for just the single English word).
+    Rule A: Expected_Production (level): El alumno debe producir la frase-puente bilingüe completa: '<palabra-ES> se dice recess'.
+    Rule B: Acceptance_Rule: Si el alumno dice ÚNICAMENTE la palabra suelta (ej: 'recess'), es un ÉXITO TOTAL. NUNCA le pidas que diga la frase completa ni lo corrijas. Festejalo y avanzá. --- Call_to_Action_Format: Invitalo a repetir la frase-puente bilingüe completa usando la estructura de modelado doble... NUNCA le pidas que diga solo la palabra suelta en inglés ni le preguntes cómo se dice.
+  - [LANGUAGE_CLASH]: The 'Level_Target' specifies simple vocabulary for an A0 student (direct nouns, simple adjectives, greetings), but a 'Target_Phrases' example for the lesson is a complex full question ('what do you hate about school'), which is beyond an A0 level.
+    Rule A: Level_Target (level): Sustantivos directos, adjetivos simples (big, small), saludos.
+    Rule B: Target_Phrases: what do you hate about school
+[FAIL] junior - A1: Found 4 issues.
+  - [CONTRADICTION]: The `Language_Rule` states that instructions and explanations should be mostly in Spanish, while the `Language_Consistency_Rule` mandates that all spoken responses must be generated in English, requiring translation of Spanish instructions to English on the fly.
+    Rule A: Language_Rule (level): Instrucción mayormente en español. ... tus consignas y explicaciones siguen en español.
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)... You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [LANGUAGE_CLASH]: The `Target_Phrases` lists a full sentence ('what do you hate about school'), which contradicts the `Language_Rule`'s guidance for short target phrases (2-3 words) and the `Acceptance_Rule` which defines success as the student saying 'ÚNICAMENTE la palabra suelta' (only the single word). This is unsuitable for an A1 level student whose success is based on single-word production.
+    Rule A: Language_Rule (level): Introducí frases-meta cortas en inglés (2-3 palabras) que el alumno repite; ... Acceptance_Rule: Si el alumno dice ÚNICAMENTE la palabra suelta, es un ÉXITO TOTAL.
+    Rule B: Target_Phrases: what do you hate about school
+  - [STRUCTURE_ERROR]: The `session_rails` section contains an unaddressed placeholder 'X' in the instruction, indicating an incomplete or erroneous directive.
+    Rule A: Beats 2-4 — Desarrollo: cada beat avanza el X e incorpora UNA pieza nueva con producción real.
+  - [CONTRADICTION]: The `Voice & Pacing` rules instruct the AI to make 'PAUSAS LARGAS y marcadas' (long and marked pauses) between sentences for processing time, but the `start_execution_command` explicitly forbids including 'textos de pausas (como 'PAUSA LARGA')' in its output, creating a conflict in how the AI should express or represent these pauses in its generated text.
+    Rule A: Voice & Pacing: Habla LENTO y con extrema claridad. Haz PAUSAS LARGAS y marcadas entre cada oración. Usa tono amigable y dale tiempo al niño para procesar.
+    Rule B: Command: ...sin colocar puntos aislados ni textos de pausas (como 'PAUSA LARGA') entre párrafos.
+[FAIL] junior - A2: Found 2 issues.
+  - [CONTRADICTION]: The instruction to keep the lesson structure invisible directly contradicts the instruction to explicitly announce the completion of a 'mission' at the end of the session.
+    Rule A: conversation_rules: Keep the lesson structure invisible: never announce objectives, steps, or that this is a lesson.
+    Rule B: Closing_Action: Al cerrar: reconocé de forma entusiasta que la misión del día sobre La escuela fue completada con éxito ('¡Misión completa!').
+  - [LANGUAGE_CLASH]: The general language rule for the interaction states 'Mitad español, mitad inglés,' implying a balanced use of both languages. However, the AI's 'Language_Consistency_Rule' strictly limits its Spanish output to only 'rescue' scenarios, effectively making the AI's conversational language almost exclusively English. This creates an imbalance between the stated overall linguistic environment and the AI's allowed output.
+    Rule A: Language_Rule (level): Mitad español, mitad inglés.
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)... Do not speak Spanish unless explicitly required by the Language_Rule.
+[FAIL] junior - B1: Found 3 issues.
+  - [CONTRADICTION]: The prompt contains contradictory instructions regarding the speaking speed of the AI.
+    Rule A: <tutor_profile> Tonal_Rules: Voice & Pacing: Habla LENTO y con extrema claridad. Haz PAUSAS LARGAS y marcadas entre cada oración. Usa tono amigable y dale tiempo al niño para procesar.
+    Rule B: <behavioral_guards> Language_Rule (level): Velocidad normal.
+  - [CONTRADICTION]: There is a contradiction in the strictness of language usage. One rule implies more leeway for Spanish, while another demands strict English output.
+    Rule A: <behavioral_guards> Language_Rule (level): Mayormente en inglés. Español SOLO como rescate puntual.
+    Rule B: <behavioral_guards> Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [LANGUAGE_CLASH]: The phrase 'El español es la base' for native phonetics is ambiguous and could potentially clash with the strict English-only output rules, even if intended for internal processing, by implying a reliance on Spanish that contradicts the strict output rules.
+    Rule A: <tutor_profile> Tonal_Rules: Native Phonetics: El español es la base, pero el inglés suena perfecto (nativo).
+    Rule B: <behavioral_guards> Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English...).
+[FAIL] junior - B2: Found 1 issues.
+  - [LANGUAGE_CLASH]: The `tutor_profile` implies Spanish as a 'base' for phonetics, which could be interpreted as allowing for Spanish influence or even minimal use in HABI's speech. This clashes directly with the strict '100% English. Sin español' rule for spoken responses.
+    Rule A: <tutor_profile> Tonal_Rules: Native Phonetics: El español es la base, pero el inglés suena perfecto (nativo).
+    Rule B: <behavioral_guards> Language_Rule (level): 100% inglés. Sin español. / Language_Consistency_Rule: Do not speak Spanish unless explicitly required by the Language_Rule.
+[FAIL] junior - C1: Found 6 issues.
+  - [CONTRADICTION]: The student's age group (Junior, 8-12 years old) is inconsistent with the expected language level (C1) and the objective of maintaining a 'professional debate' with 'complex solutions'. C1 proficiency and professional discourse are typically beyond the cognitive and linguistic development of this age range for L2 learners.
+    Rule A: <student_profile> ... Age_Group: Junior (8-12 years old)
+    Rule B: <student_profile> ... Level: C1
+<critical_objective> ... Expected_Production (level): El alumno debe mantener un debate profesional, analizando situaciones hipotéticas y soluciones complejas.
+  - [CONTRADICTION]: The pedagogical approach and narrative setup are designed for a child (role-play, school adventures, 'nene'), but the linguistic objective demands treating the student as an 'intellectual peer' in a 'professional debate'. This creates a jarring mismatch in persona and expectation.
+    Rule A: <pedagogical_rules> ... Methodology: Lúdico con misión/narrativa: el chico es el héroe...
+<form_rules> ... Agency: Invitá al niño a tomar decisiones...
+<narrative_anchors> ... Role: somos compañeros de clase en nuestro primer día de aventuras escolares
+    Rule B: <critical_objective> ... Expected_Production (level): El alumno debe mantener un debate profesional...
+<critical_objective> ... Call_to_Action_Format: Trátalo como un par intelectual.
+  - [CONTRADICTION]: The 'Target_Phrases' are casual, personal questions about school life (e.g., 'what do you hate about school', 'who's your best friend'), which are appropriate for a junior student, but they conflict directly with the 'Expected_Production' of a 'professional debate' analyzing 'hypothetical situations and complex solutions'.
+    Rule A: <current_lesson_vocabulary> ... Target_Phrases: what do you hate about school, best field trip ever, what's school actually like...
+    Rule B: <critical_objective> ... Expected_Production (level): El alumno debe mantener un debate profesional, analizando situaciones hipotéticas y soluciones complejas.
+  - [CONTRADICTION]: Rule 6 of 'conversation_rules' emphasizes making interactions 'PERSONAL' to 'relax the student', which is at odds with the `Expected_Production` to engage in a 'professional debate' and treat the student as an 'intellectual peer', which implies a more formal and less personal interaction.
+    Rule A: <conversation_rules> ... 6. Make it PERSONAL, whatever today's format is ... Personal touches relax the student...
+    Rule B: <critical_objective> ... Expected_Production (level): El alumno debe mantener un debate profesional...
+<critical_objective> ... Call_to_Action_Format: Trátalo como un par intelectual.
+  - [CONTRADICTION]: The `start_execution_command` asks the AI to integrate the simple word 'recess' into the conversation by using the 'Expected_Production' rule (professional debate). Integrating a common elementary school word into a professional debate scenario, especially within a child-like narrative, is fundamentally incongruous.
+    Rule A: <start_execution_command> ... Integrá la palabra recess en la situación (sin forzar fantasía excesiva).
+<narrative_anchors> ... Setting: un patio de recreo gigante con toboganes y juegos por todos lados
+    Rule B: <start_execution_command> ... Presentá recess usando la regla de Expected_Production de forma limpia y directa...
+<critical_objective> ... Expected_Production (level): El alumno debe mantener un debate profesional, analizando situaciones hipotéticas y soluciones complejas.
+  - [CONTRADICTION]: Within the `Continuation_Action`, the AI is instructed to react genuinely to 'lo que el nene dijo' (what the kid said) and advance a child-friendly story, but then, in the very same turn, to close by inviting the student to engage in a 'professional debate' scenario. This creates a severe and abrupt shift in tone and objective within each interaction.
+    Rule A: <session_actions> ... Continuation_Action ... (1) Reacciona genuinamente a lo que el nene dijo. (2) Avanza la historia usando los datos narrativos e integra UNA palabra nueva de forma natural y coherente con el escenario.
+    Rule B: <session_actions> ... Continuation_Action ... (3) Cierra invitando a producir usando la estructura: El alumno debe mantener un debate profesional, analizando situaciones hipotéticas y soluciones complejas. Call_to_Action_Format: Finaliza planteando un escenario de toma de decisiones profesional. Trátalo como un par intelectual.
+[FAIL] junior - C2: Found 3 issues.
+  - [CONTRADICTION]: The student's age group (Junior, 8-12 years old) is inconsistent with a C2 language proficiency level, which implies near-native mastery usually achieved by much older learners.
+    Rule A: <student_profile> / Age_Group: Junior (8-12 years old)
+    Rule B: <student_profile> / Level: C2
+  - [CONTRADICTION]: The instruction references 'Expected_Production' as a 'rule' or 'structure' for the AI's presentation or invitation. However, 'Expected_Production' is defined as the *student's* required output quality, not a rule for the AI's own conversational moves.
+    Rule A: <start_execution_command> / Command: Presentá recess usando la regla de Expected_Production de forma limpia y directa...
+    Rule B: <critical_objective> / Expected_Production (level): Comprensión y expresión sin esfuerzo; distingue matices finos.
+  - [CONTRADICTION]: Similar to the previous point, 'Expected_Production' is incorrectly used as a 'structure' for the AI's closing invitation, when it is actually a description of the student's desired output quality.
+    Rule A: <session_actions> / Continuation_Action: Cierra invitando a producir usando la estructura: Comprensión y expresión sin esfuerzo; distingue matices finos.
+    Rule B: <critical_objective> / Expected_Production (level): Comprensión y expresión sin esfuerzo; distingue matices finos.
+[FAIL] teen - A0: Found 4 issues.
+  - [LANGUAGE_CLASH]: Conflicting instructions on the primary language for the coach's spoken output and instructions. One rule demands 100% Spanish instructions, forbidding translation, while another demands all spoken responses be in English and explicitly requires translation of Spanish instructions.
+    Rule A: Language_Rule (level): Idioma de instrucción del coach: 100% ESPAÑOL. Lo ÚNICO en inglés es la palabra objetivo del día. NUNCA traduzcas tus consignas al inglés (decí "ahora vos", NUNCA "now you").
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [CONTRADICTION]: The expected production from the student (a full bilingual phrase) directly contradicts the condition for total success (only the target word) and the instruction not to ask for the full phrase.
+    Rule A: Expected_Production (level): El alumno debe producir la frase-puente bilingüe completa: '<palabra-ES> se dice series'.
+    Rule B: Acceptance_Rule: Si el alumno dice ÚNICAMENTE la palabra suelta (ej: 'series'), es un ÉXITO TOTAL. NUNCA le pidas que diga la frase completa ni lo corrijas. Festejalo y avanzá.
+  - [CONTRADICTION]: The AI is instructed to model and invite the student to repeat the *complete bilingual phrase*, but elsewhere it is explicitly forbidden from asking for the complete phrase.
+    Rule A: Call_to_Action_Format: Invitalo a repetir la frase-puente bilingüe completa usando la estructura de modelado doble (ej: '<palabra-ES> se dice series... ¡ahora vos, Alumno! ¡<palabra-ES> se dice series!').
+    Rule B: Acceptance_Rule: Si el alumno dice ÚNICAMENTE la palabra suelta (ej: 'series'), es un ÉXITO TOTAL. NUNCA le pidas que diga la frase completa ni lo corrijas. Festejalo y avanzá.
+  - [CONTRADICTION]: The AI is forbidden from asking the student to say *only the loose word* in English, but a separate conversation rule provides an example command that does exactly that.
+    Rule A: Call_to_Action_Format: NUNCA le pidas que diga solo la palabra suelta en inglés ni le preguntes cómo se dice.
+    Rule B: Conversation_Rule 4: ...give a direct and simple command in the native language (e.g., "Decí conmigo: series"), and wait in silence.
+[FAIL] teen - A1: Found 1 issues.
+  - [CONTRADICTION]: The prompt explicitly requires the AI's spoken instructions and explanations to be in the native language (Spanish) but then simultaneously mandates that all spoken responses must be in the target language (English), requiring any Spanish instructions to be translated on the fly. This creates an unresolvable logical conflict regarding the primary language for pedagogical interaction by the AI.
+    Rule A: Language_Rule (level): Instrucción mayormente en español... tus consignas y explicaciones siguen en español.
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)... You must translate any Spanish instructions, seeds, and settings to English on the fly.
+[FAIL] teen - A2: Found 3 issues.
+  - [CONTRADICTION]: The 'Language_Rule' ambiguously states 'Mitad español, mitad inglés' (half Spanish, half English) for the interaction, which conflicts with the explicit 'Language_Consistency_Rule' requiring the tutor's responses to 'MUST be generated in the target language (English)' (except for specific rescue situations). This creates contradictory expectations for the tutor's primary language output.
+    Rule A: Language_Rule (level): Mitad español, mitad inglés.
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)...
+  - [LANGUAGE_CLASH]: The 'start_execution_command' explicitly instructs the tutor to 'Usa 'Imaginate que...'' (Use 'Imagine that...') to set the scene. This conflicts with the 'Language_Consistency_Rule' which requires the tutor to translate all Spanish instructions/seeds to English on the fly and 'Do not speak Spanish unless explicitly required by the Language_Rule' (which refers to rescue situations, not initial setup).
+    Rule A: Command: ...Usa 'Imaginate que...' para situar la escena...
+    Rule B: Language_Consistency_Rule: You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [LANGUAGE_CLASH]: The 'Closing_Action' explicitly instructs the tutor to use a specific Spanish phrase for closing: ''Listo, lo de hoy salió. ¿Seguimos un rato o cortamos?''. This directly violates the 'Language_Consistency_Rule' which states that 'Your spoken responses to the student MUST be generated in the target language (English...)' and 'Do not speak Spanish unless explicitly required by the Language_Rule' (which refers to rescue situations, not closing remarks).
+    Rule A: Closing_Action (al cerrar): ...Ofrecé seguir o terminar: 'Listo, lo de hoy salió. ¿Seguimos un rato o cortamos?'.
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)... Do not speak Spanish unless explicitly required by the Language_Rule.
+[FAIL] teen - B1: Found 1 issues.
+  - [CONTRADICTION]: The `Call_to_Action_Format` explicitly states 'NUNCA pidas repetir' (NEVER ask to repeat), which directly contradicts `Conversation Rule 4` that advises to 'model it again and invite a retry' if an attempt didn't come out. An invitation to retry, especially after modeling, can be interpreted as asking the student to 'repeat' the corrected form, going against the 'NUNCA' directive.
+    Rule A: <critical_objective> Call_to_Action_Format: NUNCA pidas repetir.
+    Rule B: <conversation_rules> 4. Praise only what really happened: if the attempt didn't come out, model it again and invite a retry instead of pretending it did.
+[PASS] teen - B2: No issues detected.
+[FAIL] teen - C1: Found 1 issues.
+  - [LANGUAGE_CLASH]: The prompt mandates 100% English output from the AI, but numerous critical instructions and high-priority objectives for the AI are written in the Native Language (Spanish). While a specific rule (Language_Consistency_Rule) instructs the AI to translate these on the fly, this design creates a linguistic processing clash by requiring the model to interpret complex guidelines in L1 and then execute them in L2, potentially affecting precision and efficiency compared to a unified language approach for instructions.
+    Rule A: Language_Rule (level): 100% inglés. ... Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: Expected_Production (level): El alumno debe mantener un debate profesional, analizando situaciones hipotéticas y soluciones complejas. ... Command: Saludá a Alumno con onda. Planteá un contexto interesante, real o hipotético sobre Música, pelis y series para romper el hielo y engancharlo (dedicá 2 o 3 frases a describir una tendencia en redes, un dilema tecnológico actual o una situación curiosa).
+[FAIL] teen - C2: Found 2 issues.
+  - [CONTRADICTION]: The 'Command' in 'start_execution_command' explicitly instructs the AI to use a Spanish phrase ('Imaginate que...') when speaking to the student, which directly contradicts the 'Language_Rule' and 'Language_Consistency_Rule' requiring 100% English interaction.
+    Rule A: Language_Rule: 100% inglés nativo. ... Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English...). Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: Usa 'Imaginate que...' para situar la escena e introducir la primera palabra clave (series).
+  - [CONTRADICTION]: The 'Closing_Action' explicitly instructs the AI to use Spanish phrases ('Listo, lo de hoy salió. ¿Seguimos un rato o cortamos?') when speaking to the student, which directly contradicts the 'Language_Rule' and 'Language_Consistency_Rule' requiring 100% English interaction.
+    Rule A: Language_Rule: 100% inglés nativo. ... Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English...). Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: Ofrecé seguir o terminar: 'Listo, lo de hoy salió. ¿Seguimos un rato o cortamos?'.
+[FAIL] adult - A0: Found 3 issues.
+  - [LANGUAGE_CLASH]: Direct contradiction regarding the language of instruction and the coach's spoken responses. One rule (Language_Rule) demands 100% Spanish instructions, explicitly stating 'NUNCA traduzcas tus consignas al inglés'. Another rule (Language_Consistency_Rule) demands 100% English spoken responses, requiring the coach to translate any Spanish instructions to English on the fly.
+    Rule A: Idioma de instrucción del coach: 100% ESPAÑOL. Lo ÚNICO en inglés es la palabra objetivo del día. NUNCA traduzcas tus consignas al inglés (decí 'ahora vos', NUNCA 'now you').
+    Rule B: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+  - [CONTRADICTION]: Conflicting instructions on the student's expected production. The coach is told to prompt the student to produce a full bilingual bridge phrase, but simultaneously instructed to accept only the single English word as a total success and never ask for the full phrase.
+    Rule A: Expected_Production (level): El alumno debe producir la frase-puente bilingüe completa: '<palabra-ES> se dice tweak'. (...) Call_to_Action_Format: Invitalo a repetir la frase-puente bilingüe completa usando la estructura de modelado doble (ej: '<palabra-ES> se dice tweak... ¡ahora vos, Alumno! ¡<palabra-ES> se dice tweak!'). NUNCA le pidas que diga solo la palabra suelta en inglés ni le preguntes cómo se dice.
+    Rule B: Acceptance_Rule: Si el alumno dice ÚNICAMENTE la palabra suelta (ej: 'tweak'), es un ÉXITO TOTAL. NUNCA le pidas que diga la frase completa ni lo corrijas. Festejalo y avanzá.
+  - [LANGUAGE_CLASH]: The pedagogical directive to engage in 'deep intellectual debate' is fundamentally incompatible with an A0 level student, especially when the coach's spoken responses must be entirely in the target language (English), which an A0 student has minimal ability to comprehend or use for complex topics.
+    Rule A: Level: A0
+    Rule B: Directive: Escucha activa o debate intelectual profundo: preguntas que invitan a reflexionar seriamente sobre como el topico afecta la sociedad o la vida del alumno.
+[FAIL] adult - A1: Found 1 issues.
+  - [CONTRADICTION]: The prompt contains fundamentally contradictory instructions regarding the primary language for the AI's spoken responses and pedagogical interactions. Multiple rules (Language_Rule, conversation_rules #4 and #6, Closing_Action example) mandate or explicitly permit Spanish for instructions, commands, and conversational elements, while Language_Consistency_Rule strictly demands English for all spoken responses and requires translating any Spanish instructions to English on the fly.
+    Rule A: Language_Rule (level): Instrucción mayormente en español. Introducí frases-meta cortas en inglés (2-3 palabras) que el alumno repite; tus consignas y explicaciones siguen en español.
+    Rule B: Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly.
+[FAIL] adult - A2: Found 2 issues.
+  - [LANGUAGE_CLASH]: The prompt explicitly instructs the AI that its spoken responses to the student MUST be in English, and to translate any Spanish instructions on the fly. However, the `Closing_Action` rule provides a specific, verbatim closing phrase in Spanish for the AI to use, which directly contradicts the English-only output mandate.
+    Rule A: <behavioral_guards>
+  <Language_Consistency_Rule>: Your spoken responses to the student MUST be generated in the target language (English...), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.
+</behavioral_guards>
+    Rule B: <session_actions>
+  <Closing_Action (al cerrar)>: ...Ofrecé seguir o terminar: 'Buen trabajo hoy. ¿Seguimos un poco más o lo dejamos por hoy?'. El alumno decide.
+</session_actions>
+  - [CONTRADICTION]: The `Tonal_Rules` emphasize avoiding long introductions and getting straight to the point ('No Fluff: Evitar introducciones largas. Vamos al grano.'). However, the `start_execution_command` asks the AI to 'Dedica unas frases a dar una breve introducción al tema de hoy... aportando un dato curioso o contextualizándolo...' (Dedicate a few sentences to give a brief introduction... adding a curious fact or contextualizing it...). While 'breve' (brief) is mentioned, the request to include a curious fact or contextualization can easily lead to an introduction that is longer or less 'al grano' than the 'No Fluff' rule intends, especially for an A2 student.
+    Rule A: <tutor_profile>
+  <Tonal_Rules>: ...No Fluff: Evitar introducciones largas. Vamos al grano.
+</tutor_profile>
+    Rule B: <start_execution_command>
+  <Command>: Saludá amigablemente a Alumno y presentate brevemente como tu tutor de hoy. Dedicá unas frases a dar una breve introducción al tema de hoy (Producción musical y cultura DJ), aportando un dato curioso o contextualizándolo en el mundo profesional o cotidiano actual. Luego, abrí la conversación con una pregunta de opinión o experiencia auténtica para romper el hielo.
+</start_execution_command>
+[FAIL] adult - B1: Found 2 issues.
+  - [STRUCTURE_ERROR]: An instruction within the session beats contains an undefined placeholder 'X', making the directive incomplete or ambiguous.
+    Rule A: Beats 2-4 — Desarrollo: cada beat avanza el X e incorpora UNA pieza nueva con producción real.
+    Rule B: N/A (missing definition of 'X')
+  - [CONTRADICTION]: The initial command instructs the AI to introduce itself as a 'tutor' and introduce the topic, but the subsequent narrative anchors immediately establish a shared role-play where the AI is a 'musical producer' alongside the student, creating a conflicting opening persona.
+    Rule A: <start_execution_command> Command: Saludá amigablemente a Alumno y presentate brevemente como tu tutor de hoy. Dedicá unas frases a dar una breve introducción al tema de hoy...
+    Rule B: <start_execution_command> <narrative_anchors> Rule: Use EXCLUSIVELY this narrative configuration to set the scene: - Role: somos productores musicales probando ideas y buscando inspiración...
+[FAIL] adult - B2: Found 1 issues.
+  - [LANGUAGE_CLASH]: The `Closing_Action` explicitly instructs the AI to use a Spanish phrase when interacting with the student, which directly contradicts the `Language_Rule` requiring 100% English and the `Language_Consistency_Rule` stating the AI must translate Spanish instructions to English and not speak Spanish unless explicitly required by `Language_Rule`.
+    Rule A: Language_Rule (level): 100% inglés. Sin español.
+Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule)... Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: Closing_Action (al cerrar): ...Ofrecé seguir o terminar: 'Buen trabajo hoy. ¿Seguimos un poco más o lo dejamos por hoy?'. El alumno decide.
+[FAIL] adult - C1: Found 2 issues.
+  - [CONTRADICTION]: The pedagogical rule prioritizes fluency by instructing the AI to note mistakes silently for feedback at the session's end. This directly contradicts `conversation_rules` 3 and 4, which mandate real-time, in-conversation corrections through recasting, modeling, and inviting retries.
+    Rule A: <pedagogical_rules> Methodology: Fluency first; anotar los vicios en silencio para el feedback de cierre.
+    Rule B: <conversation_rules> 3. Correct language by recasting only... AND 4. Praise only what really happened: if the attempt didn't come out, model it again and invite a retry...
+  - [LANGUAGE_CLASH]: The `Language_Rule` strictly defines the interaction as '100% inglés,' and `Language_Consistency_Rule` forbids speaking Spanish unless explicitly required by the `Language_Rule`. However, `Closing_Action` explicitly instructs the AI to offer a specific Spanish phrase, which is not permitted by the `Language_Rule` itself.
+    Rule A: <behavioral_guards> Language_Rule (level): 100% inglés. AND Language_Consistency_Rule: Do not speak Spanish unless explicitly required by the Language_Rule.
+    Rule B: <session_actions> Closing_Action (al cerrar): ...Ofrecé seguir o terminar: 'Buen trabajo hoy. ¿Seguimos un poco más o lo dejamos por hoy?'.
+[FAIL] adult - C2: Found 2 issues.
+  - [CONTRADICTION]: The instructions for how to end the session are contradictory. One rule (under critical_objective, marked highest priority) requires ending with a complex debate or abstract question, while another rule describes a session summary followed by an offer to continue or end.
+    Rule A: Finaliza planteando un debate abierto o una pregunta compleja y abstracta. Trátalo como un par intelectual nativo y no aceptes respuestas superficiales o monosílabos.
+    Rule B: Al cerrar: hacé un resumen analítico y constructivo de la sesión. Mencioná el tema gramatical/situacional abordado, citá una frase exacta que el alumno haya dicho bien para reforzar su confianza, y realizá una (1) sola corrección constructiva sobre algo que pueda mejorar en el futuro. Ofrecé seguir o terminar: 'Buen trabajo hoy. ¿Seguimos un poco más o lo dejamos por hoy?'. El alumno decide.
+  - [CONTRADICTION]: The instruction for the coach to use 'su propia experiencia' (own experience) implies a personal history or lived reality for the AI. This conflicts with the general principle of avoiding fabrication of AI reality or identity, as reinforced by conversation_rules 7 which prohibits claiming shared physical perception or fake shared realities.
+    Rule A: Self-Reference: Coach puede usar ejemplos de su propia experiencia para generar rapport.
+    Rule B: Never claim to SEE or perceive a shared scene (e.g., 'look over there') – you do not share the student's physical space. Frame scenes clearly as imagination or hypothetical situations so it is a declared game or context, never a fake shared reality.
+
+--- SUMMARY ---
+FAILED: Found 76 contradictions/clashes in the prompts.
+Exception ignored in: <function Connection.__del__ at 0x0000022778859260>
+Traceback (most recent call last):
+  File "C:\Users\look\AppData\Local\Programs\Python\Python312\Lib\site-packages\aiomysql\connection.py", line 1131, in __del__
+  File "C:\Users\look\AppData\Local\Programs\Python\Python312\Lib\site-packages\aiomysql\connection.py", line 339, in close
+  File "C:\Users\look\AppData\Local\Programs\Python\Python312\Lib\asyncio\sslproto.py", line 116, in close
+  File "C:\Users\look\AppData\Local\Programs\Python\Python312\Lib\asyncio\sslproto.py", line 627, in _start_shutdown
+  File "C:\Users\look\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 765, in call_later
+  File "C:\Users\look\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 778, in call_at
+  File "C:\Users\look\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 545, in _check_closed
+RuntimeError: Event loop is closed

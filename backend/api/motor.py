@@ -61,6 +61,10 @@ ABM_REGISTRY: dict[str, dict[str, str]] = {
     "levels": {"group": "Catálogo Dinámico (V2)", "label": "Niveles (QUÉ)"},
     "topics": {"group": "Catálogo Dinámico (V2)", "label": "Tópicos (LÉXICO)"},
     "templates": {"group": "Catálogo Dinámico (V2)", "label": "Personalidad del Coach"},
+    # Orquestación como DATO (reingeniería placeholders) — 100% editable, sin deploy
+    "orchestration_templates": {"group": "Orquestación (placeholders)", "label": "Template (la FORMA del prompt)"},
+    "age_level_matrix": {"group": "Orquestación (placeholders)", "label": "Cruces edad × nivel"},
+    "conversation_rules": {"group": "Orquestación (placeholders)", "label": "Reglas universales (gateadas)"},
 }
 
 

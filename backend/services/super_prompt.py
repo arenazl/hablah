@@ -14,13 +14,14 @@ gemini_live, que sí pasa todos los datos del motor); quedan para migrar aparte.
 """
 from __future__ import annotations
 
-from services.composer_proto import compose_proto_prompt
+from services.orchestration_resolver import compose_from_template
 
 
 def build_super_prompt(**kwargs) -> str:
-    """Arma el systemInstruction de la clase apilando los catálogos del motor de 9 pasos
-    (eje EDAD + eje NIVEL + tópico + memoria del alumno). Camino único, sin fallback legacy."""
-    return compose_proto_prompt(
+    """Arma el systemInstruction de la clase resolviendo el TEMPLATE de orquestación (dato) contra
+    los catálogos (EDAD + NIVEL + cruce age_level_matrix + tópico + memoria). Reingeniería
+    placeholders (F3): la FORMA del prompt vive en orchestration_templates, no hardcodeada en Python."""
+    return compose_from_template(
         user=kwargs.get("user"),
         topic=kwargs.get("topic"),
         topic_content=kwargs.get("topic_content"),
