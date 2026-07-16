@@ -730,7 +730,7 @@ export default function MotorPlaygroundPanel() {
                                     ? renderUniversalRules(ent.body)
                                     : renderBodyWithPlaceholders(ent.body)}
                                 </div>
-                                {ent.source && ent.source.split('.').length === 2 && (
+                                {ent.source && ent.source.split('.').length === 2 && ent.source !== 'app_config.universal_conversation_rules' && (
                                   <button 
                                     onClick={(e) => { e.stopPropagation(); handleEditEntry(ent.source) }}
                                     title="Editar esta regla en el catálogo"
