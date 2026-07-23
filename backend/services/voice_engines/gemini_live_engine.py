@@ -311,13 +311,12 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                     # de fondo o respiracion → el coach cortaba sin sentido y
                     # despues respondia un turn vacio con "muy bien" generico.
                     "startOfSpeechSensitivity": (
-                        _start_sens or ("START_SENSITIVITY_LOW" if is_kid else "START_SENSITIVITY_HIGH")
+                        _start_sens or "START_SENSITIVITY_HIGH"
                     ),
-                    # HIGH: VAD interno mas sensible para detectar voz Y turn-end.
-                    # Con LOW no transcribia inputs cortos (S489 tuvo 0 input_transcription
-                    # con 60 chunks de audio). El silenceDurationMs=2000 capped evita
-                    # que pise al alumno cuando hace pausa corta.
-                    "endOfSpeechSensitivity": (_end_sens or "END_SENSITIVITY_HIGH"),
+                    # LOW: evita que el VAD corte antes de tiempo o ignore monosílabos breves
+                    # (ej. bread, dog, yes, no). Con HIGH o LOW start_sens se equilibra para
+                    # capturar sin falso positivo.
+                    "endOfSpeechSensitivity": (_end_sens or "END_SENSITIVITY_LOW"),
                     # Kids: prefix generoso (700ms) para recuperar el arranque suave de la
                     # primera palabra sin subir la sensibilidad (recomendación del dueño del
                     # modelo). Es audio del PASADO del buffer -> no agrega latencia a la
