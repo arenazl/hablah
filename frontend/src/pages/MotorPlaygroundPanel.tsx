@@ -100,6 +100,8 @@ export default function MotorPlaygroundPanel() {
   const [err, setErr] = useState<string | null>(null)
   const [showXml, setShowXml] = useState(false)
   const [activeLayer, setActiveLayer] = useState('Contexto')
+  // Mesa de pruebas dockeada abajo: abierta por defecto, colapsable a una barra.
+  const [dockOpen, setDockOpen] = useState(true)
   
   // Estado del JIT inline editor
   const [editTable, setEditTable] = useState<string | null>(null)
@@ -617,7 +619,7 @@ export default function MotorPlaygroundPanel() {
   const steps = res?.steps || []
 
   return (
-    <div style={{ minHeight: '100vh', background: C.bg, color: C.fg, padding: '18px 16px 64px' }}>
+    <div style={{ minHeight: '100vh', background: C.bg, color: C.fg, padding: '18px 16px', paddingBottom: dockOpen ? '50vh' : 120 }}>
       <div style={{ maxWidth: 1340, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
           <div>
@@ -937,8 +939,30 @@ export default function MotorPlaygroundPanel() {
 
         </div>
 
-        {/* Loop de Aprendizaje */}
-        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14, marginTop: 18 }}>
+        {/* Mesa de pruebas DOCKEADA al borde inferior (SRS + Simulador + Clase en VIVO):
+            fija abajo para operar sin scrollear; colapsable a una barra para recuperar pantalla. */}
+        <div style={{
+          position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+          width: isMobile ? 'calc(100% - 16px)' : 'calc(100% - 32px)', maxWidth: 1340, zIndex: 60,
+          background: C.panel, border: `1px solid ${C.border}`, borderBottom: 'none',
+          borderRadius: '14px 14px 0 0', boxShadow: '0 -8px 28px rgba(0,0,0,0.18)',
+          display: 'flex', flexDirection: 'column', maxHeight: dockOpen ? '46vh' : undefined,
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}>
+          <button onClick={() => setDockOpen((v) => !v)} style={{
+            display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left',
+            background: 'none', border: 0, borderBottom: dockOpen ? `1px solid ${C.border}` : 'none',
+            padding: '9px 14px', cursor: 'pointer', color: C.fg,
+          }}>
+            <span style={{ width: 8, height: 8, borderRadius: 999, background: isLive ? C.red : C.accent }} />
+            <span style={{ fontSize: 12.5, fontWeight: 800 }}>Mesa de pruebas</span>
+            <span style={{ fontSize: 10.5, color: C.dim }}>SRS · Simulador Gemini · Clase en VIVO{isLive ? ' — clase en curso' : ''}</span>
+            <span style={{ marginLeft: 'auto', color: C.dim, display: 'flex' }}>
+              <Ico d={dockOpen ? 'M6 9l6 6 6-6' : 'M18 15l-6-6-6 6'} size={15} />
+            </span>
+          </button>
+          {dockOpen && (
+          <div style={{ overflowY: 'auto', padding: 14 }}>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 20 }}>
             {/* Col 1: Loop de aprendizaje (SRS) */}
             <div>
@@ -1116,6 +1140,8 @@ export default function MotorPlaygroundPanel() {
                 ))}
               </div>
             </div>
+          )}
+          </div>
           )}
         </div>
 
