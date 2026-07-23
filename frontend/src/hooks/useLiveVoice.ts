@@ -258,6 +258,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       try { analyserRef.current.disconnect() } catch {}
       analyserRef.current = null
     }
+    if (masterGainRef.current) {
+      try { masterGainRef.current.disconnect() } catch {}
+      masterGainRef.current = null
+    }
     if (playCtxRef.current) {
       try { playCtxRef.current.close() } catch {}
       playCtxRef.current = null
@@ -275,6 +279,26 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   }, [])
 
   useEffect(() => () => stop(), [stop])
+
+  const masterGainRef = useRef<GainNode | null>(null)
+
+  const getMasterGain = useCallback(() => {
+    const ctx = playCtxRef.current
+    if (!ctx) return null
+    const settings = loadAudioSettings()
+    if (!masterGainRef.current) {
+      const gain = ctx.createGain()
+      gain.gain.value = settings.coachVolume
+      gain.connect(ctx.destination)
+      if (analyserRef.current) {
+        gain.connect(analyserRef.current)
+      }
+      masterGainRef.current = gain
+    } else {
+      masterGainRef.current.gain.value = settings.coachVolume
+    }
+    return masterGainRef.current
+  }, [])
 
   const playNextChunk = useCallback(() => {
     const ctx = playCtxRef.current
@@ -309,13 +333,13 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       buf.getChannelData(0).set(item.floats)
       const src = ctx.createBufferSource()
       src.buffer = buf
-      // Gain node para controlar volumen del coach/participant
-      const gain = ctx.createGain()
-      gain.gain.value = settings.coachVolume
-      src.connect(gain)
-      gain.connect(ctx.destination)
-      const analyser = analyserRef.current
-      if (analyser) gain.connect(analyser)
+      // Nodo de volumen persistente (evita crear/desconectar GainNode por chunk en mobile)
+      const masterGain = getMasterGain()
+      if (masterGain) {
+        src.connect(masterGain)
+      } else {
+        src.connect(ctx.destination)
+      }
       const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + settings.playbackCushionSeconds)
       src.start(startAt)
       nextStartTimeRef.current = startAt + buf.duration
@@ -324,10 +348,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         const arr = playSourcesRef.current
         const idx = arr.indexOf(src)
         if (idx >= 0) arr.splice(idx, 1)
-        try { gain.disconnect() } catch {}
+        try { src.disconnect() } catch {}
       }
     }
-  }, [])
+  }, [getMasterGain])
 
   // Barge-in: el usuario empezo a hablar mientras el coach todavia soltaba audio.
   // Gemini ya cancelo el output server-side; aca cancelamos los chunks que ya
@@ -434,7 +458,10 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         playQueueRef.current.push({ floats: float, sampleRate })
         if (!playCtxRef.current) {
           const settings = loadAudioSettings()
-          playCtxRef.current = new AudioContext({ sampleRate: settings.playbackSampleRate })
+          const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+          playCtxRef.current = isMobile
+            ? new AudioContext()
+            : new AudioContext({ sampleRate: settings.playbackSampleRate })
         }
         // Recovery: si el AudioContext quedo suspended (por autoplay policy,
         // o porque el browser lo suspendio al cambiar de WS en upgradeToRoom)
