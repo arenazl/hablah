@@ -846,9 +846,9 @@ export default function MotorPlaygroundPanel() {
             )}
           </div>
 
-          {/* Columna Derecha: JIT Inline Editor */}
-          {!isMobile && (
-            <div style={{ position: 'sticky', top: 14 }}>
+          {/* Columna Derecha / JIT Inline Editor */}
+          {(!isMobile || editTable !== null) && (
+            <div style={{ position: isMobile ? 'static' : 'sticky', top: 14, marginTop: isMobile ? 12 : 0 }}>
               {editTable ? (
                 <div style={{ background: C.panel, border: `1px solid ${C.accent}`, borderRadius: 12, padding: 14 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
@@ -966,213 +966,80 @@ export default function MotorPlaygroundPanel() {
 
         </div>
 
-        {/* Mesa de pruebas DOCKEADA al borde inferior (SRS + Simulador + Clase en VIVO):
+        {/* Mesa de pruebas / Clase en VIVO dockeada al borde inferior:
             fija abajo para operar sin scrollear; colapsable a una barra para recuperar pantalla. */}
         <div style={{
           position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-          width: isMobile ? 'calc(100% - 16px)' : 'calc(100% - 32px)', maxWidth: 1340, zIndex: 60,
+          width: isMobile ? '100%' : 'calc(100% - 32px)', maxWidth: 1340, zIndex: 60,
           background: C.panel, border: `1px solid ${C.border}`, borderBottom: 'none',
-          borderRadius: '14px 14px 0 0', boxShadow: '0 -8px 28px rgba(0,0,0,0.18)',
-          display: 'flex', flexDirection: 'column', maxHeight: dockOpen ? '46vh' : undefined,
+          borderRadius: isMobile ? '12px 12px 0 0' : '14px 14px 0 0', boxShadow: '0 -8px 28px rgba(0,0,0,0.22)',
+          display: 'flex', flexDirection: 'column', maxHeight: dockOpen ? '50vh' : undefined,
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}>
           <button onClick={() => setDockOpen((v) => !v)} style={{
             display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left',
             background: 'none', border: 0, borderBottom: dockOpen ? `1px solid ${C.border}` : 'none',
-            padding: '9px 14px', cursor: 'pointer', color: C.fg,
+            padding: isMobile ? '10px 12px' : '10px 14px', cursor: 'pointer', color: C.fg, flexWrap: 'wrap',
           }}>
             <span style={{ width: 8, height: 8, borderRadius: 999, background: isLive ? C.red : C.accent }} />
-            <span style={{ fontSize: 12.5, fontWeight: 800 }}>Mesa de pruebas</span>
-            <span style={{ fontSize: 10.5, color: C.dim }}>SRS · Simulador Gemini · Clase en VIVO{isLive ? ' — clase en curso' : ''}</span>
+            <span style={{ fontSize: 13, fontWeight: 800 }}>Clase en VIVO por Voz</span>
+            <span style={{ fontSize: 11, color: C.dim }}>{band.toUpperCase()} · {level} · {meta?.topic_title || 'sin tópico'}{isLive ? ' — clase en curso' : ''}</span>
             <span style={{ marginLeft: 'auto', color: C.dim, display: 'flex' }}>
               <Ico d={dockOpen ? 'M6 9l6 6 6-6' : 'M18 15l-6-6-6 6'} size={15} />
             </span>
           </button>
           {dockOpen && (
-          <div style={{ overflowY: 'auto' }}>
-
-            {/* Fila 1 — Simulación SRS (colapsable) */}
-            <div style={{ borderBottom: `1px solid ${C.border}` }}>
-              <div onClick={() => setOpenRows((r) => ({ ...r, srs: !r.srs }))}
-                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', cursor: 'pointer' }}>
-                <span style={{ width: 8, height: 8, borderRadius: 999, background: NAT.dinamico }} />
-                <span style={{ fontSize: 12.5, fontWeight: 800 }}>Simulación SRS</span>
-                <span style={{ fontSize: 10.5, color: C.dim }}>observación en texto libre → memoria del alumno</span>
-                {lastRun && <span style={{ fontSize: 10.5, color: C.green, fontWeight: 700 }}>{lastRun}</span>}
-                <span style={{ marginLeft: 'auto', color: C.dim, display: 'flex' }}>
-                  <Ico d={openRows.srs ? 'M6 9l6 6 6-6' : 'M9 18l6-6-6-6'} size={13} />
-                </span>
-              </div>
-              {openRows.srs && (
-              <div style={{ padding: '0 12px 10px' }}>
-              <textarea 
-                value={obsText} 
-                onChange={(e) => setObsText(e.target.value)} 
-                rows={2}
-                placeholder="Ej: El alumno dudó al decir que perro se dice dog. Tuvo problemas con el vocabulario del topic."
-                style={{ width: '100%', background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '8px 10px', fontSize: 12.5, lineHeight: 1.45, fontFamily: 'inherit', boxSizing: 'border-box' }}
-              />
-              <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-                <button onClick={runClass} disabled={running}
-                  style={{ background: 'var(--primary)', border: 0, color: 'white', borderRadius: 8, fontSize: 12.5, fontWeight: 700, padding: '7px 16px', cursor: 'pointer' }}>
-                  {running ? 'Procesando…' : 'Simular clase (guardar observación)'}
-                </button>
-                {effStudent && (
-                  <button onClick={wipeProfile}
-                    style={{ background: 'none', border: `1px solid ${C.red}`, color: C.red, borderRadius: 8, fontSize: 12, padding: '6px 14px', cursor: 'pointer', marginLeft: 'auto' }}>
-                    Resetear Memoria
-                  </button>
-                )}
-              </div>
-              {analysis.length > 0 && (
-                <div style={{ marginTop: 10 }}>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: C.dim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Análisis de la simulación de memoria</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5, maxHeight: 100, overflowY: 'auto', background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: 8 }}>
-                    {analysis.map((a, i) => (
-                      <div key={i} style={{ fontSize: 11 }}>
-                        <span style={{ color: C.accent, fontWeight: 700 }}>{a.name}</span>: {a.note}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              </div>
-              )}
-            </div>
-
-            {/* Fila 2 — Simulador Gemini en texto (colapsable) */}
-            <div style={{ borderBottom: `1px solid ${C.border}` }}>
-              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-              <div onClick={() => setOpenRows((r) => ({ ...r, sim: !r.sim }))}
-                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', cursor: 'pointer' }}>
-                <span style={{ width: 8, height: 8, borderRadius: 999, background: C.accent }} />
-                <span style={{ fontSize: 12.5, fontWeight: 800 }}>Simulador Gemini (texto)</span>
-                <span style={{ fontSize: 10.5, color: C.dim }}>bienvenida y cierre generados con el prompt actual</span>
-                <span style={{ marginLeft: 'auto', color: C.dim, display: 'flex' }}>
-                  <Ico d={openRows.sim ? 'M6 9l6 6 6-6' : 'M9 18l6-6-6-6'} size={13} />
-                </span>
-              </div>
-              {openRows.sim && (
-              <div style={{ padding: '0 12px 10px' }}>
-              
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-                <button 
-                  onClick={() => handleSimulateGemini('start')} 
-                  disabled={simulatingGemini || !res?.prompt}
-                  style={{ 
-                    background: C.accent, border: 0, color: C.bg, borderRadius: 8, 
-                    fontSize: 12, fontWeight: 700, padding: '8px 16px', cursor: 'pointer',
-                    display: 'inline-flex', alignItems: 'center', gap: 6
-                  }}
-                >
-                  {simulatingGemini ? (
-                    <>
-                      <span style={{ border: `2px solid ${C.bg}`, borderTopColor: 'transparent', borderRadius: '50%', width: 12, height: 12, display: 'inline-block', animation: 'spin 1s linear infinite' }} />
-                      Cargando…
-                    </>
-                  ) : '▶ Simular Inicio / Bienvenida'}
-                </button>
-
-                <button 
-                  onClick={() => handleSimulateGemini('closing')} 
-                  disabled={simulatingGemini || !res?.prompt}
-                  style={{ 
-                    background: 'none', border: `1px solid #10b981`, color: '#10b981', borderRadius: 8, 
-                    fontSize: 12, fontWeight: 700, padding: '8px 16px', cursor: 'pointer',
-                    display: 'inline-flex', alignItems: 'center', gap: 6
-                  }}
-                >
-                  {simulatingGemini ? (
-                    <>
-                      <span style={{ border: `2px solid #10b981`, borderTopColor: 'transparent', borderRadius: '50%', width: 12, height: 12, display: 'inline-block', animation: 'spin 1s linear infinite' }} />
-                      Cargando…
-                    </>
-                  ) : '⏹ Simular Cierre / Wrap-up'}
-                </button>
-              </div>
-
-              {geminiStartResponse && (
-                <div style={{ marginTop: 12 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: C.dim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Frase de bienvenida generada:</div>
-                  <div style={{ 
-                    background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, padding: 12,
-                    fontSize: 13, lineHeight: 1.5, color: C.fg, whiteSpace: 'pre-wrap', fontStyle: 'italic'
-                  }}>
-                    {geminiStartResponse}
-                  </div>
-                </div>
-              )}
-
-              {geminiClosingResponse && (
-                <div style={{ marginTop: 12 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: C.dim, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Cierre / Resumen de clase generado:</div>
-                  <div style={{ 
-                    background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, padding: 12,
-                    fontSize: 13, lineHeight: 1.5, color: C.fg, whiteSpace: 'pre-wrap', fontStyle: 'italic'
-                  }}>
-                    {geminiClosingResponse}
-                  </div>
-                </div>
-              )}
-              </div>
-              )}
-            </div>
-
-            {/* Fila 3 — Clase en VIVO por voz (colapsable; las acciones viven en la barra) */}
-            <div>
-              <div onClick={() => setOpenRows((r) => ({ ...r, vivo: !r.vivo }))}
-                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', cursor: 'pointer', flexWrap: 'wrap' }}>
-                <span style={{ width: 8, height: 8, borderRadius: 999, background: isLive ? C.red : C.accent }} />
-                <span style={{ fontSize: 12.5, fontWeight: 800 }}>Clase en VIVO</span>
-                <span style={{ fontSize: 10.5, color: C.dim }}>{band.toUpperCase()} · {level} · {meta?.topic_title || 'sin tópico'} · solo audio</span>
-                {isLive && (
-                  <span style={{ fontSize: 9.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: live.status === 'speaking' ? C.accent : C.dim, border: `1px solid ${C.border}`, borderRadius: 999, padding: '1px 7px' }}>
-                    {live.status === 'connecting' ? 'Conectando…' : live.status === 'speaking' ? 'El profe habla' : 'Te escucha'}
+          <div style={{ overflowY: 'auto', padding: isMobile ? 10 : 14 }}>
+            {/* Contenido de la Clase en VIVO por Voz */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 11, color: C.dim }}>Estado:</span>
+                  <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: isLive ? (live.status === 'speaking' ? C.accent : 'var(--info)') : C.dim, border: `1px solid ${C.border}`, borderRadius: 999, padding: '2px 8px', background: C.soft }}>
+                    {!isLive ? 'Listo para iniciar' : live.status === 'connecting' ? 'Conectando…' : live.status === 'speaking' ? 'El profe habla' : 'Escuchando tu voz'}
                   </span>
-                )}
-                {isLive && (
-                  <span style={{ width: 54, height: 5, background: C.soft, borderRadius: 999, overflow: 'hidden', display: 'inline-block' }}>
-                    <span style={{ display: 'block', height: '100%', width: `${Math.round(live.audioLevel * 100)}%`, background: C.accent, transition: 'width 80ms linear' }} />
-                  </span>
-                )}
-                <span style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }} onClick={(e) => e.stopPropagation()}>
+                  {isLive && (
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: 10.5, color: C.dim }}>Mic:</span>
+                      <span style={{ width: 60, height: 6, background: C.soft, borderRadius: 999, overflow: 'hidden', display: 'inline-block' }}>
+                        <span style={{ display: 'block', height: '100%', width: `${Math.round(live.audioLevel * 100)}%`, background: C.accent, transition: 'width 80ms linear' }} />
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div>
                   {!isLive ? (
                     <button onClick={startLiveClass} disabled={loading || !!err}
-                      title={err ? 'Este cruce no compone (dato faltante en el catálogo)' : 'Iniciar clase real por voz. Los ajustes de placeholders aplican a la PRÓXIMA clase; la que está en curso mantiene su prompt.'}
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, border: 0, color: C.bg, borderRadius: 8, fontSize: 12, fontWeight: 800, padding: '5px 14px', cursor: 'pointer', opacity: loading || err ? 0.5 : 1 }}>
-                      <Ico d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z M19 10v2a7 7 0 0 1-14 0v-2 M12 19v3" size={13} /> Iniciar clase
+                      title={err ? 'Este cruce no compone (dato faltante en el catálogo)' : 'Iniciar clase real por voz'}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, border: 0, color: C.bg, borderRadius: 8, fontSize: 12.5, fontWeight: 800, padding: '7px 16px', cursor: 'pointer', opacity: loading || err ? 0.5 : 1 }}>
+                      <Ico d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z M19 10v2a7 7 0 0 1-14 0v-2 M12 19v3" size={14} /> Iniciar clase
                     </button>
                   ) : (
                     <button onClick={live.stop}
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: `1px solid ${C.red}`, color: C.red, borderRadius: 8, fontSize: 12, fontWeight: 800, padding: '5px 14px', cursor: 'pointer' }}>
-                      <Ico d="M6 6h12v12H6z" size={12} /> Terminar
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: `1px solid ${C.red}`, color: C.red, borderRadius: 8, fontSize: 12.5, fontWeight: 800, padding: '7px 16px', cursor: 'pointer' }}>
+                      <Ico d="M6 6h12v12H6z" size={13} /> Terminar clase
                     </button>
                   )}
-                </span>
-                <span style={{ color: C.dim, display: 'flex' }}>
-                  <Ico d={openRows.vivo ? 'M6 9l6 6 6-6' : 'M9 18l6-6-6-6'} size={13} />
-                </span>
+                </div>
               </div>
-              {openRows.vivo && (
-              <div style={{ padding: '0 12px 10px' }}>
-                {!isLive && live.status === 'ended' && live.transcript.length > 0 && (
-                  <div style={{ fontSize: 11, color: C.dim, marginBottom: 6 }}>Clase terminada — ajustá lo que haga falta y volvé a iniciar.</div>
-                )}
-                {(isLive || live.transcript.length > 0) ? (
-                  <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10, maxHeight: 150, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {live.transcript.length === 0 && <div style={{ fontSize: 12, color: C.faint, fontStyle: 'italic' }}>Esperando al profe…</div>}
-                    {live.transcript.map((l, i) => (
-                      <div key={i} style={{ fontSize: 12, lineHeight: 1.45 }}>
-                        <b style={{ color: l.who === 'ai' ? C.accent : 'var(--info)' }}>{l.who === 'ai' ? 'Profe' : 'Vos'}:</b>{' '}
-                        <span style={{ color: C.fg }}>{l.text}</span>
-                      </div>
-                    ))}
-                    <div ref={liveTranscriptEndRef} />
-                  </div>
-                ) : (
-                  <div style={{ fontSize: 11, color: C.faint }}>Charla real por el motor único (ws_motor → compose_proto). El transcript en vivo aparece acá.</div>
-                )}
-              </div>
+
+              {!isLive && live.status === 'ended' && live.transcript.length > 0 && (
+                <div style={{ fontSize: 11.5, color: C.dim }}>Clase terminada — ajustá lo que haga falta arriba y volvé a iniciar.</div>
+              )}
+              {(isLive || live.transcript.length > 0) ? (
+                <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10, maxHeight: 180, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {live.transcript.length === 0 && <div style={{ fontSize: 12, color: C.faint, fontStyle: 'italic' }}>Conectando audio en vivo con el Profe…</div>}
+                  {live.transcript.map((l, i) => (
+                    <div key={i} style={{ fontSize: 12.5, lineHeight: 1.45 }}>
+                      <b style={{ color: l.who === 'ai' ? C.accent : 'var(--info)' }}>{l.who === 'ai' ? 'Profe' : 'Vos'}:</b>{' '}
+                      <span style={{ color: C.fg }}>{l.text}</span>
+                    </div>
+                  ))}
+                  <div ref={liveTranscriptEndRef} />
+                </div>
+              ) : (
+                <div style={{ fontSize: 11.5, color: C.faint, fontStyle: 'italic' }}>Charla real por el motor único. Tocá "Iniciar clase" para hablar por voz con el Profe. El transcript de la charla aparecerá acá en tiempo real.</div>
               )}
             </div>
           </div>
