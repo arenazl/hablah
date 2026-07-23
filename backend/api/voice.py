@@ -1,8 +1,9 @@
+import json
 import logging
 from types import SimpleNamespace
 
 from fastapi import APIRouter, WebSocket, Query
-from sqlalchemy import select
+from sqlalchemy import select, text as _sqltext
 
 from core.database import AsyncSessionLocal
 from services.gemini_live import voice_proxy
@@ -18,7 +19,7 @@ from services.super_prompt import build_super_prompt
 from services import motor_engine
 from models.rooms import VoiceRoom
 from models.user import User
-from models.template import Topic, Template
+from models.template import Topic, Template, Session as SessionModel
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -387,13 +388,56 @@ async def voice_ws_motor(
     )
     engine_name = engine if engine in available_engines() else "gemini_live"
     log.info("voice_ws_motor: %s/%s topic=%s engine=%s voice=%s", age_group, level_code, topic_id, engine_name, safe_voice)
+    transcript: list[dict] = []
     try:
         eng = get_engine(engine_name)
-        async for _line in eng.run(websocket, ctx):
-            pass
+        async for line in eng.run(websocket, ctx):
+            if line:
+                transcript.append(line)
     except Exception as e:
         log.exception("voice_ws_motor error: %s", e)
+    finally:
         try:
             await websocket.close()
         except Exception:
             pass
+
+    if transcript:
+        try:
+            async with AsyncSessionLocal() as db:
+                eff_student = student_id or 990001
+                topic_title = ""
+                if topic_id:
+                    top_row = (await db.execute(select(Topic).where(Topic.id == topic_id))).scalar_one_or_none()
+                    if top_row:
+                        topic_title = top_row.title
+
+                # 1. Persistir en la tabla sessions (para auditoría estándar y scripts)
+                s = SessionModel(
+                    user_id=eff_student,
+                    topic_id=topic_id or None,
+                    cefr_at_start=level_code,
+                    status="completed",
+                    transcript=transcript,
+                    prompt_final=super_prompt,
+                )
+                db.add(s)
+
+                # 2. Persistir en la tabla finaltest_class (para tab de Análisis / Auditoría de laboratorio)
+                sql_finaltest = _sqltext("""
+                    INSERT INTO finaltest_class
+                    (band_code, level_code, topic_id, topic_title, student_id, hist_obj, hist_items, transcript)
+                    VALUES (:band_code, :level_code, :topic_id, :topic_title, :student_id, 0, 0, :transcript)
+                """)
+                await db.execute(sql_finaltest, {
+                    "band_code": age_group,
+                    "level_code": level_code,
+                    "topic_id": topic_id or None,
+                    "topic_title": topic_title,
+                    "student_id": eff_student,
+                    "transcript": json.dumps(transcript, ensure_ascii=False),
+                })
+                await db.commit()
+                log.info("voice_ws_motor: transcripción auditada y guardada (session_id=%s, turns=%d)", s.id, len(transcript))
+        except Exception as ex:
+            log.exception("voice_ws_motor: error guardando transcripción auditada: %s", ex)
