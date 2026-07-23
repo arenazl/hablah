@@ -222,10 +222,28 @@ export default function MotorPlaygroundPanel() {
     }
   }, [band, level, topics, topicId])
 
+  const [discipline, setDiscipline] = useState<'ingles' | 'fonetica' | 'todos'>('ingles')
+
   const levelsForBand = useMemo(() => {
     const mx = bands.find((b) => b.code === band)?.max_level_order ?? 99
-    return levels.filter((l) => l.sort_order <= mx)
-  }, [levels, bands, band])
+    return levels.filter((l) => {
+      const isFonetica = l.level_code.startsWith('FON')
+      if (discipline === 'fonetica') return isFonetica
+      if (discipline === 'ingles') return !isFonetica && l.sort_order <= mx
+      return l.sort_order <= mx
+    })
+  }, [levels, bands, band, discipline])
+
+  const handleDisciplineChange = (newDisc: 'ingles' | 'fonetica' | 'todos') => {
+    setDiscipline(newDisc)
+    if (newDisc === 'fonetica') {
+      setLevel('FONR')
+      const fonTopic = topics.find(t => t.title.toLowerCase().includes('ramón') || t.title.toLowerCase().includes('fonética'))
+      if (fonTopic) setTopicId(fonTopic.topic_id)
+    } else if (newDisc === 'ingles') {
+      if (level.startsWith('FON')) setLevel('A0')
+    }
+  }
 
   useEffect(() => {
     if (levelsForBand.length && !levelsForBand.some((l) => l.level_code === level)) {
@@ -627,7 +645,7 @@ export default function MotorPlaygroundPanel() {
           <div>
             <h1 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 2px' }}>Probador de clases</h1>
             <p style={{ color: C.dim, fontSize: 12.5, margin: '0 0 14px', maxWidth: 760 }}>
-              Elegí el perfil (edad × nivel × tópico). Tocá una capa para desplegarla. Clickeá en los <b>placeholders destacados</b> o en el lápiz para realizar el <b>ajuste fino JIT</b> del catálogo original.
+              Elegí el perfil (disciplina × edad × objetivo × tópico). Tocá una capa para desplegarla. Clickeá en los <b>placeholders destacados</b> o en el lápiz para realizar el <b>ajuste fino JIT</b> del catálogo original.
             </p>
           </div>
           <div style={{ display: 'flex', gap: 5, flexShrink: 0, alignItems: 'center' }}>
@@ -640,9 +658,16 @@ export default function MotorPlaygroundPanel() {
         </div>
 
         {/* Dropdowns unificados */}
-        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 8, alignItems: 'start' }}>
+        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(5, 1fr)', gap: 8, alignItems: 'start' }}>
+          <Ctx label="Disciplina">
+            <select style={sel} value={discipline} onChange={(e) => handleDisciplineChange(e.target.value as any)}>
+              <option value="ingles">Inglés (idiomas)</option>
+              <option value="fonetica">Fonética / Pronunciación</option>
+              <option value="todos">Todas las disciplinas</option>
+            </select>
+          </Ctx>
           <Ctx label="Edad"><select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>{bands.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}</select></Ctx>
-          <Ctx label="Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levelsForBand.map((l) => <option key={l.level_code} value={l.level_code}>{l.level_code}</option>)}</select></Ctx>
+          <Ctx label="Objetivo / Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levelsForBand.map((l) => <option key={l.level_code} value={l.level_code}>{l.label || l.level_code}</option>)}</select></Ctx>
           <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topics.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
           <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— Perfil del nivel</option>{students.map((s) => <option key={s.student_id} value={s.student_id}>{s.name} ({s.level_code})</option>)}</select></Ctx>
         </div>
