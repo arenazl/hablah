@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { BACKOFFICE_CSS } from './backoffice.css'
+import { ThemeSwitcher } from '../components/ThemeSwitcher'
 import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
@@ -626,6 +627,7 @@ export default function MotorPlaygroundPanel() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 5, flexShrink: 0, alignItems: 'center' }}>
+            <ThemeSwitcher />
             <button onClick={resolve} title="Recalcular orquestación desde los inputs actuales"
               style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, fontSize: 12.5, fontWeight: 800, cursor: 'pointer', border: `1px solid ${C.accent}`, background: 'rgba(0,179,126,0.14)', color: C.accent, marginRight: 6 }}>
               <Ico d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" size={13} /> Actualizar
