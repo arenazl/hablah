@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Mic, Square, CheckCircle, Layers } from 'lucide-react'
 import { useLiveVoice } from '../hooks/useLiveVoice'
-import { buildMiniWsUrl, finaltestAPI, miniAPI, type MiniTopic, type MiniStep } from '../services/api'
+import { buildMotorWsUrl, finaltestAPI, miniAPI, type MiniTopic, type MiniStep } from '../services/api'
 import { PushToTalkControl } from '../components/PushToTalkControl'
 
 const AGES: { slug: string; label: string }[] = [
@@ -82,7 +82,7 @@ export default function MiniTestPanel() {
   const startClass = useCallback(async () => {
     if (!topicId) return
     setErr(''); setResult(null)
-    const url = buildMiniWsUrl({
+    const url = buildMotorWsUrl({
       age_group: ageGroup, level_code: level, topic_id: topicId,
       engine: 'gemini_live', model: 'models/gemini-3.1-flash-live-preview', voice: 'Aoede',
     })

@@ -4,10 +4,15 @@
  * las 9 capas JIT. Tocás una capa → se despliega su panel (acordeón) con sus reglas.
  * Los placeholders como {expected_production} se pintan como badges editables.
  * Al tocar un placeholder o hacer click en el lápiz, editás la plantilla de origen.
+ *
+ * Clase en VIVO: botón "Iniciar clase" que abre una charla REAL por voz (solo audio,
+ * sin imágenes) contra el motor único (ws_motor → compose_proto) con el MISMO combo que
+ * se está previsualizando. Loop: ajustar placeholder → guardar → reiniciar clase.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { motorAPI, MotorResolve, MotorOverride, MotorPreset, MotorStageNote } from '../services/api'
+import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote } from '../services/api'
+import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
@@ -130,6 +135,25 @@ export default function MotorPlaygroundPanel() {
   }, [band, level])
 
   const effStudent = useMemo(() => studentId ?? profile?.student_id, [studentId, profile])
+
+  // Clase en VIVO — charla REAL por voz (solo audio, sin imágenes) contra el motor
+  // único (ws_motor → compose_proto), con el MISMO combo que se está previsualizando.
+  const live = useLiveVoice({ onError: (e) => toast.error(`Voz: ${e.message}`) })
+  const isLive = live.status === 'connecting' || live.status === 'listening' || live.status === 'speaking'
+  const liveTranscriptEndRef = useRef<HTMLDivElement>(null)
+  useEffect(() => { liveTranscriptEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [live.transcript])
+  // Cortar la sesión de voz si el usuario navega fuera del panel con la clase abierta.
+  const liveStopRef = useRef(live.stop)
+  liveStopRef.current = live.stop
+  useEffect(() => () => { liveStopRef.current() }, [])
+
+  const startLiveClass = useCallback(async () => {
+    const url = buildMotorWsUrl({
+      age_group: band, level_code: level, topic_id: topicId ?? 0, student_id: effStudent ?? 0,
+      engine: 'gemini_live', model: 'models/gemini-3.1-flash-live-preview', voice: 'Aoede',
+    })
+    await live.start(0, undefined, 'Aoede', url)
+  }, [live, band, level, topicId, effStudent])
 
   // Resolve JIT de orquestación (Motor V2)
   const resolve = useCallback(() => {
@@ -1011,6 +1035,58 @@ export default function MotorPlaygroundPanel() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Clase en VIVO — la prueba real: HABLAR con la orquestación tal cual está */}
+          <div style={{ marginTop: 14, borderTop: `1px solid ${C.border}`, paddingTop: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+              <span style={{ width: 9, height: 9, borderRadius: 999, background: isLive ? C.red : C.accent }} />
+              <div style={{ fontSize: 14, fontWeight: 800 }}>Clase en VIVO (voz real · solo audio)</div>
+              {isLive && (
+                <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: live.status === 'speaking' ? C.accent : C.dim, border: `1px solid ${C.border}`, borderRadius: 999, padding: '2px 8px' }}>
+                  {live.status === 'connecting' ? 'Conectando…' : live.status === 'speaking' ? 'El profe habla' : 'Te escucha'}
+                </span>
+              )}
+              {isLive && (
+                <span style={{ width: 60, height: 6, background: C.soft, borderRadius: 999, overflow: 'hidden', display: 'inline-block' }}>
+                  <span style={{ display: 'block', height: '100%', width: `${Math.round(live.audioLevel * 100)}%`, background: C.accent, transition: 'width 80ms linear' }} />
+                </span>
+              )}
+            </div>
+            <div style={{ fontSize: 11.5, color: C.dim, marginBottom: 10 }}>
+              Arranca una charla real por el motor único (ws_motor → compose_proto) con el combo de arriba:{' '}
+              <b style={{ color: C.fg }}>{band.toUpperCase()} · {level} · {meta?.topic_title || 'sin tópico'}</b>.
+              Los ajustes de placeholders se aplican al iniciar la <b>próxima</b> clase — la que está en curso mantiene su prompt.
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              {!isLive ? (
+                <button onClick={startLiveClass} disabled={loading || !!err}
+                  title={err ? 'Este cruce no compone (dato faltante en el catálogo)' : 'Iniciar una clase real por voz con esta orquestación'}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, border: 0, color: C.bg, borderRadius: 8, fontSize: 12.5, fontWeight: 800, padding: '8px 18px', cursor: 'pointer', opacity: loading || err ? 0.5 : 1 }}>
+                  <Ico d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z M19 10v2a7 7 0 0 1-14 0v-2 M12 19v3" size={14} /> Iniciar clase
+                </button>
+              ) : (
+                <button onClick={live.stop}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: `1px solid ${C.red}`, color: C.red, borderRadius: 8, fontSize: 12.5, fontWeight: 800, padding: '8px 18px', cursor: 'pointer' }}>
+                  <Ico d="M6 6h12v12H6z" size={13} /> Terminar clase
+                </button>
+              )}
+              {!isLive && live.status === 'ended' && live.transcript.length > 0 && (
+                <span style={{ fontSize: 11.5, color: C.dim }}>Clase terminada — ajustá lo que haga falta y volvé a iniciar.</span>
+              )}
+            </div>
+            {(isLive || live.transcript.length > 0) && (
+              <div style={{ marginTop: 10, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10, maxHeight: 260, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {live.transcript.length === 0 && <div style={{ fontSize: 12, color: C.faint, fontStyle: 'italic' }}>Esperando al profe…</div>}
+                {live.transcript.map((l, i) => (
+                  <div key={i} style={{ fontSize: 12.5, lineHeight: 1.5 }}>
+                    <b style={{ color: l.who === 'ai' ? C.accent : 'var(--info)' }}>{l.who === 'ai' ? 'Profe' : 'Vos'}:</b>{' '}
+                    <span style={{ color: C.fg }}>{l.text}</span>
+                  </div>
+                ))}
+                <div ref={liveTranscriptEndRef} />
+              </div>
+            )}
           </div>
 
           {/* Fila de análisis de SRS */}

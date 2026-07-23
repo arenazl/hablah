@@ -610,12 +610,13 @@ export function buildLlmTestWsUrl(params: Record<string, string | number>): stri
 }
 
 /** URL del WS del MOTOR ÚNICO (v2/compose_proto) — el MISMO que produce: 3 pilares
- * edad(age_group)+nivel(level_code)+tópico. Directo al backend, sin JWT. */
-export function buildMiniWsUrl(params: Record<string, string | number>): string {
+ * edad(age_group)+nivel(level_code)+tópico [+student_id = historia]. Directo al backend, sin JWT.
+ * (Ex buildMiniWsUrl/ws_mini — renombrado: sirve TODAS las edades, no solo kids.) */
+export function buildMotorWsUrl(params: Record<string, string | number>): string {
   const wsBase = buildWsBase()
   const sp = new URLSearchParams()
   for (const [k, v] of Object.entries(params)) sp.set(k, String(v))
-  return `${wsBase}/voice/ws_mini?${sp.toString()}`
+  return `${wsBase}/voice/ws_motor?${sp.toString()}`
 }
 
 /* ────────────── FINALTEST (consola de prueba de clases reales) ────────────── */

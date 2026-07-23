@@ -2,7 +2,7 @@
 
 MOTOR ÚNICO v2 (compose_proto) — el MISMO que produce (F0-01). El usuario elige perfil(edad =
 age_group) × nivel × tópico, arranca una clase por voz (mic + Gemini Live, vía el WS
-/voice/ws_mini que resuelve por motor_engine.resolve_v2), y al terminar se guarda la
+/voice/ws_motor que resuelve por motor_engine.resolve_v2), y al terminar se guarda la
 transcripción: se puntúa con el panel de jueces SLA, se escribe un .md en la carpeta raíz
 `finaltest_clases/` y queda en BD para el tab de Análisis.
 

@@ -301,13 +301,15 @@ async def voice_ws_llm_test(
 
 
 # NOTA (F0-01): el WS /ws_orchestration (motor v3, ruta /probar-orq) se RETIRÓ. Producción y las
-# superficies de test corren el motor ÚNICO v2 (ws_mini → motor_engine.resolve_v2). El panel
+# superficies de test corren el motor ÚNICO v2 (ws_motor → motor_engine.resolve_v2). El panel
 # ProbarOrquestacion quedó archivado en frontend/src/pages/_attic/. v3 sigue vivo solo en el
 # back-office de guards (/admin/reglas-motor). Ver docs/03-rework/02-hoja-de-ruta.md · WO F0-01.
+# (Renombrado de /ws_mini → /ws_motor 2026-07-23: el nombre "mini" era herencia de /mini-test,
+#  pero el WS sirve TODAS las edades/niveles del motor único.)
 
 
-@router.websocket("/ws_mini")
-async def voice_ws_mini(
+@router.websocket("/ws_motor")
+async def voice_ws_motor(
     websocket: WebSocket,
     age_group: str = Query("mini"),
     level_code: str = Query("A0"),
@@ -331,7 +333,7 @@ async def voice_ws_mini(
                                             student_id=student_id or None)
         super_prompt = res["prompt"]
     except Exception as e:
-        log.warning("voice_ws_mini resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
+        log.warning("voice_ws_motor resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
         await websocket.close(code=1011)
         return
 
@@ -384,13 +386,13 @@ async def voice_ws_mini(
         activity_handling_override=db_activity,
     )
     engine_name = engine if engine in available_engines() else "gemini_live"
-    log.info("voice_ws_mini: %s/%s topic=%s engine=%s voice=%s", age_group, level_code, topic_id, engine_name, safe_voice)
+    log.info("voice_ws_motor: %s/%s topic=%s engine=%s voice=%s", age_group, level_code, topic_id, engine_name, safe_voice)
     try:
         eng = get_engine(engine_name)
         async for _line in eng.run(websocket, ctx):
             pass
     except Exception as e:
-        log.exception("voice_ws_mini error: %s", e)
+        log.exception("voice_ws_motor error: %s", e)
         try:
             await websocket.close()
         except Exception:
