@@ -11,6 +11,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { BACKOFFICE_CSS } from './backoffice.css'
 import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
@@ -61,6 +62,18 @@ const Chip = ({ label, value }: { label: string; value: string }) => (
     <b style={{ color: C.fg }}>{value}</b>
   </div>
 )
+
+/* Wrapper para la ruta pública /motor (sin AuthGate): el panel usa las CSS vars del
+ * backoffice (--bg-1, --surface, ...) que viven scopeadas bajo .bo-root — acá se
+ * inyectan standalone. Bajo /admin/motor el Backoffice ya las provee. */
+export function MotorPlaygroundStandalone() {
+  return (
+    <div className="bo-root">
+      <style>{BACKOFFICE_CSS}</style>
+      <MotorPlaygroundPanel />
+    </div>
+  )
+}
 
 export default function MotorPlaygroundPanel() {
   const isMobile = useIsMobile()

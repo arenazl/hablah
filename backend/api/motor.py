@@ -138,8 +138,11 @@ async def insert_row(table: str, payload: dict = Body(...), db: AsyncSession = D
 
 
 @router.patch("/rows/{table}")
-async def update_row(table: str, payload: dict = Body(...), db: AsyncSession = Depends(get_db), _: User = _admin):
-    """payload = {pk: {col: val, ...}, set: {col: val, ...}}"""
+async def update_row(table: str, payload: dict = Body(...), db: AsyncSession = Depends(get_db)):
+    """payload = {pk: {col: val, ...}, set: {col: val, ...}}
+
+    SIN auth (2026-07-23, prod=QA pre-lanzamiento): el probador público /motor edita
+    placeholders del catálogo con este PATCH. Re-poner `_: User = _admin` al lanzar."""
     _check_table(table)
     sch = await _schema(db, table)
     valid = {c["name"] for c in sch["columns"]}

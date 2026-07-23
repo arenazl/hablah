@@ -21,10 +21,14 @@ const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login }
 const WebApp = lazy(() => import('./pages/WebApp').then(m => ({ default: m.WebApp })))
 const Backoffice = lazy(() => import('./pages/Backoffice').then(m => ({ default: m.Backoffice })))
 const GuestRoom = lazy(() => import('./pages/GuestRoom').then(m => ({ default: m.GuestRoom })))
-// F0-01: rutas públicas de test del motor v3 RETIRADAS (/motor, /training, /probar-orq,
-// /orquestacion). El motor de test es v2 (/finaltest, /mini-test). ProbarOrquestacion y
-// OrquestacionPanel se archivaron en pages/_attic/; MotorPlaygroundPanel y TrainingPanel
-// siguen SOLO bajo /admin (back-office v3, ver Backoffice.tsx).
+// F0-01: rutas públicas de test del motor v3 RETIRADAS (/training, /probar-orq,
+// /orquestacion). ProbarOrquestacion y OrquestacionPanel se archivaron en pages/_attic/.
+// 2026-07-23: /motor VUELVE como ruta pública SIN AuthGate (prod=QA pre-lanzamiento) —
+// es el Probador de clases v2 (MotorPlaygroundPanel, el mismo de /admin/motor) con la
+// clase en VIVO por voz. Re-poner el guard al lanzar.
+const MotorPlayground = lazy(() =>
+  import('./pages/MotorPlaygroundPanel').then(m => ({ default: m.MotorPlaygroundStandalone })),
+)
 // F0-04: TODO el laboratorio (/llm, /finaltest, /mini-test, /auditoria, /comparacion,
 // /transcripciones*, /infra, /tune, /kids/kit, /kids/galeria, /kids/curar) vive ahora en UN
 // solo arbol lazy montado en /lab/* (ver pages/lab/LabRoutes.tsx) — no se importa acá.
@@ -146,6 +150,9 @@ export default function App() {
               </AuthGate>
             }
           />
+          {/* Probador de clases del motor único, PÚBLICO sin login (prod=QA pre-lanzamiento):
+              preview de las 9 capas + edición de placeholders + clase en VIVO por voz. */}
+          <Route path="/motor" element={<MotorPlayground />} />
 
           {/* ═══ LABORATORIO (/lab/*) ═══
               Mesa de trabajo del motor (probar clases, ver el prompt armado, comparar modelos,
