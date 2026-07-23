@@ -183,7 +183,6 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
         f"<behavioral_guards>\n"
         f"  Language_Rule (level): {lang.strip()}\n"
         f"  Level_Target (level): {grammar.strip()}\n"
-        f"  Language_Consistency_Rule: Your spoken responses to the student MUST be generated in the target language (English, as defined by Language_Rule), even if opening seeds, topic settings, or instructions are written in Spanish. You must translate any Spanish instructions, seeds, and settings to English on the fly. Do not speak Spanish unless explicitly required by the Language_Rule.\n"
         f"  <critical_objective>\n"
         f"    HIGHEST PRIORITY — this is exactly what the student must produce this class; "
         f"follow it above every other block:\n"
