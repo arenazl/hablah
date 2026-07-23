@@ -466,6 +466,13 @@ def _get_output_rules(app_config: Optional[dict]) -> str:
     return ("<output_rules>\n" + "\n".join(lines) + "\n</output_rules>") if lines else ""
 
 
+# Cognados/palabras idénticas en castellano e inglés que se excluyen para garantizar contraste pedagógico 100%
+_IDENTICAL_COGNATES_ES_EN = {
+    "banana", "chocolate", "hotel", "hospital", "radio", "mango", "cacao",
+    "piano", "idea", "actor", "doctor", "pasta", "cable", "sofa", "animal", "tango"
+}
+
+
 def compose_proto_prompt(
     *,
     user=None,
@@ -501,8 +508,12 @@ def compose_proto_prompt(
     _req(topic, "tópico (sequencer)", ctx)
     _req(raw_vocab or raw_phrases, "vocab/frases del tópico (pinned_vocabulary/keywords/generated_vocab)", ctx)
 
+    # Filtrar palabras idénticas ES/EN (ej. banana, chocolate, animal) para garantizar aprendizaje de contraste real
+    clean_raw_vocab = [w for w in raw_vocab if str(w).strip().lower() not in _IDENTICAL_COGNATES_ES_EN] if raw_vocab else []
+    effective_raw_vocab = clean_raw_vocab if clean_raw_vocab else raw_vocab
+
     # 1. Rotar y acotar palabras para esta sesión (máx 4 para kids)
-    vocab = _rotate(raw_vocab, _derive(session_seed, "words"))[:4] if raw_vocab else []
+    vocab = _rotate(effective_raw_vocab, _derive(session_seed, "words"))[:4] if effective_raw_vocab else []
 
     # 2. Rotar y acotar frases-ancla según nivel
     depth = _req(raw_lv.get("vocab_depth"), "levels.vocab_depth", ctx)
