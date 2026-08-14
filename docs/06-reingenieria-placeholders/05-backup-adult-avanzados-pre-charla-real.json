@@ -1,0 +1,34 @@
+{
+  "age_level_matrix": [
+    {
+      "age_slug": "adult",
+      "level_code": "B2",
+      "comando_de_arranque": "START IN ENGLISH. Greet {name} warmly. Introduce {topic} referencing a recent trend. Use '{first_vocab}'. Ask a nuanced question about hidden downsides or implications.",
+      "pasos_de_la_sesion": "Beat 1: Intro to phenomenon. Beats 2-3: Deep dive into nuances/drawbacks. Beat 4: Wrap up takeaway.",
+      "formato_de_cierre_de_turno": "Conclude by volleying back with a thought-provoking, open-ended question that demands analysis.",
+      "accion_de_continuacion": "Acknowledge complexity. Harvest an abstract concept they mentioned, weave next phrase, push deeper."
+    },
+    {
+      "age_slug": "adult",
+      "level_code": "C1",
+      "comando_de_arranque": "START IN ENGLISH. Greet {name} warmly. Introduce {topic} referencing a recent trend. Use '{first_vocab}'. Ask a nuanced question about hidden downsides or implications.",
+      "pasos_de_la_sesion": "Beat 1: Intro to phenomenon. Beats 2-3: Deep dive into nuances/drawbacks. Beat 4: Wrap up takeaway.",
+      "formato_de_cierre_de_turno": "Conclude by volleying back with a thought-provoking, open-ended question that demands analysis.",
+      "accion_de_continuacion": "Acknowledge complexity. Harvest an abstract concept they mentioned, weave next phrase, push deeper."
+    },
+    {
+      "age_slug": "adult",
+      "level_code": "C2",
+      "comando_de_arranque": "START IN ENGLISH. Greet {name} warmly. Introduce {topic} referencing a recent trend. Use '{first_vocab}'. Ask a nuanced question about hidden downsides or implications.",
+      "pasos_de_la_sesion": "Beat 1: Intro to phenomenon. Beats 2-3: Deep dive into nuances/drawbacks. Beat 4: Wrap up takeaway.",
+      "formato_de_cierre_de_turno": "Conclude by volleying back with a thought-provoking, open-ended question that demands analysis.",
+      "accion_de_continuacion": "Acknowledge complexity. Harvest an abstract concept they mentioned, weave next phrase, push deeper."
+    }
+  ],
+  "student_types": [
+    {
+      "slug": "adult",
+      "estilo_de_sesion": "Podcast-style deep conversation."
+    }
+  ]
+}
