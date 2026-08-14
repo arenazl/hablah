@@ -51,6 +51,11 @@ class StudentType(Base):
     pedagogy = Column(Text, nullable=True)                  # gamificación, manejo del error, registro por edad
     form_rules = Column(Text, nullable=True)                # reglas de forma (nene: contexto/celebración; adulto: sin infantilizar)
     duration_adjust_minutes = Column(Integer, nullable=True)  # ajuste de duración por edad (+/- sobre la base del nivel)
+    # ─── Reingeniería placeholders (F0-F4): campos del template {EDAD:...}. Las columnas
+    # las creó apply_orquestacion_placeholders.py (ALTER); mapeadas acá para que el path
+    # de producción (gemini_live → super_prompt → resolver) las pueda leer. ───
+    estilo_de_sesion = Column(Text, nullable=True)          # {EDAD:estilo_de_sesion} — cómo se lleva la sesión por edad
+    anclas_narrativas = Column(Text, nullable=True)         # {EDAD:anclas_narrativas} — anclas de narrativa por edad
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 

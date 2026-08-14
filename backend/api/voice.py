@@ -251,6 +251,7 @@ async def voice_ws_llm_test(
         "tutor_tonal_rules": _st.tutor_tonal_rules, "session_focus": _st.session_focus,
         "pedagogy": _st.pedagogy, "form_rules": _st.form_rules, "opening_seed": _st.opening_seed,
         "continuation_seed": _st.continuation_seed, "closing_seed": _st.closing_seed,
+        "estilo_de_sesion": _st.estilo_de_sesion, "anclas_narrativas": _st.anclas_narrativas,
     } if _st else None
     level_data = {
         "language_rule": _lv.language_rule, "curriculum_grammar": _lv.curriculum_grammar,

@@ -51,6 +51,8 @@ async def resolve(
             "opening_seed": getattr(st, "opening_seed", None),
             "continuation_seed": getattr(st, "continuation_seed", None),
             "closing_seed": getattr(st, "closing_seed", None),
+            "estilo_de_sesion": getattr(st, "estilo_de_sesion", None),
+            "anclas_narrativas": getattr(st, "anclas_narrativas", None),
         }
         if coach:  # el coach elegido manda en el bloque 2 (persona)
             st_data["tutor_mascot"] = coach.name

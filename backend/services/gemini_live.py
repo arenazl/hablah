@@ -125,6 +125,10 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "opening_seed": getattr(st, "opening_seed", None),
                     "continuation_seed": getattr(st, "continuation_seed", None),
                     "closing_seed": getattr(st, "closing_seed", None),
+                    # Reingeniería placeholders: campos {EDAD:...} del template. Sin estos
+                    # el resolver corta la sesión (fail-fast, "conversación terminada").
+                    "estilo_de_sesion": getattr(st, "estilo_de_sesion", None),
+                    "anclas_narrativas": getattr(st, "anclas_narrativas", None),
                 }
         except Exception as e:
             log.warning(f"motor: student_type_data no disponible ({e})")
