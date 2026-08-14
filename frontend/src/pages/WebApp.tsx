@@ -1649,7 +1649,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               <div style={{ fontSize: 10, color: 'rgba(232,236,234,.4)', marginBottom: 8 }}>
                 Tocá uno para que el tutor pivotee la charla hacia ese concepto.
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+              <div className="side-trigger-chips">
                 {filtered.map((k) => {
                   const used = userText.includes(k.toLowerCase())
                   return (

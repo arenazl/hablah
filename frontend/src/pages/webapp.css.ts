@@ -524,6 +524,17 @@ export const WEBAPP_CSS = `
 .webapp-root .mic-wave { flex: 1; display: flex; align-items: center; justify-content: center; gap: 2px; height: 36px; min-width: 0; overflow: hidden; }
 .webapp-root .mic-wave i { display: block; width: 3px; min-width: 3px; flex-shrink: 0; background: var(--primary); border-radius: 2px; opacity: .9; }
 .webapp-root .mic-controls { display: flex; gap: 8px; }
+/* Chips de disparadores: en desktop wrappean; en mobile una sola linea
+   swipeable para que 20+ keywords no coman media pantalla. */
+.webapp-root .side-trigger-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.webapp-root .side-trigger-chips > button { flex-shrink: 0; }
+@media (max-width: 880px) {
+  .webapp-root .side-trigger-chips {
+    flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .webapp-root .side-trigger-chips::-webkit-scrollbar { display: none; }
+}
 .webapp-root .mic-btn { width: 44px; height: 44px; border-radius: 999px; display: grid; place-items: center; border: 0; color: white; }
 .webapp-root .mic-btn.pause { background: rgba(255,255,255,.08); }
 .webapp-root .mic-btn.stop  { background: var(--danger); }
@@ -734,6 +745,9 @@ export const WEBAPP_CSS = `
   .webapp-root .recent-row .when .day-l { font-size: 13px; }
   .webapp-root .convo-view {
     grid-template-columns: 1fr;
+    /* Stage arriba con su alto de contenido; el transcript (convo-side)
+       estira 1fr y llena lo que sobra del viewport — sin huecos muertos. */
+    grid-template-rows: auto 1fr;
     /* Cubre TODA la altura disponible bajo el topbar. La mobile-bar (position:
        fixed) flota por encima — agregamos padding-bottom para que el contenido
        no quede tapado por ella. Asi el bg dark llega hasta el final, sin
@@ -743,9 +757,12 @@ export const WEBAPP_CSS = `
     overflow: visible;
   }
   .webapp-root .convo-stage {
-    padding: 14px 16px calc(96px + env(safe-area-inset-bottom, 0px));
+    /* El padding grande para la mobile-bar vive en el convo-side (que es lo
+       ultimo de la pagina) — aca abajo iba un hueco muerto de 96px. */
+    padding: 12px 16px 10px;
     gap: 8px; position: relative;
   }
+  .webapp-root .mic-row { margin-top: 10px; padding: 12px 16px; }
   /* OBSOLETO: estas reglas mobile del header viejo (columna + Terminar absolute)
      quedan inactivas porque ahora el header usa la clase .convo-header-onerow
      que tiene su propio bloque mobile arriba. Las dejo silenciadas con .convo-header:not(.convo-header-onerow)
