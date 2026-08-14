@@ -320,6 +320,7 @@ async def voice_ws_motor(
     engine: str = Query("gemini_live"),
     model: str = Query("models/gemini-3.1-flash-live-preview"),
     voice: str = Query("Aoede"),
+    cadencia: str = Query(""),
 ):
     """Prueba de clase REAL por el MOTOR ÚNICO (v2 / compose_proto) — el MISMO que produce.
 
@@ -375,9 +376,10 @@ async def voice_ws_motor(
     db_activity = app_cfg.get(activity_key)
 
     # Director de orquesta (capa viva): onda de intensidad del cruce, como dato.
+    # `cadencia` (probador /motor): onda ad-hoc que pisa la del cruce SOLO en esta sesión.
     try:
         from services.orchestration_resolver import load_rhythm
-        _rhythm = load_rhythm(age_group, level_code)
+        _rhythm = load_rhythm(age_group, level_code, wave_override=cadencia or None)
     except Exception:
         _rhythm = None
 

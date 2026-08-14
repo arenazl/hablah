@@ -165,13 +165,20 @@ export default function MotorPlaygroundPanel() {
   liveStopRef.current = live.stop
   useEffect(() => () => { liveStopRef.current() }, [])
 
+  // Cadencia de la charla: onda de intensidad ad-hoc para la próxima clase de prueba
+  // (0=icebreaker, 1=normal, 2=profunda, 3=filosa; se cicla). Vacío = la del cruce.
+  const [cadencia, setCadencia] = useState('')
+
   const startLiveClass = useCallback(async () => {
-    const url = buildMotorWsUrl({
+    const params: Record<string, string | number> = {
       age_group: band, level_code: level, topic_id: topicId ?? 0, student_id: effStudent ?? 0,
       engine: 'gemini_live', model: 'models/gemini-3.1-flash-live-preview', voice: 'Aoede',
-    })
+    }
+    const cad = cadencia.replace(/[^\d,]/g, '')
+    if (cad) params.cadencia = cad
+    const url = buildMotorWsUrl(params)
     await live.start(0, undefined, 'Aoede', url)
-  }, [live, band, level, topicId, effStudent])
+  }, [live, band, level, topicId, effStudent, cadencia])
 
   // Resolve JIT de orquestación (Motor V2)
   const resolve = useCallback(() => {
@@ -1024,6 +1031,19 @@ export default function MotorPlaygroundPanel() {
                 </div>
               </div>
 
+              {/* Cadencia de la charla: onda de intensidad para la PRÓXIMA clase (dato vivo) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: C.dim }}>Cadencia de la charla</span>
+                <input
+                  value={cadencia}
+                  onChange={(e) => setCadencia(e.target.value)}
+                  placeholder="1,0,2,1,0,1,2,3,2,1 (default del cruce)"
+                  disabled={isLive}
+                  title="Onda de intensidad de las preguntas para la PRÓXIMA clase: 0=icebreaker, 1=normal, 2=profunda, 3=filosa. Se cicla. Vacío = usa la cadencia del cruce."
+                  style={{ flex: '1 1 200px', minWidth: 160, background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '5px 10px', fontSize: 12.5, fontFamily: 'ui-monospace, monospace', opacity: isLive ? 0.5 : 1 }}
+                />
+                <span style={{ fontSize: 10, color: C.faint }}>0=icebreaker · 1=normal · 2=profunda · 3=filosa · se cicla</span>
+              </div>
               {!isLive && live.status === 'ended' && live.transcript.length > 0 && (
                 <div style={{ fontSize: 11.5, color: C.dim }}>Clase terminada — ajustá lo que haga falta arriba y volvé a iniciar.</div>
               )}

@@ -46,25 +46,31 @@ def _load_orchestration(age_slug: str, level_code: str):
         db.conn.close()
 
 
-def load_rhythm(age_slug: str, level_code: str):
+def load_rhythm(age_slug: str, level_code: str, wave_override: str | None = None):
     """Onda de intensidad del cruce — DATO para el director de orquesta de la capa viva.
 
     age_level_matrix.ritmo = secuencia "1,0,2,1,0,1,2,3,2,1" (0=icebreaker, 1=normal,
     2=profunda, 3=la más filosa; se cicla). El SIGNIFICADO de cada nivel vive en
-    app_config (rhythm_level_0..3). Devuelve JSON autocontenido
-    {"wave": [...], "levels": {"0": txt, ...}} o None (cruce sin ritmo = sin director).
-    Determinista y sin feedback: el engine solo cicla e inyecta (agnóstico total)."""
+    app_config (rhythm_level_0..3) redactado RELATIVO al nivel del alumno (agnóstico).
+    wave_override: cadencia ad-hoc del probador /motor ("1,0,2,...") — pisa la del cruce
+    SOLO para esa sesión de prueba, sin tocar el catálogo.
+    Devuelve JSON autocontenido {"wave": [...], "levels": {...}} o None (sin director)."""
     import json as _json
+
+    def _parse(raw: str):
+        try:
+            return [int(x) for x in (raw or "").replace(" ", "").split(",") if x != ""]
+        except ValueError:
+            return []
+
     db = _connect()
     try:
         db.conn.ping(reconnect=True)
-        row = db.q1("SELECT ritmo FROM age_level_matrix WHERE age_slug=%s AND level_code=%s AND active=1",
-                    (age_slug, level_code))
-        raw = (row or {}).get("ritmo") or ""
-        try:
-            wave = [int(x) for x in raw.replace(" ", "").split(",") if x != ""]
-        except ValueError:
-            wave = []
+        wave = _parse(wave_override) if wave_override else []
+        if not wave:
+            row = db.q1("SELECT ritmo FROM age_level_matrix WHERE age_slug=%s AND level_code=%s AND active=1",
+                        (age_slug, level_code))
+            wave = _parse((row or {}).get("ritmo") or "")
         if not wave:
             return None
         rows = db.q("SELECT config_key, config_value FROM app_config WHERE config_key LIKE 'rhythm_level_%%'")
