@@ -509,7 +509,10 @@ class GeminiLiveEngine(VoiceEngine):
         counters = {"user_audio_chunks": 0, "user_audio_bytes": 0,
                     "ai_audio_chunks": 0, "ai_audio_bytes": 0,
                     "ai_text_chunks": 0, "user_text_chunks": 0,
-                    "turn_completes_seen": 0, "first_ai_audio_at": None}
+                    "turn_completes_seen": 0, "first_ai_audio_at": None,
+                    # Forense de cortes 1006 (2026-08-14): contamos keepalive para saber
+                    # si los pings del cliente seguian llegando cuando el WS murio.
+                    "pings_received": 0}
 
         session_id_log = getattr(ctx, "session_id", None)
         is_kid_log = bool(getattr(ctx, "is_kid", False))
@@ -671,10 +674,12 @@ class GeminiLiveEngine(VoiceEngine):
                             except websockets.ConnectionClosed:
                                 pass
                     elif msg.get("type") == "ping":
+                        counters["pings_received"] += 1
                         try:
                             await ws.send_json({"type": "pong"})
                         except Exception:
-                            pass
+                            trace.warn("ws.pong.send_failed", session_id=session_id_log,
+                                       pings=counters["pings_received"])
                     elif msg.get("type") == "end":
                         stop_event.set()
                         try:
@@ -682,7 +687,13 @@ class GeminiLiveEngine(VoiceEngine):
                         except Exception:
                             pass
                         return
-            except WebSocketDisconnect:
+            except WebSocketDisconnect as e:
+                # Forense de cortes: con que codigo se cayo el WS del cliente y si el
+                # keepalive venia fluyendo (diferencia red-local vs edge vs app).
+                trace.event("ws.server.disconnect", session_id=session_id_log,
+                            code=getattr(e, "code", None),
+                            pings_received=counters["pings_received"],
+                            user_audio_chunks=counters["user_audio_chunks"])
                 stop_event.set()
                 try:
                     await gws_holder["ws"].close()
@@ -1219,6 +1230,7 @@ class GeminiLiveEngine(VoiceEngine):
                         turn_completes=counters["turn_completes_seen"],
                         coach_spoke=bool(counters["ai_audio_chunks"] > 0),
                         user_was_transcribed=bool(counters["user_text_chunks"] > 0),
+                        pings_received=counters["pings_received"],
                         transcript_lines=len(transcript))
 
         for line in transcript:
