@@ -133,6 +133,17 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"motor: student_type_data no disponible ({e})")
 
+        # Director de orquesta (capa viva): el cruce declara su onda de intensidad como
+        # DATO (age_level_matrix.ritmo = "1,0,2,1,..."). Determinista, sin feedback.
+        # Best-effort: sin ritmo (o error) la sesión corre igual, sin director.
+        rhythm_data = None
+        try:
+            from services.orchestration_resolver import load_rhythm
+            grp_r = (getattr(user, "age_group", None) or "mini") if is_kid else "adult"
+            rhythm_data = load_rhythm(grp_r, user.cefr_level or "A0")
+        except Exception:
+            rhythm_data = None
+
         # Idioma por nivel (el "ahora vos") + reglas de salida/seguridad, como dato.
         level_data = None
         app_config = None
@@ -267,6 +278,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             "silence_tolerance_ms": getattr(template, "silence_tolerance_ms", 800) if template else 800,
             "interruption_allowed": getattr(template, "interruption_allowed", False) if template else False,
             "app_config": app_config,
+            "rhythm": rhythm_data,
         }
 
 
@@ -348,6 +360,7 @@ async def voice_proxy(ws: WebSocket, session_id: int, token: str, voice_name: st
         start_sensitivity_override=db_start_sens,
         end_sensitivity_override=db_end_sens,
         activity_handling_override=db_activity,
+        rhythm=ctx_dict.get("rhythm"),
     )
 
     engine_name = os.environ.get("VOICE_ENGINE", "gemini_live")

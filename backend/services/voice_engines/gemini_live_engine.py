@@ -514,6 +514,21 @@ class GeminiLiveEngine(VoiceEngine):
                     # si los pings del cliente seguian llegando cuando el WS murio.
                     "pings_received": 0}
 
+        # Director de orquesta (capa viva, AGNOSTICO): el cruce declara su onda de
+        # intensidad como DATO (ctx.rhythm = {"wave":[1,0,2,...], "levels":{"0":txt,...}}).
+        # Tras cada turno del COACH inyectamos la directiva del proximo compas via
+        # clientContent turnComplete=False (mismo canal probado de system_update).
+        # Determinista, sin feedback. Sin dato => sin director (kids ni se entera).
+        rhythm_conf = None
+        rhythm_state = {"idx": 0}
+        try:
+            if getattr(ctx, "rhythm", None):
+                _rc = json.loads(ctx.rhythm) if isinstance(ctx.rhythm, str) else ctx.rhythm
+                if _rc.get("wave") and _rc.get("levels"):
+                    rhythm_conf = _rc
+        except Exception:
+            rhythm_conf = None
+
         session_id_log = getattr(ctx, "session_id", None)
         is_kid_log = bool(getattr(ctx, "is_kid", False))
         # model efectivo (override del banco /llm o LIVE_MODEL global). Solo para
@@ -916,6 +931,27 @@ class GeminiLiveEngine(VoiceEngine):
                                         ai_text=ai_text_final[:200],
                                         ms_since_user_input=ms_since_user,
                                         possible_coach_cut=possible_cut)
+                            # Director de orquesta: tras cada turno del COACH (hablo este
+                            # turno), inyectar el compas del PROXIMO. Best-effort total.
+                            if rhythm_conf and ai_text_final:
+                                try:
+                                    _wave = rhythm_conf["wave"]
+                                    _lvl = _wave[rhythm_state["idx"] % len(_wave)]
+                                    rhythm_state["idx"] += 1
+                                    _directive = rhythm_conf["levels"].get(str(_lvl))
+                                    if _directive:
+                                        await gws_holder["ws"].send(json.dumps({
+                                            "clientContent": {
+                                                "turns": [{"role": "user", "parts": [{"text": f"[RHYTHM] {_directive}"}]}],
+                                                "turnComplete": False,
+                                            }
+                                        }))
+                                        trace.debug("rhythm.beat.injected",
+                                                    session_id=session_id_log,
+                                                    turn_n=counters["turn_completes_seen"],
+                                                    level=_lvl)
+                                except Exception:
+                                    pass
                             # Empty turn: coach cerro turno sin generar audio ni texto.
                             # Causas tipicas: safety filter bloqueo silenciosamente, o
                             # el modelo decidio no responder. Loguear como WARNING para

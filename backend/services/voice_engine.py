@@ -57,6 +57,7 @@ class VoiceEngineContext:
         prefix_padding_override: Optional[int] = None,
         activity_handling_override: Optional[str] = None,
         thinking_budget_override: Optional[int] = None,
+        rhythm: Optional[str] = None,
     ) -> None:
         self.session_id = session_id
         self.user_id = user_id
@@ -77,6 +78,9 @@ class VoiceEngineContext:
         self.prefix_padding_override = prefix_padding_override
         self.activity_handling_override = activity_handling_override
         self.thinking_budget_override = thinking_budget_override
+        # Director de orquesta (capa viva): patron de ritmo del cruce como DATO
+        # (age_level_matrix.ritmo, JSON con beats+directives). None = sin director.
+        self.rhythm = rhythm
         self.language = language
         self.target_language = target_language
         self.silence_tolerance_ms = silence_tolerance_ms

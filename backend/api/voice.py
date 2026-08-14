@@ -374,6 +374,13 @@ async def voice_ws_motor(
     activity_key = "vad_activity_handling"
     db_activity = app_cfg.get(activity_key)
 
+    # Director de orquesta (capa viva): onda de intensidad del cruce, como dato.
+    try:
+        from services.orchestration_resolver import load_rhythm
+        _rhythm = load_rhythm(age_group, level_code)
+    except Exception:
+        _rhythm = None
+
     ctx = VoiceEngineContext(
         session_id=0, user_id=0, user_name="Alumno",
         is_kid=is_kid,
@@ -386,6 +393,7 @@ async def voice_ws_motor(
         start_sensitivity_override=db_start_sens,
         end_sensitivity_override=db_end_sens,
         activity_handling_override=db_activity,
+        rhythm=_rhythm,
     )
     engine_name = engine if engine in available_engines() else "gemini_live"
     log.info("voice_ws_motor: %s/%s topic=%s engine=%s voice=%s", age_group, level_code, topic_id, engine_name, safe_voice)

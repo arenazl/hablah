@@ -46,6 +46,36 @@ def _load_orchestration(age_slug: str, level_code: str):
         db.conn.close()
 
 
+def load_rhythm(age_slug: str, level_code: str):
+    """Onda de intensidad del cruce — DATO para el director de orquesta de la capa viva.
+
+    age_level_matrix.ritmo = secuencia "1,0,2,1,0,1,2,3,2,1" (0=icebreaker, 1=normal,
+    2=profunda, 3=la más filosa; se cicla). El SIGNIFICADO de cada nivel vive en
+    app_config (rhythm_level_0..3). Devuelve JSON autocontenido
+    {"wave": [...], "levels": {"0": txt, ...}} o None (cruce sin ritmo = sin director).
+    Determinista y sin feedback: el engine solo cicla e inyecta (agnóstico total)."""
+    import json as _json
+    db = _connect()
+    try:
+        db.conn.ping(reconnect=True)
+        row = db.q1("SELECT ritmo FROM age_level_matrix WHERE age_slug=%s AND level_code=%s AND active=1",
+                    (age_slug, level_code))
+        raw = (row or {}).get("ritmo") or ""
+        try:
+            wave = [int(x) for x in raw.replace(" ", "").split(",") if x != ""]
+        except ValueError:
+            wave = []
+        if not wave:
+            return None
+        rows = db.q("SELECT config_key, config_value FROM app_config WHERE config_key LIKE 'rhythm_level_%%'")
+        levels = {r["config_key"].rsplit("_", 1)[-1]: r["config_value"] for r in (rows or [])}
+        if not levels:
+            return None
+        return _json.dumps({"wave": wave, "levels": levels}, ensure_ascii=False)
+    finally:
+        db.conn.close()
+
+
 def _filter_rules(rules, age_slug: str, level_code: str) -> str:
     """Gating por dato (age_groups + min/max_level) + reenumeración. Reemplaza los target_ids
     hardcodeados y los 2 bloques: la selección es puro dato."""
