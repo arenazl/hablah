@@ -466,6 +466,10 @@ export const WEBAPP_CSS = `
 }
 @media (max-width: 880px) {
   .webapp-root .convo-orb-area {
+    /* En mobile .convo-view es height:auto (contenedor indefinido): flex:1
+       (basis 0) colapsaba el area a su padding y el orbe quedaba recortado
+       en dos tiritas por el overflow:hidden. Content-sized aca. */
+    flex: 0 0 auto;
     padding: 4px; min-height: 0;
     display: flex; align-items: center; justify-content: center;
   }
@@ -517,7 +521,7 @@ export const WEBAPP_CSS = `
   padding: 18px 24px; background: var(--ink-2);
   border-radius: 16px; margin-top: 22px;
 }
-.webapp-root .mic-wave { flex: 1; display: flex; align-items: center; justify-content: center; gap: 2px; height: 36px; min-width: 0; }
+.webapp-root .mic-wave { flex: 1; display: flex; align-items: center; justify-content: center; gap: 2px; height: 36px; min-width: 0; overflow: hidden; }
 .webapp-root .mic-wave i { display: block; width: 3px; min-width: 3px; flex-shrink: 0; background: var(--primary); border-radius: 2px; opacity: .9; }
 .webapp-root .mic-controls { display: flex; gap: 8px; }
 .webapp-root .mic-btn { width: 44px; height: 44px; border-radius: 999px; display: grid; place-items: center; border: 0; color: white; }
@@ -758,6 +762,9 @@ export const WEBAPP_CSS = `
     border-top: 1px solid rgba(255,255,255,.06);
     background: rgba(10,16,14,.92);
     min-height: 40dvh;
+    /* La mobile-bar es fixed: sin esto el final del transcript (tarjeta del
+       tutor) queda tapado por la barra y el boton verde. */
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   }
   .webapp-root .convo-side .side-tabs { padding: 8px 14px; }
   .webapp-root .convo-side .side-body { padding: 12px 14px; }
