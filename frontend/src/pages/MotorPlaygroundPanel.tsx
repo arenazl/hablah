@@ -1031,9 +1031,26 @@ export default function MotorPlaygroundPanel() {
                 </div>
               </div>
 
-              {/* Cadencia de la charla: onda de intensidad para la PRÓXIMA clase (dato vivo) */}
+              {/* Cadencia de la charla: presets con nombre (app_config.rhythm_presets) +
+                  onda editable para la PRÓXIMA clase. Cíclica: se repite toda la charla. */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: C.dim }}>Cadencia de la charla</span>
+                {(() => {
+                  const row = appConfigRows.find((r) => r.config_key === 'rhythm_presets')
+                  if (!row) return null
+                  let presets: { key: string; label: string; wave: string; desc: string }[] = []
+                  try { presets = JSON.parse(row.config_value) } catch { return null }
+                  return presets.map((p) => {
+                    const active = cadencia.replace(/\s/g, '') === p.wave
+                    return (
+                      <button key={p.key} onClick={() => setCadencia(active ? '' : p.wave)} disabled={isLive}
+                        title={`${p.desc} · ${p.wave}`}
+                        style={{ background: active ? 'rgba(0,179,126,0.16)' : C.soft, border: `1px solid ${active ? C.accent : C.border}`, color: active ? C.accent : C.fg, borderRadius: 999, fontSize: 11, fontWeight: 700, padding: '3px 10px', cursor: 'pointer', opacity: isLive ? 0.5 : 1 }}>
+                        {p.label}
+                      </button>
+                    )
+                  })
+                })()}
                 <input
                   value={cadencia}
                   onChange={(e) => setCadencia(e.target.value)}
