@@ -1047,8 +1047,10 @@ export default function MotorPlaygroundPanel() {
         {/* Dropdowns unificados */}
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8, alignItems: 'start' }}>
           <Ctx label="Disciplina">
+            {/* "Disciplina" es QUÉ se enseña (idioma con escala CEFR vs fonética), NO cuál idioma:
+                eso lo elige "Idioma de la clase". Antes decía "Inglés" y sonaba a que era el único. */}
             <select style={sel} value={discipline} onChange={(e) => handleDisciplineChange(e.target.value as any)}>
-              <option value="ingles">Inglés (idiomas)</option>
+              <option value="ingles">Idiomas (niveles CEFR)</option>
               <option value="fonetica">Fonética / Pronunciación</option>
               <option value="todos">Todas las disciplinas</option>
             </select>
