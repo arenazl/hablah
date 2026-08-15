@@ -1,0 +1,922 @@
+[
+  {
+    "id": 200,
+    "titulo": "Teoría musical desde cero",
+    "categoria": "mus-teoria",
+    "disciplina": "musica",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["note", "scale", "rhythm", "beat", "key"],
+    "narrative_setting": "el sillón del living con una guitarra acústica sobre las piernas",
+    "narrative_conflict": "entender por qué algunos acordes suenan tristes y otros alegres antes de intentar componer un tema",
+    "narrative_role": "somos dos amigos intentando sacar una canción de oído sin saber leer música",
+    "generated_vocab": [
+      "that sounds completely off",
+      "try moving your finger up one fret",
+      "the rhythm feels too rushed",
+      "it doesn't match the beat",
+      "what if we slow it down",
+      "that chord sounds too dark",
+      "can you play the melody again"
+    ]
+  },
+  {
+    "id": 201,
+    "titulo": "Aprender piano",
+    "categoria": "mus-instrumentos",
+    "disciplina": "musica",
+    "niveles": ["A0", "A1", "A2", "B1", "B2", "C1"],
+    "keywords_en": ["keys", "chord", "both hands", "posture", "practice slowly"],
+    "narrative_setting": "frente a un teclado midi conectado a la notebook",
+    "narrative_conflict": "decidir si seguir practicando la postura correcta o intentar tocar la canción entera asumiendo los errores",
+    "narrative_role": "somos compañeros de departamento practicando un arreglo básico a cuatro manos",
+    "generated_vocab": [
+      "my fingers keep slipping",
+      "you're rushing the tempo",
+      "let's just play the chords",
+      "my left hand is completely lost",
+      "keep your wrists up",
+      "we keep messing up the chorus",
+      "let's take it from the top"
+    ]
+  },
+  {
+    "id": 202,
+    "titulo": "Aprender guitarra",
+    "categoria": "mus-instrumentos",
+    "disciplina": "musica",
+    "niveles": ["A0", "A1", "A2", "B1", "B2", "C1"],
+    "keywords_en": ["fret", "strum", "chord change", "tuning", "calluses"],
+    "narrative_setting": "el patio trasero de casa una tarde de domingo",
+    "narrative_conflict": "intentar cambiar de acorde rápido sin que la guitarra deje de sonar fluidamente",
+    "narrative_role": "somos principiantes compartiendo trucos para que no nos duelan los dedos",
+    "generated_vocab": [
+      "my fingertips are killing me",
+      "the strings keep buzzing",
+      "how do you mute the top string",
+      "my hand starts cramping",
+      "I can't get the strumming pattern right",
+      "it sounds totally muted",
+      "just press down harder"
+    ]
+  },
+  {
+    "id": 203,
+    "titulo": "Aprender a cantar",
+    "categoria": "mus-instrumentos",
+    "disciplina": "musica",
+    "niveles": ["A0", "A1", "A2", "B1", "B2", "C1"],
+    "keywords_en": ["breath support", "pitch", "range", "warm up", "head voice"],
+    "narrative_setting": "el asiento del conductor del auto con el estéreo a todo volumen",
+    "narrative_conflict": "intentar llegar a las notas altas del estribillo sin quedarnos sin aire a la mitad",
+    "narrative_role": "somos compañeros de viaje cantando encima de nuestras bandas favoritas",
+    "generated_vocab": [
+      "I totally lost my breath",
+      "that note was way too high for me",
+      "I'm straining my neck",
+      "you gotta sing from your stomach",
+      "my throat is getting scratchy",
+      "let's drop it down a key",
+      "I can't hit that pitch"
+    ]
+  },
+  {
+    "id": 204,
+    "titulo": "Lectura musical y partituras",
+    "categoria": "mus-teoria",
+    "disciplina": "musica",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["staff", "clef", "time signature", "sight-read", "rest"],
+    "narrative_setting": "una sala de ensayo pequeña frente a un atril con hojas sueltas",
+    "narrative_conflict": "descifrar en qué momento exacto entra cada uno a tocar según los silencios marcados",
+    "narrative_role": "somos músicos intentando tocar una pieza nueva a primera vista",
+    "generated_vocab": [
+      "I lost my place completely",
+      "are we in four four time",
+      "I missed that rest",
+      "let's count it out loud",
+      "we came in way too early",
+      "what's the key signature again",
+      "I can't read it that fast"
+    ]
+  },
+  {
+    "id": 205,
+    "titulo": "Armonía y composición",
+    "categoria": "mus-teoria",
+    "disciplina": "musica",
+    "niveles": ["B1", "B2", "C1", "C2"],
+    "keywords_en": ["chord progression", "voicing", "resolve", "modulation", "hook"],
+    "narrative_setting": "un café ruidoso con auriculares y una libreta llena de tachaduras",
+    "narrative_conflict": "decidir cómo cambiar los acordes del estribillo para que suene mucho más épico y pegadizo",
+    "narrative_role": "somos compositores buscando el gancho perfecto para un tema nuevo",
+    "generated_vocab": [
+      "the chorus doesn't hit hard enough",
+      "what if we modulate up a step",
+      "that chord progression is too basic",
+      "it needs a better hook",
+      "the transition feels really clunky",
+      "let's build more tension here",
+      "how do we resolve this part"
+    ]
+  },
+  {
+    "id": 206,
+    "titulo": "Producción musical",
+    "categoria": "mus-produccion",
+    "disciplina": "musica",
+    "niveles": ["A2", "B1", "B2", "C1", "C2"],
+    "keywords_en": ["mix", "track", "EQ", "compression", "master"],
+    "narrative_setting": "frente a la pantalla de la computadora con las bandejas dj apagadas a un costado",
+    "narrative_conflict": "decidir si integrar la api externa de metadatos o analizar los archivos flac manualmente para armar el set",
+    "narrative_role": "somos productores armando una nueva herramienta técnica para mezclar pistas en vivo",
+    "generated_vocab": [
+      "we need lossless quality for the club",
+      "the bpm detection is completely off",
+      "how do we map the key signatures",
+      "the low end is clashing",
+      "we should compress it a bit more",
+      "let's crossfade right on the drop",
+      "the metadata isn't syncing properly"
+    ]
+  },
+  {
+    "id": 210,
+    "titulo": "Informática desde cero",
+    "categoria": "inf-general",
+    "disciplina": "informatica",
+    "niveles": ["A0", "A1", "A2"],
+    "keywords_en": ["file", "folder", "desktop", "click", "save"],
+    "narrative_setting": "el escritorio de la oficina frente a una computadora recién encendida",
+    "narrative_conflict": "organizar el caos de iconos del escritorio antes de perder los documentos importantes del día",
+    "narrative_role": "somos compañeros de trabajo tratando de ordenar nuestras carpetas digitales",
+    "generated_vocab": [
+      "where did that file go",
+      "I saved it to the desktop",
+      "can we just put it all in one folder",
+      "my screen is completely cluttered",
+      "did you accidentally delete it",
+      "I can't find the shortcut",
+      "just drag and drop it there"
+    ]
+  },
+  {
+    "id": 211,
+    "titulo": "Uso de Windows y herramientas básicas",
+    "categoria": "inf-general",
+    "disciplina": "informatica",
+    "niveles": ["A0", "A1", "A2"],
+    "keywords_en": ["window", "shortcut", "settings", "install", "backup"],
+    "narrative_setting": "una videollamada de pantalla compartida que se congela a cada rato",
+    "narrative_conflict": "decidir qué programas de fondo desinstalar porque la computadora está demasiado lenta para trabajar",
+    "narrative_role": "somos usuarios intentando hacer una limpieza del sistema sin romper nada importante",
+    "generated_vocab": [
+      "the computer is freezing up",
+      "we should uninstall all this junk",
+      "did you back up your stuff first",
+      "my hard drive is completely full",
+      "let's check the task manager",
+      "the update is taking forever",
+      "why is it running so slow"
+    ]
+  },
+  {
+    "id": 212,
+    "titulo": "Internet, archivos y seguridad digital",
+    "categoria": "inf-general",
+    "disciplina": "informatica",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["password", "phishing", "download", "two-factor", "browser"],
+    "narrative_setting": "una mesa de cafetería revisando un correo sospechoso en la laptop",
+    "narrative_conflict": "determinar si hacer clic en el enlace del banco para verificar la cuenta o bloquear el remitente",
+    "narrative_role": "somos amigos discutiendo sobre cómo proteger nuestras contraseñas y datos personales",
+    "generated_vocab": [
+      "that email looks really shady",
+      "don't click on that link",
+      "we should change the password just in case",
+      "do you use two-factor authentication",
+      "I think my account got hacked",
+      "the browser is giving a warning",
+      "always check the sender's address"
+    ]
+  },
+  {
+    "id": 213,
+    "titulo": "Programación desde cero",
+    "categoria": "inf-general",
+    "disciplina": "informatica",
+    "niveles": ["A0", "A1", "A2", "B1", "B2"],
+    "keywords_en": ["variable", "loop", "function", "bug", "run the code"],
+    "narrative_setting": "un editor de texto en blanco con un cursor parpadeando",
+    "narrative_conflict": "encontrar dónde falta el punto y coma porque el código se niega a compilar",
+    "narrative_role": "somos estudiantes rompiéndonos la cabeza para hacer funcionar nuestro primer script",
+    "generated_vocab": [
+      "why is it throwing an error",
+      "the loop never actually stops",
+      "let's run the code again",
+      "I think we missed a bracket",
+      "the variable isn't defined anywhere",
+      "can we just start from scratch",
+      "it works but I have no idea why"
+    ]
+  },
+  {
+    "id": 214,
+    "titulo": "Desarrollo web",
+    "categoria": "inf-general",
+    "disciplina": "informatica",
+    "niveles": ["A1", "A2", "B1", "B2", "C1"],
+    "keywords_en": ["frontend", "backend", "deploy", "responsive", "API"],
+    "narrative_setting": "un canal de chat de desarrollo debatiendo la arquitectura frontend de ngcheck",
+    "narrative_conflict": "decidir si pasar toda la arquitectura de componentes a react puro o seguir parchando el diseño viejo",
+    "narrative_role": "somos desarrolladores frontend planificando el rediseño crítico de una aplicación web",
+    "generated_vocab": [
+      "the UI framework is completely outdated",
+      "we need to break this down into components",
+      "how are we managing the state",
+      "the styling takes way too long",
+      "let's just use tailwind for everything",
+      "the backend api is taking forever to respond",
+      "this won't look good on mobile"
+    ]
+  },
+  {
+    "id": 215,
+    "titulo": "Bases de datos",
+    "categoria": "inf-general",
+    "disciplina": "informatica",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["query", "table", "index", "join", "schema"],
+    "narrative_setting": "una llamada de urgencia revisando los logs de los servidores de ng.web",
+    "narrative_conflict": "descubrir cómo arreglar un cuello de botella en las consultas que está consumiendo toda la cpu",
+    "narrative_role": "somos ingenieros backend intentando optimizar el rendimiento de entity framework bajo presión",
+    "generated_vocab": [
+      "the database is completely locked up",
+      "we have a major bottleneck here",
+      "are these queries even indexed",
+      "the entity framework is doing too much work",
+      "we need to fix the threading issue",
+      "it's eating up all the cpu",
+      "let's rewrite that query from scratch"
+    ]
+  },
+  {
+    "id": 216,
+    "titulo": "Inteligencia artificial aplicada",
+    "categoria": "inf-general",
+    "disciplina": "informatica",
+    "niveles": ["A1", "A2", "B1", "B2", "C1"],
+    "keywords_en": ["prompt", "model", "training data", "fine-tune", "hallucination"],
+    "narrative_setting": "una terminal de comandos oscura corriendo procesos en la computadora de casa",
+    "narrative_conflict": "decidir si seguir afinando los parámetros del modelo local por consola o cambiar de entorno",
+    "narrative_role": "somos programadores testeando flujos de trabajo locales de inteligencia artificial por línea de comandos",
+    "generated_vocab": [
+      "the local model is running too slow",
+      "we need to tweak the prompt",
+      "it keeps hallucinating random code",
+      "the CLI tool crashed again",
+      "let's feed it more context",
+      "the outputs are getting way too repetitive",
+      "can our graphics card even handle this"
+    ]
+  },
+  {
+    "id": 220,
+    "titulo": "Electricidad domiciliaria desde cero",
+    "categoria": "of-electricidad",
+    "disciplina": "oficios",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["circuit", "voltage", "breaker", "ground", "safety first"],
+    "narrative_setting": "el pasillo oscuro de una casa iluminado solo por la linterna del celular",
+    "narrative_conflict": "descubrir qué aparato hizo saltar la llave térmica antes de intentar volver a dar la luz",
+    "narrative_role": "somos vecinos intentando arreglar un corte general sin tener que llamar al electricista",
+    "generated_vocab": [
+      "did you flip the breaker back",
+      "something definitely shorted out",
+      "don't touch those exposed wires",
+      "we need to cut the main power",
+      "which switch goes to the kitchen",
+      "the fuse is completely blown",
+      "it sparked when I plugged it in"
+    ]
+  },
+  {
+    "id": 221,
+    "titulo": "Instalaciones eléctricas del hogar",
+    "categoria": "of-electricidad",
+    "disciplina": "oficios",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["wiring", "outlet", "junction box", "load", "conduit"],
+    "narrative_setting": "una habitación en plena reforma con escombros y corrugados asomando por las paredes",
+    "narrative_conflict": "decidir por dónde pasar los caños de electricidad para agregar enchufes sin picar de más",
+    "narrative_role": "somos compañeros de obra planificando la nueva distribución del cableado del cuarto",
+    "generated_vocab": [
+      "we need to run a new line from the box",
+      "make sure the ground wire is connected",
+      "this circuit can't handle that much load",
+      "strip the ends of the wire first",
+      "where should we put the junction box",
+      "tape it up really well",
+      "the voltage is way too low"
+    ]
+  },
+  {
+    "id": 222,
+    "titulo": "Diagnóstico de fallas eléctricas",
+    "categoria": "of-electricidad",
+    "disciplina": "oficios",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["short circuit", "multimeter", "trace the fault", "overload", "loose connection"],
+    "narrative_setting": "una mesa de trabajo cubierta de estaño, soldadores y placas electrónicas",
+    "narrative_conflict": "determinar por qué estallaron los capacitores de la placa justo al darle voltaje",
+    "narrative_role": "somos hermanos buscando una falla crítica en un circuito con el multímetro en mano",
+    "generated_vocab": [
+      "I think we wired the polarity backwards",
+      "check the voltage on that capacitor",
+      "the multimeter is giving a weird reading",
+      "that component is completely fried",
+      "we have a loose connection somewhere",
+      "the soldering job looks terrible",
+      "trace the current back to the source"
+    ]
+  },
+  {
+    "id": 230,
+    "titulo": "Carpintería desde cero",
+    "categoria": "of-carpinteria",
+    "disciplina": "oficios",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["wood grain", "measure twice", "sand", "clamp", "chisel"],
+    "narrative_setting": "un garaje lleno de aserrín fresco con una sierra circular apoyada sobre un caballete",
+    "narrative_conflict": "intentar cortar una tabla totalmente recta a pesar de que la madera vino combada",
+    "narrative_role": "somos principiantes tratando de armar un mueble básico que no quede tambaleando",
+    "generated_vocab": [
+      "measure it twice before you cut",
+      "the edge is completely crooked",
+      "we need to sand this down a lot more",
+      "clamp it tight to the table",
+      "the wood is splitting at the end",
+      "this saw blade is way too dull",
+      "it's not sitting flush against the wall"
+    ]
+  },
+  {
+    "id": 231,
+    "titulo": "Herramientas y técnicas de carpintería",
+    "categoria": "of-carpinteria",
+    "disciplina": "oficios",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["router", "jig", "miter", "dovetail", "square"],
+    "narrative_setting": "un banco de trabajo firme rodeado de formones afilados y prensas manuales",
+    "narrative_conflict": "decidir si tomarnos el tiempo para hacer encastres tradicionales o simplemente usar tornillos para terminar hoy",
+    "narrative_role": "somos carpinteros aficionados debatiendo la forma más limpia de unir las esquinas",
+    "generated_vocab": [
+      "let's just use screws and be done with it",
+      "a dovetail joint would look way better",
+      "the glue is taking forever to dry",
+      "you didn't drill a pilot hole",
+      "we need the router to round off the edges",
+      "it's slightly out of square",
+      "wipe off the excess glue"
+    ]
+  },
+  {
+    "id": 232,
+    "titulo": "Construcción de muebles",
+    "categoria": "of-carpinteria",
+    "disciplina": "oficios",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["joinery", "assembly", "finish", "load-bearing", "dry fit"],
+    "narrative_setting": "el terreno vacío y demarcado mirando fijamente los planos arquitectónicos impresos",
+    "narrative_conflict": "evaluar si las medidas y proporciones del boceto realmente encajan con la estructura final pensada",
+    "narrative_role": "somos constructores discutiendo cómo corregir la escala de un plano mal posicionado antes de avanzar",
+    "generated_vocab": [
+      "the dimensions are completely off here",
+      "we need to check the scale on the blueprint",
+      "the original floor plan makes more sense",
+      "this joint won't bear the load",
+      "let's do a dry fit before gluing",
+      "the assembly is taking longer than expected",
+      "we have to adjust the measurements"
+    ]
+  },
+  {
+    "id": 240,
+    "titulo": "Mecánica automotriz desde cero",
+    "categoria": "of-mecanica",
+    "disciplina": "oficios",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["engine", "oil change", "tire pressure", "battery", "under the hood"],
+    "narrative_setting": "un capó levantado al costado de una ruta desierta con olor a recalentado",
+    "narrative_conflict": "descubrir por qué el auto se apagó repentinamente sin tener señal para llamar a la grúa",
+    "narrative_role": "somos amigos en pleno viaje intentando que el motor vuelva a arrancar",
+    "generated_vocab": [
+      "did we run out of gas",
+      "the engine is overheating badly",
+      "let's check the oil dipstick",
+      "the battery might be completely dead",
+      "I smell something burning",
+      "turn the key and give it some gas",
+      "there's a weird rattling sound"
+    ]
+  },
+  {
+    "id": 241,
+    "titulo": "Mantenimiento básico del auto",
+    "categoria": "of-mecanica",
+    "disciplina": "oficios",
+    "niveles": ["A1", "A2", "B1"],
+    "keywords_en": ["service interval", "coolant", "brake pads", "filter", "top up"],
+    "narrative_setting": "la entrada húmeda del garaje con el auto levantado inestablemente sobre un crique",
+    "narrative_conflict": "intentar aflojar el tapón del cárter oxidado para cambiar el aceite sin terminar de redondear la tuerca",
+    "narrative_role": "somos dueños de un auto usado tratando de ahorrar la mano de obra del mecánico",
+    "generated_vocab": [
+      "that bolt is completely stuck",
+      "we need to drain the oil first",
+      "your brake pads are looking really worn",
+      "hand me the wrench",
+      "top up the coolant while we're at it",
+      "the tire pressure is way too low",
+      "don't strip the thread on that screw"
+    ]
+  },
+  {
+    "id": 242,
+    "titulo": "Mecánica y diagnóstico de fallas",
+    "categoria": "of-mecanica",
+    "disciplina": "oficios",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["error code", "misfire", "diagnostics", "wear and tear", "rule it out"],
+    "narrative_setting": "un taller de barrio oscuro frente a la pantalla brillante de un escáner obd2",
+    "narrative_conflict": "descifrar qué sensor fallado está causando el código de error para no cambiar repuestos por cambiar",
+    "narrative_role": "somos mecánicos intentando aislar el problema real detrás de una falla intermitente",
+    "generated_vocab": [
+      "the check engine light came on again",
+      "it's pulling a misfire code",
+      "we need to rule out the spark plugs",
+      "the diagnostics are all over the place",
+      "clear the codes and see if it comes back",
+      "it could just be a faulty sensor",
+      "the transmission is slipping in second gear"
+    ]
+  },
+  {
+    "id": 250,
+    "titulo": "Plomería desde cero",
+    "categoria": "of-plomeria",
+    "disciplina": "oficios",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["pipe", "leak", "shut-off valve", "drain", "seal"],
+    "narrative_setting": "el piso mojado del baño de servicio con una gotera cayendo incesantemente del lavatorio",
+    "narrative_conflict": "intentar frenar el agua trabando la pérdida antes de que la humedad arruine los muebles",
+    "narrative_role": "somos inquilinos desesperados luchando contra una cañería vieja que acaba de ceder",
+    "generated_vocab": [
+      "shut off the main valve right now",
+      "the pipe is leaking everywhere",
+      "we need some waterproof tape",
+      "the drain is completely clogged up",
+      "grab a bucket quickly",
+      "the seal must be broken",
+      "tighten that nut a little more"
+    ]
+  },
+  {
+    "id": 251,
+    "titulo": "Reparaciones del hogar",
+    "categoria": "of-mantenimiento",
+    "disciplina": "oficios",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["fix", "patch", "replace", "tighten", "quick job"],
+    "narrative_setting": "el living del departamento analizando un hueco feo hundido en la pared de yeso",
+    "narrative_conflict": "decidir si hacer la reparación con masilla y lijar todo o simplemente tapar el desastre con un mueble",
+    "narrative_role": "somos compañeros de piso intentando arreglar los daños antes de la inspección del propietario",
+    "generated_vocab": [
+      "we can't just leave it like this",
+      "let's patch it up and paint over it",
+      "the landlord is gonna be furious",
+      "is the wall completely hollow",
+      "we need to sand it flush first",
+      "just hang a picture over the crack",
+      "it looks like a total quick fix"
+    ]
+  },
+  {
+    "id": 252,
+    "titulo": "Herramientas y bricolaje",
+    "categoria": "of-mantenimiento",
+    "disciplina": "oficios",
+    "niveles": ["A0", "A1", "A2", "B1", "B2"],
+    "keywords_en": ["toolbox", "drill", "screw", "level", "DIY"],
+    "narrative_setting": "el inmenso pasillo de una ferretería industrial debatiendo frente a los estantes",
+    "narrative_conflict": "definir si vale la pena gastar en herramientas eléctricas de primera marca o comprar la versión económica para zafar",
+    "narrative_role": "somos entusiastas del hogar armando nuestro primer kit de herramientas serias",
+    "generated_vocab": [
+      "we don't need a heavy duty drill for this",
+      "buy cheap and you'll buy twice",
+      "this one comes with a full set of bits",
+      "let's check if the battery is included",
+      "we definitely need a better level",
+      "put it back in the toolbox",
+      "that screw keeps stripping the wood"
+    ]
+  },
+  {
+    "id": 260,
+    "titulo": "Fotografía desde cero",
+    "categoria": "cre-fotografia",
+    "disciplina": "creativo",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["frame", "light", "focus", "shutter", "shot"],
+    "narrative_setting": "una plaza fría al atardecer con una cámara réflex manual colgando del cuello",
+    "narrative_conflict": "intentar que la toma no salga borrosa mientras se va escondiendo rápidamente el sol",
+    "narrative_role": "somos aficionados probando los diales del modo manual para salir de la zona de confort",
+    "generated_vocab": [
+      "the shot is completely blurry",
+      "how do I turn the flash off",
+      "the lighting is terrible right now",
+      "try to focus on the background instead",
+      "my hands are shaking too much",
+      "the picture is totally blown out",
+      "we're losing the daylight fast"
+    ]
+  },
+  {
+    "id": 261,
+    "titulo": "Composición y técnicas fotográficas",
+    "categoria": "cre-fotografia",
+    "disciplina": "creativo",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["rule of thirds", "depth of field", "golden hour", "leading lines", "exposure"],
+    "narrative_setting": "el balcón de un piso alto apuntando los lentes hacia el tráfico ruidoso de la ciudad",
+    "narrative_conflict": "decidir qué encuadre elegir para que la foto comunique velocidad y no parezca una postal estática",
+    "narrative_role": "somos fotógrafos en práctica desafiándonos a romper las reglas clásicas de composición",
+    "generated_vocab": [
+      "the framing feels really off balance",
+      "put the subject right on the rule of thirds",
+      "we need a shallower depth of field",
+      "the leading lines draw your eye away",
+      "let's widen the aperture a bit",
+      "the horizon is totally crooked",
+      "we missed the golden hour entirely"
+    ]
+  },
+  {
+    "id": 262,
+    "titulo": "Edición de fotografía",
+    "categoria": "cre-fotografia",
+    "disciplina": "creativo",
+    "niveles": ["A1", "A2", "B1", "B2", "C1"],
+    "keywords_en": ["crop", "contrast", "white balance", "retouch", "export"],
+    "narrative_setting": "el monitor grande del estudio mostrando versiones idénticas de la misma campaña",
+    "narrative_conflict": "establecer el límite de saturación de color para que el resultado final no se vea plástico y falso",
+    "narrative_role": "somos retocadores debatiendo arduamente los tonos y contrastes antes de la entrega final",
+    "generated_vocab": [
+      "the contrast is way too harsh",
+      "the skin tones look totally fake",
+      "let's bump up the shadows a little",
+      "we should crop out that distraction",
+      "the white balance is way off",
+      "don't overdo the saturation",
+      "export it in high resolution"
+    ]
+  },
+  {
+    "id": 270,
+    "titulo": "Costura desde cero",
+    "categoria": "cre-costura",
+    "disciplina": "creativo",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["stitch", "needle", "hem", "fabric", "thread"],
+    "narrative_setting": "la mesa amplia del comedor cubierta de hilos enredados y retazos descartados",
+    "narrative_conflict": "luchar por desenredar la máquina de coser que se trabó justo en el medio del pantalón",
+    "narrative_role": "somos aprendices tratando de acortar un dobladillo urgente sin arruinar la prenda original",
+    "generated_vocab": [
+      "the thread keeps snapping",
+      "the machine is completely jammed",
+      "how do we sew in a straight line",
+      "the fabric is bunching up",
+      "we need to hem the bottom first",
+      "my stitches are all over the place",
+      "let's just pin it together for now"
+    ]
+  },
+  {
+    "id": 271,
+    "titulo": "Corte y confección",
+    "categoria": "cre-costura",
+    "disciplina": "creativo",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["pattern", "seam", "fitting", "cut on the fold", "alter"],
+    "narrative_setting": "un taller de diseño lleno de alfileres en el piso y moldes de papel vegetal colgando",
+    "narrative_conflict": "alterar agresivamente las costuras del diseño porque la tela caída le queda pésimo al cuerpo",
+    "narrative_role": "somos confeccionistas trabajando contrarreloj para ajustar las proporciones de una pieza",
+    "generated_vocab": [
+      "the fitting is completely wrong",
+      "we need to take it in at the waist",
+      "the seam is totally unravelling",
+      "cut it right on the fold",
+      "the drape of this fabric is awful",
+      "we don't have enough material left",
+      "let's let out the hem a bit"
+    ]
+  },
+  {
+    "id": 280,
+    "titulo": "Jardinería desde cero",
+    "categoria": "cre-jardineria",
+    "disciplina": "creativo",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["soil", "water", "sunlight", "pot", "prune"],
+    "narrative_setting": "el balcón ardiente de un departamento bordeado por macetas de plástico descascaradas",
+    "narrative_conflict": "entender desesperadamente qué hicimos mal para que las hojas sanas se pusieran todas amarillas",
+    "narrative_role": "somos dueños de plantas frustrados por estar a punto de matar nuestro último ejemplar",
+    "generated_vocab": [
+      "the leaves are turning yellow",
+      "I think we're overwatering it",
+      "the soil feels completely dry",
+      "it needs way more direct sunlight",
+      "the pot doesn't have any drainage",
+      "we should prune those dead branches",
+      "it's barely clinging to life"
+    ]
+  },
+  {
+    "id": 281,
+    "titulo": "Huerta en casa",
+    "categoria": "cre-jardineria",
+    "disciplina": "creativo",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["seedling", "harvest", "compost", "raised bed", "in season"],
+    "narrative_setting": "la tierra removida del fondo del patio ensuciando los bordes de un cajón improvisado",
+    "narrative_conflict": "decidir si transplantar los brotes ahora o esperar otra semana y arriesgarnos a que los coman los bichos",
+    "narrative_role": "somos vecinos incursionando en el cultivo urbano para dejar de comprar en la verdulería",
+    "generated_vocab": [
+      "these seeds are never gonna sprout",
+      "we need to add more compost to the soil",
+      "the bugs are eating all the leaves",
+      "is it too late to plant tomatoes",
+      "we should space them out a bit more",
+      "the roots need more room to grow",
+      "it's finally ready to harvest"
+    ]
+  },
+  {
+    "id": 282,
+    "titulo": "Cuidado y reproducción de plantas",
+    "categoria": "cre-jardineria",
+    "disciplina": "creativo",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["cutting", "repot", "root", "propagate", "overwatering"],
+    "narrative_setting": "la mesada manchada de la cocina con frascos de vidrio llenos de esquejes en agua",
+    "narrative_conflict": "evaluar si las raíces están lo suficientemente fuertes como para soportar el cambio a la tierra",
+    "narrative_role": "somos acumuladores de plantas intercambiando gajos para intentar expandir la colección",
+    "generated_vocab": [
+      "make the cut right below the node",
+      "the roots are rotting in the water",
+      "it's time to repot this one",
+      "the cutting isn't taking hold",
+      "we need fresh soil for propagation",
+      "don't let the leaves touch the water",
+      "it grew so much over the summer"
+    ]
+  },
+  {
+    "id": 300,
+    "titulo": "Hablar en público sin morir en el intento",
+    "categoria": "orat-presentaciones",
+    "disciplina": "oratoria",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["stage fright", "take a breath", "eye contact", "pace yourself", "own the room"],
+    "narrative_setting": "el pasillo oscuro detrás del telón escuchando el murmullo impaciente de las sillas",
+    "narrative_conflict": "controlar las pulsaciones y los nervios paralizantes a cinco minutos exactos de tener que salir",
+    "narrative_role": "somos colegas dándonos apoyo moral extremo antes de una charla obligatoria e intimidante",
+    "generated_vocab": [
+      "my hands are shaking uncontrollably",
+      "take a deep breath and slow down",
+      "don't forget to make eye contact",
+      "just own the room when you walk out",
+      "what if I freeze up completely",
+      "pace yourself so you don't rush it",
+      "you know this material inside out"
+    ]
+  },
+  {
+    "id": 301,
+    "titulo": "Estructurar una presentación",
+    "categoria": "orat-presentaciones",
+    "disciplina": "oratoria",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["opening hook", "key message", "signpost", "wrap up", "call to action"],
+    "narrative_setting": "una sala de reuniones pequeña modificando diapositivas aburridas proyectadas en la pared",
+    "narrative_conflict": "descartar toda la introducción teórica larga para enganchar a la audiencia directamente con un golpe de efecto",
+    "narrative_role": "somos presentadores buscando rearmar la charla para no perder el interés en el primer minuto",
+    "generated_vocab": [
+      "the opening hook is totally weak",
+      "we're burying the main message",
+      "let's jump straight to the point",
+      "the transition to the next slide is awkward",
+      "we need a stronger call to action",
+      "we're throwing too much text at them",
+      "wrap it up before they lose focus"
+    ]
+  },
+  {
+    "id": 302,
+    "titulo": "Manejo de la voz y los nervios",
+    "categoria": "orat-presentaciones",
+    "disciplina": "oratoria",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["projection", "pause", "slow down", "breathe", "steady"],
+    "narrative_setting": "un auditorio vacío rebotando el eco de cada palabra leída",
+    "narrative_conflict": "forzarnos a hablar deliberadamente más lento y en voz alta porque de lo contrario no se entiende nada",
+    "narrative_role": "somos oradores corrigiendo implacablemente nuestras posturas corporales y el volumen de la voz",
+    "generated_vocab": [
+      "your voice is trailing off at the end",
+      "project to the back of the room",
+      "you're speaking way too fast",
+      "hold that pause a second longer",
+      "take a breath between sentences",
+      "it sounds a bit monotone",
+      "you need to sound more confident"
+    ]
+  },
+  {
+    "id": 303,
+    "titulo": "Presentar datos sin aburrir",
+    "categoria": "orat-presentaciones",
+    "disciplina": "oratoria",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["the headline is", "what this means", "zoom in on", "the takeaway", "in short"],
+    "narrative_setting": "una videollamada estresante compartiendo un reporte corporativo lleno de barras y tortas",
+    "narrative_conflict": "encontrar la historia humana y las tendencias ocultas detrás de tantos números fríos",
+    "narrative_role": "somos analistas decidiendo cómo traducir métricas complejas para que los jefes no dejen de prestar atención",
+    "generated_vocab": [
+      "the headline is that revenue dropped",
+      "nobody cares about the raw numbers",
+      "let's zoom in on this specific trend",
+      "the main takeaway is right here",
+      "in short we need to cut costs",
+      "we're losing them in the details",
+      "what does this actually mean for us"
+    ]
+  },
+  {
+    "id": 310,
+    "titulo": "Entrevista de trabajo: contame de vos",
+    "categoria": "orat-entrevistas",
+    "disciplina": "oratoria",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["walk you through", "my background", "what drew me to", "I'd say my strength", "in a nutshell"],
+    "narrative_setting": "los cómodos pero intimidantes sillones de la recepción de una oficina",
+    "narrative_conflict": "resumir diez años de vida profesional en dos minutos sin sonar como un robot leyendo un pdf",
+    "narrative_role": "somos candidatos ensayando el tono de la respuesta personal más difícil y trillada",
+    "generated_vocab": [
+      "let me walk you through my background",
+      "in a nutshell I build software",
+      "what really drew me to this role was",
+      "I tend to ramble too much",
+      "I'd say my biggest strength is",
+      "how do I sound more natural",
+      "I should highlight my leadership skills"
+    ]
+  },
+  {
+    "id": 311,
+    "titulo": "Responder por errores y fracasos",
+    "categoria": "orat-entrevistas",
+    "disciplina": "oratoria",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["in hindsight", "what I learned", "I owned it", "I'd handle it differently", "turned it around"],
+    "narrative_setting": "la ruidosa barra de una cafetería marcando los posibles escenarios fatales",
+    "narrative_conflict": "enmarcar estratégicamente un desastre laboral del pasado como una profunda lección de aprendizaje",
+    "narrative_role": "somos profesionales buscando cómo asumir culpa sin arruinar completamente nuestras posibilidades de ser contratados",
+    "generated_vocab": [
+      "in hindsight I made a huge mistake",
+      "the most important thing I learned was",
+      "I completely owned up to it",
+      "I'd handle it very differently now",
+      "we managed to turn the situation around",
+      "don't make excuses for what happened",
+      "it was a tough pill to swallow"
+    ]
+  },
+  {
+    "id": 312,
+    "titulo": "Negociar sueldo y condiciones",
+    "categoria": "orat-entrevistas",
+    "disciplina": "oratoria",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["market rate", "I was hoping for", "is there flexibility", "the whole package", "meet in the middle"],
+    "narrative_setting": "la pantalla luminosa del celular con el contrato y la oferta final en bandeja de entrada",
+    "narrative_conflict": "decidir el wording exacto para exigir un salario mayor asumiendo el riesgo de que retiren la oferta",
+    "narrative_role": "somos colegas debatiendo si aceptar las condiciones base o tensar la cuerda un poco más",
+    "generated_vocab": [
+      "that offer is way below market rate",
+      "I was hoping for a higher base salary",
+      "is there any flexibility on the numbers",
+      "we have to look at the whole package",
+      "maybe we can meet in the middle",
+      "don't leave any money on the table",
+      "I'm not accepting that first offer"
+    ]
+  },
+  {
+    "id": 313,
+    "titulo": "Contar tu experiencia técnica",
+    "categoria": "orat-entrevistas",
+    "disciplina": "oratoria",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["I was responsible for", "we shipped", "the tricky part was", "I led", "end to end"],
+    "narrative_setting": "frente a un pizarrón lleno de diagramas técnicos borroneados a medias",
+    "narrative_conflict": "simplificar una arquitectura enredada para destacar la participación individual sin ahogar en datos inútiles",
+    "narrative_role": "somos ingenieros fogueándonos mutuamente para la dura prueba del diseño de sistemas",
+    "generated_vocab": [
+      "I was responsible for the whole backend",
+      "we shipped the feature ahead of schedule",
+      "the tricky part was handling the scale",
+      "I led the migration from scratch",
+      "I built the integration end to end",
+      "we kept hitting a massive bottleneck",
+      "let me draw out the architecture for you"
+    ]
+  },
+  {
+    "id": 320,
+    "titulo": "Decir exactamente lo que querés decir",
+    "categoria": "orat-expresion",
+    "disciplina": "oratoria",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["to put it another way", "more precisely", "what I mean is", "the nuance here", "rather than"],
+    "narrative_setting": "la tensa mesa redonda de una sala de negociaciones contractuales",
+    "narrative_conflict": "encontrar la precisión verbal quirúrgica para hacer una corrección crítica sin romper relaciones",
+    "narrative_role": "somos socios re-enfocando el debate porque la otra parte malinterpretó nuestras exigencias",
+    "generated_vocab": [
+      "what I'm actually trying to say is",
+      "to put it another way",
+      "the nuance here is really important",
+      "more precisely we need guarantees",
+      "rather than focusing on the cost",
+      "I feel like we're talking in circles",
+      "let me rephrase that entirely"
+    ]
+  },
+  {
+    "id": 321,
+    "titulo": "Muletillas, pausas y silencios",
+    "categoria": "orat-expresion",
+    "disciplina": "oratoria",
+    "niveles": ["A0", "A1", "A2", "B1"],
+    "keywords_en": ["filler words", "hold the pause", "let it land", "think out loud", "take your time"],
+    "narrative_setting": "un pequeño estudio acustizado escuchando la cruda grabación de voz",
+    "narrative_conflict": "sufrir al decidir si editar o dejar las enormes respiraciones y muletillas del relato",
+    "narrative_role": "somos podcasters evaluando dolorosamente nuestros propios tics auditivos",
+    "generated_vocab": [
+      "I rely way too much on filler words",
+      "just hold the pause a second longer",
+      "let the silence do the work",
+      "I keep thinking out loud",
+      "take your time before answering",
+      "the constant 'ums' are driving me crazy",
+      "it sounds too scripted if we cut it"
+    ]
+  },
+  {
+    "id": 322,
+    "titulo": "Contar una anécdota que enganche",
+    "categoria": "orat-expresion",
+    "disciplina": "oratoria",
+    "niveles": ["A1", "A2", "B1", "B2"],
+    "keywords_en": ["so there I was", "long story short", "out of nowhere", "and then it hit me", "you won't believe"],
+    "narrative_setting": "los ruidosos sillones de un bar atestado un viernes por la noche",
+    "narrative_conflict": "meter la anécdota en tiempo récord y con remate antes de que la charla derive hacia otro lado",
+    "narrative_role": "somos compañeros compitiendo ferozmente por mantener cautiva la atención de todo el grupo",
+    "generated_vocab": [
+      "so there I was completely stuck",
+      "long story short it was a disaster",
+      "out of nowhere this guy shows up",
+      "and then it finally hit me",
+      "you are never gonna believe this",
+      "I couldn't stop laughing about it",
+      "get to the punchline already"
+    ]
+  },
+  {
+    "id": 323,
+    "titulo": "Discutir sin pelear",
+    "categoria": "orat-expresion",
+    "disciplina": "oratoria",
+    "niveles": ["B1", "B2", "C1"],
+    "keywords_en": ["I see your point but", "fair enough", "where I'd push back", "let's agree that", "hear me out"],
+    "narrative_setting": "una áspera reunión de retrospectiva de cierre mensual en la oficina",
+    "narrative_conflict": "evitar que la crítica sobre el desempeño presupuestario se convierta en una guerra personal gritada",
+    "narrative_role": "somos colegas intentando objetivar las críticas para no terminar odiándonos profesionalmente",
+    "generated_vocab": [
+      "I see your point but I disagree",
+      "fair enough let's move on",
+      "this is where I'd push back",
+      "let's agree that we need a change",
+      "hear me out for a second",
+      "we're getting way too defensive",
+      "let's look at this objectively"
+    ]
+  }
+]

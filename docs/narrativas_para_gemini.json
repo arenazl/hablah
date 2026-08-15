@@ -1,0 +1,1150 @@
+{
+  "instrucciones": {
+    "que_es_esto": "Catalogo de topicos de Hablah, una app donde un coach de IA conversa por VOZ con el alumno. Cada topico necesita una NARRATIVA que le da al coach una escena concreta donde ocurre la charla, para que no arranque como una clase sino como una conversacion real.",
+    "que_completar": {
+      "narrative_setting": "EN CASTELLANO. Donde pasa la escena. Concreto y sensorial, en minuscula, sin punto final. Una frase. Ej: \"un estudio de grabacion oscuro a las 3 de la manana\".",
+      "narrative_conflict": "EN CASTELLANO. Que esta en juego AHORA en esa escena: una tension o decision, no un tema. En infinitivo. Ej: \"decidir si reconstruir todo el sistema desde cero o parchear el codigo viejo\".",
+      "narrative_role": "EN CASTELLANO. Quienes somos los dos, SIEMPRE empezando con \"somos\". Ej: \"somos productores musicales probando ideas y buscando inspiracion\".",
+      "generated_vocab": "EN INGLES. 6 a 10 FRASES cortas y coloquiales que una persona real diria en esa escena. No definiciones ni terminos sueltos: frases habladas. Ej: \"the mix is getting muddy\", \"how do we keep this maintainable\"."
+    },
+    "reglas": [
+      "El alumno es ADULTO. Nada infantil, nada de \"imaginate que sos un dinosaurio\".",
+      "La escena tiene que poder sostener 7 minutos de charla entre DOS personas, no un monologo.",
+      "El conflicto NO se resuelve solo: tiene que dar lugar a opiniones distintas.",
+      "generated_vocab va en INGLES aunque los otros tres campos vayan en castellano: es la lengua pivote del catalogo y el coach la adapta al idioma de la clase.",
+      "Nada de emojis.",
+      "Respetar el id de cada topico: se usa para volver a cargarlo en la base."
+    ],
+    "formato_de_respuesta": "Devolver el MISMO array de completar, con los 4 campos llenos y sin agregar ni quitar topicos."
+  },
+  "ejemplos_ya_curados": [
+    {
+      "titulo": "Producción musical y cultura DJ",
+      "categoria": "musica",
+      "narrative_setting": "un estudio de grabación oscuro a las 3 de la mañana",
+      "narrative_conflict": "encontrar ese sonido perfecto que falta para terminar la pista antes del amanecer",
+      "narrative_role": "somos productores musicales probando ideas y buscando inspiración",
+      "generated_vocab": [
+        "layer it in there",
+        "the mix is getting muddy",
+        "let me sideboard that",
+        "tweak the envelope",
+        "bounce it down",
+        "chop that up",
+        "lock in the groove",
+        "where's the punch coming from"
+      ]
+    },
+    {
+      "titulo": "IA generativa · ética",
+      "categoria": "tech",
+      "narrative_setting": "un panel de debate en una cumbre de tecnología frente a mil personas",
+      "narrative_conflict": "discutir dónde dibujar la línea de los límites éticos de las máquinas",
+      "narrative_role": "somos expertos en inteligencia artificial debatiendo el futuro",
+      "generated_vocab": [
+        "who's actually responsible here",
+        "that's a legal grey area",
+        "it skews the data",
+        "biased right out of the box",
+        "we don't really know how it decides",
+        "should we even be doing this",
+        "what happens to people's information",
+        "who benefits and who loses"
+      ]
+    },
+    {
+      "titulo": "Entrenamiento de fuerza y suplementación",
+      "categoria": "fitness",
+      "narrative_setting": "el área de pesas libres de un gimnasio viejo y ruidoso",
+      "narrative_conflict": "armar una nueva estrategia porque nos estancamos y no podemos levantar más peso",
+      "narrative_role": "somos compañeros de entrenamiento descansando entre series pesadas",
+      "generated_vocab": [
+        "gotta nail that form",
+        "the weight felt different today",
+        "I'm leaving gains on the table",
+        "keep the core tight",
+        "your grip's slipping",
+        "progressive overload is key",
+        "hit a new PR",
+        "too much volume"
+      ]
+    },
+    {
+      "titulo": "Fútbol · Mundiales y selecciones",
+      "categoria": "deportes",
+      "narrative_setting": "la tribuna popular vacía un par de horas antes del clásico",
+      "narrative_conflict": "intentar ponernos de acuerdo sobre quién es el mejor jugador de la historia",
+      "narrative_role": "somos fanáticos del fútbol discutiendo de táctica",
+      "generated_vocab": [
+        "they should've buried that chance",
+        "the keeper pulled off a worldie",
+        "what a strike",
+        "they're playing out of their skins",
+        "got robbed by the ref",
+        "the midfield's completely overrun",
+        "pure class from him",
+        "barely scraped through"
+      ]
+    }
+  ],
+  "completar": [
+    {
+      "id": 200,
+      "titulo": "Teoría musical desde cero",
+      "categoria": "mus-teoria",
+      "disciplina": "musica",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "note",
+        "scale",
+        "rhythm",
+        "beat",
+        "key"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 201,
+      "titulo": "Aprender piano",
+      "categoria": "mus-instrumentos",
+      "disciplina": "musica",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "keys",
+        "chord",
+        "both hands",
+        "posture",
+        "practice slowly"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 202,
+      "titulo": "Aprender guitarra",
+      "categoria": "mus-instrumentos",
+      "disciplina": "musica",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "fret",
+        "strum",
+        "chord change",
+        "tuning",
+        "calluses"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 203,
+      "titulo": "Aprender a cantar",
+      "categoria": "mus-instrumentos",
+      "disciplina": "musica",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "breath support",
+        "pitch",
+        "range",
+        "warm up",
+        "head voice"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 204,
+      "titulo": "Lectura musical y partituras",
+      "categoria": "mus-teoria",
+      "disciplina": "musica",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "staff",
+        "clef",
+        "time signature",
+        "sight-read",
+        "rest"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 205,
+      "titulo": "Armonía y composición",
+      "categoria": "mus-teoria",
+      "disciplina": "musica",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1",
+        "C2"
+      ],
+      "keywords_en": [
+        "chord progression",
+        "voicing",
+        "resolve",
+        "modulation",
+        "hook"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 206,
+      "titulo": "Producción musical",
+      "categoria": "mus-produccion",
+      "disciplina": "musica",
+      "niveles": [
+        "A2",
+        "B1",
+        "B2",
+        "C1",
+        "C2"
+      ],
+      "keywords_en": [
+        "mix",
+        "track",
+        "EQ",
+        "compression",
+        "master"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 210,
+      "titulo": "Informática desde cero",
+      "categoria": "inf-general",
+      "disciplina": "informatica",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2"
+      ],
+      "keywords_en": [
+        "file",
+        "folder",
+        "desktop",
+        "click",
+        "save"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 211,
+      "titulo": "Uso de Windows y herramientas básicas",
+      "categoria": "inf-general",
+      "disciplina": "informatica",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2"
+      ],
+      "keywords_en": [
+        "window",
+        "shortcut",
+        "settings",
+        "install",
+        "backup"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 212,
+      "titulo": "Internet, archivos y seguridad digital",
+      "categoria": "inf-general",
+      "disciplina": "informatica",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "password",
+        "phishing",
+        "download",
+        "two-factor",
+        "browser"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 213,
+      "titulo": "Programación desde cero",
+      "categoria": "inf-general",
+      "disciplina": "informatica",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "variable",
+        "loop",
+        "function",
+        "bug",
+        "run the code"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 214,
+      "titulo": "Desarrollo web",
+      "categoria": "inf-general",
+      "disciplina": "informatica",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "frontend",
+        "backend",
+        "deploy",
+        "responsive",
+        "API"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 215,
+      "titulo": "Bases de datos",
+      "categoria": "inf-general",
+      "disciplina": "informatica",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "query",
+        "table",
+        "index",
+        "join",
+        "schema"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 216,
+      "titulo": "Inteligencia artificial aplicada",
+      "categoria": "inf-general",
+      "disciplina": "informatica",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "prompt",
+        "model",
+        "training data",
+        "fine-tune",
+        "hallucination"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 220,
+      "titulo": "Electricidad domiciliaria desde cero",
+      "categoria": "of-electricidad",
+      "disciplina": "oficios",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "circuit",
+        "voltage",
+        "breaker",
+        "ground",
+        "safety first"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 221,
+      "titulo": "Instalaciones eléctricas del hogar",
+      "categoria": "of-electricidad",
+      "disciplina": "oficios",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "wiring",
+        "outlet",
+        "junction box",
+        "load",
+        "conduit"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 222,
+      "titulo": "Diagnóstico de fallas eléctricas",
+      "categoria": "of-electricidad",
+      "disciplina": "oficios",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "short circuit",
+        "multimeter",
+        "trace the fault",
+        "overload",
+        "loose connection"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 230,
+      "titulo": "Carpintería desde cero",
+      "categoria": "of-carpinteria",
+      "disciplina": "oficios",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "wood grain",
+        "measure twice",
+        "sand",
+        "clamp",
+        "chisel"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 231,
+      "titulo": "Herramientas y técnicas de carpintería",
+      "categoria": "of-carpinteria",
+      "disciplina": "oficios",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "router",
+        "jig",
+        "miter",
+        "dovetail",
+        "square"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 232,
+      "titulo": "Construcción de muebles",
+      "categoria": "of-carpinteria",
+      "disciplina": "oficios",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "joinery",
+        "assembly",
+        "finish",
+        "load-bearing",
+        "dry fit"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 240,
+      "titulo": "Mecánica automotriz desde cero",
+      "categoria": "of-mecanica",
+      "disciplina": "oficios",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "engine",
+        "oil change",
+        "tire pressure",
+        "battery",
+        "under the hood"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 241,
+      "titulo": "Mantenimiento básico del auto",
+      "categoria": "of-mecanica",
+      "disciplina": "oficios",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "service interval",
+        "coolant",
+        "brake pads",
+        "filter",
+        "top up"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 242,
+      "titulo": "Mecánica y diagnóstico de fallas",
+      "categoria": "of-mecanica",
+      "disciplina": "oficios",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "error code",
+        "misfire",
+        "diagnostics",
+        "wear and tear",
+        "rule it out"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 250,
+      "titulo": "Plomería desde cero",
+      "categoria": "of-plomeria",
+      "disciplina": "oficios",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "pipe",
+        "leak",
+        "shut-off valve",
+        "drain",
+        "seal"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 251,
+      "titulo": "Reparaciones del hogar",
+      "categoria": "of-mantenimiento",
+      "disciplina": "oficios",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "fix",
+        "patch",
+        "replace",
+        "tighten",
+        "quick job"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 252,
+      "titulo": "Herramientas y bricolaje",
+      "categoria": "of-mantenimiento",
+      "disciplina": "oficios",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "toolbox",
+        "drill",
+        "screw",
+        "level",
+        "DIY"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 260,
+      "titulo": "Fotografía desde cero",
+      "categoria": "cre-fotografia",
+      "disciplina": "creativo",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "frame",
+        "light",
+        "focus",
+        "shutter",
+        "shot"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 261,
+      "titulo": "Composición y técnicas fotográficas",
+      "categoria": "cre-fotografia",
+      "disciplina": "creativo",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "rule of thirds",
+        "depth of field",
+        "golden hour",
+        "leading lines",
+        "exposure"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 262,
+      "titulo": "Edición de fotografía",
+      "categoria": "cre-fotografia",
+      "disciplina": "creativo",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "crop",
+        "contrast",
+        "white balance",
+        "retouch",
+        "export"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 270,
+      "titulo": "Costura desde cero",
+      "categoria": "cre-costura",
+      "disciplina": "creativo",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "stitch",
+        "needle",
+        "hem",
+        "fabric",
+        "thread"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 271,
+      "titulo": "Corte y confección",
+      "categoria": "cre-costura",
+      "disciplina": "creativo",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "pattern",
+        "seam",
+        "fitting",
+        "cut on the fold",
+        "alter"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 280,
+      "titulo": "Jardinería desde cero",
+      "categoria": "cre-jardineria",
+      "disciplina": "creativo",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "soil",
+        "water",
+        "sunlight",
+        "pot",
+        "prune"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 281,
+      "titulo": "Huerta en casa",
+      "categoria": "cre-jardineria",
+      "disciplina": "creativo",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "seedling",
+        "harvest",
+        "compost",
+        "raised bed",
+        "in season"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 282,
+      "titulo": "Cuidado y reproducción de plantas",
+      "categoria": "cre-jardineria",
+      "disciplina": "creativo",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "cutting",
+        "repot",
+        "root",
+        "propagate",
+        "overwatering"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 300,
+      "titulo": "Hablar en público sin morir en el intento",
+      "categoria": "orat-presentaciones",
+      "disciplina": "oratoria",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "stage fright",
+        "take a breath",
+        "eye contact",
+        "pace yourself",
+        "own the room"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 301,
+      "titulo": "Estructurar una presentación",
+      "categoria": "orat-presentaciones",
+      "disciplina": "oratoria",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "opening hook",
+        "key message",
+        "signpost",
+        "wrap up",
+        "call to action"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 302,
+      "titulo": "Manejo de la voz y los nervios",
+      "categoria": "orat-presentaciones",
+      "disciplina": "oratoria",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "projection",
+        "pause",
+        "slow down",
+        "breathe",
+        "steady"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 303,
+      "titulo": "Presentar datos sin aburrir",
+      "categoria": "orat-presentaciones",
+      "disciplina": "oratoria",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "the headline is",
+        "what this means",
+        "zoom in on",
+        "the takeaway",
+        "in short"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 310,
+      "titulo": "Entrevista de trabajo: contame de vos",
+      "categoria": "orat-entrevistas",
+      "disciplina": "oratoria",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "walk you through",
+        "my background",
+        "what drew me to",
+        "I'd say my strength",
+        "in a nutshell"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 311,
+      "titulo": "Responder por errores y fracasos",
+      "categoria": "orat-entrevistas",
+      "disciplina": "oratoria",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "in hindsight",
+        "what I learned",
+        "I owned it",
+        "I'd handle it differently",
+        "turned it around"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 312,
+      "titulo": "Negociar sueldo y condiciones",
+      "categoria": "orat-entrevistas",
+      "disciplina": "oratoria",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "market rate",
+        "I was hoping for",
+        "is there flexibility",
+        "the whole package",
+        "meet in the middle"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 313,
+      "titulo": "Contar tu experiencia técnica",
+      "categoria": "orat-entrevistas",
+      "disciplina": "oratoria",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "I was responsible for",
+        "we shipped",
+        "the tricky part was",
+        "I led",
+        "end to end"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 320,
+      "titulo": "Decir exactamente lo que querés decir",
+      "categoria": "orat-expresion",
+      "disciplina": "oratoria",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "to put it another way",
+        "more precisely",
+        "what I mean is",
+        "the nuance here",
+        "rather than"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 321,
+      "titulo": "Muletillas, pausas y silencios",
+      "categoria": "orat-expresion",
+      "disciplina": "oratoria",
+      "niveles": [
+        "A0",
+        "A1",
+        "A2",
+        "B1"
+      ],
+      "keywords_en": [
+        "filler words",
+        "hold the pause",
+        "let it land",
+        "think out loud",
+        "take your time"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 322,
+      "titulo": "Contar una anécdota que enganche",
+      "categoria": "orat-expresion",
+      "disciplina": "oratoria",
+      "niveles": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "keywords_en": [
+        "so there I was",
+        "long story short",
+        "out of nowhere",
+        "and then it hit me",
+        "you won't believe"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    },
+    {
+      "id": 323,
+      "titulo": "Discutir sin pelear",
+      "categoria": "orat-expresion",
+      "disciplina": "oratoria",
+      "niveles": [
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "keywords_en": [
+        "I see your point but",
+        "fair enough",
+        "where I'd push back",
+        "let's agree that",
+        "hear me out"
+      ],
+      "narrative_setting": null,
+      "narrative_conflict": null,
+      "narrative_role": null,
+      "generated_vocab": null
+    }
+  ]
+}
