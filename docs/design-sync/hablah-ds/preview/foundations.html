@@ -1,0 +1,58 @@
+<!-- @dsCard group="Fundamentos" -->
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Habláh — Fundamentos</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+body{padding:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:960px}
+.sw{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sw .c{width:40px;height:28px;border-radius:8px;border:1px solid var(--border-1)}
+.sw b{font-size:var(--t-sm)}.sw span{font-family:var(--font-mono);font-size:10.5px;color:var(--fg-3)}
+.own{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:var(--t-sm)}
+.tspec{margin-bottom:10px}
+h1{font-size:var(--t-2xl);font-weight:800;margin:0 0 4px}
+.sub{color:var(--fg-3);font-size:var(--t-sm);margin-bottom:20px}
+section{margin-bottom:8px}
+</style></head><body>
+<h1>Habláh — Fundamentos</h1>
+<div class="sub">Tokens del producto real. La paleta por dueño del dato es ley en todo el back office.</div>
+<div class="grid">
+<section class="hb-card" style="padding:16px">
+  <div class="hb-label" style="margin-bottom:10px">Marca y neutrales</div>
+  <div class="sw"><div class="c" style="background:#00B37E"></div><b>Habláh green</b><span>#00B37E · primario</span></div>
+  <div class="sw"><div class="c" style="background:#FFB800"></div><b>Ámbar</b><span>#FFB800 · acento</span></div>
+  <div class="sw"><div class="c" style="background:#E5484D"></div><b>Danger</b><span>#E5484D</span></div>
+  <div class="sw"><div class="c" style="background:#FAFBFA"></div><b>bg-1 claro</b><span>#FAFBFA · cálido</span></div>
+  <div class="sw"><div class="c" style="background:#0B1210"></div><b>bg-1 oscuro</b><span>#0B1210 · verde-carbón</span></div>
+</section>
+<section class="hb-card" style="padding:16px">
+  <div class="hb-label" style="margin-bottom:10px">Paleta por dueño del dato</div>
+  <div class="own"><span class="hb-owner-dot" style="background:var(--own-runtime)"></span>Runtime (sesión) <span class="hb-mono" style="color:var(--fg-4);font-size:10px;margin-left:auto">#3B82F6</span></div>
+  <div class="own"><span class="hb-owner-dot" style="background:var(--own-edad)"></span>EDAD · student_types <span class="hb-mono" style="color:var(--fg-4);font-size:10px;margin-left:auto">#FBBF24</span></div>
+  <div class="own"><span class="hb-owner-dot" style="background:var(--own-nivel)"></span>NIVEL · levels <span class="hb-mono" style="color:var(--fg-4);font-size:10px;margin-left:auto">#7DD3FC</span></div>
+  <div class="own"><span class="hb-owner-dot" style="background:var(--own-cruce)"></span>CRUCE · age_level_matrix <span class="hb-mono" style="color:var(--fg-4);font-size:10px;margin-left:auto">#00B37E</span></div>
+  <div class="own"><span class="hb-owner-dot" style="background:var(--own-topico)"></span>TÓPICO · topics <span class="hb-mono" style="color:var(--fg-4);font-size:10px;margin-left:auto">#818CF8</span></div>
+  <div class="own"><span class="hb-owner-dot" style="background:var(--own-reglas)"></span>REGLAS · conversation_rules <span class="hb-mono" style="color:var(--fg-4);font-size:10px;margin-left:auto">#A855F7</span></div>
+  <div class="own"><span class="hb-owner-dot" style="background:var(--own-codigo)"></span>Código · resolver <span class="hb-mono" style="color:var(--fg-4);font-size:10px;margin-left:auto">#F87171</span></div>
+</section>
+<section class="hb-card" style="padding:16px">
+  <div class="hb-label" style="margin-bottom:10px">Tipografía</div>
+  <div class="tspec" style="font-size:var(--t-2xl);font-weight:800">Probador de clases</div>
+  <div class="tspec" style="font-size:var(--t-md);font-weight:600">Inter — el peso hace la jerarquía</div>
+  <div class="tspec" style="font-size:var(--t-sm);color:var(--fg-2)">Cuerpo 12.5-13.5px, línea 1.5. Labels uppercase 10px con tracking.</div>
+  <div class="tspec hb-mono" style="font-size:11px;color:var(--fg-3)">mono: age_level_matrix.comando_de_arranque · cadencia 1,0,2,1,0,2,3,1</div>
+</section>
+<section class="hb-card" style="padding:16px">
+  <div class="hb-label" style="margin-bottom:10px">Componentes base</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+    <button class="hb-btn">Iniciar clase</button>
+    <button class="hb-btn hb-btn--ghost">Ver XML final</button>
+    <button class="hb-btn hb-btn--danger">Terminar</button>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+    <span class="hb-chip hb-chip--on">Sobremesa</span><span class="hb-chip">Ping-pong</span>
+    <span class="hb-chip">Debate</span><span class="hb-state"><span class="hb-owner-dot" style="background:var(--primary)"></span>El profe habla</span>
+  </div>
+  <div style="font-size:var(--t-sm)"><span class="hb-field-key" style="border-color:var(--own-cruce);color:var(--own-cruce)">start_command</span> — clave de campo con su dueño</div>
+</section>
+</div>
+</body></html>

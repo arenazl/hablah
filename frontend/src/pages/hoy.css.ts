@@ -106,6 +106,8 @@ export const HOY_CSS = `
 .hoy-page .hp-mic-dot{width:10px;height:10px;border-radius:50%;background:var(--hp-green);box-shadow:0 0 0 4px rgba(0,179,126,.25);animation:hp-pulse 1.8s ease-out infinite}
 @keyframes hp-pulse{0%{box-shadow:0 0 0 0 rgba(0,179,126,.45)}80%{box-shadow:0 0 0 10px rgba(0,179,126,0)}100%{box-shadow:0 0 0 0 rgba(0,179,126,0)}}
 
+/* Onda decorativa al pie del hero (design handoff). Se oculta en mobile. */
+.hoy-page .hp-waveform{position:absolute;left:0;right:0;bottom:0;height:64px;opacity:.18;pointer-events:none}
 .hoy-page .hp-hero-r{position:relative;padding:24px 22px 22px;border-left:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg,rgba(0,0,0,.0),rgba(0,0,0,.18));display:flex;flex-direction:column;gap:10px}
 .hoy-page .hp-hero-r .hp-label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:700;margin-bottom:2px}
 .hoy-page .hp-prompt{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start;backdrop-filter:blur(4px)}
@@ -200,6 +202,9 @@ export const HOY_CSS = `
 .hoy-page .hp-arrow{color:var(--hp-fg-4)}
 .hoy-page .hp-gauge{position:relative;height:10px;background:var(--hp-bg-2);border-radius:99px;overflow:hidden}
 .hoy-page .hp-gauge i{display:block;height:100%;background:linear-gradient(90deg,var(--hp-green),#5EE0B0);border-radius:99px}
+/* Marcador de la posición actual (design handoff). La posición llega por
+   --hp-gauge-pos porque el % es dinámico, no fijo como en el prototipo. */
+.hoy-page .hp-gauge::after{content:"";position:absolute;top:-2px;left:var(--hp-gauge-pos,0%);height:14px;width:3px;background:var(--hp-fg-1);border-radius:99px;transform:translateX(-1.5px)}
 .hoy-page .hp-lstats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
 .hoy-page .hp-lstats .hp-li{display:flex;flex-direction:column}
 .hoy-page .hp-lstats .hp-li .hp-v{font-family:var(--hp-font-display);font-weight:700;font-size:18px;color:var(--hp-fg-1);letter-spacing:-0.01em}
@@ -213,6 +218,10 @@ export const HOY_CSS = `
 .hoy-page .hp-tag.cat{background:transparent;border-color:var(--hp-border-2);color:var(--hp-fg-3);text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;font-weight:700;padding:5px 10px}
 .hoy-page .hp-tag-add{background:transparent;border:1px dashed var(--hp-border-2);color:var(--hp-fg-3);cursor:pointer}
 .hoy-page .hp-tag-add:hover{color:var(--hp-fg-1);border-color:var(--hp-fg-3)}
+/* Card "Tus tópicos": rótulo de categoría + chips a la vista (design handoff v2),
+   en lugar del acordeón que estiraba la columna con muchas categorías. */
+.hoy-page .hp-topic-groups{display:flex;flex-direction:column;gap:10px}
+.hoy-page .hp-topic-group .hp-tags{margin-top:6px}
 
 .hoy-page .hp-tutor-card{background:linear-gradient(180deg,#0D1412,#1B2624);color:#fff;border:0}
 .hoy-page .hp-tutor-card .hp-card-head h3{color:#fff}
@@ -277,7 +286,8 @@ export const HOY_CSS = `
     background:linear-gradient(180deg,rgba(0,0,0,.0),rgba(0,0,0,.25));
   }
   .hoy-page .hp-hero-r .hp-label{font-size:10px;margin-bottom:8px}
-  .hoy-page .hp-hero .waveform,.hoy-page .hp-hero svg.waveform{display:none !important}
+  .hoy-page .hp-hero .waveform,.hoy-page .hp-hero svg.waveform,
+  .hoy-page .hp-hero .hp-waveform{display:none !important}
 
   /* CTAs - primary alto + ghost compacto */
   .hoy-page .hp-hero-cta{flex-direction:column;width:100%;gap:8px;margin-top:8px}

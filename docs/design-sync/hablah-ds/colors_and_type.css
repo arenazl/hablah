@@ -1,0 +1,80 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Habláh — Design Tokens
+   Fuente de verdad visual. Los valores vienen del producto REAL
+   (frontend/src/pages/backoffice.css.ts + webapp.css.ts + paleta OWNERS
+   de MotorPlaygroundPanel). Cualquier pantalla del kit importa este file.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Marca */
+  --primary: #00B37E;          /* Habláh green — go, voz, vivo */
+  --primary-dark: #008F63;
+  --primary-tint: #E6F7F1;
+  --accent: #FFB800;           /* ámbar — energía, kids, highlights */
+  --danger: #E5484D;
+  --info: #3B82F6;
+  --violet: #7C3AED;
+
+  /* Neutrales cálidos (un toque de verde en los grises) */
+  --bg-1: #FAFBFA;  --bg-2: #F2F4F1;  --bg-3: #EAEDE8;
+  --surface: #FFFFFF;
+  --border-1: rgba(13,20,18,.08);  --border-2: rgba(13,20,18,.14);
+  --fg-1: #0D1412;  --fg-2: #2D3431;  --fg-3: #5A625F;  --fg-4: #8E938F;
+
+  /* Paleta por DUEÑO del dato — LEY de la app: identifica de qué tabla
+     viene cada dato en cualquier vista (leyenda siempre visible). */
+  --own-runtime: #3B82F6;      /* sesión (fecha, alumno, dispositivo)   */
+  --own-edad: #FBBF24;         /* student_types (EDAD)                  */
+  --own-nivel: #7DD3FC;        /* levels (NIVEL)                        */
+  --own-cruce: #00B37E;        /* age_level_matrix (EDAD × NIVEL)       */
+  --own-topico: #818CF8;       /* topics (TÓPICO)                       */
+  --own-reglas: #A855F7;       /* conversation_rules (gateadas)         */
+  --own-template: #8E938F;     /* literal del template                  */
+  --own-codigo: #F87171;       /* resolver (única pieza en Python)      */
+  --own-tag: #38BDF8;          /* tags XML                              */
+
+  /* Tipografía */
+  --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --t-xs: 11px; --t-sm: 12.5px; --t-base: 13.5px; --t-md: 15px;
+  --t-lg: 18px; --t-xl: 22px; --t-2xl: 28px;
+
+  /* Forma */
+  --r-md: 10px; --r-lg: 12px; --r-xl: 16px; --r-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(13,20,18,.04), 0 2px 6px rgba(13,20,18,.04);
+  --shadow-float: 0 6px 20px rgba(13,20,18,.10), 0 2px 6px rgba(13,20,18,.06);
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+
+[data-theme="dark"] {
+  --primary-tint: rgba(0,179,126,.18);
+  --bg-1: #0B1210;  --bg-2: #131B18;  --bg-3: #1B2421;
+  --surface: #161E1B;
+  --border-1: rgba(232,236,234,.08);  --border-2: rgba(232,236,234,.14);
+  --fg-1: #E8ECEA;  --fg-2: #B6BDB9;  --fg-3: #8E938F;  --fg-4: #5A625F;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.2), 0 2px 6px rgba(0,0,0,.2);
+  --shadow-float: 0 6px 20px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.25);
+}
+
+/* ── Base ── */
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg-1); color: var(--fg-1);
+  font-family: var(--font-sans); font-size: var(--t-base); line-height: 1.5;
+  -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11','ss01','tnum';
+}
+
+/* ── Componentes del kit ── */
+.hb-card { background: var(--surface); border: 1px solid var(--border-1); border-radius: var(--r-lg); box-shadow: var(--shadow-card); }
+.hb-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--primary); color: #fff; border: 0; border-radius: var(--r-md); padding: 8px 16px; font-weight: 700; font-size: var(--t-sm); font-family: inherit; cursor: pointer; transition: filter .15s var(--ease); }
+.hb-btn:hover { filter: brightness(.94); }
+.hb-btn--ghost { background: transparent; color: var(--fg-2); border: 1px solid var(--border-2); }
+.hb-btn--danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+.hb-chip { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--border-2); border-radius: var(--r-pill); padding: 3px 10px; font-size: var(--t-xs); font-weight: 700; background: var(--bg-2); color: var(--fg-2); }
+.hb-chip--on { border-color: var(--primary); color: var(--primary); background: var(--primary-tint); }
+.hb-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-3); }
+.hb-field-key { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; padding-left: 8px; border-left: 3px solid var(--border-2); }
+.hb-owner-dot { width: 8px; height: 8px; border-radius: var(--r-pill); display: inline-block; flex-shrink: 0; }
+.hb-state { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border-2); border-radius: var(--r-pill); padding: 3px 11px; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: var(--bg-2); }
+.hb-transcript { background: var(--bg-1); border: 1px solid var(--border-1); border-radius: var(--r-md); padding: 10px 12px; overflow-y: auto; }
+.hb-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }

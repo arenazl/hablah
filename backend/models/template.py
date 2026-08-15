@@ -147,6 +147,13 @@ class Topic(Base):
     target_structure_es = Column(String(200), nullable=True)
     mastery_criteria = Column(String(300), nullable=True)
 
+    # ─── Imagen de portada (design handoff v2: cards de Practicar) ───
+    # Foto de stock representativa del tópico, bajada de Pexels por
+    # scripts/fetch_topic_images.py. NO entra al prompt: es capa visual pura.
+    # image_credit es obligatorio por licencia de Pexels (atribución al autor).
+    image_url = Column(String(500), nullable=True)
+    image_credit = Column(String(200), nullable=True)
+
     # ─── Catálogo jerárquico (Categoría → Subcategoría → Tópico) ───
     category_id = Column(Integer, nullable=True, index=True)     # -> categories.id
     subcategory_id = Column(Integer, nullable=True, index=True)  # -> subcategories.id

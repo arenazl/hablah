@@ -64,6 +64,9 @@ export const WEBAPP_CSS = `
   --shadow-float: 0 6px 20px rgba(13,20,18,.10), 0 2px 6px rgba(13,20,18,.06);
   --ease: cubic-bezier(.2,.8,.2,1);
   --sidebar-w: 240px;
+  /* Design handoff: Sora para titulos/numeros, Inter para UI */
+  --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
+  --font-display: 'Sora', var(--font-sans);
 
   font-family: 'Inter', -apple-system, system-ui, sans-serif;
   background: var(--bg-1); color: var(--fg-1);
@@ -121,34 +124,84 @@ export const WEBAPP_CSS = `
   background: var(--ink-1); color: rgba(232,236,234,.8);
   display: flex; flex-direction: column;
   position: sticky; top: 64px; height: calc(100vh - 64px); flex-shrink: 0;
+  overflow-y: auto; overscroll-behavior: contain;
 }
-.webapp-root .sidebar .brand { padding: 20px 18px 22px; display: flex; align-items: center; gap: 10px; }
+/* Marca — el primer bloque; el divisor arranca justo debajo del logo */
+.webapp-root .sidebar .brand {
+  padding: 18px 18px 16px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(232,236,234,.07);
+}
 .webapp-root .sidebar .brand-mark {
-  width: 32px; height: 32px; border-radius: 8px;
+  width: 30px; height: 30px; border-radius: 8px;
   background: var(--primary); color: white;
   display: grid; place-items: center;
-  font-weight: 900; font-style: italic; font-size: 19px;
+  font-family: var(--font-display); font-weight: 800; font-size: 16px;
 }
-.webapp-root .sidebar .brand-name { color: white; font-weight: 800; font-size: 17px; letter-spacing: -.01em; }
-.webapp-root .sidebar .brand-mark-img { width: 32px; height: 32px; border-radius: 8px; display: block; flex-shrink: 0; }
-.webapp-root .sidebar-nav { padding: 0 12px; display: flex; flex-direction: column; gap: 2px; }
+.webapp-root .sidebar .brand-name {
+  color: white; font-family: var(--font-display);
+  font-weight: 700; font-size: 17px; letter-spacing: -.01em;
+}
+.webapp-root .sidebar .brand-mark-img { width: 30px; height: 30px; border-radius: 8px; display: block; flex-shrink: 0; }
+.webapp-root .sidebar-nav { padding: 10px 12px; display: flex; flex-direction: column; gap: 1px; }
 .webapp-root .nav-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px; border-radius: 10px;
-  font-size: var(--t-base); font-weight: 500;
-  color: rgba(232,236,234,.7); cursor: pointer; user-select: none;
+  position: relative;
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 12px 9px 13px; border-radius: 9px;
+  font-size: 13.5px; font-weight: 500;
+  color: rgba(232,236,234,.72); cursor: pointer; user-select: none;
   transition: background .15s var(--ease), color .15s var(--ease);
 }
 .webapp-root .nav-item:hover { background: rgba(255,255,255,.05); color: white; }
-.webapp-root .nav-item.active { background: rgba(0,179,126,.16); color: var(--primary); }
-.webapp-root .nav-item svg { flex-shrink: 0; }
+.webapp-root .nav-item.active { background: rgba(0,179,126,.14); color: white; font-weight: 600; }
+/* Barra verde del item activo (design handoff) */
+.webapp-root .nav-item.active::before {
+  content: ''; position: absolute; left: 0; top: 7px; bottom: 7px;
+  width: 3px; border-radius: 99px; background: var(--primary);
+}
+.webapp-root .nav-item svg { flex-shrink: 0; width: 18px; height: 18px; color: rgba(232,236,234,.5); }
+.webapp-root .nav-item.active svg { color: var(--primary); }
 .webapp-root .nav-item .badge {
-  margin-left: auto; background: var(--accent); color: #5A3D00;
-  font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 999px;
+  margin-left: auto; background: var(--accent); color: #3a2a00;
+  font-size: 10px; font-weight: 700; letter-spacing: .04em;
+  padding: 2px 7px; border-radius: 999px;
+}
+/* Badge "hay algo nuevo": punto verde en vez de pastilla */
+.webapp-root .nav-item .badge.dot {
+  background: transparent; padding: 0; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--primary); box-shadow: 0 0 0 4px rgba(0,179,126,.18);
+  font-size: 0;
 }
 
-.webapp-root .sidebar-section { padding: 18px 18px 6px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(232,236,234,.4); }
-.webapp-root .sidebar-foot { margin-top: auto; padding: 12px; }
+/* Bloques del menu: cada uno separado por un divisor, con su rotulo */
+.webapp-root .sidebar-block { border-top: 1px solid rgba(232,236,234,.07); padding: 14px 18px 16px; }
+.webapp-root .sidebar-block.tight { padding-top: 12px; padding-bottom: 12px; }
+.webapp-root .sidebar-block.nav-block { padding: 0; }
+.webapp-root .sidebar-section,
+.webapp-root .sidebar-block .label {
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(232,236,234,.42); font-weight: 600; margin-bottom: 10px;
+}
+.webapp-root .sidebar-section { padding: 18px 18px 6px; margin-bottom: 0; }
+.webapp-root .sidebar-foot { margin-top: auto; padding: 12px; border-top: 1px solid rgba(232,236,234,.07); }
+
+/* Nivel (bloque "Tu progreso") */
+.webapp-root .level-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.webapp-root .level-row .nivel { color: rgba(232,236,234,.72); font-size: 12px; }
+.webapp-root .level-row .lvl {
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  background: rgba(0,179,126,.18); color: #7CE7BD; padding: 2px 8px; border-radius: 6px;
+}
+.webapp-root .level-bar { height: 6px; border-radius: 99px; background: rgba(255,255,255,.06); overflow: hidden; }
+.webapp-root .level-bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--primary), #5EE0B0); border-radius: 99px; }
+.webapp-root .level-hint { margin-top: 6px; font-size: 11.5px; color: rgba(232,236,234,.45); }
+
+/* Chips de topicos activos */
+.webapp-root .side-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.webapp-root .side-tags span {
+  font-size: 11px; padding: 3px 8px; border-radius: 99px;
+  background: rgba(255,255,255,.04); color: rgba(232,236,234,.72);
+}
+.webapp-root .side-tags span.hot { background: rgba(0,179,126,.14); color: #7CE7BD; font-weight: 600; }
 .webapp-root .user-card {
   display: flex; align-items: center; gap: 10px;
   padding: 10px; border-radius: 12px;
@@ -179,14 +232,14 @@ export const WEBAPP_CSS = `
 }
 .webapp-root .topbar-inner { height: 64px; display: flex; align-items: center; gap: 16px; padding: 0 28px; }
 .webapp-root .topbar h1 {
-  font-size: 18px; font-weight: 800; letter-spacing: -.025em; margin: 0;
-  background: linear-gradient(135deg, var(--fg-1) 0%, var(--fg-2) 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 600; letter-spacing: -.01em; margin: 0;
+  color: var(--fg-1);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-[data-theme="dark"] .webapp-root .topbar h1 {
-  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.7) 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-}
+.webapp-root .topbar h1 .crumb { color: var(--fg-4); font-weight: 500; }
+[data-theme="dark"] .webapp-root .topbar h1 { color: #fff; }
+[data-theme="dark"] .webapp-root .topbar h1 .crumb { color: rgba(232,236,234,.45); }
 .webapp-root .topbar .search { flex: 1; max-width: 360px; position: relative; }
 .webapp-root .topbar .search input {
   width: 100%; height: 38px; padding: 0 14px 0 36px;

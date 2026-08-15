@@ -34,7 +34,7 @@ function ensureFont() {
   link.id = 'hablah-google-fonts'
   link.rel = 'stylesheet'
   link.href =
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap'
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap'
   document.head.appendChild(link)
 }
 
@@ -77,6 +77,25 @@ const VIEW_TITLES: Record<string, string> = {
   '/app': 'Hoy', '/app/practicar': 'Practicar',
   '/app/mapa': 'Mapa de progreso', '/app/historial': 'Historial', '/app/perfil': 'Perfil',
 }
+
+/** Bajada gris del breadcrumb, al estilo "Hoy · lunes 17 de noviembre" del handoff. */
+const VIEW_CRUMBS: Record<string, string> = {
+  '/app/practicar': 'elegir tópico',
+  '/app/mapa': 'tus rutas',
+  '/app/historial': 'últimos 90 días',
+  '/app/perfil': 'ajustes y preferencias',
+}
+
+function todayLabel(): string {
+  return new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })
+}
+
+/** Eje del gráfico de frecuencia del rescate (design handoff: Lun → Hoy). */
+const RESCUE_FREQ_DAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Hoy']
+
+/** Categorías de tópicos que se muestran expandidas en la card de Hoy antes
+ *  de plegar el resto: con muchas categorías la card estiraba la columna. */
+const HOY_TOPIC_GROUPS = 3
 
 /**
  * Skeleton de pantalla mientras carga data. Aparece dentro del .main del AppShell
@@ -192,64 +211,63 @@ function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpe
   const user = profile?.user
   const initial = user?.nombre?.[0] || 'U'
   const pct = user?.cefr_level ? cefrPct(user.cefr_level) : 0
-  const [auditOpen, setAuditOpen] = useState(false)
   return (
     <aside className={`sidebar${mobileOpen ? ' mobile-open' : ''}`}>
       <div className="brand">
         <img src="/logos/hablah-mark.svg" alt="habláh" className="brand-mark-img" width="32" height="32" />
         <div className="brand-name">habláh</div>
       </div>
-      <nav className="sidebar-nav">
-        <SidebarItem to="/app" icon={<HomeIcon />} label="Hoy" exact />
-        <SidebarItem to="/app/practicar" icon={<MicIcon />} label="Practicar" badge="DAILY" />
-        {(profile as MeProfile & { feature_flags?: Record<string, { unlocked: boolean }> })?.feature_flags?.mapa_basico?.unlocked && (
-          <SidebarItem to="/app/mapa" icon={<MapIcon />} label="Mapa de progreso" />
-        )}
-        <SidebarItem to="/app/historial" icon={<ClockIcon />} label="Historial" />
-        <SidebarItem to="/app/kids" icon={<KidsIcon />} label="Modo Kids" badge="HABI" />
-      </nav>
+      <div className="sidebar-block nav-block">
+        <nav className="sidebar-nav">
+          <SidebarItem to="/app" icon={<HomeIcon />} label="Hoy" exact />
+          <SidebarItem to="/app/practicar" icon={<MicIcon />} label="Practicar" badge="DAILY" />
+          {(profile as MeProfile & { feature_flags?: Record<string, { unlocked: boolean }> })?.feature_flags?.mapa_basico?.unlocked && (
+            <SidebarItem to="/app/mapa" icon={<MapIcon />} label="Mapa de progreso" />
+          )}
+          <SidebarItem to="/app/historial" icon={<ClockIcon />} label="Historial" />
+          <SidebarItem to="/app/perfil" icon={<UserIcon size={18} />} label="Perfil" />
+        </nav>
+      </div>
 
-      <div className="sidebar-section">Tu progreso</div>
-      <div style={{ padding: '0 18px' }}>
-        <div style={{ background: 'rgba(255,255,255,.04)', borderRadius: 12, padding: 14 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-            <span style={{ fontSize: 12, color: 'rgba(232,236,234,.6)' }}>Nivel</span>
-            <span style={{ color: 'white', fontWeight: 800, fontSize: 16 }}>{user?.cefr_level || '—'}</span>
-          </div>
-          <div style={{ height: 5, background: 'rgba(255,255,255,.1)', borderRadius: 3 }}>
-            <div style={{ width: `${pct}%`, height: '100%', background: 'var(--primary)', borderRadius: 3 }} />
-          </div>
-          <div style={{ fontSize: 11, color: 'rgba(232,236,234,.5)', marginTop: 6 }}>{pct}% hasta el siguiente nivel</div>
+      <div className="sidebar-block nav-block">
+        <nav className="sidebar-nav">
+          <SidebarItem to="/app/kids" icon={<KidsIcon />} label="Modo Kids" badge="HABI" />
+        </nav>
+      </div>
+
+      <div className="sidebar-block">
+        <div className="label">Tu progreso</div>
+        <div className="level-row">
+          <span className="nivel">Nivel</span>
+          <span className="lvl">{user?.cefr_level || '—'}</span>
         </div>
+        <div className="level-bar"><i style={{ width: `${pct}%` }} /></div>
+        <div className="level-hint">{pct}% hasta {user?.cefr_level ? nextCefr(user.cefr_level) : 'el siguiente nivel'}</div>
       </div>
 
       {/* Tópicos activos (design handoff Hoy.html): el del día en verde, el resto neutro */}
       {(profile?.interests?.length ?? 0) > 0 && (
-        <>
-          <div className="sidebar-section">Tópicos activos</div>
-          <div style={{ padding: '0 18px', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+        <div className="sidebar-block">
+          <div className="label">Tópicos activos</div>
+          <div className="side-tags">
             {profile!.interests.slice(0, 5).map((t, i) => (
-              <span key={t.id} style={{
-                fontSize: 11, padding: '3px 8px', borderRadius: 999, fontWeight: i === 0 ? 600 : 400,
-                background: i === 0 ? 'rgba(0,179,126,.14)' : 'rgba(255,255,255,.04)',
-                color: i === 0 ? '#7CE7BD' : 'rgba(232,236,234,.72)',
-              }}>{t.title}</span>
+              <span key={t.id} className={i === 0 ? 'hot' : undefined}>{t.title}</span>
             ))}
           </div>
-        </>
+        </div>
       )}
 
       {user?.role === 'admin' && (
-        <>
-          <div className="sidebar-section">Administración</div>
-          <nav className="sidebar-nav">
-            <SidebarItem 
-              to="/admin" 
-              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/></svg>} 
-              label="Backoffice" 
+        <div className="sidebar-block">
+          <div className="label">Administración</div>
+          <nav className="sidebar-nav" style={{ padding: 0 }}>
+            <SidebarItem
+              to="/admin"
+              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/></svg>}
+              label="Backoffice"
             />
           </nav>
-        </>
+        </div>
       )}
       <div className="sidebar-foot">
         <Link to="/app/perfil" className="user-card" style={{ textDecoration: 'none' }}>
@@ -294,6 +312,7 @@ function TopBar({ profile, onMenuClick, themeMode, onToggleTheme }: { profile: M
   const loc = useLocation()
   const nav = useNavigate()
   const title = VIEW_TITLES[loc.pathname] ?? 'Hoy'
+  const crumb = loc.pathname === '/app' ? todayLabel() : VIEW_CRUMBS[loc.pathname]
   const streak = profile?.user?.streak_days ?? 0
   const user = profile?.user
   const initial = user?.nombre?.[0]?.toUpperCase() || 'U'
@@ -332,7 +351,10 @@ function TopBar({ profile, onMenuClick, themeMode, onToggleTheme }: { profile: M
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </button>
-        <h1 style={isDark ? { color: 'white' } : undefined}>{title}</h1>
+        <h1 style={isDark ? { color: 'white' } : undefined}>
+          {title}
+          {crumb && <span className="crumb"> · {crumb}</span>}
+        </h1>
         <div className="topbar-right">
           {streak > 0 && (
             <div className="streak-badge">
@@ -586,7 +608,9 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   const [heatmap, setHeatmap] = useState<HeatmapCell[]>([])
   const [levelProg, setLevelProg] = useState<LevelProgress | null>(null)
   const [today, setToday] = useState<TodayPayload | null>(null)
-  const [openCats, setOpenCats] = useState<Record<string, boolean>>({})
+  // Card "Tus tópicos": se muestran HOY_TOPIC_GROUPS categorías y el resto se
+  // pliega, para que la card no estire la columna cuando hay muchas.
+  const [topicsExpanded, setTopicsExpanded] = useState(false)
   // Indice del tema sugerido. Si el user da dislike, avanzamos a la siguiente
   // sugerencia. Se persiste por dia en localStorage para no resetear en refresh.
   const todayKey = `hoy_topic_idx_${new Date().toISOString().slice(0, 10)}`
@@ -751,14 +775,8 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
                   Empezar charla
                 </button>
-                <button className="hp-btn hp-btn-secondary hp-btn-lg" onClick={() => nav('/app/practicar')}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
-                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-                  </svg>
-                  Más temas
+                <button className="hp-btn hp-btn-ghost" onClick={() => nav('/app/practicar')}>
+                  Cambiar tópico
                 </button>
               </div>
             </div>
@@ -784,6 +802,13 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
                 Aparecen como tarjetas durante la charla. No tenés que cumplir todas.
               </div>
             </div>
+
+            {/* Onda decorativa al pie del hero (design handoff). El CSS ya estaba
+                en hoy.css.ts pero el SVG nunca se renderizaba. */}
+            <svg className="hp-waveform" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 40 Q 30 20 60 40 T 120 40 T 180 40 T 240 40 T 300 40 T 360 40 T 420 40 T 480 40 T 540 40 T 600 40 T 660 40 T 720 40 T 780 40 T 840 40 T 900 40 T 960 40 T 1020 40 T 1080 40 T 1140 40 T 1200 40" stroke="#fff" strokeWidth="2" fill="none" />
+              <path d="M0 40 Q 30 5 60 40 T 120 40 T 180 40 T 240 40 T 300 40 T 360 40 T 420 40 T 480 40 T 540 40 T 600 40 T 660 40 T 720 40 T 780 40 T 840 40 T 900 40 T 960 40 T 1020 40 T 1080 40 T 1140 40 T 1200 40" stroke="#fff" strokeWidth="1" fill="none" opacity=".5" />
+            </svg>
           </div>
 
           {/* RESCUE — visible solo si el backend detectó un error recurrente real */}
@@ -804,17 +829,22 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
                       <span className="hp-bad">{ex.wrong || '—'}</span>
                       <span className="hp-arr">→</span>
                       <span className="hp-good">{ex.correct || '—'}</span>
+                      {/* Contexto de dónde salió el error — el backend ya lo manda en ctx_date */}
+                      {ex.ctx_date && <span className="hp-ctx">{ex.ctx_date}</span>}
                     </div>
                   ))}
                 </div>
 
                 <div className="hp-rescue-aside">
                   <div>
-                    <div style={{ fontSize: 11, color: '#8A6A00', letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>Detectado en {today.rescue.sessions_count} sesiones</div>
+                    <div style={{ fontSize: 11, color: '#8A6A00', letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>Frecuencia · últimas {RESCUE_FREQ_DAYS.length} sesiones</div>
                     <div className="hp-freq">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <i key={i} style={{ height: `${30 + i * 12}%`, opacity: 0.4 + i * 0.1, background: i === 5 ? '#E5484D' : undefined }} />
+                      {Array.from({ length: RESCUE_FREQ_DAYS.length }).map((_, i) => (
+                        <i key={i} style={{ height: `${30 + i * 12}%`, opacity: 0.4 + i * 0.1, background: i === RESCUE_FREQ_DAYS.length - 1 ? '#E5484D' : undefined }} />
                       ))}
+                    </div>
+                    <div className="hp-freq-x">
+                      {RESCUE_FREQ_DAYS.map((d) => <span key={d}>{d}</span>)}
                     </div>
                   </div>
                   <div className="hp-rescue-cta">
@@ -822,6 +852,7 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
                       Empezar misión de rescate
                     </button>
+                    <Link to="/app/historial" className="hp-btn-ghost-dark">Ver los errores</Link>
                   </div>
                 </div>
               </div>
@@ -949,7 +980,12 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
               </div>
               <div style={{ fontFamily: 'var(--hp-font-display)', fontWeight: 700, fontSize: 14 }}>{levelProg?.pct ?? cefrPctVal}%</div>
             </div>
-            <div className="hp-gauge"><i style={{ width: `${levelProg?.pct ?? cefrPctVal}%` }}></i></div>
+            <div
+              className="hp-gauge"
+              style={{ '--hp-gauge-pos': `${levelProg?.pct ?? cefrPctVal}%` } as React.CSSProperties}
+            >
+              <i style={{ width: `${levelProg?.pct ?? cefrPctVal}%` }}></i>
+            </div>
 
             <div className="hp-lstats">
               <div className="hp-li"><span className="hp-v">{totalSessions}</span><span className="hp-k">charlas</span></div>
@@ -966,7 +1002,7 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
           <div className="hp-card">
             <div className="hp-card-head">
               <h3>Tus tópicos</h3>
-              <Link to="/app/perfil" className="hp-link">Editar →</Link>
+              <Link to="/app/perfil" className="hp-link">Rotar →</Link>
             </div>
 
             {profile.interests.length === 0 && (
@@ -975,30 +1011,33 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
               </div>
             )}
 
-            <div className="hp-tags" style={{ marginTop: 4 }}>
-              {Object.entries(groupByCategory(profile.interests)).map(([cat, items]) => {
-                const isOpen = !!openCats[cat]
-                return (
-                  <div key={cat} style={{ width: '100%' }}>
-                    <button
-                      type="button"
-                      onClick={() => setOpenCats((s) => ({ ...s, [cat]: !s[cat] }))}
-                      className="hp-tag cat"
-                      style={{ cursor: 'pointer', background: 'transparent', border: '1px solid var(--hp-border)', display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                    >
-                      <span style={{ display: 'inline-block', transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }}>›</span>
-                      {cat} <span style={{ opacity: 0.6, marginLeft: 4 }}>({items.length})</span>
-                    </button>
-                    {isOpen && (
-                      <div className="hp-tags" style={{ marginTop: 6, marginBottom: 8 }}>
-                        {items.map((t: any, i: number) => (
-                          <span key={t.id} className={`hp-tag${i === 0 && cat === (firstInterest?.category || '') ? ' hot' : ''}`}>{t.title}</span>
-                        ))}
-                      </div>
-                    )}
+            {/* Design handoff: rótulo de categoría + chips a la vista, sin acordeón.
+                Se muestran los primeros grupos y el resto queda detrás de "ver todos"
+                para que la card no estire la columna cuando hay muchas categorías. */}
+            <div className="hp-topic-groups">
+              {Object.entries(groupByCategory(profile.interests))
+                .slice(0, topicsExpanded ? undefined : HOY_TOPIC_GROUPS)
+                .map(([cat, items]) => (
+                  <div key={cat} className="hp-topic-group">
+                    <span className="hp-tag cat">{cat}</span>
+                    <div className="hp-tags">
+                      {items.map((t: any) => (
+                        <span key={t.id} className={`hp-tag${t.id === firstInterest?.id ? ' hot' : ''}`}>{t.title}</span>
+                      ))}
+                    </div>
                   </div>
-                )
-              })}
+                ))}
+
+              <div className="hp-tags">
+                {Object.keys(groupByCategory(profile.interests)).length > HOY_TOPIC_GROUPS && (
+                  <button type="button" className="hp-tag hp-tag-add" onClick={() => setTopicsExpanded((v) => !v)}>
+                    {topicsExpanded
+                      ? 'ver menos'
+                      : `+ ${Object.keys(groupByCategory(profile.interests)).length - HOY_TOPIC_GROUPS} categorías más`}
+                  </button>
+                )}
+                <Link to="/app/perfil" className="hp-tag hp-tag-add">+ sumar uno</Link>
+              </div>
             </div>
 
             <div style={{ fontSize: 11.5, color: 'var(--hp-fg-3)', marginTop: 12, lineHeight: 1.5 }}>Los tópicos alimentan cada charla. Cambialos cuando quieras.</div>
