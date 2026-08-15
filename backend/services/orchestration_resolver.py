@@ -30,6 +30,13 @@ from services.motor_engine import _connect, _json_list
 
 _PH = re.compile(r"\{([A-Z_]+):([a-z_]+)\}")
 
+# Nombre de cada idioma EN SU PROPIO IDIOMA (endónimo). Es presentación, no pedagogía: se usa para
+# resolver {idioma}/{idioma_base} dentro de los textos del catálogo. El endónimo mantiene idénticos
+# los textos que ya estaban en inglés ("START IN English", "Speak 100% in English") y suena natural
+# en los que están en castellano. Si algún día hay que editarlo sin deploy, se muda a app_config.
+_LANG_NAME = {"en": "English", "es": "español", "pt": "português", "it": "italiano",
+              "fr": "français", "de": "Deutsch"}
+
 
 def _load_orchestration(age_slug: str, level_code: str):
     db = _connect()
@@ -159,6 +166,12 @@ def compose_from_template(
 
     tutor = std.get("tutor_mascot") or "Coach"
     topic_title = title or "today's topic"
+    # Idioma que se aprende / lengua del alumno — el catálogo los referencia como {idioma} y
+    # {idioma_base}, nunca escribiéndolos. Sumar portugués = target_language='pt', cero catálogo.
+    _tl = getattr(user, "target_language", None) or "en"
+    _bl = getattr(user, "base_language", None) or "es"
+    idioma = _LANG_NAME.get(_tl, _tl)
+    idioma_base = _LANG_NAME.get(_bl, _bl)
 
     # Anclas del TÓPICO (Role/Setting/Mission), interpoladas.
     # Si la EDAD declara NO ROLEPLAY (teen/adult), NO se inyecta la escena del tópico: chocaría con
@@ -230,10 +243,15 @@ def compose_from_template(
 
     body = _PH.sub(lambda m: resolve(m.group(1), m.group(2)), tpl["body"])
 
-    # Interpolación de placeholders sueltos dentro de los textos resueltos
+    # Interpolación de placeholders sueltos dentro de los textos resueltos.
+    # {idioma}/{idioma_base}: el idioma NO se escribe dentro de la orquestación (era "in ENGLISH"
+    # horneado en cada arquetipo, lo que ataba el catálogo a un solo idioma). El arquetipo declara
+    # la ACCIÓN, el alumno pone el idioma — misma jugada que las anclas narrativas, donde la EDAD
+    # declara el modo y el TÓPICO pone el escenario.
     body = (body.replace("{name}", user_name).replace("{topic}", topic_title)
                 .replace("{first_vocab}", first_word).replace("{word}", first_word)
-                .replace("{tutor}", tutor))
+                .replace("{tutor}", tutor)
+                .replace("{idioma}", idioma).replace("{idioma_base}", idioma_base))
 
     # Bloques computados opcionales apilados al final (memoria + reglas de salida runtime)
     tail = [_get_learner_state(learner_state), _get_output_rules(app_config)]

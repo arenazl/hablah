@@ -383,12 +383,15 @@ async def mini_topics():
 
 
 @router.get("/mini/preview")
-async def mini_preview(age_group: str = "mini", level: str = "A0", topic_id: int = 0, student_id: int = 0):
+async def mini_preview(age_group: str = "mini", level: str = "A0", topic_id: int = 0, student_id: int = 0,
+                       target_language: str = "en"):
     """Desglose de la orquestación POR CAMPO de la base: cada entrada con su fuente (tabla.columna)
     y su dueño (de qué pilar depende). Deja ver que NO es un registro único — se apilan campos sueltos.
-    student_id (F2-02): incluye el paso HISTORIA (learner_state) del alumno de prueba si tiene estado."""
+    student_id (F2-02): incluye el paso HISTORIA (learner_state) del alumno de prueba si tiene estado.
+    target_language: el MISMO cruce en otro idioma — el catálogo dice {idioma}, no "inglés"."""
     try:
-        return await motor_engine.resolve_v2_breakdown(age_group, level, topic_id or None, student_id or None)
+        return await motor_engine.resolve_v2_breakdown(age_group, level, topic_id or None,
+                                                       student_id or None, target_language)
     except Exception as e:
         return {"error": str(e)}
 

@@ -321,6 +321,7 @@ async def voice_ws_motor(
     model: str = Query("models/gemini-3.1-flash-live-preview"),
     voice: str = Query("Aoede"),
     cadencia: str = Query(""),
+    target_language: str = Query("en"),
 ):
     """Prueba de clase REAL por el MOTOR ÚNICO (v2 / compose_proto) — el MISMO que produce.
 
@@ -328,12 +329,16 @@ async def voice_ws_motor(
     (topic_id → topics) + HISTORIA (learner_state del alumno de prueba, si student_id trae
     estado — F2-02: se valida por voz que el coach usa la memoria). Determinístico, genera el
     prompt al vuelo (no persiste orquestación). Sin login.
+
+    target_language: el MISMO cruce hablado en otro idioma. El catálogo referencia el idioma como
+    {idioma}, nunca lo escribe — así se prueba el motor sin la variable idioma encima.
     """
     await websocket.accept()
     safe_voice = voice if voice in _LLM_VALID_VOICES else "Aoede"
     try:
         res = await motor_engine.resolve_v2(age_group, level_code, topic_id or None,
-                                            student_id=student_id or None)
+                                            student_id=student_id or None,
+                                            target_language=target_language)
         super_prompt = res["prompt"]
     except Exception as e:
         log.warning("voice_ws_motor resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
@@ -387,7 +392,7 @@ async def voice_ws_motor(
         session_id=0, user_id=0, user_name="Alumno",
         is_kid=is_kid,
         super_prompt=super_prompt, voice_id=None, voice_name=safe_voice,
-        language="es", target_language="en",
+        language="es", target_language=target_language or "en",
         silence_tolerance_ms=1500, interruption_allowed=True,
         model_override=model or None,
         prefix_padding_override=db_prefix,

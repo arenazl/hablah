@@ -309,10 +309,13 @@ export default function AdminUsersPanel() {
                 </select>
               </div>
               <div className="au-field">
-                <label>Target lang</label>
+                <label>Idioma que aprende</label>
                 <select value={edit.target_language} onChange={(e) => setEdit({ ...edit, target_language: e.target.value })}>
-                  <option value="en">en</option><option value="pt">pt</option>
-                  <option value="it">it</option><option value="fr">fr</option>
+                  <option value="en">en — inglés</option>
+                  <option value="es">es — castellano</option>
+                  <option value="pt">pt — portugués</option>
+                  <option value="it">it — italiano</option>
+                  <option value="fr">fr — francés</option>
                 </select>
               </div>
               <div className="au-field">

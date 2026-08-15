@@ -438,6 +438,7 @@ export const motorAPI = {
   }) => api.post<MotorResolve>('/motor/resolve', body).then((r) => r.data),
   previewV2: (params: {
     age_group: string; level: string; topic_id?: number | null; student_id?: number | null
+    target_language?: string
   }) => api.get<any>('/finaltest/mini/preview', { params: { ...params, _t: Date.now() } }).then((r) => r.data),
   simulatePreview: (systemInstruction: string, mode: 'start' | 'closing') => api.post<any>('/finaltest/mini/preview/simulate', { system_instruction: systemInstruction, mode }).then((r) => r.data),
   trainState: (studentId: number) => api.get(`/motor/train/state/${studentId}`).then((r) => r.data),

@@ -427,6 +427,9 @@ export default function MotorPlaygroundPanel() {
 
   const [band, setBand] = useState('mini')
   const [level, setLevel] = useState('A0')
+  // Idioma que se aprende. El catálogo NUNCA lo escribe (dice {idioma}), así que el MISMO cruce
+  // se compone y se habla en cualquier idioma: sirve para probar el motor sin esa variable encima.
+  const [targetLang, setTargetLang] = useState('en')
   const [topicId, setTopicId] = useState<number | undefined>()
   const [studentId, setStudentId] = useState<number | undefined>(undefined)
   const [profile, setProfile] = useState<{ student_id: number; name: string } | null>(null)
@@ -519,12 +522,13 @@ export default function MotorPlaygroundPanel() {
     const params: Record<string, string | number> = {
       age_group: band, level_code: level, topic_id: topicId ?? 0, student_id: effStudent ?? 0,
       engine: 'gemini_live', model: 'models/gemini-3.1-flash-live-preview', voice: 'Aoede',
+      target_language: targetLang,
     }
     const cad = cadencia.replace(/[^\d,]/g, '')
     if (cad) params.cadencia = cad
     const url = buildMotorWsUrl(params)
     await live.start(0, undefined, 'Aoede', url)
-  }, [live, band, level, topicId, effStudent, cadencia])
+  }, [live, band, level, topicId, effStudent, cadencia, targetLang])
 
   // Terminar clase: además de cortar, la charla alimenta la MEMORIA del alumno elegido
   // (post-clase del probador → observaciones → protocolo SRS → pilar HISTORIA).
@@ -550,12 +554,13 @@ export default function MotorPlaygroundPanel() {
   const resolve = useCallback(() => {
     setLoading(true); setErr(null)
     motorAPI.previewV2({
-      age_group: band, level: level, topic_id: topicId ?? null, student_id: effStudent ?? null
+      age_group: band, level: level, topic_id: topicId ?? null, student_id: effStudent ?? null,
+      target_language: targetLang,
     }).then((d) => {
       setRes(d)
     }).catch((e) => { setErr(e?.response?.data?.detail || 'Error'); setRes(null) })
       .finally(() => setLoading(false))
-  }, [band, level, topicId, effStudent])
+  }, [band, level, topicId, effStudent, targetLang])
 
   useEffect(() => { resolve() }, [resolve])
 
@@ -1040,12 +1045,23 @@ export default function MotorPlaygroundPanel() {
         </div>
 
         {/* Dropdowns unificados */}
-        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(5, 1fr)', gap: 8, alignItems: 'start' }}>
+        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8, alignItems: 'start' }}>
           <Ctx label="Disciplina">
             <select style={sel} value={discipline} onChange={(e) => handleDisciplineChange(e.target.value as any)}>
               <option value="ingles">Inglés (idiomas)</option>
               <option value="fonetica">Fonética / Pronunciación</option>
               <option value="todos">Todas las disciplinas</option>
+            </select>
+          </Ctx>
+          {/* El MISMO cruce en otro idioma: el catálogo dice {idioma}, nunca "inglés". Sirve para
+              mirar el motor (ritmo, tejido, beats) sin la fricción del idioma extranjero. */}
+          <Ctx label="Idioma de la clase">
+            <select style={sel} value={targetLang} onChange={(e) => setTargetLang(e.target.value)} disabled={isLive}
+              title="Cambia SOLO el idioma en que se da la clase. La orquestación es exactamente la misma.">
+              <option value="en">Inglés</option>
+              <option value="es">Castellano</option>
+              <option value="pt">Portugués</option>
+              <option value="it">Italiano</option>
             </select>
           </Ctx>
           <Ctx label="Edad"><select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>{bands.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}</select></Ctx>
