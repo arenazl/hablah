@@ -223,6 +223,22 @@ function Sidebar({ profile, mobileOpen }: { profile: MeProfile | null; mobileOpe
         </div>
       </div>
 
+      {/* Tópicos activos (design handoff Hoy.html): el del día en verde, el resto neutro */}
+      {(profile?.interests?.length ?? 0) > 0 && (
+        <>
+          <div className="sidebar-section">Tópicos activos</div>
+          <div style={{ padding: '0 18px', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            {profile!.interests.slice(0, 5).map((t, i) => (
+              <span key={t.id} style={{
+                fontSize: 11, padding: '3px 8px', borderRadius: 999, fontWeight: i === 0 ? 600 : 400,
+                background: i === 0 ? 'rgba(0,179,126,.14)' : 'rgba(255,255,255,.04)',
+                color: i === 0 ? '#7CE7BD' : 'rgba(232,236,234,.72)',
+              }}>{t.title}</span>
+            ))}
+          </div>
+        </>
+      )}
+
       {user?.role === 'admin' && (
         <>
           <div className="sidebar-section">Administración</div>
