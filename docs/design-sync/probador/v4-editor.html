@@ -1,0 +1,76 @@
+<!-- @dsCard group="Probador — layouts" -->
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Probador V4 — Editor IDE</title>
+<style>
+:root{--bg:#FAFBFA;--surface:#fff;--border:#e3e7e4;--fg:#0D1412;--dim:#5A625F;--primary:#00B37E;
+--edad:#fbbf24;--nivel:#7dd3fc;--cruce:#00b37e;--topico:#818cf8;--reglas:#a855f7;--runtime:#3b82f6;--codigo:#f87171}
+*{box-sizing:border-box;margin:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);font-size:13px}
+.top{display:flex;align-items:center;gap:10px;padding:9px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+.top h1{font-size:14px;font-weight:800}.chip{border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;background:var(--bg)}
+.ide{display:grid;grid-template-columns:250px 1fr 290px;gap:0;min-height:430px}
+.tree{background:var(--surface);border-right:1px solid var(--border);padding:10px}
+.tlbl{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--dim);margin:8px 0 4px}
+.node{display:flex;align-items:center;gap:7px;padding:4px 8px;border-radius:7px;font-size:11.5px;cursor:pointer}
+.node .d{width:7px;height:7px;border-radius:999px}
+.node.on{background:#00b37e14;font-weight:800;border:1px solid var(--primary)}
+.ed{padding:14px 18px}
+.ed .path{font-family:ui-monospace,monospace;font-size:10.5px;color:var(--dim);margin-bottom:8px}
+.ed h2{font-size:15px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.badge{font-size:9.5px;font-weight:800;border-radius:999px;padding:2px 8px;border:1px solid var(--cruce);color:#00734f;background:#00b37e12}
+.editor{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;line-height:1.6;min-height:130px}
+.editor .ph{color:var(--runtime);font-weight:700;background:#3b82f614;border-radius:4px;padding:0 3px}
+.edbtns{display:flex;gap:8px;margin-top:10px}
+.btn{background:var(--primary);color:#fff;border:0;border-radius:8px;padding:7px 16px;font-weight:800;font-size:12px}
+.btn.sec{background:#fff;color:var(--dim);border:1px solid var(--border)}
+.ctx{background:var(--surface);border-left:1px solid var(--border);padding:12px}
+.ctx .lbl{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.ctx p{font-size:11.5px;line-height:1.55;color:var(--fg);margin-bottom:10px}
+.ctx .rel{border-left:3px solid var(--topico);padding-left:8px;font-size:11px;margin-bottom:6px}
+.livebar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--surface);border-top:2px solid var(--primary)}
+.state{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:800;background:var(--bg)}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--primary)}
+.lastline{font-size:12px;color:var(--dim);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.note{margin:14px 16px;background:#0D1412;color:#e8ece9;border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.6}
+.note b{color:#7CE7BD}
+</style></head><body>
+<div class="top"><h1>Probador · modo editor</h1>
+  <span class="chip">Teen · B2 · Adicción al celular · <b>Nico</b></span>
+  <span class="chip" style="margin-left:auto">Cambios aplican a la PRÓXIMA clase</span>
+</div>
+<div class="ide">
+  <div class="tree">
+    <div class="tlbl">Orquestación</div>
+    <div class="node"><span class="d" style="background:var(--runtime)"></span>Contexto</div>
+    <div class="node"><span class="d" style="background:var(--edad)"></span>El profe (EDAD)</div>
+    <div class="node"><span class="d" style="background:var(--topico)"></span>El tópico</div>
+    <div class="node"><span class="d" style="background:var(--nivel)"></span>El nivel</div>
+    <div class="tlbl">El cruce (teen × B2)</div>
+    <div class="node on"><span class="d" style="background:var(--cruce)"></span>comando_de_arranque</div>
+    <div class="node"><span class="d" style="background:var(--cruce)"></span>formato_de_cierre_de_turno</div>
+    <div class="node"><span class="d" style="background:var(--cruce)"></span>pasos_de_la_sesion</div>
+    <div class="node"><span class="d" style="background:var(--cruce)"></span>cadencia (ritmo)</div>
+    <div class="tlbl">Reglas universales</div>
+    <div class="node"><span class="d" style="background:var(--reglas)"></span>9 activas de 12</div>
+  </div>
+  <div class="ed">
+    <div class="path">age_level_matrix[teen, B2].comando_de_arranque</div>
+    <h2>Comando de arranque <span class="badge">EDAD × NIVEL</span></h2>
+    <div class="editor">START IN ENGLISH. Greet <span class="ph">{name}</span> casually. Bring up a controversial opinion about <span class="ph">{topic}</span> to break the ice using '<span class="ph">{first_vocab}</span>'. End by asking for their take.</div>
+    <div class="edbtns"><button class="btn">Guardar y recomponer</button><button class="btn sec">Ver en el prompt final</button><button class="btn sec">Historial del campo</button></div>
+  </div>
+  <div class="ctx">
+    <div class="lbl">Cómo se llena</div>
+    <p>El resolver toma <b>{EDAD_X_NIVEL:comando_de_arranque}</b> de la fila del cruce — la celda exacta de ESTE combo. Editarla afecta solo teen×B2, en los 94 tópicos.</p>
+    <div class="lbl">Relaciones</div>
+    <div class="rel">Interpola <b>{name}</b> (alumno), <b>{topic}</b> y <b>{first_vocab}</b> (tópico) en runtime.</div>
+    <div class="rel" style="border-color:var(--reglas)">Convive con la ley universal 4: UNA movida por turno.</div>
+    <div class="rel" style="border-color:var(--cruce)">Gobierna SOLO el turno 1 — el resto lo llevan cierre + cadencia.</div>
+  </div>
+</div>
+<div class="livebar">
+  <span class="state"><span class="dot"></span> CLASE EN CURSO · 3 min</span>
+  <span class="lastline">Profe: "One hour! Okay — worth it, or do you regret it after?"</span>
+  <span class="chip">Sobremesa · compás 3/8</span>
+  <button class="btn" style="background:#fff;color:#E5484D;border:1px solid #E5484D">Terminar</button>
+</div>
+<div class="note"><b>V4 · EDITOR (IDE):</b> para el trabajo de curación fina. Izquierda: árbol de la orquestación con puntito de color por dueño — se navega como archivos. Centro: EL campo seleccionado, grande, editable, con los placeholders pintados. Derecha: la ficha de contexto (cómo se llena, relaciones) siempre visible — nunca más adivinar de dónde viene un dato. La clase en vivo queda como barra inferior fina con la última línea del transcript: probás sin salir del modo edición.</div>
+</body></html>

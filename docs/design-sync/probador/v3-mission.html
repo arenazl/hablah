@@ -1,0 +1,70 @@
+<!-- @dsCard group="Probador — layouts" -->
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Probador V3 — Mission Control</title>
+<style>
+:root{--bg:#FAFBFA;--surface:#fff;--border:#e3e7e4;--fg:#0D1412;--dim:#5A625F;--primary:#00B37E;
+--edad:#fbbf24;--nivel:#7dd3fc;--cruce:#00b37e;--topico:#818cf8;--reglas:#a855f7;--runtime:#3b82f6}
+*{box-sizing:border-box;margin:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);font-size:13px}
+.hero{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border)}
+.ava{width:52px;height:52px;border-radius:999px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px}
+.hero .who b{font-size:17px;font-weight:800}.hero .who .dim{font-size:12px;color:var(--dim)}
+.badge{border:1px solid var(--border);border-radius:999px;padding:4px 11px;font-size:11px;font-weight:700;background:var(--bg)}
+.badge.mem{border-color:var(--reglas);color:var(--reglas)}
+.evo{margin-left:auto;text-align:right}.evo .lbl{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:800;letter-spacing:.5px}
+.evo .clases{font-size:13px;font-weight:800}
+.btn{background:var(--primary);color:#fff;border:0;border-radius:9px;padding:9px 18px;font-weight:800;font-size:12.5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;min-height:180px}
+.lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.lbl .dot{width:8px;height:8px;border-radius:999px;background:var(--primary)}
+.layer{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;margin-bottom:5px;font-size:11.5px}
+.layer b{min-width:110px}.layer .src{font-family:ui-monospace,monospace;font-size:9.5px;color:var(--dim)}
+.lm{width:8px;height:8px;border-radius:999px;flex-shrink:0}
+.fieldrow{display:flex;gap:8px;margin-bottom:6px}.k{font-family:ui-monospace,monospace;font-size:10px;font-weight:800;min-width:120px;border-left:3px solid var(--cruce);padding-left:6px;color:#00734f}
+.v{font-size:11.5px;line-height:1.45}
+.tr{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px;max-height:130px;overflow:auto;margin-bottom:8px}
+.tl{margin-bottom:6px;font-size:12px}.tl b{color:var(--primary)}.tl.user b{color:var(--runtime)}
+.obs{border-left:3px solid var(--reglas);padding:6px 10px;background:var(--bg);border-radius:0 8px 8px 0;font-size:11.5px;margin-bottom:6px}
+.note{margin:6px 20px 18px;background:#0D1412;color:#e8ece9;border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.6}
+.note b{color:#7CE7BD}
+</style></head><body>
+<div class="hero">
+  <div class="ava">N</div>
+  <div class="who"><b>Nico</b> <span class="badge">Teen · B2 Navegante</span> <span class="badge">Adicción al celular</span> <span class="badge mem">Memoria: 4 presets</span>
+    <div class="dim">La clase se arma para ESTA persona — cambiar de alumno reconfigura todo.</div>
+  </div>
+  <div class="evo"><div class="lbl">Evolución</div><div class="clases">6 clases · última hoy</div></div>
+  <button class="btn">Iniciar clase</button>
+</div>
+<div class="grid">
+  <div class="card">
+    <div class="lbl"><span class="dot" style="background:var(--edad)"></span> Orquestación — las 6 capas</div>
+    <div class="layer"><span class="lm" style="background:var(--runtime)"></span><b>Contexto</b><span class="src">runtime</span></div>
+    <div class="layer"><span class="lm" style="background:var(--edad)"></span><b>El profe</b><span class="src">student_types.teen</span></div>
+    <div class="layer"><span class="lm" style="background:var(--topico)"></span><b>El tópico</b><span class="src">topics · 22 semillas</span></div>
+    <div class="layer"><span class="lm" style="background:var(--nivel)"></span><b>El nivel</b><span class="src">levels.B2</span></div>
+    <div class="layer"><span class="lm" style="background:var(--cruce)"></span><b>El cruce</b><span class="src">age_level_matrix[teen,B2] · 8 campos</span></div>
+    <div class="layer"><span class="lm" style="background:var(--reglas)"></span><b>Reglas</b><span class="src">9 de 12 (gateadas)</span></div>
+  </div>
+  <div class="card">
+    <div class="lbl"><span class="dot" style="background:var(--cruce)"></span> Prompt final — lo que manda</div>
+    <div class="fieldrow"><span class="k">start_command</span><span class="v">Greet casually. Bring up a controversial opinion about phones using 'scroll'. End asking their take.</span></div>
+    <div class="fieldrow"><span class="k">cierre_de_turno</span><span class="v">ONE question, turn UNDER 25 WORDS, alternate intensity…</span></div>
+    <div class="fieldrow"><span class="k">cadencia</span><span class="v" style="font-family:ui-monospace,monospace">Sobremesa · 1,0,2,1,0,2,3,1</span></div>
+  </div>
+  <div class="card">
+    <div class="lbl"><span class="dot"></span> Clase en vivo</div>
+    <div class="tr">
+      <div class="tl"><b>Profe:</b> Hot take: phones didn't ruin attention. Boring content did. Agree?</div>
+      <div class="tl user"><b>Vos:</b> Mmm no! I lose focus even with good content…</div>
+    </div>
+    <div style="display:flex;gap:8px"><button class="btn" style="background:#fff;color:#E5484D;border:1px solid #E5484D">Terminar</button><span class="badge">compás 2/8 · próxima: icebreaker</span></div>
+  </div>
+  <div class="card">
+    <div class="lbl"><span class="dot" style="background:var(--reglas)"></span> Memoria e historia — qué aprendió de Nico</div>
+    <div class="obs">Le cuesta el past simple en preguntas — recastear sin frenar.</div>
+    <div class="obs">Usó bien conectores (although, however) — subir la vara.</div>
+    <div class="obs">Tema que lo enciende: gaming competitivo.</div>
+  </div>
+</div>
+<div class="note"><b>V3 · MISSION CONTROL:</b> el ALUMNO es el protagonista (ficha grande arriba con su memoria y evolución — la clase se arma para una persona, no para un combo abstracto). Debajo, los 4 cuadrantes del trabajo: qué capas la arman · qué prompt salió · la charla en vivo · qué aprendió el motor de él. Todo visible a la vez, sin scroll, para la vista de "estado general". Tocar cualquier cuadrante lo expande a pantalla completa.</div>
+</body></html>

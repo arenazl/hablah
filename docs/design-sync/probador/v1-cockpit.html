@@ -1,0 +1,95 @@
+<!-- @dsCard group="Probador — layouts" -->
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Probador V1 — Cockpit 3 columnas</title>
+<style>
+:root{--bg:#FAFBFA;--surface:#fff;--border:#e3e7e4;--fg:#0D1412;--dim:#5A625F;--primary:#00B37E;
+--edad:#fbbf24;--nivel:#7dd3fc;--cruce:#00b37e;--topico:#818cf8;--reglas:#a855f7;--runtime:#3b82f6;--codigo:#f87171}
+*{box-sizing:border-box;margin:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);font-size:13px}
+.top{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--surface);border-bottom:1px solid var(--border)}
+.top h1{font-size:16px;font-weight:800}.combo{display:flex;gap:6px;margin-left:10px}
+.chip{border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;background:var(--bg)}
+.chip b{font-weight:800}.btn{margin-left:auto;background:var(--primary);color:#fff;border:0;border-radius:8px;padding:7px 16px;font-weight:800;font-size:12px}
+.cols{display:grid;grid-template-columns:250px 1fr 320px;gap:12px;padding:12px 18px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px}
+.lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);margin-bottom:6px}
+.persona{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ava{width:38px;height:38px;border-radius:999px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+.sel{width:100%;border:1px solid var(--border);border-radius:8px;padding:7px 9px;background:var(--bg);font-size:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.dim{color:var(--dim)}.row{display:flex;gap:6px;flex-wrap:wrap}
+.preset{border:1px solid var(--border);border-radius:999px;padding:3px 9px;font-size:10.5px;font-weight:700;background:var(--bg)}
+.preset.on{border-color:var(--primary);color:var(--primary);background:#00b37e14}
+.sec{border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-bottom:8px}
+.k{font-family:ui-monospace,monospace;font-size:10.5px;font-weight:800;padding-left:7px;border-left:3px solid var(--border);display:inline-block;min-width:140px}
+.k.edad{border-color:var(--edad);color:#8a6d00}.k.cruce{border-color:var(--cruce);color:#00734f}.k.nivel{border-color:var(--nivel);color:#0369a1}
+.k.topico{border-color:var(--topico);color:#4338ca}.k.runtime{border-color:var(--runtime);color:#1d4ed8}
+.v{font-size:12px;line-height:1.5}.fieldrow{display:flex;gap:10px;margin-bottom:6px;align-items:flex-start}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tab{border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:11.5px;font-weight:700;color:var(--dim)}
+.tab.on{border-color:var(--primary);color:var(--primary);background:#00b37e10}
+.live{border-left:4px solid var(--primary)}
+.state{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:10.5px;font-weight:800;background:var(--bg)}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--primary)}
+.tr{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px;margin:8px 0;max-height:190px;overflow:auto}
+.tl{margin-bottom:6px;font-size:12px;line-height:1.45}.tl b{color:var(--primary)}.tl.user b{color:var(--runtime)}
+.mem{display:flex;gap:5px;flex-wrap:wrap}.memchip{font-size:10px;border:1px solid var(--border);border-radius:6px;padding:2px 7px;background:var(--bg)}
+.note{margin:6px 18px 18px;background:#0D1412;color:#e8ece9;border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.6}
+.note b{color:#7CE7BD}
+</style></head><body>
+<div class="top">
+  <h1>Probador de clases</h1>
+  <div class="combo">
+    <span class="chip">Motor: <b>orchestration_resolver</b></span>
+    <span class="chip">Semilla: <b>1616…3250</b></span>
+  </div>
+  <button class="btn">Actualizar</button>
+</div>
+<div class="cols">
+  <div>
+    <div class="card">
+      <div class="lbl">Perfil de la clase</div>
+      <div class="persona"><div class="ava">N</div><div><b>Nico</b><div class="dim" style="font-size:11px">teen · B2 · con historia</div></div></div>
+      <div class="sel">Edad <b>Teen (13-17)</b></div>
+      <div class="sel">Nivel <b>B2 · Navegante</b></div>
+      <div class="sel">Tópico <b>Adicción al celular</b></div>
+      <div class="lbl" style="margin-top:10px">Cadencia</div>
+      <div class="row">
+        <span class="preset on">Sobremesa</span><span class="preset">Ping-pong</span><span class="preset">Debate</span>
+        <span class="preset">Profundidad</span><span class="preset">Primera vez</span>
+      </div>
+      <div class="dim" style="font-size:10px;margin-top:6px;font-family:ui-monospace,monospace">1,0,2,1,0,2,3,1 · cicla</div>
+    </div>
+    <div class="card" style="margin-top:10px">
+      <div class="lbl">Memoria del alumno (SRS)</div>
+      <div class="mem"><span class="memchip">vocab: gaming (3 obs)</span><span class="memchip">error: past simple</span><span class="memchip">interés: fútbol</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="tabs"><span class="tab on">Formateado</span><span class="tab">Crudo (Gemini)</span><span class="tab">Mapa de nodos</span><span class="tab" style="margin-left:auto">Pantalla completa</span></div>
+    <div class="sec"><div class="lbl">tutor_profile</div>
+      <div class="fieldrow"><span class="k edad">tutor_name</span><span class="v">Sam</span></div>
+      <div class="fieldrow"><span class="k edad">identity</span><span class="v">Compañero de equipo que reta con onda.</span></div>
+    </div>
+    <div class="sec"><div class="lbl">learning_goals</div>
+      <div class="fieldrow"><span class="k nivel">level_target</span><span class="v">Tiempos perfectos, modales de deducción, conectores (However, Although).</span></div>
+      <div class="fieldrow"><span class="k cruce">call_to_action</span><span class="v">End each turn with ONE question, whole turn UNDER 25 WORDS. Alternate intensity like real talk…</span></div>
+    </div>
+    <div class="sec"><div class="lbl">runtime_commands</div>
+      <div class="fieldrow"><span class="k cruce">start_command</span><span class="v">Open like you'd text a friend: ONE casual line using 'scroll' — UNDER 20 WORDS…</span></div>
+      <div class="fieldrow"><span class="k topico">anclas</span><span class="v">Real conversation about the topic — NOT a roleplay.</span></div>
+    </div>
+  </div>
+  <div class="card live">
+    <div class="lbl">Clase en vivo · siempre visible</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <span class="state"><span class="dot"></span> EL PROFE HABLA</span>
+      <button class="btn" style="margin-left:auto;background:#fff;color:#E5484D;border:1px solid #E5484D">Terminar</button>
+    </div>
+    <div class="tr">
+      <div class="tl"><b>Profe:</b> Honestly? I doom-scroll before bed. Total fraud. You worse than me?</div>
+      <div class="tl user"><b>Vos:</b> Yes! I check TikTok like… one hour every night.</div>
+      <div class="tl"><b>Profe:</b> One hour! Okay — worth it, or do you regret it after?</div>
+    </div>
+    <div class="lbl">Al terminar</div>
+    <div class="dim" style="font-size:11px">El transcript alimenta la memoria de Nico (observaciones → SRS). La próxima clase lo sabe.</div>
+  </div>
+</div>
+<div class="note"><b>V1 · COCKPIT:</b> tres columnas fijas, cero scroll para operar. Izquierda = QUIÉN (perfil + cadencia + memoria: todo lo que define la clase). Centro = QUÉ (la orquestación, protagonista). Derecha = LA PRUEBA (clase en vivo siempre a la vista, nunca en un dock tapado). El flujo natural va de izquierda a derecha: armo → leo → hablo. Paleta por dueño en todos los campos.</div>
+</body></html>

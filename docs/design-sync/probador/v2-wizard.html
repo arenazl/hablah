@@ -1,0 +1,78 @@
+<!-- @dsCard group="Probador — layouts" -->
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Probador V2 — Wizard por etapas</title>
+<style>
+:root{--bg:#FAFBFA;--surface:#fff;--border:#e3e7e4;--fg:#0D1412;--dim:#5A625F;--primary:#00B37E;
+--edad:#fbbf24;--nivel:#7dd3fc;--cruce:#00b37e;--topico:#818cf8;--runtime:#3b82f6}
+*{box-sizing:border-box;margin:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);font-size:13px}
+.crumb{display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0}
+.crumb h1{font-size:15px;font-weight:800;margin-right:8px}
+.cpart{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:12px;background:var(--bg);cursor:pointer}
+.cpart b{font-weight:800}.cpart .pen{color:var(--dim);font-size:10px}
+.sep{color:var(--dim)}
+.steps{display:flex;gap:0;justify-content:center;margin:18px auto 6px;max-width:860px}
+.step{flex:1;text-align:center;padding:10px 6px;border-bottom:3px solid var(--border);color:var(--dim);font-weight:700;font-size:12.5px;cursor:pointer}
+.step .n{display:inline-flex;width:20px;height:20px;border-radius:999px;background:var(--border);color:var(--fg);align-items:center;justify-content:center;font-size:11px;margin-right:6px}
+.step.done{border-color:var(--primary)}.step.done .n{background:var(--primary);color:#fff}
+.step.on{border-color:var(--primary);color:var(--fg)}.step.on .n{background:var(--primary);color:#fff}
+.stage{max-width:860px;margin:14px auto;padding:0 16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}
+.state{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:800;background:var(--bg)}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--primary)}
+.big-tr{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin:14px 0;min-height:230px}
+.tl{margin-bottom:12px;font-size:14px;line-height:1.55;max-width:640px}
+.tl b{color:var(--primary);font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
+.tl.user{margin-left:auto;text-align:right}.tl.user b{color:var(--runtime)}
+.wavebar{display:flex;align-items:flex-end;gap:4px;height:34px;margin:4px 0 2px}
+.wv{width:14px;border-radius:4px 4px 0 0;background:var(--border)}
+.wv.l1{height:14px}.wv.l0{height:7px}.wv.l2{height:22px}.wv.l3{height:32px}
+.wv.now{background:var(--primary)}
+.wlbl{font-size:10px;color:var(--dim)}
+.actions{display:flex;gap:10px;align-items:center;margin-top:10px}
+.btn{background:var(--primary);color:#fff;border:0;border-radius:9px;padding:9px 20px;font-weight:800;font-size:13px}
+.btn.ghost{background:#fff;color:#E5484D;border:1px solid #E5484D}
+.preset{border:1px solid var(--border);border-radius:999px;padding:4px 11px;font-size:11px;font-weight:700;background:#fff}
+.preset.on{border-color:var(--primary);color:var(--primary);background:#00b37e10}
+.note{margin:18px auto;max-width:860px;background:#0D1412;color:#e8ece9;border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.6}
+.note b{color:#7CE7BD}
+</style></head><body>
+<div class="crumb">
+  <h1>Probador</h1>
+  <span class="cpart">Inglés <span class="pen">editar</span></span><span class="sep">›</span>
+  <span class="cpart"><b>Teen</b> <span class="pen">editar</span></span><span class="sep">›</span>
+  <span class="cpart"><b>B2 · Navegante</b> <span class="pen">editar</span></span><span class="sep">›</span>
+  <span class="cpart"><b>Adicción al celular</b> <span class="pen">editar</span></span><span class="sep">›</span>
+  <span class="cpart"><b>Nico</b> · con historia <span class="pen">editar</span></span>
+</div>
+<div class="steps">
+  <div class="step done"><span class="n">1</span>Armar el perfil</div>
+  <div class="step done"><span class="n">2</span>Revisar la orquestación</div>
+  <div class="step on"><span class="n">3</span>Probar hablando</div>
+  <div class="step"><span class="n">4</span>Memoria y ajuste</div>
+</div>
+<div class="stage">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="state"><span class="dot"></span> EL PROFE HABLA</span>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <div>
+          <div class="wavebar">
+            <div class="wv l1"></div><div class="wv l0"></div><div class="wv l2 now"></div><div class="wv l1"></div>
+            <div class="wv l0"></div><div class="wv l2"></div><div class="wv l3"></div><div class="wv l1"></div>
+          </div>
+          <div class="wlbl">Cadencia: Sobremesa · compás 3 de 8</div>
+        </div>
+      </div>
+    </div>
+    <div class="big-tr">
+      <div class="tl"><b>Profe</b>Honestly? I doom-scroll before bed. Total fraud. You worse than me?</div>
+      <div class="tl user"><b>Vos</b>Yes! I check TikTok like… one hour every night.</div>
+      <div class="tl"><b>Profe</b>One hour! Okay — worth it, or do you regret it after?</div>
+    </div>
+    <div class="actions">
+      <span class="preset on">Sobremesa</span><span class="preset">Ping-pong</span><span class="preset">Debate</span>
+      <button class="btn ghost" style="margin-left:auto">Terminar clase</button>
+    </div>
+  </div>
+</div>
+<div class="note"><b>V2 · WIZARD:</b> la pantalla cuenta el FLUJO de trabajo como etapas (armar → revisar → probar → memoria), una cosa por vez, sin todo apilado. El contexto vive comprimido en UNA línea de breadcrumbs editables arriba (siempre visible, nunca ocupa media pantalla). La etapa "Probar" pone la charla como protagonista total, con la CADENCIA visualizada como ecualizador en vivo — se VE en qué compás está el director. Etapa 4 muestra las observaciones extraídas y qué aprendió el perfil.</div>
+</body></html>
