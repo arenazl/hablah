@@ -132,12 +132,17 @@ def _topics_sync(age_group: str) -> list[dict]:
 
 
 def _options_sync() -> dict:
-    """Combos del motor v2: edades = student_types (slug), niveles = levels (CEFR)."""
+    """Combos del motor v2: edades = student_types (slug), niveles = levels (CEFR),
+    idiomas = languages. TODO sale de la BD: sumar un idioma es un INSERT, no un deploy."""
     db = motor_engine._connect()
     try:
         bands = db.q("SELECT slug AS code, name AS label FROM student_types WHERE active=1 ORDER BY sort_order")
         levels = db.q("SELECT code FROM levels ORDER BY sort_order")
-        return {"bands": bands, "levels": [r["code"] for r in levels]}
+        try:
+            languages = db.q("SELECT code, label, name_native FROM languages WHERE active=1 ORDER BY sort_order")
+        except Exception:
+            languages = []
+        return {"bands": bands, "levels": [r["code"] for r in levels], "languages": languages or []}
     finally:
         db.conn.close()
 

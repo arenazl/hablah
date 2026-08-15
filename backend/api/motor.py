@@ -65,6 +65,9 @@ ABM_REGISTRY: dict[str, dict[str, str]] = {
     "orchestration_templates": {"group": "Orquestación (placeholders)", "label": "Template (la FORMA del prompt)"},
     "age_level_matrix": {"group": "Orquestación (placeholders)", "label": "Cruces edad × nivel"},
     "conversation_rules": {"group": "Orquestación (placeholders)", "label": "Reglas universales (gateadas)"},
+    # El catálogo de idiomas también es dato: alta de idioma = INSERT acá, sin build.
+    # name_native es lo que entra al prompt como {idioma}; label es lo que se ve en los combos.
+    "languages": {"group": "Orquestación (placeholders)", "label": "Idiomas ({idioma})"},
 }
 
 
@@ -199,6 +202,14 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
     students = _rows(await db.execute(text(
         "SELECT id AS student_id, nombre AS name, cefr_level AS level_code, age_group FROM users ORDER BY nombre")))
 
+    # 5. Idiomas (languages) — el catálogo de idiomas es DATO: sumar portugués es un INSERT,
+    # no una lista en el <option> del combo (que obligaría a un build para verlo).
+    try:
+        languages = _rows(await db.execute(text(
+            "SELECT code, label, name_native FROM languages WHERE active=1 ORDER BY sort_order")))
+    except Exception:
+        languages = []
+
     # Relación tópicos-bandas sugeridas
     tbs = []
     for t in db_topics:
@@ -221,7 +232,7 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
     }]
 
     return {"bands": bands, "levels": levels, "catalog": catalog, "students": students,
-            "topic_suggested_band": tbs}
+            "topic_suggested_band": tbs, "languages": languages}
 
 
 class ResolveIn(BaseModel):

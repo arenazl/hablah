@@ -429,7 +429,9 @@ export default function MotorPlaygroundPanel() {
   const [level, setLevel] = useState('A0')
   // Idioma que se aprende. El catálogo NUNCA lo escribe (dice {idioma}), así que el MISMO cruce
   // se compone y se habla en cualquier idioma: sirve para probar el motor sin esa variable encima.
+  // La LISTA sale de la tabla `languages` — sumar uno es un INSERT, no un build.
   const [targetLang, setTargetLang] = useState('en')
+  const [languages, setLanguages] = useState<{ code: string; label: string; name_native?: string }[]>([])
   const [topicId, setTopicId] = useState<number | undefined>()
   const [studentId, setStudentId] = useState<number | undefined>(undefined)
   const [profile, setProfile] = useState<{ student_id: number; name: string } | null>(null)
@@ -470,6 +472,7 @@ export default function MotorPlaygroundPanel() {
   const loadDimensions = useCallback(() => {
     motorAPI.dimensions().then((d) => {
       setBands(d.bands); setLevels(d.levels); setCatalog(d.catalog); setStudents(d.students)
+      setLanguages(d.languages || [])
     }).catch(() => {})
   }, [])
 
@@ -1060,10 +1063,7 @@ export default function MotorPlaygroundPanel() {
           <Ctx label="Idioma de la clase">
             <select style={sel} value={targetLang} onChange={(e) => setTargetLang(e.target.value)} disabled={isLive}
               title="Cambia SOLO el idioma en que se da la clase. La orquestación es exactamente la misma.">
-              <option value="en">Inglés</option>
-              <option value="es">Castellano</option>
-              <option value="pt">Portugués</option>
-              <option value="it">Italiano</option>
+              {languages.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
             </select>
           </Ctx>
           <Ctx label="Edad"><select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>{bands.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}</select></Ctx>

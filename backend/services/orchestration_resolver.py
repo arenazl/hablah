@@ -30,12 +30,23 @@ from services.motor_engine import _connect, _json_list
 
 _PH = re.compile(r"\{([A-Z_]+):([a-z_]+)\}")
 
-# Nombre de cada idioma EN SU PROPIO IDIOMA (endónimo). Es presentación, no pedagogía: se usa para
-# resolver {idioma}/{idioma_base} dentro de los textos del catálogo. El endónimo mantiene idénticos
-# los textos que ya estaban en inglés ("START IN English", "Speak 100% in English") y suena natural
-# en los que están en castellano. Si algún día hay que editarlo sin deploy, se muda a app_config.
-_LANG_NAME = {"en": "English", "es": "español", "pt": "português", "it": "italiano",
-              "fr": "français", "de": "Deutsch"}
+def _lang_names() -> dict:
+    """code -> nombre del idioma EN SU PROPIO IDIOMA (endónimo), desde la tabla `languages`.
+
+    Es DATO, no una lista en el código: sumar portugués es un INSERT, no un deploy. El endónimo
+    mantiene idénticos los textos que ya estaban en inglés ("Speak 100% in English") y suena
+    natural en los que están en castellano. Resuelve {idioma} / {idioma_base}."""
+    db = _connect()
+    try:
+        db.conn.ping(reconnect=True)
+        return {r["code"]: r["name_native"] for r in (db.q("SELECT code, name_native FROM languages") or [])}
+    except Exception:
+        return {}
+    finally:
+        try:
+            db.conn.close()
+        except Exception:
+            pass
 
 
 def _load_orchestration(age_slug: str, level_code: str):
@@ -170,8 +181,9 @@ def compose_from_template(
     # {idioma_base}, nunca escribiéndolos. Sumar portugués = target_language='pt', cero catálogo.
     _tl = getattr(user, "target_language", None) or "en"
     _bl = getattr(user, "base_language", None) or "es"
-    idioma = _LANG_NAME.get(_tl, _tl)
-    idioma_base = _LANG_NAME.get(_bl, _bl)
+    _names = _lang_names()
+    idioma = _names.get(_tl, _tl)
+    idioma_base = _names.get(_bl, _bl)
 
     # Anclas del TÓPICO (Role/Setting/Mission), interpoladas.
     # Si la EDAD declara NO ROLEPLAY (teen/adult), NO se inyecta la escena del tópico: chocaría con

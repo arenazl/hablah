@@ -96,9 +96,10 @@ export default function AdminUsersPanel() {
   const [edit, setEdit] = useState<EditState | null>(null)
   const [pwdReset, setPwdReset] = useState<{ id: number; email: string } | null>(null)
   const [newPwd, setNewPwd] = useState('')
-  // Los niveles salen del catálogo (tabla levels), no de una lista fija: así los tracks nuevos
-  // (castellano ES1-ES3, fonética) aparecen acá sin tocar el front.
+  // Niveles e idiomas salen del catálogo (tablas levels / languages), no de listas fijas: sumar
+  // un idioma o un track es un INSERT en la base, no un build de 10 minutos.
   const [levels, setLevels] = useState<{ code: string; friendly_name: string }[]>([])
+  const [languages, setLanguages] = useState<{ code: string; label: string }[]>([])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -120,15 +121,19 @@ export default function AdminUsersPanel() {
 
   useEffect(() => {
     (async () => {
+      const token = localStorage.getItem('token')
+      const auth = { Authorization: `Bearer ${token}` }
       try {
-        const token = localStorage.getItem('token')
-        const res = await fetch(`${API_BASE_URL}/levels`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        if (!res.ok) return
-        const rows = await res.json()
-        setLevels(rows.filter((l: { active: boolean }) => l.active))
+        const res = await fetch(`${API_BASE_URL}/levels`, { headers: auth })
+        if (res.ok) {
+          const rows = await res.json()
+          setLevels(rows.filter((l: { active: boolean }) => l.active))
+        }
       } catch { /* sin catálogo el selector queda vacío; no rompe el panel */ }
+      try {
+        const res = await fetch(`${API_BASE_URL}/motor/dimensions`, { headers: auth })
+        if (res.ok) setLanguages((await res.json()).languages || [])
+      } catch { /* idem */ }
     })()
   }, [])
 
@@ -311,11 +316,8 @@ export default function AdminUsersPanel() {
               <div className="au-field">
                 <label>Idioma que aprende</label>
                 <select value={edit.target_language} onChange={(e) => setEdit({ ...edit, target_language: e.target.value })}>
-                  <option value="en">en — inglés</option>
-                  <option value="es">es — castellano</option>
-                  <option value="pt">pt — portugués</option>
-                  <option value="it">it — italiano</option>
-                  <option value="fr">fr — francés</option>
+                  {(languages.length ? languages : [{ code: edit.target_language, label: edit.target_language }])
+                    .map(l => <option key={l.code} value={l.code}>{l.code} — {l.label}</option>)}
                 </select>
               </div>
               <div className="au-field">
