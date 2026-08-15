@@ -145,27 +145,70 @@ function ColoredXml({ prompt }: { prompt: string }) {
   )
 }
 
+/* Ficha de contexto por dueño: cómo se llena ese campo (mecánica del resolver). */
+const OWNER_EXPLAIN: Record<string, string> = {
+  runtime: 'Se calcula al abrir la sesión (fecha, dispositivo, alumno). No vive en ninguna tabla: es contexto del momento.',
+  edad: 'El resolver toma {EDAD:campo} y lo busca en student_types por el segmento del alumno. Cambia por EDAD; igual para todos sus niveles. Editable en ABM/lápiz.',
+  nivel: 'El resolver toma {NIVEL:campo} y lo busca en levels por el código CEFR. Define el QUÉ lingüístico del alumno.',
+  cruce: 'El resolver toma {EDAD_X_NIVEL:campo} de la fila age_level_matrix[edad, nivel] — la celda exacta de ESTE combo. El dato más específico del catálogo.',
+  topico: 'El resolver toma {TOPICO:campo} del tópico elegido (topics): léxico y anclas. El tópico aporta contenido, nunca forma.',
+  reglas: 'conversation_rules filtradas por gates (age_groups + min/max nivel): de las 12 de la tabla entran solo las que aplican a este combo.',
+  template: 'Texto literal del template activo (orchestration_templates.body): no es placeholder, es el esqueleto del prompt.',
+  codigo: 'Única pieza que vive en Python (orchestration_resolver): con NO ROLEPLAY declarado por la EDAD, el resolver suprime la escena del tópico y pone este texto fijo.',
+}
+/* Relaciones entre campos: qué toca a qué (para la ficha del nodo de detalle). */
+const FIELD_RELATIONS: Record<string, string> = {
+  comando_de_arranque: 'Interpola {name} (ALUMNO), {topic} y {first_vocab} (TÓPICO) en runtime. Gobierna SOLO el turno 1; convive con la ley universal 4 (una movida por turno).',
+  formato_de_cierre_de_turno: 'Aplica a CADA turno. Trabaja en dúo con la CADENCIA (ritmo del cruce): el director inyecta la intensidad, este campo fija forma y largo.',
+  accion_de_continuacion: 'Cada vuelta tras hablar el alumno. El director de orquesta (ritmo) le marca la intensidad de la próxima pregunta.',
+  pasos_de_la_sesion: 'El mapa macro de la sesión (beats). El compás fino turno a turno lo lleva el director (age_level_matrix.ritmo).',
+  reglas_universales_filtradas: 'Gateadas por EDAD y NIVEL: mini/A0-A1 reciben un bloque, B2+ otro. Editables regla por regla en el probador.',
+  estilo_de_sesion: 'Marco de TODO el segmento (todas sus edades×niveles). El estilo declara la ida y vuelta; la cadencia la ejecuta.',
+  anclas_narrativas: 'En teen/adult declara NO ROLEPLAY → el resolver suprime la escena del tópico (por eso Narrative_Anchors sale de código).',
+  semillas: 'Vocabulario del tópico: {first_vocab} sale de acá. El coach las teje en la charla; forzarlas degrada la clase (medido).',
+  gramatica_objetivo: 'El QUÉ del nivel. El coach lo PROVOCA en el alumno con sus preguntas — no lo actúa en su propia habla.',
+  titulo: 'Puede quedar en español al hablarle al alumno (Language_Note lo permite): es el nombre del tema, no producción.',
+}
+
 function PromptFlow({ steps, height }: { steps: PromptStep[]; height: number | string }) {
+  const [openStep, setOpenStep] = useState<number | null>(null)
+
   const { nodes, edges } = useMemo(() => {
     const nodes: import('reactflow').Node[] = []
     const edges: import('reactflow').Edge[] = []
     let y = 0
+    const stepY: number[] = []
     ;(steps || []).forEach((st, i) => {
       const entries = st.entries || []
+      const isOpen = openStep === i
+      stepY.push(y)
       nodes.push({
         id: `s${i}`,
         position: { x: 0, y },
         data: {
           label: (
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: 12, fontWeight: 800, marginBottom: 5 }}>{i + 1}. {st.step}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                <span style={{ fontSize: 12.5, fontWeight: 800 }}>{i + 1}. {st.step}</span>
+                <span style={{ marginLeft: 'auto', fontSize: 9.5, fontWeight: 700, color: isOpen ? 'var(--primary)' : '#8e938f' }}>
+                  {isOpen ? 'cerrar detalle' : 'tocar para abrir'}
+                </span>
+              </div>
               {entries.map((ent, j) => {
                 const ow = OWNERS[ownerOfSource(ent.source || '')]
+                const preview = (ent.body || '').replace(/\s+/g, ' ').slice(0, 92)
                 return (
-                  <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, marginBottom: 3 }}>
-                    <span style={{ width: 7, height: 7, borderRadius: 999, background: ow.color, flexShrink: 0 }} />
-                    <b style={{ whiteSpace: 'nowrap' }}>{ent.label}</b>
-                    <span style={{ color: '#8e938f', fontFamily: 'ui-monospace, monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ent.source || 'runtime'}</span>
+                  <div key={j} style={{ marginBottom: 5 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5 }}>
+                      <span style={{ width: 7, height: 7, borderRadius: 999, background: ow.color, flexShrink: 0 }} />
+                      <b>{ent.label}</b>
+                      <span style={{ color: '#8e938f', fontFamily: 'ui-monospace, monospace', fontSize: 9.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ent.source || 'runtime'}</span>
+                    </div>
+                    {preview && (
+                      <div style={{ fontSize: 10, color: 'var(--fg-2)', paddingLeft: 13, fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {preview}{(ent.body || '').length > 92 ? '…' : ''}
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -173,19 +216,75 @@ function PromptFlow({ steps, height }: { steps: PromptStep[]; height: number | s
           ),
         },
         style: {
-          width: 470, borderRadius: 10, border: '1px solid var(--border-2)',
+          width: 480, borderRadius: 10, cursor: 'pointer',
+          border: `1px solid ${isOpen ? 'var(--primary)' : 'var(--border-2)'}`,
           borderLeft: `4px solid ${OWNERS[ownerOfSource(entries[0]?.source || '')].color}`,
           background: 'var(--surface)', color: 'var(--fg-1)', padding: 10, fontSize: 11,
         },
       })
       if (i > 0) edges.push({ id: `e${i}`, source: `s${i - 1}`, target: `s${i}`, animated: true })
-      y += 58 + entries.length * 22
+      y += 66 + entries.length * 34
     })
+
+    // Nodos de DETALLE: se abren al costado del paso tocado — contenido completo + ficha.
+    if (openStep != null && steps[openStep]) {
+      let dy = stepY[openStep]
+      ;(steps[openStep].entries || []).forEach((ent, j) => {
+        const owner = ownerOfSource(ent.source || '')
+        const ow = OWNERS[owner]
+        const field = (ent.source || '').split('.').pop() || ent.label
+        const relation = FIELD_RELATIONS[field] || FIELD_RELATIONS[ent.label] || null
+        const body = ent.body || '(vacío)'
+        nodes.push({
+          id: `d${openStep}-${j}`,
+          position: { x: 560, y: dy },
+          data: {
+            label: (
+              <div style={{ textAlign: 'left' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 12, fontWeight: 800 }}>{ent.label}</span>
+                  <span style={{ fontSize: 9, fontWeight: 800, color: ow.color, border: `1px solid ${ow.color}55`, background: `${ow.color}18`, borderRadius: 999, padding: '1px 7px' }}>{ow.label}</span>
+                  <span style={{ fontSize: 9.5, color: '#8e938f', fontFamily: 'ui-monospace, monospace' }}>{ent.source || 'runtime'}</span>
+                </div>
+                <div style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--fg-1)', background: 'var(--bg-2)', border: '1px solid var(--border-1)', borderRadius: 8, padding: '8px 10px', maxHeight: 150, overflowY: 'auto', whiteSpace: 'pre-wrap', marginBottom: 6 }}>
+                  {body}
+                </div>
+                <div style={{ fontSize: 9.5, color: 'var(--fg-2)', lineHeight: 1.45 }}>
+                  <b style={{ color: ow.color }}>Cómo se llena:</b> {OWNER_EXPLAIN[owner]}
+                </div>
+                {relation && (
+                  <div style={{ fontSize: 9.5, color: 'var(--fg-2)', lineHeight: 1.45, marginTop: 4 }}>
+                    <b>Relaciones:</b> {relation}
+                  </div>
+                )}
+              </div>
+            ),
+          },
+          style: {
+            width: 470, borderRadius: 10, border: `1px solid ${ow.color}66`,
+            borderLeft: `4px solid ${ow.color}`, background: 'var(--surface)',
+            color: 'var(--fg-1)', padding: 10, fontSize: 11,
+          },
+        })
+        edges.push({ id: `ed${openStep}-${j}`, source: `s${openStep}`, target: `d${openStep}-${j}`, animated: false, style: { stroke: ow.color } })
+        dy += 250
+      })
+    }
     return { nodes, edges }
-  }, [steps])
+  }, [steps, openStep])
+
   return (
     <div style={{ height, border: `1px solid ${C.border}`, borderRadius: 8, overflow: 'hidden', background: C.bg }}>
-      <ReactFlow nodes={nodes} edges={edges} fitView nodesDraggable={false} nodesConnectable={false} proOptions={{ hideAttribution: true }}>
+      <ReactFlow
+        nodes={nodes} edges={edges} fitView nodesConnectable={false}
+        onNodeClick={(_, node) => {
+          if (node.id.startsWith('s')) {
+            const idx = Number(node.id.slice(1))
+            setOpenStep((v) => (v === idx ? null : idx))
+          }
+        }}
+        proOptions={{ hideAttribution: true }}
+      >
         <Background gap={18} size={1} />
         <Controls showInteractive={false} />
       </ReactFlow>
