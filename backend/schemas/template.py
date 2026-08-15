@@ -164,6 +164,10 @@ class TopicUpdate(BaseModel):
 class TopicResponse(TopicBase):
     id: int
     usage_count: int = 0
+    # Portada del tópico (scripts/fetch_topic_images.py). image_credit es
+    # obligatorio mostrarlo por la licencia de Pexels.
+    image_url: Optional[str] = None
+    image_credit: Optional[str] = None
 
     class Config:
         from_attributes = True

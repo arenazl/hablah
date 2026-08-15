@@ -1381,11 +1381,26 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
     const surprise = surprisePool[Math.floor(Math.random() * surprisePool.length)] || others[0] || interests[0]
 
     const freeTopicFlag = (profile as MeProfile & { feature_flags?: Record<string, { unlocked: boolean }> }).feature_flags?.free_topic
+    // Progreso por tópico: alimenta "N charlas" y "hace N días" de cada card.
+    const progByTopic = new Map(profile.progress.map(p => [p.topic_id, p]))
+    const toCard = (t: { id: number; title: string; category: string; image_url?: string | null }) => {
+      const p = progByTopic.get(t.id)
+      return {
+        id: t.id, title: t.title, category: t.category,
+        imageUrl: t.image_url ?? null,
+        sessions: p?.sessions_count ?? 0,
+        lastAt: p?.updated_at ?? null,
+      }
+    }
+
     return (
       <PracticarGalaxy
         userName={userName}
-        interests={interests.map(i => ({ id: i.id, title: i.title, category: i.category }))}
-        recommended={others.slice(0, 8).map(t => ({ id: t.id, title: t.title, category: t.category }))}
+        interests={interests.map(toCard)}
+        recommended={others.slice(0, 8).map(toCard)}
+        level={profile.user.cefr_level || ''}
+        tutorName={profile.active_template?.name || ''}
+        defaultMinutes={profile.user.target_minutes_per_session || 7}
         enableFreeTopic={freeTopicFlag?.unlocked ?? false}
         onPick={(topicId) => {
           // Si el topico clickeado NO estaba en los intereses del user (vino del

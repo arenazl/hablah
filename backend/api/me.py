@@ -31,8 +31,13 @@ async def get_my_profile(
         .where(UserInterest.user_id == current.id)
         .order_by(UserInterest.added_at)
     )
+    # image_url/image_credit: portada del tópico para las cards de Practicar
+    # (design handoff v2). Las baja scripts/fetch_topic_images.py desde Pexels.
     interests = [
-        {"id": t.id, "slug": t.slug, "title": t.title, "category": t.category}
+        {
+            "id": t.id, "slug": t.slug, "title": t.title, "category": t.category,
+            "image_url": t.image_url, "image_credit": t.image_credit,
+        }
         for t in interests_rows.scalars().all()
     ]
 
@@ -51,6 +56,9 @@ async def get_my_profile(
             "pct": prog.pct,
             "minutes_spoken": prog.minutes_spoken,
             "sessions_count": prog.sessions_count,
+            # Última actividad en el tópico: alimenta el "hace N días" de las
+            # cards de Practicar.
+            "updated_at": prog.updated_at.isoformat() if prog.updated_at else None,
         })
 
     last_session = (await db.execute(

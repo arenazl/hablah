@@ -47,8 +47,8 @@ export interface MeProfile {
     daily_reminder_enabled: boolean; audio_retention_days: number; plan: string
   }
   active_template: { id: number; slug: string; name: string; description: string; voice_id: string; voice_label: string } | null
-  interests: { id: number; slug: string; title: string; category: string }[]
-  progress: { topic_id: number; topic_title: string; stages_done: number; stages_total: number; pct: number; minutes_spoken: number; sessions_count: number }[]
+  interests: { id: number; slug: string; title: string; category: string; image_url?: string | null; image_credit?: string | null }[]
+  progress: { topic_id: number; topic_title: string; stages_done: number; stages_total: number; pct: number; minutes_spoken: number; sessions_count: number; updated_at?: string | null }[]
   last_session: { id: number; topic_id: number | null; started_at: string; score: number | null } | null
   total_sessions: number
 }
@@ -164,6 +164,8 @@ export interface Topic {
   // Motor: a quién sirve el tópico (lo usa el sequencer para filtrar por banda).
   audience?: string; segmento?: string | null
   appropriate_bands?: string[] | null; generated_vocab?: string[] | null
+  // Portada del tópico (Pexels). image_credit hay que mostrarlo por licencia.
+  image_url?: string | null; image_credit?: string | null
 }
 
 export const topicsAPI = {

@@ -1,256 +1,31 @@
 /**
- * PracticarGalaxy — pantalla de selección de tópico.
+ * PracticarGalaxy — pantalla de elección de tópico.
  *
- * Layout:
- *   - Fondo dark inmersivo con stars
- *   - Hero arriba: "¿De qué charlamos, {nombre}?"
- *   - Grid central de cards coloridas por categoría (3 col desktop / 2 mobile)
- *   - Panel lateral derecho "Sugeridos para vos" (otros temas del catálogo)
- *   - Footer: Sorpréndeme + Tema libre
+ * Implementa Practicar.html del design handoff v2
+ * (docs/design-sync/hablah-ds/v2/Practicar.html):
+ *
+ *   greet → quick start (recomendado / sorprendeme / tema libre)
+ *         → copiloto de elección → controles (buscar, orden, atajos, categorías)
+ *         → grilla de tópicos → barra de selección fija
+ *
+ * Diferencias deliberadas contra el prototipo, por datos reales:
+ *   - Las cards usan la FOTO del tópico (topics.image_url, bajada de Pexels).
+ *     El prototipo usaba un degradé por categoría; queda de fallback para los
+ *     tópicos sin foto.
+ *   - "Duración" y "Ritmo" de la barra son los estados que el prototipo dibuja;
+ *     hoy sólo la duración viaja al motor.
  */
-import { useState } from 'react'
-
-const STYLES = `
-@keyframes pg-fade-in { 0%{opacity:0} 100%{opacity:1} }
-@keyframes pg-star-twinkle { 0%,100%{opacity:.2} 50%{opacity:.9} }
-@keyframes pg-hero-glow { 0%,100%{text-shadow: 0 0 20px rgba(0,179,126,.3)} 50%{text-shadow: 0 0 35px rgba(0,179,126,.55)} }
-@keyframes pg-card-in { 0%{opacity:0;transform:translateY(16px) scale(.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
-@keyframes pg-rec-in { 0%{opacity:0;transform:translateX(12px)} 100%{opacity:1;transform:translateX(0)} }
-
-.pg-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 22px 20px;
-  border-radius: 22px;
-  border: 1.5px solid var(--pg-card-border);
-  background: var(--pg-card-bg);
-  color: white;
-  text-align: left;
-  cursor: pointer;
-  min-height: 168px;
-  overflow: hidden;
-  transition: transform 280ms cubic-bezier(.2,.8,.2,1), box-shadow 280ms, border-color 280ms;
-  animation: pg-card-in 540ms cubic-bezier(.2,.8,.2,1) backwards;
-  isolation: isolate;
-}
-.pg-card::before {
-  content: '';
-  position: absolute;
-  inset: -40% -40% auto auto;
-  width: 180px; height: 180px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--pg-card-glow) 0%, transparent 70%);
-  opacity: .55;
-  z-index: -1;
-  transition: opacity 320ms, transform 320ms;
-}
-.pg-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  border-color: var(--pg-card-color);
-  box-shadow: 0 12px 36px -8px var(--pg-card-glow), 0 0 0 1px var(--pg-card-color);
-}
-.pg-card:hover::before { opacity: .85; transform: scale(1.15); }
-.pg-card:active { transform: translateY(-2px) scale(.98); transition: transform 120ms ease-out; }
-.pg-card-icon-wrap {
-  width: 44px; height: 44px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 12px;
-  background: var(--pg-card-icon-bg);
-  color: var(--pg-card-color);
-}
-.pg-card-title {
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -.01em;
-  margin: 0;
-}
-.pg-card-cat {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--pg-card-color);
-  opacity: .85;
-  margin-top: 4px;
-}
-
-/* Estado "seleccionando": la card elegida crece, el resto se desvanece */
-.pg-stage.is-selecting .pg-card:not(.is-selected) {
-  opacity: 0;
-  transform: scale(.9);
-  filter: blur(2px);
-  transition: opacity 600ms, transform 600ms, filter 600ms;
-}
-.pg-stage.is-selecting .pg-card.is-selected {
-  transform: scale(1.18);
-  box-shadow: 0 0 80px var(--pg-card-glow), 0 0 0 2px var(--pg-card-color);
-  z-index: 50;
-  transition: transform 800ms cubic-bezier(.22,1,.36,1), box-shadow 800ms;
-}
-.pg-stage.is-selecting .pg-hero,
-.pg-stage.is-selecting .pg-footer,
-.pg-stage.is-selecting .pg-sidepanel { opacity: 0; transition: opacity 500ms ease; pointer-events: none; }
-
-/* ─── SIDE PANEL: "Sugeridos para vos" — desktop: pinned right, mobile: flow normal ─── */
-.pg-sidepanel {
-  position: absolute;
-  right: 24px;
-  top: 100px;
-  bottom: 100px;
-  width: 280px;
-  z-index: 6;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 18px 14px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(10,18,16,.78) 0%, rgba(5,10,9,.85) 100%);
-  border: 1px solid rgba(0,179,126,.18);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  animation: pg-fade-in 700ms ease-out 200ms backwards;
-  overflow: hidden;
-}
-/* Compensacion: en desktop el grid-wrap reserva espacio derecho para el panel */
-@media (min-width: 1101px) {
-  .pg-grid-wrap { padding-right: 320px !important; }
-}
-.pg-sidepanel-title {
-  font-size: 10px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  font-weight: 800;
-  color: #9CFCD2;
-  text-align: center;
-  margin-bottom: 6px;
-}
-.pg-sidepanel-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-  padding-right: 4px;
-  flex: 1;
-}
-.pg-sidepanel-list::-webkit-scrollbar { width: 4px; }
-.pg-sidepanel-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 999px; }
-.pg-rec-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  color: white;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-  transition: transform 220ms cubic-bezier(.2,.8,.2,1), background 220ms, border-color 220ms;
-  animation: pg-rec-in 500ms ease-out backwards;
-}
-.pg-rec-card:hover {
-  transform: translateX(-4px);
-  background: rgba(255,255,255,.09);
-  border-color: rgba(0,179,126,.45);
-}
-.pg-rec-card:active { transform: translateX(-2px) scale(.97); }
-.pg-rec-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  box-shadow: 0 0 8px currentColor;
-}
-.pg-rec-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.pg-rec-title {
-  font-size: 13px; font-weight: 700; line-height: 1.2;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.pg-rec-cat {
-  font-size: 10px; font-weight: 600; letter-spacing: .04em;
-  color: rgba(255,255,255,.5); text-transform: capitalize;
-}
-.pg-rec-arrow {
-  opacity: 0; color: #9CFCD2;
-  transition: opacity 220ms, transform 220ms;
-}
-.pg-rec-card:hover .pg-rec-arrow { opacity: 1; transform: translateX(2px); }
-
-/* ─── Footer: respeta MobileBar del AppShell en mobile ─────────── */
-.pg-footer-mobile { bottom: 0; }
-@media (max-width: 720px) {
-  /* MobileBar ocupa ~64px alto + safe-area-bottom. El footer (Sorprendéme +
-     Tema libre) tiene que quedar arriba de eso, no debajo. */
-  .pg-footer-mobile {
-    bottom: calc(64px + env(safe-area-inset-bottom, 0px));
-    background: linear-gradient(180deg, transparent 0%, rgba(5,10,9,.95) 60%);
-    padding-bottom: 12px !important;
-  }
-}
-
-/* ─── Grid responsive ──────────────────────────────────────────── */
-.pg-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  width: 100%;
-  max-width: 880px;
-  margin: 0 auto;
-}
-@media (max-width: 1100px) {
-  /* Sidepanel pasa a flow normal — debajo del grid, arriba del footer */
-  .pg-sidepanel {
-    position: relative;
-    right: auto; left: auto; top: auto; bottom: auto;
-    width: 100%;
-    height: auto; max-height: none;
-    flex-direction: column;
-    margin-top: 8px;
-    padding: 14px 16px;
-    border-radius: 0;
-    background: linear-gradient(180deg, rgba(5,10,9,.55) 0%, rgba(5,10,9,.9) 100%);
-    border: none; border-top: 1px solid rgba(0,179,126,.12);
-    backdrop-filter: none;
-  }
-  .pg-sidepanel-title { text-align: left; padding-left: 4px; }
-  .pg-sidepanel-list {
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 6px;
-  }
-  .pg-rec-card { flex-shrink: 0; width: 200px; }
-  .pg-rec-card:hover { transform: scale(1.03); }
-  .pg-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-  }
-  /* Footer mobile: flow normal, sin bottom-fixed */
-  .pg-footer-mobile {
-    bottom: auto !important;
-    background: transparent !important;
-    padding: 16px 20px 12px !important;
-  }
-}
-@media (max-width: 480px) {
-  .pg-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .pg-rec-card { width: 180px; padding: 8px 10px; }
-  .pg-rec-title { font-size: 12px; }
-  .pg-card { padding: 16px 14px; min-height: 140px; border-radius: 18px; }
-  .pg-card-title { font-size: 14px; }
-  .pg-card-icon-wrap { width: 36px; height: 36px; }
-}
-`
+import { useMemo, useState } from 'react'
 
 interface InterestTopic {
   id: number
   title: string
   category: string
+  imageUrl?: string | null
+  /** Charlas hechas en el tópico (TopicProgress.sessions_count). */
+  sessions?: number
+  /** Última vez que se tocó el tópico (TopicProgress.updated_at). */
+  lastAt?: string | null
 }
 
 interface Props {
@@ -259,264 +34,544 @@ interface Props {
   recommended?: InterestTopic[]
   /** Si false, el botón "Tema libre" no aparece (gate por feature flag). */
   enableFreeTopic?: boolean
+  /** Nivel CEFR del alumno, para la meta de la barra de selección. */
+  level?: string
+  /** Nombre del tutor activo. */
+  tutorName?: string
+  /** Minutos sugeridos por defecto. */
+  defaultMinutes?: number
   onPick: (topicId: number) => void
   onSurprise: () => void
   onFreeTopic: (text: string) => void
 }
 
-// Paleta por categoría: color principal + glow + bg suave
-const CATEGORY_THEME: Record<string, { color: string; glow: string; bg: string; border: string; iconBg: string }> = {
-  musica:      { color: '#C026D3', glow: 'rgba(192,38,211,.35)', bg: 'linear-gradient(135deg, rgba(192,38,211,.18) 0%, rgba(192,38,211,.06) 100%)', border: 'rgba(192,38,211,.25)', iconBg: 'rgba(192,38,211,.18)' },
-  peliculas:   { color: '#FF5E7E', glow: 'rgba(255,94,126,.35)', bg: 'linear-gradient(135deg, rgba(255,94,126,.18) 0%, rgba(255,94,126,.06) 100%)', border: 'rgba(255,94,126,.25)', iconBg: 'rgba(255,94,126,.18)' },
-  deportes:    { color: '#22D67A', glow: 'rgba(34,214,122,.35)', bg: 'linear-gradient(135deg, rgba(34,214,122,.18) 0%, rgba(34,214,122,.06) 100%)', border: 'rgba(34,214,122,.25)', iconBg: 'rgba(34,214,122,.18)' },
-  videojuegos: { color: '#7C5CFF', glow: 'rgba(124,92,255,.35)', bg: 'linear-gradient(135deg, rgba(124,92,255,.18) 0%, rgba(124,92,255,.06) 100%)', border: 'rgba(124,92,255,.25)', iconBg: 'rgba(124,92,255,.18)' },
-  comida:      { color: '#FF8A4C', glow: 'rgba(255,138,76,.35)',  bg: 'linear-gradient(135deg, rgba(255,138,76,.18) 0%, rgba(255,138,76,.06) 100%)',  border: 'rgba(255,138,76,.25)', iconBg: 'rgba(255,138,76,.18)' },
-  viajes:      { color: '#F59E0B', glow: 'rgba(245,158,11,.35)',  bg: 'linear-gradient(135deg, rgba(245,158,11,.18) 0%, rgba(245,158,11,.06) 100%)',  border: 'rgba(245,158,11,.25)', iconBg: 'rgba(245,158,11,.18)' },
-  tech:        { color: '#22D3EE', glow: 'rgba(34,211,238,.35)',  bg: 'linear-gradient(135deg, rgba(34,211,238,.18) 0%, rgba(34,211,238,.06) 100%)',  border: 'rgba(34,211,238,.25)', iconBg: 'rgba(34,211,238,.18)' },
-  ciencia:     { color: '#3B82F6', glow: 'rgba(59,130,246,.35)',  bg: 'linear-gradient(135deg, rgba(59,130,246,.18) 0%, rgba(59,130,246,.06) 100%)',  border: 'rgba(59,130,246,.25)', iconBg: 'rgba(59,130,246,.18)' },
-  arte:        { color: '#EC4899', glow: 'rgba(236,72,153,.35)',  bg: 'linear-gradient(135deg, rgba(236,72,153,.18) 0%, rgba(236,72,153,.06) 100%)',  border: 'rgba(236,72,153,.25)', iconBg: 'rgba(236,72,153,.18)' },
-  moda:        { color: '#EC4899', glow: 'rgba(236,72,153,.35)',  bg: 'linear-gradient(135deg, rgba(236,72,153,.18) 0%, rgba(236,72,153,.06) 100%)',  border: 'rgba(236,72,153,.25)', iconBg: 'rgba(236,72,153,.18)' },
-  fitness:     { color: '#A8E60E', glow: 'rgba(168,230,14,.35)',  bg: 'linear-gradient(135deg, rgba(168,230,14,.18) 0%, rgba(168,230,14,.06) 100%)',  border: 'rgba(168,230,14,.25)', iconBg: 'rgba(168,230,14,.18)' },
-  animales:    { color: '#FFC83D', glow: 'rgba(255,200,61,.35)',  bg: 'linear-gradient(135deg, rgba(255,200,61,.18) 0%, rgba(255,200,61,.06) 100%)',  border: 'rgba(255,200,61,.25)', iconBg: 'rgba(255,200,61,.18)' },
-  lifestyle:   { color: '#1AC5A0', glow: 'rgba(26,197,160,.35)',  bg: 'linear-gradient(135deg, rgba(26,197,160,.18) 0%, rgba(26,197,160,.06) 100%)',  border: 'rgba(26,197,160,.25)', iconBg: 'rgba(26,197,160,.18)' },
+/* ─────────── categorías: color + ícono ─────────── */
+const CAT_META: Record<string, { color: string; bg: string; icon: JSX.Element }> = {
+  tech: { color: '#4338CA', bg: '#EEF2FF', icon: <><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></> },
+  ciencia: { color: '#0E7490', bg: '#CFFAFE', icon: <><path d="M9 2v6l-5 9a3 3 0 0 0 3 4h10a3 3 0 0 0 3-4l-5-9V2" /><path d="M9 2h6M7 15h10" /></> },
+  arte: { color: '#7C3AED', bg: '#F3E8FF', icon: <><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></> },
+  musica: { color: '#C026D3', bg: '#FAE8FF', icon: <><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></> },
+  lifestyle: { color: '#BE185D', bg: '#FCE7F3', icon: <><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z" /></> },
+  deportes: { color: '#C2410C', bg: '#FFEDD5', icon: <><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18M3 12h18" /></> },
+  fitness: { color: '#4D7C0F', bg: '#ECFCCB', icon: <><path d="M6 3v18M18 3v18M3 8h18M3 16h18" /></> },
+  viajes: { color: '#1D4ED8', bg: '#DBEAFE', icon: <><path d="M17.8 19.2 16 11l5-5a2 2 0 0 0-2.8-2.8l-5 5-8.2-1.8L3 7.8l6 3-3 3-3-.6-1 1.4 4.6 2.4L9 21.6l1.4-1L9.8 17l3-3 3 6z" /></> },
+  gastronomia: { color: '#BE123C', bg: '#FFE4E6', icon: <><path d="M17 8h1a4 4 0 0 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z" /></> },
+  comida: { color: '#BE123C', bg: '#FFE4E6', icon: <><path d="M17 8h1a4 4 0 0 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z" /></> },
+  negocios: { color: '#334155', bg: '#E7EAEC', icon: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></> },
+  entretenimiento: { color: '#DB2777', bg: '#FCE7F3', icon: <><rect x="2" y="2" width="20" height="20" rx="2" /><path d="M7 2v20M17 2v20M2 12h20" /></> },
+  peliculas: { color: '#DB2777', bg: '#FCE7F3', icon: <><rect x="2" y="2" width="20" height="20" rx="2" /><path d="M7 2v20M17 2v20M2 12h20" /></> },
+  videojuegos: { color: '#7C3AED', bg: '#F3E8FF', icon: <><rect x="2" y="6" width="20" height="12" rx="3" /><path d="M6 12h4M8 10v4M15 12h.01M18 10h.01" /></> },
+  diseno: { color: '#334155', bg: '#E7EAEC', icon: <><path d="M3 21h18M5 21V7l7-4 7 4v14" /><path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h6" /></> },
 }
-const DEFAULT_THEME = { color: '#00B37E', glow: 'rgba(0,179,126,.35)', bg: 'linear-gradient(135deg, rgba(0,179,126,.18) 0%, rgba(0,179,126,.06) 100%)', border: 'rgba(0,179,126,.25)', iconBg: 'rgba(0,179,126,.18)' }
-function themeFor(cat: string) { return CATEGORY_THEME[(cat || '').toLowerCase()] || DEFAULT_THEME }
+const DEFAULT_CAT = { color: '#008F63', bg: '#E6F7F0', icon: <><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></> }
+const catMeta = (c: string) => CAT_META[(c || '').toLowerCase()] || DEFAULT_CAT
 
-// Iconos SVG por categoría (Lucide-style, inline)
-function CategoryIcon({ cat }: { cat: string }) {
-  const c = (cat || '').toLowerCase()
-  const props = { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true }
-  switch (c) {
-    case 'musica':      return <svg {...props}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-    case 'peliculas':   return <svg {...props}><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
-    case 'deportes':    return <svg {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-    case 'videojuegos': return <svg {...props}><line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258A4 4 0 0 0 17.32 5z"/></svg>
-    case 'comida':      return <svg {...props}><path d="M3 11h18"/><path d="M12 11V3"/><path d="M5 11v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9"/><path d="M9 7h.01M15 7h.01"/></svg>
-    case 'viajes':      return <svg {...props}><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
-    case 'tech':        return <svg {...props}><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="14" x2="4" y2="14"/></svg>
-    case 'ciencia':     return <svg {...props}><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>
-    case 'arte':        return <svg {...props}><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
-    case 'moda':        return <svg {...props}><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
-    case 'fitness':     return <svg {...props}><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
-    case 'animales':    return <svg {...props}><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></svg>
-    case 'lifestyle':   return <svg {...props}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-    default:            return <svg {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-  }
+function CatIcon({ cat }: { cat: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      {catMeta(cat).icon}
+    </svg>
+  )
 }
 
-const SELECT_ANIM_MS = 900
+/* ─────────── orden ─────────── */
+const SORTS = [
+  { k: 'pref', l: 'Tu preferencia', f: (a: Card, b: Card) => a.rank - b.rank },
+  { k: 'menos', l: 'Menos practicados', f: (a: Card, b: Card) => a.sessions - b.sessions || a.rank - b.rank },
+  { k: 'frios', l: 'Nunca tocados primero', f: (a: Card, b: Card) => Number(b.cold) - Number(a.cold) || a.rank - b.rank },
+  { k: 'mas', l: 'Más practicados', f: (a: Card, b: Card) => b.sessions - a.sessions || a.rank - b.rank },
+  { k: 'az', l: 'A–Z', f: (a: Card, b: Card) => a.title.localeCompare(b.title, 'es') },
+]
 
-export function PracticarGalaxy({ userName, interests, recommended = [], enableFreeTopic = false, onPick, onSurprise, onFreeTopic }: Props) {
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+/* ─────────── atajos ─────────── */
+const QUICK_FILTERS = [
+  { k: 'nuevos', l: 'Recién sumados', icon: <path d="M12 3v18M3 12h18" />, t: (c: Card) => c.cold },
+  { k: 'hot', l: 'Los que más charlo', icon: <path d="M12 2s4 4 4 8a4 4 0 0 1-8 0c0-4 4-8 4-8z" />, t: (c: Card) => c.sessions >= 4 },
+  { k: 'dormidos', l: 'Dormidos hace rato', icon: <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />, t: (c: Card) => c.days !== null && c.days >= 7 },
+]
 
-  const handlePick = (topicId: number) => {
-    if (selectedId !== null) return
+/* ─────────── copiloto ─────────── */
+const MOODS = [
+  { k: 'corto', l: 'Tengo 5 minutos', icon: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></> },
+  { k: 'duro', l: 'Que me desafíe', icon: <path d="M13 2 4 14h7l-1 8 9-12h-7z" /> },
+  { k: 'liviano', l: 'Algo liviano', icon: <><path d="M18 10h-1.3A5 5 0 1 0 7 8.6" /><path d="M2 14h14a4 4 0 1 1 0 8H8" /></> },
+  { k: 'nuevo', l: 'Salir de la rutina', icon: <><path d="M12 3v6M12 15v6M3 12h6M15 12h6" /><circle cx="12" cy="12" r="3" /></> },
+  { k: 'laburo', l: 'Hablar de laburo', icon: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></> },
+]
+
+type MoodKey = 'corto' | 'duro' | 'liviano' | 'nuevo' | 'laburo'
+
+const MOOD_RULES: Record<MoodKey, { score: (c: Card) => number; why: (c: Card) => string; min: number }> = {
+  corto: {
+    score: (c) => (c.sessions >= 3 ? 2 : 0) + (c.cold ? -1 : 1),
+    why: (c) => c.sessions > 0
+      ? `ya lo tocaste ${c.sessions} ${c.sessions === 1 ? 'vez' : 'veces'}: arranca rápido y no necesita contexto`
+      : 'tema directo, no necesita contexto previo',
+    min: 5,
+  },
+  duro: {
+    score: (c) => (['ciencia', 'tech', 'negocios'].includes((c.cat || '').toLowerCase()) ? 2 : 0) + (c.sessions >= 2 ? 1 : 0),
+    why: (c) => `${(c.cat || 'el tema').toLowerCase()} te obliga a explicar, no sólo a opinar`,
+    min: 12,
+  },
+  liviano: {
+    score: (c) => (['lifestyle', 'gastronomia', 'comida', 'deportes', 'entretenimiento'].includes((c.cat || '').toLowerCase()) ? 3 : 0) + (c.sessions > 0 ? 1 : 0),
+    why: () => 'tema cotidiano: se charla solo, sin vocabulario técnico',
+    min: 7,
+  },
+  nuevo: {
+    score: (c) => (c.cold ? 4 : 0) + (c.sessions === 0 ? 1 : 0),
+    why: () => 'nunca lo tocaste: vocabulario nuevo garantizado',
+    min: 7,
+  },
+  laburo: {
+    score: (c) => (['tech', 'negocios', 'diseno'].includes((c.cat || '').toLowerCase()) ? 3 : 0) + (c.sessions >= 2 ? 1 : 0),
+    why: (c) => `${(c.cat || 'el tema').toLowerCase()} es el léxico que usás en el trabajo`,
+    min: 12,
+  },
+}
+
+const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+function moodFromText(t: string): MoodKey {
+  const s = norm(t)
+  if (/5|cinco|poco tiempo|apurad|corto|rapido/.test(s)) return 'corto'
+  if (/desaf|dificil|exig|profund|pensar|duro/.test(s)) return 'duro'
+  if (/liviano|facil|relax|tranqui|cansad/.test(s)) return 'liviano'
+  if (/nuevo|distinto|rutina|aburr|cambiar/.test(s)) return 'nuevo'
+  if (/labur|trabaj|oficina|reuni|entrevist/.test(s)) return 'laburo'
+  return 'liviano'
+}
+
+const OPENERS = [
+  (t: string) => `El profe abre: "Okay — ${t.toLowerCase()}. Convenceme de que importa."`,
+  (t: string) => `El profe abre: "${t}. ¿Qué te enganchó de esto?"`,
+  (t: string) => `El profe abre: "Confesión: no entiendo ${t.toLowerCase()}. Explicámelo vos."`,
+]
+
+interface Card {
+  id: number
+  title: string
+  cat: string
+  imageUrl?: string | null
+  rank: number
+  sessions: number
+  /** Días desde la última charla del tópico. null = nunca. */
+  days: number | null
+  cold: boolean
+  /** true si vino del panel de sugeridos y no de los intereses del alumno. */
+  suggested: boolean
+}
+
+function daysSince(iso?: string | null): number | null {
+  if (!iso) return null
+  const ms = Date.now() - new Date(iso).getTime()
+  if (!Number.isFinite(ms) || ms < 0) return 0
+  return Math.floor(ms / 86_400_000)
+}
+
+function agoLabel(days: number | null): string {
+  if (days === null) return 'nunca'
+  if (days === 0) return 'hoy'
+  if (days === 1) return 'ayer'
+  if (days < 7) return `hace ${days} días`
+  if (days < 14) return 'hace 1 semana'
+  if (days < 31) return `hace ${Math.floor(days / 7)} semanas`
+  if (days < 60) return 'hace 1 mes'
+  return `hace ${Math.floor(days / 30)} meses`
+}
+
+const SELECT_ANIM_MS = 700
+
+export function PracticarGalaxy({
+  userName, interests, recommended = [], enableFreeTopic = false,
+  level = '', tutorName = '', defaultMinutes = 7,
+  onPick, onSurprise, onFreeTopic,
+}: Props) {
+  const [query, setQuery] = useState('')
+  const [cat, setCat] = useState<string | null>(null)
+  const [sort, setSort] = useState(0)
+  const [quickF, setQuickF] = useState<string | null>(null)
+  const [chipsOpen, setChipsOpen] = useState(false)
+  const [freeText, setFreeText] = useState('')
+  const [minutes, setMinutes] = useState(defaultMinutes)
+  const [cadence, setCadence] = useState('Sobremesa')
+  const [launching, setLaunching] = useState(false)
+  const [cpText, setCpText] = useState('')
+  const [cpPicks, setCpPicks] = useState<{ mood: MoodKey; picks: Card[] } | null>(null)
+  const [cpThinking, setCpThinking] = useState(false)
+
+  /* ── cards: intereses primero (con su rank), después sugeridos ── */
+  const cards: Card[] = useMemo(() => {
+    const mk = (t: InterestTopic, i: number, suggested: boolean): Card => {
+      const days = daysSince(t.lastAt)
+      const sessions = t.sessions ?? 0
+      return {
+        id: t.id, title: t.title, cat: t.category, imageUrl: t.imageUrl,
+        rank: suggested ? 900 + i : i + 1,
+        sessions, days,
+        cold: sessions === 0,
+        suggested,
+      }
+    }
+    return [
+      ...interests.map((t, i) => mk(t, i, false)),
+      ...recommended.map((t, i) => mk(t, i, true)),
+    ]
+  }, [interests, recommended])
+
+  const [selectedId, setSelectedId] = useState<number | null>(() => cards[0]?.id ?? null)
+  const selected = cards.find((c) => c.id === selectedId) || cards[0] || null
+
+  /* ── categorías presentes, con su conteo ── */
+  const categories = useMemo(() => {
+    const m = new Map<string, number>()
+    cards.forEach((c) => { const k = (c.cat || '').toLowerCase(); if (k) m.set(k, (m.get(k) || 0) + 1) })
+    return [...m.entries()].sort((a, b) => b[1] - a[1])
+  }, [cards])
+
+  /* ── grilla filtrada + ordenada ── */
+  const visible = useMemo(() => {
+    const q = norm(query.trim())
+    const qf = QUICK_FILTERS.find((f) => f.k === quickF)
+    return cards
+      .filter((c) => {
+        if (qf && !qf.t(c)) return false
+        if (cat && (c.cat || '').toLowerCase() !== cat) return false
+        if (q && !norm(`${c.title} ${c.cat}`).includes(q)) return false
+        return true
+      })
+      .sort(SORTS[sort].f)
+  }, [cards, query, cat, quickF, sort])
+
+  const launch = (topicId: number) => {
+    if (launching) return
+    setLaunching(true)
     setSelectedId(topicId)
     window.setTimeout(() => onPick(topicId), SELECT_ANIM_MS)
   }
 
-  // Stars de fondo (deterministic seed)
-  const stars = (() => {
-    let s = 42
-    const rng = () => { s = (s * 9301 + 49297) % 233280; return s / 233280 }
-    return Array.from({ length: 180 }, () => ({
-      x: rng() * 100, y: rng() * 100,
-      size: 0.5 + rng() * 1.6, delay: rng() * 4,
-    }))
-  })()
+  const recomendar = (mood: MoodKey, texto: string) => {
+    setCpThinking(true)
+    setCpPicks(null)
+    const rule = MOOD_RULES[mood]
+    window.setTimeout(() => {
+      const picks = [...cards]
+        .map((c) => ({ c, s: rule.score(c) + (c.rank <= 5 ? 1 : 0) }))
+        .sort((a, b) => b.s - a.s)
+        .slice(0, 3)
+        .map((x) => x.c)
+      setCpPicks({ mood, picks })
+      setMinutes(rule.min)
+      setCpThinking(false)
+      void texto
+    }, 620)
+  }
+
+  const openerFor = (c: Card) => OPENERS[c.title.length % OPENERS.length](c.title)
 
   return (
-    <div
-      className={`pg-stage${selectedId !== null ? ' is-selecting' : ''}`}
-      style={{
-        position: 'relative',
-        minHeight: 'calc(100dvh - 64px)',
-        background: 'radial-gradient(ellipse at 50% 30%, #1a2b26 0%, #050A09 70%)',
-        animation: 'pg-fade-in 600ms ease-out',
-        display: 'flex', flexDirection: 'column',
-        // padding-bottom: deja espacio para MobileBar (mobile) y footer interno.
-        // Desktop: solo padding normal. Mobile: extra para que el ultimo card no quede tapado.
-        paddingBottom: 'calc(96px + env(safe-area-inset-bottom, 0px))',
-      }}
-    >
-      <style>{STYLES}</style>
-
-      {/* STARS DE FONDO */}
-      {stars.map((s, i) => (
-        <div
-          key={i}
-          style={{
-            position: 'absolute',
-            left: `${s.x}%`, top: `${s.y}%`,
-            width: s.size, height: s.size,
-            borderRadius: '50%',
-            background: 'white',
-            animation: `pg-star-twinkle ${3 + s.delay}s ease-in-out ${s.delay}s infinite`,
-            pointerEvents: 'none',
-          }}
-        />
-      ))}
-
-      {/* HERO — flow normal, scrollea con el contenido */}
-      <div className="pg-hero" style={{
-        position: 'relative',
-        padding: '24px 24px 16px',
-        textAlign: 'center', zIndex: 3,
-      }}>
-        <div style={{
-          fontSize: 11, letterSpacing: '.22em', textTransform: 'uppercase', fontWeight: 800,
-          color: '#9CFCD2', marginBottom: 6,
-        }}>
-          Hola, {userName}
-        </div>
-        <h1 style={{
-          color: 'white',
-          fontSize: 'clamp(24px, 4.5vw, 44px)',
-          fontWeight: 800,
-          letterSpacing: '-.03em',
-          lineHeight: 1.05,
-          margin: 0,
-          animation: 'pg-hero-glow 5s ease-in-out infinite',
-        }}>
-          ¿De qué <span style={{ color: '#00B37E' }}>charlamos</span>?
-        </h1>
-        <p style={{
-          color: 'rgba(255,255,255,.55)',
-          fontSize: 12, marginTop: 8, fontWeight: 500,
-        }}>
-          Elegí un tema o tirá uno libre
+    <div className="practicar-page">
+      {/* ═══ SALUDO ═══ */}
+      <section className="pp-greet">
+        <div className="pp-eyebrow">¿Listo, {userName}?</div>
+        <h1 className="pp-title">¿De qué <em>charlamos</em> hoy?</h1>
+        <p className="pp-sub">
+          Elegí un tópico de tus intereses, dejá que te sorprendamos, o tirá un tema libre.
+          La sesión arranca cuando tocás <b>empezar charla</b>.
         </p>
+      </section>
+
+      {/* ═══ QUICK START ═══ */}
+      <section className="pp-quick">
+        {selected && (
+          <button className="pp-qc featured" onClick={() => launch(selected.id)}>
+            <div className="pp-qe"><span className="pp-live-dot" /> Recomendado para hoy</div>
+            <h3>{selected.title}</h3>
+            <p>
+              {selected.cold
+                ? 'Todavía no lo tocaste. Buen momento para estrenarlo.'
+                : `Lo charlaste ${selected.sessions} ${selected.sessions === 1 ? 'vez' : 'veces'} · ${agoLabel(selected.days)}.`}
+            </p>
+            <div className="pp-meta-row">
+              <span>~{minutes} min</span>
+              {level && <><span className="pp-dot-sep" /><span><b>{level}</b></span></>}
+              {tutorName && <><span className="pp-dot-sep" /><span>{tutorName}</span></>}
+            </div>
+          </button>
+        )}
+
+        <button className="pp-qc surprise" onClick={onSurprise}>
+          <div className="pp-qe"><span className="pp-die">?</span> Sorprendeme</div>
+          <h3>Tópico al azar</h3>
+          <p>Te tiro un tópico que casi no tocás. Buena forma de salir de la zona de confort.</p>
+        </button>
+
+        {enableFreeTopic ? (
+          <div className="pp-qc free">
+            <div className="pp-qe">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+              Tema libre
+            </div>
+            <h3>Decí de qué querés hablar</h3>
+            <div className="pp-free-input">
+              <input
+                value={freeText}
+                onChange={(e) => setFreeText(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') onFreeTopic(freeText) }}
+                placeholder="ej. mi último viaje a Berlín…"
+              />
+              <button className="pp-send" type="button" onClick={() => onFreeTopic(freeText)} aria-label="Empezar con tema libre">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M13 5l7 7-7 7" /></svg>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="pp-qc free" style={{ cursor: 'default' }}>
+            <div className="pp-qe">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 15v2M12 7v4" /><circle cx="12" cy="12" r="9" /></svg>
+              Tema libre
+            </div>
+            <h3>Se desbloquea más adelante</h3>
+            <p>Con algunas charlas más vas a poder tirar cualquier tema y el profe lo arma al vuelo.</p>
+          </div>
+        )}
+      </section>
+
+      {/* ═══ COPILOTO ═══ */}
+      <div className="pp-copilot">
+        <div className="pp-cp-head">
+          <span className="pp-av">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" /><circle cx="12" cy="12" r="3.2" /></svg>
+          </span>
+          <div>
+            <h3>¿No sabés qué elegir? Contame cómo venís hoy</h3>
+            <p className="pp-cp-sub">Te propongo tres tópicos con el motivo: mira cuánto los charlaste y hace cuánto no los tocás.</p>
+          </div>
+        </div>
+        <div className="pp-cp-input">
+          <input
+            value={cpText}
+            onChange={(e) => setCpText(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') recomendar(moodFromText(cpText), cpText) }}
+            placeholder="ej. tengo 10 minutos y quiero algo que me haga pensar"
+          />
+          <button type="button" onClick={() => recomendar(moodFromText(cpText), cpText)}>Recomendame</button>
+        </div>
+        <div className="pp-cp-moods">
+          {MOODS.map((m) => (
+            <button key={m.k} type="button" onClick={() => recomendar(m.k as MoodKey, '')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{m.icon}</svg>
+              {m.l}
+            </button>
+          ))}
+        </div>
+
+        {(cpThinking || cpPicks) && (
+          <div className="pp-cp-out">
+            {cpThinking && (
+              <div className="pp-cp-line">
+                Pensando <span className="pp-cp-typing"><i /><i /><i /></span>
+              </div>
+            )}
+            {cpPicks && (
+              <>
+                <div className="pp-cp-line">
+                  {cpText.trim() ? <>Leí “{cpText.trim()}”. </> : null}
+                  Para eso te propongo <b>{MOOD_RULES[cpPicks.mood].min} minutos</b> y estos tres:
+                </div>
+                <div className="pp-cp-picks">
+                  {cpPicks.picks.map((c, i) => (
+                    <button key={c.id} className="pp-cp-pick" type="button" onClick={() => { setSelectedId(c.id); setCpPicks(null) }}>
+                      <span className="pp-n">{i + 1}</span>
+                      <span>
+                        <span className="pp-t">{c.title}</span>
+                        <span className="pp-w">{MOOD_RULES[cpPicks.mood].why(c)}</span>
+                      </span>
+                      <span className="pp-go2">elegir →</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="pp-cp-line" style={{ opacity: .75 }}>
+                  Si ninguno te cierra, buscá abajo o tirá un tema libre.
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* GRID DE CARDS (en flow normal junto al sidepanel). */}
-      <div className="pg-grid-wrap" style={{
-        position: 'relative',
-        flex: 1,
-        padding: '0 24px',
-        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-        zIndex: 2,
-      }}>
-        <div className="pg-grid">
-          {interests.map((topic, i) => {
-            const theme = themeFor(topic.category)
-            const isSelected = selectedId === topic.id
+      {/* ═══ CONTROLES ═══ */}
+      <div className="pp-controls">
+        <div className="pp-ctrl-row">
+          <div className="pp-search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Escape') setQuery('') }}
+              placeholder="Buscar tópico, categoría…"
+              aria-label="Buscar tópico"
+            />
+          </div>
+          <span className="pp-ctrl-lbl">Orden</span>
+          <select
+            className="pp-fc"
+            value={sort}
+            onChange={(e) => setSort(Number(e.target.value))}
+            aria-label="Orden de los tópicos"
+          >
+            {SORTS.map((s, i) => <option key={s.k} value={i}>{s.l}</option>)}
+          </select>
+        </div>
+
+        <div className="pp-quick-f">
+          <span className="pp-ctrl-lbl">Atajos</span>
+          {QUICK_FILTERS.map((f) => {
+            const n = cards.filter(f.t).length
+            if (!n) return null
             return (
               <button
-                key={topic.id}
-                className={`pg-card${isSelected ? ' is-selected' : ''}`}
-                onClick={() => handlePick(topic.id)}
-                style={{
-                  animationDelay: `${i * 55}ms`,
-                  ['--pg-card-color' as never]: theme.color,
-                  ['--pg-card-glow' as never]: theme.glow,
-                  ['--pg-card-bg' as never]: theme.bg,
-                  ['--pg-card-border' as never]: theme.border,
-                  ['--pg-card-icon-bg' as never]: theme.iconBg,
-                }}
+                key={f.k}
+                className={`pp-qf${quickF === f.k ? ' on' : ''}`}
+                type="button"
+                onClick={() => setQuickF(quickF === f.k ? null : f.k)}
               >
-                <div className="pg-card-icon-wrap"><CategoryIcon cat={topic.category} /></div>
-                <div>
-                  <h3 className="pg-card-title">{topic.title}</h3>
-                  <div className="pg-card-cat">{topic.category}</div>
-                </div>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{f.icon}</svg>
+                {f.l} <span style={{ opacity: .55 }}>{n}</span>
               </button>
             )
           })}
         </div>
+
+        <div className={`pp-chips${chipsOpen ? ' expanded' : ''}`}>
+          <button className={`pp-fc${cat === null ? ' active' : ''}`} type="button" onClick={() => setCat(null)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h16M4 18h10" /></svg>
+            Todos<span className="pp-n">{cards.length}</span>
+          </button>
+          {categories.map(([k, n]) => {
+            const meta = catMeta(k)
+            const on = cat === k
+            return (
+              <button
+                key={k}
+                className={`pp-fc${on ? ' active' : ''}`}
+                type="button"
+                onClick={() => setCat(on ? null : k)}
+                style={on ? undefined : { color: meta.color }}
+              >
+                <CatIcon cat={k} />
+                <span style={{ textTransform: 'capitalize' }}>{k}</span>
+                <span className="pp-n">{n}</span>
+              </button>
+            )
+          })}
+          {categories.length > 5 && (
+            <button className="pp-fc more" type="button" onClick={() => setChipsOpen((v) => !v)}>
+              {chipsOpen ? 'menos' : 'todas'}
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* SIDE PANEL — "Sugeridos para vos" */}
-      {recommended.length > 0 && (
-        <aside className="pg-sidepanel" aria-label="Temas sugeridos">
-          <div className="pg-sidepanel-title">Sugeridos para vos</div>
-          <div className="pg-sidepanel-list">
-            {recommended.slice(0, 10).map((topic, i) => {
-              const theme = themeFor(topic.category)
-              return (
-                <button
-                  key={topic.id}
-                  className="pg-rec-card"
-                  style={{ animationDelay: `${300 + i * 60}ms` }}
-                  onClick={() => handlePick(topic.id)}
-                >
-                  <span className="pg-rec-dot" style={{ background: theme.color, color: theme.color }} aria-hidden />
-                  <span className="pg-rec-text">
-                    <span className="pg-rec-title">{topic.title}</span>
-                    <span className="pg-rec-cat">{topic.category}</span>
-                  </span>
-                  <svg className="pg-rec-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                    <polyline points="9 18 15 12 9 6"/>
-                  </svg>
-                </button>
-              )
-            })}
-          </div>
-        </aside>
-      )}
-
-      {/* EMPTY STATE */}
-      {interests.length === 0 && (
-        <div style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          color: 'rgba(255,255,255,.6)', textAlign: 'center',
-        }}>
-          <div>No tenés intereses cargados.</div>
-          <div style={{ marginTop: 6, fontSize: 13 }}>Andá a /perfil para sumar.</div>
+      {/* ═══ GRILLA ═══ */}
+      <div className="pp-section-head">
+        <h2>Tus intereses</h2>
+        <div className="pp-mut">
+          {visible.length === cards.length ? `${cards.length} tópicos` : `${visible.length} de ${cards.length}`}
+          {' · orden: '}{SORTS[sort].l.toLowerCase()}
         </div>
-      )}
+      </div>
 
-      {/* FOOTER en flow normal (no absolute). El padding-bottom del stage
-          ya clearea la MobileBar del AppShell. */}
-      <div className="pg-footer pg-footer-mobile" style={{
-        position: 'relative',
-        padding: '14px 20px',
-        display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12,
-        flexWrap: 'wrap',
-        zIndex: 4,
-        background: 'linear-gradient(180deg, transparent 0%, rgba(5,10,9,.92) 60%)',
-      }}>
-        <button
-          onClick={onSurprise}
-          style={{
-            padding: '12px 22px', borderRadius: 999,
-            background: 'rgba(255,184,0,.15)', color: '#FFB800',
-            border: '1px solid rgba(255,184,0,.35)',
-            fontSize: 13, fontWeight: 700, cursor: 'pointer',
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-          }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="3"/>
-            <circle cx="8" cy="8" r="1.3" fill="currentColor"/>
-            <circle cx="16" cy="8" r="1.3" fill="currentColor"/>
-            <circle cx="12" cy="12" r="1.3" fill="currentColor"/>
-            <circle cx="8" cy="16" r="1.3" fill="currentColor"/>
-            <circle cx="16" cy="16" r="1.3" fill="currentColor"/>
-          </svg>
-          Sorprendéme
-        </button>
-        {/* "Tema libre": ya NO pide texto. Arranca la sesion directamente; el coach
-            pregunta verbalmente "de que vamos a hablar hoy" y el alumno responde
-            por voz. Solo aparece si el user lo desbloqueo (5+ sesiones). */}
-        {enableFreeTopic && (
-          <button
-            onClick={() => onFreeTopic('')}
-            style={{
-              padding: '12px 22px', borderRadius: 999,
-              background: 'rgba(0,179,126,.15)', color: '#9CFCD2',
-              border: '1px solid rgba(0,179,126,.4)',
-              fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-            }}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            Tema libre
-          </button>
+      <div className="pp-grid">
+        {visible.map((c) => {
+          const meta = catMeta(c.cat)
+          const isSel = selectedId === c.id
+          return (
+            <button
+              key={c.id}
+              className={`pp-tc${isSel ? ' active' : ''}`}
+              type="button"
+              onClick={() => setSelectedId(c.id)}
+              onDoubleClick={() => launch(c.id)}
+            >
+              <div
+                className="pp-tc-media"
+                style={
+                  c.imageUrl
+                    ? { backgroundImage: `url(${c.imageUrl})` }
+                    : { background: `linear-gradient(135deg, ${meta.bg}, ${meta.color}22)` }
+                }
+              >
+                {/* Sin foto: el glyph de la categoría hace de portada */}
+                {!c.imageUrl && (
+                  <div className="pp-glyph" style={{ color: meta.color }}><CatIcon cat={c.cat} /></div>
+                )}
+                <div className="pp-fade" />
+                <div className="pp-tc-head">
+                  <span className={`pp-rank${c.cold ? ' cold' : ''}`}>
+                    {c.suggested ? 'sugerido' : `#${c.rank}`}{isSel ? ' · elegido' : ''}
+                  </span>
+                </div>
+              </div>
+              <div className="pp-ico" style={{ background: meta.bg, color: meta.color }}>
+                <CatIcon cat={c.cat} />
+              </div>
+              <div className="pp-tc-body">
+                <div className="pp-top-sp" />
+                <div>
+                  <div className="pp-cat" style={isSel ? undefined : { color: meta.color }}>{c.cat}</div>
+                  <h4>{c.title}</h4>
+                </div>
+                <div className="pp-tc-meta">
+                  {c.sessions > 0
+                    ? <><span><b>{c.sessions} charla{c.sessions === 1 ? '' : 's'}</b></span><span className="pp-dot" /><span>{agoLabel(c.days)}</span></>
+                    : <span>nunca tocado</span>}
+                </div>
+              </div>
+            </button>
+          )
+        })}
+
+        {visible.length === 0 && (
+          <div className="pp-empty">
+            <b>Ningún tópico coincide</b>
+            Probá con otra categoría, limpiá la búsqueda o tirá un tema libre desde arriba.
+          </div>
         )}
       </div>
+
+      {/* ═══ BARRA DE SELECCIÓN ═══ */}
+      {selected && (
+        <div className={`pp-selbar${launching ? ' pulse' : ''}`}>
+          <div className="pp-sel-ic" style={{ color: '#fff' }}><CatIcon cat={selected.cat} /></div>
+          <div className="pp-sel-text">
+            <div className="pp-l">Tópico elegido</div>
+            <div className="pp-t">{selected.title}</div>
+            <div className="pp-sel-prev">{openerFor(selected)}</div>
+          </div>
+          <div className="pp-sel-meta">
+            {tutorName && <span>{tutorName}</span>}
+            {level && <span><b>{level}</b> · {minutes} min</span>}
+          </div>
+          <div className="pp-opts">
+            <span className="pp-optlbl">Duración</span>
+            {[5, 7, 12].map((m) => (
+              <button key={m} type="button" className={`pp-opt${minutes === m ? ' on' : ''}`} onClick={() => setMinutes(m)}>{m}′</button>
+            ))}
+            <span className="pp-optlbl">Ritmo</span>
+            {['Sobremesa', 'Ping-pong', 'Debate'].map((c) => (
+              <button key={c} type="button" className={`pp-opt${cadence === c ? ' on' : ''}`} onClick={() => setCadence(c)}>{c}</button>
+            ))}
+          </div>
+          <div className="pp-sel-actions">
+            <button className="pp-go" type="button" onClick={() => launch(selected.id)} disabled={launching}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0" /><path d="M12 18v3" /></svg>
+              {launching ? 'Arrancando…' : 'Empezar charla'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
