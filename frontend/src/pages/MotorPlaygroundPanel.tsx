@@ -11,6 +11,8 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import ReactFlow, { Background, Controls } from 'reactflow'
+import 'reactflow/dist/style.css'
 import { BACKOFFICE_CSS } from './backoffice.css'
 import { ThemeSwitcher } from '../components/ThemeSwitcher'
 import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote } from '../services/api'
@@ -20,7 +22,7 @@ import { useIsMobile } from '../hooks/useIsMobile'
 interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
 interface Level { level_code: string; label: string; sort_order: number }
 interface Topic { topic_id: number; title: string; segmento?: string }
-interface Student { student_id: number; name: string; age?: number; level_code: string }
+interface Student { student_id: number; name: string; age?: number; level_code: string; age_group?: string }
 
 const C = {
   bg: 'var(--bg-1)',
@@ -76,6 +78,164 @@ export function MotorPlaygroundStandalone() {
   )
 }
 
+/* ── Prompt Final PRO: XML coloreado por ORIGEN del dato + mapa de nodos (ReactFlow)
+ * + pantalla completa. Cada color = de qué tabla/placeholder salió esa línea. ── */
+type PromptStep = { step: string; entries: { label: string; source?: string; body?: string }[] }
+
+const OWNERS: Record<string, { label: string; color: string }> = {
+  runtime: { label: 'Runtime (sesión)', color: '#3b82f6' },
+  edad: { label: 'student_types (EDAD)', color: '#fbbf24' },
+  nivel: { label: 'levels (NIVEL)', color: '#7dd3fc' },
+  cruce: { label: 'age_level_matrix (E×N)', color: '#00b37e' },
+  topico: { label: 'topics (TÓPICO)', color: '#818cf8' },
+  reglas: { label: 'conversation_rules', color: '#a855f7' },
+  template: { label: 'template (literal)', color: '#8e938f' },
+  codigo: { label: 'resolver (código)', color: '#f87171' },
+}
+const FIELD_OWNER: Record<string, string> = {
+  'system_info.Current_Date': 'runtime', 'system_info.Device_Type': 'runtime',
+  'student_profile.Name': 'runtime', 'student_profile.Age_Group': 'runtime', 'student_profile.Level': 'runtime',
+  'tutor_profile.Name': 'edad', 'tutor_profile.Identity': 'edad', 'tutor_profile.Gamification_Focus': 'edad',
+  'topic_data.Topic': 'topico', 'topic_data.Words_Available': 'topico',
+  'learning_goals.Level_Target': 'nivel', 'learning_goals.Expected_Production': 'cruce', 'learning_goals.Call_to_Action_Format': 'cruce',
+  'language_and_tone.Language_Rule': 'nivel', 'language_and_tone.Language_Note': 'template', 'language_and_tone.Form_Rules': 'cruce',
+  'structure.Style': 'edad', 'structure.Session_Rails': 'cruce',
+  'runtime_commands.Start_Command': 'cruce', 'runtime_commands.Narrative_Mode': 'edad',
+  'runtime_commands.Narrative_Anchors': 'codigo', 'runtime_commands.Continuation_Action': 'cruce', 'runtime_commands.Closing_Action': 'cruce',
+}
+
+function ownerOfSource(src: string): string {
+  if (!src) return 'runtime'
+  if (src.startsWith('topics')) return 'topico'
+  if (src.startsWith('student_types')) return 'edad'
+  if (src.startsWith('levels')) return 'nivel'
+  if (src.startsWith('age_level_matrix')) return 'cruce'
+  if (src.includes('conversation_rules') || src.includes('universal')) return 'reglas'
+  if (src.includes('resolver') || src.includes('composer')) return 'codigo'
+  if (src.includes('template')) return 'template'
+  return 'runtime'
+}
+
+function ColoredXml({ prompt }: { prompt: string }) {
+  let section = ''
+  let lastOwner = ''
+  return (
+    <pre style={{ margin: 0, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '10px 12px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12, lineHeight: 1.55, fontFamily: 'ui-monospace, monospace', color: C.fg }}>
+      {prompt.split('\n').map((line, i) => {
+        const tag = line.match(/^\s*<\/?([a-zA-Z_]+)>\s*$/)
+        if (tag) {
+          if (!line.includes('</')) section = tag[1]
+          lastOwner = ''
+          return <div key={i} style={{ color: '#38bdf8', fontWeight: 700 }}>{line}</div>
+        }
+        const field = line.match(/^(\s*)([A-Za-z_]+):/)
+        let owner = ''
+        if (section === 'conversation_laws') owner = 'reglas'
+        else if (field) owner = FIELD_OWNER[`${section}.${field[2]}`] || ''
+        if (!owner && !field) owner = lastOwner
+        if (owner) lastOwner = owner
+        const col = owner ? OWNERS[owner]?.color : undefined
+        return (
+          <div key={i} style={{ borderLeft: `3px solid ${col || 'transparent'}`, paddingLeft: 8, marginLeft: 2 }}>
+            {field && col ? (<><span style={{ color: col, fontWeight: 700 }}>{line.slice(0, field[0].length)}</span>{line.slice(field[0].length)}</>) : line}
+          </div>
+        )
+      })}
+    </pre>
+  )
+}
+
+function PromptFlow({ steps, height }: { steps: PromptStep[]; height: number | string }) {
+  const { nodes, edges } = useMemo(() => {
+    const nodes: import('reactflow').Node[] = []
+    const edges: import('reactflow').Edge[] = []
+    let y = 0
+    ;(steps || []).forEach((st, i) => {
+      const entries = st.entries || []
+      nodes.push({
+        id: `s${i}`,
+        position: { x: 0, y },
+        data: {
+          label: (
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ fontSize: 12, fontWeight: 800, marginBottom: 5 }}>{i + 1}. {st.step}</div>
+              {entries.map((ent, j) => {
+                const ow = OWNERS[ownerOfSource(ent.source || '')]
+                return (
+                  <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, marginBottom: 3 }}>
+                    <span style={{ width: 7, height: 7, borderRadius: 999, background: ow.color, flexShrink: 0 }} />
+                    <b style={{ whiteSpace: 'nowrap' }}>{ent.label}</b>
+                    <span style={{ color: '#8e938f', fontFamily: 'ui-monospace, monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ent.source || 'runtime'}</span>
+                  </div>
+                )
+              })}
+            </div>
+          ),
+        },
+        style: {
+          width: 470, borderRadius: 10, border: '1px solid var(--border-2)',
+          borderLeft: `4px solid ${OWNERS[ownerOfSource(entries[0]?.source || '')].color}`,
+          background: 'var(--surface)', color: 'var(--fg-1)', padding: 10, fontSize: 11,
+        },
+      })
+      if (i > 0) edges.push({ id: `e${i}`, source: `s${i - 1}`, target: `s${i}`, animated: true })
+      y += 58 + entries.length * 22
+    })
+    return { nodes, edges }
+  }, [steps])
+  return (
+    <div style={{ height, border: `1px solid ${C.border}`, borderRadius: 8, overflow: 'hidden', background: C.bg }}>
+      <ReactFlow nodes={nodes} edges={edges} fitView nodesDraggable={false} nodesConnectable={false} proOptions={{ hideAttribution: true }}>
+        <Background gap={18} size={1} />
+        <Controls showInteractive={false} />
+      </ReactFlow>
+    </div>
+  )
+}
+
+const btnT = (on: boolean): React.CSSProperties => ({
+  background: on ? 'rgba(0,179,126,0.16)' : 'transparent',
+  border: `1px solid ${on ? 'var(--primary)' : 'var(--border-2)'}`,
+  color: on ? 'var(--primary)' : 'var(--fg-2)', borderRadius: 7, fontSize: 11, fontWeight: 700,
+  padding: '4px 10px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4,
+})
+
+function PromptProSection({ prompt, steps }: { prompt: string; steps: PromptStep[] }) {
+  const [view, setView] = useState<'xml' | 'flow'>('xml')
+  const [full, setFull] = useState(false)
+  const content = (
+    <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14, ...(full ? { minHeight: '100%', display: 'flex', flexDirection: 'column' as const } : {}) }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ width: 9, height: 9, borderRadius: 999, background: C.accent }} />
+          <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>Prompt Final Compilado (Gemini Live)</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+          <button onClick={() => setView('xml')} style={btnT(view === 'xml')}>XML coloreado</button>
+          <button onClick={() => setView('flow')} style={btnT(view === 'flow')}>Mapa de nodos</button>
+          <button onClick={() => { navigator.clipboard.writeText(prompt); toast.success('Prompt copiado al portapapeles') }} style={btnT(false)}>Copiar</button>
+          <button onClick={() => setFull((v) => !v)} style={btnT(full)} title={full ? 'Salir de pantalla completa' : 'Pantalla completa'}>
+            <Ico d={full ? 'M8 3v3a2 2 0 0 1-2 2H3 M21 8h-3a2 2 0 0 1-2-2V3 M3 16h3a2 2 0 0 1 2 2v3 M16 21v-3a2 2 0 0 1 2-2h3' : 'M8 3H5a2 2 0 0 0-2 2v3 M21 8V5a2 2 0 0 0-2-2h-3 M3 16v3a2 2 0 0 0 2 2h3 M16 21h3a2 2 0 0 0 2-2v-3'} size={13} />
+            {full ? 'Salir' : 'Pantalla completa'}
+          </button>
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+        {Object.entries(OWNERS).map(([k, o]) => (
+          <span key={k} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, color: C.dim }}>
+            <span style={{ width: 8, height: 8, borderRadius: 999, background: o.color }} /> {o.label}
+          </span>
+        ))}
+      </div>
+      {view === 'xml'
+        ? (<div style={{ maxHeight: full ? 'none' : 420, overflowY: 'auto' }}><ColoredXml prompt={prompt} /></div>)
+        : (<PromptFlow steps={steps} height={full ? 'calc(100vh - 200px)' : 460} />)}
+    </div>
+  )
+  if (!full) return <div style={{ marginTop: 20 }}>{content}</div>
+  return <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: C.bg, padding: 16, overflow: 'auto' }}>{content}</div>
+}
+
 export default function MotorPlaygroundPanel() {
   const isMobile = useIsMobile()
   const [bands, setBands] = useState<Band[]>([])
@@ -92,7 +252,7 @@ export default function MotorPlaygroundPanel() {
   const [band, setBand] = useState('mini')
   const [level, setLevel] = useState('A0')
   const [topicId, setTopicId] = useState<number | undefined>()
-  const [studentId, setStudentId] = useState<number | undefined>(14)
+  const [studentId, setStudentId] = useState<number | undefined>(undefined)
   const [profile, setProfile] = useState<{ student_id: number; name: string } | null>(null)
 
   const [res, setRes] = useState<any>(null)
@@ -153,6 +313,16 @@ export default function MotorPlaygroundPanel() {
   }, [band, level])
 
   const effStudent = useMemo(() => studentId ?? profile?.student_id, [studentId, profile])
+
+  // El ALUMNO manda: al elegirlo, el cruce (edad + nivel) se alinea a SU perfil —
+  // sin esto podías elegir "Lucas (B2)" y componer A2 (bug reportado por el dueño).
+  useEffect(() => {
+    if (studentId == null) return
+    const s = students.find((x) => x.student_id === studentId)
+    if (!s) return
+    if (s.age_group && bands.some((b) => b.code === s.age_group)) setBand(s.age_group)
+    if (s.level_code) setLevel(s.level_code)
+  }, [studentId, students, bands])
 
   // Clase en VIVO — charla REAL por voz (solo audio, sin imágenes) contra el motor
   // único (ws_motor → compose_proto), con el MISMO combo que se está previsualizando.
@@ -825,32 +995,8 @@ export default function MotorPlaygroundPanel() {
               </div>
             )}
             
-            {/* Prompt final compilado abajo de las capas */}
-            {res?.prompt && (
-              <div style={{ marginTop: 20, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ width: 9, height: 9, borderRadius: 999, background: C.accent }} />
-                    <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>Prompt Final Compilado (Gemini Live)</div>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(res.prompt)
-                      toast.success('Prompt copiado al portapapeles')
-                    }}
-                    style={{ background: 'none', border: `1px solid ${C.soft}`, color: C.accent, borderRadius: 7, fontSize: 11, padding: '3px 9px', cursor: 'pointer' }}
-                  >
-                    Copiar Prompt
-                  </button>
-                </div>
-                <textarea 
-                  readOnly 
-                  value={res.prompt} 
-                  rows={12}
-                  style={{ width: '100%', background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '8px 10px', fontSize: 12, lineHeight: 1.5, fontFamily: 'ui-monospace, monospace', resize: 'vertical', boxSizing: 'border-box' }}
-                />
-              </div>
-            )}
+            {/* Prompt final compilado — vista PRO: XML coloreado por origen + mapa de nodos */}
+            {res?.prompt && <PromptProSection prompt={res.prompt} steps={steps} />}
           </div>
 
           {/* Columna Derecha / JIT Inline Editor */}

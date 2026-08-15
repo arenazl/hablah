@@ -197,7 +197,7 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
 
     # 4. Alumnos (users)
     students = _rows(await db.execute(text(
-        "SELECT id AS student_id, nombre AS name, cefr_level AS level_code FROM users ORDER BY nombre")))
+        "SELECT id AS student_id, nombre AS name, cefr_level AS level_code, age_group FROM users ORDER BY nombre")))
 
     # Relación tópicos-bandas sugeridas
     tbs = []
