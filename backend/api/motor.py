@@ -302,6 +302,49 @@ async def protocol_run(payload: ProtocolRunIn):
         raise HTTPException(400, f"{type(e).__name__}: {e}")
 
 
+class LiveClassEndIn(BaseModel):
+    student_id: int
+    level_code: str
+    transcript: list[dict]  # [{who: 'ai'|'user', text}]
+
+
+@router.post("/live-class-end")
+async def live_class_end(payload: LiveClassEndIn):
+    """Post-clase del PROBADOR (/motor): la clase por voz alimenta la memoria del alumno
+    elegido. Extrae observaciones pedagógicas del transcript (Gemini) y corre el MISMO
+    protocolo SRS de siempre (motor_protocol) — la evolución del perfil queda persistida
+    y la PRÓXIMA clase de ese alumno la lee (pilar HISTORIA). Sin auth (probador)."""
+    import json as _json
+    lines = [f"[{'Profe' if t.get('who') == 'ai' else 'Alumno'}] {t.get('text', '')}"
+             for t in payload.transcript if (t.get('text') or '').strip()]
+    if not lines:
+        return {"applied": 0, "observations": []}
+    convo = "\n".join(lines)[:12000]
+    prompt = (
+        "Sos un profesor de inglés analizando la transcripción de una clase por voz.\n"
+        f"Nivel del alumno: {payload.level_code}.\n"
+        'Devolvé JSON con este shape exacto: {"observations": ["...", "..."]}\n'
+        "2 a 4 observaciones CORTAS en español sobre el ALUMNO (no sobre el profe): qué le "
+        "costó (vocabulario, gramática, fluidez), qué usó bien, qué evitó, qué temas le "
+        "interesaron. Concretas y accionables para la próxima clase. Si el alumno casi no "
+        "habló, decilo en una observación.\n\nTRANSCRIPCIÓN:\n" + convo
+    )
+    raw = await motor_protocol._gemini(prompt)
+    obs: list[str] = []
+    if raw:
+        try:
+            obs = [str(o).strip() for o in (_json.loads(raw).get("observations") or []) if str(o).strip()][:4]
+        except Exception:
+            obs = []
+    if not obs:
+        return {"applied": 0, "observations": [], "error": "no se pudieron extraer observaciones"}
+    try:
+        result = await motor_protocol.process(payload.student_id, obs, payload.level_code, provider="gemini")
+    except Exception as e:
+        raise HTTPException(400, f"{type(e).__name__}: {e}")
+    return {"observations": obs, **(result or {})}
+
+
 @router.get("/student-presets/{student_id}")
 async def student_presets(student_id: int):
     """Presets que arrastra el alumno (etapa 5 / memoria). Sin auth (probador)."""

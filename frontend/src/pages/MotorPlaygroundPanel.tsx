@@ -526,6 +526,26 @@ export default function MotorPlaygroundPanel() {
     await live.start(0, undefined, 'Aoede', url)
   }, [live, band, level, topicId, effStudent, cadencia])
 
+  // Terminar clase: además de cortar, la charla alimenta la MEMORIA del alumno elegido
+  // (post-clase del probador → observaciones → protocolo SRS → pilar HISTORIA).
+  const endLiveClass = useCallback(async () => {
+    const transcript = live.transcript.map((l) => ({ who: l.who, text: l.text }))
+    live.stop()
+    if (!effStudent || transcript.length === 0) return
+    try {
+      const r = await motorAPI.liveClassEnd({ student_id: effStudent, level_code: level, transcript })
+      if (r.observations?.length) {
+        const name = students.find((s) => s.student_id === effStudent)?.name || 'el alumno'
+        toast.success(`Memoria de ${name} actualizada`, {
+          description: r.observations.join(' · ').slice(0, 180),
+        })
+        motorAPI.studentPresets(effStudent).then((pr) => setPresets(pr.presets || [])).catch(() => {})
+      }
+    } catch {
+      toast.error('La clase terminó pero no se pudo actualizar la memoria del alumno')
+    }
+  }, [live, effStudent, level, students])
+
   // Resolve JIT de orquestación (Motor V2)
   const resolve = useCallback(() => {
     setLoading(true); setErr(null)
@@ -1345,7 +1365,8 @@ export default function MotorPlaygroundPanel() {
                       <Ico d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z M19 10v2a7 7 0 0 1-14 0v-2 M12 19v3" size={14} /> Iniciar clase
                     </button>
                   ) : (
-                    <button onClick={live.stop}
+                    <button onClick={endLiveClass}
+                      title="Corta la clase y guarda lo aprendido en la memoria del alumno elegido"
                       style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none', border: `1px solid ${C.red}`, color: C.red, borderRadius: 8, fontSize: 12.5, fontWeight: 800, padding: '7px 16px', cursor: 'pointer' }}>
                       <Ico d="M6 6h12v12H6z" size={13} /> Terminar clase
                     </button>

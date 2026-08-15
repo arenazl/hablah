@@ -450,6 +450,9 @@ export const motorAPI = {
   // loop de aprendizaje: texto libre de la clase -> presets canónicos -> estado del alumno
   protocolRun: (body: { student_id: number; level_code: string; observations: string[]; provider?: string }) =>
     api.post<MotorPresetRun>('/motor/protocol/run', body).then((r) => r.data),
+  // post-clase del probador: la clase por voz de /motor alimenta la memoria del alumno elegido
+  liveClassEnd: (body: { student_id: number; level_code: string; transcript: { who: string; text: string }[] }) =>
+    api.post<{ observations: string[]; applied?: number; error?: string }>('/motor/live-class-end', body).then((r) => r.data),
   studentPresets: (studentId: number) =>
     api.get<{ presets: MotorPreset[] }>(`/motor/student-presets/${studentId}`).then((r) => r.data),
   // perfil-molde por edad×nivel (acumula su learned_state) + borrar historial
