@@ -472,4 +472,36 @@ export const BACKOFFICE_CSS = `
   .bo-root .kpi-row { grid-template-columns: 1fr; }
   .bo-root .gamif-stats { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── Topbar del backoffice (design handoff): barra fina sticky con breadcrumb
+   contextual + búsqueda y acción principal que cada vista aporta. ── */
+.bo-root .bo-topbar {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; gap: 12px;
+  height: 56px; padding: 0 20px;
+  background: var(--surface); border-bottom: 1px solid var(--border-1);
+}
+.bo-root .bo-crumbs { display: flex; align-items: center; gap: 7px; font-size: 15px; min-width: 0; }
+.bo-root .bo-crumbs .root { color: var(--fg-3); font-weight: 500; text-decoration: none; }
+.bo-root .bo-crumbs .root:hover { color: var(--fg-1); }
+.bo-root .bo-crumbs .sep { color: var(--fg-4); }
+.bo-root .bo-crumbs .here { font-weight: 700; color: var(--fg-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bo-root .bo-adminpill {
+  font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--accent-tint); color: #8A5A00; border-radius: 999px; padding: 3px 9px;
+}
+[data-theme="dark"] .bo-root .bo-adminpill { background: rgba(255,184,0,.16); color: var(--accent); }
+.bo-root .bo-topsearch { position: relative; margin-left: auto; width: 300px; max-width: 38vw; }
+.bo-root .bo-topsearch svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--fg-4); }
+.bo-root .bo-topsearch input { width: 100%; height: 36px; padding: 0 12px 0 34px; border: 1px solid var(--border-2); border-radius: 11px; background: var(--bg-1); font: inherit; font-size: 13px; color: var(--fg-1); }
+.bo-root .bo-topsearch input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-tint); }
+.bo-root .bo-topactions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.bo-root .bo-topsearch + .bo-topactions { margin-left: 0; }
+.bo-root .bo-iconbtn { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; border: 1px solid var(--border-2); background: var(--surface); color: var(--fg-2); cursor: pointer; }
+.bo-root .bo-iconbtn:hover { background: var(--bg-2); color: var(--fg-1); }
+@media (max-width: 760px) {
+  .bo-root .bo-topbar { padding: 0 12px; gap: 8px; }
+  .bo-root .bo-topsearch { width: auto; flex: 1; max-width: none; }
+  .bo-root .bo-crumbs .root, .bo-root .bo-crumbs .sep { display: none; }
+}
 `

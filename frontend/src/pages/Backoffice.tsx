@@ -1,8 +1,9 @@
-import { useEffect, useState, useMemo, useRef } from 'react'
-import { NavLink, Routes, Route, useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useState, useMemo, useRef, createContext, useContext } from 'react'
+import { NavLink, Routes, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { BACKOFFICE_CSS } from './backoffice.css'
+import { ThemeSwitcher } from '../components/ThemeSwitcher'
 import {
   templatesAPI, topicsAPI, alumnosAPI, dashboardAPI, ttsAPI, auditAPI,
   Template, Topic, Alumno,
@@ -42,9 +43,76 @@ const SvgMenu = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none
 const SvgSearch = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
 const SvgChev = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
 
+/* ── Topbar del backoffice (design handoff Backoffice.html): breadcrumb contextual
+ * + slots que cada vista llena con SU búsqueda y SU acción principal (nada de
+ * controles de adorno: si la vista no aporta, no se dibujan). ── */
+export interface BoTopSlots {
+  search?: { value: string; onChange: (v: string) => void; placeholder?: string }
+  cta?: { label: string; onClick: () => void }
+}
+const BoTopCtx = createContext<(s: BoTopSlots) => void>(() => {})
+
+/** La vista publica su búsqueda/acción en la topbar. deps = valores que cambian. */
+export function useBoTopbar(slots: BoTopSlots, deps: unknown[]) {
+  const set = useContext(BoTopCtx)
+  useEffect(() => {
+    set(slots)
+    return () => set({})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [set, ...deps])
+}
+
+const BO_CRUMB: Record<string, string> = {
+  '': 'Resumen',
+  motor: 'Probador de clases',
+  auditoria: 'Auditoría de sesiones',
+  topicos: 'Biblioteca de tópicos',
+  abms: 'Edades y niveles',
+  templates: 'Personalidades',
+  voz: 'Voz',
+  alumnos: 'Alumnos',
+  usuarios: 'Usuarios',
+}
+
+function BoTopbar({ slots, onMenu }: { slots: BoTopSlots; onMenu: () => void }) {
+  const loc = useLocation()
+  const seg = loc.pathname.replace(/^\/admin\/?/, '').split('/')[0] || ''
+  const here = BO_CRUMB[seg] || 'Backoffice'
+  return (
+    <header className="bo-topbar">
+      <button className="bo-iconbtn menu-toggle" onClick={onMenu} aria-label="Abrir menú">
+        <SvgMenu />
+      </button>
+      <div className="bo-crumbs">
+        <NavLink to="/admin" className="root" end>Backoffice</NavLink>
+        <span className="sep">›</span>
+        <span className="here">{here}</span>
+        <span className="bo-adminpill">Admin</span>
+      </div>
+      {slots.search && (
+        <div className="bo-topsearch">
+          <SvgSearch />
+          <input
+            value={slots.search.value}
+            onChange={(e) => slots.search!.onChange(e.target.value)}
+            placeholder={slots.search.placeholder || 'Buscar…'}
+          />
+        </div>
+      )}
+      <div className="bo-topactions">
+        <ThemeSwitcher />
+        {slots.cta && (
+          <button className="btn btn-dark btn-sm" onClick={slots.cta.onClick}>{slots.cta.label}</button>
+        )}
+      </div>
+    </header>
+  )
+}
+
 export function Backoffice() {
   useEffect(() => { ensureFont() }, [])
   const [menuOpen, setMenuOpen] = useState(false)
+  const [topSlots, setTopSlots] = useState<BoTopSlots>({})
   return (
     <div className="bo-root">
       <style>{BACKOFFICE_CSS}</style>
@@ -52,6 +120,8 @@ export function Backoffice() {
       <div className="shell">
         <BoSidebar open={menuOpen} />
         <main className="main">
+          <BoTopbar slots={topSlots} onMenu={() => setMenuOpen(true)} />
+          <BoTopCtx.Provider value={setTopSlots}>
           <Routes>
             <Route path="/" element={<ResumenView onMenu={() => setMenuOpen(true)} />} />
             <Route path="/templates" element={<TemplatesView onMenu={() => setMenuOpen(true)} />} />
@@ -66,6 +136,7 @@ export function Backoffice() {
             <Route path="/motor" element={<MotorPlaygroundPanel />} />
             <Route path="/voz" element={<AdminVozPanel />} />
           </Routes>
+          </BoTopCtx.Provider>
         </main>
       </div>
     </div>
@@ -645,6 +716,13 @@ function TopicosView({ onMenu }: { onMenu: () => void }) {
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
 
+  // La búsqueda y el alta viven en la topbar (design handoff). El alta real es el
+  // ABM de `topics` — no un botón de adorno.
+  useBoTopbar({
+    search: { value: q, onChange: (v) => { setQ(v); setPage(0) }, placeholder: 'Buscar tópico, seed, keyword…' },
+    cta: { label: '+ Sumar tópico', onClick: () => nav('/admin/abms?table=topics') },
+  }, [q, nav])
+
   useEffect(() => {
     setLoading(true)
     topicsAPI.list({ category: category !== 'todas' ? category : undefined, q: q || undefined })
@@ -664,8 +742,6 @@ function TopicosView({ onMenu }: { onMenu: () => void }) {
 
   return (
     <>
-      <PageHead eyebrow="Sector 2 · Biblioteca" title="Punteros temáticos" onMenu={onMenu}
-        sub="Universos de interés con seed prompts y keywords por nivel." />
       <div className="view">
         <div className="topics-layout">
           <aside className="cat-sidebar">
@@ -678,10 +754,7 @@ function TopicosView({ onMenu }: { onMenu: () => void }) {
           </aside>
           <div>
             <div className="toolbar">
-              <div className="search">
-                <SvgSearch />
-                <input className="input" placeholder="Buscar tópico" value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} />
-              </div>
+              <span className="eyebrow">Universos de interés con seed prompts y keywords por nivel</span>
               <span className="right">{items.length} tópicos</span>
             </div>
             {loading && <div style={{ padding: 30, textAlign: 'center', color: 'var(--fg-3)' }}>Cargando…</div>}
