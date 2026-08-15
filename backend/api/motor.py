@@ -191,9 +191,9 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
     levels = _rows(await db.execute(text(
         "SELECT code AS level_code, friendly_name AS label, id AS sort_order FROM levels ORDER BY id")))
 
-    # 3. Tópicos (topics)
+    # 3. Tópicos (topics) — levels viaja para que el probador filtre por nivel elegido
     db_topics = _rows(await db.execute(text(
-        "SELECT id AS topic_id, title, segmento FROM topics WHERE is_active=1 ORDER BY title")))
+        "SELECT id AS topic_id, title, segmento, levels FROM topics WHERE is_active=1 ORDER BY title")))
 
     # 4. Alumnos (users)
     students = _rows(await db.execute(text(

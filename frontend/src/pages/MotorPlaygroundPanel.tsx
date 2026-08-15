@@ -21,7 +21,7 @@ import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
 interface Level { level_code: string; label: string; sort_order: number }
-interface Topic { topic_id: number; title: string; segmento?: string }
+interface Topic { topic_id: number; title: string; segmento?: string; levels?: string[] }
 interface Student { student_id: number; name: string; age?: number; level_code: string; age_group?: string }
 
 const C = {
@@ -565,23 +565,32 @@ export default function MotorPlaygroundPanel() {
     catalog.forEach((cat: any) => {
       cat.subcategories?.forEach((sub: any) => {
         sub.topics?.forEach((t: any) => {
+          // levels llega como JSON string desde MySQL o como array — normalizamos
+          let lv: string[] | undefined
+          if (Array.isArray(t.levels)) lv = t.levels
+          else if (typeof t.levels === 'string') { try { lv = JSON.parse(t.levels) } catch { lv = undefined } }
           allTopics.push({
             topic_id: t.id || t.topic_id,
             title: t.title,
-            segmento: t.segmento
+            segmento: t.segmento,
+            levels: lv,
           })
         })
       })
     })
-    // Filtrar por segmento y ordenar alfabéticamente
+    // Filtrar por segmento + NIVEL elegido (bug: el nivel no participaba y la lista
+    // no cambiaba nunca al mover Objetivo/Nivel). Tópico sin levels declarados = pasa.
     return allTopics
-      .filter((t: any) => {
-        if (!t.segmento) return true
-        const normSegmento = t.segmento === 'adultos' ? 'adult' : t.segmento
-        return normSegmento === band
+      .filter((t) => {
+        if (t.segmento) {
+          const normSegmento = t.segmento === 'adultos' ? 'adult' : t.segmento
+          if (normSegmento !== band) return false
+        }
+        if (t.levels && t.levels.length > 0 && !t.levels.includes(level)) return false
+        return true
       })
       .sort((a, b) => a.title.localeCompare(b.title))
-  }, [catalog, band])
+  }, [catalog, band, level])
 
   // Al cambiar la banda de edad (band) o el nivel, verificar si el tópico sigue siendo válido o seleccionar el primero
   useEffect(() => {
