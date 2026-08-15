@@ -17,7 +17,8 @@ if ('serviceWorker' in navigator) {
   })
 }
 
-// Auto-actualización: si hay un build nuevo deployado, la PWA se recarga sola (sin Ctrl+Shift+R).
+// Auto-actualización (kit 6-GUIA-PWA): si hay build nuevo, popup abajo a la derecha
+// y EL USUARIO dispara la recarga — jamás se interrumpe su operatoria.
 setupVersionCheck()
 
 const container = document.getElementById('root')!
