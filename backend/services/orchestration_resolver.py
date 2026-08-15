@@ -29,7 +29,6 @@ from services.composer_proto import (
 from services.motor_engine import _connect, _json_list
 
 _PH = re.compile(r"\{([A-Z_]+):([a-z_]+)\}")
-_LEVEL_ORDER = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"]
 
 
 def _load_orchestration(age_slug: str, level_code: str):
@@ -41,7 +40,12 @@ def _load_orchestration(age_slug: str, level_code: str):
                     (age_slug, level_code))
         rules = db.q("SELECT slug, rule_text, age_groups, min_level, max_level, sort_order "
                      "FROM conversation_rules WHERE active=1 ORDER BY sort_order")
-        return tpl, row, rules
+        # La ESCALA de niveles es dato (levels.sort_order), no una lista en el código: así un track
+        # nuevo (castellano ES1-ES3, fonética FONR) gatea las reglas por su lugar en la escala sin
+        # tocar el resolver. Antes era un literal A0..C2 y todo lo demás caía en 0 (= gateaba como A0).
+        order = {r["code"]: (r["sort_order"] or 0)
+                 for r in (db.q("SELECT code, sort_order FROM levels") or [])}
+        return tpl, row, rules, order
     finally:
         db.conn.close()
 
@@ -82,19 +86,20 @@ def load_rhythm(age_slug: str, level_code: str, wave_override: str | None = None
         db.conn.close()
 
 
-def _filter_rules(rules, age_slug: str, level_code: str) -> str:
+def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict) -> str:
     """Gating por dato (age_groups + min/max_level) + reenumeración. Reemplaza los target_ids
-    hardcodeados y los 2 bloques: la selección es puro dato."""
-    li = _LEVEL_ORDER.index(level_code) if level_code in _LEVEL_ORDER else 0
+    hardcodeados y los 2 bloques: la selección es puro dato. El ORDEN de los niveles también
+    es dato (levels.sort_order) — ver _load_orchestration."""
+    li = level_order.get(level_code, 0)
     picked = []
     for r in rules:
         ags = _json_list(r.get("age_groups"))
         if ags and age_slug not in [str(a).lower() for a in ags]:
             continue
         mn, mx = r.get("min_level"), r.get("max_level")
-        if mn and mn in _LEVEL_ORDER and _LEVEL_ORDER.index(mn) > li:
+        if mn and mn in level_order and level_order[mn] > li:
             continue
-        if mx and mx in _LEVEL_ORDER and _LEVEL_ORDER.index(mx) < li:
+        if mx and mx in level_order and level_order[mx] < li:
             continue
         picked.append(r["rule_text"])
     return "\n".join(f"{i}. {t}" for i, t in enumerate(picked, 1))
@@ -135,7 +140,7 @@ def compose_from_template(
     level_code = getattr(user, "cefr_level", None) or "?"
     ctx = f"segmento={age_slug}, nivel={level_code}"
 
-    tpl, row, rules = _load_orchestration(age_slug, level_code)
+    tpl, row, rules, level_order = _load_orchestration(age_slug, level_code)
     _req(tpl and tpl.get("body"), "orchestration_templates.active (no hay template activo)", ctx)
     _req(row, f"age_level_matrix[{age_slug},{level_code}] — cruce inexistente (¿combo válido?)", ctx)
 
@@ -203,7 +208,7 @@ def compose_from_template(
     def resolve(prefix: str, field: str) -> str:
         if prefix == "EDAD_X_NIVEL":
             if field == "reglas_universales_filtradas":
-                val = _filter_rules(rules, age_slug, level_code)
+                val = _filter_rules(rules, age_slug, level_code, level_order)
                 source = "conversation_rules (gateadas)"
             else:
                 val = _req(row.get(field), f"age_level_matrix.{field}", ctx)

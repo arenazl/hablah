@@ -17,7 +17,6 @@ from models.template import Topic
 from services import motor_engine
 
 SEG_TO_TOPIC_SEG = {"mini": "mini", "junior": "junior", "teen": "teen", "adult": "adultos"}
-LEVELS = ["A0", "A1", "A2", "B1", "B2", "C1", "C2"]
 
 _CRITIC_PROMPT = (
     "You are an expert prompt engineer and pedagogical linter.\n"
@@ -38,6 +37,22 @@ _CRITIC_PROMPT = (
     "]\n"
     "If no issues are found, return an empty JSON list: []"
 )
+
+async def pick_combos() -> list:
+    """Los combos a auditar salen de la MATRIZ real (age_level_matrix), no de una lista fija:
+    audita exactamente los cruces que existen y cubre solo los tracks nuevos (castellano,
+    fonética) sin tocar este script."""
+    # Sin JOIN a propósito: age_level_matrix (reingeniería) y levels tienen collations distintas
+    # (utf8mb4_unicode_ci vs utf8mb4_0900_ai_ci) y MySQL rechaza el '=' entre ambas.
+    from sqlalchemy import text as _t
+    async with AsyncSessionLocal() as db:
+        cruces = (await db.execute(_t(
+            "SELECT age_slug, level_code FROM age_level_matrix WHERE active=1"))).all()
+        orden = {r[0]: (r[1] or 0) for r in (await db.execute(_t(
+            "SELECT code, sort_order FROM levels WHERE active=1"))).all()}
+    combos = [(r[0], r[1]) for r in cruces if r[1] in orden]
+    return sorted(combos, key=lambda c: (c[0], orden[c[1]]))
+
 
 async def pick_topics() -> dict:
     out = {}
@@ -84,22 +99,28 @@ async def main():
         
     print("Picking active topics...")
     topics = await pick_topics()
-    
-    print("Generating prompts for all 28 combinations and analyzing...")
+    combos = await pick_combos()
+    # Filtro opcional por CLI: `python scripts/detect_prompt_clashes.py ES1 ES2 ES3`
+    only = [a.upper() for a in sys.argv[1:]]
+    if only:
+        combos = [c for c in combos if c[1].upper() in only]
+
+    print(f"Generating prompts for {len(combos)} real crosses and analyzing...")
     sem = asyncio.Semaphore(4)
     tasks = []
-    
+
     async with httpx.AsyncClient() as client:
-        for age_slug in SEG_TO_TOPIC_SEG:
-            topic_id = topics[age_slug]
-            for level in LEVELS:
-                try:
-                    res = await motor_engine.resolve_v2(age_slug, level, topic_id)
-                    prompt_text = res["prompt"]
-                    tasks.append(analyze_prompt(sem, client, age_slug, level, prompt_text))
-                except Exception as e:
-                    print(f"Error composing prompt for {age_slug} {level}: {e}")
-        
+        for age_slug, level in combos:
+            topic_id = topics.get(age_slug)
+            if not topic_id:
+                continue
+            try:
+                res = await motor_engine.resolve_v2(age_slug, level, topic_id)
+                prompt_text = res["prompt"]
+                tasks.append(analyze_prompt(sem, client, age_slug, level, prompt_text))
+            except Exception as e:
+                print(f"Error composing prompt for {age_slug} {level}: {e}")
+
         results = await asyncio.gather(*tasks)
     
     total_clashes = 0

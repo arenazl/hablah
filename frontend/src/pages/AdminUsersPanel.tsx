@@ -96,6 +96,9 @@ export default function AdminUsersPanel() {
   const [edit, setEdit] = useState<EditState | null>(null)
   const [pwdReset, setPwdReset] = useState<{ id: number; email: string } | null>(null)
   const [newPwd, setNewPwd] = useState('')
+  // Los niveles salen del catálogo (tabla levels), no de una lista fija: así los tracks nuevos
+  // (castellano ES1-ES3, fonética) aparecen acá sin tocar el front.
+  const [levels, setLevels] = useState<{ code: string; friendly_name: string }[]>([])
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -114,6 +117,20 @@ export default function AdminUsersPanel() {
   }, [])
 
   useEffect(() => { load() }, [load])
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const res = await fetch(`${API_BASE_URL}/levels`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (!res.ok) return
+        const rows = await res.json()
+        setLevels(rows.filter((l: { active: boolean }) => l.active))
+      } catch { /* sin catálogo el selector queda vacío; no rompe el panel */ }
+    })()
+  }, [])
 
   const filtered = useMemo(() => {
     const s = search.toLowerCase().trim()
@@ -306,9 +323,13 @@ export default function AdminUsersPanel() {
                 </select>
               </div>
               <div className="au-field">
-                <label>CEFR</label>
+                <label>Nivel</label>
                 <select value={edit.cefr_level} onChange={(e) => setEdit({ ...edit, cefr_level: e.target.value })}>
-                  {['A0','A1','A2','B1','B2','C1','C2'].map(l => <option key={l} value={l}>{l}</option>)}
+                  {(levels.length ? levels : [{ code: edit.cefr_level, friendly_name: '' }]).map(l => (
+                    <option key={l.code} value={l.code}>
+                      {l.friendly_name ? `${l.code} — ${l.friendly_name}` : l.code}
+                    </option>
+                  ))}
                 </select>
               </div>
               {edit.id && (
