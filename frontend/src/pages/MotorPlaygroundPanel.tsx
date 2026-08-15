@@ -116,31 +116,76 @@ function ownerOfSource(src: string): string {
   return 'runtime'
 }
 
-function ColoredXml({ prompt }: { prompt: string }) {
-  let section = ''
-  let lastOwner = ''
+/* Parser del prompt XML → árbol de secciones/campos/leyes para la vista Formateada. */
+type PField = { kind: 'field'; key: string; value: string; section: string }
+type PLaw = { kind: 'law'; n: string; text: string }
+type PSection = { kind: 'section'; tag: string; children: (PSection | PField | PLaw)[] }
+
+function parsePrompt(prompt: string): PSection {
+  const root: PSection = { kind: 'section', tag: 'root', children: [] }
+  const stack: PSection[] = [root]
+  let last: PField | PLaw | null = null
+  for (const raw of prompt.split('\n')) {
+    const line = raw.trim()
+    if (!line) continue
+    const top = stack[stack.length - 1]
+    const open = line.match(/^<([a-zA-Z_]+)>$/)
+    const close = line.match(/^<\/([a-zA-Z_]+)>$/)
+    if (open) { const n: PSection = { kind: 'section', tag: open[1], children: [] }; top.children.push(n); stack.push(n); last = null; continue }
+    if (close) { if (stack.length > 1) stack.pop(); last = null; continue }
+    const law = line.match(/^(\d+)\.\s+(.*)$/)
+    if (top.tag === 'conversation_laws' && law) { const l: PLaw = { kind: 'law', n: law[1], text: law[2] }; top.children.push(l); last = l; continue }
+    const field = line.match(/^([A-Za-z_]+):\s?(.*)$/)
+    if (field && top.tag !== 'conversation_laws') { const f: PField = { kind: 'field', key: field[1], value: field[2], section: top.tag }; top.children.push(f); last = f; continue }
+    if (last) { if (last.kind === 'law') last.text += ' ' + line; else last.value += ' ' + line } // continuación de línea larga
+  }
+  return root
+}
+
+/* Vista FORMATEADA (curada para leer): cards por sección, campos con badge del dueño,
+ * leyes como lista numerada. El contenido es idéntico al crudo — cambia la presentación. */
+function PromptPretty({ prompt }: { prompt: string }) {
+  const tree = useMemo(() => parsePrompt(prompt), [prompt])
+  const renderSection = (node: PSection, depth: number): React.ReactNode => {
+    if (node.tag === 'root') return node.children.map((ch, i) => ch.kind === 'section' ? <div key={i}>{renderSection(ch, 0)}</div> : null)
+    const laws = node.children.filter((c): c is PLaw => c.kind === 'law')
+    return (
+      <div style={{ background: depth === 0 ? C.bg : 'transparent', border: depth === 0 ? `1px solid ${C.border}` : 'none', borderRadius: 10, padding: depth === 0 ? '10px 12px' : '2px 0 2px 10px', marginBottom: depth === 0 ? 10 : 4, borderLeft: depth > 0 ? `2px solid ${C.border}` : undefined }}>
+        <div style={{ fontSize: depth === 0 ? 11.5 : 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.6, color: C.dim, marginBottom: 6, fontFamily: 'ui-monospace, monospace' }}>{node.tag}</div>
+        {laws.length > 0 && (
+          <ol style={{ margin: 0, paddingLeft: 22, display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {laws.map((l) => (
+              <li key={l.n} value={Number(l.n)} style={{ fontSize: 12.5, lineHeight: 1.5, color: C.fg }}>
+                <span style={{ borderLeft: `3px solid ${OWNERS.reglas.color}`, paddingLeft: 8, display: 'block' }}>{l.text}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+        {node.children.map((ch, i) => {
+          if (ch.kind === 'section') return <div key={i}>{renderSection(ch, depth + 1)}</div>
+          if (ch.kind === 'field') {
+            const owner = FIELD_OWNER[`${ch.section}.${ch.key}`] || 'template'
+            const ow = OWNERS[owner]
+            return (
+              <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 7, alignItems: 'flex-start' }}>
+                <span title={ow.label} style={{ flexShrink: 0, minWidth: 150, fontSize: 10.5, fontWeight: 800, color: ow.color, fontFamily: 'ui-monospace, monospace', paddingTop: 1, borderLeft: `3px solid ${ow.color}`, paddingLeft: 7 }}>{ch.key}</span>
+                <span style={{ fontSize: 12.5, lineHeight: 1.55, color: C.fg, whiteSpace: 'pre-wrap' }}>{ch.value}</span>
+              </div>
+            )
+          }
+          return null
+        })}
+      </div>
+    )
+  }
+  return <div>{renderSection(tree, 0)}</div>
+}
+
+/* Vista CRUDA: el texto LITERAL que recibe Gemini, byte a byte, sin decorar. */
+function PromptRaw({ prompt }: { prompt: string }) {
   return (
     <pre style={{ margin: 0, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '10px 12px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12, lineHeight: 1.55, fontFamily: 'ui-monospace, monospace', color: C.fg }}>
-      {prompt.split('\n').map((line, i) => {
-        const tag = line.match(/^\s*<\/?([a-zA-Z_]+)>\s*$/)
-        if (tag) {
-          if (!line.includes('</')) section = tag[1]
-          lastOwner = ''
-          return <div key={i} style={{ color: '#38bdf8', fontWeight: 700 }}>{line}</div>
-        }
-        const field = line.match(/^(\s*)([A-Za-z_]+):/)
-        let owner = ''
-        if (section === 'conversation_laws') owner = 'reglas'
-        else if (field) owner = FIELD_OWNER[`${section}.${field[2]}`] || ''
-        if (!owner && !field) owner = lastOwner
-        if (owner) lastOwner = owner
-        const col = owner ? OWNERS[owner]?.color : undefined
-        return (
-          <div key={i} style={{ borderLeft: `3px solid ${col || 'transparent'}`, paddingLeft: 8, marginLeft: 2 }}>
-            {field && col ? (<><span style={{ color: col, fontWeight: 700 }}>{line.slice(0, field[0].length)}</span>{line.slice(field[0].length)}</>) : line}
-          </div>
-        )
-      })}
+      {prompt}
     </pre>
   )
 }
@@ -300,17 +345,20 @@ const btnT = (on: boolean): React.CSSProperties => ({
 })
 
 function PromptProSection({ prompt, steps }: { prompt: string; steps: PromptStep[] }) {
-  const [view, setView] = useState<'xml' | 'flow'>('xml')
+  const [view, setView] = useState<'pretty' | 'raw' | 'flow'>('pretty')
   const [full, setFull] = useState(false)
   const content = (
-    <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14, ...(full ? { minHeight: '100%', display: 'flex', flexDirection: 'column' as const } : {}) }}>
+    <div style={full
+      ? { background: C.panel, padding: '10px 12px', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' as const }
+      : { background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 14 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ width: 9, height: 9, borderRadius: 999, background: C.accent }} />
           <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>Prompt Final Compilado (Gemini Live)</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-          <button onClick={() => setView('xml')} style={btnT(view === 'xml')}>XML coloreado</button>
+          <button onClick={() => setView('pretty')} style={btnT(view === 'pretty')}>Formateado</button>
+          <button onClick={() => setView('raw')} style={btnT(view === 'raw')} title="El texto LITERAL que recibe Gemini, byte a byte">Crudo (Gemini)</button>
           <button onClick={() => setView('flow')} style={btnT(view === 'flow')}>Mapa de nodos</button>
           <button onClick={() => { navigator.clipboard.writeText(prompt); toast.success('Prompt copiado al portapapeles') }} style={btnT(false)}>Copiar</button>
           <button onClick={() => setFull((v) => !v)} style={btnT(full)} title={full ? 'Salir de pantalla completa' : 'Pantalla completa'}>
@@ -326,13 +374,19 @@ function PromptProSection({ prompt, steps }: { prompt: string; steps: PromptStep
           </span>
         ))}
       </div>
-      {view === 'xml'
-        ? (<div style={{ maxHeight: full ? 'none' : 420, overflowY: 'auto' }}><ColoredXml prompt={prompt} /></div>)
-        : (<PromptFlow steps={steps} height={full ? 'calc(100vh - 200px)' : 460} />)}
+      {view === 'flow'
+        ? (<div style={full ? { flex: 1, minHeight: 0 } : {}}><PromptFlow steps={steps} height={full ? '100%' : 460} /></div>)
+        : (
+          <div style={full ? { flex: 1, minHeight: 0, overflowY: 'auto' } : { maxHeight: 460, overflowY: 'auto' }}>
+            {view === 'pretty' ? <PromptPretty prompt={prompt} /> : <PromptRaw prompt={prompt} />}
+          </div>
+        )}
     </div>
   )
   if (!full) return <div style={{ marginTop: 20 }}>{content}</div>
-  return <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: C.bg, padding: 16, overflow: 'auto' }}>{content}</div>
+  // Pantalla completa: layout flex sin chrome — el canvas cubre el 100% del viewport
+  // menos la barrita de header/leyenda, sin números mágicos (su alto puede variar).
+  return <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: C.bg, display: 'flex', flexDirection: 'column' }}>{content}</div>
 }
 
 export default function MotorPlaygroundPanel() {
