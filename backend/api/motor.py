@@ -190,13 +190,21 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
         max_level_order = 3 if code == "mini" else 5 if code == "junior" else 99
         bands.append({**b, "phase_group": phase_group, "max_level_order": max_level_order})
 
-    # 2. Niveles (levels)
+    # 2. Niveles (levels) — SOLO los activos, con su disciplina.
+    #    El probador filtraba por el prefijo del código ("FON..."); ahora la
+    #    disciplina es un campo y viaja como dato. Sin el filtro por active los
+    #    niveles ES1-3 (experimento ya revertido) seguían apareciendo.
     levels = _rows(await db.execute(text(
-        "SELECT code AS level_code, friendly_name AS label, id AS sort_order FROM levels ORDER BY id")))
+        "SELECT code AS level_code, friendly_name AS label, id AS sort_order, discipline "
+        "FROM levels WHERE active = 1 ORDER BY id")))
 
-    # 3. Tópicos (topics) — levels viaja para que el probador filtre por nivel elegido
+    # 3. Tópicos (topics) — levels viaja para que el probador filtre por nivel
+    #    elegido; la disciplina la hereda de su categoría (categories.discipline).
     db_topics = _rows(await db.execute(text(
-        "SELECT id AS topic_id, title, segmento, levels FROM topics WHERE is_active=1 ORDER BY title")))
+        "SELECT t.id AS topic_id, t.title, t.segmento, t.levels, t.category, "
+        "COALESCE(c.discipline, 'idiomas') AS discipline "
+        "FROM topics t LEFT JOIN categories c ON c.id = t.category_id "
+        "WHERE t.is_active = 1 ORDER BY t.title")))
 
     # 4. Alumnos (users)
     students = _rows(await db.execute(text(

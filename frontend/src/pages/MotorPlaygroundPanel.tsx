@@ -20,8 +20,15 @@ import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
-interface Level { level_code: string; label: string; sort_order: number }
-interface Topic { topic_id: number; title: string; segmento?: string; levels?: string[] }
+interface Level { level_code: string; label: string; sort_order: number; discipline?: string }
+
+/** Nombre lindo por disciplina. Si entra una nueva y no está acá, se muestra su
+ *  código tal cual — no rompe nada. */
+const DISCIPLINE_LABELS: Record<string, string> = {
+  idiomas: 'Idiomas',
+  fonetica: 'Fonética / Pronunciación',
+}
+interface Topic { topic_id: number; title: string; segmento?: string; levels?: string[]; category?: string; discipline?: string }
 interface Student { student_id: number; name: string; age?: number; level_code: string; age_group?: string }
 
 const C = {
@@ -433,6 +440,13 @@ export default function MotorPlaygroundPanel() {
   const [targetLang, setTargetLang] = useState('en')
   const [languages, setLanguages] = useState<{ code: string; label: string; name_native?: string }[]>([])
   const [topicId, setTopicId] = useState<number | undefined>()
+  // Categoría del tópico: el eje que antes venía disfrazado dentro de "Objetivo".
+  // '' = todas.
+  const [topicCat, setTopicCat] = useState<string>('')
+  // Disciplina: 'todos' o el valor de categories.discipline / levels.discipline.
+  // Es string libre a propósito — van a entrar cursos de otras disciplinas y no
+  // hay que volver a tocar este tipo cada vez.
+  const [discipline, setDiscipline] = useState<string>('idiomas')
   const [studentId, setStudentId] = useState<number | undefined>(undefined)
   const [profile, setProfile] = useState<{ student_id: number; name: string } | null>(null)
 
@@ -582,14 +596,19 @@ export default function MotorPlaygroundPanel() {
             title: t.title,
             segmento: t.segmento,
             levels: lv,
+            category: t.category || cat.name || cat.slug,
+            discipline: t.discipline,
           })
         })
       })
     })
     // Filtrar por segmento + NIVEL elegido (bug: el nivel no participaba y la lista
-    // no cambiaba nunca al mover Objetivo/Nivel). Tópico sin levels declarados = pasa.
+    // no cambiaba nunca al mover el nivel). Tópico sin levels declarados = pasa.
     return allTopics
       .filter((t) => {
+        // La disciplina es una constraint del catálogo: en fonética sólo entran
+        // sus tópicos; en el resto, los de esa disciplina.
+        if (discipline !== 'todos' && (t.discipline || 'idiomas') !== discipline) return false
         if (t.segmento) {
           const normSegmento = t.segmento === 'adultos' ? 'adult' : t.segmento
           if (normSegmento !== band) return false
@@ -598,7 +617,21 @@ export default function MotorPlaygroundPanel() {
         return true
       })
       .sort((a, b) => a.title.localeCompare(b.title))
-  }, [catalog, band, level])
+  }, [catalog, band, level, discipline])
+
+  // Categorías presentes en los tópicos ya filtrados por edad+nivel, con su
+  // conteo. Es el eje que antes estaba escondido dentro de "Objetivo".
+  const topicCategories = useMemo(() => {
+    const m = new Map<string, number>()
+    topics.forEach((t) => { const k = t.category || ''; if (k) m.set(k, (m.get(k) || 0) + 1) })
+    return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+  }, [topics])
+
+  // Tópicos que entran en el select, ya acotados por la categoría elegida
+  const topicsInCategory = useMemo(
+    () => (topicCat ? topics.filter((t) => (t.category || '') === topicCat) : topics),
+    [topics, topicCat],
+  )
 
   // Al cambiar la banda de edad (band) o el nivel, verificar si el tópico sigue siendo válido o seleccionar el primero
   useEffect(() => {
@@ -612,27 +645,37 @@ export default function MotorPlaygroundPanel() {
     }
   }, [band, level, topics, topicId])
 
-  const [discipline, setDiscipline] = useState<'ingles' | 'fonetica' | 'todos'>('ingles')
+
+  // La disciplina de cada nivel llega como DATO (levels.discipline). Antes se
+  // adivinaba con level_code.startsWith('FON'), que se rompía con cualquier
+  // disciplina nueva. El tope por edad sólo aplica a los niveles de idiomas:
+  // una disciplina como fonética tiene su propia progresión.
+  // Disciplinas existentes, derivadas de los niveles activos
+  const disciplines = useMemo(
+    () => [...new Set(levels.map((l) => l.discipline || 'idiomas'))].sort(),
+    [levels],
+  )
 
   const levelsForBand = useMemo(() => {
     const mx = bands.find((b) => b.code === band)?.max_level_order ?? 99
     return levels.filter((l) => {
-      const isFonetica = l.level_code.startsWith('FON')
-      if (discipline === 'fonetica') return isFonetica
-      if (discipline === 'ingles') return !isFonetica && l.sort_order <= mx
-      return l.sort_order <= mx
+      const d = l.discipline || 'idiomas'
+      if (discipline !== 'todos' && d !== discipline) return false
+      return d !== 'idiomas' || l.sort_order <= mx
     })
   }, [levels, bands, band, discipline])
 
-  const handleDisciplineChange = (newDisc: 'ingles' | 'fonetica' | 'todos') => {
+  const handleDisciplineChange = (newDisc: string) => {
     setDiscipline(newDisc)
-    if (newDisc === 'fonetica') {
-      setLevel('FONR')
-      const fonTopic = topics.find(t => t.title.toLowerCase().includes('ramón') || t.title.toLowerCase().includes('fonética'))
-      if (fonTopic) setTopicId(fonTopic.topic_id)
-    } else if (newDisc === 'ingles') {
-      if (level.startsWith('FON')) setLevel('A0')
-    }
+    if (newDisc === 'todos') return
+    // Si el nivel actual no pertenece a la disciplina elegida, saltar al primero
+    // que sí — sin nombrar ningún código a mano.
+    const first = levels.find((l) => (l.discipline || 'idiomas') === newDisc)
+    const current = levels.find((l) => l.level_code === level)
+    if (first && (current?.discipline || 'idiomas') !== newDisc) setLevel(first.level_code)
+    // Y lo mismo con el tópico: se elige por disciplina, no por su título.
+    const t = topics.find((x) => (x.discipline || 'idiomas') === newDisc)
+    if (t) setTopicId(t.topic_id)
   }
 
   useEffect(() => {
@@ -1050,11 +1093,12 @@ export default function MotorPlaygroundPanel() {
         {/* Dropdowns unificados */}
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8, alignItems: 'start' }}>
           <Ctx label="Disciplina">
-            {/* "Disciplina" es QUÉ se enseña (idioma con escala CEFR vs fonética), NO cuál idioma:
-                eso lo elige "Idioma de la clase". Antes decía "Inglés" y sonaba a que era el único. */}
-            <select style={sel} value={discipline} onChange={(e) => handleDisciplineChange(e.target.value as any)}>
-              <option value="ingles">Idiomas (niveles CEFR)</option>
-              <option value="fonetica">Fonética / Pronunciación</option>
+            {/* "Disciplina" es QUÉ se enseña, NO cuál idioma: eso lo elige "Idioma
+                de la clase". La lista sale de los datos (levels.discipline), así que
+                un curso nuevo aparece solo. Sin "CEFR": es jerga y quedaría mal con
+                idiomas no europeos — los niveles ya tienen nombre propio. */}
+            <select style={sel} value={discipline} onChange={(e) => handleDisciplineChange(e.target.value)}>
+              {disciplines.map((d) => <option key={d} value={d}>{DISCIPLINE_LABELS[d] || d}</option>)}
               <option value="todos">Todas las disciplinas</option>
             </select>
           </Ctx>
@@ -1067,8 +1111,9 @@ export default function MotorPlaygroundPanel() {
             </select>
           </Ctx>
           <Ctx label="Edad"><select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>{bands.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}</select></Ctx>
-          <Ctx label="Objetivo / Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levelsForBand.map((l) => <option key={l.level_code} value={l.level_code}>{l.label || l.level_code}</option>)}</select></Ctx>
-          <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topics.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
+          <Ctx label="Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levelsForBand.map((l) => <option key={l.level_code} value={l.level_code}>{l.label || l.level_code}</option>)}</select></Ctx>
+          <Ctx label="Categoría"><select style={sel} value={topicCat} onChange={(e) => setTopicCat(e.target.value)}><option value="">— Todas ({topics.length})</option>{topicCategories.map(([c, n]) => <option key={c} value={c}>{c} ({n})</option>)}</select></Ctx>
+          <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topicsInCategory.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
           <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— Perfil del nivel</option>{students.map((s) => <option key={s.student_id} value={s.student_id}>{s.name} ({s.level_code})</option>)}</select></Ctx>
         </div>
 
