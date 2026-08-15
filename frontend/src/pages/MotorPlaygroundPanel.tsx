@@ -181,11 +181,34 @@ function PromptPretty({ prompt }: { prompt: string }) {
   return <div>{renderSection(tree, 0)}</div>
 }
 
-/* Vista CRUDA: el texto LITERAL que recibe Gemini, byte a byte, sin decorar. */
+/* Vista CRUDA: el texto LITERAL que recibe Gemini, byte a byte — con la MISMA paleta
+ * de colores por dueño que usan la leyenda, el Formateado y el mapa de nodos (el
+ * resaltado no altera el contenido; es para identificar la sección de un vistazo). */
 function PromptRaw({ prompt }: { prompt: string }) {
+  let section = ''
+  let lastOwner = ''
   return (
     <pre style={{ margin: 0, background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '10px 12px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12, lineHeight: 1.55, fontFamily: 'ui-monospace, monospace', color: C.fg }}>
-      {prompt}
+      {prompt.split('\n').map((line, i) => {
+        const tag = line.match(/^\s*<\/?([a-zA-Z_]+)>\s*$/)
+        if (tag) {
+          if (!line.includes('</')) section = tag[1]
+          lastOwner = ''
+          return <div key={i} style={{ color: '#38bdf8', fontWeight: 700 }}>{line}</div>
+        }
+        const field = line.match(/^(\s*)([A-Za-z_]+):/)
+        let owner = ''
+        if (section === 'conversation_laws') owner = 'reglas'
+        else if (field) owner = FIELD_OWNER[`${section}.${field[2]}`] || ''
+        if (!owner && !field) owner = lastOwner
+        if (owner) lastOwner = owner
+        const col = owner ? OWNERS[owner]?.color : undefined
+        return (
+          <div key={i} style={{ borderLeft: `3px solid ${col || 'transparent'}`, paddingLeft: 8, marginLeft: 2 }}>
+            {field && col ? (<><span style={{ color: col, fontWeight: 700 }}>{line.slice(0, field[0].length)}</span>{line.slice(field[0].length)}</>) : line}
+          </div>
+        )
+      })}
     </pre>
   )
 }
