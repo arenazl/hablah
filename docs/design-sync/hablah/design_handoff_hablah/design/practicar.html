@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Practicar · elegir tópico — habláh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  main{padding-bottom:190px}
+  .greet{padding:14px 0 22px;max-width:880px}
+  .greet h1.title{font-size:46px;margin:8px 0 8px}
+  .greet .sub{font-size:15px;max-width:640px}
+
+  /* ===== QUICK START STRIP ===== */
+  .quick{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px;margin-bottom:24px}
+  .qc{position:relative;background:var(--surface);border:1px solid var(--border-1);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;min-height:120px;transition:all .18s var(--ease);cursor:pointer;text-align:left}
+  .qc:hover{border-color:var(--border-3);transform:translateY(-1px);box-shadow:var(--shadow-card)}
+  .qc .qe{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-3);font-weight:700;display:flex;align-items:center;gap:8px}
+  .qc h3{font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.015em;margin:0;color:var(--fg-1);line-height:1.2}
+  .qc p{margin:0;font-size:13px;color:var(--fg-3);line-height:1.4}
+  .qc .qa{margin-top:auto;display:flex;align-items:center;gap:10px}
+
+  .qc.featured{background:linear-gradient(160deg,#062B25 0%,#054A3A 50%,#00845C 100%);color:#fff;border-color:transparent;grid-row:span 1;position:relative;overflow:hidden}
+  .qc.featured::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.08),transparent 70%);pointer-events:none}
+  .qc.featured .qe{color:#7CE7BD}
+  .qc.featured h3{color:#fff;font-size:22px}
+  .qc.featured p{color:rgba(255,255,255,.7)}
+  .qc.featured .meta-row{display:flex;align-items:center;gap:14px;font-size:12px;color:rgba(255,255,255,.65);margin-top:4px}
+  .qc.featured .meta-row b{color:#fff;font-weight:600}
+  .qc.featured .dot-sep{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.4)}
+
+  .qc.surprise{background:linear-gradient(140deg,#FFFDF4,#FFF4D8);border-color:rgba(255,184,0,.3)}
+  .qc.surprise .qe{color:#8A6A00}
+  .qc.surprise .die{font-family:var(--font-display);font-weight:800;font-size:34px;color:#8A6A00;letter-spacing:-0.02em;line-height:1}
+
+  .qc.free .qe{color:var(--info)}
+  .qc.free .free-input{display:flex;align-items:center;gap:8px;background:var(--bg-2);border-radius:10px;padding:8px 12px;margin-top:auto}
+  .qc.free input{background:transparent;border:0;outline:0;font-size:13.5px;color:var(--fg-1);flex:1;font-family:var(--font-sans)}
+  .qc.free input::placeholder{color:var(--fg-4)}
+  .qc.free .send{width:30px;height:30px;border-radius:8px;background:var(--fg-1);color:#fff;display:grid;place-items:center;flex-shrink:0}
+
+  /* ===== FILTER BAR ===== */
+  .filterbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+  .fb-l{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .fc{height:34px;padding:0 12px;border-radius:var(--r-pill);background:transparent;border:1px solid var(--border-2);font-size:12.5px;font-weight:500;color:var(--fg-2);display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:all .15s var(--ease)}
+  .fc:hover{background:var(--bg-2)}
+  .fc.active{background:var(--fg-1);color:#fff;border-color:var(--fg-1)}
+  .fc .n{font-family:var(--font-display);font-weight:700;color:var(--fg-3);font-size:11px;background:var(--bg-2);padding:1px 6px;border-radius:99px;margin-left:2px}
+  .fc.active .n{background:rgba(255,255,255,.18);color:#fff}
+  .fc .dot{width:8px;height:8px;border-radius:50%}
+
+  .fb-r{display:flex;align-items:center;gap:8px}
+  .search-sm{display:flex;align-items:center;gap:8px;border:1px solid var(--border-2);background:var(--surface);height:34px;padding:0 12px;border-radius:10px;color:var(--fg-3);min-width:220px}
+  .search-sm input{border:0;outline:0;background:transparent;font-size:13px;color:var(--fg-1);flex:1}
+  .sort{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--border-2);background:var(--surface);border-radius:10px;font-size:12.5px;color:var(--fg-2);font-weight:500;cursor:pointer}
+  .sort:hover{background:var(--bg-2)}
+
+  /* ===== TOPIC GRID ===== */
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin:24px 0 12px}
+  .section-head h2{font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;margin:0;color:var(--fg-3)}
+  .section-head .mut{font-size:12px;color:var(--fg-4);font-weight:500}
+  .section-head .mut a{color:var(--green-700);font-weight:600}
+
+  .grid-topics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media (max-width:1280px){.grid-topics{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:980px){.grid-topics{grid-template-columns:repeat(2,1fr)}}
+
+  .tc{position:relative;background:var(--surface);border:1px solid var(--border-1);border-radius:14px;padding:0;display:flex;flex-direction:column;height:216px;cursor:pointer;transition:all .18s var(--ease);text-align:left;overflow:hidden}
+  .tc-media{position:relative;height:78px;flex-shrink:0;overflow:hidden}
+  .tc-media .glyph{position:absolute;right:-14px;bottom:-22px;width:104px;height:104px;opacity:.22;transform:rotate(-8deg)}
+  .tc-media .fade{position:absolute;left:0;right:0;bottom:0;height:44px;background:linear-gradient(180deg,transparent,var(--surface));pointer-events:none;z-index:1}
+  .tc-media .glyph svg{width:100%;height:100%;stroke-width:1.4}
+  .tc-body{display:flex;flex-direction:column;gap:8px;padding:12px 16px 14px;flex:1;min-height:0}
+  .tc .ico{position:absolute;left:14px;top:60px;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;box-shadow:0 4px 12px rgba(13,20,18,.14);border:2px solid var(--surface);z-index:3;background:var(--surface)}
+  .tc-body h4{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .tc-head{position:absolute;top:10px;right:12px;left:auto;z-index:2}
+  .tc-body .top-sp{height:18px}
+  .tc:hover{border-color:var(--border-3);transform:translateY(-1px);box-shadow:var(--shadow-card)}
+  .tc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .tc .ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+  .tc .ico svg{width:20px;height:20px;stroke-width:2.2}
+  .tc .rank{font-family:var(--font-display);font-weight:700;font-size:11px;background:#E6F7F0;color:var(--green-700);padding:3px 9px;border-radius:99px;letter-spacing:.02em;flex-shrink:0;font-feature-settings:"tnum";white-space:nowrap}
+  .tc .rank.new{background:#FFF7DD;color:#8A6A00}
+  .tc .rank.cold{background:var(--bg-2);color:var(--fg-4)}
+  .tc .cat{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;line-height:1}
+  .tc h4{font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:-0.01em;line-height:1.2;margin:0;color:var(--fg-1)}
+  .tc .tc-meta{margin-top:auto;display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--fg-3);font-weight:500}
+  .tc .tc-meta b{color:var(--fg-2);font-weight:600}
+  .tc .tc-meta .dot{width:2.5px;height:2.5px;border-radius:50%;background:var(--fg-4)}
+  .tc .difficulty{display:inline-flex;gap:2px}
+  .tc .difficulty i{width:9px;height:3px;border-radius:99px;background:var(--bg-3)}
+  .tc .difficulty i.on{background:var(--fg-2)}
+
+  /* category colors (icon bg / text) */
+  .cat-tec{background:#EEF2FF;color:#4338CA}
+  .cat-tec .cat,.tc.tec .cat{color:#4338CA}
+  .cat-arte{background:#F3E8FF;color:#7C3AED}
+  .tc.arte .cat{color:#7C3AED}
+  .cat-life{background:#FCE7F3;color:#BE185D}
+  .tc.life .cat{color:#BE185D}
+  .cat-dep{background:#FFEDD5;color:#C2410C}
+  .tc.dep .cat{color:#C2410C}
+  .cat-cien{background:#CFFAFE;color:#0E7490}
+  .tc.cien .cat{color:#0E7490}
+  .cat-via{background:#DBEAFE;color:#1D4ED8}
+  .tc.via .cat{color:#1D4ED8}
+  .cat-gas{background:#FFE4E6;color:#BE123C}
+  .tc.gas .cat{color:#BE123C}
+  .cat-arq{background:#E7EAEC;color:#334155}
+  .tc.arq .cat{color:#334155}
+
+  /* ACTIVE / SELECTED CARD */
+  .tc.active{background:linear-gradient(160deg,#00B37E 0%,#008F63 60%,#054A3A 100%);border-color:transparent;color:#fff;box-shadow:0 12px 28px rgba(0,143,99,.28)}
+  .tc.active .ico{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.18);color:#fff}
+  .tc.active .tc-media .glyph svg{stroke:#fff}
+  .tc.active .tc-media .glyph{opacity:.32}
+  .tc.active .tc-media .fade{background:linear-gradient(180deg,transparent,#00B37E)}
+  .tc.active h4,.tc.active .cat,.tc.active .tc-meta,.tc.active .tc-meta b{color:#fff}
+  .tc.active .cat{color:rgba(255,255,255,.7)}
+  .tc.active .ico{background:rgba(255,255,255,.15);color:#fff}
+  .tc.active .rank{background:rgba(255,255,255,.18);color:#fff}
+  .tc.active .tc-meta{color:rgba(255,255,255,.78)}
+  .tc.active .difficulty i{background:rgba(255,255,255,.25)}
+  .tc.active .difficulty i.on{background:#fff}
+  .tc.active::after{content:"";position:absolute;right:-30px;bottom:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.10),transparent 70%);pointer-events:none}
+
+  /* SELECTED FOOTER ACTION */
+  .selbar{position:fixed;bottom:18px;left:calc(240px + 32px);right:32px;max-width:calc(1440px - 240px - 64px);margin:0 auto;background:var(--fg-1);color:#fff;border-radius:16px;padding:12px 16px 12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;row-gap:10px;box-shadow:var(--shadow-float);z-index:50;container-type:inline-size;container-name:selbar}
+  .selbar .sel-ic{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.10);color:#fff;display:grid;place-items:center;flex-shrink:0}
+  .selbar .sel-text{min-width:0}
+  .selbar .sel-text .l{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);font-weight:700}
+  .selbar .sel-text .t{font-family:var(--font-display);font-weight:600;font-size:15px;letter-spacing:-0.005em;margin-top:2px;color:#fff}
+  .selbar .sel-text .t b{font-weight:700}
+  .selbar .sel-meta{display:flex;align-items:center;gap:14px;font-size:12px;color:rgba(255,255,255,.65);margin-left:8px}
+  .selbar .sel-meta b{color:#fff;font-weight:600}
+  .selbar .sel-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .selbar .change{height:38px;padding:0 14px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);color:#fff;font-size:13px;font-weight:500}
+  .selbar .change:hover{background:rgba(255,255,255,.12)}
+  .selbar .go{height:38px;padding:0 18px;border-radius:10px;background:var(--green);color:#fff;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+  .selbar .go:hover{background:var(--green-700)}
+
+  /* ===== interacción ===== */
+  .tc[hidden]{display:none}
+  .tc.dim{opacity:.35;filter:saturate(.4)}
+  .tc.roll{outline:2px solid var(--green);outline-offset:2px}
+  .empty-state{grid-column:1/-1;text-align:center;padding:38px 20px;color:var(--fg-3);font-size:13.5px;border:1px dashed var(--border-2);border-radius:14px}
+  .empty-state b{display:block;font-family:var(--font-display);font-size:15px;color:var(--fg-1);margin-bottom:4px}
+  .fc kbd{font-family:var(--font-sans);font-size:10px;border:1px solid var(--border-2);border-radius:4px;padding:0 4px;color:var(--fg-4)}
+  .selbar .sel-text{min-width:220px;max-width:360px;flex:1 1 auto}
+  .selbar .sel-text .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .selbar .sel-actions{flex-shrink:0}
+  .selbar .sel-meta{flex-shrink:0;white-space:nowrap}
+  .selbar .sel-prev{font-size:11.5px;color:rgba(255,255,255,.55);margin-top:3px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .selbar .opts{display:flex;align-items:center;gap:6px;margin-left:8px;flex:0 1 auto;min-width:0;flex-wrap:wrap}
+  .selbar .opt{height:28px;padding:0 10px;border-radius:99px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);font-size:11.5px;font-weight:600;border:0;cursor:pointer}
+  .selbar .opt.on{background:#7CE7BD;color:#04231D}
+  .selbar .optlbl{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;margin-left:6px}
+  @keyframes selpulse{0%{box-shadow:0 0 0 0 rgba(0,179,126,.45)}100%{box-shadow:0 0 0 14px rgba(0,179,126,0)}}
+  .selbar.pulse{animation:selpulse .5s var(--ease)}
+  .qc.surprise.rolling .die{animation:spin .5s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .qc.surprise .die{display:inline-block}
+  .res-count{font-size:12px;color:var(--fg-4);font-weight:500}
+
+  /* ===== controles: una sola fila que se adapta ===== */
+  .controls{container-type:inline-size;container-name:ctrl;background:var(--surface);border:1px solid var(--border-1);border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow-card)}
+  .ctrl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ctrl-row .search-sm{flex:1 1 240px;min-width:180px}
+  .chips-scroll{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;overflow-y:hidden;padding-bottom:4px;scrollbar-width:none;margin-top:10px;align-items:center}
+  .chips-scroll::-webkit-scrollbar{display:none}
+  .chips-scroll.expanded{flex-wrap:wrap;overflow:visible;mask-image:none}
+  .chips-scroll .fico{width:28px;height:28px;flex-shrink:0;display:grid;place-items:center;color:var(--fg-4)}
+  .fc svg.ci{width:13px;height:13px;flex-shrink:0}
+  .fc.more{border-style:dashed;color:var(--fg-3);font-weight:700}
+  .fc{flex-shrink:0}
+  .quick-f{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+  .qf{height:30px;padding:0 11px;border-radius:99px;border:1px dashed var(--border-3);background:transparent;font-size:12px;font-weight:600;color:var(--fg-2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .qf:hover{background:var(--bg-2)}
+  .qf.on{background:var(--green-050,#E6F7F0);border-style:solid;border-color:var(--green);color:var(--green-700)}
+  .qf i{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.55}
+  .ctrl-lbl{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-4);margin-right:2px}
+  select.sortsel{height:34px;border:1px solid var(--border-2);background:var(--surface);border-radius:10px;font:inherit;font-size:12.5px;color:var(--fg-2);padding:0 8px}
+  @container ctrl (max-width:620px){.ctrl-lbl{display:none}}
+
+  /* ===== copiloto de elección ===== */
+  .copilot{background:linear-gradient(150deg,#F4F9F7,#EAF6F1);border:1px solid rgba(0,179,126,.28);border-radius:16px;padding:16px 18px;margin-bottom:18px}
+  [data-theme="dark"] .copilot{background:linear-gradient(150deg,#0F1A17,#11201B)}
+  .copilot .cp-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .copilot .cp-head h3{line-height:1.3}
+  .copilot p.cp-sub{font-size:12.5px;color:var(--fg-3);margin:3px 0 0;max-width:620px;line-height:1.45}
+  .copilot .cp-head .av{width:30px;height:30px;border-radius:9px;background:var(--green);color:#fff;display:grid;place-items:center;flex-shrink:0}
+  .copilot h3{font-family:var(--font-display);font-weight:700;font-size:15px;margin:0}
+  .copilot p.cp-sub-old{display:none}
+  .cp-input{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border-2);border-radius:11px;padding:8px 10px 8px 12px}
+  .cp-input input{flex:1;border:0;outline:0;background:transparent;font:inherit;font-size:13.5px;color:var(--fg-1)}
+  .cp-input button{height:32px;padding:0 14px;border-radius:9px;background:var(--fg-1);color:#fff;font-weight:700;font-size:12.5px;border:0;cursor:pointer;flex-shrink:0}
+  .cp-moods{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .cp-moods button{height:32px;padding:0 12px;border-radius:99px;background:var(--surface);border:1px solid var(--border-2);font-size:12px;font-weight:600;color:var(--fg-2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .cp-moods button svg{width:13px;height:13px}
+  .cp-moods button:hover{border-color:var(--green);color:var(--green-700)}
+  .cp-out{margin-top:14px;display:none;flex-direction:column;gap:8px}
+  .cp-picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+  .cp-pick{flex-direction:column;align-items:flex-start;gap:6px}
+  .cp-pick .go2{align-self:flex-end;margin-top:auto}
+  .cp-out.show{display:flex}
+  .cp-line{font-size:12.5px;color:var(--fg-2);line-height:1.5}
+  .cp-pick{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border-1);border-radius:12px;padding:11px 13px;cursor:pointer;text-align:left;width:100%}
+  .cp-pick:hover{border-color:var(--green)}
+  .cp-pick .n{width:22px;height:22px;border-radius:7px;background:var(--bg-2);color:var(--fg-3);display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:11px;flex-shrink:0}
+  .cp-pick .b{flex:1;min-width:0}
+  .cp-pick .b .t{font-weight:700;font-size:13.5px;display:block}
+  .cp-pick .b .w{font-size:12px;color:var(--fg-3);margin-top:2px;display:block;line-height:1.4}
+  .cp-pick .go2{font-size:12px;font-weight:700;color:var(--green-700);flex-shrink:0}
+  .cp-typing{display:inline-flex;gap:3px;align-items:center}
+  .cp-typing i{width:5px;height:5px;border-radius:50%;background:var(--green);animation:cpb 1s infinite}
+  .cp-typing i:nth-child(2){animation-delay:.15s}.cp-typing i:nth-child(3){animation-delay:.3s}
+  @keyframes cpb{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+  /* el control se adapta a SU propio ancho, no al del viewport */
+  @container selbar (max-width:1150px){.selbar .optlbl{display:none}}
+  @container selbar (max-width:1000px){.selbar .sel-prev{display:none}}
+  @container selbar (max-width:880px){.selbar .opts{display:none}}
+  @container selbar (max-width:700px){.selbar .sel-meta{display:none}}
+  @container selbar (max-width:520px){.selbar .change{display:none}.selbar .sel-text{min-width:120px}}
+  @media (max-width:1000px){.selbar{left:16px;right:16px}}
+
+</style>
+<link href="embed.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+    </div>
+    <nav class="nav">
+      <a href="Hoy.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>Hoy</a>
+      <a href="Practicar.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>Practicar<span class="pill">DAILY</span></a>
+      <a href="Mapa.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>Mapa de progreso</a>
+      <a href="Historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historial</a>
+      <a href="Perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Perfil</a>
+    </nav>
+
+    <div class="side-section">
+      <div class="label">Tu progreso</div>
+      <div class="level-row"><span class="nivel">Nivel</span><span class="b2">B2</span></div>
+      <div class="level-bar"><i style="width:62%"></i></div>
+      <div class="level-hint">62% hasta C1</div>
+    </div>
+
+    <div class="side-section">
+      <div class="label">Tutor activo</div>
+      <div style="font-family:var(--font-display);font-weight:700;color:#fff;font-size:13px">The Sincerist</div>
+      <div style="font-size:11.5px;color:#7A8480;margin-top:2px">Rigurosidad 4/5 · Sin interrupciones</div>
+      <a href="Perfil.html" style="font-size:11.5px;color:#7CE7BD;font-weight:600;margin-top:6px;display:inline-block">cambiar →</a>
+    </div>
+
+    <div class="side-user">
+      <div class="avatar">L</div>
+      <div class="meta"><span class="name">Lautaro M.</span><span class="plan">Plan pro</span></div>
+      <button class="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg></button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div class="crumbs">Practicar <span>· elegir tópico</span></div>
+      <div class="top-actions">
+        <span class="streak-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB800" stroke="#7A5800" stroke-width="1.4" stroke-linejoin="round"><path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/></svg> 12 días</span>
+        <button class="icon-btn" title="Notificaciones"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="dot"></span></button>
+      </div>
+    </header>
+
+    <section class="greet">
+      <div class="eyebrow">¿Listo, Lautaro?</div>
+      <h1 class="title">¿De qué <em>charlamos</em> hoy?</h1>
+      <p class="sub">Elegí un tópico de tus intereses, dejá que te sorprendamos, o tirá un tema libre. La sesión arranca cuando tocás <b>empezar charla</b>.</p>
+    </section>
+
+    <!-- QUICK START STRIP -->
+    <section class="quick">
+      <button class="qc featured">
+        <div class="qe">
+          <span class="live-dot" style="background:#7CE7BD"></span>
+          Recomendado para hoy
+        </div>
+        <h3>Música electrónica · UK Garage</h3>
+        <p>Tu tópico #3 — sin tocar hace 4 días. Te puede ayudar a forzar <b style="color:#FFE9A6;font-weight:600">verbos irregulares en pasado simple</b>.</p>
+        <div class="meta-row">
+          <span>~7 min</span>
+          <span class="dot-sep"></span>
+          <span><b>B2</b></span>
+          <span class="dot-sep"></span>
+          <span>The Sincerist</span>
+          <span class="dot-sep"></span>
+          <span style="color:#FFE9A6">misión de rescate</span>
+        </div>
+      </button>
+
+      <button class="qc surprise">
+        <div class="qe"><span class="die">🎲</span> Sorprendeme</div>
+        <h3>Tópico al azar de tus #20</h3>
+        <p>Te tiro un tópico que casi no tocás. Buena forma de salir de la zona de confort.</p>
+      </button>
+
+      <div class="qc free">
+        <div class="qe">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Tema libre
+        </div>
+        <h3>Decí de qué querés hablar</h3>
+        <div class="free-input">
+          <input placeholder="ej. mi último viaje a Berlín…" />
+          <button class="send" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- COPILOTO DE ELECCIÓN -->
+    <div class="copilot">
+      <div class="cp-head">
+        <span class="av"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg></span>
+        <div><h3>¿No sabés qué elegir? Contame cómo venís hoy</h3>
+        <p class="cp-sub">Te propongo tres tópicos con el motivo: mira tu historial, tus errores abiertos y el tiempo que tengas.</p></div>
+      </div>
+      <div class="cp-input">
+        <input id="cpInput" placeholder="ej. tengo 10 minutos y quiero algo que me haga pensar" />
+        <button id="cpGo" type="button">Recomendame</button>
+      </div>
+      <div class="cp-moods" id="cpMoods"></div>
+      <div class="cp-out" id="cpOut"></div>
+    </div>
+
+    <!-- CONTROLES -->
+    <div class="controls">
+      <div class="ctrl-row">
+        <div class="search-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="tsearch" placeholder="Buscar tópico, categoría…  (/)" />
+        </div>
+        <span class="ctrl-lbl">Orden</span>
+        <select class="sortsel" id="sortSel"></select>
+        <span class="ctrl-lbl">Ver</span>
+        <select class="sortsel" id="viewSel">
+          <option value="20">Tus 20 tópicos</option>
+          <option value="cat">Catálogo completo (94)</option>
+        </select>
+      </div>
+      <div class="quick-f" id="quickF">
+        <span class="ctrl-lbl">Atajos</span>
+      </div>
+      <div class="chips-scroll" id="chipsScroll"></div>
+    </div>
+
+    <!-- SECTION: TUS INTERESES -->
+    <div class="section-head">
+      <h2>Tus intereses</h2>
+      <div class="mut"><span class="res-count" id="resCount"></span> · orden: <span id="sortNote">tu preferencia</span> · <a href="Perfil.html">editalos en perfil</a></div>
+    </div>
+
+    <div class="grid-topics">
+
+      <!-- ACTIVE CARD: this is what the user just picked -->
+      <button class="tc active arte">
+        <div class="tc-head">
+          <div class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <span class="rank">#3 · elegido</span>
+        </div>
+        <div>
+          <div class="cat">Arte</div>
+          <h4>Música electrónica · UK Garage</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>B2</b></span>
+          <span class="dot"></span>
+          <span>misión de rescate</span>
+          <span class="dot"></span>
+          <span class="difficulty"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>
+        </div>
+      </button>
+
+      <!-- #1 -->
+      <button class="tc tec">
+        <div class="tc-head">
+          <div class="ico cat-tec">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <span class="rank">#1</span>
+        </div>
+        <div>
+          <div class="cat">Tecnología</div>
+          <h4>Arquitectura de software</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>8 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 2 días</span>
+        </div>
+      </button>
+
+      <!-- #2 -->
+      <button class="tc arte">
+        <div class="tc-head">
+          <div class="ico cat-arte">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <span class="rank">#2</span>
+        </div>
+        <div>
+          <div class="cat">Arte</div>
+          <h4>Producción musical · Ableton</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>5 charlas</b></span>
+          <span class="dot"></span>
+          <span>ayer</span>
+        </div>
+      </button>
+
+      <!-- #4 -->
+      <button class="tc life">
+        <div class="tc-head">
+          <div class="ico cat-life">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a4 4 0 0 1 8 0c0 4-8 8-8 8s-8-4-8-8a4 4 0 0 1 8 0"/></svg>
+          </div>
+          <span class="rank">#4</span>
+        </div>
+        <div>
+          <div class="cat">Lifestyle</div>
+          <h4>Viajes · aeropuertos en horarios pico</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>3 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 1 semana</span>
+        </div>
+      </button>
+
+      <!-- #5 -->
+      <button class="tc tec">
+        <div class="tc-head">
+          <div class="ico cat-tec">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <span class="rank">#5</span>
+        </div>
+        <div>
+          <div class="cat">Tecnología</div>
+          <h4>IA generativa · ética</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>4 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 3 días</span>
+        </div>
+      </button>
+
+      <!-- #6 -->
+      <button class="tc arte">
+        <div class="tc-head">
+          <div class="ico cat-arte">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <span class="rank">#6</span>
+        </div>
+        <div>
+          <div class="cat">Arte</div>
+          <h4>Videojuegos · indie y AAA</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>3 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 5 días</span>
+        </div>
+      </button>
+
+      <!-- #7 -->
+      <button class="tc life">
+        <div class="tc-head">
+          <div class="ico cat-life">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M18 3v18M3 8h18M3 16h18"/></svg>
+          </div>
+          <span class="rank">#7</span>
+        </div>
+        <div>
+          <div class="cat">Lifestyle</div>
+          <h4>Entrenamiento de fuerza · powerlifting</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>6 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 2 días</span>
+        </div>
+      </button>
+
+      <!-- #8 -->
+      <button class="tc dep">
+        <div class="tc-head">
+          <div class="ico cat-dep">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0v3a6 6 0 0 1-12 0z"/><path d="M6 9H3M21 9h-3M12 15v6M9 21h6"/></svg>
+          </div>
+          <span class="rank">#8</span>
+        </div>
+        <div>
+          <div class="cat">Deportes</div>
+          <h4>Fútbol · mundiales y selecciones</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>2 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 2 semanas</span>
+        </div>
+      </button>
+
+      <!-- #9 -->
+      <button class="tc dep">
+        <div class="tc-head">
+          <div class="ico cat-dep">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17a7 7 0 0 1 14 0"/><circle cx="12" cy="8" r="3"/><path d="M5 21h14"/></svg>
+          </div>
+          <span class="rank">#9</span>
+        </div>
+        <div>
+          <div class="cat">Deportes</div>
+          <h4>Fórmula 1 y automovilismo</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>2 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 1 mes</span>
+        </div>
+      </button>
+
+      <!-- #10 -->
+      <button class="tc life">
+        <div class="tc-head">
+          <div class="ico cat-life">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <span class="rank">#10</span>
+        </div>
+        <div>
+          <div class="cat">Lifestyle</div>
+          <h4>Nutrición · dietas y mitos</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>1 charla</b></span>
+          <span class="dot"></span>
+          <span>nunca</span>
+        </div>
+      </button>
+
+      <!-- #11 -->
+      <button class="tc dep">
+        <div class="tc-head">
+          <div class="ico cat-dep">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17a7 7 0 0 1 14 0"/><circle cx="12" cy="8" r="3"/><path d="M5 21h14"/></svg>
+          </div>
+          <span class="rank">#11</span>
+        </div>
+        <div>
+          <div class="cat">Deportes</div>
+          <h4>Running · entrenamiento y maratones</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>3 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 3 días</span>
+        </div>
+      </button>
+
+      <!-- #12 -->
+      <button class="tc dep">
+        <div class="tc-head">
+          <div class="ico cat-dep">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0v3a6 6 0 0 1-12 0z"/><path d="M6 9H3M21 9h-3M12 15v6M9 21h6"/></svg>
+          </div>
+          <span class="rank">#12</span>
+        </div>
+        <div>
+          <div class="cat">Deportes</div>
+          <h4>Tenis · Grand Slam y rivalidades</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>1 charla</b></span>
+          <span class="dot"></span>
+          <span>hace 2 meses</span>
+        </div>
+      </button>
+
+      <!-- #13 -->
+      <button class="tc gas">
+        <div class="tc-head">
+          <div class="ico cat-gas">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 2v4M10 2v4M14 2v4"/></svg>
+          </div>
+          <span class="rank">#13</span>
+        </div>
+        <div>
+          <div class="cat">Gastronomía</div>
+          <h4>Café de especialidad · v60, espresso</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>4 charlas</b></span>
+          <span class="dot"></span>
+          <span>ayer</span>
+        </div>
+      </button>
+
+      <!-- #14 -->
+      <button class="tc cien">
+        <div class="tc-head">
+          <div class="ico cat-cien">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg>
+          </div>
+          <span class="rank">#14</span>
+        </div>
+        <div>
+          <div class="cat">Ciencia</div>
+          <h4>Biología · evolución y genética</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>2 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 1 semana</span>
+        </div>
+      </button>
+
+      <!-- #15 -->
+      <button class="tc arte">
+        <div class="tc-head">
+          <div class="ico cat-arte">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <span class="rank">#15</span>
+        </div>
+        <div>
+          <div class="cat">Arte</div>
+          <h4>Rock clásico · 70s a 90s</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>2 charlas</b></span>
+          <span class="dot"></span>
+          <span>hace 10 días</span>
+        </div>
+      </button>
+
+      <!-- #16 -->
+      <button class="tc via">
+        <div class="tc-head">
+          <div class="ico cat-via">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+          </div>
+          <span class="rank">#16</span>
+        </div>
+        <div>
+          <div class="cat">Viajes</div>
+          <h4>Japón · cultura y tradiciones</h4>
+        </div>
+        <div class="tc-meta">
+          <span><b>1 charla</b></span>
+          <span class="dot"></span>
+          <span>nunca</span>
+        </div>
+      </button>
+
+      <!-- #17 -->
+      <button class="tc arq">
+        <div class="tc-head">
+          <div class="ico cat-arq">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h6"/></svg>
+          </div>
+          <span class="rank cold">#17</span>
+        </div>
+        <div>
+          <div class="cat">Arquitectura</div>
+          <h4>Hormigón visto · arquitectura residencial</h4>
+        </div>
+        <div class="tc-meta">
+          <span>nunca tocado</span>
+        </div>
+      </button>
+
+      <!-- #18 -->
+      <button class="tc tec">
+        <div class="tc-head">
+          <div class="ico cat-tec">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/></svg>
+          </div>
+          <span class="rank cold">#18</span>
+        </div>
+        <div>
+          <div class="cat">Tecnología</div>
+          <h4>Metodologías ágiles · scrum y kanban</h4>
+        </div>
+        <div class="tc-meta">
+          <span>nunca tocado</span>
+        </div>
+      </button>
+
+      <!-- #19 -->
+      <button class="tc gas">
+        <div class="tc-head">
+          <div class="ico cat-gas">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/></svg>
+          </div>
+          <span class="rank new">#19 · nuevo</span>
+        </div>
+        <div>
+          <div class="cat">Gastronomía</div>
+          <h4>Vinos · cepas y maridajes</h4>
+        </div>
+        <div class="tc-meta">
+          <span style="color:#8A6A00">recién sumado</span>
+        </div>
+      </button>
+
+      <!-- #20 -->
+      <button class="tc cien">
+        <div class="tc-head">
+          <div class="ico cat-cien">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6L4 17a3 3 0 0 0 3 4h10a3 3 0 0 0 3-4L15 8V2"/><path d="M9 2h6M7 14h10"/></svg>
+          </div>
+          <span class="rank new">#20 · nuevo</span>
+        </div>
+        <div>
+          <div class="cat">Ciencia</div>
+          <h4>Física cuántica para curiosos</h4>
+        </div>
+        <div class="tc-meta">
+          <span style="color:#8A6A00">recién sumado</span>
+        </div>
+      </button>
+
+    </div>
+
+    <!-- LOAD MORE -->
+    <div style="display:flex;justify-content:center;margin-top:18px">
+      <button class="btn btn-ghost">Explorar el catálogo completo →</button>
+    </div>
+
+    <!-- SELECTION FOOTER -->
+    <div class="selbar">
+      <div class="sel-ic">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </div>
+      <div class="sel-text">
+        <div class="l">Tópico elegido</div>
+        <div class="t" id="selTitle">Música electrónica · <b>UK Garage</b></div>
+        <div class="sel-prev" id="selPrev"></div>
+      </div>
+      <div class="sel-meta" id="selMeta">
+        <span>The Sincerist</span>
+        <span style="opacity:.4">·</span>
+        <span><b>B2</b> · <span id="selMin">7</span> min</span>
+        <span style="opacity:.4">·</span>
+        <span id="selTag" style="color:#FFE9A6">misión de rescate</span>
+      </div>
+      <div class="opts">
+        <span class="optlbl">Duración</span>
+        <button class="opt" data-min="5">5′</button>
+        <button class="opt on" data-min="7">7′</button>
+        <button class="opt" data-min="12">12′</button>
+        <span class="optlbl">Ritmo</span>
+        <button class="opt on" data-cad="Sobremesa">Sobremesa</button>
+        <button class="opt" data-cad="Ping-pong">Ping-pong</button>
+        <button class="opt" data-cad="Debate">Debate</button>
+      </div>
+      <div class="sel-actions">
+        <button class="change">Cambiar tutor</button>
+        <a href="Charla.html" class="go">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+          Empezar charla
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="practicar.js?v=8"></script>
+<script src="embed.js"></script>
+</body>
+</html>

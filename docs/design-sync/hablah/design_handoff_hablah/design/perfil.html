@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Perfil — habláh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  /* === PROFILE PAGE === */
+  .pgrid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px}
+  @media (max-width:1100px){.pgrid{grid-template-columns:1fr}}
+
+  /* LEFT — identity */
+  .id-card{position:sticky;top:80px;align-self:start;background:linear-gradient(180deg,#062B25,#054A3A);color:#fff;border-radius:16px;padding:22px 20px;overflow:hidden}
+  .id-card::after{content:"";position:absolute;right:-60px;bottom:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(0,179,126,.22),transparent 70%);pointer-events:none}
+  .id-card .av{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#FFB800,#FF6A3D);display:grid;place-items:center;color:#1B0E00;font-family:var(--font-display);font-weight:800;font-size:30px;letter-spacing:-0.02em;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);position:relative;z-index:1}
+  .id-card .name{font-family:var(--font-display);font-weight:700;letter-spacing:-0.01em;font-size:22px;margin-top:14px;color:#fff;position:relative;z-index:1}
+  .id-card .email{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;position:relative;z-index:1}
+  .id-card .id-meta{display:flex;flex-direction:column;gap:8px;margin-top:18px;position:relative;z-index:1}
+  .id-card .idm{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;font-size:12.5px;color:rgba(255,255,255,.75)}
+  .id-card .idm b{font-family:var(--font-display);font-weight:700;color:#fff}
+  .id-card .idm .nivel{color:#7CE7BD;background:rgba(0,179,126,.18);padding:2px 8px;border-radius:6px;font-family:var(--font-display);font-weight:700;font-size:12px}
+  .id-card .id-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px;position:relative;z-index:1}
+  .id-card .id-actions button{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);color:#fff;height:38px;border-radius:10px;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+  .id-card .id-actions button:hover{background:rgba(255,255,255,.12)}
+
+  /* RIGHT — sections */
+  .sec{background:var(--surface);border:1px solid var(--border-1);border-radius:14px;padding:22px 24px;margin-bottom:16px}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;gap:14px}
+  .sec-head h2{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:-0.015em;margin:0;color:var(--fg-1)}
+  .sec-head .desc{font-size:13px;color:var(--fg-3);max-width:380px;text-align:right}
+
+  /* INTERESTS */
+  .ints-row{display:flex;align-items:flex-start;gap:24px}
+  .ints-row .left{flex:1}
+  .ints-row .right{width:260px;flex-shrink:0;background:var(--bg-2);border-radius:12px;padding:14px;border:1px solid var(--border-1)}
+  .ints-row .right h4{font-family:var(--font-display);font-weight:700;font-size:13px;margin:0 0 8px;letter-spacing:-0.005em}
+  .ints-row .right p{font-size:12px;color:var(--fg-3);margin:0 0 10px;line-height:1.5}
+  .ints-row .right .btn{width:100%}
+
+  .ints-cat{margin-bottom:14px}
+  .ints-cat .ct{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+  .ints-cat .ct .nm{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--fg-3)}
+  .ints-cat .ct .cnt{font-size:11px;color:var(--fg-4);font-weight:600}
+  .ints-cat .ct .add{margin-left:auto;font-size:11.5px;color:var(--green-700);font-weight:600}
+  .ints-cat .tag-list{display:flex;flex-wrap:wrap;gap:6px}
+  .tag.active{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}
+  .tag.active::after{content:"×";margin-left:6px;font-weight:700;opacity:.7}
+
+  /* TEMPLATE CARDS */
+  .templates{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .tpl{background:var(--surface);border:1px solid var(--border-2);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:all .18s var(--ease);text-align:left;min-height:200px;position:relative}
+  .tpl:hover{border-color:var(--border-3);transform:translateY(-1px)}
+  .tpl-head{display:flex;align-items:center;gap:10px}
+  .tpl-av{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:15px;flex-shrink:0}
+  .tpl.sincerist .tpl-av{background:linear-gradient(135deg,#FFB800,#FF6A3D);color:#1B0E00}
+  .tpl.coach .tpl-av{background:linear-gradient(135deg,#5EE0B0,var(--green));color:#06321F}
+  .tpl.arcade .tpl-av{background:linear-gradient(135deg,#EC4899,#7C3AED);color:#fff}
+  .tpl h4{font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.01em;margin:0;line-height:1.15}
+  .tpl .role{font-size:11px;color:var(--fg-3);font-weight:500;margin-top:1px;text-transform:uppercase;letter-spacing:.06em}
+  .tpl p{font-size:12.5px;color:var(--fg-2);margin:0;line-height:1.45}
+  .tpl .meters{display:flex;flex-direction:column;gap:4px;margin-top:auto;padding-top:6px}
+  .tpl .meter-r{display:grid;grid-template-columns:80px 1fr auto;gap:8px;align-items:center;font-size:11px;color:var(--fg-3)}
+  .tpl .meter-r .bar{height:4px;border-radius:99px;background:var(--bg-2);overflow:hidden}
+  .tpl .meter-r .bar i{display:block;height:100%;border-radius:99px}
+  .tpl .meter-r b{font-family:var(--font-display);font-weight:700;color:var(--fg-1);font-size:11.5px}
+  .tpl.sincerist.selected{border-color:var(--amber);background:linear-gradient(180deg,#FFFDF4,#FFF7DD);box-shadow:0 0 0 4px rgba(255,184,0,.12)}
+  .tpl.selected::after{content:"activo";position:absolute;top:14px;right:14px;font-size:10px;font-weight:800;color:#3A2A00;background:var(--amber);padding:2px 8px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase}
+
+  /* VOICE settings */
+  .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .setting{display:flex;flex-direction:column;gap:8px}
+  .setting .slabel{font-size:11.5px;font-weight:600;color:var(--fg-2);display:flex;align-items:center;gap:6px}
+  .setting .sdesc{font-size:11.5px;color:var(--fg-3);margin-top:-4px}
+  .setting select,.setting input[type=text]{height:38px;padding:0 12px;border:1px solid var(--border-2);border-radius:10px;background:var(--surface);font-family:var(--font-sans);font-size:13.5px;color:var(--fg-1);outline:0;cursor:pointer}
+  .setting select:hover,.setting input[type=text]:hover{border-color:var(--border-3)}
+
+  .accent-row{display:flex;gap:8px;flex-wrap:wrap}
+  .accent{padding:8px 14px;border-radius:10px;border:1px solid var(--border-2);background:var(--surface);font-size:13px;font-weight:500;color:var(--fg-2);display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:all .15s var(--ease)}
+  .accent:hover{background:var(--bg-2)}
+  .accent.on{background:var(--fg-1);color:#fff;border-color:var(--fg-1)}
+  .accent .flag{font-size:14px}
+
+  /* TOGGLES */
+  .row-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px dashed var(--border-1)}
+  .row-toggle:last-child{border-bottom:0}
+  .row-toggle .info h4{font-family:var(--font-display);font-weight:700;font-size:14px;margin:0;color:var(--fg-1)}
+  .row-toggle .info p{font-size:12.5px;color:var(--fg-3);margin:2px 0 0;max-width:560px}
+  .toggle{position:relative;width:42px;height:24px;border-radius:99px;background:var(--bg-3);cursor:pointer;transition:background .2s var(--ease);flex-shrink:0}
+  .toggle::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:all .2s var(--ease);box-shadow:var(--shadow-soft)}
+  .toggle.on{background:var(--green)}
+  .toggle.on::after{left:21px}
+
+  /* danger zone */
+  .danger-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1px solid #FECDD3;border-radius:12px;background:#FEF2F3;margin-top:8px}
+  .danger-row h4{font-family:var(--font-display);font-weight:700;font-size:14px;color:#9A2D31;margin:0}
+  .danger-row p{font-size:12.5px;color:#7A2326;margin:2px 0 0}
+  .danger-row button{background:#fff;border:1px solid #FECDD3;color:#9A2D31;height:36px;padding:0 14px;border-radius:10px;font-weight:600;font-size:13px}
+  .danger-row button:hover{background:#FEF2F3;border-color:#E5484D}
+</style>
+<link href="embed.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">h</div><div class="brand-name">habláh</div></div>
+    <nav class="nav">
+      <a href="Hoy.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>Hoy</a>
+      <a href="Practicar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>Practicar<span class="pill">DAILY</span></a>
+      <a href="Mapa.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>Mapa de progreso</a>
+      <a href="Historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historial</a>
+      <a href="Perfil.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Perfil<span class="pill dot"></span></a>
+    </nav>
+
+    <div class="side-section">
+      <div class="label">Tu progreso</div>
+      <div class="level-row"><span class="nivel">Nivel</span><span class="b2">B2</span></div>
+      <div class="level-bar"><i style="width:62%"></i></div>
+      <div class="level-hint">62% hasta C1</div>
+    </div>
+
+    <div class="side-user">
+      <div class="avatar">L</div>
+      <div class="meta"><span class="name">Lautaro M.</span><span class="plan">Plan pro</span></div>
+      <button class="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg></button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div class="crumbs">Perfil <span>· ajustes y preferencias</span></div>
+      <div class="top-actions">
+        <span class="streak-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB800" stroke="#7A5800" stroke-width="1.4" stroke-linejoin="round"><path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/></svg> 12 días</span>
+        <a href="Practicar.html" class="btn btn-sm btn-dark">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg>
+          Empezar charla
+        </a>
+      </div>
+    </header>
+
+    <section class="greet">
+      <div class="eyebrow">Perfil</div>
+      <h1 class="title">Tu cuenta y <em>cómo</em> querés que sea la charla.</h1>
+      <p class="sub">Acá decidís de qué hablás, con qué tutor, en qué acento, y cuándo te molestamos. Todo se aplica al instante.</p>
+    </section>
+
+    <div class="pgrid">
+      <!-- LEFT — identity sticky -->
+      <aside class="id-card">
+        <div class="av">L</div>
+        <div class="name">Lautaro Mendieta</div>
+        <div class="email">lautaro@hablah.app</div>
+
+        <div class="id-meta">
+          <div class="idm"><span>Nivel</span><span class="nivel">B2</span></div>
+          <div class="idm"><span>Racha actual</span><b>12 días</b></div>
+          <div class="idm"><span>Mejor racha</span><b>14 días</b></div>
+          <div class="idm"><span>Charlas</span><b>38</b></div>
+          <div class="idm"><span>Plan</span><b style="color:#FFE9A6">Pro · anual</b></div>
+        </div>
+
+        <div class="id-actions">
+          <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> Editar perfil</button>
+          <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Cambiar contraseña</button>
+        </div>
+      </aside>
+
+      <!-- RIGHT — sections -->
+      <div style="min-width:0">
+
+        <!-- ========= INTERESES ========= -->
+        <section class="sec">
+          <div class="sec-head">
+            <div>
+              <h2>Punteros de interés</h2>
+              <p style="margin:4px 0 0;color:var(--fg-3);font-size:13px">Tus 4–5 obligatorios + los extras. Alimentan toda charla. Podés rotarlos cuando quieras.</p>
+            </div>
+            <div style="display:flex;gap:8px"><button class="btn btn-sm btn-soft">Rotar todos</button></div>
+          </div>
+
+          <div class="ints-row">
+            <div class="left">
+
+              <div class="ints-cat">
+                <div class="ct">
+                  <span class="nm" style="color:#4338CA">Tecnología y desarrollo</span>
+                  <span class="cnt">3 activos</span>
+                  <span class="add">+ sumar</span>
+                </div>
+                <div class="tag-list">
+                  <span class="tag active">Arquitectura de software</span>
+                  <span class="tag active">IA generativa</span>
+                  <span class="tag active">Metodologías ágiles</span>
+                  <span class="tag">Gadgets</span>
+                  <span class="tag">DevOps</span>
+                  <span class="tag">Bases de datos</span>
+                </div>
+              </div>
+
+              <div class="ints-cat">
+                <div class="ct">
+                  <span class="nm" style="color:#7C3AED">Arte y entretenimiento</span>
+                  <span class="cnt">3 activos</span>
+                  <span class="add">+ sumar</span>
+                </div>
+                <div class="tag-list">
+                  <span class="tag active">Música electrónica · UK Garage</span>
+                  <span class="tag active">Producción musical · Ableton</span>
+                  <span class="tag active">Cine y series</span>
+                  <span class="tag">Rock clásico</span>
+                  <span class="tag">House y techno</span>
+                  <span class="tag">Videojuegos</span>
+                  <span class="tag">Literatura contemporánea</span>
+                </div>
+              </div>
+
+              <div class="ints-cat">
+                <div class="ct">
+                  <span class="nm" style="color:#BE185D">Estilo de vida y hábitos</span>
+                  <span class="cnt">2 activos</span>
+                  <span class="add">+ sumar</span>
+                </div>
+                <div class="tag-list">
+                  <span class="tag active">Entrenamiento de fuerza</span>
+                  <span class="tag active">Nutrición y suplementos</span>
+                  <span class="tag">Viajes internacionales</span>
+                  <span class="tag">Café de especialidad</span>
+                  <span class="tag">Mindfulness</span>
+                  <span class="tag">Productividad</span>
+                </div>
+              </div>
+
+              <div class="ints-cat">
+                <div class="ct">
+                  <span class="nm" style="color:#334155">Diseño y construcción</span>
+                  <span class="cnt">1 activo</span>
+                  <span class="add">+ sumar</span>
+                </div>
+                <div class="tag-list">
+                  <span class="tag active">Arquitectura residencial</span>
+                  <span class="tag">Diseño industrial warm</span>
+                  <span class="tag">Distribuciones espaciales</span>
+                  <span class="tag">Mobiliario y madera</span>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="right">
+              <h4>Cómo funcionan</h4>
+              <p>Los activos (verdes) son tus <b>obligatorios</b>. Toda charla se construye alrededor de ellos. Los demás son extras que podés activar para variar.</p>
+              <div style="font-size:12.5px;color:var(--fg-2);padding:10px;background:#fff;border-radius:10px;border:1px solid var(--border-2);margin-top:4px">
+                <b style="color:var(--fg-1);font-weight:600">9 activos</b> · te recomendamos entre 4 y 8 para que las charlas no se vuelvan ralas.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========= TUTOR TEMPLATE ========= -->
+        <section class="sec">
+          <div class="sec-head">
+            <div>
+              <h2>Template del tutor</h2>
+              <p style="margin:4px 0 0;color:var(--fg-3);font-size:13px">El tutor cambia cómo te corrige, qué tan riguroso es y si te interrumpe. Podés cambiarlo en cualquier momento.</p>
+            </div>
+          </div>
+
+          <div class="templates">
+            <button class="tpl coach">
+              <div class="tpl-head">
+                <div class="tpl-av">C</div>
+                <div><h4>The Coach</h4><div class="role">Ultra-empático</div></div>
+              </div>
+              <p>Paciente y motivador. Prioriza fluidez sobre precisión. Ideal cuando recién arrancás o tenés ansiedad al habla.</p>
+              <div class="meters">
+                <div class="meter-r"><span>Rigurosidad</span><div class="bar"><i style="width:30%;background:var(--green)"></i></div><b>2/5</b></div>
+                <div class="meter-r"><span>Interrupciones</span><div class="bar"><i style="width:0%;background:var(--green)"></i></div><b>no</b></div>
+                <div class="meter-r"><span>Desafíos/min</span><div class="bar"><i style="width:30%;background:var(--green)"></i></div><b>0.5</b></div>
+              </div>
+            </button>
+
+            <button class="tpl sincerist selected">
+              <div class="tpl-head">
+                <div class="tpl-av">S</div>
+                <div><h4>The Sincerist</h4><div class="role">Profesional · bootcamp</div></div>
+              </div>
+              <p>Directo y demandante. Evalúa sintaxis, pronunciación y muletillas con rigor. Bloquea estaciones por repetición.</p>
+              <div class="meters">
+                <div class="meter-r"><span>Rigurosidad</span><div class="bar"><i style="width:80%;background:var(--amber)"></i></div><b>4/5</b></div>
+                <div class="meter-r"><span>Interrupciones</span><div class="bar"><i style="width:0%;background:var(--amber)"></i></div><b>no</b></div>
+                <div class="meter-r"><span>Desafíos/min</span><div class="bar"><i style="width:70%;background:var(--amber)"></i></div><b>1.5</b></div>
+              </div>
+            </button>
+
+            <button class="tpl arcade">
+              <div class="tpl-head">
+                <div class="tpl-av">A</div>
+                <div><h4>The Arcade</h4><div class="role">Enérgico · lúdico</div></div>
+              </div>
+              <p>Sesiones cortas y rápidas con hitos de gamificación y recompensas inmediatas. Foco en velocidad.</p>
+              <div class="meters">
+                <div class="meter-r"><span>Rigurosidad</span><div class="bar"><i style="width:55%;background:#BE185D"></i></div><b>3/5</b></div>
+                <div class="meter-r"><span>Interrupciones</span><div class="bar"><i style="width:50%;background:#BE185D"></i></div><b>suaves</b></div>
+                <div class="meter-r"><span>Desafíos/min</span><div class="bar"><i style="width:100%;background:#BE185D"></i></div><b>2.5</b></div>
+              </div>
+            </button>
+          </div>
+
+          <div style="margin-top:14px;padding:14px;background:var(--bg-2);border-radius:12px;font-size:12.5px;color:var(--fg-2);display:flex;align-items:center;gap:12px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fg-3);flex-shrink:0"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span>Activaste <b style="color:#7A5800">misiones de rescate</b> en The Sincerist — bloquean estaciones cuando repetís el mismo error 3 veces. Desactivá las misiones si te resulta frustrante.</span>
+            <button class="btn btn-sm btn-ghost" style="margin-left:auto;flex-shrink:0">Ajustar</button>
+          </div>
+        </section>
+
+        <!-- ========= IDIOMA Y VOZ ========= -->
+        <section class="sec">
+          <div class="sec-head">
+            <div>
+              <h2>Idioma y voz del tutor</h2>
+              <p style="margin:4px 0 0;color:var(--fg-3);font-size:13px">A qué idioma practicás y cómo te suena el tutor.</p>
+            </div>
+          </div>
+
+          <div class="settings-grid" style="margin-bottom:18px">
+            <div class="setting">
+              <span class="slabel">Idioma de práctica</span>
+              <select>
+                <option>🇬🇧 Inglés (estándar)</option>
+                <option>🇺🇸 Inglés americano</option>
+                <option>🇧🇷 Portugués brasileño</option>
+                <option>🇮🇹 Italiano</option>
+              </select>
+            </div>
+            <div class="setting">
+              <span class="slabel">Idioma de la interfaz</span>
+              <select>
+                <option>Español (rioplatense · vos)</option>
+                <option>Español (neutro · tú)</option>
+                <option>English</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <span class="slabel" style="font-size:11.5px;font-weight:600;color:var(--fg-2);display:block;margin-bottom:8px">Acento del tutor</span>
+            <div class="accent-row">
+              <button class="accent on"><span class="flag">🇬🇧</span> British · RP</button>
+              <button class="accent"><span class="flag">🇺🇸</span> American · GA</button>
+              <button class="accent"><span class="flag">🇦🇺</span> Australian</button>
+              <button class="accent"><span class="flag">🇮🇪</span> Irish</button>
+              <button class="accent"><span class="flag">🇨🇦</span> Canadian</button>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="setting">
+              <span class="slabel">Voz</span>
+              <select>
+                <option>Ava · femenina, 30s, londinense</option>
+                <option>James · masculina, 40s, manchester</option>
+                <option>Theo · masculina, 20s, glasgow</option>
+              </select>
+              <span class="sdesc">Probar voz · sample de 8 seg</span>
+            </div>
+            <div class="setting">
+              <span class="slabel">Velocidad de habla</span>
+              <select>
+                <option>Natural · 140 ppm</option>
+                <option>Lenta · 100 ppm</option>
+                <option>Rápida · 180 ppm</option>
+              </select>
+              <span class="sdesc">Se adapta a tu nivel automáticamente</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========= NOTIFICATIONS ========= -->
+        <section class="sec">
+          <div class="sec-head">
+            <div>
+              <h2>Avisos y rachas</h2>
+              <p style="margin:4px 0 0;color:var(--fg-3);font-size:13px">Cuándo te recordamos practicar y qué tono usamos.</p>
+            </div>
+          </div>
+
+          <div class="row-toggle">
+            <div class="info">
+              <h4>Recordatorio diario de práctica</h4>
+              <p>Te avisamos cada día a las <b style="color:var(--fg-1)">19:00</b> hasta que termines tu sesión.</p>
+            </div>
+            <div class="toggle on"></div>
+          </div>
+          <div class="row-toggle">
+            <div class="info">
+              <h4>Alerta de racha en peligro</h4>
+              <p>Cuando faltan menos de 2 horas para perder la racha del día.</p>
+            </div>
+            <div class="toggle on"></div>
+          </div>
+          <div class="row-toggle">
+            <div class="info">
+              <h4>Tono insistente en avisos</h4>
+              <p>Mensajes directos del estilo: "ayer perdiste el progreso del bloque de condicionales. ¿vas a abandonar la racha hoy?". Cambiá a tono suave si te resulta agresivo.</p>
+            </div>
+            <div class="toggle on"></div>
+          </div>
+          <div class="row-toggle">
+            <div class="info">
+              <h4>Resumen semanal por mail</h4>
+              <p>Cada lunes a la mañana, tu fluidez vs. la semana anterior y los puntos a pulir.</p>
+            </div>
+            <div class="toggle"></div>
+          </div>
+          <div class="row-toggle">
+            <div class="info">
+              <h4>Misiones de rescate</h4>
+              <p>Cuando repetís el mismo error 3 sesiones seguidas, el sistema fuerza una charla específica sobre ese tema.</p>
+            </div>
+            <div class="toggle on"></div>
+          </div>
+        </section>
+
+        <!-- ========= ACCOUNT ========= -->
+        <section class="sec">
+          <div class="sec-head">
+            <div>
+              <h2>Cuenta</h2>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="setting">
+              <span class="slabel">Nombre</span>
+              <input type="text" value="Lautaro Mendieta" />
+            </div>
+            <div class="setting">
+              <span class="slabel">Email</span>
+              <input type="text" value="lautaro@hablah.app" />
+            </div>
+            <div class="setting">
+              <span class="slabel">Zona horaria</span>
+              <select>
+                <option>América/Buenos Aires (UTC-3)</option>
+                <option>América/Santiago (UTC-4)</option>
+                <option>Europe/Madrid (UTC+1)</option>
+              </select>
+            </div>
+            <div class="setting">
+              <span class="slabel">Plan</span>
+              <select>
+                <option>Pro anual · USD 79/año</option>
+                <option>Pro mensual · USD 9/mes</option>
+                <option>Free · 3 charlas/semana</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:18px">
+            <button class="btn btn-primary">Guardar cambios</button>
+            <button class="btn btn-ghost">Descartar</button>
+          </div>
+
+          <div class="danger-row">
+            <div>
+              <h4>Cerrar la cuenta</h4>
+              <p>Borramos toda tu historia, audios y progreso. No se puede deshacer.</p>
+            </div>
+            <button>Cerrar cuenta</button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="embed.js"></script>
+</body>
+</html>

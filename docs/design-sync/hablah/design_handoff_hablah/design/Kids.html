@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>¡Hola Mateo! — habláh kids</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* habláh brand */
+    --green:#00B37E;
+    --green-700:#008F63;
+    --green-900:#054A3A;
+    --amber:#FFB800;
+    --amber-bg:#FFF7DD;
+
+    /* kids accents — used per topic / per moment */
+    --kid-pink:#FF6AA9;
+    --kid-blue:#3B82F6;
+    --kid-cyan:#06B6D4;
+    --kid-violet:#A855F7;
+    --kid-orange:#FB7C39;
+    --kid-yellow:#FACC15;
+
+    /* warm neutrals */
+    --bg-1:#FFFCF6;
+    --bg-2:#FAF4E8;
+    --bg-3:#F2EAD9;
+    --surface:#FFFFFF;
+    --border-1:rgba(13,20,18,.06);
+    --border-2:rgba(13,20,18,.10);
+    --fg-1:#0D1412;
+    --fg-2:#3A4441;
+    --fg-3:#6B7672;
+    --fg-4:#98A19D;
+
+    --font-sans:'Inter',ui-sans-serif,system-ui,sans-serif;
+    --font-display:'Sora',var(--font-sans);
+
+    --shadow-soft:0 1px 2px rgba(13,20,18,.04), 0 4px 12px rgba(13,20,18,.05);
+    --shadow-pop:0 10px 30px rgba(13,20,18,.10), 0 4px 12px rgba(13,20,18,.06);
+
+    /* kids: bigger radii, softer shapes */
+    --r-card:22px;
+    --r-card-lg:28px;
+    --r-btn:18px;
+    --r-pill:999px;
+
+    --ease:cubic-bezier(0.2,0.8,0.2,1);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg-1);color:var(--fg-1);font-family:var(--font-sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  a{color:inherit;text-decoration:none}
+
+  /* ============ APP SHELL ============ */
+  .app{display:grid;grid-template-columns:256px 1fr;min-height:100vh}
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{background:#062B25;color:#E6EAE7;display:flex;flex-direction:column;padding:20px 14px;gap:8px;position:sticky;top:0;height:100vh;overflow:hidden}
+  .sidebar::before{
+    content:"";position:absolute;right:-60px;top:30%;width:240px;height:240px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,184,0,.10),transparent 70%);pointer-events:none
+  }
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 14px;position:relative;z-index:1}
+  .brand-mark{width:32px;height:32px;border-radius:10px;background:var(--green);display:grid;place-items:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:17px}
+  .brand-name{font-family:var(--font-display);font-weight:700;letter-spacing:-0.01em;font-size:18px;color:#fff}
+  .brand-tag{font-size:9.5px;background:var(--amber);color:#3A2A00;padding:2px 7px;border-radius:6px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-left:4px}
+
+  /* mini mascot in sidebar */
+  .side-habi{display:flex;align-items:center;gap:12px;padding:10px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin:0 4px;position:relative;z-index:1}
+  .side-habi .habi-mini{width:42px;height:42px;flex-shrink:0}
+  .side-habi .ht{flex:1;min-width:0}
+  .side-habi .ht .nm{font-family:var(--font-display);font-weight:700;font-size:14px;color:#fff;line-height:1.1}
+  .side-habi .ht .ds{font-size:11.5px;color:#9DA8A4;margin-top:2px}
+
+  .nav{display:flex;flex-direction:column;gap:3px;margin-top:8px;position:relative;z-index:1}
+  .nav a{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:14px;color:#B7BFBB;font-weight:600;font-size:14px;transition:all .15s var(--ease)}
+  .nav a:hover{color:#fff;background:rgba(255,255,255,.04)}
+  .nav a.active{background:rgba(0,179,126,.18);color:#fff}
+  .nav a.active svg{color:#5EE0B0}
+  .nav svg{width:20px;height:20px;color:#7A8480}
+  .nav .badge{margin-left:auto;font-size:10.5px;padding:2px 8px;border-radius:99px;font-weight:800;letter-spacing:.04em}
+  .nav .badge.gold{background:var(--amber);color:#3A2A00}
+  .nav .badge.pink{background:var(--kid-pink);color:#fff}
+  .nav .badge.dot{background:transparent;color:var(--green);padding:0}
+  .nav .badge.dot::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(0,179,126,.18)}
+
+  /* progress in sidebar */
+  .side-section{margin-top:18px;padding:0 12px;position:relative;z-index:1}
+  .side-section .lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6B7672;font-weight:700;margin-bottom:10px}
+  .lvl-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .lvl-row .ll{font-family:var(--font-display);font-weight:700;font-size:13px;color:#fff;background:rgba(0,179,126,.2);padding:3px 9px;border-radius:99px;color:#7CE7BD}
+  .lvl-row .pct{font-family:var(--font-display);font-weight:700;font-size:13px;color:#fff}
+  .lvl-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}
+  .lvl-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),#5EE0B0);border-radius:99px;position:relative}
+  .lvl-bar i::after{content:"";position:absolute;right:-2px;top:50%;width:14px;height:14px;border-radius:50%;background:var(--amber);transform:translateY(-50%);box-shadow:0 0 0 3px #062B25}
+  .lvl-hint{margin-top:8px;font-size:11.5px;color:#7CE7BD}
+
+  /* coin counter in sidebar */
+  .coins{display:flex;align-items:center;gap:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(255,184,0,.16),rgba(255,184,0,.06));border:1px solid rgba(255,184,0,.18);border-radius:14px;margin:14px 4px 0;position:relative;z-index:1}
+  .coins .ci{width:30px;height:30px;border-radius:50%;background:var(--amber);display:grid;place-items:center;flex-shrink:0;box-shadow:inset 0 -3px 0 #C58F00}
+  .coins .ct{flex:1}
+  .coins .cn{font-family:var(--font-display);font-weight:800;font-size:18px;color:#fff;line-height:1;font-feature-settings:"tnum"}
+  .coins .cl{font-size:11px;color:#FFE9A6;margin-top:2px;font-weight:500}
+
+  /* parental link */
+  .parental-link{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;color:#9DA8A4;font-size:12.5px;position:relative;z-index:1;transition:background .15s var(--ease)}
+  .parental-link:hover{background:rgba(255,255,255,.06);color:#fff}
+  .parental-link svg{width:18px;height:18px;flex-shrink:0;color:#7A8480}
+  .parental-link .pt{flex:1}
+  .parental-link .pt b{display:block;color:#fff;font-weight:600;font-size:13px;margin-bottom:1px}
+
+  /* ============ MAIN ============ */
+  main{padding:0 32px 56px;max-width:1440px;min-width:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0 6px;position:sticky;top:0;background:var(--bg-1);z-index:10}
+  .crumbs{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:-0.01em}
+  .crumbs .day{color:var(--fg-4);font-weight:500;font-size:15px;margin-left:6px}
+  .topbar .actions{display:flex;align-items:center;gap:10px}
+  .icon-btn{width:42px;height:42px;border-radius:14px;background:var(--surface);border:1px solid var(--border-2);display:grid;place-items:center;color:var(--fg-2);transition:all .15s var(--ease);position:relative}
+  .icon-btn:hover{background:var(--bg-2);transform:translateY(-1px)}
+  .icon-btn .dot{position:absolute;top:9px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--kid-pink);box-shadow:0 0 0 2px var(--surface)}
+  .avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#FF6AA9,#A855F7);color:#fff;font-family:var(--font-display);font-weight:800;font-size:16px;display:grid;place-items:center;cursor:pointer;border:2px solid var(--surface);box-shadow:0 0 0 2px var(--border-2)}
+
+  /* ============ GREETING ============ */
+  .greet{padding:18px 0 22px;display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap}
+  .greet .gtext{flex:1;min-width:280px}
+  .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-700);font-weight:800;display:inline-flex;align-items:center;gap:8px}
+  .eyebrow .wave{display:inline-block;animation:wave 2s ease-in-out infinite;transform-origin:70% 70%}
+  @keyframes wave{0%,100%{transform:rotate(0)}10%,30%{transform:rotate(15deg)}20%{transform:rotate(-8deg)}}
+  h1.title{font-family:var(--font-display);font-weight:800;letter-spacing:-0.025em;font-size:42px;line-height:1.02;margin:8px 0 6px;color:var(--fg-1);text-wrap:balance}
+  h1.title em{font-style:normal;color:var(--green-700);background:linear-gradient(180deg,transparent 64%,rgba(0,179,126,.22) 64% 96%,transparent 96%);padding:0 4px}
+  .greet .sub{color:var(--fg-2);font-size:16px;margin:0;max-width:580px}
+  .greet .sub b{color:var(--fg-1);font-weight:700}
+
+  /* greet badge (stars today) */
+  .stars-today{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border-2);border-radius:18px;padding:10px 14px;box-shadow:var(--shadow-soft)}
+  .stars-today .sti{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--amber),#FFC93B);display:grid;place-items:center;box-shadow:inset 0 -3px 0 #C58F00}
+  .stars-today .stt{font-size:11px;color:var(--fg-3);font-weight:700;letter-spacing:.08em;text-transform:uppercase;line-height:1.1}
+  .stars-today .stt b{display:block;font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--fg-1);letter-spacing:-0.02em;margin-top:2px;font-feature-settings:"tnum"}
+
+  /* ============ HERO ============ */
+  .hero{position:relative;border-radius:var(--r-card-lg);overflow:hidden;background:linear-gradient(150deg,#00B37E 0%,#008F63 50%,#054A3A 100%);color:#fff;display:grid;grid-template-columns:1.3fr 1fr;align-items:stretch;min-height:340px;box-shadow:var(--shadow-pop);margin-bottom:24px}
+  .hero::before{content:"";position:absolute;inset:0;background:
+    radial-gradient(800px 400px at 100% 0%, rgba(255,184,0,.22), transparent 60%),
+    radial-gradient(600px 300px at 0% 100%, rgba(94,224,176,.16), transparent 60%);pointer-events:none}
+  .hero-l{padding:30px 32px;position:relative;z-index:1;display:flex;flex-direction:column;gap:14px}
+  .hero-eye{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#7CE7BD;font-weight:800;display:inline-flex;align-items:center;gap:8px}
+  .hero-eye .star{font-family:var(--font-display);font-weight:800;color:var(--amber)}
+  .hero-l h2{font-family:var(--font-display);font-weight:800;letter-spacing:-0.025em;font-size:52px;line-height:.98;margin:6px 0 4px;color:#fff;text-wrap:balance}
+  .hero-l h2 .acc{color:var(--amber);display:inline-block;font-style:italic}
+  .hero-l p{margin:0;font-size:16px;line-height:1.4;color:rgba(255,255,255,.78);max-width:440px}
+  .hero-l p b{color:#fff;font-weight:600}
+
+  .hero-cta{display:flex;align-items:center;gap:14px;margin-top:10px}
+  .btn-play{display:inline-flex;align-items:center;gap:12px;height:62px;padding:0 26px 0 22px;border-radius:var(--r-btn);background:#fff;color:var(--green-900);font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-0.01em;transition:transform .15s var(--ease);box-shadow:0 8px 24px rgba(0,0,0,.18)}
+  .btn-play:hover{transform:translateY(-2px) scale(1.02)}
+  .btn-play:active{transform:scale(.97)}
+  .btn-play .pl-ico{width:36px;height:36px;border-radius:50%;background:var(--amber);color:#3A2A00;display:grid;place-items:center;flex-shrink:0;box-shadow:inset 0 -2px 0 #C58F00}
+  .btn-play .pl-ico svg{margin-left:2px}
+
+  .btn-ghost-w{display:inline-flex;align-items:center;gap:8px;height:54px;padding:0 18px;border-radius:var(--r-btn);background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:600;font-size:14px}
+  .btn-ghost-w:hover{background:rgba(255,255,255,.16)}
+
+  .hero-meta{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.7);font-size:13px;margin-top:auto;flex-wrap:wrap}
+  .hero-meta .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);padding:5px 11px;border-radius:99px;font-weight:600;font-size:12px;color:#fff}
+  .hero-meta .pill svg{width:13px;height:13px}
+
+  /* hero right — Habi the mascot */
+  .hero-r{position:relative;display:flex;align-items:center;justify-content:center;padding:20px}
+  .habi-wrap{position:relative;width:280px;height:280px;display:grid;place-items:center}
+  .habi-wrap::before{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 65%)}
+  .habi{width:240px;height:240px;animation:habi-bounce 2.6s ease-in-out infinite}
+  @keyframes habi-bounce{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+  /* talk bubble */
+  .habi-bubble{position:absolute;top:18px;right:-10px;background:#fff;color:var(--green-900);font-family:var(--font-display);font-weight:700;font-size:13px;padding:9px 14px;border-radius:18px;box-shadow:0 6px 16px rgba(0,0,0,.18);animation:bubble-pop .5s var(--ease) backwards;animation-delay:.8s}
+  .habi-bubble::after{content:"";position:absolute;bottom:-6px;left:24px;width:14px;height:14px;background:#fff;transform:rotate(45deg);border-radius:3px}
+  @keyframes bubble-pop{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+  /* floating little stars around mascot */
+  .star-float{position:absolute;color:var(--amber);animation:float 3s ease-in-out infinite}
+  .star-float.sf1{top:30px;left:14px;width:22px;height:22px;animation-delay:0s}
+  .star-float.sf2{bottom:60px;left:0;width:14px;height:14px;animation-delay:.6s;color:#fff}
+  .star-float.sf3{bottom:30px;right:30px;width:18px;height:18px;animation-delay:1.2s;color:#7CE7BD}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(8deg)}}
+
+  /* ============ GRID ============ */
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px}
+  @media (max-width:1180px){.grid{grid-template-columns:1fr}}
+  .col-l{display:flex;flex-direction:column;gap:22px;min-width:0}
+  .col-r{display:flex;flex-direction:column;gap:18px}
+
+  /* ============ SECTION HEAD ============ */
+  .sh{display:flex;align-items:baseline;justify-content:space-between;margin:6px 0 12px}
+  .sh h3{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-0.02em;margin:0;color:var(--fg-1)}
+  .sh .meta{font-size:13px;color:var(--fg-3)}
+  .sh .link{font-size:13.5px;color:var(--green-700);font-weight:700;display:inline-flex;align-items:center;gap:4px}
+
+  /* ============ TOPICS GRID ============ */
+  .topics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:760px){.topics{grid-template-columns:repeat(2,1fr)}}
+  .topic{position:relative;border-radius:var(--r-card);padding:18px 18px 16px;min-height:160px;overflow:hidden;cursor:pointer;color:#fff;transition:transform .18s var(--ease), box-shadow .18s var(--ease);text-align:left;display:flex;flex-direction:column;justify-content:space-between}
+  .topic:hover{transform:translateY(-3px) rotate(-.5deg);box-shadow:var(--shadow-pop)}
+  .topic .t-ico{width:56px;height:56px;border-radius:18px;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);display:grid;place-items:center;margin-bottom:auto}
+  .topic .t-ico svg{width:30px;height:30px;stroke-width:2}
+  .topic .t-name{font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-0.015em;line-height:1.1;margin-top:14px}
+  .topic .t-name small{display:block;font-family:var(--font-sans);font-weight:500;font-size:12px;color:rgba(255,255,255,.78);margin-top:4px;letter-spacing:0}
+  .topic .t-stars{position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:3px;background:rgba(255,255,255,.18);padding:4px 8px;border-radius:99px;font-size:11px;font-weight:700;backdrop-filter:blur(6px);font-family:var(--font-display);font-feature-settings:"tnum"}
+  .topic .t-stars svg{width:11px;height:11px;color:var(--amber)}
+
+  .topic.dino{background:linear-gradient(135deg,#00B37E,#008F63)}
+  .topic.space{background:linear-gradient(135deg,#A855F7,#7C3AED)}
+  .topic.sea{background:linear-gradient(135deg,#06B6D4,#0891B2)}
+  .topic.sport{background:linear-gradient(135deg,#FB7C39,#EA580C)}
+  .topic.art{background:linear-gradient(135deg,#FF6AA9,#DB2777)}
+  .topic.music{background:linear-gradient(135deg,#3B82F6,#1E40AF)}
+  .topic.locked{background:#F0EAD9;color:var(--fg-3);border:2px dashed var(--border-2);cursor:default}
+  .topic.locked .t-ico{background:#fff;color:var(--fg-4)}
+  .topic.locked .t-name{color:var(--fg-2)}
+  .topic.locked .t-name small{color:var(--fg-4)}
+  .topic.locked .t-stars{background:rgba(13,20,18,.04);color:var(--fg-3)}
+  .topic.locked .t-stars svg{color:var(--fg-4)}
+  .topic.locked:hover{transform:none;box-shadow:none}
+  .topic.locked::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 8px,rgba(13,20,18,.02) 8px 14px);pointer-events:none}
+
+  .topic .recommend{position:absolute;top:-8px;left:14px;background:var(--amber);color:#3A2A00;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;box-shadow:0 4px 10px rgba(255,184,0,.4)}
+
+  /* ============ MONSTER CARD (rescue reskinned) ============ */
+  .monster{background:linear-gradient(180deg,#FFFDF4,#FFF4D8);border:2px solid #F4E1A4;border-radius:var(--r-card);padding:22px 24px;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center}
+  .monster .m-vis{width:88px;height:88px;flex-shrink:0;position:relative}
+  .monster .m-vis svg{width:100%;height:100%;animation:wiggle 2s ease-in-out infinite}
+  @keyframes wiggle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(6deg)}}
+  .monster .m-vis::after{content:"";position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:64px;height:8px;border-radius:50%;background:rgba(229,72,77,.18);filter:blur(4px)}
+  .monster .m-txt h4{font-family:var(--font-display);font-weight:800;font-size:20px;letter-spacing:-0.015em;margin:0 0 4px;color:#3A2A00;line-height:1.15}
+  .monster .m-txt h4 small{display:block;font-family:var(--font-sans);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#9A2D31;margin-bottom:6px}
+  .monster .m-txt p{margin:0;color:#6A4F00;font-size:13.5px;line-height:1.5;max-width:380px}
+  .monster .m-txt p b{color:#3A2A00;font-weight:700}
+  .monster .m-cta{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .btn-catch{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px;border-radius:14px;background:#0D1412;color:#fff;font-family:var(--font-display);font-weight:800;font-size:14px;letter-spacing:-0.005em;transition:all .15s var(--ease)}
+  .btn-catch:hover{background:#000;transform:translateY(-1px)}
+  .btn-catch svg{width:16px;height:16px}
+  .monster .m-cta small{font-size:11px;color:#8A6A00;font-weight:600}
+
+  /* ============ STICKERS / COLLECTION ============ */
+  .stickers-card{background:#fff;border:1px solid var(--border-1);border-radius:var(--r-card);padding:20px}
+  .stickers-card .sh{margin:0 0 16px}
+  .stickers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .sticker{aspect-ratio:1;border-radius:18px;display:grid;place-items:center;position:relative;cursor:pointer;transition:transform .15s var(--ease)}
+  .sticker:hover{transform:scale(1.08) rotate(-3deg)}
+  .sticker.locked{background:repeating-linear-gradient(135deg,#F2EAD9,#F2EAD9 6px,#E8DFCA 6px 12px);opacity:.6;cursor:default}
+  .sticker.locked:hover{transform:none}
+  .sticker svg{width:70%;height:70%}
+  .sticker .new{position:absolute;top:-4px;right:-4px;background:var(--kid-pink);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase}
+
+  /* ============ STREAK ============ */
+  .streak{background:linear-gradient(160deg,#FFF7DD 0%,#FFE9A6 100%);border:2px solid rgba(255,184,0,.3);border-radius:var(--r-card);padding:22px;position:relative;overflow:hidden}
+  .streak::after{content:"";position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(255,184,0,.3),transparent 70%)}
+  .streak-h{font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-0.015em;color:#3A2A00;margin:0 0 4px;position:relative;z-index:1}
+  .streak-sub{font-size:13px;color:#7A5800;margin:0 0 16px;position:relative;z-index:1}
+  .streak-sub b{font-weight:700;color:#3A2A00}
+  .streak-days{display:flex;justify-content:space-between;gap:6px;position:relative;z-index:1}
+  .sday{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .sday .sd-name{font-size:10.5px;font-weight:700;color:#7A5800;text-transform:uppercase;letter-spacing:.06em}
+  .sday .sd-cir{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.5);border:2px solid rgba(122,88,0,.18);display:grid;place-items:center;color:#7A5800;font-family:var(--font-display);font-weight:800;font-size:13px}
+  .sday.done .sd-cir{background:linear-gradient(135deg,var(--amber),#FFC93B);color:#fff;border-color:#7A5800;box-shadow:0 2px 6px rgba(255,184,0,.45)}
+  .sday.today .sd-cir{background:#fff;border-color:var(--green);color:var(--green-700);box-shadow:0 0 0 4px rgba(0,179,126,.2)}
+  .sday.today .sd-name{color:var(--green-700)}
+  .sday.future .sd-cir{background:transparent;border-style:dashed;color:#9A8550}
+
+  .streak-best{margin-top:14px;display:flex;align-items:center;gap:8px;font-size:12px;color:#7A5800;font-weight:600;position:relative;z-index:1;padding-top:14px;border-top:1px dashed rgba(122,88,0,.25)}
+  .streak-best svg{width:14px;height:14px;color:#FB7C39}
+  .streak-best b{font-family:var(--font-display);font-weight:800;color:#3A2A00}
+
+  /* ============ PATH ============ */
+  .path{background:#fff;border:1px solid var(--border-1);border-radius:var(--r-card);padding:20px}
+  .path-h{font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-0.015em;margin:0 0 4px}
+  .path-sub{font-size:13px;color:var(--fg-3);margin:0 0 16px}
+  .ranks{display:flex;align-items:center;gap:6px;justify-content:space-between}
+  .rank{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+  .rank .r-ico{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex-shrink:0;color:#fff;font-family:var(--font-display);font-weight:800;font-size:16px}
+  .rank.done .r-ico{background:var(--green)}
+  .rank.now .r-ico{background:#fff;color:var(--green-700);border:3px solid var(--green);box-shadow:0 0 0 4px rgba(0,179,126,.18)}
+  .rank.next .r-ico{background:var(--bg-3);color:var(--fg-4);border:2px dashed var(--border-2)}
+  .rank .r-name{font-family:var(--font-display);font-weight:700;font-size:11px;color:var(--fg-3);text-align:center}
+  .rank.now .r-name{color:var(--fg-1);font-weight:800}
+  .rank .r-line{position:absolute}
+  .ranks-line{height:3px;background:var(--bg-3);border-radius:99px;margin:8px 22px 12px;position:relative}
+  .ranks-line i{display:block;height:100%;background:var(--green);border-radius:99px}
+
+  /* tiny mascot SVG helper, used in monster/avatar */
+  .habi-mini, .monster-vis{display:block}
+
+  /* ============ MOBILE TOP BAR / DRAWER / TAB BAR (hidden by default) ============ */
+  .m-topbar,.m-tabbar,.m-drawer,.m-drawer-backdrop{display:none}
+
+  /* ============ MEDIA: TABLET ============ */
+  @media (max-width:1100px){
+    .hero{grid-template-columns:1fr}
+    .hero-r{display:none}
+    .topics{grid-template-columns:repeat(3,1fr)}
+  }
+
+  /* ============ MEDIA: MOBILE ============ */
+  @media (max-width:900px){
+    body{padding-bottom:88px}
+    .app{display:block}
+    .sidebar{display:none}
+    main{padding:0 16px 24px;max-width:100%}
+    .topbar{display:none}
+
+    /* mobile top bar */
+    .m-topbar{
+      display:flex;align-items:center;gap:10px;
+      padding:14px 16px;
+      position:sticky;top:0;z-index:30;
+      background:var(--bg-1);
+      border-bottom:1px solid var(--border-1);
+    }
+    .m-topbar .m-menu{
+      width:40px;height:40px;border-radius:12px;
+      display:grid;place-items:center;
+      color:var(--fg-1);background:transparent;
+    }
+    .m-topbar .m-menu:active{background:var(--bg-2)}
+    .m-topbar .m-title{font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-0.01em;flex:1}
+    .m-topbar .m-coins{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;background:#fff;border:1px solid var(--border-2);border-radius:99px;font-weight:800;font-size:13.5px;color:var(--fg-1);font-family:var(--font-display);font-feature-settings:"tnum"}
+    .m-topbar .m-coins .ci{width:18px;height:18px;border-radius:50%;background:var(--amber);display:grid;place-items:center;color:#3A2A00;flex-shrink:0;box-shadow:inset 0 -2px 0 #C58F00}
+    .m-topbar .m-coins .ci svg{width:10px;height:10px}
+    .m-topbar .m-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FF6AA9,#A855F7);color:#fff;font-family:var(--font-display);font-weight:800;font-size:15px;display:grid;place-items:center}
+
+    /* greeting */
+    .greet{padding:18px 0 16px;gap:14px}
+    .greet .gtext{min-width:0}
+    h1.title{font-size:32px;line-height:1.04}
+    .greet .sub{font-size:14px}
+    .stars-today{align-self:flex-start}
+
+    /* hero stacked */
+    .hero{min-height:auto;margin-bottom:20px}
+    .hero-l{padding:24px 22px;gap:12px}
+    .hero-l h2{font-size:36px}
+    .hero-l p{font-size:14.5px}
+    .hero-cta{flex-wrap:wrap;gap:10px}
+    .btn-play{flex:1;justify-content:center;min-width:200px;height:58px;font-size:17px}
+    .btn-ghost-w{height:48px}
+
+    /* grid stacked */
+    .grid{grid-template-columns:1fr;gap:18px}
+    .col-l{gap:18px}
+
+    /* topics 2-col on mobile */
+    .topics{grid-template-columns:repeat(2,1fr);gap:10px}
+    .topic{min-height:148px;padding:16px}
+    .topic .t-ico{width:48px;height:48px;border-radius:14px}
+    .topic .t-ico svg{width:24px;height:24px}
+    .topic .t-name{font-size:16px}
+    .topic .t-name small{font-size:11.5px}
+
+    /* monster card stacked */
+    .monster{grid-template-columns:1fr;text-align:center;padding:20px 18px;gap:14px}
+    .monster .m-vis{margin:0 auto}
+    .monster .m-txt p{margin-left:auto;margin-right:auto}
+    .monster .m-cta{align-items:stretch}
+    .btn-catch{justify-content:center}
+
+    /* stickers 5 cols on small */
+    .stickers-grid{grid-template-columns:repeat(5,1fr);gap:8px}
+    .stickers-grid .sticker:nth-child(n+6){display:none}
+
+    /* mobile drawer */
+    .m-drawer-backdrop{display:none;position:fixed;inset:0;z-index:50;background:rgba(13,20,18,.5);opacity:0;transition:opacity .24s var(--ease)}
+    .m-drawer{
+      display:flex;flex-direction:column;
+      position:fixed;top:0;left:0;bottom:0;z-index:60;
+      width:84%;max-width:320px;
+      background:#062B25;color:#E6EAE7;
+      padding:18px 14px calc(14px + env(safe-area-inset-bottom));
+      transform:translateX(-100%);
+      transition:transform .28s var(--ease);
+      overflow-y:auto;
+    }
+    body.drawer-open .m-drawer-backdrop{display:block;opacity:1}
+    body.drawer-open .m-drawer{transform:translateX(0)}
+    .m-drawer .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:6px 4px 14px}
+    .m-drawer .dbrand{display:flex;align-items:center;gap:10px}
+    .m-drawer .brand-mark{width:32px;height:32px;border-radius:10px;background:var(--green);display:grid;place-items:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:17px}
+    .m-drawer .brand-name{font-family:var(--font-display);font-weight:700;font-size:18px;color:#fff;letter-spacing:-0.01em}
+    .m-drawer .close{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.05);color:#E6EAE7;display:grid;place-items:center}
+    .m-drawer .nav a{font-size:15px;padding:13px 14px}
+    .m-drawer .nav svg{width:22px;height:22px}
+
+    /* mobile bottom tab bar */
+    .m-tabbar{
+      display:grid;grid-template-columns:1fr 1fr 86px 1fr 1fr;
+      align-items:center;
+      position:fixed;left:0;right:0;bottom:0;z-index:40;
+      background:rgba(255,252,246,.94);
+      border-top:1px solid var(--border-1);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      padding:8px 6px calc(10px + env(safe-area-inset-bottom));
+    }
+    .m-tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;color:var(--fg-4);font-size:11px;font-weight:700;letter-spacing:.01em}
+    .m-tabbar a svg{width:24px;height:24px;stroke-width:2}
+    .m-tabbar a.active{color:var(--green-700)}
+    .m-tabbar a.active svg{color:var(--green)}
+    .m-fab-wrap{display:flex;justify-content:center;align-items:flex-end;height:100%;position:relative}
+    .m-fab{
+      width:68px;height:68px;border-radius:50%;
+      background:linear-gradient(180deg,var(--amber),#F09D00);color:#3A2A00;
+      display:grid;place-items:center;
+      box-shadow:0 10px 28px rgba(240,157,0,.45), 0 4px 8px rgba(13,20,18,.2);
+      transform:translateY(-22px);
+      transition:transform .15s;
+    }
+    .m-fab:active{transform:translateY(-22px) scale(.95)}
+    .m-fab svg{width:30px;height:30px;stroke-width:2.2}
+    .m-fab-wrap .m-fab-label{
+      position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+      font-size:10.5px;font-weight:800;color:var(--fg-2);letter-spacing:.04em;
+      white-space:nowrap;text-transform:uppercase
+    }
+  }
+
+  /* very small */
+  @media (max-width:380px){
+    h1.title{font-size:28px}
+    .hero-l h2{font-size:30px}
+    .hero-l{padding:20px 18px}
+    .topic{min-height:138px;padding:14px}
+    .topic .t-ico{width:42px;height:42px}
+  }
+</style>
+<link href="embed.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ============ MOBILE TOP BAR ============ -->
+<header class="m-topbar">
+  <button class="m-menu" aria-label="Abrir menú" onclick="document.body.classList.add('drawer-open')">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <div class="m-title">¡Hola, Mateo!</div>
+  <div class="m-coins">
+    <span class="ci"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></span>
+    248
+  </div>
+  <a href="#" class="m-av" aria-label="Perfil">M</a>
+</header>
+
+<!-- ============ MOBILE DRAWER ============ -->
+<div class="m-drawer-backdrop" onclick="document.body.classList.remove('drawer-open')"></div>
+<aside class="m-drawer">
+  <div class="drawer-head">
+    <div class="dbrand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+      <span class="brand-tag">kids</span>
+    </div>
+    <button class="close" onclick="document.body.classList.remove('drawer-open')" aria-label="Cerrar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M6 18L18 6"/></svg>
+    </button>
+  </div>
+  <nav class="nav">
+    <a href="Kids.html" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+      Hoy
+      <span class="badge dot"></span>
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+      ¡A hablar!
+      <span class="badge gold">DIARIO</span>
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+      Mi colección
+      <span class="badge pink">12</span>
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>
+      Mis aventuras
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      Mi perfil
+    </a>
+  </nav>
+
+  <div class="side-section" style="margin-top:20px">
+    <div class="lbl">Mi progreso</div>
+    <div class="lvl-row">
+      <span class="ll">Explorador</span>
+      <span class="pct">34%</span>
+    </div>
+    <div class="lvl-bar"><i style="width:34%"></i></div>
+    <div class="lvl-hint">¡faltan 6 charlas para Aventurero!</div>
+  </div>
+
+  <div class="coins">
+    <div class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="#3A2A00"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+    <div class="ct">
+      <div class="cn">248</div>
+      <div class="cl">monedas habi</div>
+    </div>
+  </div>
+
+  <a href="#" class="parental-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    <div class="pt"><b>Modo familia</b>Ver lo que practicó hoy</div>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+  </a>
+</aside>
+
+<!-- ============ APP SHELL ============ -->
+<div class="app">
+
+  <!-- ============ SIDEBAR (desktop) ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+      <span class="brand-tag">kids</span>
+    </div>
+
+    <!-- mini mascot greeting in sidebar -->
+    <div class="side-habi">
+      <svg class="habi-mini" viewBox="0 0 100 100">
+        <!-- body -->
+        <ellipse cx="50" cy="58" rx="32" ry="34" fill="#00B37E"/>
+        <ellipse cx="50" cy="58" rx="32" ry="34" fill="url(#g)"/>
+        <defs><radialGradient id="g" cx="35%" cy="35%"><stop offset="0%" stop-color="#5EE0B0"/><stop offset="100%" stop-color="#00B37E" stop-opacity="0"/></radialGradient></defs>
+        <!-- antenna -->
+        <line x1="50" y1="22" x2="50" y2="14" stroke="#054A3A" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="50" cy="12" r="4" fill="#FFB800"/>
+        <!-- eyes -->
+        <ellipse cx="40" cy="52" rx="5.5" ry="6.5" fill="#fff"/>
+        <ellipse cx="60" cy="52" rx="5.5" ry="6.5" fill="#fff"/>
+        <circle cx="41" cy="53" r="3" fill="#0D1412"/>
+        <circle cx="61" cy="53" r="3" fill="#0D1412"/>
+        <circle cx="42" cy="51.5" r="1" fill="#fff"/>
+        <circle cx="62" cy="51.5" r="1" fill="#fff"/>
+        <!-- mouth small smile -->
+        <path d="M44 67 Q 50 73 56 67" stroke="#054A3A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- cheeks -->
+        <circle cx="32" cy="64" r="3" fill="#FF6AA9" opacity=".5"/>
+        <circle cx="68" cy="64" r="3" fill="#FF6AA9" opacity=".5"/>
+      </svg>
+      <div class="ht">
+        <div class="nm">¡Hola Mateo!</div>
+        <div class="ds">soy Habi, tu amigo</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="Kids.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+        Hoy
+        <span class="badge dot"></span>
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+        ¡A hablar!
+        <span class="badge gold">DIARIO</span>
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+        Mi colección
+        <span class="badge pink">12</span>
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>
+        Mis aventuras
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        Mi perfil
+      </a>
+    </nav>
+
+    <div class="side-section">
+      <div class="lbl">Mi progreso</div>
+      <div class="lvl-row">
+        <span class="ll">Explorador</span>
+        <span class="pct">34%</span>
+      </div>
+      <div class="lvl-bar"><i style="width:34%"></i></div>
+      <div class="lvl-hint">¡faltan 6 charlas para Aventurero!</div>
+    </div>
+
+    <div class="coins">
+      <div class="ci"><svg width="16" height="16" viewBox="0 0 24 24" fill="#3A2A00"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+      <div class="ct">
+        <div class="cn">248</div>
+        <div class="cl">monedas habi</div>
+      </div>
+    </div>
+
+    <a href="#" class="parental-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      <div class="pt"><b>Modo familia</b>Ver lo que practicó hoy</div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main>
+    <header class="topbar">
+      <div class="crumbs">Hoy<span class="day">· martes 18 de noviembre</span></div>
+      <div class="actions">
+        <button class="icon-btn" title="Ajustes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .4 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.4 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .4-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.4-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.4H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.4 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        </button>
+        <button class="icon-btn" title="Mensajes de papá/mamá">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="avatar">M</div>
+      </div>
+    </header>
+
+    <section class="greet">
+      <div class="gtext">
+        <div class="eyebrow"><span class="wave">👋</span> ¡Buen día, Mateo!</div>
+        <h1 class="title">Tu aventura de hoy: <em>dinosaurios</em></h1>
+        <p class="sub">Vas a charlar con Habi <b>5 minutos</b> y ganarás <b>monedas</b> si nombrás 3 dinosaurios distintos. ¿Listo?</p>
+      </div>
+      <div class="stars-today">
+        <div class="sti"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+        <div class="stt">monedas esta semana<b>+86</b></div>
+      </div>
+    </section>
+
+    <!-- ===== HERO ===== -->
+    <div class="hero">
+      <div class="hero-l">
+        <div class="hero-eye">
+          <span class="star">★</span> Aventura del día · martes
+        </div>
+        <h2>Hablamos de <span class="acc">dinosaurios</span></h2>
+        <p>Habi conoce muchísimos. ¿Cuál es <b>tu favorito</b>? Si te trabás, Habi te va a ayudar. Y al final, te muestra cómo se dicen las palabras nuevas.</p>
+
+        <div class="hero-cta">
+          <button class="btn-play">
+            <span class="pl-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></span>
+            ¡A hablar con Habi!
+          </button>
+          <button class="btn-ghost-w">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v8h8"/></svg>
+            Cambiar tema
+          </button>
+        </div>
+
+        <div class="hero-meta">
+          <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 5 minutos</span>
+          <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg> hasta +20 monedas</span>
+          <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg> nivel: explorador</span>
+        </div>
+      </div>
+
+      <!-- right: Habi -->
+      <div class="hero-r">
+        <div class="habi-wrap">
+          <svg class="star-float sf1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg class="star-float sf2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+          <svg class="star-float sf3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+
+          <!-- big Habi mascot -->
+          <svg class="habi" viewBox="0 0 240 240" aria-label="Habi, el amigo de habláh">
+            <!-- shadow under -->
+            <ellipse cx="120" cy="218" rx="70" ry="8" fill="rgba(0,0,0,.25)"/>
+            <!-- body main -->
+            <ellipse cx="120" cy="138" rx="78" ry="82" fill="#00B37E"/>
+            <!-- highlight -->
+            <ellipse cx="100" cy="115" rx="34" ry="28" fill="#5EE0B0" opacity=".6"/>
+            <!-- antenna -->
+            <path d="M120 56 Q 122 38 118 26" stroke="#054A3A" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <circle cx="118" cy="22" r="9" fill="#FFB800"/>
+            <circle cx="115" cy="19" r="3" fill="#FFE9A6"/>
+            <!-- arms -->
+            <ellipse cx="46" cy="148" rx="14" ry="22" fill="#00B37E" transform="rotate(-22 46 148)"/>
+            <ellipse cx="194" cy="148" rx="14" ry="22" fill="#00B37E" transform="rotate(22 194 148)"/>
+            <!-- eyes -->
+            <ellipse cx="98" cy="128" rx="15" ry="18" fill="#fff"/>
+            <ellipse cx="142" cy="128" rx="15" ry="18" fill="#fff"/>
+            <circle cx="100" cy="131" r="8" fill="#0D1412"/>
+            <circle cx="144" cy="131" r="8" fill="#0D1412"/>
+            <circle cx="103" cy="128" r="3" fill="#fff"/>
+            <circle cx="147" cy="128" r="3" fill="#fff"/>
+            <!-- cheeks -->
+            <circle cx="72" cy="160" r="9" fill="#FF6AA9" opacity=".55"/>
+            <circle cx="168" cy="160" r="9" fill="#FF6AA9" opacity=".55"/>
+            <!-- mouth open smile -->
+            <path d="M100 168 Q 120 192 140 168 Q 140 188 120 188 Q 100 188 100 168 Z" fill="#054A3A"/>
+            <ellipse cx="120" cy="184" rx="9" ry="5" fill="#FF6AA9"/>
+            <!-- feet -->
+            <ellipse cx="92" cy="218" rx="18" ry="9" fill="#054A3A"/>
+            <ellipse cx="148" cy="218" rx="18" ry="9" fill="#054A3A"/>
+          </svg>
+
+          <div class="habi-bubble">¡Hola, te estaba esperando! 🦖</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GRID ===== -->
+    <div class="grid">
+
+      <!-- LEFT COL -->
+      <div class="col-l">
+
+        <!-- TOPICS -->
+        <div>
+          <div class="sh">
+            <h3>¿De qué charlamos?</h3>
+            <a href="#" class="link">Ver todos →</a>
+          </div>
+
+          <div class="topics">
+            <button class="topic dino">
+              <span class="recommend">★ hoy</span>
+              <span class="t-stars">8/10 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></span>
+              <div class="t-ico">
+                <!-- dinosaur silhouette -->
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 16 c0-2 2-3 4-3 0-3 3-7 8-7 3 0 6 2 6 5 0 1-1 2-2 2 0 2-1 5-4 6 -3 1-5 1-7 0v3h-2v-3c-2 0-3-1-3-3z"/></svg>
+              </div>
+              <div class="t-name">Dinosaurios<small>prehistoria</small></div>
+            </button>
+
+            <button class="topic space">
+              <span class="t-stars">5/10 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></span>
+              <div class="t-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-4M8 16l4-12 4 12M14 16h-6"/><circle cx="18" cy="6" r="2"/><path d="M20 18l-3-3 3-3"/></svg>
+              </div>
+              <div class="t-name">Espacio<small>planetas y cohetes</small></div>
+            </button>
+
+            <button class="topic sea">
+              <span class="t-stars">3/10 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></span>
+              <div class="t-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c0-4 3-7 7-7s7 3 7 7c0 3-2 5-5 5h-2"/><circle cx="9" cy="11" r="1.5" fill="currentColor"/><path d="M3 18c2-2 4-2 6 0 2 2 4 2 6 0 2-2 4-2 6 0"/></svg>
+              </div>
+              <div class="t-name">Mar y animales<small>tiburones, ballenas</small></div>
+            </button>
+
+            <button class="topic sport">
+              <span class="t-stars">6/10 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></span>
+              <div class="t-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5 7l14 10M19 7L5 17"/></svg>
+              </div>
+              <div class="t-name">Mi deporte<small>fútbol, básquet</small></div>
+            </button>
+
+            <button class="topic art">
+              <span class="t-stars">2/10 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></span>
+              <div class="t-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 1 10-10 4 4 0 0 1-4 4h-2a2 2 0 0 0-2 2 4 4 0 0 1-2 4z"/><circle cx="6.5" cy="11.5" r="1" fill="currentColor"/><circle cx="9.5" cy="6.5" r="1" fill="currentColor"/><circle cx="14.5" cy="6.5" r="1" fill="currentColor"/><circle cx="17.5" cy="11.5" r="1" fill="currentColor"/></svg>
+              </div>
+              <div class="t-name">Dibujar y crear<small>colores, formas</small></div>
+            </button>
+
+            <button class="topic music">
+              <span class="t-stars">4/10 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></span>
+              <div class="t-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="18" cy="16" r="3" fill="currentColor"/></svg>
+              </div>
+              <div class="t-name">Música y canciones<small>cantar y bailar</small></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- MONSTRUO DEL IDIOMA (rescue reskinned) -->
+        <div class="monster">
+          <div class="m-vis">
+            <!-- friendly little monster -->
+            <svg viewBox="0 0 100 100">
+              <ellipse cx="50" cy="62" rx="34" ry="32" fill="#FB7C39"/>
+              <ellipse cx="40" cy="50" rx="18" ry="14" fill="#FFC23B" opacity=".7"/>
+              <!-- horns -->
+              <path d="M30 30 L 26 18 L 36 28 Z" fill="#FB7C39"/>
+              <path d="M70 30 L 74 18 L 64 28 Z" fill="#FB7C39"/>
+              <!-- 3 eyes -->
+              <circle cx="38" cy="56" r="6" fill="#fff"/>
+              <circle cx="62" cy="56" r="6" fill="#fff"/>
+              <circle cx="50" cy="44" r="5" fill="#fff"/>
+              <circle cx="38" cy="57" r="3" fill="#0D1412"/>
+              <circle cx="62" cy="57" r="3" fill="#0D1412"/>
+              <circle cx="50" cy="45" r="2.5" fill="#0D1412"/>
+              <!-- mouth -->
+              <path d="M38 72 Q 50 84 62 72" stroke="#0D1412" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <!-- tooth -->
+              <path d="M46 72 L 46 78 L 50 78 Z" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="m-txt">
+            <h4>
+              <small>★ monstruo del idioma</small>
+              "Gusté" se le escapa a Mateo
+            </h4>
+            <p>3 charlas seguidas dijo <b>"yo gusté el helado"</b>. La próxima vez le decimos cómo es: <b>"a mí me gustó el helado"</b>. ¡Si lo atrapa, gana 25 monedas!</p>
+          </div>
+          <div class="m-cta">
+            <button class="btn-catch">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+              ¡Atrapar!
+            </button>
+            <small>+25 monedas si lo lográs</small>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COL -->
+      <div class="col-r">
+
+        <!-- STREAK -->
+        <div class="streak">
+          <div class="streak-h">¡4 días seguidos!</div>
+          <div class="streak-sub">Si charlás hoy, llegás a <b>5</b>.</div>
+          <div class="streak-days">
+            <div class="sday done"><span class="sd-name">Vie</span><span class="sd-cir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></div>
+            <div class="sday done"><span class="sd-name">Sáb</span><span class="sd-cir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></div>
+            <div class="sday done"><span class="sd-name">Dom</span><span class="sd-cir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></div>
+            <div class="sday done"><span class="sd-name">Lun</span><span class="sd-cir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></div>
+            <div class="sday today"><span class="sd-name">HOY</span><span class="sd-cir">★</span></div>
+            <div class="sday future"><span class="sd-name">Mié</span><span class="sd-cir">·</span></div>
+            <div class="sday future"><span class="sd-name">Jue</span><span class="sd-cir">·</span></div>
+          </div>
+          <div class="streak-best">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c-4 0-7-3-7-7 0-3 2-5 3-6 0 2 1 3 2 3 0-3 1-6 4-9 0 4 6 6 6 12 0 4-3 7-8 7z"/></svg>
+            Tu mejor racha: <b>11 días</b>
+          </div>
+        </div>
+
+        <!-- COLLECTION -->
+        <div class="stickers-card">
+          <div class="sh">
+            <h3 style="font-size:18px">Mi colección</h3>
+            <a href="#" class="link">12/30 →</a>
+          </div>
+          <div class="stickers-grid">
+            <button class="sticker" style="background:linear-gradient(135deg,#00B37E,#008F63)" title="T-Rex">
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M3 16c0-2 2-3 4-3 0-3 3-7 8-7 3 0 6 2 6 5 0 1-1 2-2 2 0 2-1 5-4 6-3 1-5 1-7 0v3H6v-3c-2 0-3-1-3-3z"/></svg>
+            </button>
+            <button class="sticker" style="background:linear-gradient(135deg,#A855F7,#7C3AED)" title="Cohete">
+              <span class="new">¡nuevo!</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c4 4 6 8 6 12l-3 4h-6l-3-4c0-4 2-8 6-12z"/><circle cx="12" cy="10" r="2"/><path d="M9 18l-2 4M15 18l2 4"/></svg>
+            </button>
+            <button class="sticker" style="background:linear-gradient(135deg,#06B6D4,#0891B2)" title="Ballena">
+              <svg viewBox="0 0 24 24" fill="#fff"><ellipse cx="11" cy="14" rx="9" ry="6"/><circle cx="9" cy="13" r="1.5" fill="#0D1412"/><path d="M20 11l3-3v6z" fill="#fff"/></svg>
+            </button>
+            <button class="sticker" style="background:linear-gradient(135deg,#FF6AA9,#DB2777)" title="Paleta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 1 10-10 4 4 0 0 1-4 4h-2a2 2 0 0 0-2 2 4 4 0 0 1-2 4z"/></svg>
+            </button>
+            <button class="sticker" style="background:linear-gradient(135deg,#FB7C39,#EA580C)" title="Pelota">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+            </button>
+            <button class="sticker" style="background:linear-gradient(135deg,#FACC15,#F59E0B)" title="Estrella">
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            </button>
+            <button class="sticker" style="background:linear-gradient(135deg,#3B82F6,#1E40AF)" title="Nota">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3" fill="#fff"/><circle cx="18" cy="16" r="3" fill="#fff"/></svg>
+            </button>
+            <button class="sticker locked" title="Bloqueado">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#98A19D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- PATH -->
+        <div class="path">
+          <h4 class="path-h">Mi camino</h4>
+          <p class="path-sub">Cada nivel te abre temas nuevos.</p>
+          <div class="ranks-line"><i style="width:30%"></i></div>
+          <div class="ranks">
+            <div class="rank done"><div class="r-ico">1</div><div class="r-name">Curioso</div></div>
+            <div class="rank now"><div class="r-ico">2</div><div class="r-name">Explorador</div></div>
+            <div class="rank next"><div class="r-ico">3</div><div class="r-name">Aventurero</div></div>
+            <div class="rank next"><div class="r-ico">4</div><div class="r-name">Capitán</div></div>
+            <div class="rank next"><div class="r-ico">★</div><div class="r-name">Embajador</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ============ MOBILE TAB BAR ============ -->
+<nav class="m-tabbar" aria-label="Navegación">
+  <a href="Kids.html" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    Hoy
+  </a>
+  <a href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+    Colección
+  </a>
+  <div class="m-fab-wrap">
+    <a href="#" class="m-fab" aria-label="¡A hablar!">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" stroke="none"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3M8 21h8"/></svg>
+    </a>
+    <span class="m-fab-label">¡Hablar!</span>
+  </div>
+  <a href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/></svg>
+    Aventuras
+  </a>
+  <a href="#" onclick="document.body.classList.add('drawer-open');return false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg>
+    Más
+  </a>
+</nav>
+
+<script>
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') document.body.classList.remove('drawer-open') });
+</script>
+
+<script src="embed.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>habláh — integrador de pantallas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<link href="admin.css" rel="stylesheet">
+<style>
+html,body{height:100%}
+.shell{display:grid;grid-template-columns:240px minmax(0,1fr);height:100vh;overflow:hidden}
+.shell aside{background:var(--ink-1,#0E1614);color:rgba(232,236,234,.8);display:flex;flex-direction:column;overflow-y:auto}
+.shell .brand{padding:20px 18px 6px;display:flex;align-items:center;gap:10px}
+.shell .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:900;font-style:italic;font-size:18px}
+.shell .brand-name{color:#fff;font-weight:800;font-size:16px}
+.shell .brand-sub{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(232,236,234,.45);margin-top:2px}
+.nav2{padding:8px 12px;display:flex;flex-direction:column;gap:1px}
+.nav2 .grp{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(232,236,234,.42);padding:14px 12px 6px}
+.nav2 a{display:flex;align-items:center;gap:11px;padding:8px 12px 8px 14px;border-radius:9px;font-size:13.5px;color:rgba(232,236,234,.72);position:relative;text-decoration:none}
+.nav2 a svg{width:17px;height:17px;flex-shrink:0}
+.nav2 a:hover{background:rgba(255,255,255,.05);color:#fff}
+.nav2 a.on{background:rgba(0,179,126,.14);color:#fff;font-weight:600}
+.nav2 a.on::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:99px;background:var(--green)}
+.nav2 a .n{margin-left:auto;font-size:10.5px;font-weight:700;color:rgba(232,236,234,.45)}
+.sideft{margin-top:auto;padding:12px}
+.sideft .card{background:rgba(255,255,255,.04);border-radius:12px;padding:11px 12px;font-size:11.5px;color:rgba(232,236,234,.6);line-height:1.45}
+.sideft .card b{color:#fff;display:block;font-size:12.5px;margin-bottom:3px}
+.pane{display:flex;flex-direction:column;min-width:0;background:var(--bg-1)}
+.tbar{display:flex;align-items:center;gap:14px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border-1);flex-wrap:wrap}
+.tbar h1{font-family:var(--font-display);font-weight:700;font-size:17px;margin:0;letter-spacing:-.01em}
+.tbar .sub{font-size:12.5px;color:var(--fg-3)}
+.tbar .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.tbar .file{font-family:ui-monospace,monospace;font-size:11px;color:var(--fg-4);background:var(--bg-2);border-radius:7px;padding:4px 8px}
+.frame-wrap{flex:1;min-height:0;position:relative}
+.frame-wrap iframe{width:100%;height:100%;border:0;display:block;background:var(--bg-1)}
+.ftr{display:flex;align-items:center;gap:12px;padding:9px 24px;background:var(--surface);border-top:1px solid var(--border-1);font-size:11.5px;color:var(--fg-4);flex-wrap:wrap}
+.ftr .dot{width:4px;height:4px;border-radius:50%;background:var(--border-3)}
+.ftr a{color:var(--green-700);font-weight:600}
+.ftr .right{margin-left:auto;display:flex;gap:12px;align-items:center}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside>
+    <div class="brand"><div class="brand-mark">h</div><div><div class="brand-name">habláh</div><div class="brand-sub">paquete de pantallas</div></div></div>
+    <nav class="nav2" id="nav2"></nav>
+    <div class="sideft"><div class="card"><b>Handoff</b>Cada opción es un HTML propio. Este integrador solo aporta menú, topbar y footer — ver README.md.</div></div>
+  </aside>
+  <div class="pane">
+    <header class="tbar">
+      <div><h1 id="tTitle">—</h1><div class="sub" id="tSub"></div></div>
+      <div class="right">
+        <span class="file" id="tFile"></span>
+        <a class="btn btn-soft btn-sm" id="tOpen" href="#" target="_blank">Abrir sola ↗</a>
+      </div>
+    </header>
+    <div class="frame-wrap"><iframe id="frame" title="pantalla"></iframe></div>
+    <footer class="ftr">
+      <span>habláh · paquete de diseño</span><span class="dot"></span>
+      <span id="fNote"></span>
+      <span class="right"><span>tokens: <a href="app.css">app.css</a> · <a href="admin.css">admin.css</a></span><span class="dot"></span><a href="README.md">README</a></span>
+    </footer>
+  </div>
+</div>
+<script>
+const I={
+ hoy:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+ practicar:'<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/>',
+ charla:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+ reporte:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/>',
+ mapa:'<path d="m9 3-6 3v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/>',
+ historial:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ perfil:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ probador:'<path d="M12 3v18M4 8l8-5 8 5M4 16l8 5 8-5"/>',
+ backoffice:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>'
+};
+const SCREENS=[
+ {g:'Producto (alumno)'},
+ {k:'hoy',t:'Hoy',s:'La sesión del día, racha y misiones',f:'hoy.html'},
+ {k:'practicar',t:'Practicar',s:'Elección de tópico interactiva: filtros, orden, sorpresa y tema libre',f:'practicar.html',n:'JS'},
+ {k:'charla',t:'Charla',s:'La clase en vivo por voz',f:'charla.html'},
+ {k:'reporte',t:'Reporte',s:'Cierre de sesión: qué salió bien y qué queda abierto',f:'reporte.html'},
+ {k:'mapa',t:'Mapa de progreso',s:'Recorrido por niveles y misiones',f:'mapa.html'},
+ {k:'historial',t:'Historial',s:'Todas las sesiones con su resultado',f:'historial.html'},
+ {k:'perfil',t:'Perfil',s:'Intereses, tutor activo y preferencias',f:'perfil.html'},
+ {g:'Motor (equipo)'},
+ {k:'probador',t:'Probador de clases',s:'6 capas del composer JIT, 3 vistas del prompt y clase en vivo',f:'probador.html',n:'JS'},
+ {k:'backoffice',t:'Backoffice',s:'Overview técnico, catálogo del motor, auditoría y operación',f:'backoffice.html',n:'JS'}
+];
+const NOTES={
+ practicar:'Lógica en practicar.js · estilos inline en el <style> de la pantalla',
+ probador:'Componentes tipados para migrar en Probador_Redesign.tsx · estilos en probador.css',
+ backoffice:'Shell mínimo + backoffice.css / backoffice.data.js / backoffice.views.js',
+ hoy:'Estilos compartidos en app.css',
+ charla:'Estilos compartidos en app.css'
+};
+function nav(){
+ document.getElementById('nav2').innerHTML=SCREENS.map(s=>s.g
+  ?`<div class="grp">${s.g}</div>`
+  :`<a href="#${s.k}" class="${cur()===s.k?'on':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[s.k]}</svg>${s.t}${s.n?`<span class="n">${s.n}</span>`:''}</a>`).join('');
+}
+function cur(){return (location.hash||'#practicar').slice(1)}
+function render(){
+ const s=SCREENS.find(x=>x.k===cur())||SCREENS[2];
+ nav();
+ document.getElementById('tTitle').textContent=s.t;
+ document.getElementById('tSub').textContent=s.s;
+ document.getElementById('tFile').textContent=s.f;
+ document.getElementById('tOpen').href=s.f;
+ document.getElementById('fNote').textContent=NOTES[s.k]||'';
+ const fr=document.getElementById('frame');
+ const src=s.f+'?embed=1';
+ if(fr.getAttribute('src')!==src)fr.setAttribute('src',src);
+}
+addEventListener('hashchange',render);render();
+</script>
+</body>
+</html>

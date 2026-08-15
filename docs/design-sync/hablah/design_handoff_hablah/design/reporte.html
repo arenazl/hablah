@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Reporte de sesión — habláh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  /* ====== REPORT ====== */
+  .report-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px}
+  @media (max-width:1180px){.report-grid{grid-template-columns:1fr}}
+
+  /* hero summary */
+  .summary{background:linear-gradient(160deg,#FAFFFC 0%,#E6F7F0 70%, #C9EEDC 100%);border:1px solid rgba(0,179,126,.18);border-radius:20px;padding:28px 28px 24px;position:relative;overflow:hidden}
+  .summary::after{content:"";position:absolute;right:-80px;top:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(0,179,126,.16),transparent 60%)}
+  .check-wrap{display:flex;align-items:center;gap:18px;position:relative;z-index:1}
+  .check{width:64px;height:64px;border-radius:50%;background:var(--green);display:grid;place-items:center;color:#fff;box-shadow:0 8px 24px rgba(0,179,126,.4);animation:check-pop .5s var(--ease) both}
+  @keyframes check-pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  .check svg{width:34px;height:34px;stroke-width:2.6}
+  .summary h1{font-family:var(--font-display);font-weight:700;letter-spacing:-0.025em;font-size:38px;line-height:1.05;margin:0 0 4px;color:var(--fg-1)}
+  .summary p.sub{color:var(--fg-2);font-size:14.5px;margin:0;max-width:620px}
+  .summary p.sub b{color:var(--fg-1);font-weight:600}
+
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px;position:relative;z-index:1}
+  .stat{background:rgba(255,255,255,.6);backdrop-filter:blur(6px);border:1px solid rgba(0,179,126,.16);border-radius:12px;padding:12px 14px}
+  .stat .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg-3);font-weight:700}
+  .stat .v{font-family:var(--font-display);font-weight:700;font-size:24px;letter-spacing:-0.02em;color:var(--fg-1);margin-top:4px;font-feature-settings:"tnum"}
+  .stat .v small{font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--green-700);margin-left:5px}
+  .stat .v small.down{color:#B53337}
+  .stat .v small.unit{color:var(--fg-3);margin-left:2px}
+
+  /* sections */
+  .sec-head{display:flex;align-items:center;gap:10px;margin:32px 0 14px;justify-content:space-between}
+  .sec-head .l{display:flex;align-items:center;gap:10px}
+  .sec-head .badge{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:4px 9px;border-radius:99px;font-weight:700}
+  .sec-head .badge.green{background:#E6F7F0;color:var(--green-700)}
+  .sec-head .badge.amber{background:#FFF7DD;color:#8A6A00}
+  .sec-head h2{font-family:var(--font-display);font-weight:700;letter-spacing:-0.015em;font-size:22px;margin:0}
+  .sec-head .count{font-size:13px;color:var(--fg-3);font-weight:500}
+
+  /* praise */
+  .praise{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pr{background:#F1FBF6;border:1px solid #BCE8D6;border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;position:relative}
+  .pr .pr-icon{position:absolute;top:14px;right:14px;color:var(--green);opacity:.5}
+  .pr .pr-eye{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-700);font-weight:700;display:flex;align-items:center;gap:6px}
+  .pr h4{font-family:var(--font-display);font-weight:700;letter-spacing:-0.01em;font-size:16px;margin:0;color:#06321F;line-height:1.25}
+  .pr p{margin:0;color:#2F4D40;font-size:13px;line-height:1.5}
+  .pr .num{font-family:var(--font-display);font-weight:700;color:var(--green-700);font-size:14px}
+
+  /* pulido / corrections */
+  .corrs{display:flex;flex-direction:column;gap:12px}
+  .corr{background:var(--surface);border:1px solid var(--border-1);border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:32px 1fr auto;gap:14px;align-items:start}
+  .corr .num{width:28px;height:28px;border-radius:8px;background:#FFF7DD;color:#8A6A00;font-family:var(--font-display);font-weight:700;font-size:14px;display:grid;place-items:center;margin-top:2px}
+  .corr.gram .num{background:#E6F7F0;color:var(--green-700)}
+  .corr.phon .num{background:#EEF3FF;color:#2A4DAA}
+  .corr .body{min-width:0}
+  .corr .eye{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3);font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .corr.gram .eye{color:var(--green-700)}
+  .corr.phon .eye{color:#2A4DAA}
+  .corr h4{font-family:var(--font-display);font-weight:700;letter-spacing:-0.01em;font-size:16px;margin:0 0 10px;color:var(--fg-1)}
+  .corr .quote{display:grid;grid-template-columns:1fr;gap:6px;background:var(--bg-2);padding:10px 12px;border-radius:10px}
+  .corr .q-row{display:grid;grid-template-columns:80px 1fr;align-items:center;gap:10px;font-size:13.5px;font-family:var(--font-display);font-weight:500}
+  .corr .q-row .qlbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;font-family:var(--font-sans)}
+  .corr .q-row.bad .qlbl{color:#B53337}
+  .corr .q-row.good .qlbl{color:var(--green-700)}
+  .corr .q-row.bad .qval{color:#7A2326}
+  .corr .q-row.bad .qval mark{background:#FDECED;color:#9A2D31;padding:1px 5px;border-radius:5px;text-decoration:line-through;text-decoration-color:rgba(229,72,77,.5)}
+  .corr .q-row.good .qval{color:#06321F}
+  .corr .q-row.good .qval mark{background:#E6F7F0;color:var(--green-700);padding:1px 5px;border-radius:5px;font-weight:700}
+  .corr .ctx{font-size:12px;color:var(--fg-3);margin-top:8px;font-style:italic}
+  .corr .actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+  .corr .freq{font-size:11px;color:#8A6A00;background:#FFF7DD;padding:3px 8px;border-radius:99px;font-weight:600;white-space:nowrap}
+  .corr .freq.warn{color:#7A2326;background:#FDECED}
+
+  /* pronunciation */
+  .phon-rows{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .phon-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;background:var(--bg-2);padding:10px 14px;border-radius:10px}
+  .phon-row .wd{display:flex;align-items:baseline;gap:10px}
+  .phon-row .wd .word{font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.01em}
+  .phon-row .wd .ipa{font-family:var(--font-display);font-weight:500;font-size:13px;color:var(--fg-3);font-feature-settings:"ss01"}
+  .phon-row .wd .ipa.you{color:#B53337}
+  .phon-row .wd .ipa.right{color:var(--green-700)}
+  .phon-row .play{display:flex;align-items:center;gap:8px}
+  .phon-row .play button{width:34px;height:34px;border-radius:50%;background:var(--fg-1);color:#fff;display:grid;place-items:center}
+  .phon-row .play button:hover{background:#000}
+  .phon-row .play button.outline{background:transparent;border:1px solid var(--border-2);color:var(--fg-2)}
+  .phon-row .play span{font-size:11px;color:var(--fg-3);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+
+  /* recurring banner */
+  .recurring{background:linear-gradient(180deg,#FFFDF4,#FFF4D8);border:1px solid #F4E1A4;border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;margin-top:18px}
+  .recurring .ri{width:40px;height:40px;border-radius:12px;background:var(--amber);color:#3A2A00;display:grid;place-items:center;flex-shrink:0}
+  .recurring .rt{flex:1}
+  .recurring .rt h4{font-family:var(--font-display);font-weight:700;font-size:15px;margin:0 0 2px;color:#3A2A00}
+  .recurring .rt p{margin:0;font-size:13px;color:#6A4F00}
+
+  /* CTA row */
+  .cta-row{display:flex;align-items:center;gap:10px;margin-top:24px;flex-wrap:wrap}
+
+  /* RIGHT COLUMN */
+  .rc{display:flex;flex-direction:column;gap:18px;position:sticky;top:80px;align-self:start}
+
+  /* fluency meter */
+  .meter-card{padding:18px}
+  .meter-card .row1{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+  .meter-card .row1 .big{font-family:var(--font-display);font-weight:800;font-size:42px;letter-spacing:-0.03em;line-height:1;color:var(--fg-1)}
+  .meter-card .row1 .big small{font-family:var(--font-display);font-weight:600;font-size:14px;color:var(--green-700);margin-left:8px}
+  .meter-card .row1 .scale{font-size:11px;color:var(--fg-3);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .meter-bar{height:8px;border-radius:99px;background:var(--bg-2);overflow:hidden;position:relative}
+  .meter-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),#5EE0B0);border-radius:99px}
+  .meter-bar .prev{position:absolute;top:-3px;height:14px;width:2px;background:var(--fg-3);border-radius:99px}
+  .meter-card .legend{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--fg-4)}
+  .meter-card .breakdown{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+  .meter-card .bd{display:flex;flex-direction:column}
+  .meter-card .bd .k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-3);font-weight:600;margin-bottom:4px}
+  .meter-card .bd .v{font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--fg-1)}
+  .meter-card .bd .v small{font-family:var(--font-display);font-weight:600;font-size:11px;color:var(--green-700);margin-left:4px}
+  .meter-card .bd .v small.down{color:#B53337}
+
+  /* JSON peek (the "objeto estructurado JSON" the system emits) */
+  .json{background:#0D1412;color:#7CE7BD;border-radius:14px;padding:14px 16px;font-family:'SFMono-Regular',ui-monospace,monospace;font-size:11.5px;line-height:1.55;overflow:auto;border:1px solid #1B2624}
+  .json .k{color:#9DA8A4}
+  .json .s{color:#FFE9A6}
+  .json .n{color:#5EE0B0}
+  .json-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .json-head .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7A8480;font-weight:700}
+
+</style>
+<link href="embed.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+    </div>
+    <nav class="nav">
+      <a href="Hoy.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>Hoy<span class="pill dot"></span></a>
+      <a href="Practicar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>Practicar<span class="pill">DAILY</span></a>
+      <a href="Mapa.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>Mapa de progreso</a>
+      <a href="Historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historial</a>
+      <a href="Perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Perfil</a>
+    </nav>
+
+    <div class="side-section">
+      <div class="label">Tu progreso</div>
+      <div class="level-row"><span class="nivel">Nivel</span><span class="b2">B2</span></div>
+      <div class="level-bar"><i style="width:64%"></i></div>
+      <div class="level-hint">64% hasta C1 · <span style="color:#7CE7BD">+2%</span></div>
+    </div>
+
+    <div class="side-user">
+      <div class="avatar">L</div>
+      <div class="meta"><span class="name">Lautaro M.</span><span class="plan">Plan pro</span></div>
+      <button class="logout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg></button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div class="crumbs"><a href="Hoy.html" style="color:var(--fg-4)">Hoy</a> <span style="color:var(--fg-4)">›</span> Reporte de sesión</div>
+      <div class="top-actions">
+        <a href="Historial.html" class="btn btn-ghost btn-sm">Ver historial</a>
+        <a href="Practicar.html" class="btn btn-dark btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg>
+          Charlar de nuevo
+        </a>
+      </div>
+    </header>
+
+    <div class="report-grid" style="margin-top:14px">
+      <!-- LEFT -->
+      <div style="min-width:0">
+
+        <!-- SUMMARY -->
+        <section class="summary">
+          <div class="eyebrow" style="margin-bottom:10px;color:var(--green-700)">Charla completada · 16 nov · 18:42</div>
+          <div class="check-wrap">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>
+            </div>
+            <div>
+              <h1>¡Lo lograste, Lautaro!</h1>
+              <p class="sub">Charla de <b>6 min 48 s</b> sobre <b>Música electrónica · UK Garage</b> con <b>The Sincerist</b>. Cumpliste <b>2 de 3</b> desafíos en pantalla. Acá está tu reporte sin vueltas.</p>
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat">
+              <div class="k">Duración</div>
+              <div class="v">6:48<small class="unit">min</small></div>
+            </div>
+            <div class="stat">
+              <div class="k">Palabras dichas</div>
+              <div class="v">842<small>+96</small></div>
+            </div>
+            <div class="stat">
+              <div class="k">Fluidez</div>
+              <div class="v">78<small>+6</small></div>
+            </div>
+            <div class="stat">
+              <div class="k">Nivel detectado</div>
+              <div class="v">B2<small style="color:var(--fg-3)">·alto</small></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PRAISE -->
+        <div class="sec-head">
+          <div class="l">
+            <span class="badge green">El elogio</span>
+            <h2>Lo que hiciste bien</h2>
+          </div>
+          <span class="count">3 aciertos notables</span>
+        </div>
+
+        <div class="praise">
+          <div class="pr">
+            <svg class="pr-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+            <div class="pr-eye">Vocabulario · técnico</div>
+            <h4>Incorporaste 4 términos avanzados de producción musical</h4>
+            <p><b>"sidechain compression"</b>, <b>"shuffled hi-hats"</b>, <b>"two-step"</b> y <b>"sub-bass"</b> — todos de forma natural, sin trabarte.</p>
+          </div>
+          <div class="pr">
+            <svg class="pr-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+            <div class="pr-eye">Fluidez</div>
+            <h4>Tu velocidad subió <span class="num">+12%</span> respecto a ayer</h4>
+            <p>137 palabras por minuto, con pausas <b>más cortas</b> entre ideas. Sonaste cómodo aún hablando de algo complejo.</p>
+          </div>
+          <div class="pr" style="grid-column:1 / -1">
+            <svg class="pr-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            <div class="pr-eye">Desafío cumplido</div>
+            <h4>Usaste <b>"nevertheless"</b> al hilar tu argumento sobre las raíces del género</h4>
+            <p style="color:#2F4D40"><span style="background:#fff;border:1px solid #BCE8D6;padding:8px 12px;border-radius:8px;display:inline-block;margin-top:4px;font-family:var(--font-display);font-weight:500;color:#06321F">"…it grew from US garage house; <b>nevertheless</b>, the sound is completely british."</span></p>
+          </div>
+        </div>
+
+        <!-- CORRECTIONS -->
+        <div class="sec-head">
+          <div class="l">
+            <span class="badge amber">Pulido sincerista</span>
+            <h2>Lo que hay que pulir</h2>
+          </div>
+          <span class="count">3 puntos · máximo del día</span>
+        </div>
+
+        <div class="corrs">
+          <!-- 1 -->
+          <article class="corr gram">
+            <div class="num">1</div>
+            <div class="body">
+              <div class="eye">Gramática · pasado simple irregular <span style="color:var(--fg-3);font-weight:500;text-transform:none;letter-spacing:0">— el tercero esta semana</span></div>
+              <h4>Verbos irregulares todavía se te escapan</h4>
+              <div class="quote">
+                <div class="q-row bad">
+                  <div class="qlbl">Dijiste</div>
+                  <div class="qval">"It <mark>beginned</mark> in late 90s south london clubs."</div>
+                </div>
+                <div class="q-row good">
+                  <div class="qlbl">Mejor</div>
+                  <div class="qval">"It <mark>began</mark> in the late '90s in south London clubs."</div>
+                </div>
+              </div>
+              <div class="ctx">Minuto 1:42 · respondiendo "where did UK Garage start?"</div>
+            </div>
+            <div class="actions">
+              <span class="freq warn">3 sesiones seguidas</span>
+              <button class="btn btn-sm btn-soft" style="margin-top:auto"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20"/></svg> Oír el audio</button>
+            </div>
+          </article>
+
+          <!-- 2 -->
+          <article class="corr gram">
+            <div class="num">2</div>
+            <div class="body">
+              <div class="eye">Gramática · uso de artículo</div>
+              <h4>Falta artículo definido en construcciones de período histórico</h4>
+              <div class="quote">
+                <div class="q-row bad">
+                  <div class="qlbl">Dijiste</div>
+                  <div class="qval">"DJs played pirate radios during <mark>weekends</mark>."</div>
+                </div>
+                <div class="q-row good">
+                  <div class="qlbl">Mejor</div>
+                  <div class="qval">"DJs played on pirate radio stations <mark>on the weekends</mark>."</div>
+                </div>
+              </div>
+              <div class="ctx">Minuto 3:11 · contando el origen del sonido</div>
+            </div>
+            <div class="actions">
+              <span class="freq">1 vez</span>
+              <button class="btn btn-sm btn-soft" style="margin-top:auto"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20"/></svg> Oír el audio</button>
+            </div>
+          </article>
+
+          <!-- 3 -->
+          <article class="corr phon">
+            <div class="num">3</div>
+            <div class="body">
+              <div class="eye">Pronunciación · sonido /θ/ y /uː/</div>
+              <h4>Dos palabras quedaron lejos del nativo — escuchá y repetí</h4>
+              <div class="phon-rows">
+                <div class="phon-row">
+                  <div class="wd">
+                    <span class="word">through</span>
+                    <span class="ipa you">/truː/ <span style="color:var(--fg-3);font-weight:500">— dijiste</span></span>
+                    <span class="ipa right">/θruː/ <span style="color:var(--fg-3);font-weight:500">— nativo</span></span>
+                  </div>
+                  <div class="play">
+                    <button title="Tu audio" class="outline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20"/></svg></button>
+                    <span>vs.</span>
+                    <button title="Audio nativo"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg></button>
+                  </div>
+                </div>
+                <div class="phon-row">
+                  <div class="wd">
+                    <span class="word">smooth</span>
+                    <span class="ipa you">/smuθ/ <span style="color:var(--fg-3);font-weight:500">— dijiste</span></span>
+                    <span class="ipa right">/smuːð/ <span style="color:var(--fg-3);font-weight:500">— nativo</span></span>
+                  </div>
+                  <div class="play">
+                    <button title="Tu audio" class="outline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20"/></svg></button>
+                    <span>vs.</span>
+                    <button title="Audio nativo"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg></button>
+                  </div>
+                </div>
+              </div>
+              <div class="ctx">Tip: pone la lengua entre los dientes para /θ/ y /ð/. Es el primer sonido que ataca el acento argentino.</div>
+            </div>
+            <div class="actions">
+              <span class="freq warn">repetido</span>
+              <button class="btn btn-sm btn-soft" style="margin-top:auto"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg> Practicar</button>
+            </div>
+          </article>
+        </div>
+
+        <!-- RECURRING -->
+        <div class="recurring">
+          <div class="ri">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </div>
+          <div class="rt">
+            <h4>El patrón "verbos irregulares" llegó al límite</h4>
+            <p>Lo repetiste 3 sesiones seguidas. Tu próxima charla se va a moldear para forzar este tema — <b>misión de rescate activada</b>.</p>
+          </div>
+          <a href="Mapa.html" class="btn btn-sm btn-dark">Ver en el mapa →</a>
+        </div>
+
+        <!-- CTA ROW -->
+        <div class="cta-row">
+          <a href="Practicar.html" class="btn btn-lg btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+            Charlar de nuevo (5 min)
+          </a>
+          <a href="Mapa.html" class="btn btn-lg btn-ghost">Ir al mapa</a>
+          <a href="Hoy.html" class="btn btn-lg btn-ghost">Volver a hoy</a>
+          <div style="margin-left:auto;font-size:12px;color:var(--fg-3)">+18 XP · racha mantenida</div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <aside class="rc">
+        <div class="card meter-card">
+          <div class="card-head">
+            <h3>Tu fluidez</h3>
+            <span class="h-meta">contra tu media 30d</span>
+          </div>
+          <div class="row1">
+            <div class="big">78<small>+6</small></div>
+            <div class="scale">/ 100</div>
+          </div>
+          <div class="meter-bar">
+            <i style="width:78%"></i>
+            <span class="prev" style="left:72%"></span>
+          </div>
+          <div class="legend"><span>0</span><span style="color:var(--fg-3)">↑ media 72</span><span>100</span></div>
+
+          <div class="breakdown">
+            <div class="bd">
+              <span class="k">Velocidad</span>
+              <span class="v">137 ppm<small>+12%</small></span>
+            </div>
+            <div class="bd">
+              <span class="k">Pausas largas</span>
+              <span class="v">3<small class="down">+1</small></span>
+            </div>
+            <div class="bd">
+              <span class="k">Léxico único</span>
+              <span class="v">186<small>+22</small></span>
+            </div>
+            <div class="bd">
+              <span class="k">Muletillas</span>
+              <span class="v">8<small>−4</small></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Desafíos en pantalla</h3>
+            <span class="h-meta">2 / 3</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:#E6F7F0;border:1px solid rgba(0,179,126,.18);border-radius:10px">
+              <span style="width:24px;height:24px;border-radius:7px;background:rgba(0,179,126,.22);color:var(--green-700);display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:11px">V</span>
+              <span style="font-size:13px;color:#06321F;flex:1"><b style="font-weight:600">Usar "nevertheless"</b></span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:#E6F7F0;border:1px solid rgba(0,179,126,.18);border-radius:10px">
+              <span style="width:24px;height:24px;border-radius:7px;background:rgba(0,179,126,.22);color:var(--green-700);display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:11px">G</span>
+              <span style="font-size:13px;color:#06321F;flex:1"><b style="font-weight:600">Narrativa en pasado simple</b></span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:10px;opacity:.85">
+              <span style="width:24px;height:24px;border-radius:7px;background:#FDECED;color:#9A2D31;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:11px">R</span>
+              <span style="font-size:13px;color:var(--fg-2);flex:1"><b style="font-weight:600">Expresar desacuerdo formal</b></span>
+              <span style="font-size:11px;color:var(--fg-3);font-weight:600">sin uso</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="json-head" style="padding:14px 14px 0"><span class="lbl">Salida estructurada</span><span style="font-size:10.5px;color:var(--fg-4);font-family:'SFMono-Regular',ui-monospace,monospace">session_42.json</span></div>
+          <pre class="json" style="margin:10px 14px 14px;border-radius:10px"><span class="k">"praise"</span>: [
+  <span class="s">"advanced_vocab"</span>,
+  <span class="s">"fluency_+12%"</span>
+],
+<span class="k">"grammar_errors"</span>: <span class="n">2</span>,
+<span class="k">"phonetic_errors"</span>: <span class="n">2</span>,
+<span class="k">"recurring_pattern"</span>:
+  <span class="s">"irreg_past_simple"</span>,
+<span class="k">"trigger_rescue"</span>: <span style="color:#FFB4B6">true</span></pre>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+</div>
+
+<script src="embed.js"></script>
+</body>
+</html>

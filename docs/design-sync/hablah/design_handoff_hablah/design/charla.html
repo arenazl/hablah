@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Practicar · charla en curso — habláh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  /* ============ PRACTICAR PAGE ============ */
+  body{background:#062B25}
+  main{padding:0;max-width:none;overflow:hidden}
+  .topbar{display:none}
+
+  .stage{position:relative;min-height:100vh;color:#fff;
+    background:
+      radial-gradient(1200px 700px at 50% 0%, rgba(0,179,126,.22), transparent 60%),
+      radial-gradient(900px 500px at 0% 100%, rgba(255,184,0,.10), transparent 60%),
+      radial-gradient(900px 500px at 100% 100%, rgba(229,72,77,.08), transparent 60%),
+      linear-gradient(180deg,#062B25,#031A16);
+    display:grid;grid-template-rows:auto 1fr auto;padding:20px 28px 22px}
+
+  /* session header */
+  .sess-header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .sh-left{display:flex;align-items:center;gap:10px}
+  .sh-right{display:flex;align-items:center;gap:10px}
+  .exit{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);color:#fff;height:36px;padding:0 12px;border-radius:10px;font-size:13px;font-weight:500}
+  .exit:hover{background:rgba(255,255,255,.12)}
+  .pill-info{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:var(--r-pill);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);color:#fff;font-size:12.5px;font-weight:500}
+  .pill-info b{color:#fff;font-weight:600}
+  .pill-info .live-dot{background:var(--green);box-shadow:0 0 0 3px rgba(0,179,126,.25)}
+  .timer{font-family:var(--font-display);font-feature-settings:"tnum";font-weight:700;font-size:14px;letter-spacing:.04em;color:#fff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);padding:0 14px;height:36px;border-radius:var(--r-pill);display:inline-flex;align-items:center;gap:8px}
+  .timer .clock{color:rgba(255,255,255,.5)}
+  .icon-mini{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);color:#fff;display:grid;place-items:center}
+  .icon-mini:hover{background:rgba(255,255,255,.12)}
+
+  /* center stage */
+  .center{position:relative;display:grid;grid-template-columns:1fr minmax(520px,720px) 1fr;align-items:center;gap:24px;padding:0 8px}
+
+  /* tutor orb */
+  .orb-wrap{display:flex;flex-direction:column;align-items:center;gap:24px;justify-self:center}
+  .orb{position:relative;width:340px;height:340px;display:grid;place-items:center}
+  .orb .r{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(124,231,189,.18)}
+  .orb .r1{inset:8%;border-color:rgba(124,231,189,.22)}
+  .orb .r2{inset:18%;border-color:rgba(124,231,189,.28)}
+  .orb .r3{inset:30%;border-color:rgba(124,231,189,.36);background:radial-gradient(circle at 30% 30%, rgba(94,224,176,.35), rgba(0,143,99,.0) 60%)}
+  .orb .core{position:absolute;inset:38%;border-radius:50%;
+    background:
+      radial-gradient(circle at 35% 30%, #BDF6DD 0%, #5EE0B0 30%, #00B37E 60%, #008F63 100%);
+    box-shadow:
+      0 0 60px rgba(0,179,126,.45),
+      inset 0 0 30px rgba(255,255,255,.25);
+    animation:orb-breath 4s ease-in-out infinite}
+  .orb .glow{position:absolute;inset:-20%;border-radius:50%;background:radial-gradient(circle, rgba(0,179,126,.18), transparent 60%);filter:blur(8px);animation:orb-glow 3s ease-in-out infinite alternate}
+  @keyframes orb-breath{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  @keyframes orb-glow{0%{opacity:.6}100%{opacity:1}}
+
+  .orb-label{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .orb-label .tname{font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.01em}
+  .orb-label .tstate{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:rgba(255,255,255,.65);background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);padding:5px 12px;border-radius:var(--r-pill)}
+  .orb-label .tstate .live-dot{background:var(--green);box-shadow:0 0 0 3px rgba(0,179,126,.25)}
+
+  /* live transcript / hint */
+  .transcript{margin-top:8px;max-width:560px;text-align:center;color:rgba(255,255,255,.78);font-size:18px;line-height:1.45;font-family:var(--font-display);font-weight:500;letter-spacing:-0.005em;min-height:54px}
+  .transcript .you{color:rgba(255,255,255,.55);font-style:italic;font-weight:500}
+
+  /* side challenge cards */
+  .prompts{display:flex;flex-direction:column;gap:10px;align-self:start;margin-top:48px}
+  .prompts.right{align-self:start;margin-top:96px}
+  .promptc{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px 16px;backdrop-filter:blur(10px);display:flex;gap:12px;align-items:flex-start;min-width:260px;max-width:300px;transition:all .24s var(--ease)}
+  .promptc:hover{background:rgba(255,255,255,.10);transform:translateY(-2px)}
+  .promptc.done{opacity:.5}
+  .promptc.done .pt{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.3)}
+  .promptc .pgl{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;font-family:var(--font-display);font-weight:800;font-size:13px}
+  .promptc.vocab .pgl{background:rgba(255,184,0,.22);color:#FFE9A6}
+  .promptc.gram .pgl{background:rgba(94,224,176,.22);color:#7CE7BD}
+  .promptc.restr .pgl{background:rgba(229,72,77,.22);color:#FFB4B6}
+  .promptc.new{box-shadow:0 0 0 1px rgba(255,184,0,.4), 0 0 40px rgba(255,184,0,.18);animation:fade-up .4s var(--ease)}
+  @keyframes fade-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .promptc .ptl{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+  .promptc .ptl.new::after{content:"nuevo";font-size:9px;background:var(--amber);color:#3A2A00;padding:1px 5px;border-radius:99px;letter-spacing:.04em;font-weight:800}
+  .promptc.done .ptl.new::after{content:"hecho";background:rgba(94,224,176,.4);color:#062B25}
+  .promptc .pt{font-size:13.5px;line-height:1.45;color:rgba(255,255,255,.94)}
+  .promptc .pt b{color:#fff;font-weight:600;background:rgba(255,255,255,.10);padding:1px 6px;border-radius:6px;font-family:var(--font-display);font-size:12.5px;letter-spacing:.01em}
+
+  /* bottom mic & controls */
+  .controls{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:8px 4px 0;position:relative}
+  .mic-col{display:flex;justify-content:center}
+  .mic{position:relative;width:88px;height:88px;border-radius:50%;background:#fff;color:#062B25;display:grid;place-items:center;box-shadow:0 12px 40px rgba(0,0,0,.35);transition:transform .15s var(--ease)}
+  .mic:hover{transform:scale(1.03)}
+  .mic:active{transform:scale(.97)}
+  .mic svg{width:34px;height:34px}
+  .mic.recording{background:var(--green);color:#fff}
+  .mic-ring{position:absolute;inset:-12px;border-radius:50%;border:2px solid rgba(0,179,126,.35);animation:ring 2s var(--ease) infinite}
+  .mic-ring.r2{inset:-20px;animation-delay:.5s;border-color:rgba(0,179,126,.2)}
+  @keyframes ring{0%{transform:scale(.9);opacity:0}30%{opacity:1}100%{transform:scale(1.25);opacity:0}}
+
+  .ctl-left{display:flex;align-items:center;gap:18px;justify-content:flex-end}
+  .ctl-right{display:flex;align-items:center;gap:18px;justify-content:flex-start}
+  .ctl{display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,.6);font-size:11px;letter-spacing:.04em;font-weight:500}
+  .ctl button{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);color:#fff;display:grid;place-items:center}
+  .ctl button:hover{background:rgba(255,255,255,.12)}
+  .ctl button.danger{background:rgba(229,72,77,.16);border-color:rgba(229,72,77,.4);color:#FFB4B6}
+  .ctl button.danger:hover{background:rgba(229,72,77,.24)}
+
+  /* live waveform across bottom */
+  .wave-bar{display:flex;align-items:center;gap:3px;height:48px;padding:0 16px}
+  .wave-bar i{display:block;width:3px;background:rgba(124,231,189,.5);border-radius:99px;height:30%;animation:wave 1.2s ease-in-out infinite}
+  .wave-bar i:nth-child(odd){animation-duration:1.5s}
+  .wave-bar i:nth-child(3n){animation-duration:.9s}
+  .wave-bar i:nth-child(5n){animation-duration:1.8s}
+  @keyframes wave{0%,100%{height:14%}50%{height:78%}}
+
+  /* footer hints */
+  .footer-hints{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:rgba(255,255,255,.4);padding:12px 4px 0;letter-spacing:.02em}
+  .footer-hints kbd{font-family:var(--font-sans);font-size:10.5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:1px 6px;border-radius:5px;color:rgba(255,255,255,.75);margin:0 3px}
+
+  /* sidebar dim */
+  .sidebar{background:#04201B;border-right:1px solid rgba(255,255,255,.04)}
+  .sidebar .nav a:not(.active){opacity:.5}
+</style>
+<link href="embed.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+    </div>
+    <nav class="nav">
+      <a href="Hoy.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>Hoy</a>
+      <a href="Practicar.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>Practicar<span class="pill dot"></span></a>
+      <!-- Active session is a child of Practicar; keeping Practicar active in nav -->
+      <a href="Mapa.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/></svg>Mapa de progreso</a>
+      <a href="Historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Historial</a>
+      <a href="Perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Perfil</a>
+    </nav>
+
+    <div class="side-section">
+      <div class="label">Sesión</div>
+      <div style="color:#B7BFBB;font-size:12.5px;line-height:1.5">
+        <div style="color:#fff;font-weight:600;font-family:var(--font-display);margin-bottom:2px">Música electrónica</div>
+        <div>UK Garage · B2</div>
+        <div style="margin-top:8px;color:#7A8480">Tutor: The Sincerist</div>
+      </div>
+    </div>
+
+    <div class="side-section">
+      <div class="label">Punto a forzar</div>
+      <div style="font-size:12.5px;color:#FFE9A6;background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.18);padding:8px 10px;border-radius:10px;line-height:1.45">
+        Verbos irregulares en pasado simple
+      </div>
+    </div>
+
+    <div class="side-user">
+      <div class="avatar">L</div>
+      <div class="meta">
+        <span class="name">Lautaro M.</span>
+        <span class="plan">Plan pro</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ STAGE ============ -->
+  <main>
+    <section class="stage">
+
+      <header class="sess-header">
+        <div class="sh-left">
+          <a href="Practicar.html" class="exit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+            Salir
+          </a>
+          <span class="pill-info">
+            <span class="live-dot"></span>
+            <span>Charla en curso · <b>Música electrónica · UK Garage</b></span>
+          </span>
+        </div>
+        <div class="sh-right">
+          <span class="timer">
+            <svg class="clock" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            03:42 <span style="color:rgba(255,255,255,.4);font-weight:500">/ 07:00</span>
+          </span>
+          <span class="pill-info" title="Tutor"><b>The Sincerist</b> · rigurosidad 4/5</span>
+          <button class="icon-mini" title="Ajustes">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .4 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.4 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .4-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.4-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.4H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.4 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <section class="center">
+        <!-- LEFT PROMPTS -->
+        <div class="prompts">
+          <div class="promptc vocab done">
+            <span class="pgl">V</span>
+            <div>
+              <div class="ptl new">Vocabulario</div>
+              <div class="pt">Usá <b>nevertheless</b> en alguna idea.</div>
+            </div>
+          </div>
+          <div class="promptc gram new">
+            <span class="pgl">G</span>
+            <div>
+              <div class="ptl new">Gramática</div>
+              <div class="pt">Contá cómo <b>empezó</b> el género en <b>pasado simple</b>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORB -->
+        <div class="orb-wrap">
+          <div class="orb" role="img" aria-label="Tutor escuchando">
+            <span class="glow"></span>
+            <span class="r r1"></span>
+            <span class="r r2"></span>
+            <span class="r r3"></span>
+            <span class="core"></span>
+          </div>
+          <div class="orb-label">
+            <div class="tname">The Sincerist</div>
+            <div class="tstate"><span class="live-dot"></span> Escuchando…</div>
+          </div>
+          <div class="transcript">
+            "UK Garage <span class="you">[hablás vos]</span>"
+            <div style="font-size:13px;color:rgba(255,255,255,.45);margin-top:8px;font-family:var(--font-sans);font-weight:400;font-style:italic">Lo que dijiste se procesa en silencio. El tutor responde cuando terminás.</div>
+          </div>
+        </div>
+
+        <!-- RIGHT PROMPTS -->
+        <div class="prompts right">
+          <div class="promptc restr">
+            <span class="pgl">R</span>
+            <div>
+              <div class="ptl">Restricción</div>
+              <div class="pt">El tutor va a discrepar. Expresá <b>desacuerdo formal</b>.</div>
+            </div>
+          </div>
+          <div class="promptc" style="background:rgba(255,255,255,.03);border-style:dashed;color:rgba(255,255,255,.5);min-height:62px;align-items:center;justify-content:center">
+            <div style="font-size:11.5px;color:rgba(255,255,255,.5);text-align:center;width:100%">próximo desafío en 1 min</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BOTTOM CONTROLS -->
+      <section class="controls">
+        <div class="ctl-left">
+          <div class="wave-bar">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+
+        <div class="mic-col">
+          <button class="mic recording" aria-label="Pausar grabación">
+            <span class="mic-ring"></span>
+            <span class="mic-ring r2"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" stroke="none"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3M8 21h8"/></svg>
+          </button>
+        </div>
+
+        <div class="ctl-right">
+          <div class="ctl">
+            <button title="Silenciar mic">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M3 3l18 18"/></svg>
+            </button>
+            <span>silenciar</span>
+          </div>
+          <div class="ctl">
+            <button class="danger" title="Terminar charla">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></svg>
+            </button>
+            <span>terminar</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer-hints">
+        <div>
+          <kbd>espacio</kbd> pausar · <kbd>esc</kbd> terminar · <kbd>D</kbd> ver desafíos
+        </div>
+        <div>
+          El feedback aparece <b style="color:rgba(255,255,255,.7);font-weight:600">al final</b>. The Sincerist no interrumpe.
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script>
+  // simple click on terminar → go to report
+  document.querySelector('.ctl button.danger')?.addEventListener('click', () => {
+    window.location.href = 'Reporte.html';
+  });
+</script>
+
+<script src="embed.js"></script>
+</body>
+</html>

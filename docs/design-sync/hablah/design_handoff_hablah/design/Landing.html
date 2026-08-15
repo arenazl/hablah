@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>habláh · aprender inglés hablando, sin clases</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<style>
+  body{background:#FAFBFA;overflow-x:hidden}
+  .app{display:block;min-height:auto}
+  main{padding:0;max-width:none}
+
+  /* ============ NAV ============ */
+  .lnav{position:sticky;top:0;z-index:50;background:rgba(6,43,37,.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06)}
+  .lnav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;gap:24px}
+  .lnav .brand{padding:0;display:flex;align-items:center;gap:10px}
+  .lnav .brand .brand-mark{width:30px;height:30px;border-radius:9px;font-size:17px}
+  .lnav .brand .brand-name{font-size:18px;color:#fff}
+  .lnav-links{display:flex;align-items:center;gap:6px}
+  .lnav-links a{color:rgba(255,255,255,.7);font-size:13.5px;font-weight:500;padding:8px 12px;border-radius:8px;transition:all .15s var(--ease)}
+  .lnav-links a:hover{color:#fff;background:rgba(255,255,255,.05)}
+  .lnav-cta{display:flex;align-items:center;gap:8px}
+  .lnav-cta .signin{color:rgba(255,255,255,.7);font-size:13.5px;font-weight:500;padding:8px 12px;border-radius:8px}
+  .lnav-cta .signin:hover{color:#fff}
+  .lnav-cta .start{background:var(--green);color:#fff;padding:9px 16px;border-radius:10px;font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;gap:6px}
+  .lnav-cta .start:hover{background:var(--green-700)}
+
+  /* ============ HERO ============ */
+  .hero{position:relative;background:
+    radial-gradient(900px 600px at 100% 0%, rgba(0,179,126,.22), transparent 60%),
+    radial-gradient(900px 600px at 0% 100%, rgba(255,184,0,.10), transparent 60%),
+    linear-gradient(180deg,#062B25 0%,#031A16 100%);
+    color:#fff;padding:64px 32px 100px;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06)}
+  .hero-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center;position:relative;z-index:1}
+  @media (max-width:1000px){.hero-inner{grid-template-columns:1fr}}
+
+  .hero-eyebrow{display:inline-flex;align-items:center;gap:10px;padding:6px 14px;background:rgba(124,231,189,.10);border:1px solid rgba(124,231,189,.22);color:#7CE7BD;border-radius:99px;font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:24px}
+  .hero-eyebrow .ld{width:7px;height:7px;border-radius:50%;background:#7CE7BD;box-shadow:0 0 0 3px rgba(124,231,189,.2);animation:pulse 1.8s ease-out infinite}
+
+  .hero h1{font-family:var(--font-display);font-weight:800;letter-spacing:-0.035em;font-size:84px;line-height:.95;margin:0 0 22px;color:#fff;text-wrap:balance}
+  @media (max-width:1000px){.hero h1{font-size:64px}}
+  .hero h1 em{font-style:normal;background:linear-gradient(180deg,#fff 60%,#5EE0B0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero h1 strong{font-weight:800;color:var(--amber);font-style:italic}
+
+  .hero .sub{font-size:18px;line-height:1.5;color:rgba(255,255,255,.7);max-width:520px;margin:0 0 32px}
+  .hero .sub b{color:#fff;font-weight:600}
+
+  .hero-cta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .hero-cta .primary{height:54px;padding:0 26px;border-radius:14px;background:#fff;color:#062B25;font-family:var(--font-sans);font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:10px;transition:transform .15s var(--ease)}
+  .hero-cta .primary:hover{transform:translateY(-1px);background:#F2FBF7}
+  .hero-cta .ghost{height:54px;padding:0 22px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:var(--font-sans);font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:10px}
+  .hero-cta .ghost:hover{background:rgba(255,255,255,.12)}
+
+  .hero-trust{display:flex;align-items:center;gap:18px;margin-top:32px;font-size:12.5px;color:rgba(255,255,255,.55)}
+  .hero-trust .row{display:flex;align-items:center;gap:8px}
+  .hero-trust b{color:#fff;font-weight:600}
+  .hero-trust .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.3)}
+
+  /* hero right — visual */
+  .hero-visual{position:relative;display:flex;align-items:center;justify-content:center;min-height:520px}
+  .h-orb{position:relative;width:440px;height:440px;display:grid;place-items:center}
+  .h-orb .r{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(124,231,189,.16)}
+  .h-orb .r1{inset:8%}
+  .h-orb .r2{inset:18%;border-color:rgba(124,231,189,.22)}
+  .h-orb .r3{inset:30%;border-color:rgba(124,231,189,.32);background:radial-gradient(circle at 30% 30%, rgba(94,224,176,.4), rgba(0,143,99,.0) 60%)}
+  .h-orb .core{position:absolute;inset:38%;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #BDF6DD 0%, #5EE0B0 30%, #00B37E 60%, #008F63 100%);
+    box-shadow:0 0 80px rgba(0,179,126,.5),inset 0 0 40px rgba(255,255,255,.25);
+    animation:orb-breath 4s ease-in-out infinite}
+  .h-orb .glow{position:absolute;inset:-20%;border-radius:50%;background:radial-gradient(circle, rgba(0,179,126,.22), transparent 60%);filter:blur(8px);animation:orb-glow 3s ease-in-out infinite alternate}
+  @keyframes orb-breath{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  @keyframes orb-glow{0%{opacity:.55}100%{opacity:1}}
+
+  /* floating chips around orb */
+  .float-chip{position:absolute;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 14px;backdrop-filter:blur(8px);font-size:12.5px;color:#fff;display:flex;align-items:center;gap:10px;animation:float 4s ease-in-out infinite;max-width:240px;line-height:1.4}
+  .float-chip .fc-l{font-size:9.5px;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.5);font-weight:700;margin-right:2px}
+  .float-chip .fc-pgl{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;font-family:var(--font-display);font-weight:800;font-size:11px}
+  .fc.vocab{top:6%;left:-4%;animation-delay:0s}
+  .fc.vocab .fc-pgl{background:rgba(255,184,0,.22);color:#FFE9A6}
+  .fc.gram{top:30%;right:-10%;animation-delay:1s}
+  .fc.gram .fc-pgl{background:rgba(94,224,176,.22);color:#7CE7BD}
+  .fc.flu{bottom:14%;left:-8%;animation-delay:2s}
+  .fc.flu .fc-pgl{background:rgba(124,231,189,.22);color:#7CE7BD}
+  .fc.amb{bottom:6%;right:-6%;animation-delay:1.5s;background:rgba(255,184,0,.06);border-color:rgba(255,184,0,.2)}
+  .fc.amb .fc-pgl{background:rgba(255,184,0,.22);color:#FFE9A6}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  /* ============ SECTIONS ============ */
+  section{padding:96px 32px}
+  .sec-inner{max-width:1280px;margin:0 auto}
+  .sec-head{max-width:760px;margin-bottom:56px}
+  .sec-head .eb{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green-700);background:#E6F7F0;padding:5px 12px;border-radius:99px}
+  .sec-head h2{font-family:var(--font-display);font-weight:800;letter-spacing:-0.03em;font-size:56px;line-height:1.02;margin:18px 0 14px;color:var(--fg-1);text-wrap:balance}
+  .sec-head h2 em{font-style:normal;color:var(--green-700)}
+  .sec-head h2 .strike{color:var(--fg-1);text-decoration:line-through;text-decoration-color:rgba(229,72,77,.6);text-decoration-thickness:4px}
+  .sec-head p{font-size:18px;color:var(--fg-2);max-width:580px;line-height:1.5;margin:0}
+
+  /* TRUSTLESS strip */
+  .trust-strip{background:#fff;border-top:1px solid var(--border-1);border-bottom:1px solid var(--border-1);padding:24px 32px}
+  .trust-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+  .trust-l{font-size:13px;color:var(--fg-3);font-weight:500}
+  .trust-l b{color:var(--fg-1);font-weight:700}
+  .trust-stats{display:flex;align-items:center;gap:32px}
+  .trust-stats .ts{display:flex;flex-direction:column;text-align:center}
+  .trust-stats .ts .v{font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--fg-1);letter-spacing:-0.02em;line-height:1;font-feature-settings:"tnum"}
+  .trust-stats .ts .v small{font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--green-700)}
+  .trust-stats .ts .k{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg-3);font-weight:600;margin-top:3px}
+  .trust-stats .ts-div{width:1px;height:36px;background:var(--border-2)}
+
+  /* HOW IT WORKS */
+  .how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media (max-width:980px){.how-grid{grid-template-columns:1fr}}
+  .how-c{background:#fff;border:1px solid var(--border-1);border-radius:18px;padding:28px;position:relative;overflow:hidden;min-height:340px}
+  .how-c .num{font-family:var(--font-display);font-weight:800;font-size:64px;color:#E6F7F0;line-height:.9;letter-spacing:-0.04em;position:absolute;top:18px;right:24px}
+  .how-c .ico{width:46px;height:46px;border-radius:13px;background:#062B25;color:#7CE7BD;display:grid;place-items:center;margin-bottom:18px;position:relative;z-index:1}
+  .how-c .ico svg{width:22px;height:22px;stroke-width:2.2}
+  .how-c h3{font-family:var(--font-display);font-weight:700;font-size:24px;letter-spacing:-0.02em;margin:0 0 10px;line-height:1.15;color:var(--fg-1);max-width:280px}
+  .how-c p{font-size:14.5px;color:var(--fg-2);margin:0;line-height:1.55;max-width:340px}
+  .how-c .demo{margin-top:22px;padding:14px;background:var(--bg-2);border-radius:12px;font-size:12.5px;color:var(--fg-2);line-height:1.5;font-family:var(--font-display);font-weight:500}
+  .how-c .demo small{display:block;font-family:var(--font-sans);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg-4);margin-bottom:6px}
+  .how-c .demo mark{background:transparent;color:var(--green-700);font-weight:600}
+  .how-c .demo .you{color:var(--fg-3);font-style:italic;font-weight:500}
+
+  /* TUTORS */
+  .tutors-section{background:#062B25;color:#fff}
+  .tutors-section .sec-head h2{color:#fff}
+  .tutors-section .sec-head h2 em{color:#5EE0B0}
+  .tutors-section .sec-head p{color:rgba(255,255,255,.7)}
+  .tutors-section .sec-head .eb{background:rgba(124,231,189,.10);color:#7CE7BD}
+  .tutors-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media (max-width:980px){.tutors-grid{grid-template-columns:1fr}}
+  .tutor-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:16px;min-height:380px}
+  .tc-head{display:flex;align-items:center;gap:14px}
+  .tc-av{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:22px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  .tutor-card.coach .tc-av{background:linear-gradient(135deg,#5EE0B0,var(--green));color:#06321F}
+  .tutor-card.sinc .tc-av{background:linear-gradient(135deg,#FFB800,#FF6A3D);color:#1B0E00}
+  .tutor-card.arc .tc-av{background:linear-gradient(135deg,#EC4899,#7C3AED);color:#fff}
+  .tc-name h4{font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:-0.015em;margin:0;color:#fff;line-height:1.1}
+  .tc-name .role{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.55);font-weight:600;margin-top:3px}
+  .tutor-card .quote{font-family:var(--font-display);font-weight:500;font-size:16px;line-height:1.4;color:#fff;letter-spacing:-0.005em}
+  .tutor-card .quote::before{content:"\201C";color:rgba(124,231,189,.45);font-size:30px;line-height:0;margin-right:3px;vertical-align:-10px;font-family:Georgia,serif}
+  .tutor-card .traits{display:flex;flex-direction:column;gap:6px;margin-top:auto}
+  .tutor-card .trait{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:rgba(255,255,255,.65)}
+  .tutor-card .trait .bar{display:inline-flex;gap:3px}
+  .tutor-card .trait .bar i{width:18px;height:5px;border-radius:99px;background:rgba(255,255,255,.1)}
+  .tutor-card.coach .trait .bar i.on{background:#5EE0B0}
+  .tutor-card.sinc .trait .bar i.on{background:#FFB800}
+  .tutor-card.arc .trait .bar i.on{background:#EC4899}
+
+  /* DIFFERENTIATOR */
+  .diff-section{background:#FAFBFA}
+  .diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  @media (max-width:980px){.diff-grid{grid-template-columns:1fr}}
+  .compare-list{display:flex;flex-direction:column;gap:12px}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;background:#fff;border:1px solid var(--border-1);border-radius:14px;overflow:hidden}
+  .cmp .col{padding:18px 22px}
+  .cmp .col.bad{background:#FAFBFA;color:var(--fg-3);border-right:1px solid var(--border-1)}
+  .cmp .col .label{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;margin-bottom:8px}
+  .cmp .col.bad .label{color:var(--fg-4)}
+  .cmp .col.good .label{color:var(--green-700)}
+  .cmp .col h5{font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.005em;margin:0;line-height:1.3;color:var(--fg-1)}
+  .cmp .col.bad h5{color:var(--fg-3);text-decoration:line-through;text-decoration-color:rgba(229,72,77,.3)}
+
+  .diff-visual{background:linear-gradient(180deg,#062B25,#054A3A);border-radius:24px;padding:32px;color:#fff;position:relative;overflow:hidden;min-height:520px}
+  .diff-visual::after{content:"";position:absolute;right:-60px;bottom:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(0,179,126,.3),transparent 70%);pointer-events:none}
+  .dv-chat{display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
+  .dv-bubble{padding:14px 18px;border-radius:18px;font-size:14px;line-height:1.45;max-width:78%}
+  .dv-bubble.tutor{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);color:#fff;align-self:flex-start;border-bottom-left-radius:6px;font-family:var(--font-display);font-weight:500}
+  .dv-bubble.you{background:var(--green);color:#fff;align-self:flex-end;border-bottom-right-radius:6px;font-family:var(--font-display);font-weight:500}
+  .dv-bubble .ann{display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:rgba(124,231,189,.9);font-weight:700;margin-bottom:6px;font-family:var(--font-sans)}
+  .dv-final{margin-top:18px;padding:16px 18px;background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.22);border-radius:14px;color:#FFF7DD;font-size:13.5px;line-height:1.5}
+  .dv-final b{color:#FFE9A6;font-weight:600}
+  .dv-final h5{font-family:var(--font-display);font-weight:700;font-size:14px;margin:0 0 6px;color:#FFE9A6;display:flex;align-items:center;gap:6px}
+
+  /* PRICING */
+  .pricing-section{background:#FAFBFA}
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media (max-width:980px){.price-grid{grid-template-columns:1fr}}
+  .price{background:#fff;border:1px solid var(--border-1);border-radius:18px;padding:30px 28px;display:flex;flex-direction:column;gap:6px;position:relative}
+  .price h4{font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.01em;margin:0;color:var(--fg-1)}
+  .price .desc{font-size:13.5px;color:var(--fg-3);margin:0 0 14px;line-height:1.45}
+  .price .amt{display:flex;align-items:baseline;gap:6px;margin:6px 0 14px}
+  .price .amt .n{font-family:var(--font-display);font-weight:800;font-size:48px;letter-spacing:-0.03em;color:var(--fg-1);line-height:1;font-feature-settings:"tnum"}
+  .price .amt .u{font-size:14px;color:var(--fg-3);font-weight:500}
+  .price .amt .strike{font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--fg-4);text-decoration:line-through;margin-left:6px}
+  .price .billing{font-size:12px;color:var(--fg-3);margin-top:-10px;margin-bottom:16px}
+  .price .billing b{color:var(--green-700);font-weight:700}
+  .price ul{list-style:none;padding:0;margin:14px 0 22px;display:flex;flex-direction:column;gap:10px}
+  .price ul li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--fg-2);line-height:1.45}
+  .price ul li svg{width:16px;height:16px;color:var(--green);flex-shrink:0;margin-top:1px}
+  .price ul li.muted{color:var(--fg-4);text-decoration:line-through}
+  .price ul li.muted svg{color:var(--fg-4)}
+  .price ul li b{color:var(--fg-1);font-weight:600}
+  .price .price-cta{margin-top:auto}
+  .price .price-cta a{width:100%;justify-content:center}
+  .price.featured{background:linear-gradient(180deg,#062B25 0%,#054A3A 100%);color:#fff;border-color:transparent;transform:scale(1.03);box-shadow:0 12px 40px rgba(0,143,99,.18)}
+  .price.featured h4{color:#fff}
+  .price.featured .desc{color:rgba(255,255,255,.65)}
+  .price.featured .amt .n{color:#fff}
+  .price.featured .amt .u{color:rgba(255,255,255,.55)}
+  .price.featured .amt .strike{color:rgba(255,255,255,.4)}
+  .price.featured .billing{color:rgba(255,255,255,.55)}
+  .price.featured .billing b{color:#5EE0B0}
+  .price.featured ul li{color:rgba(255,255,255,.85)}
+  .price.featured ul li.muted{color:rgba(255,255,255,.35)}
+  .price.featured ul li svg{color:#5EE0B0}
+  .price.featured ul li b{color:#fff}
+  .price.featured::before{content:"más elegido";position:absolute;top:-12px;left:28px;background:var(--amber);color:#3A2A00;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:99px}
+
+  /* FAQ */
+  .faq-section{background:#fff;border-top:1px solid var(--border-1)}
+  .faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 32px}
+  @media (max-width:980px){.faq-grid{grid-template-columns:1fr}}
+  .faq-item{padding:18px 0;border-bottom:1px solid var(--border-1)}
+  .faq-item summary{font-family:var(--font-display);font-weight:600;font-size:16.5px;letter-spacing:-0.005em;color:var(--fg-1);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:18px}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary::after{content:"+";font-family:var(--font-display);font-weight:600;color:var(--fg-4);font-size:22px;flex-shrink:0;transition:transform .2s var(--ease)}
+  .faq-item[open] summary::after{transform:rotate(45deg)}
+  .faq-item p{margin:10px 0 0;font-size:14px;color:var(--fg-2);line-height:1.55}
+
+  /* CTA BANNER */
+  .cta-banner{background:#0D1412;color:#fff;padding:80px 32px}
+  .cta-inner{max-width:980px;margin:0 auto;text-align:center;position:relative}
+  .cta-inner h2{font-family:var(--font-display);font-weight:800;letter-spacing:-0.03em;font-size:56px;line-height:1.02;margin:0 0 18px;color:#fff;text-wrap:balance}
+  .cta-inner h2 em{font-style:normal;color:#5EE0B0}
+  .cta-inner p{font-size:18px;color:rgba(255,255,255,.6);margin:0 0 32px;line-height:1.5}
+  .cta-banner .hero-cta{justify-content:center}
+
+  /* FOOTER */
+  footer{background:#0D1412;color:rgba(255,255,255,.55);padding:48px 32px 32px;border-top:1px solid rgba(255,255,255,.08)}
+  .foot-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px}
+  @media (max-width:980px){.foot-inner{grid-template-columns:1fr 1fr}}
+  .foot-brand .brand-name{color:#fff}
+  .foot-brand p{font-size:13px;margin:14px 0 0;max-width:280px;line-height:1.5}
+  .foot-col h6{font-family:var(--font-display);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#fff;margin:0 0 14px}
+  .foot-col a{display:block;font-size:13.5px;color:rgba(255,255,255,.55);padding:5px 0}
+  .foot-col a:hover{color:#fff}
+  .foot-bottom{max-width:1280px;margin:48px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;font-size:12px;gap:14px;flex-wrap:wrap}
+  .foot-bottom a{color:rgba(255,255,255,.55)}
+  .foot-bottom a:hover{color:#fff}
+</style>
+<link href="embed.css" rel="stylesheet">
+</head>
+<body>
+
+<main>
+
+<!-- ============ NAV ============ -->
+<nav class="lnav">
+  <div class="lnav-inner">
+    <a href="Landing.html" class="brand">
+      <div class="brand-mark">h</div>
+      <div class="brand-name">habláh</div>
+    </a>
+    <div class="lnav-links">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#tutores">Tutores</a>
+      <a href="#precios">Precios</a>
+      <a href="#faq">Preguntas</a>
+      <a href="Hoy.html">Demo</a>
+    </div>
+    <div class="lnav-cta">
+      <a href="Login.html" class="signin">Iniciar sesión</a>
+      <a href="Onboarding.html" class="start">
+        Empezar gratis
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow"><span class="ld"></span> Aprender inglés conversando · sin clases</div>
+      <h1>Hablar inglés <em>no</em> se aprende leyendo. Se aprende <strong>hablando</strong>.</h1>
+      <p class="sub">habláh es una app de inmersión conversacional para latinos. Charlás 5–10 minutos por día con un tutor de IA sobre <b>tus temas</b> — música, fútbol, trabajo, café — y al final te dice qué pulir. Sin exámenes, sin niveles aburridos, sin "complete la oración".</p>
+      <div class="hero-cta">
+        <a href="Onboarding.html" class="primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+          Probar 7 días gratis
+        </a>
+        <a href="Hoy.html" class="ghost">
+          Ver el producto
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="hero-trust">
+        <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5EE0B0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Sin tarjeta los primeros 7 días</div>
+        <span class="dot"></span>
+        <div class="row"><b>12.000+</b> charlas esta semana</div>
+        <span class="dot"></span>
+        <div class="row">B1 → B2 en <b>~6 semanas</b></div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="h-orb">
+        <span class="glow"></span>
+        <span class="r r1"></span>
+        <span class="r r2"></span>
+        <span class="r r3"></span>
+        <span class="core"></span>
+      </div>
+      <div class="float-chip fc vocab">
+        <span class="fc-pgl">V</span>
+        <div><span class="fc-l">vocabulario</span><br>usá <b>nevertheless</b> en tu próxima idea</div>
+      </div>
+      <div class="float-chip fc gram">
+        <span class="fc-pgl">G</span>
+        <div><span class="fc-l">gramática</span><br>contalo en <b>pasado simple</b></div>
+      </div>
+      <div class="float-chip fc flu">
+        <span class="fc-pgl">F</span>
+        <div><span class="fc-l">fluidez</span><br>+12% vs ayer</div>
+      </div>
+      <div class="float-chip fc amb">
+        <span class="fc-pgl">!</span>
+        <div><span class="fc-l">rescate</span><br>verbos irregulares</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-l">Para gente que ya intentó <b>Duolingo, Babbel, Cambly</b> y se aburrió.</div>
+    <div class="trust-stats">
+      <div class="ts"><div class="v">94<small>%</small></div><div class="k">retención 30 días</div></div>
+      <div class="ts-div"></div>
+      <div class="ts"><div class="v">4.8<small>/5</small></div><div class="k">app store</div></div>
+      <div class="ts-div"></div>
+      <div class="ts"><div class="v">~7<small>min</small></div><div class="k">por sesión</div></div>
+      <div class="ts-div"></div>
+      <div class="ts"><div class="v">14<small>k</small></div><div class="k">usuarios pro</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="como-funciona">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="eb">Cómo funciona</div>
+      <h2>Tres pasos. <em>Cero exámenes</em>.</h2>
+      <p>El primer día charlás con el tutor sin saber que es una prueba de nivel. A partir de ahí, todos los días te cae una charla cortita sobre algo que te gusta. Al final, feedback directo. Sin vueltas.</p>
+    </div>
+
+    <div class="how-grid">
+      <div class="how-c">
+        <span class="num">01</span>
+        <div class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+        </div>
+        <h3>Te leemos sin que te des cuenta</h3>
+        <p>El primer día respondés un par de preguntas sueltas. Analizamos vocabulario, sintaxis, fluidez y pronunciación — y te ubicamos del A1 al C2. No hay test, no hay nota.</p>
+        <div class="demo">
+          <small>el tutor pregunta</small>
+          "Tell me a bit about your weekend. What did you do?"
+          <small style="margin-top:10px">el motor escucha</small>
+          <span style="color:var(--fg-2)">→ <mark>nivel B2 alto</mark>, fluidez 72, falla pasado simple irregular</span>
+        </div>
+      </div>
+
+      <div class="how-c">
+        <span class="num">02</span>
+        <div class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>Charlás de lo que te gusta · todos los días</h3>
+        <p>Elegís 4–5 tópicos: música electrónica, IA, viajes, fútbol, lo que sea. El tutor habla con vos solo de eso. Y cada sesión te tira pequeños desafíos en pantalla para que no zafes con las muletillas de siempre.</p>
+        <div class="demo">
+          <small>desafío en pantalla · hoy</small>
+          Intentá usar <mark>nevertheless</mark> en alguna idea sobre los orígenes del UK Garage.
+        </div>
+      </div>
+
+      <div class="how-c">
+        <span class="num">03</span>
+        <div class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>
+        </div>
+        <h3>Pulido sincerista · feedback al final</h3>
+        <p>Cuando terminás, te decimos qué hiciste bien y máximo 3 cosas para pulir. Frase exacta tuya vs. la versión natural. Si volvés a fallar lo mismo, la próxima charla te empuja a enfrentarlo.</p>
+        <div class="demo">
+          <small>dijiste</small>
+          <span class="you">"It beginned in late 90s south london..."</span>
+          <small style="margin-top:8px">mejor</small>
+          "It <mark>began</mark> in the late '90s in south London..."
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TUTORS ============ -->
+<section id="tutores" class="tutors-section">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="eb">Los tres tutores</div>
+      <h2>Elegí cómo querés que te <em>traten</em>.</h2>
+      <p>Mismo motor, distintas personalidades. Cambialos cuando quieras. Cada uno tiene su nivel de exigencia, su tono, su forma de corregirte.</p>
+    </div>
+
+    <div class="tutors-grid">
+      <div class="tutor-card coach">
+        <div class="tc-head">
+          <div class="tc-av">C</div>
+          <div class="tc-name"><h4>The Coach</h4><div class="role">ultra-empático</div></div>
+        </div>
+        <p class="quote">No hay error. Hay velocidad de aprendizaje. ¿Probamos otra vez?</p>
+        <div class="traits">
+          <div class="trait"><span>Exigencia</span><span class="bar"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+          <div class="trait"><span>Calidez</span><span class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+          <div class="trait"><span>Penalizaciones</span><span style="color:rgba(255,255,255,.55);font-weight:500">nunca</span></div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.1);font-size:11.5px;color:rgba(255,255,255,.5);line-height:1.5">Para ansiedad al habla, principiantes, días flojos.</div>
+        </div>
+      </div>
+
+      <div class="tutor-card sinc">
+        <div class="tc-head">
+          <div class="tc-av">S</div>
+          <div class="tc-name"><h4>The Sincerist</h4><div class="role">profesional · bootcamp</div></div>
+        </div>
+        <p class="quote">No te voy a mentir: dijiste "beginned" tres veces esta semana. Hoy lo arreglamos.</p>
+        <div class="traits">
+          <div class="trait"><span>Exigencia</span><span class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+          <div class="trait"><span>Calidez</span><span class="bar"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+          <div class="trait"><span>Penalizaciones</span><span style="color:#FFE9A6;font-weight:600">bloqueos por repetición</span></div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.1);font-size:11.5px;color:rgba(255,255,255,.5);line-height:1.5">Para entrevistas laborales, gente que ya tiene base.</div>
+        </div>
+      </div>
+
+      <div class="tutor-card arc">
+        <div class="tc-head">
+          <div class="tc-av">A</div>
+          <div class="tc-name"><h4>The Arcade</h4><div class="role">enérgico · lúdico</div></div>
+        </div>
+        <p class="quote">¡Buenísima! 3 puntos. Próximo desafío en 5… 4… 3… ¡dale!</p>
+        <div class="traits">
+          <div class="trait"><span>Exigencia</span><span class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+          <div class="trait"><span>Calidez</span><span class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+          <div class="trait"><span>Penalizaciones</span><span style="color:rgba(255,255,255,.55);font-weight:500">solo en juegos</span></div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.1);font-size:11.5px;color:rgba(255,255,255,.5);line-height:1.5">Para sesiones cortas, gamificación, recompensas rápidas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIFFERENTIATOR ============ -->
+<section class="diff-section">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="eb">Por qué somos distintos</div>
+      <h2><span class="strike">Más apps</span> que te enseñan a <em>resolver tests</em>.<br>Nadie te enseñaba a <em>hablar</em>.</h2>
+      <p>Las apps de idiomas tradicionales optimizan para retención dentro de la app — no para que sepas hablar. habláh está hecha para incomodarte al principio y dejarte hablando como nativo en seis meses.</p>
+    </div>
+
+    <div class="diff-grid">
+      <div class="compare-list">
+        <div class="cmp">
+          <div class="col bad">
+            <div class="label">Otras apps</div>
+            <h5>Llenar huecos en una frase</h5>
+          </div>
+          <div class="col good">
+            <div class="label">habláh</div>
+            <h5>Hablar 7 min sobre algo real</h5>
+          </div>
+        </div>
+        <div class="cmp">
+          <div class="col bad">
+            <div class="label">Otras apps</div>
+            <h5>Vocabulario de turista (manzana, paraguas)</h5>
+          </div>
+          <div class="col good">
+            <div class="label">habláh</div>
+            <h5>Vocabulario tuyo (sidechain, hormigón visto, RPE)</h5>
+          </div>
+        </div>
+        <div class="cmp">
+          <div class="col bad">
+            <div class="label">Otras apps</div>
+            <h5>"Excelente, +5 XP" en todo lo que decís</h5>
+          </div>
+          <div class="col good">
+            <div class="label">habláh</div>
+            <h5>"Dijiste beginned. Es began. Practicalo."</h5>
+          </div>
+        </div>
+        <div class="cmp">
+          <div class="col bad">
+            <div class="label">Otras apps</div>
+            <h5>Pasar de nivel completando tareas</h5>
+          </div>
+          <div class="col good">
+            <div class="label">habláh</div>
+            <h5>El nivel sube solo, midiendo cómo hablás</h5>
+          </div>
+        </div>
+        <div class="cmp">
+          <div class="col bad">
+            <div class="label">Clases con profe</div>
+            <h5>USD 25/hora · agenda · esperás 3 días</h5>
+          </div>
+          <div class="col good">
+            <div class="label">habláh</div>
+            <h5>Cuando quieras · 7 min · USD 9/mes</h5>
+          </div>
+        </div>
+      </div>
+
+      <div class="diff-visual">
+        <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;color:rgba(124,231,189,.85);font-weight:700;margin-bottom:14px">Una charla real · 1:42 min</div>
+        <div class="dv-chat">
+          <div class="dv-bubble tutor">So, where did UK Garage actually start?</div>
+          <div class="dv-bubble you">It beginned in the late 90s south london clubs.</div>
+          <div class="dv-bubble tutor">Interesting. And what was different about the sound?</div>
+          <div class="dv-bubble you">The producers used <mark style="background:rgba(124,231,189,.18);color:#7CE7BD;padding:1px 4px;border-radius:4px">sidechain compression</mark> and shuffled hi-hats to make it groove.</div>
+        </div>
+        <div class="dv-final">
+          <h5>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>
+            Al final · pulido sincerista
+          </h5>
+          ✓ Usaste vocabulario técnico avanzado (sidechain, shuffled hi-hats). <b>+12% fluidez</b>.<br>
+          ✗ Dijiste <b style="color:#FFB4B6">"beginned"</b> — la versión es <b>began</b>. Lo repetiste 3 sesiones seguidas.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="precios" class="pricing-section">
+  <div class="sec-inner">
+    <div class="sec-head" style="text-align:center;margin:0 auto 56px">
+      <div class="eb">Precios</div>
+      <h2 style="margin-bottom:14px">Empezás gratis. <em>Cuando enganchás</em>, te suscribís.</h2>
+      <p style="margin:0 auto;text-align:center">7 días gratis, sin tarjeta. Después elegís. Los planes pagos se cancelan en un click.</p>
+    </div>
+
+    <div class="price-grid">
+      <div class="price">
+        <h4>Free</h4>
+        <p class="desc">Para probar la cosa.</p>
+        <div class="amt"><span class="n">USD 0</span><span class="u">/ por siempre</span></div>
+        <div class="billing">sin tarjeta</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> <b>3 charlas</b> por semana</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Tutor <b>The Coach</b></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Mapa de progreso básico</li>
+          <li class="muted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Misiones de rescate</li>
+          <li class="muted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Acento configurable</li>
+          <li class="muted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Audio de pronunciación nativa</li>
+        </ul>
+        <div class="price-cta"><a href="Onboarding.html" class="btn btn-soft" style="width:100%">Empezar</a></div>
+      </div>
+
+      <div class="price featured">
+        <h4>Pro</h4>
+        <p class="desc">Para la mayoría. Sesiones diarias.</p>
+        <div class="amt"><span class="n">USD 9</span><span class="u">/ mes</span><span class="strike">USD 14</span></div>
+        <div class="billing">o <b>USD 79/año</b> · ahorrás 26%</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> <b>Charlas ilimitadas</b></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Los 3 tutores (Coach, Sincerist, Arcade)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Misiones de rescate</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Mapa completo + logros</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> 5 acentos · 8 voces</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Audio de pronunciación nativa</li>
+        </ul>
+        <div class="price-cta"><a href="Onboarding.html" class="btn btn-primary" style="width:100%;background:#fff;color:#062B25">Probar 7 días gratis</a></div>
+      </div>
+
+      <div class="price">
+        <h4>Pro Plus</h4>
+        <p class="desc">Para entrevistas y trabajos formales.</p>
+        <div class="amt"><span class="n">USD 19</span><span class="u">/ mes</span></div>
+        <div class="billing">o <b>USD 169/año</b> · ahorrás 26%</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Todo lo de Pro</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> <b>Mock interviews</b> en inglés (técnicas y soft)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Sesiones largas (30 min)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Reportes exportables (PDF)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Soporte humano por WhatsApp</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg> Acceso temprano a nuevos idiomas</li>
+        </ul>
+        <div class="price-cta"><a href="Onboarding.html" class="btn btn-soft" style="width:100%">Probar 7 días gratis</a></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;font-size:13px;color:var(--fg-3)">
+      Estudiantes: <b style="color:var(--fg-1);font-weight:600">30% off</b> con email institucional.
+      Equipos de más de 5 personas: <a href="#" style="color:var(--green-700);font-weight:600">hablar con ventas</a>.
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="faq-section">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div class="eb">Preguntas</div>
+      <h2>Las dudas <em>de verdad</em>.</h2>
+      <p>Las preguntas que recibimos por mail, ordenadas honestamente.</p>
+    </div>
+
+    <div class="faq-grid">
+      <details class="faq-item" open>
+        <summary>¿Sirve si soy principiante absoluto?</summary>
+        <p>Si no podés decir "hi, my name is…" todavía no. Necesitás un piso A1 / A2 para que las charlas tengan sentido. Te avisamos en el diagnóstico inicial — y si es ese tu caso, te recomendamos un par de apps base antes de volver.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Por qué no me corrigen mientras hablo?</summary>
+        <p>Porque te corta el pensamiento y te enseña a hablar con miedo. Acumulamos los errores y te los mostramos al final, ordenados por importancia. Si querés un modo "interrumpime", está en ajustes — pero no lo recomendamos.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Qué tan precisos son los análisis?</summary>
+        <p>Para gramática y vocabulario, muy precisos (96%+). Para pronunciación, sólidos pero no perfectos — depende del micrófono y el acento. Si pensás que falló, hay un botón para reportar.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Puedo usarlo offline?</summary>
+        <p>No. Las charlas necesitan procesar audio en tiempo real en el servidor. El resumen y el historial sí se pueden ver offline en la app móvil.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Comparten los audios de mis charlas?</summary>
+        <p>No. Los audios se procesan en milisegundos y se descartan. Solo guardamos el texto transcrito y las métricas. Podés borrar todo desde Perfil → Cuenta cuando quieras.</p>
+      </details>
+      <details class="faq-item">
+        <summary>¿Funciona para portugués o italiano?</summary>
+        <p>Inglés está terminado. Portugués brasileño está en beta cerrada (sumate a la lista). Italiano y francés llegan en 2026.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="cta-banner">
+  <div class="cta-inner">
+    <h2>Empezá hoy. En <em>7 minutos</em> ya estás charlando.</h2>
+    <p>Sin tarjeta los primeros 7 días. Si no te enganchás, ningún drama.</p>
+    <div class="hero-cta">
+      <a href="Onboarding.html" class="primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+        Probar gratis
+      </a>
+      <a href="Hoy.html" class="ghost">Ver demo del producto</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <div class="brand" style="padding:0;display:flex;align-items:center;gap:10px">
+        <div class="brand-mark" style="width:28px;height:28px;font-size:15px">h</div>
+        <div class="brand-name" style="color:#fff;font-family:var(--font-display);font-weight:700;font-size:17px">habláh</div>
+      </div>
+      <p>Aprender inglés conversando, sin clases, sin tests, sin vueltas. Hecho en Buenos Aires.</p>
+    </div>
+    <div class="foot-col">
+      <h6>Producto</h6>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#tutores">Tutores</a>
+      <a href="#precios">Precios</a>
+      <a href="Hoy.html">Demo</a>
+      <a href="#">Equipos</a>
+    </div>
+    <div class="foot-col">
+      <h6>Compañía</h6>
+      <a href="#">Sobre nosotros</a>
+      <a href="#">Blog</a>
+      <a href="#">Trabajá con nosotros</a>
+      <a href="#">Prensa</a>
+      <a href="#">Partners</a>
+    </div>
+    <div class="foot-col">
+      <h6>Soporte</h6>
+      <a href="#faq">Preguntas frecuentes</a>
+      <a href="#">Contactanos</a>
+      <a href="Login.html">Iniciar sesión</a>
+      <a href="Admin.html">Backoffice</a>
+      <a href="#">Estado del servicio</a>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div>© 2026 habláh. Hecho con paciencia en Buenos Aires.</div>
+    <div style="display:flex;gap:18px">
+      <a href="#">Términos</a>
+      <a href="#">Privacidad</a>
+      <a href="#">Cookies</a>
+    </div>
+  </div>
+</footer>
+
+</main>
+<script src="embed.js"></script>
+</body>
+</html>

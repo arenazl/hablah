@@ -1,0 +1,6 @@
+/* embed.css — modo embebido: el shell (menú/topbar/footer) lo pone el integrador */
+body.embed .sidebar{display:none}
+body.embed .app{grid-template-columns:1fr}
+body.embed .dock,body.embed .selbar{left:16px}
+body.embed main{padding-left:20px;padding-right:20px}
+body.embed .topbar{position:sticky;top:0;z-index:40}

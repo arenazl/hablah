@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Probador de clases — funcional</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="app.css" rel="stylesheet">
+<link href="admin.css" rel="stylesheet">
+<link href="probador.css" rel="stylesheet">
+<link href="https://unpkg.com/reactflow@11.11.4/dist/style.css" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/reactflow@11.11.4/dist/umd/index.js" crossorigin="anonymous"></script>
+<style>
+main{padding:0 28px 40px;padding-bottom:96px}
+.selrow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.selrow select{width:100%;height:44px;border:1px solid var(--border-2);border-radius:11px;padding:0 10px;background:var(--surface);font:inherit;font-size:13px;color:var(--fg-1);font-family:inherit}
+.selrow label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-4);font-weight:700;margin-bottom:4px}
+.warn-combo{display:none;background:#FFF7E5;border:1px solid rgba(255,184,0,.4);border-radius:10px;padding:8px 12px;font-size:12px;color:#8A5A00;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) 300px;gap:20px;align-items:start}
+@media (max-width:1100px){.grid2{grid-template-columns:1fr}.rail{position:static}.jit-field{grid-template-columns:1fr auto}.jit-field .fk{grid-column:1/-1}.dock{left:0 !important}}
+@media (max-width:640px){.selrow{grid-template-columns:1fr 1fr}}
+.rail{position:sticky;top:76px;display:flex;flex-direction:column;gap:16px}
+.card,.fmt-card,.layer{box-shadow:var(--shadow-card)}
+.card-head h3{letter-spacing:-.005em}
+/* panel distintivo del prompt */
+.prompt-panel{background:var(--surface);border:1px solid var(--border-2);border-radius:16px;padding:18px;margin-top:26px;box-shadow:var(--shadow-card)}
+.prompt-panel.full{position:fixed;inset:0;z-index:220;border-radius:0;margin:0;overflow:auto}
+.pp-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.pp-head h3{font-family:var(--font-display);font-weight:700;font-size:15px;margin:0;display:flex;align-items:center;gap:8px}
+.pp-dot{width:9px;height:9px;border-radius:99px;background:var(--green);flex-shrink:0}
+.pp-actions{margin-left:auto;display:flex;gap:6px}
+#flowWrap{height:500px;border:1px solid var(--border-1);border-radius:12px;overflow:hidden;background:var(--bg-2)}
+.prompt-panel.full #flowWrap{height:calc(100vh - 150px)}
+/* rail autocolapsable */
+.rail-strip{display:none;flex-direction:column;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--border-1);border-radius:14px;padding:10px 0;box-shadow:var(--shadow-card)}
+.rail-strip button{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:var(--fg-3);background:none;border:0;cursor:pointer}
+.rail-strip button:hover{background:var(--bg-2);color:var(--fg-1)}
+.grid2.rail-closed{grid-template-columns:minmax(0,1fr) 58px}
+.grid2.rail-closed #railCards{display:none}
+.grid2.rail-closed .rail-strip{display:flex}
+.rcard .card-head{cursor:pointer;user-select:none;margin-bottom:0}
+.rcard .rbody{display:none;padding-top:10px}
+.rcard.open .rbody{display:block}
+.rcard .rchev{width:15px;height:15px;color:var(--fg-4);transition:transform .15s var(--ease);flex-shrink:0}
+.rcard.open .rchev{transform:rotate(180deg)}
+/* field sub-cards — diseño real del composer */
+.jf-card{background:var(--bg-2);border:1px solid var(--border-1);border-radius:10px;padding:10px 12px 12px;position:relative;margin-bottom:8px}
+.jf-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:7px;flex-wrap:wrap}
+.jf-name{font-family:ui-monospace,monospace;font-size:12px;font-weight:800;color:var(--green-700)}
+[data-theme="dark"] .jf-name{color:#7CE7BD}
+.jf-meta{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.jf-src{font-size:10px;color:var(--fg-3)}
+.jf-src b{font-family:ui-monospace,monospace;color:var(--fg-1);font-weight:700}
+.jf-acopl{font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:5px;border:1px solid;white-space:nowrap}
+.jf-acopl.edad{color:#8A6A00;border-color:rgba(251,191,36,.45);background:var(--o-edad-bg)}
+[data-theme="dark"] .jf-acopl.edad{color:var(--o-edad)}
+.jf-acopl.nivel{color:#0B6E96;border-color:rgba(125,211,252,.5);background:var(--o-nivel-bg)}
+.jf-acopl.cruce{color:var(--green-700);border-color:rgba(0,179,126,.4);background:var(--o-cruce-bg)}
+.jf-acopl.topico{color:#5C5FC7;border-color:rgba(129,140,248,.45);background:var(--o-topico-bg)}
+.jf-acopl.runtime{color:#1d4ed8;border-color:rgba(59,130,246,.4);background:var(--o-runtime-bg)}
+.jf-acopl.reglas{color:#8B27C7;border-color:rgba(168,85,247,.4);background:var(--o-reglas-bg)}
+.jf-val{font-size:13px;line-height:1.6;color:var(--fg-1);padding-right:26px}
+.jf-val .ph{display:inline-block;background:rgba(56,189,248,.13);color:#0284c7;border:1.2px solid rgba(56,189,248,.45);border-radius:6px;padding:0 6px;font-family:ui-monospace,monospace;font-size:11.5px;font-weight:700;cursor:pointer;margin:0 2px}
+[data-theme="dark"] .jf-val .ph{color:#38bdf8}
+.jf-pen{position:absolute;right:10px;bottom:8px;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--green-700);background:none;border:0;cursor:pointer}
+.jf-pen:hover{background:var(--surface)}
+/* dock rows — simétrico como el producto real */
+.dock-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.dock-row:last-child{border-bottom:0}
+.dock-row .lbl{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);flex-shrink:0}
+.estado-chip{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:4px 12px;background:rgba(255,255,255,.06);color:#7CE7BD}
+.cad-input{flex:1 1 200px;min-width:160px;background:rgba(0,0,0,.25);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 10px;font-size:12px;font-family:ui-monospace,monospace}
+.cad-input::placeholder{color:rgba(255,255,255,.35)}
+.cad-hint{font-size:10px;color:rgba(255,255,255,.4)}
+.btn-dock{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 18px;border-radius:10px;font-weight:800;font-size:13px;border:0;cursor:pointer}
+.btn-dock.start{background:#00B37E;color:#fff}
+.btn-dock.end{background:transparent;color:#FF8A8D;border:1px solid #E5484D}
+.dock{position:fixed;left:240px;right:0;bottom:0;z-index:70;background:var(--green-950);color:#fff;box-shadow:0 -10px 30px rgba(0,0,0,.24);border-top:1px solid rgba(255,255,255,.08)}
+.dock-bar{display:flex;align-items:center;gap:14px;padding:12px 24px;cursor:pointer;user-select:none}
+.dock-bar .dl{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700}
+.dock-bar .meta{font-size:11.5px;color:rgba(255,255,255,.55)}
+.dock-bar .mini-cad{display:flex;align-items:flex-end;gap:2px;height:18px}
+.dock-bar .mini-cad i{width:4px;border-radius:2px;background:rgba(255,255,255,.2)}
+.dock-bar .mini-cad i.now{background:#7CE7BD}
+.dock-bar .spacer{flex:1}
+.dock-bar .chev{width:16px;height:16px;color:rgba(255,255,255,.6);transition:transform .15s var(--ease)}
+.dock.open .dock-bar .chev{transform:rotate(180deg)}
+.dock-body{display:none;padding:4px 24px 20px;max-height:38vh;overflow-y:auto}
+.dock.open .dock-body{display:block}
+.dock-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+@media (max-width:900px){.dock-grid{grid-template-columns:1fr}}
+/* mapa de nodos — canvas real con líneas conectando capas */
+.flow-canvas{position:relative;min-height:760px;background:radial-gradient(circle at 20px 20px,var(--border-1) 1px,transparent 1px) 0 0/18px 18px,var(--bg-2);border:1px solid var(--border-1);border-radius:14px;overflow:auto}
+.flow-node{position:absolute;left:32px;width:280px}
+.flow-detail2{position:absolute;left:352px;width:400px;max-width:calc(100% - 372px);display:none;background:var(--surface);border:1px solid var(--border-2);border-radius:13px;padding:14px 16px;box-shadow:var(--shadow-float)}
+.flow-detail2.show{display:block}
+.flow-svg{position:absolute;inset:0;pointer-events:none;width:100%;height:100%}
+.jit-editor2{display:none;background:var(--o-cruce-bg);border:1px solid rgba(0,179,126,.3);border-radius:12px;padding:12px 14px;margin-top:8px}
+.jit-editor2 textarea{width:100%;min-height:64px;border:1px solid var(--border-2);border-radius:9px;padding:8px 10px;font-size:12.5px;font-family:inherit;resize:vertical;margin:8px 0}
+.jit-editor2 .row{display:flex;gap:8px}
+.jit-editor2 .row .btn{flex:1;height:36px;white-space:nowrap;justify-content:center;padding:0 10px;font-size:12px}
+.mem-textarea{width:100%;min-height:50px;border:1px solid var(--border-2);border-radius:9px;padding:8px 10px;font-size:12.5px;font-family:inherit;resize:vertical;margin:8px 0}
+.flow-col{display:grid;grid-template-columns:1fr;gap:8px}
+.flow-detail{display:none;background:var(--surface);border:1px solid var(--border-2);border-radius:12px;padding:12px 14px;margin-top:6px}
+.flow-detail.show{display:block}
+.mic-live{display:none}
+.mic-live.on{display:flex}
+.toast-mini{position:fixed;bottom:20px;right:20px;background:var(--fg-1);color:#fff;border-radius:12px;padding:11px 16px;font-size:12.5px;box-shadow:var(--shadow-float);z-index:80;opacity:0;transform:translateY(8px);transition:all .25s var(--ease)}
+.toast-mini.show{opacity:1;transform:translateY(0)}
+.field-btn{background:none;border:0;cursor:pointer;padding:0}
+.owner-note{background:var(--bg-2);border-radius:8px;padding:7px 10px;font-size:11px;color:var(--fg-3);margin-top:8px;line-height:1.5}
+select:disabled,option:disabled{color:var(--fg-4)}
+body.embed .sidebar{display:none}
+body.embed .app{grid-template-columns:1fr}
+body.embed .dock{left:0}
+body.embed main{padding:0 20px 40px}
+</style>
+<link href="embed.css" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar admin">
+    <div class="brand"><div class="brand-mark">h</div><div class="brand-name">habláh</div></div>
+    <div class="side-section" style="margin-top:8px"><div class="label" style="margin-bottom:6px">Backoffice</div></div>
+    <nav class="nav">
+      <a href="Admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview</a>
+      <a href="AdminTemplate.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Templates</a>
+      <a href="AdminTopicos.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg>Tópicos</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Reglas</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 21a5 5 0 0 1 10 0M11 21a5 5 0 0 1 10 0"/></svg>Usuarios</a>
+      <a href="#" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M4 8l8-5 8 5M4 16l8 5 8-5"/></svg>Probador<span class="pill dot"></span></a>
+    </nav>
+    <div class="side-user" style="margin-top:auto">
+      <div class="avatar" style="background:linear-gradient(135deg,#3B82F6,#6366F1);color:#fff">A</div>
+      <div class="meta"><span class="name">Ana M.</span><span class="plan">Curriculum lead</span></div>
+    </div>
+  </aside>
+  <main>
+    <header class="topbar">
+      <div class="crumbs">Probador de clases <span>· funcional</span></div>
+      <div class="top-actions">
+        <span class="chip">Motor: orchestration_resolver</span>
+        <span class="chip" id="chipSeed">Semilla #—</span>
+        <div class="theme-tog"><button class="on" onclick="setTheme('light')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><button onclick="setTheme('dark')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+      </div>
+    </header>
+
+    <div class="selrow">
+      <div><label>Edad</label><select id="selBand" onchange="onBandChange()"></select></div>
+      <div><label>Objetivo / Nivel</label><select id="selLevel" onchange="onLevelChange()"></select></div>
+      <div><label>Tópico</label><select id="selTopic" onchange="onTopicChange()"></select></div>
+      <div><label>Alumno (opc.)</label><select id="selStudent" onchange="onStudentChange()"></select></div>
+      <div><label>&nbsp;</label><button class="btn btn-dark" style="width:100%;height:44px" onclick="hardRefresh()">Actualizar</button></div>
+    </div>
+    <div class="warn-combo" id="warnCombo">Este nivel no tiene datos de muestra cargados para esta edad — mostrando el cruce más cercano disponible.</div>
+
+    <div class="grid2" id="grid2">
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-3);font-weight:700;margin-bottom:8px">Las 6 capas reales del composer JIT</div>
+        <div id="layers"></div>
+
+        <div class="prompt-panel" id="promptPanel">
+          <div class="pp-head">
+            <h3><span class="pp-dot"></span>Prompt final compilado (Gemini Live)</h3>
+            <div class="pv-tabs" id="pvTabs">
+              <button class="on" data-v="fmt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Formateado</button>
+              <button data-v="raw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>Crudo</button>
+              <button data-v="flow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M6 8v8M18 8v8M8 6h8M8 18h8"/></svg>Mapa de nodos</button>
+            </div>
+            <div class="pp-actions">
+              <button class="btn btn-soft btn-sm" onclick="copyPrompt()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copiar</button>
+              <button class="btn btn-soft btn-sm" id="btnFull" onclick="toggleFullPrompt()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>Pantalla completa</button>
+            </div>
+          </div>
+          <div class="owner-legend" style="margin-bottom:12px">
+            <span class="lg"><i style="background:var(--o-runtime)"></i>runtime</span><span class="lg"><i style="background:var(--o-edad)"></i>EDAD</span><span class="lg"><i style="background:var(--o-nivel)"></i>NIVEL</span><span class="lg"><i style="background:var(--o-cruce)"></i>cruce</span><span class="lg"><i style="background:var(--o-topico)"></i>tópico</span><span class="lg"><i style="background:var(--o-reglas)"></i>reglas</span>
+          </div>
+          <div id="viewFmt"></div>
+          <div id="viewRaw" style="display:none"><div class="code-prev" id="rawBox"></div></div>
+          <div id="viewFlow" style="display:none"><div id="flowWrap"></div></div>
+        </div>
+      </div>
+
+      <div class="rail">
+        <div class="rail-strip">
+          <button title="Abrir panel lateral" onclick="toggleRailCol(true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>
+          <button title="Ajuste fino JIT" onclick="toggleRailCol(true,'jitCard')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>
+          <button title="Memoria del alumno" onclick="toggleRailCol(true,'memCard')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>
+        </div>
+        <div id="railCards" style="display:flex;flex-direction:column;gap:16px">
+        <button class="btn btn-soft btn-sm" style="align-self:flex-end" onclick="toggleRailCol(false)" title="Colapsar panel para ver todo el ancho"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>Colapsar</button>
+        <div class="card rcard" id="jitCard">
+          <div class="card-head" onclick="toggleRail('jitCard')"><h3>Ajuste fino JIT</h3><svg class="rchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="rbody">
+          <div id="jitEmpty" style="color:var(--fg-3);font-size:12px;padding:6px 0">Clickeá el lápiz de cualquier campo para editar el catálogo en el lugar. El cambio recompone el prompt al instante.</div>
+          <div class="jit-editor2" id="jitEditor">
+            <div style="font-size:11.5px;color:var(--fg-3)" id="jitLabel"></div>
+            <textarea id="jitTextarea"></textarea>
+            <div class="row"><button class="btn btn-soft btn-sm" onclick="closeJit()">Cancelar</button><button class="btn btn-sm btn-dark" onclick="saveJit()">Guardar</button></div>
+          </div>
+          </div>
+        </div>
+
+        <div class="card rcard open" id="memCard">
+          <div class="card-head" onclick="toggleRail('memCard')"><h3>Memoria — <span id="memName">alumno</span></h3><button class="link muted" onclick="event.stopPropagation();wipeMemory()">Borrar</button><svg class="rchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="rbody">
+          <div class="mem-chips" id="memChips"></div>
+          <textarea class="mem-textarea" id="obsText" placeholder="Escribí observaciones de la clase para simular el protocolo SRS..."></textarea>
+          <button class="btn btn-soft btn-sm" onclick="simulateClass()">Simular clase</button>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="dock open" id="dock">
+  <div class="dock-bar" onclick="toggleDock(event)">
+    <span class="dl"><span class="live-dot"></span>Clase en VIVO por voz</span>
+    <span class="meta" id="dockMeta">adult · B2 · Mi rutina actual</span>
+    <div class="mini-cad" id="miniCad"></div>
+    <div class="spacer"></div>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="dock-body">
+    <div class="dock-row">
+      <span class="lbl">Estado</span>
+      <span class="estado-chip" id="lpState">listo para iniciar</span>
+      <div class="mic-bars mic-live" id="micBars"><i style="height:6px"></i><i style="height:10px"></i><i style="height:14px"></i><i style="height:8px"></i><i style="height:5px"></i></div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn-dock start" id="btnStart" onclick="startClass()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>Iniciar clase</button>
+        <button class="btn-dock end" id="btnEnd" style="display:none" onclick="endClass()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>Terminar clase</button>
+      </div>
+    </div>
+    <div class="dock-row">
+      <span class="lbl">Cadencia de la charla</span>
+      <div class="cad-presets" id="cadPresets" style="margin:0"></div>
+      <input class="cad-input" id="cadInput" placeholder="1,0,2,1,0,1,2,3,2,1 (default del cruce)" oninput="onCadInput(this.value)">
+      <span class="cad-hint">0=icebreaker · 1=normal · 2=profunda · 3=filosa · se cicla</span>
+    </div>
+    <div class="dock-row" style="align-items:flex-end">
+      <div style="flex:0 0 280px"><div class="cad-wave" id="cadWave" style="height:44px"></div>
+      <div class="cad-legend"><span><i style="background:rgba(124,231,189,.35)"></i>icebreaker</span><span><i style="background:rgba(124,231,189,.6)"></i>normal</span><span><i style="background:#7CE7BD"></i>profunda</span><span><i style="background:#FFE9A6"></i>filosa</span></div></div>
+      <div class="transcript" id="transcriptBox" style="flex:1;min-width:260px;margin:0;max-height:130px"><div style="font-size:12px;color:rgba(255,255,255,.5);font-style:italic">Tocá "iniciar clase" para hablar por voz con el profe. El transcript real aparece acá.</div></div>
+    </div>
+  </div>
+</div>
+<div class="toast-mini" id="toast"></div>
+
+<script>
+const OWNER_EXPLAIN={runtime:'Se calcula al abrir la sesión (fecha, dispositivo, alumno). No vive en ninguna tabla: es contexto del momento.',edad:'El resolver toma {EDAD:campo} y lo busca en student_types por el segmento del alumno. Cambia por EDAD; igual para todos sus niveles.',nivel:'El resolver toma {NIVEL:campo} y lo busca en levels por el código CEFR. Define el QUÉ lingüístico del alumno.',cruce:'El resolver toma {EDAD_X_NIVEL:campo} de la fila age_level_matrix[edad,nivel] — la celda exacta de este combo. El dato más específico del catálogo.',topico:'El resolver toma {TOPICO:campo} del tópico elegido: léxico y anclas. El tópico aporta contenido, nunca forma.',reglas:'conversation_rules filtradas por gates (age_groups + min/max nivel): de las reglas de la tabla, entran solo las que aplican a este combo.'};
+const FIELD_RELATIONS={comando_de_arranque:'Interpola {name} (alumno), {topic} y {first_vocab} (tópico) en runtime. Gobierna SOLO el turno 1; convive con la ley "una movida por turno".',formato_de_cierre_de_turno:'Aplica a CADA turno. Trabaja en dúo con la Cadencia: el director inyecta la intensidad, este campo fija forma y largo.',accion_de_continuacion:'Cada vuelta tras hablar el alumno. El director de orquesta (cadencia) le marca la intensidad de la próxima pregunta.',accion_de_cierre:'Solo el ÚLTIMO turno de la sesión. Cierra el arco abierto por el comando de arranque.',pasos_de_la_sesion:'El mapa macro de la sesión (beats). El compás fino turno a turno lo lleva la cadencia.',produccion_esperada:'Define el objetivo medible de cada turno del alumno; el coach lo evalúa pero no lo dicta.',reglas_de_tono_y_entrega:'Rige CÓMO se entrega la voz (ritmo, pausas) — ortogonal al contenido; aplica en todos los turnos.',anclas_narrativas:'En teen/adult declara NO ROLEPLAY → el resolver suprime la escena del tópico. En mini declara el marco de juego.',semillas:'Vocabulario del tópico: {first_vocab} sale de acá. El coach las teje en la charla.',gramatica_objetivo:'El QUÉ del nivel. El coach lo PROVOCA con sus preguntas — no lo actúa en su propia habla.'};
+const BLOQUE_A=['Keep the lesson structure invisible: never announce objectives, steps, or that this is a class.','Never repeat your own phrasing twice in a row — vary how you say things.','Build each turn from what the student just said.','One correction per turn maximum, always via recast.','Celebrate effort explicitly and often — mini learners need visible warmth.'];
+const BLOQUE_B=['Keep the lesson structure invisible: never announce objectives, steps, or that this is a class.','Make ONE conversational move per turn — never stack multiple asks.','Correct by recasting only — never call out the error directly.','Match the emotional register of what the student said before advancing.','Never repeat your own phrasing twice in a row — vary how you say things.'];
+
+const PROFILES=[
+{id:'mini_a0',band:'mini',bandLabel:'Mini (4-7)',level:'A0',levelLabel:'A0 · Despegue',student:{name:'Benja',history:'3 clases · recién empezando'},
+ topics:[{id:1,title:'Abrir juguetes',seeds:['box','open','surprise','toy'],anchors:'Role: somos presentadores de nuestro propio programa de sorpresas mágicas · Setting: una caja llena de sorpresas.'},
+         {id:2,title:'Animales de la granja',seeds:['cow','pig','farm','sound'],anchors:'Role: cuidadores de una granja mágica que despierta al nombrar cada animal.'}],
+ profe:{tutor_name:'Sparky',tutor_identity:'Coach lúdico, protector y ultra-entusiasta.',gamification_focus:'Aventura compartida: {tutor} y el alumno exploran el escenario mágicamente.',estilo_de_sesion:'Cuentito interactivo.',anclas_narrativas:'USE ROLEPLAY. Role: Compañeros de magia/exploración. Setting: Lugar mágico o hiper-imaginativo.'},
+ nivel:{gramatica_objetivo:'Sustantivos directos, colores básicos, números.',idioma_instruccion:'Hablás casi 100% en español. En inglés van solo las palabras objetivo del día y su frase-puente.'},
+ cruce:{produccion_esperada:"El alumno debe producir la frase-puente bilingüe completa: 'la palabra se dice {first_vocab}'.",formato_de_cierre_de_turno:'Invitalo a repetir la frase-puente bilingüe completa usando la estructura de modelado doble.',reglas_de_tono_y_entrega:'Voice & Pacing: hablá LENTO y con extrema claridad. Hacé PAUSAS LARGAS. Festejá orgánicamente.',pasos_de_la_sesion:'Beat 1: Apertura + palabra 1. Beat 2: Acción + palabra 2. Beat 3: Giro + palabra 3. Beat 4: Cierre + festejo.',comando_de_arranque:'Saludá a {name} con energía en ESPAÑOL. Describí la escena usando los anclajes narrativos.',accion_de_continuacion:'Reaccioná con festejo. Avanzá la historia 1 paso introduciendo la siguiente palabra.',accion_de_cierre:'Festejá cálido. Recordá las palabras como trofeos de la aventura de {topic}. Pregunta final: "¿Jugamos de nuevo?"'},
+ rules:'A',cadence:{preset:'Primera vez',wave:[0,1,0,1,0,1,0,1]},
+ transcript:[{who:'ai',text:'¡Hola Benja! Soy Sparky. Mirá esta caja... ¿qué será? ¡Vamos a abrir un toy!'},{who:'user',text:'¡Un carro!'},{who:'ai',text:'¡Sí! A car! Repetí conmigo: el carro se dice car.'},{who:'user',text:'Car!'},{who:'ai',text:'¡Excelente! ¿Qué más hay en la caja?'}],
+ memoryPool:[{kind:'vocab',label:'car'},{kind:'interés',label:'carros'},{kind:'logro',label:'primera frase-puente completa'}]},
+{id:'teen_b2',band:'teen',bandLabel:'Teen (13-17)',level:'B2',levelLabel:'B2 · Navegante',student:{name:'Nico',history:'18 clases · viene de "redes sociales" hace 2 sesiones'},
+ topics:[{id:3,title:'Adicción al celular',seeds:['scroll','notification','screen time','addiction'],anchors:'NO ROLEPLAY. Real conversation about the topic.'},
+         {id:4,title:'Streaming y series',seeds:['binge','plot twist','spoiler','season'],anchors:'NO ROLEPLAY. Real conversation about the topic.'}],
+ profe:{tutor_name:'—',tutor_identity:'Compañero de equipo que reta con onda, sin condescendencia.',gamification_focus:'Debate amistoso: el coach empuja a defender una postura.',estilo_de_sesion:'Charla de igual a igual, humor seco permitido.',anclas_narrativas:'NO ROLEPLAY. Conversación real, sin personajes.'},
+ nivel:{gramatica_objetivo:'Tiempos perfectos, modales de deducción, conectores (however, although).',idioma_instruccion:'Casi 100% en inglés; recasteo silencioso de errores.'},
+ cruce:{produccion_esperada:'Turnos con opinión + justificación; al menos un conector de contraste por intercambio.',formato_de_cierre_de_turno:'End each turn with ONE question, whole turn UNDER 25 WORDS. Alternate intensity — NEVER two heavy in a row.',reglas_de_tono_y_entrega:'Tono de par informal; sin corrección explícita en el turno — recastear y seguir.',pasos_de_la_sesion:'Beat 1: hot take. Beat 2: reto con contraejemplo. Beat 3: giro personal. Beat 4: cierre.',comando_de_arranque:"Greet casually. Bring up a controversial opinion about {topic} using '{first_vocab}'. End asking their take.",accion_de_continuacion:'Reaccioná con algo genuino, subí un nivel de profundidad si la cadencia lo pide.',accion_de_cierre:'Cerrá con calidez, resumí en una frase lo que contó.'},
+ rules:'B',cadence:{preset:'Sobremesa',wave:[1,0,2,1,0,2,3,1]},
+ transcript:[{who:'ai',text:"Hot take: phones didn't ruin attention. Boring content did. Agree?"},{who:'user',text:'Mmm no! I lose focus even with good content...'},{who:'ai',text:'Fair — so is it the scroll itself, or what?'},{who:'user',text:'Yeah, the scroll is designed to never let you stop.'}],
+ memoryPool:[{kind:'error',label:'past simple'},{kind:'interés',label:'gaming competitivo'},{kind:'evita',label:'temas de familia'}]},
+{id:'adult_b2',band:'adult',bandLabel:'Adulto',level:'B2',levelLabel:'B2 · Navegante',student:{name:'Pedro',history:'18 clases · viene de "hábitos y rutinas" hace 2 sesiones'},
+ topics:[{id:5,title:'Mi rutina actual',seeds:['gym','rutina','hábito','madrugar'],anchors:'NO ROLEPLAY. Real conversation about the topic.'},
+         {id:6,title:'Adicción al celular',seeds:['scroll','doom-scroll','notification'],anchors:'NO ROLEPLAY. Real conversation about the topic.'}],
+ profe:{tutor_name:'—',tutor_identity:'Par informal, cero condescendencia, humor seco permitido.',gamification_focus:'Deep conversation de ida y vuelta, sin gamificación explícita.',estilo_de_sesion:'Charla adulta, directa.',anclas_narrativas:'NO ROLEPLAY. Conversación real, sin personajes.'},
+ nivel:{gramatica_objetivo:'Frases compuestas, conectores de contraste, longitud media.',idioma_instruccion:'Casi 100% en inglés; recasteo silencioso de errores.'},
+ cruce:{produccion_esperada:'Sostener turnos con frases compuestas y al menos un conector de contraste por intercambio.',formato_de_cierre_de_turno:'End each turn with ONE question, whole turn UNDER 25 WORDS. Alternate intensity like real talk — NEVER two heavy in a row.',reglas_de_tono_y_entrega:'Tono de par informal; sin pausas pedagógicas.',pasos_de_la_sesion:'Beat 1: apertura + gancho. Beat 2: profundización. Beat 3: giro personal. Beat 4: cierre cálido.',comando_de_arranque:"Open like you'd text a friend: ONE casual line about {topic} using '{first_vocab}' — UNDER 20 WORDS.",accion_de_continuacion:'Reaccioná con algo genuino, pedí un ejemplo concreto.',accion_de_cierre:'Cerrá con calidez, resumí en una frase lo que contó.'},
+ rules:'B',cadence:{preset:'Sobremesa',wave:[1,0,2,1,0,2,3,1]},
+ transcript:[{who:'ai',text:'Honestly? I doom-scroll before bed. Total fraud. You worse than me?'},{who:'user',text:'Yes! I check TikTok like one hour every night.'},{who:'ai',text:'One hour! Okay — worth it, or do you regret it after?'},{who:'user',text:'Honestly, I regret it every single time.'}],
+ memoryPool:[{kind:'error',label:'past simple'},{kind:'interés',label:'running'},{kind:'evita',label:'temas de trabajo'}]}
+];
+const BANDS=[...new Set(PROFILES.map(p=>p.band))];
+const CADENCE_PRESETS=[{key:'sobremesa',label:'Sobremesa',wave:[1,0,2,1,0,2,3,1]},{key:'pingpong',label:'Ping-pong',wave:[1,1,0,1,1,0,1,1]},{key:'debate',label:'Debate',wave:[2,3,2,3,2,3,2,3]},{key:'profundidad',label:'En profundidad',wave:[1,2,2,3,2,3,2,3]},{key:'primeravez',label:'Primera vez',wave:[0,1,0,1,0,1,0,1]}];
+
+let state={profileId:'adult_b2',topicId:5,cadenceOverride:null,edits:{},memory:{},live:{active:false,idx:0,timer:null,cadTimer:null,cadIdx:0},seed:Math.floor(Math.random()*9e9)};
+
+function profile(){return PROFILES.find(p=>p.id===state.profileId)}
+function topic(){return profile().topics.find(t=>t.id===state.topicId)||profile().topics[0]}
+function memKey(){return state.profileId}
+function mem(){if(!state.memory[memKey()])state.memory[memKey()]=profile().memoryPool.map((m,i)=>({...m,n:i===0?4:i===1?7:2}));return state.memory[memKey()]}
+function ed(path,fallback){return state.edits[state.profileId+'.'+path]??fallback}
+function setEd(path,val){state.edits[state.profileId+'.'+path]=val}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__tt);window.__tt=setTimeout(()=>t.classList.remove('show'),2400)}
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);document.querySelectorAll('.theme-tog button').forEach(b=>b.classList.remove('on'));(t==='light'?document.querySelector('.theme-tog button:first-child'):document.querySelector('.theme-tog button:last-child')).classList.add('on')}
+
+function initSelectors(){
+  const sb=document.getElementById('selBand');
+  sb.innerHTML=BANDS.map(b=>`<option value="${b}">${PROFILES.find(p=>p.band===b).bandLabel}</option>`).join('');
+  document.getElementById('selStudent').innerHTML='<option value="">— Perfil del nivel</option>'+PROFILES.map(p=>`<option value="${p.id}">${p.student.name} (${p.level})</option>`).join('');
+  document.getElementById('cadPresets').innerHTML=CADENCE_PRESETS.map(c=>`<button data-k="${c.key}" onclick="pickCadence('${c.key}')">${c.label}</button>`).join('');
+  syncSelectorsFromProfile();
+}
+function syncSelectorsFromProfile(){
+  const p=profile();
+  document.getElementById('selBand').value=p.band;
+  document.getElementById('selLevel').innerHTML=`<option value="${p.level}">${p.levelLabel}</option><option value="_other" disabled>(otros niveles: sin datos de muestra)</option>`;
+  document.getElementById('selLevel').value=p.level;
+  document.getElementById('selTopic').innerHTML=p.topics.map(t=>`<option value="${t.id}">${t.title}</option>`).join('');
+  document.getElementById('selTopic').value=state.topicId;
+  document.getElementById('selStudent').value=PROFILES.some(x=>x.id===state.__viaStudent)?state.__viaStudent:'';
+}
+function onBandChange(){
+  const band=document.getElementById('selBand').value;
+  const p=PROFILES.find(x=>x.band===band);
+  state.profileId=p.id;state.topicId=p.topics[0].id;state.__viaStudent=null;
+  syncSelectorsFromProfile();render();
+}
+function onLevelChange(){render()}
+function onTopicChange(){state.topicId=Number(document.getElementById('selTopic').value);render()}
+function onStudentChange(){
+  const sid=document.getElementById('selStudent').value;
+  if(!sid){state.__viaStudent=null;return}
+  state.profileId=sid;state.__viaStudent=sid;
+  const p=profile();state.topicId=p.topics[0].id;
+  syncSelectorsFromProfile();render();
+  toast('Alumno elegido: edad y nivel se alinearon a su perfil ('+p.bandLabel+' · '+p.levelLabel+')');
+}
+function hardRefresh(){state.seed=Math.floor(Math.random()*9e9);render();toast('Orquestación recompuesta')}
+
+function pickCadence(key){
+  const c=CADENCE_PRESETS.find(x=>x.key===key);
+  state.cadenceOverride={preset:c.label,wave:c.wave};
+  document.getElementById('cadInput').value=c.wave.join(',');
+  renderCadence();
+}
+
+function acoplamiento(owner){
+  const p=profile();
+  if(owner==='edad')return{cls:'edad',txt:'Acoplamiento: EDAD ("'+p.band.toUpperCase()+'")'};
+  if(owner==='nivel')return{cls:'nivel',txt:'Acoplamiento: NIVEL ("'+p.level+'")'};
+  if(owner==='cruce')return{cls:'cruce',txt:'Acoplamiento: EDAD × NIVEL ("'+p.band.toUpperCase()+' × '+p.level+'")'};
+  if(owner==='topico')return{cls:'topico',txt:'Acoplamiento: TÓPICO ("'+topic().title+'")'};
+  if(owner==='reglas')return{cls:'reglas',txt:'Acoplamiento: EDAD / NIVEL (filtro JIT)'};
+  return{cls:'runtime',txt:'Runtime (sesión)'};
+}
+function renderPh(text){return escapeHtml(text).replace(/\{([a-zA-Z0-9_]+)\}/g,'<span class="ph" title="Se interpola en runtime" onclick="event.stopPropagation();toast(\'El placeholder {$1} se calcula din\u00e1micamente en cada sesi\u00f3n\')">{$1}</span>')}
+function renderLayers(){
+  const p=profile(),t=topic();
+  const rows=[
+    {n:1,key:'runtime',title:'Contexto',owner:'runtime',fields:[
+      ['session_id','runtime.session_id','#'+state.seed],
+      ['current_date','runtime.current_date',new Date().toISOString().slice(0,10)],
+      ['device_type','runtime.device_type','Mobile (Voice Input)']]},
+    {n:2,key:'alumno',title:'Alumno',owner:'runtime',fields:[
+      ['nombre','alumno.nombre',p.student.name],
+      ['edad','alumno.edad',p.bandLabel],
+      ['nivel','alumno.nivel',p.levelLabel],
+      ['historia','alumno.historia',p.student.history]]},
+    {n:3,key:'profe',title:'El profe',owner:'edad',fields:[
+      ['tutor_name','student_types.tutor_mascot',ed('profe.tutor_name',p.profe.tutor_name)],
+      ['tutor_identity','student_types.tutor_identity',ed('profe.tutor_identity',p.profe.tutor_identity)],
+      ['gamification_focus','student_types.session_focus',ed('profe.gamification_focus',p.profe.gamification_focus)],
+      ['estilo_de_sesion','student_types.estilo_de_sesion',ed('profe.estilo_de_sesion',p.profe.estilo_de_sesion)],
+      ['anclas_narrativas','student_types.anclas_narrativas',ed('profe.anclas_narrativas',p.profe.anclas_narrativas)]]},
+    {n:4,key:'topico',title:'El tópico',owner:'topico',fields:[
+      ['titulo','topics.titulo',t.title],
+      ['semillas','topics.semillas',t.seeds.join(', ')],
+      ['anclas_narrativas','topics.anclas_narrativas',t.anchors]]},
+    {n:5,key:'nivel',title:'El nivel',owner:'nivel',fields:[
+      ['gramatica_objetivo','levels.curriculum_grammar',ed('nivel.gramatica_objetivo',p.nivel.gramatica_objetivo)],
+      ['idioma_instruccion','levels.language_rule',ed('nivel.idioma_instruccion',p.nivel.idioma_instruccion)]]},
+    {n:6,key:'cruce',title:'El cruce (EDAD × NIVEL)',owner:'cruce',fields:[
+      ['produccion_esperada','age_level_matrix.produccion_esperada',ed('cruce.produccion_esperada',p.cruce.produccion_esperada)],
+      ['formato_de_cierre_de_turno','age_level_matrix.formato_de_cierre_de_turno',ed('cruce.formato_de_cierre_de_turno',p.cruce.formato_de_cierre_de_turno)],
+      ['reglas_de_tono_y_entrega','age_level_matrix.reglas_de_tono_y_entrega',ed('cruce.reglas_de_tono_y_entrega',p.cruce.reglas_de_tono_y_entrega)],
+      ['reglas_universales_filtradas','conversation_rules (gateadas)',(p.rules==='A'?'Bloque A':'Bloque B')+' — '+(p.rules==='A'?BLOQUE_A.length:BLOQUE_B.length)+' reglas activas'],
+      ['pasos_de_la_sesion','age_level_matrix.pasos_de_la_sesion',ed('cruce.pasos_de_la_sesion',p.cruce.pasos_de_la_sesion)],
+      ['comando_de_arranque','age_level_matrix.comando_de_arranque',ed('cruce.comando_de_arranque',p.cruce.comando_de_arranque)],
+      ['accion_de_continuacion','age_level_matrix.accion_de_continuacion',ed('cruce.accion_de_continuacion',p.cruce.accion_de_continuacion)],
+      ['accion_de_cierre','age_level_matrix.accion_de_cierre',ed('cruce.accion_de_cierre',p.cruce.accion_de_cierre)]]}
+  ];
+  document.getElementById('layers').innerHTML=rows.map(r=>{
+    const editable=r.key==='profe'||r.key==='nivel'||r.key==='cruce';
+    const ac=acoplamiento(r.owner);
+    return `
+    <div class="layer ${r.n===6||r.n===3?'open':''}" data-l="${r.n}">
+      <div class="layer-head" onclick="toggleLayer(${r.n})"><div class="ln" style="background:var(--o-${r.owner}-bg);color:var(--o-${r.owner})">${r.n}</div><h4>${r.title}<span class="owner ${r.owner}">${r.owner==='runtime'?'runtime':r.owner.toUpperCase()}</span></h4><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="layer-body">${r.fields.map(f=>{
+        const src=f[1].split('.');
+        const srcHtml=src.length===2?`Tabla: <b>${src[0]}</b> · Campo: <b>${src[1]}</b>`:`<b>${f[1]}</b>`;
+        return `
+        <div class="jf-card">
+          <div class="jf-head"><span class="jf-name">${f[0]}</span>
+            <div class="jf-meta"><span class="jf-src">${srcHtml}</span><span class="jf-acopl ${ac.cls}">${ac.txt}</span></div>
+          </div>
+          <div class="jf-val">${renderPh(String(f[2]))}</div>
+          ${editable?`<button class="jf-pen" title="Editar esta plantilla en el catálogo" onclick="openJit('${r.key}.${f[0]}','${escapeAttr(f[1])}',\`${escapeAttr(String(f[2]))}\`)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></button>`:''}
+        </div>`}).join('')}
+        <div class="owner-note">${OWNER_EXPLAIN[r.owner]}</div>
+      </div>
+    </div>`}).join('');
+}
+function toggleLayer(n){document.querySelector(`.layer[data-l="${n}"]`).classList.toggle('open')}
+function escapeHtml(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function escapeAttr(s){return s.replace(/`/g,"'").replace(/\$/g,'')}
+
+function toggleRailCol(open,focusCard){
+  document.getElementById('grid2').classList.toggle('rail-closed',!open);
+  if(open&&focusCard){document.querySelectorAll('.rcard').forEach(c=>c.classList.remove('open'));document.getElementById(focusCard).classList.add('open')}
+}
+function toggleRail(id){document.getElementById(id).classList.toggle('open')}
+function toggleFullPrompt(){
+  const p=document.getElementById('promptPanel');p.classList.toggle('full');
+  document.getElementById('btnFull').lastChild.textContent=p.classList.contains('full')?'Salir':'Pantalla completa';
+  renderFlow();
+}
+function openJit(path,source,val){
+  toggleRailCol(true);
+  document.getElementById('jitCard').classList.add('open');
+  document.getElementById('jitEmpty').style.display='none';
+  document.getElementById('jitEditor').style.display='block';
+  document.getElementById('jitLabel').innerHTML='Editando <b>'+path.split('.')[1]+'</b><br><span style="font-family:ui-monospace,monospace;font-size:10.5px">'+source+'</span>';
+  const ta=document.getElementById('jitTextarea');ta.value=val;ta.dataset.path=path;
+}
+function closeJit(){document.getElementById('jitEditor').style.display='none';document.getElementById('jitEmpty').style.display='block';document.getElementById('jitCard').classList.remove('open');toggleRailCol(false)}
+function saveJit(){
+  const ta=document.getElementById('jitTextarea');setEd(ta.dataset.path,ta.value);
+  closeJit();render();toast('Plantilla guardada — prompt recompuesto');
+}
+
+function currentEntries(){
+  const p=profile(),t=topic();
+  return [
+    {step:'Contexto',owner:'runtime',fields:[['current_date',new Date().toISOString().slice(0,10)],['device_type','Mobile (Voice Input)']]},
+    {step:'Alumno',owner:'runtime',fields:[['nombre',p.student.name],['edad',p.bandLabel],['nivel',p.levelLabel]]},
+    {step:'El profe',owner:'edad',fields:[['tutor_identity',ed('profe.tutor_identity',p.profe.tutor_identity)],['gamification_focus',ed('profe.gamification_focus',p.profe.gamification_focus)],['anclas_narrativas',ed('profe.anclas_narrativas',p.profe.anclas_narrativas)]]},
+    {step:'El tópico',owner:'topico',fields:[['titulo',t.title],['semillas',t.seeds.join(', ')]]},
+    {step:'El nivel',owner:'nivel',fields:[['gramatica_objetivo',ed('nivel.gramatica_objetivo',p.nivel.gramatica_objetivo)],['idioma_instruccion',ed('nivel.idioma_instruccion',p.nivel.idioma_instruccion)]]},
+    {step:'El cruce',owner:'cruce',fields:[
+      ['comando_de_arranque',ed('cruce.comando_de_arranque',p.cruce.comando_de_arranque)],
+      ['formato_de_cierre_de_turno',ed('cruce.formato_de_cierre_de_turno',p.cruce.formato_de_cierre_de_turno)],
+      ['produccion_esperada',ed('cruce.produccion_esperada',p.cruce.produccion_esperada)],
+      ['accion_de_continuacion',ed('cruce.accion_de_continuacion',p.cruce.accion_de_continuacion)],
+      ['accion_de_cierre',ed('cruce.accion_de_cierre',p.cruce.accion_de_cierre)]]},
+    {step:'Reglas universales',owner:'reglas',fields:(p.rules==='A'?BLOQUE_A:BLOQUE_B).map((r,i)=>['regla_'+(i+1),r])}
+  ];
+}
+
+function renderFormatted(){
+  const entries=currentEntries();
+  document.getElementById('viewFmt').innerHTML=entries.map(e=>`
+    <div class="fmt-card"><div class="fc-head"><span class="owner ${e.owner}">${e.owner==='runtime'?'runtime':e.owner.toUpperCase()}</span><h5>${e.step}</h5></div>
+    ${e.fields.map(f=>`<div class="fc-row"><span class="fck">${f[0]}</span><span class="fcv">${escapeHtml(f[1])}</span></div>`).join('')}</div>`).join('');
+}
+function renderRaw(){
+  const entries=currentEntries();
+  let html='';
+  entries.forEach(e=>{
+    html+=`<span class="own-tag">&lt;${e.step.toLowerCase().replace(/\s/g,'_')}&gt;</span><br>`;
+    e.fields.forEach(f=>{html+=`&nbsp;&nbsp;<span class="own-${e.owner}">${f[0]}: ${escapeHtml(f[1])}</span><br>`});
+    html+=`<span class="own-tag">&lt;/${e.step.toLowerCase().replace(/\s/g,'_')}&gt;</span><br>`;
+  });
+  document.getElementById('rawBox').innerHTML=html;
+}
+const SRC_MAP={profe:{tutor_name:'student_types.tutor_mascot',tutor_identity:'student_types.tutor_identity',gamification_focus:'student_types.session_focus',estilo_de_sesion:'student_types.estilo_de_sesion',anclas_narrativas:'student_types.anclas_narrativas'},topico:{titulo:'topics.titulo',semillas:'topics.semillas',anclas_narrativas:'topics.anclas_narrativas'},nivel:{gramatica_objetivo:'levels.curriculum_grammar',idioma_instruccion:'levels.language_rule'},cruce:{comando_de_arranque:'age_level_matrix.comando_de_arranque',formato_de_cierre_de_turno:'age_level_matrix.formato_de_cierre_de_turno',produccion_esperada:'age_level_matrix.produccion_esperada',accion_de_continuacion:'age_level_matrix.accion_de_continuacion',accion_de_cierre:'age_level_matrix.accion_de_cierre'}};
+const OWNER_COL={runtime:'#3b82f6',edad:'#fbbf24',nivel:'#7dd3fc',cruce:'#00b37e',topico:'#818cf8',reglas:'#a855f7'};
+const STEP_KEYS=['runtime','alumno','profe','topico','nivel','cruce','reglas'];
+let __flowRoot=null;
+function srcOf(stepKey,field){return (SRC_MAP[stepKey]&&SRC_MAP[stepKey][field])||(stepKey==='reglas'?'app_config.universal_conversation_rules':'runtime')}
+function buildFlow(entries,openStep){
+  const nodes=[],edges=[];let y=0;const stepY=[];
+  entries.forEach((e,i)=>{
+    const stepKey=STEP_KEYS[i]||e.owner;
+    stepY.push(y);const isOpen=openStep===i;
+    const fieldsHtml=e.fields.map(f=>{
+      const prev=String(f[1]).replace(/\s+/g,' ').slice(0,92);
+      return `<div style="margin-bottom:5px"><div style="display:flex;align-items:center;gap:6px;font-size:10.5px"><span style="width:7px;height:7px;border-radius:999px;background:${OWNER_COL[e.owner]};flex-shrink:0"></span><b>${f[0]}</b><span style="color:#8e938f;font-family:ui-monospace,monospace;font-size:9.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${srcOf(stepKey,f[0])}</span></div><div style="font-size:10px;color:var(--fg-2);padding-left:13px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(prev)}${String(f[1]).length>92?'…':''}</div></div>`;
+    }).join('');
+    nodes.push({id:'s'+i,position:{x:0,y},data:{label:React.createElement('div',{style:{textAlign:'left'},dangerouslySetInnerHTML:{__html:`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:12.5px;font-weight:800">${i+1}. ${e.step}</span><span style="margin-left:auto;font-size:9.5px;font-weight:700;color:${isOpen?'#00B37E':'#8e938f'}">${isOpen?'cerrar detalle':'tocar para abrir'}</span></div>${fieldsHtml}`}})},style:{width:480,borderRadius:10,cursor:'pointer',border:`1px solid ${isOpen?'#00B37E':'var(--border-2)'}`,borderLeft:`4px solid ${OWNER_COL[e.owner]}`,background:'var(--surface)',color:'var(--fg-1)',padding:10,fontSize:11}});
+    if(i>0)edges.push({id:'e'+i,source:'s'+(i-1),target:'s'+i,animated:true});
+    y+=66+e.fields.length*34;
+  });
+  if(openStep!=null&&entries[openStep]){
+    const e=entries[openStep];const stepKey=STEP_KEYS[openStep]||e.owner;let dy=stepY[openStep];
+    e.fields.forEach((f,j)=>{
+      const col=OWNER_COL[e.owner];const rel=FIELD_RELATIONS[f[0]]||null;
+      nodes.push({id:`d${openStep}-${j}`,position:{x:560,y:dy},data:{label:React.createElement('div',{style:{textAlign:'left'},dangerouslySetInnerHTML:{__html:`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:800">${f[0]}</span><span style="font-size:9px;font-weight:800;color:${col};border:1px solid ${col}55;background:${col}18;border-radius:999px;padding:1px 7px">${e.owner==='runtime'?'runtime':e.owner.toUpperCase()}</span><span style="font-size:9.5px;color:#8e938f;font-family:ui-monospace,monospace">${srcOf(stepKey,f[0])}</span></div><div style="font-size:11px;line-height:1.5;color:var(--fg-1);background:var(--bg-2);border:1px solid var(--border-1);border-radius:8px;padding:8px 10px;max-height:150px;overflow-y:auto;white-space:pre-wrap;margin-bottom:6px">${escapeHtml(String(f[1]))}</div><div style="font-size:9.5px;color:var(--fg-2);line-height:1.45"><b style="color:${col}">Cómo se llena:</b> ${OWNER_EXPLAIN[e.owner]}</div>${rel?`<div style="font-size:9.5px;color:var(--fg-2);line-height:1.45;margin-top:4px"><b>Relaciones:</b> ${rel}</div>`:''}`}})},style:{width:470,borderRadius:10,border:`1px solid ${col}66`,borderLeft:`4px solid ${col}`,background:'var(--surface)',color:'var(--fg-1)',padding:10,fontSize:11}});
+      edges.push({id:`ed${openStep}-${j}`,source:'s'+openStep,target:`d${openStep}-${j}`,style:{stroke:col}});
+      dy+=250;
+    });
+  }
+  return{nodes,edges};
+}
+function FlowView({entries}){
+  const [open,setOpen]=React.useState(null);
+  const RFNS=window.ReactFlow;const RF=RFNS.ReactFlow||RFNS.default;
+  const {nodes,edges}=React.useMemo(()=>buildFlow(entries,open),[entries,open]);
+  return React.createElement(RF,{nodes,edges,fitView:true,nodesConnectable:false,proOptions:{hideAttribution:true},onNodeClick:(_,node)=>{if(node.id[0]==='s'){const idx=Number(node.id.slice(1));setOpen(v=>v===idx?null:idx)}}},React.createElement(RFNS.Background,{gap:18,size:1}),React.createElement(RFNS.Controls,{showInteractive:false}));
+}
+function renderFlow(){
+  if(!window.ReactFlow||!window.React||!window.ReactDOM)return;
+  if(!__flowRoot)__flowRoot=ReactDOM.createRoot(document.getElementById('flowWrap'));
+  __flowRoot.render(React.createElement(FlowView,{entries:currentEntries(),key:state.profileId+'|'+state.topicId+'|'+JSON.stringify(state.edits)}));
+}
+
+function switchView(v){
+  document.querySelectorAll('#pvTabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.getElementById('viewFmt').style.display=v==='fmt'?'block':'none';
+  document.getElementById('viewRaw').style.display=v==='raw'?'block':'none';
+  document.getElementById('viewFlow').style.display=v==='flow'?'block':'none';
+}
+document.getElementById('pvTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)switchView(b.dataset.v)});
+
+function toggleDock(e){if(e.target.closest('.live-actions')||e.target.closest('button'))return;document.getElementById('dock').classList.toggle('open');syncDockPadding()}
+function syncDockPadding(){const d=document.getElementById('dock');document.querySelector('main').style.paddingBottom=(d.offsetHeight+28)+'px'}
+window.addEventListener('resize',syncDockPadding);
+function onCadInput(v){
+  const nums=v.replace(/[^0-3,]/g,'').split(',').map(s=>parseInt(s)).filter(n=>!isNaN(n));
+  state.cadenceOverride=nums.length?{preset:'personalizada',wave:nums}:null;
+  renderCadence();
+}
+function currentCadence(){return state.cadenceOverride||profile().cadence}
+function renderCadence(){
+  const c=currentCadence();
+  document.getElementById('dockMeta').textContent=profile().band+' · '+profile().level+' · '+topic().title+' · cadencia: '+(c.preset||'personalizada');
+  document.getElementById('miniCad').innerHTML=c.wave.map((v,i)=>`<i style="height:${6+v*5}px" class="${i===state.live.cadIdx&&state.live.active?'now':''}"></i>`).join('');
+  document.querySelectorAll('#cadPresets button').forEach(b=>{
+    const preset=CADENCE_PRESETS.find(x=>x.key===b.dataset.k);
+    b.classList.toggle('on',preset&&JSON.stringify(preset.wave)===JSON.stringify(c.wave));
+  });
+  document.getElementById('cadWave').innerHTML=c.wave.map((v,i)=>`<i data-i="${v}" class="${i===state.live.cadIdx&&state.live.active?'now':''}"></i>`).join('');
+}
+
+function renderMemory(){
+  document.getElementById('memName').textContent=profile().student.name;
+  document.getElementById('memChips').innerHTML=mem().map(m=>`<span class="mem-chip"><b>${m.kind}:</b> ${m.label}${m.n?` <span class="n">${m.n}</span>`:''}</span>`).join('');
+}
+function wipeMemory(){state.memory[memKey()]=[];renderMemory();toast('Memoria del alumno reseteada')}
+function simulateClass(){
+  const txt=document.getElementById('obsText').value.trim();
+  if(!txt){toast('Escribí al menos una observación');return}
+  mem().push({kind:'obs',label:txt.slice(0,42)+(txt.length>42?'…':'')});
+  document.getElementById('obsText').value='';renderMemory();
+  toast('Clase procesada · la memoria cambió');
+}
+
+function copyPrompt(){
+  const entries=currentEntries();let txt='';
+  entries.forEach(e=>{txt+=`<${e.step}>\n`;e.fields.forEach(f=>txt+=`  ${f[0]}: ${f[1]}\n`);txt+=`</${e.step}>\n`});
+  navigator.clipboard?.writeText(txt);toast('Prompt copiado al portapapeles');
+}
+
+function startClass(){
+  state.live.active=true;state.live.idx=0;state.live.cadIdx=0;
+  document.getElementById('btnStart').style.display='none';
+  document.getElementById('btnEnd').style.display='flex';
+  document.getElementById('micBars').classList.add('on');
+  document.getElementById('lpState').textContent='conectando…';
+  document.getElementById('transcriptBox').innerHTML='';
+  const p=profile();
+  const step=()=>{
+    if(!state.live.active)return;
+    if(state.live.idx>=p.transcript.length){document.getElementById('lpState').textContent='en pausa';return}
+    const line=p.transcript[state.live.idx];
+    document.getElementById('lpState').textContent=line.who==='ai'?'el profe habla':'escuchando tu voz';
+    const box=document.getElementById('transcriptBox');
+    const b=document.createElement('div');b.className='bubble '+(line.who==='ai'?'profe':'vos');
+    b.innerHTML='<small>'+(line.who==='ai'?'Profe':'Vos')+'</small>'+escapeHtml(line.text);
+    box.appendChild(b);box.scrollTop=box.scrollHeight;
+    state.live.idx++;
+    state.live.timer=setTimeout(step,2200);
+  };
+  step();
+  state.live.cadTimer=setInterval(()=>{
+    const c=currentCadence();state.live.cadIdx=(state.live.cadIdx+1)%c.wave.length;renderCadence();
+  },1800);
+}
+function endClass(){
+  clearTimeout(state.live.timer);clearInterval(state.live.cadTimer);
+  state.live.active=false;
+  document.getElementById('btnStart').style.display='flex';
+  document.getElementById('btnEnd').style.display='none';
+  document.getElementById('micBars').classList.remove('on');
+  document.getElementById('lpState').textContent='listo para iniciar';
+  renderCadence();
+  const p=profile();
+  const pool=p.memoryPool.filter(m=>!mem().some(x=>x.label===m.label));
+  if(pool.length){const add=pool[0];mem().push({...add,n:1});renderMemory();
+    toast('Memoria de '+p.student.name+' actualizada: +'+add.kind+' "'+add.label+'"');
+  } else toast('Clase terminada — memoria de '+p.student.name+' revisada');
+}
+
+function render(){
+  document.getElementById('chipSeed').textContent='Semilla #'+state.seed;
+  syncSelectorsFromProfile();
+  renderLayers();
+  const v=document.querySelector('#pvTabs button.on')?.dataset.v||'fmt';
+  renderFormatted();renderRaw();renderFlow();switchView(v);
+  renderCadence();renderMemory();syncDockPadding();
+}
+initSelectors();render();
+if(location.search.includes('embed')){document.body.classList.add('embed');syncDockPadding()}
+(function(){const p=new URLSearchParams(location.search),v=p.get('view');
+ if(v==='raw'||v==='flow'||v==='fmt')switchView(v);
+ if(v==='vivo'){document.getElementById('dock').classList.add('open');syncDockPadding()}
+ if(v==='memoria'){document.getElementById('memCard').classList.add('open');toggleRailCol(true,'memCard')}
+ if(v==='jit'){toggleRailCol(true,'jitCard');document.getElementById('jitCard').classList.add('open')}
+})();
+</script>
+<script src="embed.js"></script>
+</body>
+</html>
