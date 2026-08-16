@@ -268,6 +268,18 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     }
     playQueueRef.current = []
     playingRef.current = false
+    // El cursor de scheduling es un reloj ABSOLUTO del AudioContext y va acumulando
+    // (nextStartTime = startAt + duracion, por chunk). Si no se resetea acá, la charla
+    // siguiente abre un AudioContext nuevo —currentTime arranca en 0— y el primer chunk
+    // se agenda en max(cursor_viejo, 0+colchon): tantos segundos en el futuro como duró
+    // la charla anterior. Sintoma: la transcripción aparece (viene por el WS) pero no se
+    // escucha nada, y "recupera solo" cuando el reloj nuevo alcanza al cursor viejo.
+    // Es el "no puedo hacer dos charlas sin refrescar" de siempre. cancelTutorPlayback ya
+    // reseteaba el cursor para el barge-in; stop() se lo había olvidado.
+    // Las BufferSources son del contexto que se acaba de cerrar: quedan muertas y su
+    // onended no va a correr, así que el array se vacía a mano o crece por sesión.
+    nextStartTimeRef.current = 0
+    playSourcesRef.current = []
     // Push-to-talk: limpiamos SOLO el estado transitorio (apretado / colchón
     // de cierre) -- el modo elegido (pushToTalkRef) persiste para la
     // próxima sesión de este mismo hook, igual que el resto de preferencias.
