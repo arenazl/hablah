@@ -659,12 +659,26 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         // Si "voz" es alto y "enviados" es bajo -> lo perdemos NOSOTROS.
         const audioDiag = {
           worklet_msgs: 0, con_pcm: 0, voz: 0, ws_cerrado: 0, gate_ptt: 0,
-          enviados: 0, rms_max: 0, ultimo_reporte: 0,
+          enviados: 0, rms_max: 0, ultimo_reporte: 0, gate_coach: 0,
+          // ECO vs VOZ. El mic capta al coach saliendo por el parlante y lo transcribe
+          // como si fuera el alumno ("Vos: ¿cómo estás?" dicho por el coach), y el coach
+          // se responde a sí mismo. La solución es subir el umbral SÓLO mientras el coach
+          // suena — pero para elegir ese umbral hay que saber cuánto más bajo llega el eco
+          // que la voz directa. Estos dos máximos dan esa distancia.
+          rms_max_coach_hablando: 0,   // sólo puede ser eco: el coach está sonando
+          rms_max_coach_callado: 0,    // voz directa del alumno
         }
         const reportarCadena = (extra?: Record<string, unknown>) => {
           trace('audio.cadena', activeSessionIdRef.current, {
             ...audioDiag,
             rms_max_int16: Math.round(audioDiag.rms_max * 32768),
+            eco_int16: Math.round(audioDiag.rms_max_coach_hablando * 32768),
+            voz_int16: Math.round(audioDiag.rms_max_coach_callado * 32768),
+            // Cuántas veces más fuerte llega tu voz que el eco. >4 = un umbral simple
+            // alcanza; <2 = hay que ir por cancelación de eco de verdad.
+            voz_sobre_eco: audioDiag.rms_max_coach_hablando > 0
+              ? Math.round((audioDiag.rms_max_coach_callado / audioDiag.rms_max_coach_hablando) * 10) / 10
+              : null,
             vad_threshold: settings.vadThreshold,
             push_to_talk: pushToTalkRef.current,
             ...extra,
@@ -672,12 +686,28 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
         }
         const sendPcm = (pcmBuf: ArrayBuffer, rms: number): void => {
           audioDiag.rms_max = Math.max(audioDiag.rms_max, rms)
+          if (playingRef.current) audioDiag.rms_max_coach_hablando = Math.max(audioDiag.rms_max_coach_hablando, rms)
+          else audioDiag.rms_max_coach_callado = Math.max(audioDiag.rms_max_coach_callado, rms)
           const liveWs = wsRef.current
           // Boost x4 del RMS. Es el nivel del MIC del usuario -> feedback "estás hablando".
           const _lvlMic = Math.min(1, rms * 4)
           optsRef.current.onMicLevel?.(_lvlMic)
           pushLevel(_lvlMic)   // circuitería central
           if (!liveWs || liveWs.readyState !== WebSocket.OPEN) { audioDiag.ws_cerrado++; return }
+          // MIENTRAS EL COACH SUENA, NO SE CAPTURA. El mic toma la voz del coach saliendo
+          // por el parlante, Gemini la transcribe como si fuera el alumno ("Vos: ¿cómo
+          // estás?" dicho por el coach) y el coach se responde a sí mismo. Con auriculares
+          // no pasa, pero el alumno real usa el celular con parlante.
+          //
+          // Se corta el lazo en la fuente en vez de filtrar por amplitud: el eco llega más
+          // bajo que la voz directa, pero cuánto más bajo depende del parlante, el volumen
+          // y la distancia — un umbral que sirve en un teléfono falla en otro.
+          //
+          // Cuesta la interrupción: hablar encima del coach ya no lo corta. Es a propósito:
+          // hablar encima manda voz + eco mezclados, que es peor que no mandar nada.
+          // playingRef se apaga solo cuando se vacía la cola de audio, así que no puede
+          // quedar trabado como el flag coachSpeaking que se revirtió el 2026-06-06.
+          if (playingRef.current) { audioDiag.gate_coach++; return }
           if (!shouldForwardAudio()) { audioDiag.gate_ptt++; return }  // push-to-talk: soltado y fuera del colchón de cierre
           audioDiag.enviados++
           // El primero a los 10 envíos (~1,3s): si la sesión se corta enseguida
