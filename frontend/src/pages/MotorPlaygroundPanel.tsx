@@ -1665,12 +1665,16 @@ export default function MotorPlaygroundPanel() {
                   )}
                 </div>
 
+                {/* Con "sólo infra" el combo no participa (el prompt no sale del motor), así
+                    que un cruce que no compone NO tiene por qué bloquear la prueba: justamente
+                    se prueba la voz CUANDO el motor está en duda. */}
                 <div>
                   {!isLive ? (
-                    <button onClick={startLiveClass} disabled={loading || !!err}
-                      title={err ? 'Este cruce no compone (dato faltante en el catálogo)' : 'Iniciar clase real por voz'}
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, border: 0, color: C.bg, borderRadius: 8, fontSize: 12.5, fontWeight: 800, padding: '7px 16px', cursor: 'pointer', opacity: loading || err ? 0.5 : 1 }}>
-                      <Ico d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z M19 10v2a7 7 0 0 1-14 0v-2 M12 19v3" size={14} /> Iniciar clase
+                    <button onClick={startLiveClass} disabled={loading || (!!err && !infraTest)}
+                      title={infraTest ? 'Charla mínima para probar la cadena de voz — no usa el catálogo'
+                        : err ? 'Este cruce no compone (dato faltante en el catálogo)' : 'Iniciar clase real por voz'}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: C.accent, border: 0, color: C.bg, borderRadius: 8, fontSize: 12.5, fontWeight: 800, padding: '7px 16px', cursor: 'pointer', opacity: loading || (err && !infraTest) ? 0.5 : 1 }}>
+                      <Ico d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z M19 10v2a7 7 0 0 1-14 0v-2 M12 19v3" size={14} /> {infraTest ? 'Probar infra' : 'Iniciar clase'}
                     </button>
                   ) : (
                     <button onClick={endLiveClass}
@@ -1720,10 +1724,13 @@ export default function MotorPlaygroundPanel() {
                 <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: C.dim }}>Modelo de voz</span>
                 <select value={liveModel} onChange={(e) => setLiveModel(e.target.value)} disabled={isLive}
                   style={{ background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '5px 10px', fontSize: 12.5, opacity: isLive ? 0.5 : 1 }}>
+                  {/* Sólo los que la cuenta tiene habilitados con la voz Aoede: el resto
+                      responde "voice unavailable" y cierra la sesión (probado 2026-08-16).
+                      Ojo con la etiqueta vieja del banco /llm: decía que Native Audio "no
+                      transcribe al alumno" y ese día fue el ÚNICO que devolvió
+                      transcripción del input. */}
                   <option value="models/gemini-3.1-flash-live-preview">Flash 3.1 preview — el de siempre</option>
-                  <option value="models/gemini-2.0-flash-live-001">Flash 2.0 Live — estable, no preview</option>
-                  <option value="models/gemini-live-2.5-flash">Live 2.5 Flash</option>
-                  <option value="models/gemini-2.5-flash-native-audio-preview-09-2025">2.5 Native Audio — no transcribe al alumno</option>
+                  <option value="models/gemini-2.5-flash-native-audio-preview-09-2025">2.5 Native Audio — el único que transcribió al alumno</option>
                 </select>
                 <span style={{ fontSize: 10, color: C.faint }}>si el alumno no aparece en la transcripción, probá otro: el preview cambia del lado de Google</span>
                 {/* Aísla la INFRA del motor: manda un prompt de 4 líneas en vez del
