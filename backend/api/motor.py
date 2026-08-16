@@ -180,15 +180,15 @@ async def delete_row(table: str, payload: dict = Body(...), db: AsyncSession = D
 @router.get("/dimensions")
 async def dimensions(db: AsyncSession = Depends(get_db)):
     """Selectores del playground: bandas (student_types), niveles (levels), catálogo de tópicos, alumnos (users)."""
-    # 1. Bandas de edad (student_types)
-    raw_bands = _rows(await db.execute(text(
-        "SELECT id AS band_id, slug AS code, name AS label, age_min AS min_age, age_max AS max_age FROM student_types ORDER BY id")))
-    bands = []
-    for b in raw_bands:
-        code = b["code"]
-        phase_group = "kid" if code in ["mini", "junior"] else "adult"
-        max_level_order = 3 if code == "mini" else 5 if code == "junior" else 99
-        bands.append({**b, "phase_group": phase_group, "max_level_order": max_level_order})
+    # 1. Bandas de edad (student_types).
+    #    El tope de nivel y el grupo de fase eran dos if hardcodeados acá
+    #    ("mini→3, junior→5, resto 99"). Ahora son columnas: cambiar hasta dónde
+    #    llega una banda es un UPDATE, no un deploy. max_level_order NULL = sin
+    #    tope (99 es el valor que espera el front).
+    bands = _rows(await db.execute(text(
+        "SELECT id AS band_id, slug AS code, name AS label, age_min AS min_age, "
+        "age_max AS max_age, COALESCE(max_level_order, 99) AS max_level_order, "
+        "phase_group FROM student_types ORDER BY sort_order, id")))
 
     # 1.b Disciplinas — salen de las CATEGORÍAS, que es donde vive el catálogo.
     #     No alcanza con derivarlas de los niveles: las disciplinas nuevas

@@ -37,11 +37,42 @@ import hashlib
 import json
 from typing import Optional
 
-_LANG = {"en": "English", "pt": "Portuguese", "it": "Italian", "es": "Spanish", "fr": "French", "de": "German"}
-_LANG_ES = {"es": "español", "en": "inglés", "pt": "portugués", "it": "italiano"}
+# Nombres de idioma y etiquetas de segmento: son DATO, no constantes. Viven en
+# app_config (languages_map / segment_labels), publicados desde las tablas
+# languages y student_types. Sumar un idioma o renombrar una banda es un UPDATE,
+# no un deploy.
+# Los diccionarios de abajo quedan SÓLO como red: si app_config no tiene la
+# clave, el motor sigue componiendo en vez de explotar.
+_LANG_FALLBACK = {"en": "English", "pt": "Portuguese", "it": "Italian", "es": "Spanish",
+                  "fr": "French", "de": "German"}
+_LANG_ES_FALLBACK = {"es": "español", "en": "inglés", "pt": "portugués", "it": "italiano"}
+_SEGMENT_LABEL_FALLBACK = {"mini": "Mini (4-7 years old)", "junior": "Junior (8-12 years old)",
+                           "tween": "Tween (13-17 years old)", "adult": "Adult"}
 
-_SEGMENT_LABEL = {"mini": "Mini (4-7 years old)", "junior": "Junior (8-12 years old)",
-                  "tween": "Tween (13-17 years old)", "adult": "Adult"}
+
+def _mapa_idiomas(cfg: Optional[dict]) -> tuple[dict, dict]:
+    """(nombre en inglés, nombre en castellano) por código, desde app_config."""
+    raw = (cfg or {}).get("languages_map")
+    if not raw:
+        return _LANG_FALLBACK, _LANG_ES_FALLBACK
+    try:
+        import json as _j
+        m = _j.loads(raw) if isinstance(raw, str) else raw
+        return ({k: v.get("en") for k, v in m.items() if v.get("en")},
+                {k: v.get("es") for k, v in m.items() if v.get("es")})
+    except Exception:
+        return _LANG_FALLBACK, _LANG_ES_FALLBACK
+
+
+def _etiquetas_segmento(cfg: Optional[dict]) -> dict:
+    raw = (cfg or {}).get("segment_labels")
+    if not raw:
+        return _SEGMENT_LABEL_FALLBACK
+    try:
+        import json as _j
+        return (_j.loads(raw) if isinstance(raw, str) else raw) or _SEGMENT_LABEL_FALLBACK
+    except Exception:
+        return _SEGMENT_LABEL_FALLBACK
 
 
 # ── F2-03 · Rotación de semilla por sesión (variedad POR CONSTRUCCIÓN) ─────────────────────
@@ -111,14 +142,15 @@ def _req(value, field: str, ctx: str = ""):
     return value
 
 
-def _get_runtime_context(user) -> str:
+def _get_runtime_context(user, app_config: Optional[dict] = None) -> str:
     target = getattr(user, "target_language", "en") or "en"
     base = getattr(user, "base_language", "es") or "es"
+    lang, _ = _mapa_idiomas(app_config)
     return (
         f"<runtime_context>\n"
         f"  Current_Date: {datetime.date.today().isoformat()}\n"
-        f"  Target_Language: {_LANG.get(target, target)}\n"
-        f"  Native_Language: {_LANG.get(base, base)}\n"
+        f"  Target_Language: {lang.get(target, target)}\n"
+        f"  Native_Language: {lang.get(base, base)}\n"
         f"  Device_Type: Mobile (Voice Input)\n"
         f"</runtime_context>"
     )
@@ -155,14 +187,14 @@ def _get_gamification_focus(std: dict, ctx: str) -> str:
     )
 
 
-def _get_student_profile(user, std: dict, ctx: str) -> str:
+def _get_student_profile(user, std: dict, ctx: str, app_config: Optional[dict] = None) -> str:
     name = _req(getattr(user, "nombre", None), "user.nombre", ctx)
     cefr = _req(getattr(user, "cefr_level", None), "user.cefr_level", ctx)
     slug = _req(std.get("slug") or getattr(user, "age_group", None), "segmento del alumno", ctx)
     return (
         f"<student_profile>\n"
         f"  Name: {name}\n"
-        f"  Age_Group: {_SEGMENT_LABEL.get(slug, slug)}\n"
+        f"  Age_Group: {_etiquetas_segmento(app_config).get(slug, slug)}\n"
         f"  Level: {cefr}\n"
         f"</student_profile>"
     )
@@ -579,11 +611,11 @@ def compose_proto_prompt(
         app_config = cfg_interpolated
 
     blocks = [
-        _get_runtime_context(user),
+        _get_runtime_context(user, app_config),
         _get_tutor_profile(std, ctx),
         _get_pedagogical_rules(std, ctx),
         _get_gamification_focus(std, ctx),
-        _get_student_profile(user, std, ctx),
+        _get_student_profile(user, std, ctx, app_config),
         _get_learner_state(learner_state),          # opcional (memoria, post-clase)
         _get_behavioral_guards(std, lv, ctx),
         _get_output_rules(app_config),              # opcional (config runtime)
