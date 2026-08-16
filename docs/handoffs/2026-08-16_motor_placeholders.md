@@ -127,32 +127,52 @@ Sin la fila el motor no tiene instrucciones y el nivel sale deshabilitado con
 "sin cruce" en el probador. Además, con el cruce cargado pero **0 tópicos**:
 `idiomas × junior × B1`, y `adult × C2` en creativo/informática/oficios.
 
-### 3.a DECISIÓN PENDIENTE: fallback agnóstico por capa vs. fail-fast
+### 3.a RESUELTO: el fail-fast se queda. NO hacer fallbacks.
 
-Pedido del dueño el 2026-08-16, y **contradice una regla dura vigente del
-composer**:
+Se discutió el 2026-08-16 y **quedó decidido: no se agregan fallbacks**. La regla
+dura del composer sigue vigente.
 
     # composer_proto.py, docstring
     # REGLA DURA: el motor NO usa fallbacks. Si un dato de catálogo falta,
     # se lanza MotorDataMissing. Mejor explotar y saber qué falta.
 
-Lo que pide: *"si por un error nuestro no lo llenamos para algún nivel, que la
-charla no se vuelva tosca — que tenga un fallback con un mensaje agnóstico. Eso
-tiene que aplicar a cualquier capa."*
+El dueño ya había hecho sacar los fallbacks a otro agente, porque **le tapaban
+los fallos y no se enteraba de que las clases salían mal**. Tiene razón, y el
+argumento es este:
 
-Las dos posturas sirven, pero a públicos distintos:
+> Un fallback no salva la calidad de esa clase, sólo esconde que salió mal. Si
+> falta el saludo y sale un genérico, el alumno igual tuvo una clase peor — la
+> diferencia es que sin fallback te enterás y lo arreglás para las próximas cien.
+> El fallback no protege al alumno, protege al sistema de parecer roto. Y acá la
+> calidad ES el producto.
 
-- **fail-fast** es para el backoffice: que se vea qué falta y se cargue.
-- **fallback agnóstico** es para el alumno: no puede pagar un olvido de carga con
-  una charla rota.
+**El matiz que sí vale es CUÁNDO fallar:** explotar en medio de una charla, con
+el alumno esperando, es tarde. El momento correcto es ANTES de empezar — y eso ya
+está resuelto por la cascada de combos del probador: un cruce sin dato aparece
+**deshabilitado**, así que no se puede elegir y nunca llega a una charla.
 
-**Propuesta (sin implementar):** en runtime nunca explota — cae a un texto
-agnóstico **cargado como dato** en cada capa (no como constante en el código) —
-y en paralelo el probador marca ese cruce en rojo como dato faltante. El alumno
-no se entera; el dueño lo ve igual.
+Conclusión: **prevenir en vez de tapar.** El esfuerzo va a que ningún combo
+elegible tenga huecos, no a rellenarlos en runtime.
 
-Requiere decidir dónde viven esos textos mínimos por capa. Candidato: una fila
-`scope='fallback'` por campo, o una columna `*_fallback` en cada tabla del eje.
+### 3.a.2 PRÓXIMA LÍNEA DE TRABAJO: ver los huecos de un vistazo
+
+Pedido explícito del dueño al cerrar la sesión:
+
+> "A partir de ahora voy a leer la orquestación que se genere, y te voy a hacer
+> mejorar la interfaz para que yo, humano, torpe y con poca capacidad de
+> atención, pueda identificar los huecos de forma rápida. Eso es lo que más me
+> cuesta de todo esto."
+
+Es la consecuencia directa de la decisión de arriba: si no hay fallbacks, la
+única defensa es **ver los huecos rápido**. La interfaz tiene que hacer obvio, de
+un vistazo y sin leer, qué capa está vacía o cargada a medias.
+
+Material que ya existe para apoyarse:
+- `scripts/audit_combos.py` — el cartesiano completo con los huecos marcados
+- `scripts/lint_narrativas.py` — puntúa narrativas y lista las flojas
+- El visor de las 9 capas del probador y la paleta por dueño
+  ([[feedback_paleta_colores_por_dueno]]: runtime azul, EDAD ámbar, NIVEL
+  celeste, cruce verde, tópico índigo, reglas violeta, template gris, código rojo)
 
 ### 3.b El saludo: SÍ varía por nivel (corrección del propio dueño)
 
