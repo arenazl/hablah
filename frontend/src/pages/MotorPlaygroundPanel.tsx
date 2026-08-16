@@ -600,17 +600,23 @@ export default function MotorPlaygroundPanel() {
   // (0=icebreaker, 1=normal, 2=profunda, 3=filosa; se cicla). Vacío = la del cruce.
   const [cadencia, setCadencia] = useState('')
 
+  // Modelo Live. Es un selector y no una constante porque los `preview` de Google
+  // cambian sin aviso: el 2026-08-16 el 3.1 dejó de devolver la transcripción del
+  // ALUMNO (el coach seguía hablando, pero el alumno no aparecía) sin que cambiara
+  // una línea de acá. Poder alternar en el momento evita un deploy por prueba.
+  const [liveModel, setLiveModel] = useState('models/gemini-3.1-flash-live-preview')
+
   const startLiveClass = useCallback(async () => {
     const params: Record<string, string | number> = {
       age_group: band, level_code: level, topic_id: topicId ?? 0, student_id: effStudent ?? 0,
-      engine: 'gemini_live', model: 'models/gemini-3.1-flash-live-preview', voice: 'Aoede',
+      engine: 'gemini_live', model: liveModel, voice: 'Aoede',
       target_language: targetLang,
     }
     const cad = cadencia.replace(/[^\d,]/g, '')
     if (cad) params.cadencia = cad
     const url = buildMotorWsUrl(params)
     await live.start(0, undefined, 'Aoede', url)
-  }, [live, band, level, topicId, effStudent, cadencia, targetLang])
+  }, [live, band, level, topicId, effStudent, cadencia, targetLang, liveModel])
 
   // Terminar clase: además de cortar, la charla alimenta la MEMORIA del alumno elegido
   // (post-clase del probador → observaciones → protocolo SRS → pilar HISTORIA).
@@ -1702,6 +1708,21 @@ export default function MotorPlaygroundPanel() {
                   style={{ flex: '1 1 200px', minWidth: 160, background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '5px 10px', fontSize: 12.5, fontFamily: 'ui-monospace, monospace', opacity: isLive ? 0.5 : 1 }}
                 />
                 <span style={{ fontSize: 10, color: C.faint }}>0=icebreaker · 1=normal · 2=profunda · 3=filosa · se cicla</span>
+              </div>
+              {/* Modelo Live. Los `preview` de Google cambian sin aviso: el 2026-08-16 el
+                  3.1 dejó de devolver la transcripción del ALUMNO (el coach seguía hablando
+                  igual) sin que cambiara una línea nuestra. Tenerlo acá permite comparar en
+                  el momento en vez de pushear una vez por prueba. */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: C.dim }}>Modelo de voz</span>
+                <select value={liveModel} onChange={(e) => setLiveModel(e.target.value)} disabled={isLive}
+                  style={{ background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '5px 10px', fontSize: 12.5, opacity: isLive ? 0.5 : 1 }}>
+                  <option value="models/gemini-3.1-flash-live-preview">Flash 3.1 preview — el de siempre</option>
+                  <option value="models/gemini-2.0-flash-live-001">Flash 2.0 Live — estable, no preview</option>
+                  <option value="models/gemini-live-2.5-flash">Live 2.5 Flash</option>
+                  <option value="models/gemini-2.5-flash-native-audio-preview-09-2025">2.5 Native Audio — no transcribe al alumno</option>
+                </select>
+                <span style={{ fontSize: 10, color: C.faint }}>si el alumno no aparece en la transcripción, probá otro: el preview cambia del lado de Google</span>
               </div>
               {!isLive && live.status === 'ended' && live.transcript.length > 0 && (
                 <div style={{ fontSize: 11.5, color: C.dim }}>Clase terminada — ajustá lo que haga falta arriba y volvé a iniciar.</div>
