@@ -250,9 +250,16 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
         }]
     }]
 
+    # Cruces edad × nivel que EXISTEN en la matriz. Sin la fila, el motor no
+    # tiene instrucciones para ese cruce y no puede componer — el probador los
+    # usa para deshabilitar la opción en vez de dejar elegir un combo muerto.
+    cruces = _rows(await db.execute(text(
+        "SELECT age_slug, level_code FROM age_level_matrix WHERE active = 1")))
+    matrix_cruces = [f"{c['age_slug']}:{c['level_code']}" for c in cruces]
+
     return {"bands": bands, "levels": levels, "catalog": catalog, "students": students,
             "topic_suggested_band": tbs, "languages": languages,
-            "disciplines": disciplines}
+            "disciplines": disciplines, "matrix_cruces": matrix_cruces}
 
 
 class ResolveIn(BaseModel):

@@ -22,6 +22,34 @@ import { useIsMobile } from '../hooks/useIsMobile'
 interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
 interface Level { level_code: string; label: string; sort_order: number; discipline?: string }
 
+/**
+ * LA CADENA: disciplina → edad → nivel → categoría → tópico.
+ *
+ * Un tópico "pasa" si sobrevive a todos los eslabones seleccionados. Está en una
+ * sola función para que el filtrado de la grilla y el conteo que deshabilita las
+ * opciones no puedan divergir — si divergen, la UI habilita combos que después
+ * no traen nada.
+ *
+ * El idioma NO entra en la cadena: es agnóstico, cualquier tópico se puede dar
+ * en cualquier idioma (el motor lo resuelve con el placeholder {idioma}).
+ */
+function pasaCadena(
+  t: Topic,
+  sel: { discipline?: string; band?: string; level?: string; cat?: string },
+): boolean {
+  if (sel.discipline && sel.discipline !== 'todos'
+      && (t.discipline || 'idiomas') !== sel.discipline) return false
+  // topics.segmento dice 'adultos' donde student_types dice 'adult'
+  if (sel.band && t.segmento) {
+    const seg = t.segmento === 'adultos' ? 'adult' : t.segmento
+    if (seg !== sel.band) return false
+  }
+  // Tópico sin niveles declarados = sirve para todos
+  if (sel.level && t.levels && t.levels.length > 0 && !t.levels.includes(sel.level)) return false
+  if (sel.cat && (t.category || '') !== sel.cat) return false
+  return true
+}
+
 /** Nombre lindo por disciplina. Si entra una nueva y no está acá, se muestra su
  *  código tal cual — no rompe nada. */
 const DISCIPLINE_LABELS: Record<string, string> = {
@@ -454,6 +482,9 @@ export default function MotorPlaygroundPanel() {
   const [discipline, setDiscipline] = useState<string>('idiomas')
   // Lista de disciplinas que manda el backend (categories ∪ levels)
   const [apiDisciplines, setApiDisciplines] = useState<string[]>([])
+  // Cruces edad×nivel que existen en age_level_matrix ("adult:B2"). Sin la fila
+  // el motor no tiene instrucciones y el combo no compone.
+  const [matrixCruces, setMatrixCruces] = useState<string[]>([])
   const [studentId, setStudentId] = useState<number | undefined>(undefined)
   const [profile, setProfile] = useState<{ student_id: number; name: string } | null>(null)
 
@@ -495,6 +526,7 @@ export default function MotorPlaygroundPanel() {
       setBands(d.bands); setLevels(d.levels); setCatalog(d.catalog); setStudents(d.students)
       setLanguages(d.languages || [])
       setApiDisciplines(d.disciplines || [])
+      setMatrixCruces(d.matrix_cruces || [])
     }).catch(() => {})
   }, [])
 
@@ -589,9 +621,10 @@ export default function MotorPlaygroundPanel() {
 
   useEffect(() => { resolve() }, [resolve])
 
-  // Lista filtrada de tópicos sugeridos para el segmento actual
-  const topics = useMemo<Topic[]>(() => {
-    const allTopics: Topic[] = []
+  // Catálogo aplanado, sin filtrar. Sirve para contar cuántos tópicos sobreviven
+  // a cada combinación y poder deshabilitar los combos muertos.
+  const allTopicsFlat = useMemo<Topic[]>(() => {
+    const out: Topic[] = []
     catalog.forEach((cat: any) => {
       cat.subcategories?.forEach((sub: any) => {
         sub.topics?.forEach((t: any) => {
@@ -599,7 +632,7 @@ export default function MotorPlaygroundPanel() {
           let lv: string[] | undefined
           if (Array.isArray(t.levels)) lv = t.levels
           else if (typeof t.levels === 'string') { try { lv = JSON.parse(t.levels) } catch { lv = undefined } }
-          allTopics.push({
+          out.push({
             topic_id: t.id || t.topic_id,
             title: t.title,
             segmento: t.segmento,
@@ -610,22 +643,26 @@ export default function MotorPlaygroundPanel() {
         })
       })
     })
-    // Filtrar por segmento + NIVEL elegido (bug: el nivel no participaba y la lista
-    // no cambiaba nunca al mover el nivel). Tópico sin levels declarados = pasa.
-    return allTopics
-      .filter((t) => {
-        // La disciplina es una constraint del catálogo: en fonética sólo entran
-        // sus tópicos; en el resto, los de esa disciplina.
-        if (discipline !== 'todos' && (t.discipline || 'idiomas') !== discipline) return false
-        if (t.segmento) {
-          const normSegmento = t.segmento === 'adultos' ? 'adult' : t.segmento
-          if (normSegmento !== band) return false
-        }
-        if (t.levels && t.levels.length > 0 && !t.levels.includes(level)) return false
-        return true
-      })
+    return out
+  }, [catalog])
+
+  /** Cuántos tópicos sobreviven a esa combinación. 0 = combo muerto. */
+  const contar = useCallback(
+    (sel: { discipline?: string; band?: string; level?: string; cat?: string }) =>
+      allTopicsFlat.filter((t) => pasaCadena(t, sel)).length,
+    [allTopicsFlat])
+
+  /** ¿El motor tiene instrucciones para ese cruce edad × nivel? */
+  const cruceExiste = useCallback(
+    (b: string, l: string) => matrixCruces.length === 0 || matrixCruces.includes(`${b}:${l}`),
+    [matrixCruces])
+
+  // Lista filtrada de tópicos sugeridos para el segmento actual
+  const topics = useMemo<Topic[]>(() => {
+    return allTopicsFlat
+      .filter((t) => pasaCadena(t, { discipline, band, level }))
       .sort((a, b) => a.title.localeCompare(b.title))
-  }, [catalog, band, level, discipline])
+  }, [allTopicsFlat, band, level, discipline])
 
   // Categorías presentes en los tópicos ya filtrados por edad+nivel, con su
   // conteo. Es el eje que antes estaba escondido dentro de "Objetivo".
@@ -641,17 +678,34 @@ export default function MotorPlaygroundPanel() {
     [topics, topicCat],
   )
 
-  // Al cambiar la banda de edad (band) o el nivel, verificar si el tópico sigue siendo válido o seleccionar el primero
+  // ── Reacomodo en cascada ──────────────────────────────────────────────
+  // Al mover un eslabón, los de abajo pueden quedar en un valor que ya no
+  // existe (elegís Música y la edad seguía en "junior", que no tiene tópicos).
+  // En vez de dejar el combo muerto, se salta al primer valor que sí sirve.
+
+  // 1. Edad: si la disciplina elegida no tiene tópicos para esta banda
   useEffect(() => {
-    if (topics.length) {
-      const exists = topics.some((t) => t.topic_id === topicId)
-      if (!exists) {
-        setTopicId(topics[0].topic_id)
+    if (!bands.length || !allTopicsFlat.length) return
+    if (contar({ discipline, band }) > 0) return
+    const alt = bands.find((b) => contar({ discipline, band: b.code }) > 0)
+    if (alt && alt.code !== band) setBand(alt.code)
+  }, [discipline, band, bands, allTopicsFlat, contar])
+
+  // 3. Categoría: si la elegida ya no existe en el nuevo recorte
+  useEffect(() => {
+    if (topicCat && !topicCategories.some(([c]) => c === topicCat)) setTopicCat('')
+  }, [topicCategories, topicCat])
+
+  // 4. Tópico: si el elegido se cayó del recorte, tomar el primero
+  useEffect(() => {
+    if (topicsInCategory.length) {
+      if (!topicsInCategory.some((t) => t.topic_id === topicId)) {
+        setTopicId(topicsInCategory[0].topic_id)
       }
     } else {
       setTopicId(undefined)
     }
-  }, [band, level, topics, topicId])
+  }, [topicsInCategory, topicId])
 
 
   // La disciplina de cada nivel llega como DATO (levels.discipline). Antes se
@@ -678,6 +732,18 @@ export default function MotorPlaygroundPanel() {
       : propios
     return base.filter((l) => (l.discipline || 'idiomas') !== 'idiomas' || l.sort_order <= mx)
   }, [levels, bands, band, discipline])
+
+  // 2. Nivel: si el cruce no existe en la matriz o quedó sin tópicos
+  useEffect(() => {
+    if (!levelsForBand.length) return
+    const actualOk = levelsForBand.some((l) => l.level_code === level)
+      && cruceExiste(band, level) && contar({ discipline, band, level }) > 0
+    if (actualOk) return
+    const alt = levelsForBand.find((l) =>
+      cruceExiste(band, l.level_code) && contar({ discipline, band, level: l.level_code }) > 0)
+    if (alt && alt.level_code !== level) setLevel(alt.level_code)
+  }, [discipline, band, level, levelsForBand, cruceExiste, contar])
+
 
   const handleDisciplineChange = (newDisc: string) => {
     setDiscipline(newDisc)
@@ -1112,7 +1178,10 @@ export default function MotorPlaygroundPanel() {
                 un curso nuevo aparece solo. Sin "CEFR": es jerga y quedaría mal con
                 idiomas no europeos — los niveles ya tienen nombre propio. */}
             <select style={sel} value={discipline} onChange={(e) => handleDisciplineChange(e.target.value)}>
-              {disciplines.map((d) => <option key={d} value={d}>{DISCIPLINE_LABELS[d] || d}</option>)}
+              {disciplines.map((d) => {
+                const n = contar({ discipline: d })
+                return <option key={d} value={d} disabled={n === 0}>{DISCIPLINE_LABELS[d] || d} {n === 0 ? '— vacía' : `(${n})`}</option>
+              })}
               <option value="todos">Todas las disciplinas</option>
             </select>
           </Ctx>
@@ -1124,9 +1193,34 @@ export default function MotorPlaygroundPanel() {
               {languages.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
             </select>
           </Ctx>
-          <Ctx label="Edad"><select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>{bands.map((b) => <option key={b.code} value={b.code}>{b.label}</option>)}</select></Ctx>
-          <Ctx label="Nivel"><select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>{levelsForBand.map((l) => <option key={l.level_code} value={l.level_code}>{l.label || l.level_code}</option>)}</select></Ctx>
-          <Ctx label="Categoría"><select style={sel} value={topicCat} onChange={(e) => setTopicCat(e.target.value)}><option value="">— Todas ({topics.length})</option>{topicCategories.map(([c, n]) => <option key={c} value={c}>{c} ({n})</option>)}</select></Ctx>
+          {/* Cada eslabón muestra cuántos tópicos deja vivos y se deshabilita en 0.
+              "sin cruce" = falta la fila en age_level_matrix: el motor no tiene
+              instrucciones para esa edad × nivel y no puede componer. */}
+          <Ctx label="Edad">
+            <select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>
+              {bands.map((b) => {
+                const n = contar({ discipline, band: b.code })
+                return <option key={b.code} value={b.code} disabled={n === 0}>{b.label} {n === 0 ? '— sin tópicos' : `(${n})`}</option>
+              })}
+            </select>
+          </Ctx>
+          <Ctx label="Nivel">
+            <select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>
+              {levelsForBand.map((l) => {
+                const hayCruce = cruceExiste(band, l.level_code)
+                const n = contar({ discipline, band, level: l.level_code })
+                const off = !hayCruce || n === 0
+                const nota = !hayCruce ? '— sin cruce' : n === 0 ? '— sin tópicos' : `(${n})`
+                return <option key={l.level_code} value={l.level_code} disabled={off}>{l.label || l.level_code} {nota}</option>
+              })}
+            </select>
+          </Ctx>
+          <Ctx label="Categoría">
+            <select style={sel} value={topicCat} onChange={(e) => setTopicCat(e.target.value)}>
+              <option value="">— Todas ({topics.length})</option>
+              {topicCategories.map(([c, n]) => <option key={c} value={c} disabled={n === 0}>{c} ({n})</option>)}
+            </select>
+          </Ctx>
           <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topicsInCategory.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
           <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— Perfil del nivel</option>{students.map((s) => <option key={s.student_id} value={s.student_id}>{s.name} ({s.level_code})</option>)}</select></Ctx>
         </div>
