@@ -637,14 +637,47 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
         // Handler comun: convierte ArrayBuffer PCM int16 a base64 y lo manda
         // por WS. Se reusa entre AudioWorklet (preferido) y ScriptProcessor.
+        //
+        // CADENA DEL AUDIO — cada eslabón puede tragarse la voz y hasta ahora sólo
+        // se veía del backend para adentro. Estos contadores dicen en CUÁL se pierde:
+        //   worklet_msgs   mensajes que emitió el worklet
+        //   con_pcm        los que traían audio (el worklet filtra por su propio VAD)
+        //   voz            los que superaron el umbral de voz
+        //   ws_cerrado     descartados porque el WebSocket no estaba abierto
+        //   gate_ptt       descartados por el gate de push-to-talk
+        //   enviados       los que efectivamente salieron al backend
+        // Si worklet_msgs es alto y "voz" es 0 -> el mic no capta.
+        // Si "voz" es alto y "enviados" es bajo -> lo perdemos NOSOTROS.
+        const audioDiag = {
+          worklet_msgs: 0, con_pcm: 0, voz: 0, ws_cerrado: 0, gate_ptt: 0,
+          enviados: 0, rms_max: 0, ultimo_reporte: 0,
+        }
+        const reportarCadena = (extra?: Record<string, unknown>) => {
+          trace('audio.cadena', activeSessionIdRef.current, {
+            ...audioDiag,
+            rms_max_int16: Math.round(audioDiag.rms_max * 32768),
+            vad_threshold: settings.vadThreshold,
+            push_to_talk: pushToTalkRef.current,
+            ...extra,
+          })
+        }
         const sendPcm = (pcmBuf: ArrayBuffer, rms: number): void => {
+          audioDiag.rms_max = Math.max(audioDiag.rms_max, rms)
           const liveWs = wsRef.current
-          if (!liveWs || liveWs.readyState !== WebSocket.OPEN) return
           // Boost x4 del RMS. Es el nivel del MIC del usuario -> feedback "estás hablando".
           const _lvlMic = Math.min(1, rms * 4)
           optsRef.current.onMicLevel?.(_lvlMic)
           pushLevel(_lvlMic)   // circuitería central
-          if (!shouldForwardAudio()) return  // push-to-talk: soltado y fuera del colchón de cierre
+          if (!liveWs || liveWs.readyState !== WebSocket.OPEN) { audioDiag.ws_cerrado++; return }
+          if (!shouldForwardAudio()) { audioDiag.gate_ptt++; return }  // push-to-talk: soltado y fuera del colchón de cierre
+          audioDiag.enviados++
+          // El primero a los 10 envíos (~1,3s): si la sesión se corta enseguida
+          // igual queda el dato. Después cada 50 para no inundar.
+          const _cada = audioDiag.enviados < 50 ? 10 : 50
+          if (audioDiag.enviados - audioDiag.ultimo_reporte >= _cada) {
+            audioDiag.ultimo_reporte = audioDiag.enviados
+            reportarCadena()
+          }
           const bytes = new Uint8Array(pcmBuf)
           let bin = ''
           for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
@@ -676,11 +709,19 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
               const { pcm, rms, silent } = ev.data as {
                 pcm?: ArrayBuffer; rms: number; silent?: boolean
               }
+              audioDiag.worklet_msgs++
+              if (pcm) audioDiag.con_pcm++
+              if (!silent) audioDiag.voz++
+              audioDiag.rms_max = Math.max(audioDiag.rms_max, rms || 0)
               // SIEMPRE mandar el PCM. Bloquear chunks de silencio impide que
               // el VAD de Gemini Live cierre el turno y el coach no responde.
               // El flag `silent` queda solo para el visualizer.
               if (silent) { const _l = Math.min(1, (rms || 0) * 4); optsRef.current.onMicLevel?.(_l); pushLevel(_l) }
               if (pcm) sendPcm(pcm, rms || 0)
+              // Sin pcm y con voz = el worklet detectó habla y NO la mandó. Es el
+              // caso "el vúmetro se mueve y no pasa nada": se reporta apenas ocurre,
+              // sin esperar a los 50 envíos (que quizá nunca lleguen).
+              else if (!silent && audioDiag.voz % 10 === 1) reportarCadena({ alerta: 'worklet detecto voz pero no emitio pcm' })
             }
             source.connect(node)
             // Conectar a destination silencioso para que el browser corra el worklet.

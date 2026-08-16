@@ -627,6 +627,23 @@ class GeminiLiveEngine(VoiceEngine):
                         # Momento del último audio que le mandamos a Gemini: contra esto se
                         # mide el lag hasta que devuelve la transcripción (ver gemini.input_transcription).
                         timing["last_user_audio_at"] = asyncio.get_event_loop().time()
+                        # Nivel de señal de TODOS los chunks, no del que toca loguear: el
+                        # worklet manda una cola de silencio después de cada frase (para que
+                        # el VAD de Gemini cierre el turno), así que medir un chunk suelto cada
+                        # 50 puede caer justo ahí y decir "silencio" con el alumno hablando.
+                        # El MÁXIMO es el que contesta "¿el mic captó voz alguna vez?".
+                        if audioop:
+                            try:
+                                _pcm = base64.b64decode(b64) if b64 else b""
+                                if _pcm:
+                                    _r = int(audioop.rms(_pcm, 2))
+                                    counters["rms_max"] = max(counters.get("rms_max", 0), _r)
+                                    counters["rms_sum"] = counters.get("rms_sum", 0) + _r
+                                    counters["rms_n"] = counters.get("rms_n", 0) + 1
+                                    if _r >= 300:
+                                        counters["chunks_con_voz"] = counters.get("chunks_con_voz", 0) + 1
+                            except Exception:
+                                pass
                         # Tracking para defensa anti-ghost: este chunk cuenta
                         # como "user mando audio desde el ultimo coach close".
                         ghost_state["user_audio_chunks_since_last_coach"] += 1
