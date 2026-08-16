@@ -61,7 +61,7 @@ const DISCIPLINE_LABELS: Record<string, string> = {
   creativo: 'Creativos',
   oratoria: 'Oratoria',
 }
-interface Topic { topic_id: number; title: string; segmento?: string; levels?: string[]; category?: string; discipline?: string }
+interface Topic { topic_id: number; title: string; segmento?: string; levels?: string[]; category?: string; categoryLabel?: string; discipline?: string }
 interface Student { student_id: number; name: string; age?: number; level_code: string; age_group?: string }
 
 const C = {
@@ -638,6 +638,8 @@ export default function MotorPlaygroundPanel() {
             segmento: t.segmento,
             levels: lv,
             category: t.category || cat.name || cat.slug,
+            // El combo muestra el NOMBRE de la categoría; el slug queda para filtrar
+            categoryLabel: t.category_label || t.category || cat.name || cat.slug,
             discipline: t.discipline,
           })
         })
@@ -667,9 +669,15 @@ export default function MotorPlaygroundPanel() {
   // Categorías presentes en los tópicos ya filtrados por edad+nivel, con su
   // conteo. Es el eje que antes estaba escondido dentro de "Objetivo".
   const topicCategories = useMemo(() => {
-    const m = new Map<string, number>()
-    topics.forEach((t) => { const k = t.category || ''; if (k) m.set(k, (m.get(k) || 0) + 1) })
-    return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+    const m = new Map<string, { n: number; label: string }>()
+    topics.forEach((t) => {
+      const k = t.category || ''
+      if (!k) return
+      const prev = m.get(k)
+      m.set(k, { n: (prev?.n || 0) + 1, label: t.categoryLabel || k })
+    })
+    return [...m.entries()].map(([k, v]) => [k, v.n, v.label] as [string, number, string])
+      .sort((a, b) => a[2].localeCompare(b[2]))
   }, [topics])
 
   // Tópicos que entran en el select, ya acotados por la categoría elegida
@@ -1218,7 +1226,7 @@ export default function MotorPlaygroundPanel() {
           <Ctx label="Categoría">
             <select style={sel} value={topicCat} onChange={(e) => setTopicCat(e.target.value)}>
               <option value="">— Todas ({topics.length})</option>
-              {topicCategories.map(([c, n]) => <option key={c} value={c} disabled={n === 0}>{c} ({n})</option>)}
+              {topicCategories.map(([c, n, label]) => <option key={c} value={c} disabled={n === 0}>{label} ({n})</option>)}
             </select>
           </Ctx>
           <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topicsInCategory.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>

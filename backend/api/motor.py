@@ -211,8 +211,11 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
 
     # 3. Tópicos (topics) — levels viaja para que el probador filtre por nivel
     #    elegido; la disciplina la hereda de su categoría (categories.discipline).
+    #    category_label = el NOMBRE de la categoría, no el slug: el probador
+    #    mostraba "inf-general" en el combo en vez de "Informática".
     db_topics = _rows(await db.execute(text(
         "SELECT t.id AS topic_id, t.title, t.segmento, t.levels, t.category, "
+        "COALESCE(c.name, t.category) AS category_label, "
         "COALESCE(c.discipline, 'idiomas') AS discipline "
         "FROM topics t LEFT JOIN categories c ON c.id = t.category_id "
         "WHERE t.is_active = 1 ORDER BY t.title")))
