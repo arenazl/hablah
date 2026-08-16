@@ -230,6 +230,41 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
 _ORDEN_NIVEL = {"a0": 0, "a1": 1, "a2": 2, "b1": 3, "b2": 4, "c1": 5, "c2": 6}
 
 
+# ── PARÁMETROS DEL MOTOR (tabla motor_params) ────────────────────────────────
+# Los números que deciden cómo suena la clase — cuántas palabras del tópico ve
+# el coach, cuánta memoria del alumno recibe, cuánto vocabulario rota — eran
+# slices escritos en el código ([:6], [:3], [:4]). Ahora son dato, con scope:
+#
+#   level  > age  > discipline  > global
+#
+# Gana el más específico. "En B2 quiero 8 palabras" es una fila, no un deploy.
+# El default del código queda sólo como red si la tabla no está publicada.
+def _param(cfg: Optional[dict], nombre: str, default: int,
+           level: str = "", age: str = "", discipline: str = "") -> int:
+    """Valor de un parámetro del motor, resolviendo por especificidad."""
+    raw = (cfg or {}).get("motor_params")
+    if not raw:
+        return default
+    try:
+        tabla = json.loads(raw) if isinstance(raw, str) else raw
+    except Exception:
+        return default
+    porParam = tabla.get(nombre) or {}
+    for scope, key in (("level", level), ("age", age), ("discipline", discipline)):
+        if key:
+            v = (porParam.get(scope) or {}).get(str(key))
+            if v is not None:
+                try:
+                    return int(v)
+                except (TypeError, ValueError):
+                    pass
+    v = porParam.get("global")
+    try:
+        return int(v) if v is not None else default
+    except (TypeError, ValueError):
+        return default
+
+
 def _regla_aplica(regla: dict, age_slug: str, level_code: str) -> bool:
     """¿Esta regla universal aplica a esta edad y nivel?
 
@@ -344,7 +379,8 @@ def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = 
 
 
 
-def _get_vocabulary(topic, topic_content: Optional[dict]) -> tuple[str, list[str], list[str]]:
+def _get_vocabulary(topic, topic_content: Optional[dict], app_config: Optional[dict] = None,
+                    level_code: str = "", age_slug: str = "", session_seed: int = 0) -> tuple[str, list[str], list[str]]:
     """(title, vocab, phrases) crudos del tópico. Sin fallback: el caller valida."""
     title = getattr(topic, "title", None) if topic else None
     vocab: list[str] = []
@@ -355,7 +391,13 @@ def _get_vocabulary(topic, topic_content: Optional[dict]) -> tuple[str, list[str
     if not vocab and topic:
         vocab = [str(v) for v in (getattr(topic, "pinned_vocabulary", None) or []) if v]
     if not vocab and topic:
-        vocab = [str(k) for k in (getattr(topic, "keywords", None) or [])[:6] if k]
+        # Antes: [:6] fijo, y siempre las PRIMERAS por orden de carga — con 40
+        # keywords cargadas, 34 no llegaban nunca. Ahora el tope sale de
+        # motor_params.vocab_keywords (por nivel) y se rota por semilla, así en
+        # clases distintas entran palabras distintas de forma determinística.
+        _todas = [str(k) for k in (getattr(topic, "keywords", None) or []) if k]
+        _tope = _param(app_config, "vocab_keywords", 6, level=level_code, age=age_slug)
+        vocab = _rotate(_todas, _derive(session_seed or 0, "kw"))[:_tope] if _todas else []
     # generated_vocab = frases-ancla generadas en batch (capa B). Son FRASES, no palabras
     # sueltas → alimentan Target_Phrases cuando el tópico no trae required_keywords.
     if not phrases and topic:
@@ -487,7 +529,7 @@ def _get_session_actions(continuation_seed: Optional[str], closing_seed: Optiona
     )
 
 
-def _get_learner_state(learner_state: Optional[dict]) -> str:
+def _get_learner_state(learner_state: Optional[dict], app_config: Optional[dict] = None) -> str:
     """Bloque 6 — memoria del alumno (HISTORIA), CONTRATO LIVIANO (F2-02).
 
     Shape liviano (services.learner_state_writer.load_learner_state_lite):
@@ -500,8 +542,10 @@ def _get_learner_state(learner_state: Optional[dict]) -> str:
         return ""
     top_error = str(learner_state.get("top_error") or "").strip()
     review = str(learner_state.get("review") or "").strip()
-    interests = [str(x).strip() for x in (learner_state.get("interests") or []) if str(x).strip()][:3]
-    mastered = [str(x).strip() for x in (learner_state.get("mastered") or []) if str(x).strip()][:3]
+    _n_int = _param(app_config, "memory_interests", 3)
+    _n_mas = _param(app_config, "memory_mastered", 3)
+    interests = [str(x).strip() for x in (learner_state.get("interests") or []) if str(x).strip()][:_n_int]
+    mastered = [str(x).strip() for x in (learner_state.get("mastered") or []) if str(x).strip()][:_n_mas]
 
     # Campos en ORDEN DE PRIORIDAD (top_error > review > interests > mastered); tope 4 -> ≤5 líneas.
     fields = []
@@ -515,7 +559,7 @@ def _get_learner_state(learner_state: Optional[dict]) -> str:
         fields.append(f"  · already knows: {', '.join(mastered)} — use as anchor, don't re-teach")
     if not fields:
         return ""
-    fields = fields[:4]
+    fields = fields[:_param(app_config, "memory_fields", 4)]
     return (
         "<learner_state>\n"
         "  Student memory — build on the last class, don't repeat it:\n"
@@ -597,7 +641,10 @@ def compose_proto_prompt(
                                      datetime.date.today().isoformat())
 
     user_name = _req(getattr(user, "nombre", None), "user.nombre", ctx)
-    title, raw_vocab, raw_phrases = _get_vocabulary(topic, topic_content)
+    title, raw_vocab, raw_phrases = _get_vocabulary(
+        topic, topic_content, app_config,
+        level_code=str(getattr(user, "cefr_level", "") or ""), age_slug=slug,
+        session_seed=session_seed or 0)
     _req(topic, "tópico (sequencer)", ctx)
     _req(raw_vocab or raw_phrases, "vocab/frases del tópico (pinned_vocabulary/keywords/generated_vocab)", ctx)
 
@@ -605,8 +652,10 @@ def compose_proto_prompt(
     clean_raw_vocab = [w for w in raw_vocab if str(w).strip().lower() not in _IDENTICAL_COGNATES_ES_EN] if raw_vocab else []
     effective_raw_vocab = clean_raw_vocab if clean_raw_vocab else raw_vocab
 
-    # 1. Rotar y acotar palabras para esta sesión (máx 4 para kids)
-    vocab = _rotate(effective_raw_vocab, _derive(session_seed, "words"))[:4] if effective_raw_vocab else []
+    # 1. Rotar y acotar palabras para esta sesión. El tope sale de
+    #    motor_params.vocab_rotate (configurable por nivel), no de un [:4] fijo.
+    _n_rot = _param(app_config, "vocab_rotate", 4, level=str(getattr(user, "cefr_level", "") or ""), age=slug)
+    vocab = _rotate(effective_raw_vocab, _derive(session_seed, "words"))[:_n_rot] if effective_raw_vocab else []
 
     # 2. Rotar y acotar frases-ancla según nivel
     depth = _req(raw_lv.get("vocab_depth"), "levels.vocab_depth", ctx)
@@ -677,7 +726,7 @@ def compose_proto_prompt(
         _get_pedagogical_rules(std, ctx),
         _get_gamification_focus(std, ctx),
         _get_student_profile(user, std, ctx, app_config),
-        _get_learner_state(learner_state),          # opcional (memoria, post-clase)
+        _get_learner_state(learner_state, app_config),          # opcional (memoria, post-clase)
         _get_behavioral_guards(std, lv, ctx),
         _get_output_rules(app_config),              # opcional (config runtime)
         _get_vocabulary_block(title, vocab, phrases, ctx),
