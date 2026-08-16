@@ -576,6 +576,15 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
 
   const start = useCallback(
     async (sessionId: number, explicitToken?: string, voice?: string, wsUrlOverride?: string, audioOverride?: Partial<AudioSettings>) => {
+      // CERRAR LO ANTERIOR ANTES DE ABRIR LO NUEVO. Sin esto, `start()` pisaba las refs
+      // (stream, AudioContext, worklet, WS) y la sesión previa quedaba VIVA: su worklet
+      // seguía capturando el mismo micrófono y mandando chunks por wsRef, que ya apuntaba
+      // al WebSocket nuevo. O sea DOS capturas intercalando audio en el mismo socket.
+      //
+      // A Gemini le llegaba el audio entrelazado y lo transcribía como "<noise>" o como
+      // fonemas de otro idioma. Por eso la primera charla después de refrescar andaba y
+      // ninguna otra: "nunca me tomó 2 charlas seguidas" era literal.
+      stop()
       activeSessionIdRef.current = sessionId
       trace('session.client.start', sessionId)
       setStatus('connecting')
@@ -969,6 +978,7 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
    */
   const startInRoom = useCallback(
     async (roomToken: string, hostPid: string, lang?: string) => {
+      stop()  // mismo motivo que en start(): sin esto la sesión previa sigue capturando
       setStatus('connecting')
       setTranscript([])
       const settings = loadAudioSettings()
