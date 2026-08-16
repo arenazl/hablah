@@ -324,6 +324,7 @@ async def voice_ws_motor(
     target_language: str = Query("en"),
     infra_test: int = Query(0),
     prompt_level: int = Query(0),
+    template_id: int = Query(0),
 ):
     """Prueba de clase REAL por el MOTOR ÚNICO (v2 / compose_proto) — el MISMO que produce.
 
@@ -369,8 +370,12 @@ async def voice_ws_motor(
         try:
             res = await motor_engine.resolve_v2(age_group, level_code, topic_id or None,
                                                 student_id=student_id or None,
-                                                target_language=target_language)
+                                                target_language=target_language,
+                                                template_id=template_id or None)
             super_prompt = res["prompt"]
+            if template_id:
+                log.info("voice_ws_motor template_id=%s (peldaño del banco): %d chars",
+                         template_id, len(super_prompt))
         except Exception as e:
             log.warning("voice_ws_motor resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
             await websocket.close(code=1011)

@@ -610,6 +610,19 @@ export default function MotorPlaygroundPanel() {
   // Densidad del prompt: 0 entera · 1 light · 2 mega light · 3 mega mega light.
   // Misma estructura en todas — sólo cambia cuánto contenido lleva cada bloque.
   const [promptLevel, setPromptLevel] = useState(0)
+  // Peldaño de densidad: cada uno es un TEMPLATE de verdad (orchestration_templates), con los
+  // mismos placeholders y el mismo resolver — no un prompt escrito a mano. Van de menos a más y
+  // son acumulativos: L1 esqueleto … L5 guion y leyes … L6 = el activo (semillas incluidas).
+  // Así lo que se mide es el motor, y el peldaño que gane se publica con active=1, no se porta.
+  const [templateId, setTemplateId] = useState(0)
+  const [templates, setTemplates] = useState<Array<{ id: number; name: string; notes: string; active: number; chars: number }>>([])
+  useEffect(() => {
+    let vivo = true
+    motorAPI.templates()
+      .then((r) => { if (vivo) setTemplates(r.templates ?? []) })
+      .catch(() => { if (vivo) setTemplates([]) })
+    return () => { vivo = false }
+  }, [])
 
   const startLiveClass = useCallback(async () => {
     const params: Record<string, string | number> = {
@@ -621,9 +634,10 @@ export default function MotorPlaygroundPanel() {
     if (cad) params.cadencia = cad
     if (infraTest) params.infra_test = 1
     if (promptLevel) params.prompt_level = promptLevel
+    if (templateId) params.template_id = templateId
     const url = buildMotorWsUrl(params)
     await live.start(0, undefined, 'Aoede', url)
-  }, [live, band, level, topicId, effStudent, cadencia, targetLang, liveModel, infraTest, promptLevel])
+  }, [live, band, level, topicId, effStudent, cadencia, targetLang, liveModel, infraTest, promptLevel, templateId])
 
   // Terminar clase: además de cortar, la charla alimenta la MEMORIA del alumno elegido
   // (post-clase del probador → observaciones → protocolo SRS → pilar HISTORIA).
@@ -1755,6 +1769,15 @@ export default function MotorPlaygroundPanel() {
                   <option value={1}>Light — 81%, 5 reglas</option>
                   <option value={2}>Mega light — 60%, 2 reglas</option>
                   <option value={3}>Mega mega light — 24%, sin reglas</option>
+                </select>
+                <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: C.dim }}>Peldaño</span>
+                <select value={templateId} onChange={(e) => setTemplateId(Number(e.target.value))} disabled={isLive || infraTest}
+                  title="Cada peldaño es un TEMPLATE con los mismos placeholders y el mismo resolver que producción — sólo cambia cuántos entran. Van de menos a más y son acumulativos. El que gane se publica poniéndole active=1."
+                  style={{ background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '5px 10px', fontSize: 12.5, opacity: (isLive || infraTest) ? 0.5 : 1 }}>
+                  <option value={0}>Activo (L6 completo)</option>
+                  {templates.filter((t) => !t.active).map((t) => (
+                    <option key={t.id} value={t.id} title={t.notes}>{t.name} — {t.chars} chars</option>
+                  ))}
                 </select>
               </div>
               {!isLive && live.status === 'ended' && live.transcript.length > 0 && (

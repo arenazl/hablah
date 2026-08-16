@@ -49,11 +49,16 @@ def _lang_names() -> dict:
             pass
 
 
-def _load_orchestration(age_slug: str, level_code: str):
+def _load_orchestration(age_slug: str, level_code: str, template_id: int | None = None):
+    """template_id: compone con OTRO template sin publicarlo (banco de pruebas del /motor).
+    Sirve para comparar variantes de densidad escritas en la MISMA sintaxis del motor —
+    mismos placeholders, mismo resolver — en vez de prompts a mano. Sin id: el activo."""
     db = _connect()
     try:
         db.conn.ping(reconnect=True)
-        tpl = db.q1("SELECT body FROM orchestration_templates WHERE active=1 ORDER BY id DESC LIMIT 1")
+        tpl = (db.q1("SELECT body FROM orchestration_templates WHERE id=%s", (template_id,))
+               if template_id else
+               db.q1("SELECT body FROM orchestration_templates WHERE active=1 ORDER BY id DESC LIMIT 1"))
         row = db.q1("SELECT * FROM age_level_matrix WHERE age_slug=%s AND level_code=%s AND active=1",
                     (age_slug, level_code))
         rules = db.q("SELECT slug, rule_text, age_groups, min_level, max_level, sort_order "
@@ -150,6 +155,7 @@ def compose_from_template(
     learner_state: Optional[dict] = None,
     interaction_state: Optional[dict] = None,
     session_seed: Optional[int] = None,
+    template_id: Optional[int] = None,
     _trace: Optional[list] = None,
 ) -> str:
     std = dict(_req(student_type_data, "student_type_data (eje EDAD)"))
@@ -158,8 +164,10 @@ def compose_from_template(
     level_code = getattr(user, "cefr_level", None) or "?"
     ctx = f"segmento={age_slug}, nivel={level_code}"
 
-    tpl, row, rules, level_order = _load_orchestration(age_slug, level_code)
-    _req(tpl and tpl.get("body"), "orchestration_templates.active (no hay template activo)", ctx)
+    tpl, row, rules, level_order = _load_orchestration(age_slug, level_code, template_id)
+    _req(tpl and tpl.get("body"),
+         f"orchestration_templates[id={template_id}]" if template_id
+         else "orchestration_templates.active (no hay template activo)", ctx)
     _req(row, f"age_level_matrix[{age_slug},{level_code}] — cruce inexistente (¿combo válido?)", ctx)
 
     # Semilla + vocab (misma mecánica que el composer: variedad por construcción)

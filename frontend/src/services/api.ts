@@ -440,8 +440,12 @@ export const motorAPI = {
   }) => api.post<MotorResolve>('/motor/resolve', body).then((r) => r.data),
   previewV2: (params: {
     age_group: string; level: string; topic_id?: number | null; student_id?: number | null
-    target_language?: string
+    target_language?: string; template_id?: number
   }) => api.get<any>('/finaltest/mini/preview', { params: { ...params, _t: Date.now() } }).then((r) => r.data),
+  // Peldaños de densidad del banco: cada uno es un template real (mismos placeholders, mismo
+  // resolver), para medir el MOTOR y no la prosa de quien escriba un prompt a mano.
+  templates: (): Promise<{ templates: Array<{ id: number; name: string; notes: string; active: number; chars: number }> }> =>
+    api.get('/finaltest/motor/templates').then((r) => r.data),
   simulatePreview: (systemInstruction: string, mode: 'start' | 'closing') => api.post<any>('/finaltest/mini/preview/simulate', { system_instruction: systemInstruction, mode }).then((r) => r.data),
   trainState: (studentId: number) => api.get(`/motor/train/state/${studentId}`).then((r) => r.data),
   trainApply: (body: { student_id: number; outcomes: { objectives?: [number, string][]; items?: [string, string, string][] } }) =>

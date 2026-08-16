@@ -176,7 +176,7 @@ def _load_lite_state_sync(db, student_id) -> Optional[dict]:
 
 
 def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student_id=None, session_seed=None,
-                    target_language="en") -> dict:
+                    target_language="en", template_id=None) -> dict:
     """Carga los kwargs del motor (EDAD+NIVEL+tópico+historia) — fuente ÚNICA para el prompt real y
     el visor (breakdown), sin duplicar. Devuelve los kwargs de compose_from_template + _topic_title.
 
@@ -234,56 +234,66 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
             session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat())
         return {"user": user, "topic": topic, "topic_content": None, "student_type_data": std,
                 "level_data": level_data, "app_config": cfg, "learner_state": learner_state,
-                "session_seed": session_seed, "_topic_title": tp.get("title") if tp else None}
+                "session_seed": session_seed, "template_id": template_id or None,
+                "_topic_title": tp.get("title") if tp else None}
     finally:
         db.conn.close()
 
 
 def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, student_id=None, session_seed=None,
-                     target_language="en") -> dict:
+                     target_language="en", template_id=None) -> dict:
     from services.orchestration_resolver import compose_from_template
     kw = _load_v2_kwargs(age_group, level_code, topic_id, learner_state, student_id, session_seed,
-                         target_language)
+                         target_language, template_id)
     tt = kw.pop("_topic_title")
     prompt = compose_from_template(**kw)
     return {"prompt": prompt, "meta": {
         "engine": "orchestration_resolver (template)", "age_group": age_group, "level": level_code,
         "topic_title": tt, "session_seed": kw["session_seed"], "has_history": bool(kw["learner_state"]),
-        "target_language": target_language}}
+        "target_language": target_language, "template_id": kw.get("template_id")}}
 
 
 async def resolve_v2(age_group: str, level_code: str, topic_id: Optional[int] = None,
                      learner_state: Optional[dict] = None, student_id: Optional[int] = None,
-                     session_seed: Optional[int] = None, target_language: str = "en") -> dict:
+                     session_seed: Optional[int] = None, target_language: str = "en",
+                     template_id: Optional[int] = None) -> dict:
     """Motor ÚNICO para el test: 3 pilares edad+nivel+(tópico)+HISTORIA, generado al vuelo.
 
     student_id (opcional) -> carga el learner_state LIVIANO de la BD (F2-02) si no se pasa uno
     explícito. session_seed (opcional, F2-03) -> fija la rotación; default = (alumno, tópico, hoy).
-    target_language -> el MISMO cruce en otro idioma, sin tocar catálogo (el idioma es {idioma})."""
+    target_language -> el MISMO cruce en otro idioma, sin tocar catálogo (el idioma es {idioma}).
+    template_id -> compone con otra fila de orchestration_templates (peldaños de densidad del
+    banco), sin publicarla. Sin id: el activo, que es lo que corre en producción."""
     return await asyncio.to_thread(_resolve_v2_sync, age_group, level_code, topic_id,
-                                   learner_state, student_id, session_seed, target_language)
+                                   learner_state, student_id, session_seed, target_language,
+                                   template_id)
 
 
-def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None, target_language="en") -> dict:
+def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None, target_language="en",
+                               template_id=None) -> dict:
     """Visor del /motor FROM-TEMPLATE (F3): parsea el template activo y muestra cada placeholder con su
     FUENTE (tabla.columna) y DUEÑO (prefijo). Reemplaza las ~150 líneas que re-implementaban el composer
     y podían driftar. Dinámico: si cambia el template (orchestration_templates), el visor cambia solo."""
     from services.orchestration_resolver import compose_breakdown
-    kw = _load_v2_kwargs(age_group, level_code, topic_id, None, student_id, None, target_language)
+    kw = _load_v2_kwargs(age_group, level_code, topic_id, None, student_id, None, target_language,
+                         template_id)
     tt = kw.pop("_topic_title")
     bd = compose_breakdown(**kw)
     bd["meta"] = {"engine": "orchestration_resolver (template)", "age_group": age_group,
                   "level": level_code, "topic_title": tt, "session_seed": kw["session_seed"],
-                  "has_history": bool(kw["learner_state"]), "target_language": target_language}
+                  "has_history": bool(kw["learner_state"]), "target_language": target_language,
+                  "template_id": kw.get("template_id")}
     return bd
 
 
 async def resolve_v2_breakdown(age_group: str, level_code: str, topic_id: Optional[int] = None,
-                               student_id: Optional[int] = None, target_language: str = "en") -> dict:
+                               student_id: Optional[int] = None, target_language: str = "en",
+                               template_id: Optional[int] = None) -> dict:
     """Desglose por campo (tabla.columna + dueño) de la orquestación v2 — para el visor de los pasos.
-    student_id (opcional): incluye el paso HISTORIA (learner_state liviano) del alumno de prueba."""
+    student_id (opcional): incluye el paso HISTORIA (learner_state liviano) del alumno de prueba.
+    template_id (opcional): desglosa un peldaño del banco en vez del template activo."""
     return await asyncio.to_thread(_resolve_v2_breakdown_sync, age_group, level_code, topic_id,
-                                   student_id, target_language)
+                                   student_id, target_language, template_id)
 
 
 # ── /training · ciclo de aprendizaje por alumno (sin session) ──

@@ -389,16 +389,40 @@ async def mini_topics():
 
 @router.get("/mini/preview")
 async def mini_preview(age_group: str = "mini", level: str = "A0", topic_id: int = 0, student_id: int = 0,
-                       target_language: str = "en"):
+                       target_language: str = "en", template_id: int = 0):
     """Desglose de la orquestación POR CAMPO de la base: cada entrada con su fuente (tabla.columna)
     y su dueño (de qué pilar depende). Deja ver que NO es un registro único — se apilan campos sueltos.
     student_id (F2-02): incluye el paso HISTORIA (learner_state) del alumno de prueba si tiene estado.
-    target_language: el MISMO cruce en otro idioma — el catálogo dice {idioma}, no "inglés"."""
+    target_language: el MISMO cruce en otro idioma — el catálogo dice {idioma}, no "inglés".
+    template_id: desglosa un peldaño del banco de densidad en vez del template activo."""
     try:
         return await motor_engine.resolve_v2_breakdown(age_group, level, topic_id or None,
-                                                       student_id or None, target_language)
+                                                       student_id or None, target_language,
+                                                       template_id or None)
     except Exception as e:
         return {"error": str(e)}
+
+
+@router.get("/motor/templates")
+async def motor_templates():
+    """Peldaños de densidad disponibles (orchestration_templates) para el combo del /motor.
+
+    Cada peldaño es un TEMPLATE de verdad — mismos placeholders, mismo resolver — no un
+    prompt escrito a mano: así lo que se mide es el motor, y el ganador se publica poniéndole
+    active=1 en vez de portarlo."""
+    def _sync():
+        db = motor_engine._connect()
+        try:
+            rows = db.q("SELECT id, name, notes, active, LENGTH(body) AS chars "
+                        "FROM orchestration_templates ORDER BY id") or []
+            return [{"id": r["id"], "name": r["name"], "notes": r.get("notes") or "",
+                     "active": int(r["active"] or 0), "chars": int(r["chars"] or 0)} for r in rows]
+        finally:
+            db.conn.close()
+    try:
+        return {"templates": await asyncio.to_thread(_sync)}
+    except Exception as e:
+        return {"error": str(e), "templates": []}
 
 
 # ───────────── HISTORIA del alumno de prueba (F2-02) — setear/leer/limpiar learner_state ─────────────
