@@ -635,13 +635,32 @@ class GeminiLiveEngine(VoiceEngine):
                                         session_id=session_id_log,
                                         sample_rate=client_sr,
                                         bytes_approx=counters["user_audio_bytes"])
-                        # Logueamos cada 50 chunks
+                        # Logueamos cada 50 chunks. Va el NIVEL DE SEÑAL (RMS 0-32767 sobre
+                        # PCM int16) porque sin eso "llegaron 800 KB de audio" no distingue
+                        # 25 segundos de voz de 25 segundos de silencio con el mic abierto —
+                        # y esa es justo la pregunta cuando el alumno no aparece en la
+                        # transcripción. Referencia: <300 es silencio, ~1000+ es habla clara.
+                        # También va si el COACH estaba hablando: con
+                        # activityHandling=NO_INTERRUPTION, Gemini descarta la voz del alumno
+                        # mientras genera, así que un RMS alto durante coach_speaking explica
+                        # un turno perdido sin que nada falle.
                         if counters["user_audio_chunks"] % 50 == 0:
+                            try:
+                                _pcm = base64.b64decode(b64) if b64 else b""
+                                _rms = int(audioop.rms(_pcm, 2)) if (_pcm and audioop) else -1
+                            except Exception:
+                                _rms = -1
                             trace.debug("client.audio.streaming",
                                         session_id=session_id_log,
                                         chunks=counters["user_audio_chunks"],
                                         approx_bytes=counters["user_audio_bytes"],
-                                        sample_rate=client_sr)
+                                        sample_rate=client_sr,
+                                        rms=_rms,
+                                        signal="silencio" if 0 <= _rms < 300 else "voz" if _rms >= 300 else "?",
+                                        # Si el coach viene hablando desde hace rato, el audio
+                                        # del alumno cae en la ventana que NO_INTERRUPTION descarta.
+                                        coach_turns=ghost_state["coach_turns_completed"],
+                                        user_transcriptions=counters.get("user_text_chunks", 0))
                         try:
                             await gws_holder["ws"].send(json.dumps({
                                 "realtimeInput": {
@@ -1266,6 +1285,20 @@ class GeminiLiveEngine(VoiceEngine):
                         turn_completes=counters["turn_completes_seen"],
                         coach_spoke=bool(counters["ai_audio_chunks"] > 0),
                         user_was_transcribed=bool(counters["user_text_chunks"] > 0),
+                        # Diagnóstico del caso "el mic se movía pero no salía mi texto":
+                        # cuántos segundos de audio le mandamos a Gemini y cuántas
+                        # transcripciones devolvió. Muchos segundos + 0 transcripciones
+                        # separa "el alumno no habló" de "Gemini no lo escuchó".
+                        user_audio_seconds=round(counters["user_audio_bytes"] / 32000.0, 1),
+                        segundos_por_transcripcion=(
+                            round(counters["user_audio_bytes"] / 32000.0 / counters["user_text_chunks"], 1)
+                            if counters["user_text_chunks"] else None),
+                        veredicto=(
+                            "OK" if counters["user_text_chunks"] > 0 and counters["ai_audio_chunks"] > 0
+                            else "alumno mudo: mandamos audio y Gemini no transcribió NADA"
+                            if counters["user_audio_bytes"] > 64000 and counters["user_text_chunks"] == 0
+                            else "sin audio del alumno" if counters["user_audio_bytes"] <= 64000
+                            else "coach mudo"),
                         pings_received=counters["pings_received"],
                         transcript_lines=len(transcript))
 
