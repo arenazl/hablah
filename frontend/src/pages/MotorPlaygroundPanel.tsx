@@ -1332,12 +1332,15 @@ export default function MotorPlaygroundPanel() {
             </Ctx>
           )}
           <Ctx label="De qué se habla hoy"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topicsInCategory.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
-          {/* El alumno trae SU nivel para ESTA materia (user_level) y su idioma nativo:
-              por eso se muestran, si no "Chloé (CON2)" no dice nada útil en una clase
-              de inglés. Sin alumno elegido se compone con el perfil-molde del nivel. */}
+          {/* El alumno se identifica por lo que es SUYO y no cambia con la clase: su
+              nombre y su idioma nativo. El nivel NO va acá — es de la relación
+              alumno↔materia, ya lo dice "Cuánto sabe", y mostrarlo llevaba a que el
+              combo dijera "Lucas · B2" al lado de "Inicial": dos niveles distintos en
+              la misma barra, porque B2 es su nivel de inglés y no significa nada en
+              informática. Sin alumno elegido se compone con el perfil-molde del nivel. */}
           <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— Perfil del nivel</option>{students.map((s) => {
-            const suNivel = s.levels_by_materia?.[esConocimiento ? discipline : targetLang]
-            return <option key={s.student_id} value={s.student_id}>{s.name} · {suNivel || s.level_code}{s.base_language ? ` · habla ${s.base_language}` : ''}</option>
+            const nativo = languages.find((l) => l.code === s.base_language)?.label
+            return <option key={s.student_id} value={s.student_id}>{s.name}{nativo ? ` · habla ${nativo.toLowerCase()}` : ''}</option>
           })}</select></Ctx>
         </div>
 
