@@ -607,6 +607,9 @@ export default function MotorPlaygroundPanel() {
   const [liveModel, setLiveModel] = useState('models/gemini-3.1-flash-live-preview')
   // Prompt mínimo hardcodeado en vez del compuesto: aísla la cadena de voz del motor.
   const [infraTest, setInfraTest] = useState(false)
+  // Densidad del prompt: 0 entera · 1 light · 2 mega light · 3 mega mega light.
+  // Misma estructura en todas — sólo cambia cuánto contenido lleva cada bloque.
+  const [promptLevel, setPromptLevel] = useState(0)
 
   const startLiveClass = useCallback(async () => {
     const params: Record<string, string | number> = {
@@ -617,9 +620,10 @@ export default function MotorPlaygroundPanel() {
     const cad = cadencia.replace(/[^\d,]/g, '')
     if (cad) params.cadencia = cad
     if (infraTest) params.infra_test = 1
+    if (promptLevel) params.prompt_level = promptLevel
     const url = buildMotorWsUrl(params)
     await live.start(0, undefined, 'Aoede', url)
-  }, [live, band, level, topicId, effStudent, cadencia, targetLang, liveModel, infraTest])
+  }, [live, band, level, topicId, effStudent, cadencia, targetLang, liveModel, infraTest, promptLevel])
 
   // Terminar clase: además de cortar, la charla alimenta la MEMORIA del alumno elegido
   // (post-clase del probador → observaciones → protocolo SRS → pilar HISTORIA).
@@ -1743,6 +1747,15 @@ export default function MotorPlaygroundPanel() {
                     onChange={(e) => setInfraTest(e.target.checked)} style={{ margin: 0 }} />
                   Probar sólo infra (prompt mínimo)
                 </label>
+                <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: C.dim }}>Densidad</span>
+                <select value={promptLevel} onChange={(e) => setPromptLevel(Number(e.target.value))} disabled={isLive || infraTest}
+                  title="Recorta el prompt MANTENIENDO la estructura: mismos bloques y mismo orden, menos contenido. Sirve para ver si el tamaño afecta la latencia y la transcripción."
+                  style={{ background: C.bg, color: C.fg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '5px 10px', fontSize: 12.5, opacity: (isLive || infraTest) ? 0.5 : 1 }}>
+                  <option value={0}>Entera — 100%</option>
+                  <option value={1}>Light — 81%, 5 reglas</option>
+                  <option value={2}>Mega light — 60%, 2 reglas</option>
+                  <option value={3}>Mega mega light — 24%, sin reglas</option>
+                </select>
               </div>
               {!isLive && live.status === 'ended' && live.transcript.length > 0 && (
                 <div style={{ fontSize: 11.5, color: C.dim }}>Clase terminada — ajustá lo que haga falta arriba y volvé a iniciar.</div>

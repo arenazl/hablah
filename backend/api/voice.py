@@ -323,6 +323,7 @@ async def voice_ws_motor(
     cadencia: str = Query(""),
     target_language: str = Query("en"),
     infra_test: int = Query(0),
+    prompt_level: int = Query(0),
 ):
     """Prueba de clase REAL por el MOTOR ÚNICO (v2 / compose_proto) — el MISMO que produce.
 
@@ -374,6 +375,16 @@ async def voice_ws_motor(
             log.warning("voice_ws_motor resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
             await websocket.close(code=1011)
             return
+        # Densidad del prompt SIN cambiar el motor: mismos bloques y mismo orden, menos
+        # contenido. Sirve para medir si el tamaño afecta la latencia y la transcripción,
+        # que con el prompt mínimo mejoraban pero a costa de que la charla fuera mala.
+        if prompt_level:
+            from services.prompt_trim import trim, NIVELES
+            _antes = len(super_prompt)
+            super_prompt = trim(super_prompt, prompt_level)
+            log.info("voice_ws_motor prompt '%s': %d -> %d chars (%d%%)",
+                     NIVELES.get(prompt_level, "?"), _antes, len(super_prompt),
+                     100 * len(super_prompt) // max(1, _antes))
 
     is_kid = age_group in ("mini", "junior")
     async with AsyncSessionLocal() as db:
