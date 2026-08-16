@@ -464,16 +464,37 @@ class GeminiLiveEngine(VoiceEngine):
         # llega un audio chunk nuevo del modelo.
         coach_turn_closed_awaiting_tail = [False]  # mutable container para closure
 
+        def _join_chunks(chunks: list[str]) -> str:
+            """Une los fragmentos del stream respetando los espacios entre palabras.
+
+            Gemini manda la transcripción en chunks que NO siempre traen el espacio
+            de separación ("Un" + "gusto"), así que un "".join() pega las palabras:
+            la transcript quedaba "Hola, Lucas.Ungusto.Estabapensandoen esto...".
+            El front ya hacía esto al pintar en pantalla — por eso se veía bien ahí
+            y se guardaba mal. Y sobre este texto se construye la memoria del alumno,
+            así que el texto pegado no es sólo feo: ensucia el post-clase."""
+            out = ""
+            for c in chunks:
+                if not c:
+                    continue
+                if out and not out.endswith((" ", "\n")) and not c.startswith((" ", "\n", ",", ".", "?", "!", ":", ";")):
+                    out += " "
+                out += c
+            return out.strip()
+
         def _flush_buffers():
+            # ts (epoch) por turno: sin esto la transcript no sirve para diagnosticar
+            # latencia — que es justo lo que hace falta cuando el alumno reporta que
+            # su texto aparece tarde. El campo ya existía en sesiones viejas, pero null.
             if ai_buf:
-                full = "".join(ai_buf).strip()
+                full = _join_chunks(ai_buf)
                 if full:
-                    transcript.append({"who": "ai", "text": full})
+                    transcript.append({"who": "ai", "text": full, "ts": time.time()})
                 ai_buf.clear()
             if user_buf:
-                full = "".join(user_buf).strip()
+                full = _join_chunks(user_buf)
                 if full:
-                    transcript.append({"who": "user", "text": full})
+                    transcript.append({"who": "user", "text": full, "ts": time.time()})
                 user_buf.clear()
 
         def _merge_tail_into_last_ai(text: str) -> bool:
@@ -942,7 +963,9 @@ class GeminiLiveEngine(VoiceEngine):
                                 if ms_since_user < 1500 and not "".join(user_buf).strip():
                                     possible_cut = True
                                     counters["possible_cuts"] = counters.get("possible_cuts", 0) + 1
-                            ai_text_final = "".join(ai_buf).strip()
+                            # _join_chunks y no "".join: este texto va al detector de preferencias y al
+                            # post-clase, y sin los espacios las palabras quedan pegadas.
+                            ai_text_final = _join_chunks(ai_buf)
                             trace.event("gemini.turn.complete",
                                         session_id=session_id_log,
                                         n=counters["turn_completes_seen"],
@@ -989,7 +1012,7 @@ class GeminiLiveEngine(VoiceEngine):
                                            turn_n=counters["turn_completes_seen"],
                                            ms_since_user_input=ms_since_user,
                                            ai_text_preview="".join(ai_buf).strip()[:200])
-                            last_user_text = "".join(user_buf).strip()
+                            last_user_text = _join_chunks(user_buf)
                             # Si era ghost turn, FLUSH SILENCIOSO: no escribir al
                             # transcript ni emitir turn_complete al cliente.
                             was_ghost = ghost_state["current_turn_is_ghost"]
