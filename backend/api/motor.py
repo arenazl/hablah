@@ -195,18 +195,31 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
     #     (musica, oficios, oratoria…) reusan los 7 niveles de idiomas en vez de
     #     tener escala propia, así que en `levels` sólo aparecen idiomas y
     #     fonetica. Se unen las dos fuentes para no perder ninguna.
+    #     Salen SÓLO de las categorías: ahí vive el catálogo. Antes se unían con las de
+    #     `levels` "para no perder ninguna", porque las disciplinas sin escala propia no
+    #     aparecían del otro lado. Ese UNION mezclaba dos cosas distintas —una FAMILIA
+    #     como 'conocimiento' aparecía en el combo al lado de una materia como 'oficios'—
+    #     y ya no hace falta: la familia viaja aparte en discipline_families.
     disciplines = _rows(await db.execute(text(
-        "SELECT DISTINCT discipline FROM categories WHERE active = 1 "
-        "UNION SELECT DISTINCT discipline FROM levels WHERE active = 1 "
-        "ORDER BY discipline")))
+        "SELECT DISTINCT discipline FROM categories WHERE active = 1 ORDER BY discipline")))
     disciplines = [d["discipline"] for d in disciplines if d.get("discipline")]
+
+    # 1.c Familia de cada disciplina. `discipline` hacía DOS trabajos: decir de qué
+    #     ESCALERA cuelga el nivel y filtrar el catálogo. Ahora la familia decide la
+    #     escalera (lenguaje = el idioma es el objeto de estudio; conocimiento = es el
+    #     vehículo) y `discipline` queda sólo para el catálogo. Sin este mapa el front
+    #     no puede saber que informática usa CON1-CON4 y no A0-C2.
+    discipline_families = {r["discipline"]: r["family"] for r in _rows(await db.execute(text(
+        "SELECT DISTINCT discipline, family FROM categories WHERE active = 1 "
+        "UNION SELECT DISTINCT discipline, family FROM levels WHERE active = 1")))
+        if r.get("discipline")}
 
     # 2. Niveles (levels) — SOLO los activos, con su disciplina.
     #    El probador filtraba por el prefijo del código ("FON..."); ahora la
     #    disciplina es un campo y viaja como dato. Sin el filtro por active los
     #    niveles ES1-3 (experimento ya revertido) seguían apareciendo.
     levels = _rows(await db.execute(text(
-        "SELECT code AS level_code, friendly_name AS label, id AS sort_order, discipline "
+        "SELECT code AS level_code, friendly_name AS label, id AS sort_order, discipline, family "
         "FROM levels WHERE active = 1 ORDER BY id")))
 
     # 3. Tópicos (topics) — levels viaja para que el probador filtre por nivel
@@ -222,7 +235,20 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
 
     # 4. Alumnos (users)
     students = _rows(await db.execute(text(
-        "SELECT id AS student_id, nombre AS name, cefr_level AS level_code, age_group FROM users ORDER BY nombre")))
+        "SELECT id AS student_id, nombre AS name, cefr_level AS level_code, age_group, "
+        "base_language, target_language FROM users ORDER BY nombre")))
+
+    # 4.b El nivel es del alumno POR MATERIA, no del alumno. Uno puede ser B2 en inglés,
+    #     A1 en francés y principiante en historia — `users.cefr_level` no puede
+    #     representar eso. `user_level` es un OVERRIDE: si no hay fila para la materia,
+    #     el front cae al level_code del perfil. La materia es el idioma en `lenguaje` y
+    #     la disciplina en `conocimiento` (mismo árbol que el resto del motor).
+    niveles_por_materia: dict[int, dict[str, str]] = {}
+    for r in _rows(await db.execute(text(
+            "SELECT user_id, materia, level_code FROM user_level"))):
+        niveles_por_materia.setdefault(r["user_id"], {})[r["materia"]] = r["level_code"]
+    for s in students:
+        s["levels_by_materia"] = niveles_por_materia.get(s["student_id"], {})
 
     # 5. Idiomas (languages) — el catálogo de idiomas es DATO: sumar portugués es un INSERT,
     # no una lista en el <option> del combo (que obligaría a un build para verlo).
@@ -262,7 +288,8 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
 
     return {"bands": bands, "levels": levels, "catalog": catalog, "students": students,
             "topic_suggested_band": tbs, "languages": languages,
-            "disciplines": disciplines, "matrix_cruces": matrix_cruces}
+            "disciplines": disciplines, "discipline_families": discipline_families,
+            "matrix_cruces": matrix_cruces}
 
 
 class ResolveIn(BaseModel):

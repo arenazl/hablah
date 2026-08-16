@@ -1,0 +1,1060 @@
+{
+ "topics": [
+  {
+   "id": 3,
+   "title": "Producción musical y cultura DJ",
+   "levels": "[\"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 4,
+   "title": "IA generativa · ética",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 5,
+   "title": "Entrenamiento de fuerza y suplementación",
+   "levels": "[\"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 9,
+   "title": "Fútbol · Mundiales y selecciones",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 15,
+   "title": "Asado argentino · técnica y rituales",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 17,
+   "title": "Espacio · astronomía y misiones",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 18,
+   "title": "Cambio climático · ciencia y políticas",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 20,
+   "title": "Series de streaming · drama prestigio",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 21,
+   "title": "Videojuegos · indie y AAA",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 23,
+   "title": "Stand-up · comediantes y especiales",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 24,
+   "title": "Meditación y mindfulness",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 25,
+   "title": "Nutrición · dietas y mitos",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 27,
+   "title": "Trabajo remoto · nómade digital",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 30,
+   "title": "Japón · cultura y tradiciones",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 31,
+   "title": "Patagonia · trekking y montañas",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 32,
+   "title": "Ciudades que quiero conocer",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 33,
+   "title": "Mi banda favorita",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 34,
+   "title": "Conciertos que me marcaron",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 36,
+   "title": "Aprender un instrumento",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 39,
+   "title": "Música y emociones",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 41,
+   "title": "Una peli que me marcó",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 44,
+   "title": "Libro vs película",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 46,
+   "title": "Cine vs streaming en casa",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 47,
+   "title": "Géneros que evito y por qué",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 49,
+   "title": "Mi deporte favorito",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 50,
+   "title": "Mi equipo y sus rivales",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 51,
+   "title": "Un partido inolvidable",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 52,
+   "title": "Ídolos del deporte",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 57,
+   "title": "El juego del momento",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 59,
+   "title": "Jugar con amigos online",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 65,
+   "title": "Mi comida favorita",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 66,
+   "title": "Cocinar en casa",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 69,
+   "title": "Comida típica de mi país",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 71,
+   "title": "Cocinar para otros",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 73,
+   "title": "Mi mascota",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 74,
+   "title": "Animales raros que existen",
+   "levels": "[\"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 76,
+   "title": "Animales en peligro",
+   "levels": "[\"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 81,
+   "title": "Mi último viaje",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 82,
+   "title": "Mi viaje soñado",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 83,
+   "title": "Mochilero vs hotel",
+   "levels": "[\"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 84,
+   "title": "Choque cultural",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 85,
+   "title": "Comer cuando viajás",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 86,
+   "title": "Viajar solo",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 87,
+   "title": "Turismo masivo y sus efectos",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 88,
+   "title": "Apps que uso a diario",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 89,
+   "title": "Inteligencia artificial",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 90,
+   "title": "Privacidad online",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 91,
+   "title": "Un gadget que me cambió la vida",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 92,
+   "title": "Aprender a programar",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 93,
+   "title": "IA y el futuro del trabajo",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 94,
+   "title": "Adicción al celular",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 96,
+   "title": "Una curiosidad científica",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 104,
+   "title": "Un artista que admiro",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 108,
+   "title": "Crear arte propio",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 112,
+   "title": "Mi rutina actual",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 113,
+   "title": "Empezar a entrenar",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 116,
+   "title": "Salud mental",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 120,
+   "title": "Mi estilo personal",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 125,
+   "title": "Fast fashion",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 135,
+   "title": "Mi familia",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 137,
+   "title": "La escuela",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 138,
+   "title": "Mis colores favoritos",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 139,
+   "title": "Animales de la granja y la selva",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 141,
+   "title": "Mi cuerpo",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 142,
+   "title": "Comidas ricas",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 143,
+   "title": "Abrir juguetes",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 144,
+   "title": "Dibujitos y superhéroes",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 145,
+   "title": "Jugar en la pantalla",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 146,
+   "title": "Comida divertida",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 147,
+   "title": "Mi día de la mañana a la noche",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 148,
+   "title": "Mi casa y mis habitaciones",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 149,
+   "title": "Pasatiempos y deportes",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 150,
+   "title": "Cómo me siento",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 151,
+   "title": "Naturaleza y dinosaurios",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 152,
+   "title": "Desafíos virales",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 153,
+   "title": "Mundos de bloques",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 154,
+   "title": "Coleccionar cartas y figuritas",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 155,
+   "title": "Comida rápida y dulces",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 156,
+   "title": "Música, pelis y series",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 157,
+   "title": "Viajes y culturas",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 158,
+   "title": "Trabajos del futuro",
+   "levels": "[\"A2\", \"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 159,
+   "title": "Cocinar y recetas",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 160,
+   "title": "Cuidar el planeta",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 161,
+   "title": "Decir lo que pensás",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 162,
+   "title": "Streamers y transmisiones",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 163,
+   "title": "Zapatillas y moda urbana",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 164,
+   "title": "Gaming pro y esports",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 165,
+   "title": "Slang y tendencias online",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 166,
+   "title": "Charla abierta",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 177,
+   "title": "Desarrollo de software y herramientas IA",
+   "levels": "[\"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 178,
+   "title": "Diseño y construcción del hogar",
+   "levels": "[\"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 179,
+   "title": "Juegos de pelea y torneos",
+   "levels": "[\"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 180,
+   "title": "Construcción con bloques mágicos",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 181,
+   "title": "Suscripciones gaming y juego en la nube",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 182,
+   "title": "Quién soy y quién quiero ser",
+   "levels": "[\"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 183,
+   "title": "Redes sociales: el lado B",
+   "levels": "[\"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 184,
+   "title": "Crecer en un mundo que cambia rápido",
+   "levels": "[\"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 185,
+   "title": "Causas que me importan",
+   "levels": "[\"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 186,
+   "title": "Libertad y límites con mis padres",
+   "levels": "[\"B1\", \"B2\"]",
+   "d": "idiomas"
+  },
+  {
+   "id": 187,
+   "title": "El reino del rey Ramón y el perro Roco",
+   "levels": "[\"A0\", \"A1\", \"FONR\"]",
+   "d": "fonetica"
+  },
+  {
+   "id": 200,
+   "title": "Teoría musical desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "musica"
+  },
+  {
+   "id": 201,
+   "title": "Aprender piano",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "musica"
+  },
+  {
+   "id": 202,
+   "title": "Aprender guitarra",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "musica"
+  },
+  {
+   "id": 203,
+   "title": "Aprender a cantar",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "musica"
+  },
+  {
+   "id": 204,
+   "title": "Lectura musical y partituras",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "musica"
+  },
+  {
+   "id": 205,
+   "title": "Armonía y composición",
+   "levels": "[\"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "musica"
+  },
+  {
+   "id": 206,
+   "title": "Producción musical",
+   "levels": "[\"A2\", \"B1\", \"B2\", \"C1\", \"C2\"]",
+   "d": "musica"
+  },
+  {
+   "id": 210,
+   "title": "Informática desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "informatica"
+  },
+  {
+   "id": 211,
+   "title": "Uso de Windows y herramientas básicas",
+   "levels": "[\"A0\", \"A1\", \"A2\"]",
+   "d": "informatica"
+  },
+  {
+   "id": 212,
+   "title": "Internet, archivos y seguridad digital",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "informatica"
+  },
+  {
+   "id": 213,
+   "title": "Programación desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "informatica"
+  },
+  {
+   "id": 214,
+   "title": "Desarrollo web",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "informatica"
+  },
+  {
+   "id": 215,
+   "title": "Bases de datos",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "informatica"
+  },
+  {
+   "id": 216,
+   "title": "Inteligencia artificial aplicada",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "informatica"
+  },
+  {
+   "id": 220,
+   "title": "Electricidad domiciliaria desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 221,
+   "title": "Instalaciones eléctricas del hogar",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 222,
+   "title": "Diagnóstico de fallas eléctricas",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 230,
+   "title": "Carpintería desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 231,
+   "title": "Herramientas y técnicas de carpintería",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 232,
+   "title": "Construcción de muebles",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 240,
+   "title": "Mecánica automotriz desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 241,
+   "title": "Mantenimiento básico del auto",
+   "levels": "[\"A1\", \"A2\", \"B1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 242,
+   "title": "Mecánica y diagnóstico de fallas",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 250,
+   "title": "Plomería desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 251,
+   "title": "Reparaciones del hogar",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 252,
+   "title": "Herramientas y bricolaje",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "oficios"
+  },
+  {
+   "id": 260,
+   "title": "Fotografía desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "creativo"
+  },
+  {
+   "id": 261,
+   "title": "Composición y técnicas fotográficas",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "creativo"
+  },
+  {
+   "id": 262,
+   "title": "Edición de fotografía",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\", \"C1\"]",
+   "d": "creativo"
+  },
+  {
+   "id": 270,
+   "title": "Costura desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "creativo"
+  },
+  {
+   "id": 271,
+   "title": "Corte y confección",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "creativo"
+  },
+  {
+   "id": 280,
+   "title": "Jardinería desde cero",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "creativo"
+  },
+  {
+   "id": 281,
+   "title": "Huerta en casa",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "creativo"
+  },
+  {
+   "id": 282,
+   "title": "Cuidado y reproducción de plantas",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "creativo"
+  },
+  {
+   "id": 300,
+   "title": "Hablar en público sin morir en el intento",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 301,
+   "title": "Estructurar una presentación",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 302,
+   "title": "Manejo de la voz y los nervios",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 303,
+   "title": "Presentar datos sin aburrir",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 310,
+   "title": "Entrevista de trabajo: contame de vos",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 311,
+   "title": "Responder por errores y fracasos",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 312,
+   "title": "Negociar sueldo y condiciones",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 313,
+   "title": "Contar tu experiencia técnica",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 320,
+   "title": "Decir exactamente lo que querés decir",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 321,
+   "title": "Muletillas, pausas y silencios",
+   "levels": "[\"A0\", \"A1\", \"A2\", \"B1\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 322,
+   "title": "Contar una anécdota que enganche",
+   "levels": "[\"A1\", \"A2\", \"B1\", \"B2\"]",
+   "d": "oratoria"
+  },
+  {
+   "id": 323,
+   "title": "Discutir sin pelear",
+   "levels": "[\"B1\", \"B2\", \"C1\"]",
+   "d": "oratoria"
+  }
+ ],
+ "levels": [
+  {
+   "code": "A0",
+   "friendly_name": "Primeros pasos",
+   "discipline": "idiomas",
+   "active": 1
+  },
+  {
+   "code": "A1",
+   "friendly_name": "Bases",
+   "discipline": "idiomas",
+   "active": 1
+  },
+  {
+   "code": "A2",
+   "friendly_name": "Autonomía",
+   "discipline": "idiomas",
+   "active": 1
+  },
+  {
+   "code": "B1",
+   "friendly_name": "Soltura",
+   "discipline": "idiomas",
+   "active": 1
+  },
+  {
+   "code": "B2",
+   "friendly_name": "Solvencia",
+   "discipline": "idiomas",
+   "active": 1
+  },
+  {
+   "code": "C1",
+   "friendly_name": "Dominio",
+   "discipline": "idiomas",
+   "active": 1
+  },
+  {
+   "code": "C2",
+   "friendly_name": "Maestría",
+   "discipline": "idiomas",
+   "active": 1
+  },
+  {
+   "code": "FONR",
+   "friendly_name": "Fonema R",
+   "discipline": "fonetica",
+   "active": 1
+  },
+  {
+   "code": "ES1",
+   "friendly_name": "Castellano: charla simple",
+   "discipline": "idiomas",
+   "active": 0
+  },
+  {
+   "code": "ES2",
+   "friendly_name": "Castellano: charla fluida",
+   "discipline": "idiomas",
+   "active": 0
+  },
+  {
+   "code": "ES3",
+   "friendly_name": "Castellano: charla nativa",
+   "discipline": "idiomas",
+   "active": 0
+  }
+ ],
+ "matrix": [
+  {
+   "age_slug": "adult",
+   "level_code": "A0",
+   "active": 1
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "A1",
+   "active": 1
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "A2",
+   "active": 1
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "B1",
+   "active": 1
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "B2",
+   "active": 1
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "C1",
+   "active": 1
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "C2",
+   "active": 1
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "ES1",
+   "active": 0
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "ES2",
+   "active": 0
+  },
+  {
+   "age_slug": "adult",
+   "level_code": "ES3",
+   "active": 0
+  },
+  {
+   "age_slug": "junior",
+   "level_code": "A0",
+   "active": 1
+  },
+  {
+   "age_slug": "junior",
+   "level_code": "A1",
+   "active": 1
+  },
+  {
+   "age_slug": "junior",
+   "level_code": "A2",
+   "active": 1
+  },
+  {
+   "age_slug": "junior",
+   "level_code": "B1",
+   "active": 1
+  },
+  {
+   "age_slug": "mini",
+   "level_code": "A0",
+   "active": 1
+  },
+  {
+   "age_slug": "mini",
+   "level_code": "A1",
+   "active": 1
+  },
+  {
+   "age_slug": "mini",
+   "level_code": "A2",
+   "active": 1
+  },
+  {
+   "age_slug": "mini",
+   "level_code": "FONR",
+   "active": 1
+  },
+  {
+   "age_slug": "teen",
+   "level_code": "A1",
+   "active": 1
+  },
+  {
+   "age_slug": "teen",
+   "level_code": "A2",
+   "active": 1
+  },
+  {
+   "age_slug": "teen",
+   "level_code": "B1",
+   "active": 1
+  },
+  {
+   "age_slug": "teen",
+   "level_code": "B2",
+   "active": 1
+  }
+ ]
+}

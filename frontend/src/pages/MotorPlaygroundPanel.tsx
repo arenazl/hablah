@@ -20,7 +20,7 @@ import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
-interface Level { level_code: string; label: string; sort_order: number; discipline?: string }
+interface Level { level_code: string; label: string; sort_order: number; discipline?: string; family?: string }
 
 /**
  * LA CADENA: disciplina → edad → nivel → categoría → tópico.
@@ -62,7 +62,13 @@ const DISCIPLINE_LABELS: Record<string, string> = {
   oratoria: 'Oratoria',
 }
 interface Topic { topic_id: number; title: string; segmento?: string; levels?: string[]; category?: string; categoryLabel?: string; discipline?: string }
-interface Student { student_id: number; name: string; age?: number; level_code: string; age_group?: string }
+interface Student {
+  student_id: number; name: string; age?: number; level_code: string; age_group?: string
+  base_language?: string; target_language?: string
+  // materia -> nivel. Override del level_code del perfil: B2 en 'en', A1 en 'fr',
+  // CON1 en 'historia'. Vacío = usar level_code.
+  levels_by_materia?: Record<string, string>
+}
 
 const C = {
   bg: 'var(--bg-1)',
@@ -482,6 +488,8 @@ export default function MotorPlaygroundPanel() {
   const [discipline, setDiscipline] = useState<string>('idiomas')
   // Lista de disciplinas que manda el backend (categories ∪ levels)
   const [apiDisciplines, setApiDisciplines] = useState<string[]>([])
+  // discipline -> family ('lenguaje' | 'conocimiento'). Decide de qué escalera cuelga el nivel.
+  const [disciplineFamilies, setDisciplineFamilies] = useState<Record<string, string>>({})
   // Cruces edad×nivel que existen en age_level_matrix ("adult:B2"). Sin la fila
   // el motor no tiene instrucciones y el combo no compone.
   const [matrixCruces, setMatrixCruces] = useState<string[]>([])
@@ -526,6 +534,7 @@ export default function MotorPlaygroundPanel() {
       setBands(d.bands); setLevels(d.levels); setCatalog(d.catalog); setStudents(d.students)
       setLanguages(d.languages || [])
       setApiDisciplines(d.disciplines || [])
+      setDisciplineFamilies(d.discipline_families || {})
       setMatrixCruces(d.matrix_cruces || [])
     }).catch(() => {})
   }, [])
@@ -552,13 +561,22 @@ export default function MotorPlaygroundPanel() {
 
   // El ALUMNO manda: al elegirlo, el cruce (edad + nivel) se alinea a SU perfil —
   // sin esto podías elegir "Lucas (B2)" y componer A2 (bug reportado por el dueño).
+  //
+  // Y el nivel se busca POR MATERIA: el mismo alumno puede ser B2 en inglés, A1 en
+  // francés y principiante en historia. `levels_by_materia` es el override; si esa
+  // materia no tiene nivel propio, cae al del perfil. La materia es el idioma cuando
+  // la familia es `lenguaje`, y la disciplina cuando es `conocimiento`.
   useEffect(() => {
     if (studentId == null) return
     const s = students.find((x) => x.student_id === studentId)
     if (!s) return
     if (s.age_group && bands.some((b) => b.code === s.age_group)) setBand(s.age_group)
-    if (s.level_code) setLevel(s.level_code)
-  }, [studentId, students, bands])
+    const materia = (disciplineFamilies[discipline] || 'lenguaje') === 'lenguaje'
+      ? (targetLang || s.target_language || 'en')
+      : discipline
+    const nivel = s.levels_by_materia?.[materia] || s.level_code
+    if (nivel) setLevel(nivel)
+  }, [studentId, students, bands, discipline, disciplineFamilies, targetLang])
 
   // Clase en VIVO — charla REAL por voz (solo audio, sin imágenes) contra el motor
   // único (ws_motor → compose_proto), con el MISMO combo que se está previsualizando.
@@ -729,17 +747,25 @@ export default function MotorPlaygroundPanel() {
     [apiDisciplines, levels],
   )
 
-  // Niveles de la disciplina elegida. Si esa disciplina no tiene escala propia
-  // —el caso normal: carpintería o piano usan Despegue→Maestro igual que
-  // idiomas— se cae a los transversales.
+  // Niveles de la disciplina elegida, en cascada:
+  //   1. escala PROPIA de la disciplina  (fonética → FONR, y nada más)
+  //   2. escala de su FAMILIA            (informática/carpintería → CON1-CON4;
+  //                                       inglés/francés → A0-C2)
+  // La familia es lo que decide qué significa "nivel": en `lenguaje` el idioma ES el
+  // objeto de estudio, en `conocimiento` es el vehículo. Antes esto caía SIEMPRE a
+  // idiomas, y por eso una clase de informática pedía Present Perfect.
   const levelsForBand = useMemo(() => {
     const mx = bands.find((b) => b.code === band)?.max_level_order ?? 99
+    if (discipline === 'todos') return levels
     const propios = levels.filter((l) => (l.discipline || 'idiomas') === discipline)
-    const base = discipline === 'todos' || propios.length === 0
-      ? levels.filter((l) => (l.discipline || 'idiomas') === 'idiomas' || discipline === 'todos')
-      : propios
+    const fam = disciplineFamilies[discipline] || 'lenguaje'
+    const base = propios.length > 0
+      ? propios
+      : levels.filter((l) => (l.family || 'lenguaje') === fam)
+    // El tope por edad (mini→A2, junior→B1) es de la escalera de idiomas: mide
+    // competencia lingüística, no cuánto sabe de carpintería.
     return base.filter((l) => (l.discipline || 'idiomas') !== 'idiomas' || l.sort_order <= mx)
-  }, [levels, bands, band, discipline])
+  }, [levels, bands, band, discipline, disciplineFamilies])
 
   // 2. Nivel: si el cruce no existe en la matriz o quedó sin tópicos
   useEffect(() => {
