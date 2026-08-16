@@ -782,15 +782,55 @@ export default function MotorPlaygroundPanel() {
   const handleDisciplineChange = (newDisc: string) => {
     setDiscipline(newDisc)
     if (newDisc === 'todos') return
-    // Si el nivel actual no pertenece a la disciplina elegida, saltar al primero
-    // que sí — sin nombrar ningún código a mano.
-    const first = levels.find((l) => (l.discipline || 'idiomas') === newDisc)
-    const current = levels.find((l) => l.level_code === level)
-    if (first && (current?.discipline || 'idiomas') !== newDisc) setLevel(first.level_code)
+    // Si el nivel actual no pertenece a la ESCALERA de la disciplina elegida, saltar
+    // al primero que sí. Se compara por familia (no por disciplina) porque las
+    // materias de conocimiento comparten una sola escalera.
+    const fam = disciplineFamilies[newDisc] || 'lenguaje'
+    const propios = levels.filter((l) => (l.discipline || 'idiomas') === newDisc)
+    const escalera = propios.length > 0 ? propios : levels.filter((l) => (l.family || 'lenguaje') === fam)
+    if (escalera.length && !escalera.some((l) => l.level_code === level)) setLevel(escalera[0].level_code)
     // Y lo mismo con el tópico: se elige por disciplina, no por su título.
     const t = topics.find((x) => (x.discipline || 'idiomas') === newDisc)
     if (t) setTopicId(t.topic_id)
   }
+
+  // ── "Qué aprende": UN combo en vez de dos ────────────────────────────────────
+  // Antes había que elegir "Disciplina: Idiomas" y después "Idioma de la clase:
+  // Inglés" — dos pasos para una sola decisión, y el combo de idioma significaba
+  // cosas distintas según la disciplina (en Idiomas era QUÉ aprendés, en
+  // Informática era CON QUÉ). Ahora la materia es una sola lista: los idiomas
+  // aparecen como materias, agrupados por familia con <optgroup>.
+  //   valor "lang:en"       -> familia lenguaje, se aprende inglés
+  //   valor "disc:oficios"  -> familia conocimiento, se aprende el oficio
+  const materia = (disciplineFamilies[discipline] || 'lenguaje') === 'lenguaje' && discipline === 'idiomas'
+    ? `lang:${targetLang}`
+    : `disc:${discipline}`
+
+  const handleMateriaChange = (v: string) => {
+    if (v.startsWith('lang:')) {
+      const code = v.slice(5)
+      setTargetLang(code)
+      if (discipline !== 'idiomas') handleDisciplineChange('idiomas')
+    } else {
+      handleDisciplineChange(v.slice(5))
+    }
+  }
+
+  // En `conocimiento` el idioma es una perilla (carpintería en francés); en `lenguaje`
+  // es lo que se aprende, así que elegirlo aparte sería elegir dos veces lo mismo.
+  const esConocimiento = (disciplineFamilies[discipline] || 'lenguaje') === 'conocimiento'
+
+  // Materias de conocimiento: todo lo que no es la disciplina "idiomas" (que se
+  // despliega idioma por idioma). Sale del dato, así una materia nueva aparece sola.
+  const materiasPorFamilia = useMemo(() => {
+    const out: Record<string, string[]> = {}
+    for (const d of disciplines) {
+      if (d === 'idiomas') continue
+      const fam = disciplineFamilies[d] || 'conocimiento'
+      ;(out[fam] ||= []).push(d)
+    }
+    return out
+  }, [disciplines, disciplineFamilies])
 
   useEffect(() => {
     if (levelsForBand.length && !levelsForBand.some((l) => l.level_code === level)) {
@@ -1195,7 +1235,7 @@ export default function MotorPlaygroundPanel() {
           <div>
             <h1 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 2px' }}>Probador de clases</h1>
             <p style={{ color: C.dim, fontSize: 12.5, margin: '0 0 14px', maxWidth: 760 }}>
-              Elegí el perfil (disciplina × edad × objetivo × tópico). Tocá una capa para desplegarla. Clickeá en los <b>placeholders destacados</b> o en el lápiz para realizar el <b>ajuste fino JIT</b> del catálogo original.
+              Armá la clase de izquierda a derecha: <b>qué</b> aprende → <b>quién</b> → <b>cuánto sabe</b> → <b>de qué se habla</b>. Cada combo acota al siguiente y se deshabilita cuando no hay dato. Tocá una capa para desplegarla; clickeá en los <b>placeholders destacados</b> o en el lápiz para el <b>ajuste fino JIT</b> del catálogo.
             </p>
           </div>
           <div style={{ display: 'flex', gap: 5, flexShrink: 0, alignItems: 'center' }}>
@@ -1208,32 +1248,51 @@ export default function MotorPlaygroundPanel() {
         </div>
 
         {/* Dropdowns unificados */}
-        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(6, 1fr)', gap: 8, alignItems: 'start' }}>
-          <Ctx label="Disciplina">
-            {/* "Disciplina" es QUÉ se enseña, NO cuál idioma: eso lo elige "Idioma
-                de la clase". La lista sale de los datos (levels.discipline), así que
-                un curso nuevo aparece solo. Sin "CEFR": es jerga y quedaría mal con
-                idiomas no europeos — los niveles ya tienen nombre propio. */}
-            <select style={sel} value={discipline} onChange={(e) => handleDisciplineChange(e.target.value)}>
-              {disciplines.map((d) => {
-                const n = contar({ discipline: d })
-                return <option key={d} value={d} disabled={n === 0}>{DISCIPLINE_LABELS[d] || d} {n === 0 ? '— vacía' : `(${n})`}</option>
-              })}
-              <option value="todos">Todas las disciplinas</option>
+        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 12, display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : `repeat(${topicCategories.length > 1 ? 7 : 6}, 1fr)`, gap: 8, alignItems: 'start' }}>
+          {/* 1. QUÉ APRENDE — una sola decisión. Los idiomas son materias como
+              cualquier otra; el <optgroup> muestra la familia sin pedirla como combo,
+              porque "familia" es vocabulario del motor, no del que elige la clase. */}
+          <Ctx label="Qué aprende">
+            <select style={sel} value={materia} onChange={(e) => handleMateriaChange(e.target.value)} disabled={isLive}>
+              <optgroup label="Idiomas — aprende el idioma">
+                {languages.map((l) => {
+                  const n = contar({ discipline: 'idiomas' })
+                  return <option key={l.code} value={`lang:${l.code}`} disabled={n === 0}>{l.label} {n === 0 ? '— vacía' : `(${n})`}</option>
+                })}
+              </optgroup>
+              {Object.entries(materiasPorFamilia).map(([fam, ds]) => (
+                <optgroup key={fam} label={fam === 'conocimiento' ? 'Conocimiento — aprende el tema' : 'Otros'}>
+                  {ds.map((d) => {
+                    const n = contar({ discipline: d })
+                    return <option key={d} value={`disc:${d}`} disabled={n === 0}>{DISCIPLINE_LABELS[d] || d} {n === 0 ? '— vacía' : `(${n})`}</option>
+                  })}
+                </optgroup>
+              ))}
+              <option value="disc:todos">— Todo el catálogo</option>
             </select>
           </Ctx>
-          {/* El MISMO cruce en otro idioma: el catálogo dice {idioma}, nunca "inglés". Sirve para
-              mirar el motor (ritmo, tejido, beats) sin la fricción del idioma extranjero. */}
-          <Ctx label="Idioma de la clase">
-            <select style={sel} value={targetLang} onChange={(e) => setTargetLang(e.target.value)} disabled={isLive}
-              title="Cambia SOLO el idioma en que se da la clase. La orquestación es exactamente la misma.">
-              {languages.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
-            </select>
-          </Ctx>
+          {/* 2. EN QUÉ IDIOMA — sólo cuando el idioma NO es lo que se aprende. En una
+              clase de idioma sería redundante (ya lo dijo el combo de arriba); en una
+              de conocimiento es una perilla real: carpintería en francés. */}
+          {esConocimiento ? (
+            <Ctx label="En qué idioma">
+              <select style={sel} value={targetLang} onChange={(e) => setTargetLang(e.target.value)} disabled={isLive}
+                title="El idioma es el VEHÍCULO: la orquestación es exactamente la misma. Por defecto, el del alumno.">
+                {languages.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
+              </select>
+            </Ctx>
+          ) : (
+            <Ctx label="Se habla en">
+              <div style={{ ...sel, display: 'flex', alignItems: 'center', color: C.dim, cursor: 'default' }}
+                title="En una clase de idioma, el idioma de la clase ES lo que se aprende: sale del combo de al lado.">
+                {languages.find((l) => l.code === targetLang)?.label || targetLang}
+              </div>
+            </Ctx>
+          )}
           {/* Cada eslabón muestra cuántos tópicos deja vivos y se deshabilita en 0.
               "sin cruce" = falta la fila en age_level_matrix: el motor no tiene
               instrucciones para esa edad × nivel y no puede componer. */}
-          <Ctx label="Edad">
+          <Ctx label="Quién aprende">
             <select style={sel} value={band} onChange={(e) => setBand(e.target.value)}>
               {bands.map((b) => {
                 const n = contar({ discipline, band: b.code })
@@ -1241,7 +1300,9 @@ export default function MotorPlaygroundPanel() {
               })}
             </select>
           </Ctx>
-          <Ctx label="Nivel">
+          {/* "Cuánto sabe" y no "Nivel": lo que mide cambia con la familia — en un
+              idioma es cuánto lo habla, en carpintería cuánto sabe de carpintería. */}
+          <Ctx label="Cuánto sabe">
             <select style={sel} value={level} onChange={(e) => setLevel(e.target.value)}>
               {levelsForBand.map((l) => {
                 const hayCruce = cruceExiste(band, l.level_code)
@@ -1252,14 +1313,25 @@ export default function MotorPlaygroundPanel() {
               })}
             </select>
           </Ctx>
-          <Ctx label="Categoría">
-            <select style={sel} value={topicCat} onChange={(e) => setTopicCat(e.target.value)}>
-              <option value="">— Todas ({topics.length})</option>
-              {topicCategories.map(([c, n, label]) => <option key={c} value={c} disabled={n === 0}>{label} ({n})</option>)}
-            </select>
-          </Ctx>
-          <Ctx label="Tópico"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topicsInCategory.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
-          <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— Perfil del nivel</option>{students.map((s) => <option key={s.student_id} value={s.student_id}>{s.name} ({s.level_code})</option>)}</select></Ctx>
+          {/* La categoría es un AGRUPADOR, no un eslabón que el motor necesite: con
+              pocos tópicos no filtra nada y es un click de más. Aparece sola cuando
+              la materia tiene suficientes como para que agrupar sirva. */}
+          {topicCategories.length > 1 && (
+            <Ctx label="Tema">
+              <select style={sel} value={topicCat} onChange={(e) => setTopicCat(e.target.value)}>
+                <option value="">— Todos ({topics.length})</option>
+                {topicCategories.map(([c, n, label]) => <option key={c} value={c} disabled={n === 0}>{label} ({n})</option>)}
+              </select>
+            </Ctx>
+          )}
+          <Ctx label="De qué se habla hoy"><select style={sel} value={topicId ?? ''} onChange={(e) => setTopicId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— (sin tópico)</option>{topicsInCategory.map((t) => <option key={t.topic_id} value={t.topic_id}>{t.title}</option>)}</select></Ctx>
+          {/* El alumno trae SU nivel para ESTA materia (user_level) y su idioma nativo:
+              por eso se muestran, si no "Chloé (CON2)" no dice nada útil en una clase
+              de inglés. Sin alumno elegido se compone con el perfil-molde del nivel. */}
+          <Ctx label="Alumno (opc.)"><select style={sel} value={studentId ?? ''} onChange={(e) => setStudentId(e.target.value ? Number(e.target.value) : undefined)}><option value="">— Perfil del nivel</option>{students.map((s) => {
+            const suNivel = s.levels_by_materia?.[esConocimiento ? discipline : targetLang]
+            return <option key={s.student_id} value={s.student_id}>{s.name} · {suNivel || s.level_code}{s.base_language ? ` · habla ${s.base_language}` : ''}</option>
+          })}</select></Ctx>
         </div>
 
         {meta && (
