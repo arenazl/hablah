@@ -624,6 +624,9 @@ class GeminiLiveEngine(VoiceEngine):
                             client_sr = 16000
                         counters["user_audio_chunks"] += 1
                         counters["user_audio_bytes"] += len(b64) * 3 // 4  # base64 → bytes aprox
+                        # Momento del último audio que le mandamos a Gemini: contra esto se
+                        # mide el lag hasta que devuelve la transcripción (ver gemini.input_transcription).
+                        timing["last_user_audio_at"] = asyncio.get_event_loop().time()
                         # Tracking para defensa anti-ghost: este chunk cuenta
                         # como "user mando audio desde el ultimo coach close".
                         ghost_state["user_audio_chunks_since_last_coach"] += 1
@@ -940,11 +943,25 @@ class GeminiLiveEngine(VoiceEngine):
                                            session_id=session_id_log,
                                            overlap_ms=overlap_ms,
                                            input_text=input_tr["text"][:200])
+                            # LAG DE TRANSCRIPCIÓN: cuánto tardó tu texto en aparecer desde
+                            # que mandamos tu último audio. Es EL número del síntoma "hablo y
+                            # mi texto tarda en salir": si es alto, el alumno cree que no lo
+                            # escucharon y repite — y para cuando repite, el coach ya está
+                            # contestando lo primero (por eso la transcript queda desfasada).
+                            lag_ms = None
+                            _last_audio = timing.get("last_user_audio_at")
+                            if _last_audio is not None:
+                                lag_ms = int((now_ts - _last_audio) * 1000)
                             trace.event("gemini.input_transcription",
                                         session_id=session_id_log,
                                         chunk_n=counters["user_text_chunks"],
                                         text_preview=input_tr["text"][:200],
-                                        overlap_ms=overlap_ms)
+                                        overlap_ms=overlap_ms,
+                                        lag_ms=lag_ms,
+                                        lag_veredicto=("—" if lag_ms is None
+                                                       else "ok" if lag_ms < 800
+                                                       else "molesto" if lag_ms < 2000
+                                                       else "el alumno ya repitió"))
                             await ws.send_json({"type": "transcript_chunk", "who": "user", "text": input_tr["text"]})
 
                         if sc.get("turnComplete"):
