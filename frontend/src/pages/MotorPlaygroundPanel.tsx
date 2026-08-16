@@ -785,6 +785,9 @@ export default function MotorPlaygroundPanel() {
     try {
       await motorAPI.wipeProfile(effStudent)
       toast.success('Memoria del alumno reseteada')
+      // Los chips salen de `presets`: sin recargarlos, la UI sigue mostrando la memoria
+      // borrada y parece que el botón no hizo nada (igual que runClass/endLiveClass).
+      setPresets((await motorAPI.studentPresets(effStudent)).presets || [])
       resolve()
     } catch { toast.error('No se pudo borrar') }
   }

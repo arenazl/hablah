@@ -24,7 +24,7 @@ from typing import Optional
 
 from services.composer_proto import (
     _session_seed, _derive, _pick, _rotate, _get_vocabulary, _interp,
-    _get_learner_state, _get_output_rules, _SEGMENT_LABEL, MotorDataMissing, _req,
+    _get_learner_state, _get_output_rules, _etiquetas_segmento, MotorDataMissing, _req,
 )
 from services.motor_engine import _connect, _json_list
 
@@ -221,7 +221,7 @@ def compose_from_template(
     }
     _ALUMNO = {
         "nombre": user_name,
-        "edad": _SEGMENT_LABEL.get(age_slug, age_slug),
+        "edad": _etiquetas_segmento(app_config).get(age_slug, age_slug),
         "nivel": level_code,
     }
     _TOPICO = {

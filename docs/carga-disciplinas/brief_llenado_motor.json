@@ -1,0 +1,1081 @@
+{
+  "_LEEME": {
+    "que_es": "Brief de llenado del motor de Habláh. Cada campo en '' hay que redactarlo. El motor YA funciona y no hay que tocar código: esto son filas de catálogo.",
+    "el_modelo_en_una_linea": "familia → materia → edad → nivel → (categoría) → tópico. Dos familias: `lenguaje` (el idioma ES lo que se aprende) y `conocimiento` (el idioma es el vehículo para aprender otra cosa).",
+    "como_completarlo": [
+      "1. Llená TODOS los campos que estén en ''. No borres, no renombres, no agregues claves.",
+      "2. Castellano rioplatense, tuteo con vos.",
+      "3. Cada texto es una INSTRUCCIÓN AL COACH (la IA que da la clase por voz), no un texto para el alumno. Imperativo, dirigido al coach.",
+      "4. Calcá el tono y el LARGO de '_REFERENCIA_no_tocar'. No escribas párrafos: son directivas cortas, de 1 a 3 oraciones.",
+      "5. Devolvé el MISMO JSON completo y válido, sin texto fuera del JSON."
+    ],
+    "la_regla_de_oro": "En `conocimiento` el idioma NO es lo que se enseña. PROHIBIDO redactar objetivos de gramática ('Present Perfect', 'condicionales', 'phrasal verbs'). El nivel mide cuánto sabe DE LA MATERIA. Y una sola escalera sirve para informática, carpintería, música, oratoria, historia o química: escribí SIEMPRE en abstracto, hablando de 'la materia' o 'el tema', nunca de una materia concreta.",
+    "el_error_a_evitar": "Hoy estas materias usan prestada la escalera de idiomas y sale esto: una clase de informática nivel B2 le pide al coach 'Tiempos perfectos, conectores discursivos', y la regla de idioma queda 'Speak 100% in español; do not switch to español'. Eso es lo que este brief viene a reemplazar.",
+    "filosofia_del_producto": "Es una app CONVERSACIONAL. El aprendizaje va implícito. El alumno tiene que sentir que habla con un amigo o un colega — si siente que arranca una clase, ya se perdió. Nunca anunciar objetivos, pasos, ni que esto es una lección.",
+    "el_canal": "Es SOLO VOZ, y el audio se convierte a texto antes de llegar al coach. Todo lo que se pierda en esa conversión (pronunciación, cadencia, volumen) NO se puede corregir: no escribas directivas que dependan de oír CÓMO suena algo. Tampoco de ver: el coach no comparte el espacio físico del alumno."
+  },
+  "_PLACEHOLDERS_disponibles": {
+    "{name}": "nombre del alumno",
+    "{topic}": "título del tópico del día",
+    "{first_vocab}": "primer término del vocabulario del tópico",
+    "{word}": "un término del vocabulario",
+    "{tutor}": "nombre del coach (cambia por edad)",
+    "{idioma}": "idioma en que se DA la clase",
+    "{idioma_base}": "idioma nativo del alumno",
+    "_ojo_con_el_idioma_en_conocimiento": "En `conocimiento` {idioma} y {idioma_base} suelen ser EL MISMO valor, así que una regla tipo 'hablá en {idioma} y usá {idioma_base} sólo para traducir' queda absurda. Hablá de REGISTRO (técnico o llano) y de qué términos van en su forma original del rubro, nunca de traducir."
+  },
+  "_CONTRATO_campos": {
+    "escalera (tabla levels)": {
+      "code / friendly_name": "YA VIENEN PUESTOS. No los cambies.",
+      "short_desc": "1 línea: qué sabe hacer alguien en este nivel. Se lee en el back office.",
+      "language_rule": "Qué registro usa el coach en este nivel. Leer '_ojo_con_el_idioma_en_conocimiento'.",
+      "curriculum_grammar": "EL CAMPO MÁS IMPORTANTE. Qué PROFUNDIDAD de contenido se toca en este nivel, en abstracto (sirve para cualquier materia). Ej. para CON1: 'Vocabulario básico del rubro, para qué sirve cada cosa, el error típico del que arranca.'",
+      "expected_production": "Qué tiene que lograr DECIR el alumno en este nivel.",
+      "duration_base_minutes": "entero 10-20. Los niveles altos aguantan más.",
+      "vocab_depth": "'basic' o 'full'. basic = pocos términos por clase, full = sin tope."
+    },
+    "cruce (tabla age_level_matrix)": {
+      "_que_es": "El cruce EDAD × NIVEL: la capa que más pesa (8 de los 23 huecos del prompt). Acá va lo que cambia cuando el MISMO nivel se le da a otra edad. Si el campo no cambia entre edades, repetí el texto — no lo dejes vacío.",
+      "produccion_esperada": "Qué produce el alumno en este cruce concreto.",
+      "formato_de_cierre_de_turno": "Con qué tipo de pregunta o consigna cierra el coach cada turno.",
+      "reglas_de_tono_y_entrega": "Tono, velocidad, tratamiento. Es lo que hace sonar distinto a un nene y a un adulto.",
+      "pasos_de_la_sesion": "Los 4 beats del arco. Formato: 'Beat 1: … Beat 2-3: … Beat 4: …'.",
+      "comando_de_arranque": "La primera frase del coach. OBLIGATORIO que arranque saludando a {name}: es regla dura del producto, ninguna charla empieza sin saludo.",
+      "accion_de_continuacion": "Qué hace el coach en cada turno intermedio.",
+      "accion_de_cierre": "Cómo cierra la clase.",
+      "ritmo": "8 números 0-3 separados por coma. 0=icebreaker 1=normal 2=profunda 3=la más filosa. Ej: '1,0,2,1,0,2,3,1'."
+    }
+  },
+  "_REFERENCIA_no_tocar": {
+    "_por_que": "Filas REALES que ya funcionan, para calcar tono y largo. La de idiomas es el modelo de FORMA, no de contenido: fijate que habla de gramática — eso es lo que NO hay que hacer en conocimiento.",
+    "escalera_lenguaje_B1": {
+      "code": "B1",
+      "friendly_name": "Soltura",
+      "sort_order": 3,
+      "short_desc": "Conversación cotidiana con fluidez creciente.",
+      "language_rule": "Speak to the student 100% in {idioma}. Use {idioma_base} only to translate a single blocking word.",
+      "curriculum_grammar": "Phrasal verbs comunes, condicionales simples, expresiones de opinión (I think, In my opinion).",
+      "expected_production": "El alumno debe producir lenguaje orgánico defendiendo su postura o respondiendo a un reto.\nCall_to_Action_Format: Finaliza SIEMPRE lanzando un reto numerado (ej: 'Challenge 1, ready?') seguido de una pregunta directa abierta. NUNCA pidas repetir.",
+      "duration_base_minutes": 14,
+      "vocab_depth": "full",
+      "discipline": "idiomas"
+    },
+    "cruce_adult_x_B1": {
+      "age_slug": "adult",
+      "level_code": "B1",
+      "produccion_esperada": "El alumno debe mantener un intercambio de opiniones, dando razones de sus gustos y experiencias.",
+      "formato_de_cierre_de_turno": "Preguntas que pidan motivos o perspectivas moderadas, en {idioma} — del tipo «¿por qué te parece eso?», «¿alguna vez probaste {word}?».",
+      "reglas_de_tono_y_entrega": "Tone: Charla de café. Fluida pero con vocabulario accesible. 100% {idioma}.",
+      "pasos_de_la_sesion": "Beat 1: Perspectiva general del tema. Beat 2-3: Harvesting sobre sus opiniones y nuevas palabras. Beat 4: Conclusión compartida.",
+      "comando_de_arranque": "ARRANCÁ EN {idioma}. Saludá a {name} con naturalidad. Abrí {topic} con una observación general usando '{first_vocab}'. Preguntale por su preferencia o experiencia concreta con eso.",
+      "accion_de_continuacion": "Aprovechá lo que respondió para ramificar la charla. Meté la siguiente frase objetivo con naturalidad. Preguntale por sus motivos.",
+      "accion_de_cierre": "Cerrá con soltura la idea principal de la charla. Preguntá, en {idioma}, algo del estilo: «Me tengo que ir, ¿querés seguir charlando un rato más?».",
+      "arquetipo": "adult_b1",
+      "ritmo": "1,0,2,1,0,2,3,1"
+    },
+    "cruce_mini_x_FONR": {
+      "age_slug": "mini",
+      "level_code": "FONR",
+      "produccion_esperada": "El alumno participa en un juego narrativo de imitación del sonido mágico del escenario (ej: el rugido del perro Roco 'r-r-r-o', el viento del castillo o el motor en carreras según el tópico). REGLA DE ORO DE TOLERANCIA DE AUDIO (STT FONÉTICO): El reconocedor de voz (STT) suele transcribir los sonidos fonéticos a transcripciones aproximadas como 'br br', 'rro', 'burro' o 'perro'. ESTÁ ESTRICTAMENTE PROHIBIDO corregir al alumno o detener la clase por transcripciones imperfectas del STT. Cualquier intento o emisión de voz del niño en su turno SE CONSIDERA UN ÉXITO TOTAL. Asumí siempre que el nene hizo el sonido correctamente, celebralo con gran entusiasmo e hiper-energía en la historia y avanzá de inmediato al siguiente beat/ejercicio sin romper la coherencia del cuento.",
+      "formato_de_cierre_de_turno": "Invitalo a hacer el sonido mágico usando el modelado doble lúdico en el contexto exacto del cuento (ej: '¡Hagamos sonar la R del castillo! Decí conmigo: r-r-r-o... ¡ahora vos, {name}!'). NUNCA introduzcas elementos ajenos al cuento (como motores en un castillo).",
+      "reglas_de_tono_y_entrega": "Voice & Pacing: Habla LENTO y con extrema claridad lúdica. Mantené coherencia 100% con la historia elegida. Ignorá imprecisiones del reconocedor de voz, asumí éxito en cada turno del niño, festejá y avanzá.",
+      "pasos_de_la_sesion": "Beat 1: Entrada a la historia + sonido mágico del escenario. Beat 2: Intensificación sonora. Beat 3: Misión cumplida con palabra ({first_vocab}). Beat 4: Festejo final.",
+      "comando_de_arranque": "Saludá a {name} con energía en {idioma_base}. Sumalo a la historia e invitá a hacer el sonido mágico del escenario ({first_vocab}) para empezar la aventura.",
+      "accion_de_continuacion": "Reaccioná festejando con entusiasmo la emisión del niño. Avanzá en la historia hacia la palabra clave manteniendo el cuento 100% coherente con la escena del tópico.",
+      "accion_de_cierre": "Festejá cálido. Recordá las palabras como trofeos.",
+      "arquetipo": "mini_fonr",
+      "ritmo": null
+    }
+  },
+  "_EDADES": {
+    "mini": {
+      "nombre": "Mini (4-7)",
+      "rango": "4-7",
+      "grupo": "kid"
+    },
+    "junior": {
+      "nombre": "Junior (8-12)",
+      "rango": "8-12",
+      "grupo": "kid"
+    },
+    "teen": {
+      "nombre": "Teen (13-17)",
+      "rango": "13-17",
+      "grupo": "adult"
+    },
+    "adult": {
+      "nombre": "Adulto",
+      "rango": "18-+",
+      "grupo": "adult"
+    }
+  },
+  "PARTE_1_familia_conocimiento": {
+    "_que_es": "UNA escalera y UN juego de cruces que sirven para TODAS las materias de conocimiento. Sumar química o historia después no agrega ni un nivel ni un cruce: sólo tópicos.",
+    "_por_eso_escribi_en_abstracto": "Estos textos los va a usar tanto una clase de carpintería como una de informática. Si escribís 'hablá de código' rompés carpintería. Decí 'la materia', 'el tema', 'el rubro', '{topic}'.",
+    "materias_que_lo_van_a_usar": [
+      "creativo",
+      "informatica",
+      "musica",
+      "oficios",
+      "oratoria"
+    ],
+    "escalera_a_completar": [
+      {
+        "code": "CON1",
+        "friendly_name": "Inicial",
+        "discipline": "conocimiento",
+        "_pista": "Nunca lo hizo o arrancó hace muy poco. No conoce el vocabulario básico de la materia.",
+        "short_desc": "",
+        "language_rule": "",
+        "curriculum_grammar": "",
+        "expected_production": "",
+        "duration_base_minutes": "",
+        "vocab_depth": ""
+      },
+      {
+        "code": "CON2",
+        "friendly_name": "Autónomo",
+        "discipline": "conocimiento",
+        "_pista": "Se defiende solo en lo cotidiano de la materia. Puede seguir una explicación sin que le traduzcan todo.",
+        "short_desc": "",
+        "language_rule": "",
+        "curriculum_grammar": "",
+        "expected_production": "",
+        "duration_base_minutes": "",
+        "vocab_depth": ""
+      },
+      {
+        "code": "CON3",
+        "friendly_name": "Avanzado",
+        "discipline": "conocimiento",
+        "_pista": "Resuelve casos que no están en el manual. Discute criterios, no sólo procedimientos.",
+        "short_desc": "",
+        "language_rule": "",
+        "curriculum_grammar": "",
+        "expected_production": "",
+        "duration_base_minutes": "",
+        "vocab_depth": ""
+      },
+      {
+        "code": "CON4",
+        "friendly_name": "Profesional",
+        "discipline": "conocimiento",
+        "_pista": "Vive de esto o está a ese nivel. Le interesan los bordes, los trade-offs y lo que se discute en el rubro.",
+        "short_desc": "",
+        "language_rule": "",
+        "curriculum_grammar": "",
+        "expected_production": "",
+        "duration_base_minutes": "",
+        "vocab_depth": ""
+      }
+    ],
+    "cruces_a_completar": [
+      {
+        "age_slug": "mini",
+        "level_code": "CON1",
+        "_quien_es": "Mini (4-7) en nivel Inicial",
+        "arquetipo": "mini_con1",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "mini",
+        "level_code": "CON2",
+        "_quien_es": "Mini (4-7) en nivel Autónomo",
+        "arquetipo": "mini_con2",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "mini",
+        "level_code": "CON3",
+        "_quien_es": "Mini (4-7) en nivel Avanzado",
+        "arquetipo": "mini_con3",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "mini",
+        "level_code": "CON4",
+        "_quien_es": "Mini (4-7) en nivel Profesional",
+        "arquetipo": "mini_con4",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "junior",
+        "level_code": "CON1",
+        "_quien_es": "Junior (8-12) en nivel Inicial",
+        "arquetipo": "junior_con1",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "junior",
+        "level_code": "CON2",
+        "_quien_es": "Junior (8-12) en nivel Autónomo",
+        "arquetipo": "junior_con2",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "junior",
+        "level_code": "CON3",
+        "_quien_es": "Junior (8-12) en nivel Avanzado",
+        "arquetipo": "junior_con3",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "junior",
+        "level_code": "CON4",
+        "_quien_es": "Junior (8-12) en nivel Profesional",
+        "arquetipo": "junior_con4",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "teen",
+        "level_code": "CON1",
+        "_quien_es": "Teen (13-17) en nivel Inicial",
+        "arquetipo": "teen_con1",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "teen",
+        "level_code": "CON2",
+        "_quien_es": "Teen (13-17) en nivel Autónomo",
+        "arquetipo": "teen_con2",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "teen",
+        "level_code": "CON3",
+        "_quien_es": "Teen (13-17) en nivel Avanzado",
+        "arquetipo": "teen_con3",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "teen",
+        "level_code": "CON4",
+        "_quien_es": "Teen (13-17) en nivel Profesional",
+        "arquetipo": "teen_con4",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "adult",
+        "level_code": "CON1",
+        "_quien_es": "Adulto en nivel Inicial",
+        "arquetipo": "adult_con1",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "adult",
+        "level_code": "CON2",
+        "_quien_es": "Adulto en nivel Autónomo",
+        "arquetipo": "adult_con2",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "adult",
+        "level_code": "CON3",
+        "_quien_es": "Adulto en nivel Avanzado",
+        "arquetipo": "adult_con3",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "adult",
+        "level_code": "CON4",
+        "_quien_es": "Adulto en nivel Profesional",
+        "arquetipo": "adult_con4",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      }
+    ]
+  },
+  "PARTE_2_cruces_faltantes_de_lenguaje": {
+    "_que_es": "4 cruces de la familia `lenguaje` (aprender un idioma) que nunca se cargaron. Sin la fila, el motor no tiene instrucciones y el nivel aparece deshabilitado con 'sin cruce'. Estas 4 filas habilitan 28 combos.",
+    "_ojo": "Acá SÍ va contenido de idioma: gramática, producción lingüística, corrección por recast. Es la familia donde el idioma es el objeto de estudio. Calcá los cruces hermanos de la misma edad que ya existen.",
+    "_hermanos_que_ya_existen_para_calcar": {
+      "teen": "teen×A1, teen×A2, teen×B1, teen×B2 ya están cargados",
+      "junior": "junior×A0, junior×A1, junior×A2, junior×B1 ya están cargados"
+    },
+    "cruces_a_completar": [
+      {
+        "age_slug": "teen",
+        "level_code": "A0",
+        "_quien_es": "Teen (13-17) en nivel A0 (Primeros pasos)",
+        "arquetipo": "teen_a0",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "teen",
+        "level_code": "C1",
+        "_quien_es": "Teen (13-17) en nivel C1 (Dominio)",
+        "arquetipo": "teen_c1",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "teen",
+        "level_code": "C2",
+        "_quien_es": "Teen (13-17) en nivel C2 (Maestría)",
+        "arquetipo": "teen_c2",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      },
+      {
+        "age_slug": "junior",
+        "level_code": "B2",
+        "_quien_es": "Junior (8-12) en nivel B2 (Solvencia)",
+        "arquetipo": "junior_b2",
+        "produccion_esperada": "",
+        "formato_de_cierre_de_turno": "",
+        "reglas_de_tono_y_entrega": "",
+        "pasos_de_la_sesion": "",
+        "comando_de_arranque": "",
+        "accion_de_continuacion": "",
+        "accion_de_cierre": "",
+        "ritmo": ""
+      }
+    ]
+  },
+  "PARTE_3_en_que_niveles_vive_cada_topico": {
+    "_que_es": "Para cada tópico de conocimiento, en qué niveles de la escalera CON tiene sentido. Es lo que hace que el combo TÓPICO se llene cuando el alumno elige un nivel.",
+    "_como_completarlo": [
+      "Llená 'levels' con una lista de códigos: por ejemplo [\"CON1\",\"CON2\"].",
+      "Un tópico puede vivir en varios niveles: se da distinto, no es otro tópico. 'Electricidad domiciliaria desde cero' en CON1 es qué es un circuito; en CON3 es por qué salta la térmica.",
+      "Pero NO pongas los 4 en todos: si un tópico es de arranque, no va en CON4. Un profesional no charla de 'para qué sirve el mouse'.",
+      "'_niveles_hoy' es lo que tiene cargado ahora (de la escalera de idiomas, prestada). Sirve de pista de dificultad, no lo copies literal."
+    ],
+    "_ojo_con_la_edad": "No filtres por edad acá — eso lo hace '_segmento_hoy'. Un tópico puede ser CON1 y para adultos a la vez.",
+    "topicos": [
+      {
+        "materia": "creativo",
+        "categoria": "Costura",
+        "titulo": "Corte y confección",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "creativo",
+        "categoria": "Costura",
+        "titulo": "Costura desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "creativo",
+        "categoria": "Fotografía",
+        "titulo": "Composición y técnicas fotográficas",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "creativo",
+        "categoria": "Fotografía",
+        "titulo": "Edición de fotografía",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "creativo",
+        "categoria": "Fotografía",
+        "titulo": "Fotografía desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "creativo",
+        "categoria": "Jardinería",
+        "titulo": "Cuidado y reproducción de plantas",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "creativo",
+        "categoria": "Jardinería",
+        "titulo": "Huerta en casa",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "creativo",
+        "categoria": "Jardinería",
+        "titulo": "Jardinería desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "informatica",
+        "categoria": "Inteligencia artificial",
+        "titulo": "Inteligencia artificial aplicada",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "informatica",
+        "categoria": "Programación",
+        "titulo": "Bases de datos",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "informatica",
+        "categoria": "Programación",
+        "titulo": "Desarrollo web",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "informatica",
+        "categoria": "Programación",
+        "titulo": "Programación desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "informatica",
+        "categoria": "Uso básico",
+        "titulo": "Informática desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "informatica",
+        "categoria": "Uso básico",
+        "titulo": "Internet, archivos y seguridad digital",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "informatica",
+        "categoria": "Uso básico",
+        "titulo": "Uso de Windows y herramientas básicas",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "musica",
+        "categoria": "Instrumentos",
+        "titulo": "Aprender a cantar",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "musica",
+        "categoria": "Instrumentos",
+        "titulo": "Aprender guitarra",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "musica",
+        "categoria": "Instrumentos",
+        "titulo": "Aprender piano",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "musica",
+        "categoria": "Producción",
+        "titulo": "Producción musical",
+        "_niveles_hoy": [
+          "A2",
+          "B1",
+          "B2",
+          "C1",
+          "C2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "musica",
+        "categoria": "Teoría musical",
+        "titulo": "Armonía y composición",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1",
+          "C2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "musica",
+        "categoria": "Teoría musical",
+        "titulo": "Lectura musical y partituras",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "musica",
+        "categoria": "Teoría musical",
+        "titulo": "Teoría musical desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Carpintería",
+        "titulo": "Carpintería desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Carpintería",
+        "titulo": "Construcción de muebles",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Carpintería",
+        "titulo": "Herramientas y técnicas de carpintería",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Electricidad",
+        "titulo": "Diagnóstico de fallas eléctricas",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Electricidad",
+        "titulo": "Electricidad domiciliaria desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Electricidad",
+        "titulo": "Instalaciones eléctricas del hogar",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Mantenimiento",
+        "titulo": "Herramientas y bricolaje",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Mantenimiento",
+        "titulo": "Reparaciones del hogar",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Mecánica",
+        "titulo": "Mantenimiento básico del auto",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Mecánica",
+        "titulo": "Mecánica automotriz desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Mecánica",
+        "titulo": "Mecánica y diagnóstico de fallas",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oficios",
+        "categoria": "Plomería",
+        "titulo": "Plomería desde cero",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Entrevistas",
+        "titulo": "Contar tu experiencia técnica",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Entrevistas",
+        "titulo": "Entrevista de trabajo: contame de vos",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Entrevistas",
+        "titulo": "Negociar sueldo y condiciones",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Entrevistas",
+        "titulo": "Responder por errores y fracasos",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Expresión y vocabulario",
+        "titulo": "Contar una anécdota que enganche",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Expresión y vocabulario",
+        "titulo": "Decir exactamente lo que querés decir",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Expresión y vocabulario",
+        "titulo": "Discutir sin pelear",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Expresión y vocabulario",
+        "titulo": "Muletillas, pausas y silencios",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Presentaciones",
+        "titulo": "Estructurar una presentación",
+        "_niveles_hoy": [
+          "A1",
+          "A2",
+          "B1",
+          "B2"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Presentaciones",
+        "titulo": "Hablar en público sin morir en el intento",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Presentaciones",
+        "titulo": "Manejo de la voz y los nervios",
+        "_niveles_hoy": [
+          "A0",
+          "A1",
+          "A2",
+          "B1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      },
+      {
+        "materia": "oratoria",
+        "categoria": "Presentaciones",
+        "titulo": "Presentar datos sin aburrir",
+        "_niveles_hoy": [
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "_segmento_hoy": null,
+        "levels": []
+      }
+    ]
+  },
+  "_TOTALES": {
+    "niveles_a_redactar": 4,
+    "cruces_a_redactar": 20,
+    "topicos_a_mapear": 46,
+    "campos_vacios": 230
+  }
+}
