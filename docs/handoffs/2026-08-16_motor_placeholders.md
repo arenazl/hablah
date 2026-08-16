@@ -127,7 +127,51 @@ Sin la fila el motor no tiene instrucciones y el nivel sale deshabilitado con
 "sin cruce" en el probador. Además, con el cruce cargado pero **0 tópicos**:
 `idiomas × junior × B1`, y `adult × C2` en creativo/informática/oficios.
 
-### 3.b El saludo quedó en la capa equivocada (marcado por el dueño)
+### 3.a DECISIÓN PENDIENTE: fallback agnóstico por capa vs. fail-fast
+
+Pedido del dueño el 2026-08-16, y **contradice una regla dura vigente del
+composer**:
+
+    # composer_proto.py, docstring
+    # REGLA DURA: el motor NO usa fallbacks. Si un dato de catálogo falta,
+    # se lanza MotorDataMissing. Mejor explotar y saber qué falta.
+
+Lo que pide: *"si por un error nuestro no lo llenamos para algún nivel, que la
+charla no se vuelva tosca — que tenga un fallback con un mensaje agnóstico. Eso
+tiene que aplicar a cualquier capa."*
+
+Las dos posturas sirven, pero a públicos distintos:
+
+- **fail-fast** es para el backoffice: que se vea qué falta y se cargue.
+- **fallback agnóstico** es para el alumno: no puede pagar un olvido de carga con
+  una charla rota.
+
+**Propuesta (sin implementar):** en runtime nunca explota — cae a un texto
+agnóstico **cargado como dato** en cada capa (no como constante en el código) —
+y en paralelo el probador marca ese cruce en rojo como dato faltante. El alumno
+no se entera; el dueño lo ve igual.
+
+Requiere decidir dónde viven esos textos mínimos por capa. Candidato: una fila
+`scope='fallback'` por campo, o una columna `*_fallback` en cada tabla del eje.
+
+### 3.b El saludo: SÍ varía por nivel (corrección del propio dueño)
+
+Primero dijo que el saludo sólo dependía de la edad; después lo corrigió y tiene
+razón: **también varía con el nivel**, porque cambia la complejidad lingüística.
+
+    A0  "hello, how are you? how was your day?"
+    C1  "what's up? how was your week? anything new in dev?"
+
+O sea el **cruce edad × nivel es el lugar correcto** — `age_level_matrix` — y lo
+que se hizo el 2026-08-16 no estaba mal ubicado, estaba INCOMPLETO: el saludo se
+escribió sólo en `adult` B2/C1/C2, y falta en los otros 16 cruces.
+
+Lo que NO cambia con el nivel es que **el saludo tiene que estar siempre**: eso ya
+quedó como regla universal `always_greet` en `conversation_rules`.
+
+Ojo con la tentación de meterlo en `student_types.opening_seed`: ese campo existe
+y es por edad, pero si el saludo varía también por nivel, ahí sólo entraría el
+registro/tono, no el texto.
 
 El saludo se escribió **dentro del `comando_de_arranque` de cada cruce**, o sea
 en `age_level_matrix` (edad × nivel). Está mal por la ley de asignación:
