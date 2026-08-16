@@ -574,9 +574,16 @@ export default function MotorPlaygroundPanel() {
     const materia = (disciplineFamilies[discipline] || 'lenguaje') === 'lenguaje'
       ? (targetLang || s.target_language || 'en')
       : discipline
-    const nivel = s.levels_by_materia?.[materia] || s.level_code
+    // El fallback al nivel del perfil sólo vale si pertenece a ESTA escalera: Lucas es
+    // B2 en inglés, y B2 no significa nada en informática. Si no pertenece, arranca por
+    // el principio de la escalera — que es la verdad: nunca cursó esta materia.
+    const propios = levels.filter((l) => (l.discipline || 'idiomas') === discipline)
+    const fam = disciplineFamilies[discipline] || 'lenguaje'
+    const escalera = propios.length > 0 ? propios : levels.filter((l) => (l.family || 'lenguaje') === fam)
+    const candidato = s.levels_by_materia?.[materia] || s.level_code
+    const nivel = escalera.some((l) => l.level_code === candidato) ? candidato : escalera[0]?.level_code
     if (nivel) setLevel(nivel)
-  }, [studentId, students, bands, discipline, disciplineFamilies, targetLang])
+  }, [studentId, students, bands, discipline, disciplineFamilies, targetLang, levels])
 
   // Clase en VIVO — charla REAL por voz (solo audio, sin imágenes) contra el motor
   // único (ws_motor → compose_proto), con el MISMO combo que se está previsualizando.
