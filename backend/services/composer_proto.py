@@ -225,6 +225,57 @@ def _get_behavioral_guards(std: dict, lv: dict, ctx: str) -> str:
     )
 
 
+#: Orden de los niveles para poder comparar min_level / max_level. Sale del
+#: catálogo (levels.sort_order); acá sólo se usa para ordenar códigos.
+_ORDEN_NIVEL = {"a0": 0, "a1": 1, "a2": 2, "b1": 3, "b2": 4, "c1": 5, "c2": 6}
+
+
+def _regla_aplica(regla: dict, age_slug: str, level_code: str) -> bool:
+    """¿Esta regla universal aplica a esta edad y nivel?
+
+    Las tres condiciones son opcionales: una regla sin restricciones es
+    universal de verdad y entra siempre.
+    """
+    ages = regla.get("age_groups")
+    if ages and age_slug not in [str(a).lower() for a in ages]:
+        return False
+    lv = _ORDEN_NIVEL.get(str(level_code).lower())
+    if lv is None:
+        return True  # nivel de otra disciplina (FONR): sin tope de nivel
+    mn, mx = regla.get("min_level"), regla.get("max_level")
+    if mn and lv < _ORDEN_NIVEL.get(str(mn).lower(), -1):
+        return False
+    if mx and lv > _ORDEN_NIVEL.get(str(mx).lower(), 99):
+        return False
+    return True
+
+
+def _reglas_por_dato(app_config: Optional[dict], age_slug: str, level_code: str) -> Optional[str]:
+    """Bloque de reglas universales armado desde el dato. None si no está publicado."""
+    raw = (app_config or {}).get("conversation_rules_json")
+    if not raw:
+        return None
+    try:
+        reglas = json.loads(raw) if isinstance(raw, str) else raw
+    except Exception:
+        return None
+    if not reglas:
+        return None
+    activas = [r for r in reglas if _regla_aplica(r, age_slug, level_code)]
+    if not activas:
+        return None
+    lineas = []
+    for i, r in enumerate(activas, 1):
+        cuerpo = str(r.get("text") or "").strip()
+        if not cuerpo:
+            continue
+        primera, *resto = cuerpo.split("\n")
+        lineas.append("\n".join([f"  {i}. {primera}"] + [f"     {x.strip()}" for x in resto]))
+    if not lineas:
+        return None
+    return "<universal_conversation_rules>\n" + "\n".join(lineas) + "\n</universal_conversation_rules>"
+
+
 def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = "?", level_code: str = "?") -> str:
     """Capa UNIVERSAL anti-robot (F1-01) con acoplamiento por edad y nivel (Bloque A vs Bloque B).
     
@@ -258,13 +309,23 @@ def _get_universal_rules(app_config: Optional[dict], ctx: str, age_group: str = 
     # Seleccionar las reglas estrictamente según la combinación Edad/Nivel (Filtro JIT)
     age_slug = str(age_group).lower()
     level_slug = str(level_code).lower()
-    
-    # Bloque A (Mini o Nivel A0/A1) vs Bloque B (Teens/Adultos/Niveles B1+)
+
+    # Camino nuevo: el filtro sale del DATO. Cada regla declara para qué edades y
+    # entre qué niveles aplica (conversation_rules.age_groups / min_level /
+    # max_level), publicado en app_config.conversation_rules_json. Cambiar a qué
+    # banda le llega una regla es un UPDATE, no un deploy.
+    desde_datos = _reglas_por_dato(app_config, age_slug, level_code)
+    if desde_datos:
+        return desde_datos
+
+    # Camino viejo (red): si el JSON no está publicado, se sigue usando el texto
+    # numerado con los IDs elegidos a mano. Era la única forma antes y decidía la
+    # pedagogía desde un if.
     if age_slug == "mini" or level_slug in ["a0", "a1"]:
         target_ids = [2, 3, 10, 12, 14, 16]
     else:
         target_ids = [1, 4, 5, 9, 10, 13, 14, 15]
-        
+
     rules_list = []
     for idx, rule_id in enumerate(target_ids, 1):
         body = parsed_rules.get(rule_id)
