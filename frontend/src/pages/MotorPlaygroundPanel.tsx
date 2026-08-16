@@ -1731,6 +1731,7 @@ export default function MotorPlaygroundPanel() {
                       transcripción del input. */}
                   <option value="models/gemini-3.1-flash-live-preview">Flash 3.1 preview — el de siempre</option>
                   <option value="models/gemini-2.5-flash-native-audio-preview-09-2025">2.5 Native Audio — el único que transcribió al alumno</option>
+                  <option value="models/gemini-live-2.5-flash-native-audio">Live 2.5 Native Audio — el que sugirió Gemini</option>
                 </select>
                 <span style={{ fontSize: 10, color: C.faint }}>si el alumno no aparece en la transcripción, probá otro: el preview cambia del lado de Google</span>
                 {/* Aísla la INFRA del motor: manda un prompt de 4 líneas en vez del
