@@ -190,6 +190,17 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
         max_level_order = 3 if code == "mini" else 5 if code == "junior" else 99
         bands.append({**b, "phase_group": phase_group, "max_level_order": max_level_order})
 
+    # 1.b Disciplinas — salen de las CATEGORÍAS, que es donde vive el catálogo.
+    #     No alcanza con derivarlas de los niveles: las disciplinas nuevas
+    #     (musica, oficios, oratoria…) reusan los 7 niveles de idiomas en vez de
+    #     tener escala propia, así que en `levels` sólo aparecen idiomas y
+    #     fonetica. Se unen las dos fuentes para no perder ninguna.
+    disciplines = _rows(await db.execute(text(
+        "SELECT DISTINCT discipline FROM categories WHERE active = 1 "
+        "UNION SELECT DISTINCT discipline FROM levels WHERE active = 1 "
+        "ORDER BY discipline")))
+    disciplines = [d["discipline"] for d in disciplines if d.get("discipline")]
+
     # 2. Niveles (levels) — SOLO los activos, con su disciplina.
     #    El probador filtraba por el prefijo del código ("FON..."); ahora la
     #    disciplina es un campo y viaja como dato. Sin el filtro por active los
@@ -240,7 +251,8 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
     }]
 
     return {"bands": bands, "levels": levels, "catalog": catalog, "students": students,
-            "topic_suggested_band": tbs, "languages": languages}
+            "topic_suggested_band": tbs, "languages": languages,
+            "disciplines": disciplines}
 
 
 class ResolveIn(BaseModel):

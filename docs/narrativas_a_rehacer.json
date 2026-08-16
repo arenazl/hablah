@@ -1,0 +1,686 @@
+{
+  "instrucciones": {
+    "que_hacer": "REESCRIBIR la narrativa de estos topicos. La version actual va incluida en \"actual\" para que veas que hay que mejorar, y en \"problemas\" el diagnostico del linter.",
+    "campos": {
+      "narrative_setting": "CASTELLANO, minuscula, sin punto. Escena concreta y sensorial.",
+      "narrative_conflict": "CASTELLANO, en infinitivo. Tiene que haber una TENSION O DECISION real que de lugar a opiniones distintas — es el problema mas comun aca: quedan como descripciones del tema en vez de un conflicto.",
+      "narrative_role": "CASTELLANO, empieza con \"somos\", los DOS en la escena.",
+      "generated_vocab": "INGLES, 6 a 10 FRASES HABLADAS completas. NO terminos sueltos de 1-2 palabras (el otro problema comun): mal \"clutch play\", bien \"that was an absolute clutch play\"."
+    },
+    "reglas": [
+      "OJO con audiencia=kid: son chicos. Ahi el juego y la exageracion SI van; no los vuelvas serios ni adultos. Lo que hay que arreglar igual es que el conflicto tenga dos posturas posibles y que el vocab sean frases, no terminos sueltos.",
+      "El alumno es ADULTO salvo que audience sea kid.",
+      "La escena tiene que aguantar 7 min de charla entre DOS.",
+      "Nada de emojis.",
+      "Respetar el id."
+    ],
+    "formato": "Devolver el mismo array con los 4 campos reescritos."
+  },
+  "reescribir": [
+    {
+      "id": 152,
+      "titulo": "Desafíos virales",
+      "audiencia": "kid",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "challenge",
+        "subscriber",
+        "viral",
+        "reaction",
+        "prank",
+        "video",
+        "thumbnail"
+      ],
+      "score_actual": 56,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "4 son términos sueltos, no frases: ['the challenge', \"that's crazy\", 'watch this']"
+      ],
+      "actual": {
+        "narrative_setting": "un set de grabación súper iluminado con cámaras apuntándonos",
+        "narrative_conflict": "hacer el desafío viral más divertido y loco sin parar de reírnos",
+        "narrative_role": "somos creadores de contenido a punto de grabar nuestro mejor video",
+        "generated_vocab": [
+          "the challenge",
+          "dare you to try",
+          "can you do it",
+          "I bet you can't",
+          "that's crazy",
+          "watch this",
+          "go viral",
+          "trending right now",
+          "everyone's doing it",
+          "the hardest challenge"
+        ]
+      }
+    },
+    {
+      "id": 155,
+      "titulo": "Comida rápida y dulces",
+      "audiencia": "kid",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "combo",
+        "burger",
+        "fries",
+        "soda",
+        "ice cream",
+        "menu",
+        "order"
+      ],
+      "score_actual": 56,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "4 son términos sueltos, no frases: ['so tasty', 'the usual', 'drive through']"
+      ],
+      "actual": {
+        "narrative_setting": "un mostrador colorido lleno de hamburguesas enormes y papas fritas súper ricas",
+        "narrative_conflict": "preparar el pedido gigante a la velocidad de la luz para que nadie se quede con hambre",
+        "narrative_role": "somos los cocineros en el restaurante más rápido y divertido de la ciudad",
+        "generated_vocab": [
+          "let's go get some",
+          "I want fries",
+          "my go-to meal",
+          "quick and easy",
+          "so tasty",
+          "the usual",
+          "drive through",
+          "kids meal",
+          "come on let's grab",
+          "my favorite place"
+        ]
+      }
+    },
+    {
+      "id": 164,
+      "titulo": "Gaming pro y esports",
+      "audiencia": "kid",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "team",
+        "tournament",
+        "rank",
+        "pro",
+        "competitive",
+        "strategy",
+        "win"
+      ],
+      "score_actual": 56,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "4 son términos sueltos, no frases: ['go pro', 'clutch play', 'rage quit']"
+      ],
+      "actual": {
+        "narrative_setting": "el escenario gigante de esports con luces láser y una pantalla enorme arriba nuestro",
+        "narrative_conflict": "coordinar con nuestro equipo para hacer la mejor jugada maestra y llevarnos el trofeo",
+        "narrative_role": "somos campeones jugando la final del torneo del año",
+        "generated_vocab": [
+          "go pro",
+          "carry the team",
+          "clutch play",
+          "grind your way up",
+          "a sick combo",
+          "rage quit",
+          "level up",
+          "they're cracked at this",
+          "play it safe",
+          "what a comeback",
+          "get a teammate's back",
+          "in the zone"
+        ]
+      }
+    },
+    {
+      "id": 51,
+      "titulo": "Un partido inolvidable",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "match",
+        "comeback",
+        "extra time",
+        "penalty",
+        "underdog",
+        "final whistle",
+        "screaming",
+        "tear",
+        "miracle",
+        "epic"
+      ],
+      "score_actual": 57,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "1 demasiado largas para hablarlas",
+        "tono infantil en conflicto (el alumno es adulto)"
+      ],
+      "actual": {
+        "narrative_setting": "los vestuarios todavía llenos de barro celebrando como locos",
+        "narrative_conflict": "repasar minuto a minuto cómo dimos vuelta el resultado mágico en el último segundo",
+        "narrative_role": "somos compañeros de equipo reviviendo la gloria de la victoria",
+        "generated_vocab": [
+          "I still get chills thinking about that final",
+          "the comeback was unbelievable",
+          "that last-minute goal changed everything",
+          "I was losing my mind in the stands",
+          "I couldn't sleep for days after that match",
+          "the atmosphere was absolutely electric",
+          "nobody saw that upset coming",
+          "it's the kind of match you tell people about forever",
+          "my voice was gone from screaming",
+          "that performance was pure perfection",
+          "they played out of their skins that day"
+        ]
+      }
+    },
+    {
+      "id": 87,
+      "titulo": "Turismo masivo y sus efectos",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "overtourism",
+        "destination",
+        "ruined",
+        "local",
+        "Airbnb effect",
+        "gentrification",
+        "instagram",
+        "ban",
+        "limit",
+        "responsible"
+      ],
+      "score_actual": 59,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "1 son términos sueltos, no frases: ['overcrowded attractions']",
+        "tono infantil en conflicto (el alumno es adulto)"
+      ],
+      "actual": {
+        "narrative_setting": "la plaza histórica intentando sacar una foto sin que aparezcan quinientas personas",
+        "narrative_conflict": "criticar cómo nuestra presencia está arruinando la esencia original de estos lugares mágicos",
+        "narrative_role": "somos viajeros preocupados por la gentrificación que nosotros mismos causamos",
+        "generated_vocab": [
+          "tourist traps everywhere",
+          "overcrowded attractions",
+          "losing the real place",
+          "overtourism's a problem",
+          "ruining places we love",
+          "sustainable travel matters",
+          "authenticity gets lost",
+          "staying off the beaten path"
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "titulo": "Espacio · astronomía y misiones",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "mind-blowing",
+        "imagine that",
+        "I read recently that",
+        "we still don't know",
+        "tiny in comparison",
+        "it took years",
+        "fascinating",
+        "what if",
+        "espacio exterior",
+        "astronomía",
+        "misiones espaciales",
+        "exploración espacial",
+        "planetas",
+        "estrellas",
+        "galaxias",
+        "agujeros negros",
+        "cohetes",
+        "sonda espacial",
+        "cosmonauta",
+        "observatorio",
+        "Espaço",
+        "Astronomia",
+        "Missão espacial",
+        "Planeta",
+        "Estrela",
+        "Galáxia",
+        "Universo",
+        "Foguete",
+        "Astronauta",
+        "Órbita",
+        "Telescópio",
+        "Exploração espacial",
+        "Astronomy",
+        "Space exploration",
+        "Celestial bodies",
+        "Planetary missions",
+        "Astrophysics",
+        "Cosmology",
+        "Rocketry",
+        "Orbit"
+      ],
+      "score_actual": 62,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "3 son términos sueltos, no frases: ['mind-bending distances', 'spotting constellations', 'Mars missions']"
+      ],
+      "actual": {
+        "narrative_setting": "el centro de control de misiones frente a pantallas gigantes llenas de números",
+        "narrative_conflict": "monitorear el aterrizaje de una sonda en un lugar desconocido",
+        "narrative_role": "somos científicos de la agencia espacial controlando la tensión",
+        "generated_vocab": [
+          "staring up at the stars",
+          "mind-bending distances",
+          "black holes are insane",
+          "the moon landing was wild",
+          "spotting constellations",
+          "Mars missions",
+          "what's really out there",
+          "telescopes show you another world",
+          "light years blow your mind",
+          "we're so small"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "titulo": "Nutrición · dietas y mitos",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "I try to stick to",
+        "made a huge difference",
+        "not as hard as it sounds",
+        "I cut down on",
+        "energy levels",
+        "small changes",
+        "every body's different",
+        "not a quick fix",
+        "Nutrición",
+        "Dietas",
+        "Mitos alimenticios",
+        "Macronutrientes",
+        "Micronutrientes",
+        "Calorías",
+        "Alimentos procesados",
+        "Dieta mediterránea",
+        "Vegetarianismo",
+        "Suplementos",
+        "Metabolismo",
+        "Hidratación",
+        "Nutrição",
+        "Dieta",
+        "Mitos alimentares",
+        "Alimentação saudável",
+        "Hidratação",
+        "Veganismo",
+        "Rótulos nutricionais",
+        "Nutritional science",
+        "Fad diets",
+        "Dietary myths",
+        "Metabolism",
+        "Macronutrients",
+        "Micronutrients",
+        "Processed foods",
+        "Calorie deficit",
+        "Gut microbiome",
+        "Sustainable eating",
+        "Food misinformation",
+        "Evidence-based nutrition"
+      ],
+      "score_actual": 62,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "3 son términos sueltos, no frases: ['macros matter', \"hydration's huge\", 'sustainable eating']"
+      ],
+      "actual": {
+        "narrative_setting": "el pasillo del supermercado leyendo las etiquetas de todos los paquetes",
+        "narrative_conflict": "descifrar qué comidas son realmente saludables y cuáles son una estafa del marketing",
+        "narrative_role": "somos amigos intentando hacer una compra inteligente para comer mejor",
+        "generated_vocab": [
+          "balance is key",
+          "not all calories are equal",
+          "macros matter",
+          "processed food kills you slowly",
+          "whole foods hit different",
+          "hydration's huge",
+          "fad diets come and go",
+          "listen to your body",
+          "sustainable eating",
+          "nutrition science keeps changing"
+        ]
+      }
+    },
+    {
+      "id": 84,
+      "titulo": "Choque cultural",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "culture shock",
+        "weird",
+        "rude",
+        "polite",
+        "unspoken",
+        "adapt",
+        "rude",
+        "norm",
+        "uncomfortable",
+        "eye-opening"
+      ],
+      "score_actual": 62,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "3 son términos sueltos, no frases: ['totally lost', 'awkward misunderstandings', 'eye-opening stuff']"
+      ],
+      "actual": {
+        "narrative_setting": "el mercado callejero gritando para entendernos en un idioma desconocido",
+        "narrative_conflict": "intentar descifrar las reglas raras del país para dejar de pasar vergüenza",
+        "narrative_role": "somos turistas desorientados tratando de encajar rápido",
+        "generated_vocab": [
+          "culture clash moments",
+          "totally lost",
+          "didn't expect that",
+          "learning the hard way",
+          "respect for differences",
+          "awkward misunderstandings",
+          "eye-opening stuff",
+          "changed how I see things"
+        ]
+      }
+    },
+    {
+      "id": 86,
+      "titulo": "Viajar solo",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "solo",
+        "alone",
+        "lonely",
+        "freedom",
+        "introvert",
+        "meet people",
+        "boring",
+        "scared",
+        "liberating",
+        "selfie"
+      ],
+      "score_actual": 62,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "3 son términos sueltos, no frases: ['no compromises', 'self-discovery vibes', 'totally empowering']"
+      ],
+      "actual": {
+        "narrative_setting": "un tren cruzando las montañas en completo silencio y mirando por la ventana",
+        "narrative_conflict": "reflexionar sobre la libertad absoluta de no tener que preguntarle a nadie qué quiere hacer hoy",
+        "narrative_role": "somos lobos solitarios encontrándonos con nosotros mismos",
+        "generated_vocab": [
+          "traveling alone hits different",
+          "scary at first",
+          "found yourself out there",
+          "do your own thing",
+          "no compromises",
+          "meet people naturally",
+          "self-discovery vibes",
+          "totally empowering"
+        ]
+      }
+    },
+    {
+      "id": 153,
+      "titulo": "Mundos de bloques",
+      "audiencia": "kid",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "build",
+        "block",
+        "craft",
+        "mine",
+        "create",
+        "server",
+        "world"
+      ],
+      "score_actual": 62,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "3 son términos sueltos, no frases: ['build something', 'my creation', 'endless possibilities']"
+      ],
+      "actual": {
+        "narrative_setting": "un universo de bloques donde podemos armar cualquier cosa que imaginemos",
+        "narrative_conflict": "construir el castillo más grande e increíble antes de que se haga de noche",
+        "narrative_role": "somos constructores maestros en un mundo infinito",
+        "generated_vocab": [
+          "build something",
+          "blocks and cubes",
+          "create your world",
+          "stack it up",
+          "break it down",
+          "my creation",
+          "endless possibilities",
+          "brick by brick",
+          "make whatever you want",
+          "build it tall"
+        ]
+      }
+    },
+    {
+      "id": 46,
+      "titulo": "Cine vs streaming en casa",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "cinema",
+        "theater",
+        "release",
+        "experience",
+        "couch",
+        "popcorn",
+        "pause",
+        "convenience",
+        "premiere",
+        "shared"
+      ],
+      "score_actual": 65,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "tono infantil en conflicto (el alumno es adulto)"
+      ],
+      "actual": {
+        "narrative_setting": "las butacas rojas de un cine clásico a punto de ser demolido",
+        "narrative_conflict": "reflexionar si la magia de ver cosas en gigante con extraños va a desaparecer para siempre",
+        "narrative_role": "somos amantes del séptimo arte melancólicos por el cambio",
+        "generated_vocab": [
+          "there's nothing like the big screen experience",
+          "the sound system makes all the difference",
+          "I'd rather watch at home in my comfies",
+          "you can pause and grab snacks whenever",
+          "the cinema ticket prices are ridiculous",
+          "streaming just doesn't compare to IMAX",
+          "I fall asleep watching at home",
+          "you get interrupted with notifications",
+          "seeing it in theaters is worth every penny",
+          "the cinematography is wasted on my TV",
+          "home viewing is more convenient honestly"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "titulo": "Cambio climático · ciencia y políticas",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "we're running out of",
+        "small changes add up",
+        "I'm worried about",
+        "we should be doing more",
+        "the data shows",
+        "it's already affecting",
+        "a wake-up call",
+        "doable",
+        "cambio climático",
+        "calentamiento global",
+        "efecto invernadero",
+        "descarbonización",
+        "energías renovables",
+        "Acuerdo de París",
+        "mitigación",
+        "adaptación",
+        "gases de efecto invernadero",
+        "huella de carbono",
+        "IPCC",
+        "transición energética",
+        "Mudanças climáticas",
+        "Aquecimento global",
+        "Efeito estufa",
+        "Descarbonização",
+        "Energias renováveis",
+        "Políticas ambientais",
+        "Acordo de Paris",
+        "Sustentabilidade",
+        "Pegada de carbono",
+        "Mitigação",
+        "Adaptação",
+        "Gás carbônico",
+        "Global warming",
+        "Greenhouse gases",
+        "Carbon emissions",
+        "Climate policy",
+        "Renewable energy",
+        "Deforestation",
+        "Sea-level rise",
+        "Extreme weather events"
+      ],
+      "score_actual": 68,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "2 son términos sueltos, no frases: ['carbon footprint', 'future generations']"
+      ],
+      "actual": {
+        "narrative_setting": "los pasillos de una convención internacional sobre el medio ambiente",
+        "narrative_conflict": "debatir si las soluciones que proponemos son reales o solo promesas vacías",
+        "narrative_role": "somos investigadores preocupados buscando respuestas urgentes",
+        "generated_vocab": [
+          "the science behind it",
+          "weather's getting crazy",
+          "glaciers melting fast",
+          "carbon footprint",
+          "switching to renewables",
+          "it's everyone's problem",
+          "what we can actually do",
+          "politics gets in the way",
+          "the tipping point",
+          "future generations"
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "titulo": "Stand-up · comediantes y especiales",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "had me crying laughing",
+        "spot on",
+        "uncomfortable but funny",
+        "the way he tells it",
+        "edgy",
+        "relatable",
+        "punchline lands",
+        "the bit about",
+        "stand-up",
+        "comediante",
+        "monólogo",
+        "rutina",
+        "especial de comedia",
+        "chiste",
+        "remate",
+        "humor observacional",
+        "ironía",
+        "sarcasmo",
+        "escenario",
+        "micrófono",
+        "comediante de stand-up",
+        "especial de comédia",
+        "rotina de comédia",
+        "piada",
+        "plateia",
+        "palco",
+        "humor negro",
+        "humor de observação",
+        "improvisação",
+        "risada",
+        "carisma",
+        "Stand-up routine",
+        "Punchline",
+        "Comedy special",
+        "Observational humor",
+        "One-liner",
+        "Delivery",
+        "Crowd work",
+        "Open mic",
+        "Set (comedy)"
+      ],
+      "score_actual": 68,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "2 son términos sueltos, no frases: ['dark humor', 'pure storytelling']"
+      ],
+      "actual": {
+        "narrative_setting": "el camarín de un teatro diez minutos antes de subir al escenario",
+        "narrative_conflict": "analizar por qué algunos chistes funcionan y otros nos hacen pasar vergüenza",
+        "narrative_role": "somos comediantes repasando la rutina con nervios",
+        "generated_vocab": [
+          "that joke had me cracking up",
+          "nervous energy on stage",
+          "relatable as hell",
+          "the timing was perfect",
+          "dark humor",
+          "telling it like it is",
+          "crowd work was brilliant",
+          "special was killer",
+          "built to that punchline",
+          "pure storytelling"
+        ]
+      }
+    },
+    {
+      "id": 85,
+      "titulo": "Comer cuando viajás",
+      "audiencia": "adult",
+      "disciplina": "idiomas",
+      "keywords_en": [
+        "street food",
+        "fancy",
+        "Michelin",
+        "scared",
+        "adventurous",
+        "weird",
+        "stomach",
+        "regret",
+        "discover",
+        "amazing"
+      ],
+      "score_actual": 68,
+      "problemas": [
+        "el conflicto no plantea tensión (sin verbo de decisión)",
+        "2 son términos sueltos, no frases: ['questionable hygiene', 'local flavors']"
+      ],
+      "actual": {
+        "narrative_setting": "la mesita de plástico del callejón mirando un plato rarísimo lleno de colores",
+        "narrative_conflict": "juntar fuerzas para probar esa comida exótica asumiendo el riesgo",
+        "narrative_role": "somos valientes exploradores de los sabores locales",
+        "generated_vocab": [
+          "eating on the road",
+          "street food adventures",
+          "questionable hygiene",
+          "best meal ever",
+          "tried something new",
+          "missed home food",
+          "local flavors",
+          "took a risk and lived"
+        ]
+      }
+    }
+  ]
+}

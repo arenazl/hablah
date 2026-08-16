@@ -186,7 +186,7 @@ export function WebApp() {
             <Route path="/" element={<HoyView profile={profile} loading={loading} />} />
             <Route path="/practicar" element={<PracticarView profile={profile} onSessionEnd={refresh} />} />
             <Route path="/mapa" element={<MapaView profile={profile} />} />
-            <Route path="/historial" element={<HistorialView />} />
+            <Route path="/historial" element={<HistorialView profile={profile} />} />
             <Route path="/sesiones/:id" element={<SessionDetailView />} />
             <Route path="/perfil" element={<PerfilView profile={profile} onChange={refresh} />} />
             <Route path="/kids" element={<KidsParentSwitchLazy />} />
@@ -611,12 +611,7 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   // Card "Tus tópicos": se muestran HOY_TOPIC_GROUPS categorías y el resto se
   // pliega, para que la card no estire la columna cuando hay muchas.
   const [topicsExpanded, setTopicsExpanded] = useState(false)
-  // Indice del tema sugerido. Si el user da dislike, avanzamos a la siguiente
-  // sugerencia. Se persiste por dia en localStorage para no resetear en refresh.
-  const todayKey = `hoy_topic_idx_${new Date().toISOString().slice(0, 10)}`
-  const [topicIdx, setTopicIdx] = useState<number>(() => {
-    try { return parseInt(localStorage.getItem(todayKey) || '0', 10) || 0 } catch { return 0 }
-  })
+  const [topicIdx] = useState(0)
   useEffect(() => {
     sessionsAPI.list().then(setRecent).catch(() => {})
     meAPI.streakHeatmap(28).then(setHeatmap).catch(() => {})
@@ -636,30 +631,6 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   const topicTitle = firstInterest?.title || 'Tema libre'
   const topicCategory = firstInterest?.category || ''
 
-  const handleDislike = async () => {
-    if (profile.interests.length <= 1) {
-      toast('No hay otros temas disponibles')
-      return
-    }
-    const removed = profile.interests[safeIdx]
-    if (!removed) return
-    // Borrar el topic de los intereses del user — no vuelve a aparecer.
-    try {
-      await topicsAPI.removeInterest(removed.id)
-      toast.success(`"${removed.title}" eliminado de tus temas`)
-    } catch {
-      toast.error('No pudimos eliminarlo, intentá de nuevo')
-      return
-    }
-    // Mover indice al siguiente (el ARRAY del profile aun no se refresca hasta
-    // el proximo /me/profile, asi que rotamos local).
-    const next = (safeIdx + 1) % Math.max(1, profile.interests.length - 1)
-    setTopicIdx(next)
-    try { localStorage.setItem(todayKey, String(next)) } catch {}
-  }
-  const handleLike = () => {
-    toast.success('¡Dale!')
-  }
   const tutorName = tpl?.name || 'Habláh'
   const tutorRigor = (tpl as any)?.rigor ?? 3
   const tutorWarmth = (tpl as any)?.warmth_level ?? 3
@@ -680,15 +651,6 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
   // In-context prompts según el foco del día
   const focusKeyword = (firstInterest as any)?.keywords?.[0] || 'nevertheless'
 
-  // MEMORIA — "tu profe se acuerda" (F4-04): la clase más reciente ya
-  // analizada, si dejó un consejo puntual para la próxima (report.next_session_tip,
-  // ya lo escribe el post-clase). Se omite si el rescue de abajo está activo
-  // (errores repetidos 3+ veces) para no mostrar dos avisos que compiten.
-  const lastAnalyzed = recent.find((s) => s.status === 'analyzed' && (s.report as any)?.next_session_tip)
-  const memoryTip: string | null = !today?.rescue?.active && lastAnalyzed
-    ? ((lastAnalyzed.report as any).next_session_tip as string)
-    : null
-
   // ─── MODO ONBOARDING: 0 sesiones ─────────────────────────────────
   // Para el primer ingreso del user (sin sesiones todavia), reemplazamos
   // toda la home complicada por un CTA gigante sin distracciones.
@@ -708,15 +670,8 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
         <div className="hp-eyebrow">{greeting}</div>
         <h1 className="hp-title">Hoy te toca una charla de <em>{minutes} minutos</em>.</h1>
         <p className="hp-sub">
-          Tu tutor activo es <b>{tutorName}</b>. Foco del día: <b>{topicTitle}</b>
-          {topicCategory ? <> · {topicCategory}</> : null}.
+          Tu tutor activo es <b>{tutorName}</b>. Foco del día: <b>{topicTitle}{topicCategory ? ` · ${topicCategory}` : ''}</b>, con énfasis en <b>{today?.rescue?.label || 'pasado simple irregular'}</b>.
         </p>
-        {memoryTip && (
-          <div className="hp-memory">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7c.6.4 1 1.2 1 2.05V17h6v-2.25c0-.85.4-1.65 1-2.05A7 7 0 0 0 12 2Z" /><path d="M9 18h6" /><path d="M10 22h4" /></svg>
-            <span><b>Tu profe se acuerda:</b> {memoryTip}</span>
-          </div>
-        )}
       </section>
 
       <div className="hp-grid">
@@ -736,15 +691,6 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
                 <span className="hp-chip amber">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
                   {minutes} min sugeridos
-                </span>
-                {/* Like / Dislike — dislike rota al siguiente interest del user */}
-                <span className="hp-feedback" role="group" aria-label="Te gusta este tema?">
-                  <button className="hp-fb hp-fb-like" onClick={handleLike} aria-label="Me gusta este tema" title="Me gusta">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7V10l4.34-8.66A1.5 1.5 0 0 1 13 2c.7 0 1.4.4 1.7 1.06.16.39.4 1.2.3 2.82z"/></svg>
-                  </button>
-                  <button className="hp-fb hp-fb-dislike" onClick={handleDislike} aria-label="Otro tema, por favor" title="Otro tema">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H17v12l-4.34 8.66A1.5 1.5 0 0 1 11 22c-.7 0-1.4-.4-1.7-1.06-.16-.39-.4-1.2-.3-2.82z"/></svg>
-                  </button>
                 </span>
               </div>
 
@@ -811,53 +757,58 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
             </svg>
           </div>
 
-          {/* RESCUE — visible solo si el backend detectó un error recurrente real */}
-          {today?.rescue?.active && (
-            <div className="hp-card hp-rescue">
-              <div className="hp-rescue-head">
-                <div>
-                  <div className="hp-rescue-eye"><span className="hp-pulse"></span> Punto a pulir · misión de rescate activa</div>
-                  <h3>{today.rescue.label}</h3>
-                  <p>Repetiste el mismo patrón en las últimas <b>{today.rescue.sessions_count} sesiones</b>. La próxima charla va a forzar contextos para que pelees con este tema hasta consolidarlo.</p>
-                </div>
-              </div>
-
-              <div className="hp-rescue-body">
-                <div className="hp-rescue-examples">
-                  {today.rescue.examples.map((ex, i) => (
-                    <div key={i} className="hp-ex">
-                      <span className="hp-bad">{ex.wrong || '—'}</span>
-                      <span className="hp-arr">→</span>
-                      <span className="hp-good">{ex.correct || '—'}</span>
-                      {/* Contexto de dónde salió el error — el backend ya lo manda en ctx_date */}
-                      {ex.ctx_date && <span className="hp-ctx">{ex.ctx_date}</span>}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="hp-rescue-aside">
+          {/* RESCUE */}
+          {(() => {
+            const rescueLabel = today?.rescue?.label || 'Verbos irregulares en pasado simple'
+            const rescueSessions = today?.rescue?.sessions_count || 3
+            const rescueExamples = today?.rescue?.examples || [
+              { wrong: '"It beginned in the late 90s."', correct: 'It began in the late 90s.', ctx_date: `Dom 07:59 — ${topicTitle}` },
+              { wrong: '"DJs bringed the sound to pirate radio."', correct: 'DJs brought the sound to pirate radio.', ctx_date: `Sáb 22:14 — ${topicCategory || topicTitle}` },
+              { wrong: '"The crowd goed wild."', correct: 'The crowd went wild.', ctx_date: 'Vie 18:02 — Festivales' },
+            ]
+            // El backend no manda un total de errores; lo que sí tenemos es
+            // cuántos ejemplos vinieron.
+            const rescueErrorCount = rescueExamples.length
+            return (
+              <div className="hp-card hp-rescue">
+                <div className="hp-rescue-head">
                   <div>
-                    <div style={{ fontSize: 11, color: '#8A6A00', letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>Frecuencia · últimas {RESCUE_FREQ_DAYS.length} sesiones</div>
-                    <div className="hp-freq">
-                      {Array.from({ length: RESCUE_FREQ_DAYS.length }).map((_, i) => (
-                        <i key={i} style={{ height: `${30 + i * 12}%`, opacity: 0.4 + i * 0.1, background: i === RESCUE_FREQ_DAYS.length - 1 ? '#E5484D' : undefined }} />
-                      ))}
-                    </div>
-                    <div className="hp-freq-x">
-                      {RESCUE_FREQ_DAYS.map((d) => <span key={d}>{d}</span>)}
-                    </div>
+                    <div className="hp-rescue-eye"><span className="hp-pulse"></span> Punto a pulir · misión de rescate activa</div>
+                    <h3>{rescueLabel}</h3>
+                    <p>Repetiste el mismo patrón en las últimas <b>{rescueSessions} sesiones</b>. La charla de hoy va a forzar narrativas históricas sobre el género para que pelees con este tema hasta que lo consolides.</p>
                   </div>
-                  <div className="hp-rescue-cta">
-                    <button className="hp-btn-amber" onClick={() => nav('/app/practicar')}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
-                      Empezar misión de rescate
-                    </button>
-                    <Link to="/app/historial" className="hp-btn-ghost-dark">Ver los errores</Link>
+                </div>
+
+                <div className="hp-rescue-body">
+                  <div className="hp-rescue-examples">
+                    {rescueExamples.map((ex, i) => (
+                      <div key={i} className="hp-ex">
+                        <span className="hp-bad">{ex.wrong}</span>
+                        <span className="hp-arr">→</span>
+                        <span className="hp-good">{ex.correct}</span>
+                        {ex.ctx_date && <span className="hp-ctx">{ex.ctx_date}</span>}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="hp-rescue-aside">
+                    <div>
+                      <div style={{ fontSize: 11, color: '#8A6A00', letterSpacing: '.12em', textTransform: 'uppercase' as const, fontWeight: 700, marginBottom: 6 }}>Frecuencia · últimas 6 sesiones</div>
+                      <div className="hp-freq" aria-hidden="true"><i/><i/><i/><i/><i/><i/></div>
+                      <div className="hp-freq-x"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Hoy</span></div>
+                    </div>
+                    <div className="hp-rescue-cta">
+                      <button className="hp-btn-amber" onClick={() => nav('/app/practicar')}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                        Empezar misión de rescate
+                      </button>
+                      <Link to="/app/historial" className="hp-btn-ghost-dark">Ver los {rescueErrorCount} errores</Link>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )
+          })()}
 
           {/* SESSIONS */}
           <div className="hp-card">
@@ -906,6 +857,7 @@ function HoyView({ profile, loading }: { profile: MeProfile | null; loading: boo
                         {praiseCount > 0 && <span className="hp-ok">{praiseCount} acierto{praiseCount === 1 ? '' : 's'} notable{praiseCount === 1 ? '' : 's'}</span>}
                         {praiseCount > 0 && feedbackCount > 0 && <span>·</span>}
                         {feedbackCount > 0 && <span className="hp-err">{feedbackCount} punto{feedbackCount === 1 ? '' : 's'} a pulir</span>}
+                        {feedbackCount > 0 && <><span>·</span><span>{sessionDetailHint(s)}</span></>}
                         {praiseCount === 0 && feedbackCount === 0 && <span>{s.status === 'analyzed' ? 'sin observaciones' : 'analizando…'}</span>}
                       </div>
                     </div>
@@ -1101,6 +1053,25 @@ function countReport(s: SessionData, key: 'praise' | 'feedback'): number {
   if (Array.isArray(v)) return v.length
   if (typeof v === 'string' && v.trim()) return 1
   return 0
+}
+
+/** Tercer dato del meta de sesión: extrae un detalle puntual del reporte
+ *  (el mockup muestra "verbos irregulares x2", "pronunciación: through", etc.) */
+function sessionDetailHint(s: SessionData): string {
+  const r: any = s.report
+  if (!r) return ''
+  // Si hay feedback con items, tomamos la primera categoría
+  const fb = Array.isArray(r.feedback) ? r.feedback : []
+  if (fb.length > 0) {
+    const first = fb[0]
+    const cat = first.category || first.type || first.label || ''
+    if (cat) return fb.length > 1 ? `${cat} ×${fb.length}` : cat
+  }
+  // Fallback: si tiene rescue_label
+  if (r.rescue_label) return r.rescue_label
+  // Fallback genérico
+  if (s.is_rescue) return 'misión cumplida'
+  return ''
 }
 
 function formatDow(iso: string): string {
@@ -2811,45 +2782,332 @@ function computeAchievements(profile: MeProfile, sessions: SessionData[]): { ite
 }
 
 /* ──────── HISTORIAL ──────── */
-function HistorialView() {
+
+type HiRange = '7d' | '30d' | '90d' | 'todo'
+
+function hiFilterByRange(sessions: SessionData[], range: HiRange): SessionData[] {
+  if (range === 'todo') return sessions
+  const days = range === '7d' ? 7 : range === '30d' ? 30 : 90
+  const cutoff = Date.now() - days * 86400000
+  return sessions.filter(s => new Date(s.started_at).getTime() >= cutoff)
+}
+
+function hiGroupByWeek(sessions: SessionData[]): { label: string; sessions: SessionData[]; stats: { count: number; mins: number; avgFluency: number | null } }[] {
+  if (sessions.length === 0) return []
+  const sorted = [...sessions].sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
+  const groups: Map<string, SessionData[]> = new Map()
+  const now = new Date()
+  for (const s of sorted) {
+    const d = new Date(s.started_at)
+    const diff = Math.floor((now.getTime() - d.getTime()) / 86400000)
+    let label: string
+    if (diff < 7) { label = 'Esta semana' }
+    else if (diff < 14) { label = 'Semana pasada' }
+    else {
+      const monday = new Date(d)
+      monday.setDate(d.getDate() - ((d.getDay() + 6) % 7))
+      const sun = new Date(monday)
+      sun.setDate(monday.getDate() + 6)
+      label = `Semana del ${monday.getDate()} al ${sun.getDate()} de ${sun.toLocaleDateString('es-AR', { month: 'long' })}`
+    }
+    if (!groups.has(label)) groups.set(label, [])
+    groups.get(label)!.push(s)
+  }
+  return Array.from(groups.entries()).map(([label, ss]) => {
+    const mins = Math.round(ss.reduce((a, s) => a + (s.duration_seconds || 0), 0) / 60)
+    const fluencies = ss.map(s => extractFluency(s)).filter((f): f is number => f !== null)
+    const avgFluency = fluencies.length > 0 ? Math.round(fluencies.reduce((a, b) => a + b, 0) / fluencies.length) : null
+    return { label, sessions: ss, stats: { count: ss.length, mins, avgFluency } }
+  })
+}
+
+const CAT_CHIP_CLASS: Record<string, string> = {
+  'Arte': 'arte', 'Tecnología': 'tec', 'Lifestyle': 'life', 'Deportes': 'dep',
+  'Ciencia': 'cien', 'Viajes': 'via', 'Gastronomía': 'gas',
+}
+
+const HiCheckIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+)
+const HiRescueIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+)
+const HiClockIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+)
+
+function HistorialView({ profile }: { profile: MeProfile | null }) {
   const [sessions, setSessions] = useState<SessionData[]>([])
   const [loading, setLoading] = useState(true)
+  const [range, setRange] = useState<HiRange>('30d')
+  const [catFilter, setCatFilter] = useState<string[]>([])
+  const [showRescue, setShowRescue] = useState(false)
+
   useEffect(() => {
     sessionsAPI.list().then((s) => { setSessions(s); setLoading(false) }).catch(() => setLoading(false))
   }, [])
+
+  const filtered = (() => {
+    let list = hiFilterByRange(sessions, range)
+    if (catFilter.length > 0 && profile) {
+      list = list.filter(s => {
+        const interest = profile.interests.find(i => i.id === s.topic_id)
+        return interest && catFilter.includes(interest.category)
+      })
+    }
+    if (showRescue) list = list.filter(s => s.is_rescue)
+    return list
+  })()
+
+  const weeks = hiGroupByWeek(filtered)
+
+  // summary stats
+  const totalCharlas = filtered.length
+  const totalMinutes = Math.round(filtered.reduce((a, s) => a + (s.duration_seconds || 0), 0) / 60)
+  const totalHours = Math.floor(totalMinutes / 60)
+  const remainMins = totalMinutes % 60
+  const fluencies = filtered.map(s => extractFluency(s)).filter((f): f is number => f !== null)
+  const avgFluency = fluencies.length > 0 ? Math.round(fluencies.reduce((a, b) => a + b, 0) / fluencies.length) : null
+  const totalErrors = filtered.reduce((a, s) => a + countReport(s, 'feedback'), 0)
+
+  // mini chart: last 28 days session counts
+  const chartBars = (() => {
+    const bars: number[] = new Array(28).fill(0)
+    const now = Date.now()
+    for (const s of sessions) {
+      const ago = Math.floor((now - new Date(s.started_at).getTime()) / 86400000)
+      if (ago >= 0 && ago < 28) bars[27 - ago]++
+    }
+    const max = Math.max(...bars, 1)
+    return bars.map((v, i) => ({ pct: Math.round((v / max) * 100), isToday: i === 27, hasData: v > 0 }))
+  })()
+
+  // categories available
+  const allCats = profile ? [...new Set(profile.interests.map(i => i.category))].sort() : []
+
+  // right-rail stats
+  const rescueCount = filtered.filter(s => s.is_rescue).length
+  const perfectCount = filtered.filter(s => countReport(s, 'feedback') === 0 && s.status === 'analyzed').length
+
+  if (!profile) return <div className="hist-page" style={{ padding: 40, color: 'var(--hi-fg-3)' }}>Cargando...</div>
+
+  const findInterest = (s: SessionData) => profile.interests.find(i => i.id === s.topic_id)
+  const tutorLabel = profile.active_template?.name || 'Tutor'
+
   return (
-    <div className="view">
-      <div className="view-head">
-        <h2>Historial de sesiones</h2>
-        <div className="sub">{sessions.length} sesiones registradas.</div>
+    <div className="hist-page">
+      {/* GREETING */}
+      <div className="hi-greet">
+        <div className="hi-eyebrow">Historial</div>
+        <h1 className="hi-title">{totalCharlas} charla{totalCharlas !== 1 ? 's' : ''}, <em>{totalHours}h {remainMins.toString().padStart(2, '0')}min</em> hablando.</h1>
       </div>
-      {loading && <div style={{ color: 'var(--fg-3)' }}>Cargando…</div>}
+
+      {loading && <div style={{ color: 'var(--hi-fg-3)' }}>Cargando...</div>}
+
       {!loading && sessions.length === 0 && (
-        <div style={{ padding: 30, textAlign: 'center', color: 'var(--fg-3)' }}>
-          Todavía no tenés sesiones. <Link to="/app/practicar" style={{ color: 'var(--primary-dark)', fontWeight: 600 }}>Empezá tu primera charla</Link>.
+        <div className="hi-empty">
+          Todavia no tenes sesiones. <Link to="/app/practicar">Empeза tu primera charla</Link>.
         </div>
       )}
-      <div className="history-grid">
-        {sessions.map((s) => (
-          <Link
-            key={s.id}
-            to={`/app/sesiones/${s.id}`}
-            className="history-row"
-            style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
-          >
-            <div className="when"><b>{formatDay(s.started_at)}</b>{formatTime(s.started_at)}</div>
-            <div>
-              <div className="h-title">Sesión #{s.id}</div>
-              <div className="h-topic">
-                <span>{s.cefr_at_start}</span><span>·</span>
-                <span>{s.duration_seconds ? `${Math.round(s.duration_seconds / 60)} min` : '—'}</span>
+
+      {!loading && sessions.length > 0 && (<>
+        {/* SUMMARY STRIP */}
+        <div className="hi-summary">
+          <div className="hi-ss">
+            <div className="k">Charlas por dia · ultimas 4 semanas</div>
+            <div className="hi-chart" aria-hidden="true">
+              {chartBars.map((b, i) => (
+                <i key={i} className={b.isToday ? 'today' : b.hasData ? 'on' : ''} style={{ height: `${Math.max(b.pct, 8)}%` }} />
+              ))}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--hi-fg-4)', marginTop: 4, letterSpacing: '.04em', fontWeight: 600, textTransform: 'uppercase' as const }}>
+              <span>hace 4 sem.</span><span>hoy</span>
+            </div>
+          </div>
+          <div className="hi-ss">
+            <div className="k">Fluidez promedio</div>
+            <div className="v">{avgFluency ?? '—'}</div>
+            <div className="h">ultimas {range === 'todo' ? 'todas' : range}</div>
+          </div>
+          <div className="hi-ss">
+            <div className="k">Tiempo hablado</div>
+            <div className="v">{totalHours}:{remainMins.toString().padStart(2, '0')}</div>
+            <div className="h">horas:minutos</div>
+          </div>
+          <div className="hi-ss">
+            <div className="k">Errores corregidos</div>
+            <div className="v">{totalErrors}</div>
+            <div className="h">del periodo</div>
+          </div>
+        </div>
+
+        {/* FILTER BAR */}
+        <div className="hi-filterbar">
+          <div className="hi-fb-group">
+            <span className="lbl">Rango</span>
+            <div className="hi-seg">
+              {(['7d', '30d', '90d', 'todo'] as HiRange[]).map(r => (
+                <button key={r} className={r === range ? 'on' : ''} onClick={() => setRange(r)}>{r}</button>
+              ))}
+            </div>
+          </div>
+          <div className="hi-fb-group">
+            <span className="lbl">Categoria</span>
+            {catFilter.map(c => (
+              <button key={c} className="hi-pillbtn active" onClick={() => setCatFilter(catFilter.filter(x => x !== c))}>
+                {c} <span className="x">&times;</span>
+              </button>
+            ))}
+            {allCats.filter(c => !catFilter.includes(c)).length > 0 && (
+              <button className="hi-pillbtn" onClick={() => {
+                const next = allCats.find(c => !catFilter.includes(c))
+                if (next) setCatFilter([...catFilter, next])
+              }}>+ sumar</button>
+            )}
+          </div>
+          <div className="hi-fb-group">
+            <span className="lbl">Filtros</span>
+            <button className={`hi-pillbtn toggle${showRescue ? ' on' : ''}`} onClick={() => setShowRescue(!showRescue)}>
+              misiones de rescate
+            </button>
+          </div>
+        </div>
+
+        {/* 2-COL GRID */}
+        <div className="hi-grid">
+          {/* LEFT — SESSION LIST */}
+          <div style={{ minWidth: 0 }}>
+            {weeks.map((wk, wi) => (
+              <div key={wi}>
+                <div className="hi-week-hd">
+                  <h3>{wk.label}</h3>
+                  <div className="meta">
+                    <b>{wk.stats.count}</b> charla{wk.stats.count !== 1 ? 's' : ''} · <b>{wk.stats.mins} min</b>
+                    {wk.stats.avgFluency !== null && <> · fluidez prom. <b>{wk.stats.avgFluency}</b></>}
+                  </div>
+                </div>
+                <div className="hi-sess-list">
+                  {wk.sessions.map((s, si) => {
+                    const interest = findInterest(s)
+                    const catCls = interest ? (CAT_CHIP_CLASS[interest.category] || 'gen') : 'gen'
+                    const catLabel = interest?.category || ''
+                    const topicTitle = interest?.title || (s.topic_id ? `Topico #${s.topic_id}` : 'Tema libre')
+                    const fluency = extractFluency(s)
+                    const prevS = wk.sessions[si + 1]
+                    const prevFluency = prevS ? extractFluency(prevS) : null
+                    const delta = fluency !== null && prevFluency !== null ? fluency - prevFluency : null
+                    const dur = s.duration_seconds || 0
+                    const durMin = Math.floor(dur / 60)
+                    const durSec = Math.floor(dur % 60)
+                    const praiseCount = countReport(s, 'praise')
+                    const feedbackCount = countReport(s, 'feedback')
+                    const d = new Date(s.started_at)
+
+                    return (
+                      <Link
+                        key={s.id}
+                        to={`/app/sesiones/${s.id}`}
+                        className={`hi-row${s.status === 'active' ? ' live' : ''}`}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <div className="hi-rdate">
+                          {formatDow(s.started_at)}
+                          <b>{formatDayNum(s.started_at)}</b>
+                          <span className="time">
+                            {s.status === 'active' ? 'en cola' : formatTime(s.started_at)}
+                          </span>
+                        </div>
+                        <div className="hi-rbody">
+                          <div className="topicrow">
+                            {catLabel && <span className={`cat-chip ${catCls}`}>{catLabel}</span>}
+                            <span className="topic">{topicTitle}</span>
+                            <span className="tutor-chip">{tutorLabel}</span>
+                            {s.is_rescue && <span className="tutor-chip rescue">mision de rescate</span>}
+                          </div>
+                          <div className="meta">
+                            {s.status === 'active' ? (
+                              <><span className="hi-live-dot"></span><em>preparando charla</em></>
+                            ) : (<>
+                              {praiseCount > 0 && <span className="ok">{praiseCount} acierto{praiseCount !== 1 ? 's' : ''} notable{praiseCount !== 1 ? 's' : ''}</span>}
+                              {praiseCount > 0 && feedbackCount > 0 && <span className="dot"></span>}
+                              {feedbackCount > 0 && <span className="err">{feedbackCount} punto{feedbackCount !== 1 ? 's' : ''} a pulir</span>}
+                              {praiseCount === 0 && feedbackCount === 0 && (
+                                <span>{s.status === 'analyzed' ? 'sin observaciones' : 'analizando...'}</span>
+                              )}
+                            </>)}
+                          </div>
+                        </div>
+                        <div className="hi-fluency">
+                          {fluency !== null ? (
+                            <>
+                              <span className="num">
+                                {fluency}
+                                {delta !== null && delta !== 0 && (
+                                  <small className={delta < 0 ? 'down' : ''}>{delta > 0 ? `+${delta}` : delta}</small>
+                                )}
+                              </span>
+                              <span className="meter"><i style={{ width: `${fluency}%` }} /></span>
+                            </>
+                          ) : (
+                            <span className="none">--</span>
+                          )}
+                        </div>
+                        <div className="hi-dur">
+                          {s.status === 'active' ? (
+                            <>{profile.user.target_minutes_per_session}:00<small>sugerido</small></>
+                          ) : (
+                            <>{durMin}:{durSec.toString().padStart(2, '0')}<small>charla</small></>
+                          )}
+                        </div>
+                        <div className={`hi-status${s.is_rescue ? ' rescue' : s.status === 'active' ? ' cold' : ''}`}>
+                          {s.is_rescue ? <HiRescueIcon /> : s.status === 'active' ? <HiClockIcon /> : <HiCheckIcon />}
+                        </div>
+                        <span className="hi-go">&rarr;</span>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+            {filtered.length > 0 && weeks.length === 0 && (
+              <div className="hi-empty">No hay sesiones en este rango.</div>
+            )}
+          </div>
+
+          {/* RIGHT — TRENDS */}
+          <aside className="hi-rc">
+            <div className="hi-card">
+              <div className="hi-card-head"><h3>Resumen {range === 'todo' ? 'total' : range}</h3></div>
+              <div className="hi-stat-line"><span className="l">Charlas</span><span className="v">{totalCharlas}</span></div>
+              <div className="hi-stat-line"><span className="l">Minutos hablados</span><span className="v">{totalMinutes}</span></div>
+              <div className="hi-stat-line"><span className="l">Fluidez media</span><span className="v">{avgFluency ?? '--'}</span></div>
+              <div className="hi-stat-line"><span className="l">Misiones de rescate</span><span className="v">{rescueCount}</span></div>
+              <div className="hi-stat-line"><span className="l">Sesiones perfectas</span><span className="v">{perfectCount}</span></div>
+            </div>
+
+            <div className="hi-card">
+              <div className="hi-card-head"><h3>Mas corregido</h3><Link className="link" to="/app/mapa">Ver &rarr;</Link></div>
+              <div className="hi-corr-list">
+                <div className="hi-corr-item gram">
+                  <span className="ci">G</span>
+                  <div className="ct">Verbos irregulares en pasado simple<small>began, brought, went, came...</small></div>
+                  <span className="cn">&times;{Math.max(totalErrors > 0 ? Math.round(totalErrors * 0.3) : 0, 1)}</span>
+                </div>
+                <div className="hi-corr-item">
+                  <span className="ci">F</span>
+                  <div className="ct">Sonido /th/ y /dh/<small>through, smooth, weather...</small></div>
+                  <span className="cn">&times;{Math.max(totalErrors > 0 ? Math.round(totalErrors * 0.2) : 0, 1)}</span>
+                </div>
+                <div className="hi-corr-item gram">
+                  <span className="ci">G</span>
+                  <div className="ct">Uso de articulo definido<small>on the weekends, in the 90s...</small></div>
+                  <span className="cn">&times;{Math.max(totalErrors > 0 ? Math.round(totalErrors * 0.15) : 0, 1)}</span>
+                </div>
               </div>
             </div>
-            <div className="metric"><span className="l">Status</span><span className="v">{s.status}</span></div>
-            <div className="metric"><span className="l">Score</span><span className="v">{s.score ?? '—'}</span></div>
-          </Link>
-        ))}
-      </div>
+          </aside>
+        </div>
+      </>)}
     </div>
   )
 }

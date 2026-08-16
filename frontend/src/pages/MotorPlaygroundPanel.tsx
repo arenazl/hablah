@@ -27,6 +27,11 @@ interface Level { level_code: string; label: string; sort_order: number; discipl
 const DISCIPLINE_LABELS: Record<string, string> = {
   idiomas: 'Idiomas',
   fonetica: 'Fonética / Pronunciación',
+  musica: 'Música',
+  informatica: 'Informática',
+  oficios: 'Oficios',
+  creativo: 'Creativos',
+  oratoria: 'Oratoria',
 }
 interface Topic { topic_id: number; title: string; segmento?: string; levels?: string[]; category?: string; discipline?: string }
 interface Student { student_id: number; name: string; age?: number; level_code: string; age_group?: string }
@@ -447,6 +452,8 @@ export default function MotorPlaygroundPanel() {
   // Es string libre a propósito — van a entrar cursos de otras disciplinas y no
   // hay que volver a tocar este tipo cada vez.
   const [discipline, setDiscipline] = useState<string>('idiomas')
+  // Lista de disciplinas que manda el backend (categories ∪ levels)
+  const [apiDisciplines, setApiDisciplines] = useState<string[]>([])
   const [studentId, setStudentId] = useState<number | undefined>(undefined)
   const [profile, setProfile] = useState<{ student_id: number; name: string } | null>(null)
 
@@ -487,6 +494,7 @@ export default function MotorPlaygroundPanel() {
     motorAPI.dimensions().then((d) => {
       setBands(d.bands); setLevels(d.levels); setCatalog(d.catalog); setStudents(d.students)
       setLanguages(d.languages || [])
+      setApiDisciplines(d.disciplines || [])
     }).catch(() => {})
   }, [])
 
@@ -650,19 +658,25 @@ export default function MotorPlaygroundPanel() {
   // adivinaba con level_code.startsWith('FON'), que se rompía con cualquier
   // disciplina nueva. El tope por edad sólo aplica a los niveles de idiomas:
   // una disciplina como fonética tiene su propia progresión.
-  // Disciplinas existentes, derivadas de los niveles activos
+  // Disciplinas: las manda el backend (categorías ∪ niveles). No se derivan de
+  // los niveles solos porque las disciplinas nuevas reusan los 7 de idiomas.
   const disciplines = useMemo(
-    () => [...new Set(levels.map((l) => l.discipline || 'idiomas'))].sort(),
-    [levels],
+    () => (apiDisciplines.length
+      ? apiDisciplines
+      : [...new Set(levels.map((l) => l.discipline || 'idiomas'))].sort()),
+    [apiDisciplines, levels],
   )
 
+  // Niveles de la disciplina elegida. Si esa disciplina no tiene escala propia
+  // —el caso normal: carpintería o piano usan Despegue→Maestro igual que
+  // idiomas— se cae a los transversales.
   const levelsForBand = useMemo(() => {
     const mx = bands.find((b) => b.code === band)?.max_level_order ?? 99
-    return levels.filter((l) => {
-      const d = l.discipline || 'idiomas'
-      if (discipline !== 'todos' && d !== discipline) return false
-      return d !== 'idiomas' || l.sort_order <= mx
-    })
+    const propios = levels.filter((l) => (l.discipline || 'idiomas') === discipline)
+    const base = discipline === 'todos' || propios.length === 0
+      ? levels.filter((l) => (l.discipline || 'idiomas') === 'idiomas' || discipline === 'todos')
+      : propios
+    return base.filter((l) => (l.discipline || 'idiomas') !== 'idiomas' || l.sort_order <= mx)
   }, [levels, bands, band, discipline])
 
   const handleDisciplineChange = (newDisc: string) => {

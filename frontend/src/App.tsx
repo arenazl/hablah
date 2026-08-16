@@ -95,20 +95,16 @@ function AuthGate({ children, allowKidMode = false }: { children: React.ReactNod
 }
 
 function RootRedirect() {
-  const { isAuthenticated, isLoading } = useAuth()
-  // Si hay perfil hijo activo, "/" siempre devuelve a /kids
+  // "/" es la APLICACIÓN, no la landing comercial. Mientras el motor madura, el
+  // único usuario es el dueño y entrar por la home a la página de ventas es una
+  // molestia. La landing sigue publicada en /landing.
+  // OJO: esto saca la landing del index, así que la home deja de tener contenido
+  // indexable. Revertir cuando la app salga a la calle.
   if (typeof window !== 'undefined' && localStorage.getItem('kids_token')) {
     return <Navigate to="/kids" replace />
   }
-  // Si ya confirmamos sesión, ir a la app
-  if (isAuthenticated) return <Navigate to="/app" replace />
-  // Mientras carga el auth: solo esperamos (sin pintar) si HAY token, porque
-  // probablemente sea un usuario logueado que va a ser redirigido a /app.
-  // Si NO hay token (visitante anónimo, Googlebot, crawler de IA), mostramos
-  // la landing pública de inmediato para que el contenido esté en el HTML.
-  const hasToken = typeof window !== 'undefined' && !!localStorage.getItem('token')
-  if (isLoading && hasToken) return null
-  return <Landing />
+  // Si no hay sesión, /app ya redirige solo a /login.
+  return <Navigate to="/app" replace />
 }
 
 export default function App() {
@@ -118,6 +114,8 @@ export default function App() {
         <Routes>
           {/* ═══ PRODUCTO ═══ */}
           <Route path="/" element={<RootRedirect />} />
+          {/* La landing comercial dejó de ser el index: vive acá hasta el lanzamiento */}
+          <Route path="/landing" element={<Landing />} />
           <Route path="/como-funciona" element={<HowItWorks />} />
           <Route path="/tutores" element={<Tutors />} />
           <Route path="/topicos" element={<Topics />} />
