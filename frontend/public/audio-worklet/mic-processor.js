@@ -80,29 +80,33 @@ class MicProcessor extends AudioWorkletProcessor {
       if (this.pos >= this.target) {
         const rms = Math.sqrt(this.rmsAcc / Math.max(1, this.rmsCount))
         const isVoice = rms >= this.vadThreshold
-        // Mandar PCM si: hay voz, O estamos en la cola post-voz (suficiente
-        // silencio para que el VAD de Gemini Live cierre el turno, ~1.5s).
-        // this.tailFrames se calcula dinamico en el constructor segun sampleRate.
-        let shouldSend = isVoice
+
+        // SIEMPRE se manda el PCM. El VAD de acá decidía qué bloques valían la pena
+        // y tiraba el resto — el 2026-08-16 medimos que descartaba el 40% (234
+        // bloques generados, 140 enviados). El audio le llegaba a Gemini PICADO, con
+        // huecos de 128ms en medio de las frases, y lo transcribía como "<noise>" o
+        // como fonemas sueltos de otro idioma. La energía estaba bien (RMS 16021 de
+        // 32767); lo que faltaba era continuidad.
+        //
+        // Un VAD que corta el medio de una frase no ahorra: rompe. El recorte de
+        // silencio lo hace Gemini con automaticActivityDetection, que para eso está
+        // configurado en el setup y ve el stream completo. El hook ya asumía esto
+        // ("SIEMPRE mandar el PCM", useLiveVoice.ts) — el worklet no cumplía.
+        //
+        // `isVoice` sobrevive sólo como flag para el visualizador, y `lastWasVoice`
+        // para no romper la config existente de tail.
         if (isVoice) {
           this.silentTail = 0
           this.lastWasVoice = true
         } else if (this.lastWasVoice && this.silentTail < this.tailFrames) {
-          shouldSend = true
           this.silentTail++
           if (this.silentTail >= this.tailFrames) {
             this.lastWasVoice = false
           }
         }
-        // (removido el gate coachSpeaking - causaba que chicos hablando bajito
-        //  quedaran filtrados y Gemini Live no recibiera input)
-        if (shouldSend) {
-          const out = new ArrayBuffer(this.target * 2)
-          new Int16Array(out).set(this.acc)
-          this.port.postMessage({ pcm: out, rms: rms, silent: !isVoice }, [out])
-        } else {
-          this.port.postMessage({ rms: rms, silent: true })
-        }
+        const out = new ArrayBuffer(this.target * 2)
+        new Int16Array(out).set(this.acc)
+        this.port.postMessage({ pcm: out, rms: rms, silent: !isVoice }, [out])
         this.pos = 0
         this.rmsAcc = 0
         this.rmsCount = 0

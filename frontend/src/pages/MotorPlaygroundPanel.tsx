@@ -605,6 +605,8 @@ export default function MotorPlaygroundPanel() {
   // ALUMNO (el coach seguía hablando, pero el alumno no aparecía) sin que cambiara
   // una línea de acá. Poder alternar en el momento evita un deploy por prueba.
   const [liveModel, setLiveModel] = useState('models/gemini-3.1-flash-live-preview')
+  // Prompt mínimo hardcodeado en vez del compuesto: aísla la cadena de voz del motor.
+  const [infraTest, setInfraTest] = useState(false)
 
   const startLiveClass = useCallback(async () => {
     const params: Record<string, string | number> = {
@@ -614,9 +616,10 @@ export default function MotorPlaygroundPanel() {
     }
     const cad = cadencia.replace(/[^\d,]/g, '')
     if (cad) params.cadencia = cad
+    if (infraTest) params.infra_test = 1
     const url = buildMotorWsUrl(params)
     await live.start(0, undefined, 'Aoede', url)
-  }, [live, band, level, topicId, effStudent, cadencia, targetLang, liveModel])
+  }, [live, band, level, topicId, effStudent, cadencia, targetLang, liveModel, infraTest])
 
   // Terminar clase: además de cortar, la charla alimenta la MEMORIA del alumno elegido
   // (post-clase del probador → observaciones → protocolo SRS → pilar HISTORIA).
@@ -1723,6 +1726,15 @@ export default function MotorPlaygroundPanel() {
                   <option value="models/gemini-2.5-flash-native-audio-preview-09-2025">2.5 Native Audio — no transcribe al alumno</option>
                 </select>
                 <span style={{ fontSize: 10, color: C.faint }}>si el alumno no aparece en la transcripción, probá otro: el preview cambia del lado de Google</span>
+                {/* Aísla la INFRA del motor: manda un prompt de 4 líneas en vez del
+                    compuesto de ~5000 chars. Si acá el alumno SÍ se transcribe, el
+                    problema es el prompt; si tampoco, es la cadena de voz o el modelo. */}
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, fontWeight: 700, color: infraTest ? C.accent : C.dim, cursor: isLive ? 'default' : 'pointer', border: `1px solid ${infraTest ? C.accent : C.border}`, background: infraTest ? 'rgba(0,179,126,0.14)' : C.soft, borderRadius: 999, padding: '3px 10px', opacity: isLive ? 0.5 : 1 }}
+                  title="Charla mínima sobre música en castellano, sin catálogo ni orquestación. Sirve para saber si el problema es el prompt o la cadena de voz.">
+                  <input type="checkbox" checked={infraTest} disabled={isLive}
+                    onChange={(e) => setInfraTest(e.target.checked)} style={{ margin: 0 }} />
+                  Probar sólo infra (prompt mínimo)
+                </label>
               </div>
               {!isLive && live.status === 'ended' && live.transcript.length > 0 && (
                 <div style={{ fontSize: 11.5, color: C.dim }}>Clase terminada — ajustá lo que haga falta arriba y volvé a iniciar.</div>

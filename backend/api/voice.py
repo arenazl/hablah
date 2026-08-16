@@ -322,6 +322,7 @@ async def voice_ws_motor(
     voice: str = Query("Aoede"),
     cadencia: str = Query(""),
     target_language: str = Query("en"),
+    infra_test: int = Query(0),
 ):
     """Prueba de clase REAL por el MOTOR ÚNICO (v2 / compose_proto) — el MISMO que produce.
 
@@ -335,15 +336,44 @@ async def voice_ws_motor(
     """
     await websocket.accept()
     safe_voice = voice if voice in _LLM_VALID_VOICES else "Aoede"
-    try:
-        res = await motor_engine.resolve_v2(age_group, level_code, topic_id or None,
-                                            student_id=student_id or None,
-                                            target_language=target_language)
-        super_prompt = res["prompt"]
-    except Exception as e:
-        log.warning("voice_ws_motor resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
-        await websocket.close(code=1011)
-        return
+    if infra_test:
+        # PROBAR SOLO LA INFRA: prompt mínimo, sin catálogo ni orquestación. Aísla la
+        # cadena de voz (mic → worklet → WS → Gemini → transcripción) del motor. Si acá
+        # el alumno SÍ aparece en la transcripción, el problema es el prompt compuesto
+        # (~5000 chars, 13 reglas); si tampoco aparece, es la cadena de voz o el modelo.
+        #
+        # El texto es DATO (app_config.infra_test_prompt), no una constante: probar con
+        # otro prompt no puede costar un build. El literal de acá es sólo la red por si
+        # falta la fila.
+        super_prompt = ""
+        try:
+            async with AsyncSessionLocal() as _db:
+                from sqlalchemy import text as _t
+                _row = (await _db.execute(_t(
+                    "SELECT config_value FROM app_config WHERE config_key = 'infra_test_prompt'"
+                ))).fetchone()
+                super_prompt = (_row[0] or "").strip() if _row else ""
+        except Exception as _e:
+            log.warning("infra_test: no pude leer app_config.infra_test_prompt: %s", _e)
+        if not super_prompt:
+            super_prompt = (
+                "Sos un amigo charlando en castellano rioplatense sobre música.\n"
+                "Saludá y preguntá qué escucha últimamente.\n"
+                "Turnos MUY cortos: una o dos frases y una sola pregunta.\n"
+                "Nada más: no enseñes, no corrijas, no propongas ejercicios."
+            )
+        log.info("voice_ws_motor INFRA_TEST: prompt minimo de %d chars (el compuesto ronda 5000)",
+                 len(super_prompt))
+    else:
+        try:
+            res = await motor_engine.resolve_v2(age_group, level_code, topic_id or None,
+                                                student_id=student_id or None,
+                                                target_language=target_language)
+            super_prompt = res["prompt"]
+        except Exception as e:
+            log.warning("voice_ws_motor resolve falló %s/%s topic=%s: %s", age_group, level_code, topic_id, e)
+            await websocket.close(code=1011)
+            return
 
     is_kid = age_group in ("mini", "junior")
     async with AsyncSessionLocal() as db:
