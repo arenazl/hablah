@@ -176,7 +176,7 @@ def _load_lite_state_sync(db, student_id) -> Optional[dict]:
 
 
 def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student_id=None, session_seed=None,
-                    target_language="en", template_id=None) -> dict:
+                    target_language="en", template_id=None, base_language=None) -> dict:
     """Carga los kwargs del motor (EDAD+NIVEL+tópico+historia) — fuente ÚNICA para el prompt real y
     el visor (breakdown), sin duplicar. Devuelve los kwargs de compose_from_template + _topic_title.
 
@@ -206,11 +206,18 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
         except Exception:
             cfg = None
         student_name = "Alumno"
+        # La lengua MATERNA del alumno sale de su ficha. Estaba hardcodeada en "es", y en los
+        # niveles bajos eso rompe la clase entera: la regla de A1 dice "Mayormente {idioma_base}",
+        # asi que a un alumno de portugues el coach le hablaba en espanol — obedeciendo bien una
+        # regla que le llegaba mal. En niveles altos no se notaba porque B2+ no usa {idioma_base}.
+        # Sin ficha se mantiene "es" (el probador sin alumno elegido sigue igual que antes).
+        student_base = None
         if student_id:
             try:
-                user_row = db.q1("SELECT nombre FROM users WHERE id=%s", (student_id,))
+                user_row = db.q1("SELECT nombre, base_language FROM users WHERE id=%s", (student_id,))
                 if user_row and user_row.get("nombre"):
                     student_name = user_row.get("nombre")
+                    student_base = user_row.get("base_language")
                 else:
                     st_row = db.q1("SELECT name FROM student WHERE student_id=%s", (student_id,))
                     if st_row and st_row.get("name"):
@@ -218,7 +225,8 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
             except Exception:
                 pass
         user = SimpleNamespace(id=student_id, nombre=student_name, cefr_level=level_code, age_group=age_group,
-                               target_language=target_language or "en", base_language="es")
+                               target_language=target_language or "en",
+                               base_language=base_language or student_base or "es")
         topic = None
         if tp:
             topic = SimpleNamespace(
@@ -241,10 +249,10 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
 
 
 def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, student_id=None, session_seed=None,
-                     target_language="en", template_id=None) -> dict:
+                     target_language="en", template_id=None, base_language=None) -> dict:
     from services.orchestration_resolver import compose_from_template
     kw = _load_v2_kwargs(age_group, level_code, topic_id, learner_state, student_id, session_seed,
-                         target_language, template_id)
+                         target_language, template_id, base_language)
     tt = kw.pop("_topic_title")
     prompt = compose_from_template(**kw)
     return {"prompt": prompt, "meta": {
@@ -256,7 +264,7 @@ def _resolve_v2_sync(age_group, level_code, topic_id, learner_state=None, studen
 async def resolve_v2(age_group: str, level_code: str, topic_id: Optional[int] = None,
                      learner_state: Optional[dict] = None, student_id: Optional[int] = None,
                      session_seed: Optional[int] = None, target_language: str = "en",
-                     template_id: Optional[int] = None) -> dict:
+                     template_id: Optional[int] = None, base_language: Optional[str] = None) -> dict:
     """Motor ÚNICO para el test: 3 pilares edad+nivel+(tópico)+HISTORIA, generado al vuelo.
 
     student_id (opcional) -> carga el learner_state LIVIANO de la BD (F2-02) si no se pasa uno
@@ -266,7 +274,7 @@ async def resolve_v2(age_group: str, level_code: str, topic_id: Optional[int] = 
     banco), sin publicarla. Sin id: el activo, que es lo que corre en producción."""
     return await asyncio.to_thread(_resolve_v2_sync, age_group, level_code, topic_id,
                                    learner_state, student_id, session_seed, target_language,
-                                   template_id)
+                                   template_id, base_language)
 
 
 def _resolve_v2_breakdown_sync(age_group, level_code, topic_id, student_id=None, target_language="en",
