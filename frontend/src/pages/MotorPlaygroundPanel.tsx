@@ -1925,7 +1925,8 @@ export default function MotorPlaygroundPanel() {
                       </div>
                     </div>
 
-                    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, overflowY: 'auto', padding: '0 16px 24px' }}>
+                    <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 0 }}>
+                    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, overflowY: 'auto', padding: '0 16px 24px' }}>
                       <ClaseOrbe
                         status={live.status}
                         subscribeAudioLevel={live.subscribeAudioLevel}
@@ -1978,6 +1979,16 @@ export default function MotorPlaygroundPanel() {
                         <div ref={finTranscriptRef} />
                       </div>
                     </div>
+
+                    {/* PANEL DE LA CLASE — lectura pura sobre lo que ya esta en pantalla: no
+                        llama a nada, no le habla al coach. Dice las dos cosas que contestan
+                        "sirvio esta clase": cuantas palabras objetivo PRODUJO el alumno, y
+                        como se reparte la charla entre los dos. */}
+                    <PanelDeLaClase
+                      transcript={live.transcript}
+                      keywordsCrudas={topicsRows.find((r) => r.id === topicId)?.keywords}
+                    />
+                  </div>
                   </div>
                 </div>,
                 document.body,
@@ -2049,5 +2060,102 @@ function MedidorDeNivel({ subscribeAudioLevel, color }: {
   return (
     <span style={{ display: 'block', height: '100%', width: `${Math.round(nivel * 100)}%`,
       background: color, transition: 'width 80ms linear' }} />
+  )
+}
+
+/* Panel lateral de la clase en vivo. Dos medidas, las dos derivadas del transcript:
+ *
+ *  PALABRAS OBJETIVO PRODUCIDAS — de las semillas que el motor le paso al coach, cuales dijo
+ *  el ALUMNO (no el coach). Es la medicion mas directa de si la clase sirvio, y hasta hoy se
+ *  calculaba en la app de produccion, se mostraba, y se perdia al cerrar la pantalla.
+ *
+ *  REPARTO DE LA CHARLA — turnos y palabras de cada uno. Es el numero que desnuda la
+ *  entrevista: si el coach habla mas que el alumno, la clase la esta dando el coach.
+ */
+function PanelDeLaClase({ transcript, keywordsCrudas }: {
+  transcript: { who: string; text: string }[]
+  keywordsCrudas?: unknown
+}) {
+  const semillas: string[] = (() => {
+    if (Array.isArray(keywordsCrudas)) return keywordsCrudas.map(String)
+    if (typeof keywordsCrudas === 'string') {
+      try { const v = JSON.parse(keywordsCrudas); return Array.isArray(v) ? v.map(String) : [] } catch { return [] }
+    }
+    return []
+  })()
+
+  const delAlumno = transcript.filter((l) => l.who === 'user')
+  const delProfe = transcript.filter((l) => l.who === 'ai')
+  const textoAlumno = delAlumno.map((l) => l.text.toLowerCase()).join(' ')
+  const palabras = (ls: typeof transcript) =>
+    ls.reduce((n, l) => n + l.text.trim().split(/\s+/).filter(Boolean).length, 0)
+  const palAlumno = palabras(delAlumno)
+  const palProfe = palabras(delProfe)
+  const usadas = semillas.filter((k) => textoAlumno.includes(k.toLowerCase()))
+  // Cuanto de la charla la lleva el alumno. Debajo del 50% la clase la esta dando el coach.
+  const cuotaAlumno = palAlumno + palProfe > 0 ? Math.round((palAlumno * 100) / (palAlumno + palProfe)) : 0
+
+  const T = { fg: 'rgba(232,236,234,.9)', dim: 'rgba(232,236,234,.5)', faint: 'rgba(232,236,234,.3)' }
+  const Titulo = ({ children }: { children: React.ReactNode }) => (
+    <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase',
+      color: T.faint, marginBottom: 8 }}>{children}</div>
+  )
+
+  return (
+    <aside style={{ width: 268, flexShrink: 0, borderLeft: '1px solid rgba(255,255,255,.07)',
+      padding: '4px 16px 20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 22 }}>
+      <div>
+        <Titulo>Palabras objetivo que dijo</Titulo>
+        {semillas.length === 0 ? (
+          <div style={{ fontSize: 11.5, color: T.faint, fontStyle: 'italic' }}>
+            Este tópico no tiene semillas cargadas.
+          </div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 10 }}>
+              <span style={{ fontSize: 26, fontWeight: 800, color: usadas.length ? '#00B37E' : T.dim, lineHeight: 1 }}>
+                {usadas.length}
+              </span>
+              <span style={{ fontSize: 13, color: T.dim }}>de {semillas.length}</span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+              {semillas.map((k) => {
+                const ok = usadas.includes(k)
+                return (
+                  <span key={k} style={{
+                    fontSize: 11, padding: '3px 8px', borderRadius: 999,
+                    background: ok ? 'rgba(0,179,126,.18)' : 'rgba(255,255,255,.04)',
+                    border: `1px solid ${ok ? 'rgba(0,179,126,.45)' : 'rgba(255,255,255,.08)'}`,
+                    color: ok ? '#9CFCD2' : T.dim,
+                  }}>{ok ? '✓ ' : ''}{k}</span>
+                )
+              })}
+            </div>
+          </>
+        )}
+      </div>
+
+      <div>
+        <Titulo>Quién lleva la charla</Titulo>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 8 }}>
+          <span style={{ fontSize: 26, fontWeight: 800, lineHeight: 1,
+            color: cuotaAlumno >= 50 ? '#00B37E' : '#E6A23C' }}>{cuotaAlumno}%</span>
+          <span style={{ fontSize: 12, color: T.dim }}>lo habla el alumno</span>
+        </div>
+        <div style={{ height: 6, background: 'rgba(255,255,255,.07)', borderRadius: 999, overflow: 'hidden', marginBottom: 10 }}>
+          <div style={{ width: `${cuotaAlumno}%`, height: '100%',
+            background: cuotaAlumno >= 50 ? '#00B37E' : '#E6A23C', transition: 'width 320ms ease' }} />
+        </div>
+        <div style={{ fontSize: 11.5, color: T.dim, display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <span>alumno · {delAlumno.length} turnos · {palAlumno} palabras</span>
+          <span>profe  · {delProfe.length} turnos · {palProfe} palabras</span>
+          {delProfe.length > 0 && (
+            <span style={{ color: T.faint }}>
+              el profe promedia {Math.round(palProfe / delProfe.length)} palabras por turno
+            </span>
+          )}
+        </div>
+      </div>
+    </aside>
   )
 }
