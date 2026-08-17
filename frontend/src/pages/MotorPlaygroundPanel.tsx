@@ -20,7 +20,13 @@ import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
-interface Level { level_code: string; label: string; sort_order: number; discipline?: string; family?: string }
+interface Level {
+  level_code: string; label: string; sort_order: number; discipline?: string; family?: string
+  // ESCALON: la escalera unica que comparten todas las disciplinas (tabla `escalones`). El
+  // combo muestra esto —"3 · Intermedio"— en vez del codigo interno, que decia "B2" en
+  // idiomas y "CON1" en plomeria sin que el alumno pudiera compararlos.
+  escalon?: number | null; escalon_nombre?: string | null; escalon_desc?: string | null
+}
 
 /**
  * LA CADENA: disciplina → edad → nivel → categoría → tópico.
@@ -1376,7 +1382,8 @@ export default function MotorPlaygroundPanel() {
                 const n = contar({ discipline, band, level: l.level_code })
                 const off = !hayCruce || n === 0
                 const nota = !hayCruce ? '— sin cruce' : n === 0 ? '— sin tópicos' : `(${n})`
-                return <option key={l.level_code} value={l.level_code} disabled={off}>{l.label || l.level_code} {nota}</option>
+                const nombre = l.escalon_nombre ? `${l.escalon} · ${l.escalon_nombre}` : (l.label || l.level_code)
+                return <option key={l.level_code} value={l.level_code} disabled={off} title={l.escalon_desc || ''}>{nombre} ({l.level_code}) {nota}</option>
               })}
             </select>
           </Ctx>

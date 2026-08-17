@@ -223,9 +223,16 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
     #    El probador filtraba por el prefijo del código ("FON..."); ahora la
     #    disciplina es un campo y viaja como dato. Sin el filtro por active los
     #    niveles ES1-3 (experimento ya revertido) seguían apareciendo.
+    #    El ESCALÓN es la escalera única que comparten todas las disciplinas (tabla `escalones`).
+    #    Antes cada familia mostraba su código interno —"B2" en idiomas, "CON1" en plomería— y
+    #    no había forma de que el alumno entendiera que son comparables. Ahora el combo muestra
+    #    "3 · Intermedio" en las dos, y el código queda como detalle para el que lo necesite.
     levels = _rows(await db.execute(text(
-        "SELECT code AS level_code, friendly_name AS label, id AS sort_order, discipline, family "
-        "FROM levels WHERE active = 1 ORDER BY id")))
+        "SELECT l.code AS level_code, l.friendly_name AS label, l.id AS sort_order, "
+        "       l.discipline, l.family, l.escalon, e.nombre AS escalon_nombre, "
+        "       e.descripcion AS escalon_desc "
+        "FROM levels l LEFT JOIN escalones e ON e.orden = l.escalon "
+        "WHERE l.active = 1 ORDER BY l.escalon, l.sort_order, l.id")))
 
     # 3. Tópicos (topics) — levels viaja para que el probador filtre por nivel
     #    elegido; la disciplina la hereda de su categoría (categories.discipline).
