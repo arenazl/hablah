@@ -1372,10 +1372,37 @@ export default function MotorPlaygroundPanel() {
             </Ctx>
           ) : (
             <Ctx label="Se habla en">
-              <div style={{ ...sel, display: 'flex', alignItems: 'center', color: C.dim, cursor: 'default' }}
-                title="En una clase de idioma, el idioma de la clase ES lo que se aprende: sale del combo de al lado.">
-                {languages.find((l) => l.code === targetLang)?.label || targetLang}
-              </div>
+              {/* NO se elige (por eso gris): en una clase de idioma el idioma en que se HABLA
+                  se DERIVA del escalón y de la lengua del alumno. Y no es el que se aprende:
+                  en Inicial la regla manda hablar casi todo en la lengua materna, así que este
+                  campo mostrando el objetivo decía "Castellano" mientras el coach hablaba
+                  francés — un cartel afirmando lo contrario de lo que pasaba. Ahora dice lo
+                  que va a pasar, y de dónde sale. */}
+              {(() => {
+                const esc = levels.find((l) => l.level_code === level)?.escalon ?? 3
+                const alumno = students.find((s) => s.student_id === effStudent)
+                const objetivo = languages.find((l) => l.code === targetLang)?.label || targetLang
+                const baseCode = alumno?.base_language
+                const base = languages.find((l) => l.code === baseCode)?.label || baseCode
+                let texto = objetivo
+                let detalle = `Escalón ${esc}: la clase se habla íntegramente en ${objetivo}.`
+                if (base && esc <= 1) {
+                  texto = `${base} + palabras en ${objetivo}`
+                  detalle = `Escalón ${esc} (Inicial): la regla del nivel manda hablar casi 100% en la lengua del alumno (${base}, de la ficha de ${alumno?.name}). En ${objetivo} van sólo las palabras objetivo.`
+                } else if (base && esc === 2) {
+                  texto = `mitad ${base} / mitad ${objetivo}`
+                  detalle = `Escalón ${esc} (Básico): mitad y mitad. La lengua del alumno (${base}) sale de la ficha de ${alumno?.name}.`
+                } else if (!base && esc <= 2) {
+                  texto = `${objetivo} + su lengua`
+                  detalle = `Escalón ${esc}: en los niveles bajos se apoya en la lengua materna del alumno. Sin alumno elegido, el motor cae en castellano.`
+                }
+                return (
+                  <div style={{ ...sel, display: 'flex', alignItems: 'center', color: C.dim, cursor: 'help', fontSize: 12 }}
+                    title={detalle + ' No se elige acá: sale del escalón y de la ficha del alumno.'}>
+                    {texto}
+                  </div>
+                )
+              })()}
             </Ctx>
           )}
           {/* Cada eslabón muestra cuántos tópicos deja vivos y se deshabilita en 0.
