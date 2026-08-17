@@ -20,7 +20,6 @@ import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { createPortal } from 'react-dom'
 import { ClaseOrbe } from '../components/ClaseOrbe'
-import { PalancasDeClase, PALANCAS_MOTOR_CSS, type MarcaPalanca } from '../components/PalancasDeClase'
 import { WEBAPP_CSS } from './webapp.css'
 import { CONVO_BG_CSS } from './convo-bg.css'
 
@@ -605,9 +604,6 @@ export default function MotorPlaygroundPanel() {
   // Clase en VIVO — charla REAL por voz (solo audio, sin imágenes) contra el motor
   // único (ws_motor → compose_proto), con el MISMO combo que se está previsualizando.
   const live = useLiveVoice({ onError: (e) => toast.error(`Voz: ${e.message}`) })
-  // Que palanca se movio y en que turno. Sin esto "probe un preset" no llega nunca a
-  // "este preset funciona mejor": al terminar la clase no queda con que comparar.
-  const [marcas, setMarcas] = useState<MarcaPalanca[]>([])
   const isLive = live.status === 'connecting' || live.status === 'listening' || live.status === 'speaking'
   const liveTranscriptEndRef = useRef<HTMLDivElement>(null)
   useEffect(() => { liveTranscriptEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [live.transcript])
@@ -654,8 +650,7 @@ export default function MotorPlaygroundPanel() {
   }, [])
 
   const startLiveClass = useCallback(async () => {
-    setMarcas([])
-    setModoClase(true)  // la clase se prueba en la pantalla del alumno, no en el panel  // las palancas son de ESTA clase; arrastrarlas mezclaria dos pruebas
+    setModoClase(true)  // la clase se prueba en la pantalla del alumno, no en el panel
     const params: Record<string, string | number> = {
       age_group: band, level_code: level, topic_id: topicId ?? 0, student_id: effStudent ?? 0,
       engine: 'gemini_live', model: liveModel, voice: 'Aoede',
@@ -1818,12 +1813,6 @@ export default function MotorPlaygroundPanel() {
                 />
                 <span style={{ fontSize: 10, color: C.faint }}>0=icebreaker · 1=normal · 2=profunda · 3=filosa · se cicla</span>
               </div>
-              {marcas.length > 0 && (
-                <div style={{ fontSize: 10.5, color: C.dim, fontFamily: 'ui-monospace, monospace', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  <span style={{ fontWeight: 800, color: C.faint }}>PALANCAS DE ESTA CLASE</span>
-                  {marcas.map((mk, i) => <span key={i}>turno {mk.turno} = {mk.que} {mk.valor}</span>)}
-                </div>
-              )}
               {/* Modelo Live. Los `preview` de Google cambian sin aviso: el 2026-08-16 el
                   3.1 dejó de devolver la transcripción del ALUMNO (el coach seguía hablando
                   igual) sin que cambiara una línea nuestra. Tenerlo acá permite comparar en
@@ -1925,18 +1914,6 @@ export default function MotorPlaygroundPanel() {
                       </div>
                     </div>
 
-                    {/* Las palancas, el MISMO componente que la app puede volver a usar. Acá
-                        con los nombres visibles, que es lo que hace falta para comparar. */}
-                    <div className="palancas-motor" style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', padding: '0 20px 10px', color: 'rgba(232,236,234,.9)', ['--motor-border' as string]: 'rgba(255,255,255,.18)', ['--motor-soft' as string]: 'rgba(255,255,255,.06)' }}>
-                      <style>{PALANCAS_MOTOR_CSS}</style>
-                      <PalancasDeClase
-                        onSystemUpdate={live.sendSystemUpdate}
-                        turno={live.transcript.filter((l) => l.who === 'ai').length}
-                        onMarca={(mk) => setMarcas((prev) => [...prev, mk])}
-                        onAviso={(texto, ok) => { if (ok) toast.success(texto); else toast.error(texto) }}
-                      />
-                    </div>
-
                     <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, overflowY: 'auto', padding: '0 16px 24px' }}>
                       <ClaseOrbe
                         status={live.status}
@@ -1946,11 +1923,6 @@ export default function MotorPlaygroundPanel() {
                         nivel={level}
                         onRepetir={(frase) => live.say(`Por favor repetí lentamente y con buena pronunciación esta frase exacta, una sola vez, sin agregar nada más: "${frase}"`)}
                       />
-                      {marcas.length > 0 && (
-                        <div style={{ fontSize: 10.5, color: 'rgba(232,236,234,.45)', fontFamily: 'ui-monospace, monospace', display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-                          {marcas.map((mk, i) => <span key={i}>turno {mk.turno} = {mk.que} {mk.valor}</span>)}
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>,
