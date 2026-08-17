@@ -19,6 +19,7 @@ import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, Mo
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { ClaseOrbe } from '../components/ClaseOrbe'
+import { PalancasDeClase, PALANCAS_MOTOR_CSS, type MarcaPalanca } from '../components/PalancasDeClase'
 import { WEBAPP_CSS } from './webapp.css'
 import { CONVO_BG_CSS } from './convo-bg.css'
 
@@ -603,6 +604,9 @@ export default function MotorPlaygroundPanel() {
   // Clase en VIVO — charla REAL por voz (solo audio, sin imágenes) contra el motor
   // único (ws_motor → compose_proto), con el MISMO combo que se está previsualizando.
   const live = useLiveVoice({ onError: (e) => toast.error(`Voz: ${e.message}`) })
+  // Que palanca se movio y en que turno. Sin esto "probe un preset" no llega nunca a
+  // "este preset funciona mejor": al terminar la clase no queda con que comparar.
+  const [marcas, setMarcas] = useState<MarcaPalanca[]>([])
   const isLive = live.status === 'connecting' || live.status === 'listening' || live.status === 'speaking'
   const liveTranscriptEndRef = useRef<HTMLDivElement>(null)
   useEffect(() => { liveTranscriptEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [live.transcript])
@@ -649,6 +653,7 @@ export default function MotorPlaygroundPanel() {
   }, [])
 
   const startLiveClass = useCallback(async () => {
+    setMarcas([])  // las palancas son de ESTA clase; arrastrarlas mezclaria dos pruebas
     const params: Record<string, string | number> = {
       age_group: band, level_code: level, topic_id: topicId ?? 0, student_id: effStudent ?? 0,
       engine: 'gemini_live', model: liveModel, voice: 'Aoede',
@@ -1811,6 +1816,31 @@ export default function MotorPlaygroundPanel() {
                 />
                 <span style={{ fontSize: 10, color: C.faint }}>0=icebreaker · 1=normal · 2=profunda · 3=filosa · se cicla</span>
               </div>
+              {/* ESTILO y AUDIO — estaban en el header de la clase REAL, icon-only y detras de
+                  feature flags. Nunca fueron del alumno: sirven para ver que preset funciona
+                  mejor, o sea laboratorio. Es el MISMO componente que puede volver a la app:
+                  aca solo se le suma la clase que le devuelve los nombres y el contraste. */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', opacity: isLive ? 1 : 0.5 }}>
+                <style>{PALANCAS_MOTOR_CSS}</style>
+                <div
+                  className="palancas-motor"
+                  style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', color: C.fg,
+                    ['--motor-border' as string]: C.border, ['--motor-soft' as string]: C.soft }}>
+                  <PalancasDeClase
+                    onSystemUpdate={live.sendSystemUpdate}
+                    turno={live.transcript.filter((l) => l.who === 'ai').length}
+                    onMarca={(mk) => setMarcas((prev) => [...prev, mk])}
+                    onAviso={(texto, ok) => { if (ok) toast.success(texto); else toast.error(texto) }}
+                  />
+                </div>
+                {!isLive && <span style={{ fontSize: 10, color: C.faint }}>el estilo entra en el proximo turno del coach: primero inicia la clase</span>}
+              </div>
+              {marcas.length > 0 && (
+                <div style={{ fontSize: 10.5, color: C.dim, fontFamily: 'ui-monospace, monospace', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontWeight: 800, color: C.faint }}>PALANCAS DE ESTA CLASE</span>
+                  {marcas.map((mk, i) => <span key={i}>turno {mk.turno} = {mk.que} {mk.valor}</span>)}
+                </div>
+              )}
               {/* Modelo Live. Los `preview` de Google cambian sin aviso: el 2026-08-16 el
                   3.1 dejó de devolver la transcripción del ALUMNO (el coach seguía hablando
                   igual) sin que cambiara una línea nuestra. Tenerlo acá permite comparar en

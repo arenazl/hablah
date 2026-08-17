@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { NavLink, Routes, Route, useLocation, Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -16,9 +16,7 @@ import { PracticarGalaxy } from '../components/PracticarGalaxy'
 import { CoachPhrasePanels } from '../components/CoachPhrasePanels'
 import QaPanel from './QaPanel'
 import AdminUsersPanel from './AdminUsersPanel'
-import { PRESETS, applyPreset, loadAudioSettings, type AudioPreset } from '../lib/audioSettings'
 import confetti from 'canvas-confetti'
-import { Gate, useFeatureFlag, type FeatureKey } from '../hooks/useFeatureFlag'
 import { KidsParentSwitch } from './kids/KidsParentSwitch'
 import { InviteFriendButton } from '../components/InviteFriendButton'
 import { MicSelector } from '../components/MicSelector'
@@ -1178,7 +1176,6 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
   // a pedido del usuario para mantener la UI limpia. Si quisieramos volver
   // a poner el selector, devolver useState + BgPicker.
   const convoBg = 3
-  const [pedagogy, setPedagogy] = useState<string>('balanced')
   const [templates, setTemplates] = useState<Template[]>([])
   const [switching, setSwitching] = useState(false)
   useEffect(() => { templatesAPI.list().then(setTemplates).catch(() => {}) }, [])
@@ -1444,24 +1441,11 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               </button>
             </div>
           </div>
-          <div className="convo-h-row2">
-            <Gate flag="pedagogy_picker" profile={profile}>
-              <PedagogyPicker value={pedagogy} onChange={(p, label) => {
-                setPedagogy(p)
-                const instruction = PEDAGOGY_INSTRUCTIONS[p as keyof typeof PEDAGOGY_INSTRUCTIONS] || ''
-                const ok = live.sendSystemUpdate(`[SILENT_SYSTEM_UPDATE] DO NOT acknowledge this message verbally. From now on adopt this style internally: ${label.toUpperCase()}. Rules: ${instruction}. Continue the conversation in the same language and topic you were in. Just answer the next user message with the new style.`)
-                toast.success(ok ? `Tutor ahora: ${label}` : 'Conectá primero')
-              }} />
-            </Gate>
-            <Gate flag="tune_audio" profile={profile}>
-              <VoicePresetsBar
-                onPick={(preset) => {
-                  applyPreset(preset)
-                  toast.success(`Audio: ${preset.name} (aplica en la próxima sesión)`)
-                }}
-              />
-            </Gate>
-          </div>
+          {/* Acá estaban las palancas de ESTILO y AUDIO. No eran del alumno: sirven para ver
+              qué preset funciona mejor, y eso es laboratorio. Se mudaron a
+              components/PalancasDeClase y hoy viven en /motor, donde además se leen (en la
+              clase el CSS las dejaba icon-only). El componente es agnóstico de superficie:
+              si vuelven a la app, se importa y listo. */}
         </div>
 
         <div className="convo-orb-area">
@@ -3837,117 +3821,6 @@ function BgPicker({ value, onChange }: { value: number; onChange: (n: number) =>
           aria-pressed={value === o.id}
         />
       ))}
-    </div>
-  )
-}
-
-type PedagogyId = 'entrevistador' | 'balanced' | 'charlatan' | 'mentor' | 'provocador' | 'ludico'
-
-interface PedagogyOption {
-  id: PedagogyId
-  label: string
-  short: string
-  desc: string
-  color: string
-  icon: ReactNode
-}
-
-const PED_ICON_SIZE = 14
-const pedIcon = (path: ReactNode): ReactNode => (
-  <svg width={PED_ICON_SIZE} height={PED_ICON_SIZE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {path}
-  </svg>
-)
-
-const PEDAGOGY_OPTIONS: PedagogyOption[] = [
-  { id: 'entrevistador', label: 'Entrevistador', short: 'E', desc: 'Habla poco, pregunta mucho', color: '#4A90E2',
-    icon: pedIcon(<><path d="M9.1 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><circle cx="12" cy="17" r=".5" fill="currentColor" /></>) },
-  { id: 'balanced',      label: 'Equilibrado',   short: 'B', desc: 'Conversación 50/50',          color: '#00B37E',
-    icon: pedIcon(<><path d="M12 3v18" /><path d="M5 8h14" /><path d="M5 8l-2 6a3 3 0 0 0 6 0L7 8" /><path d="M19 8l-2 6a3 3 0 0 0 6 0l-2-6" /></>) },
-  { id: 'charlatan',     label: 'Charlatán',     short: 'C', desc: 'Cuenta y pregunta',           color: '#A874E8',
-    icon: pedIcon(<><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></>) },
-  { id: 'mentor',        label: 'Mentor',        short: 'M', desc: 'Info + pregunta concreta',    color: '#E6A23C',
-    icon: pedIcon(<><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>) },
-  { id: 'provocador',    label: 'Provocador',    short: 'P', desc: 'Discrepa, te desafía',        color: '#E5484D',
-    icon: pedIcon(<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />) },
-  { id: 'ludico',        label: 'Lúdico',        short: 'L', desc: 'Juegos verbales',             color: '#EC4899',
-    icon: pedIcon(<><path d="M12 3v3" /><path d="M12 18v3" /><path d="M5.6 5.6l2.1 2.1" /><path d="M16.3 16.3l2.1 2.1" /><path d="M3 12h3" /><path d="M18 12h3" /><path d="M5.6 18.4l2.1-2.1" /><path d="M16.3 7.7l2.1-2.1" /></>) },
-]
-const PEDAGOGY_INSTRUCTIONS = {
-  entrevistador: 'Hablá muy poco. Máximo 1 oración por turno + 1 pregunta corta. Dejá que el alumno se extienda.',
-  balanced: 'Conversación equilibrada. 1-2 oraciones aportando + 1 pregunta abierta.',
-  charlatan: 'Contá data concreta o anécdota breve sobre el tema. Después pedí opinión personal con 1 pregunta.',
-  mentor: 'Contá 2-3 datos relevantes + 1 pregunta ESPECÍFICA. PROHIBIDO preguntas tipo "cuál es el mejor X" o "cuál es tu favorito".',
-  provocador: 'Discrepá, contradecí, pedí al alumno que defienda sus ideas con datos. Tono exigente pero respetuoso.',
-  ludico: 'Usá juegos verbales, micro-roleplays, humor liviano. Cero rigidez.',
-} as const
-
-/* ── Toolbar de presets de audio: 4 iconos abajo del estilo del tutor ─────── */
-const VOICE_PRESET_META: Record<string, { icon: JSX.Element; short: string; color: string }> = {
-  'voice-room':   { short: 'Grupal',  color: '#22D67A', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
-  'min-latency':  { short: '1:1',     color: '#FFB800', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> },
-  'noisy-env':    { short: 'Ruido',   color: '#7C5CFF', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="2" x2="22" y2="22"/></svg> },
-  'studio-hifi':  { short: 'Hi-Fi',   color: '#22D3EE', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg> },
-}
-function VoicePresetsBar({ onPick }: { onPick: (preset: AudioPreset) => void | Promise<void> }) {
-  const [active, setActive] = useState<string>(() => {
-    const s = loadAudioSettings()
-    const match = PRESETS.find((p) =>
-      Object.keys(p.settings).every((k) => (s as never)[k] === (p.settings as never)[k]),
-    )
-    return match?.id || ''
-  })
-  return (
-    <div className="voice-presets" role="toolbar" aria-label="Presets de audio">
-      <span className="voice-presets-label">Audio</span>
-      {PRESETS.map((p) => {
-        const meta = VOICE_PRESET_META[p.id]
-        if (!meta) return null
-        const isActive = active === p.id
-        return (
-          <button
-            key={p.id}
-            type="button"
-            className={`vp-chip${isActive ? ' active' : ''}`}
-            onClick={() => { setActive(p.id); onPick(p) }}
-            title={`${p.name} — ${p.description}`}
-            aria-label={`Preset de audio: ${p.name}`}
-            aria-pressed={isActive}
-            style={{ ['--c' as string]: meta.color }}
-          >
-            {meta.icon}
-            <span className="vp-chip-txt">{meta.short}</span>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
-function PedagogyPicker({ value, onChange }: { value: string; onChange: (id: string, label: string) => void }) {
-  return (
-    <div className="ped-picker" role="radiogroup" aria-label="Estilo del tutor">
-      <span className="ped-picker-label">Estilo</span>
-      <div className="ped-picker-chips">
-        {PEDAGOGY_OPTIONS.map((o) => {
-          const active = value === o.id
-          return (
-            <button
-              key={o.id}
-              type="button"
-              className={`ped-chip${active ? ' active' : ''}`}
-              onClick={() => onChange(o.id, o.label)}
-              title={`${o.label} — ${o.desc}`}
-              aria-label={`${o.label}: ${o.desc}`}
-              aria-pressed={active}
-              style={{ ['--c' as string]: o.color }}
-            >
-              <span className="ped-chip-ico" aria-hidden="true">{o.icon}</span>
-              <span className="ped-chip-txt">{o.label}</span>
-            </button>
-          )
-        })}
-      </div>
     </div>
   )
 }
