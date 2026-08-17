@@ -46,45 +46,40 @@ como "coach callado".
 
 ---
 
-## 3. El gating de reglas usa un número que colisiona entre familias
+## 3. El gating de reglas usaba un número que colisionaba entre familias — RESUELTO (17/08)
 
-`levels.sort_order` es compartido: `CON1`/`A0`/`FONR` son todos 0, `CON2`/`A1` son 1. Y
-`_filter_rules` gatea `conversation_rules` por ese número.
+`levels.sort_order` era compartido: `CON1`/`A0` valían 0 y `CON2`/`A1` valían 1, así que
+filtrar por nivel era un accidente aritmético. Entraba `native_pronunciation` en una clase de
+informática y se caía `harvest_dont_chase` de los niveles bajos de oficios.
 
-Consecuencias medidas:
-- `native_pronunciation` (`max_level=A2`, orden 2) **entra** en una clase de informática en
-  francés — la regla de pronunciar `'elephant'` como inglés real.
-- `harvest_dont_chase` (`min_level=A2`) **queda afuera** de CON1 y CON2 — justo la regla que
-  dice qué hacer cuando el adulto habla mucho, que es la más útil de esa familia.
-- `student_types.max_level_order` deja pasar `FONR` para todas las edades por lo mismo.
+**Arreglado con dos cosas:** la columna `conversation_rules.families` (el acoplamiento que
+faltaba) y el filtro pasando a usar el **escalón** de la escalera única en vez de `sort_order`.
 
-**Arreglo:** `conversation_rules` necesita una dimensión de FAMILIA, no un rango numérico.
-Es aditivo (columna nullable; sin valor, gatea como hoy).
+Medido: plomería Inicial 8 leyes y ninguna de idiomas · inglés A1 10 · kids A0 13.
 
 ---
 
-## 4. Huecos de catálogo identificados (no rompen, pero faltan)
+## 4. Huecos de catálogo — quedan dos
 
 Del barrido (`backend/scripts/barrido_huecos_motor.py`, salida en
 `docs/08-barrido-huecos/huecos_motor.json`):
 
-- **5 cruces de `age_level_matrix` que no existen:** `mini×B1`, `junior×C1`, y `junior/teen/adult × FONR`.
-  Los tres de FONR probablemente **no deban existir** (fonética es de mini) — pero el motor no
-  puede distinguir "falta cargarlo" de "no corresponde". Ver punto 5.
+- **2 cruces de `age_level_matrix` que no existen:** `mini×B1` y `junior×C1`. Los tres de FONR
+  desaparecieron al anular la disciplina fonética.
 - **10 tópicos sin categoría** (ids 177-186): componen bien, pero sin `family` el modelo de
   familias no puede decidir cómo se comportan sus semillas.
 
 ---
 
-## 5. "Vacío a propósito" y "falta el dato" son lo mismo para el motor
+## 5. "Vacío a propósito" vs "falta el dato" — RESUELTO (17/08)
 
-`_req` revienta si un campo falta, y está bien: evita fallbacks silenciosos. Pero como no
-existe el slot vacío, **cada placeholder son 39 textos obligatorios** en los cruces, aunque
-para algunos no corresponda decir nada. De ahí que "no inventes una escena" aparezca tres
-veces en el mismo prompt: tres slots tenían que decir algo.
+`_req` revienta si falta un campo, y está bien. El problema era que no existía el slot vacío,
+así que cada placeholder eran 38 textos obligatorios aunque para algunos cruces no
+correspondiera decir nada — de ahí que "no inventes una escena" apareciera tres veces.
 
-**Arreglo:** distinguir los dos casos. `falta` sigue reventando; `vacío a propósito` omite el
-slot. No toca el fail-fast ni saca ningún campo.
+**Arreglado:** los placeholders opcionales devuelven "" y su línea del template se cae entera.
+El fail-fast quedó intacto para los que sí faltan. Lo usan `{HISTORIA:*}`, y con eso además se
+sacó el literal en inglés que el resolver devolvía para las anclas narrativas.
 
 ---
 
@@ -101,12 +96,19 @@ documentado en la conversación del 16/08.
 
 ---
 
-## 7. La semilla de sesión está congelada por día
+## 7. La semilla de sesión estaba congelada por día — RESUELTO (17/08)
 
-`_session_seed(student_id, topic_id, day_iso)` incluye el día, no la sesión. Diez pruebas en
-una tarde son, por construcción, la misma clase. Y `orchestration_resolver` llama a
-`_get_vocabulary(topic, topic_content)` **sin los cuatro argumentos** que sí le pasa
-`composer_proto` (`app_config`, `level_code`, `age_slug`, `session_seed`), así que la rotación
-de keywords por semilla está inerte y el tope por nivel nunca se lee.
+`_session_seed(student_id, topic_id, day_iso)` incluía el día, no la sesión: diez pruebas en
+una tarde eran la misma clase. Y `orchestration_resolver` llamaba a `_get_vocabulary` **sin los
+cuatro argumentos** que sí le pasaba `composer_proto`, así que la rotación por semilla estaba
+inerte y el tope por nivel nunca se leía (de 40 keywords cargadas, 34 no llegaban nunca).
 
-Bloquea cualquier medición de variedad — no de densidad, que con semilla fija está bien.
+**Arreglado:** la clave incluye qué número de clase es (contado de `sessions`, dato real, no
+random) y el resolver pasa los cuatro argumentos. Sigue siendo determinístico: recomponer la
+clase 2 devuelve lo mismo que la primera vez.
+
+Medido en música CON1, cuatro clases del mismo alumno: `rhythm,beat,key,note` →
+`key,note,scale,rhythm` → `beat,key,note,scale` → `note,scale,rhythm,beat`.
+
+**Lo que sigue abierto es el punto 6**, no esto: con 5 semillas y tomando 4, la variedad tiene
+techo por el contenedor, no por la semilla.
