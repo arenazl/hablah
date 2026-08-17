@@ -161,7 +161,16 @@ async def distill_learner_state(session_id: int, trace_id: str) -> Optional[dict
         distilled = normalize_distilled(raw)
 
         # Qué materia es esta clase — sale del tópico (su categoría trae familia y disciplina) y
-        # del idioma del alumno. Sin tópico no hay materia y la historia va a la bolsa general.
+        # del idioma del alumno.
+        #
+        # NO SE ESCRIBE SIN MATERIA, y esto es lo importante: antes, cuando no se podía calcular
+        # (tópico sin categoría), se guardaba con materia NULL. Y el lector usa la fila NULL como
+        # comodín cuando no encuentra la materia pedida, así que esa fila se filtra a TODAS las
+        # materias del alumno. Caso real: una clase del tópico 185 (sin categoría) escribió NULL,
+        # y después una clase de mecánica se trajo de ahí "clarify topic 'change' (social
+        # causes)". Un solo tópico sin categoría envenena la memoria del alumno para siempre.
+        # Preferimos NO guardar y dejar el aviso: la clase ya terminó bien y la historia es
+        # best-effort, pero una historia MEZCLADA es peor que no tener historia.
         materia = None
         if topic is not None and getattr(topic, "category_id", None):
             cat = (await db.execute(text(
@@ -170,6 +179,15 @@ async def distill_learner_state(session_id: int, trace_id: str) -> Optional[dict
             if cat:
                 materia = materia_de(cat.get("family"), cat.get("discipline"),
                                      getattr(user, "target_language", None))
+        if not materia:
+            log.error(
+                "learner_state[%s] session %s: NO se persiste la historia porque no se pudo "
+                "determinar la materia (topic_id=%s, category_id=%s). Guardarla sin materia la "
+                "convertiria en comodin de todas las materias del alumno. Arreglo: cargarle la "
+                "categoria al topico.",
+                trace_id, session_id, getattr(topic, "id", None),
+                getattr(topic, "category_id", None))
+            return None
 
         # Upsert por alumno POR MATERIA (merge con lo previo de ESA materia).
         row = (await db.execute(select(LearnerState).where(
@@ -234,10 +252,8 @@ async def load_learner_state_lite(db, student_id: int, materia: Optional[str] = 
         row = (await db.execute(select(LearnerState).where(
             LearnerState.student_id == student_id,
             LearnerState.materia == materia))).scalar_one_or_none()
-    if not row:
-        row = (await db.execute(select(LearnerState).where(
-            LearnerState.student_id == student_id,
-            LearnerState.materia.is_(None)))).scalar_one_or_none()
+    # Sin fallback a la fila sin materia: esa fila puede venir de cualquier clase del alumno y
+    # usarla de comodín mezcla las historias (mismo criterio que _load_lite_state_sync).
     if not row:
         return None
     state = {

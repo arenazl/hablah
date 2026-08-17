@@ -445,12 +445,22 @@ async def motor_verificar(age_group: str = "adult", level: str = "A1", topic_id:
                 # denunciaba "entró la historia de informática" en una clase de inglés — cuando
                 # el motor no había cargado ninguna. Un chequeo que consulta distinto que el
                 # motor no verifica el motor: verifica su propia consulta.
+                # Se replica la busqueda del motor Y se anota DE QUE FILA salio, porque de
+                # eso depende si la historia es confiable. La fila con materia NULL es la
+                # "bolsa vieja" de cuando habia una sola historia por alumno: puede venir de
+                # CUALQUIER clase, y el motor la usa como comodin cuando no encuentra la
+                # materia. Eso metio un pendiente de causas sociales en una clase de mecanica.
                 hist = db.q1("SELECT materia FROM learner_state "
                              "WHERE student_id=%s AND materia=%s", (student_id, materia))
-                if hist is None:
+                if hist is not None:
+                    hist["_fuente"] = "materia_exacta"
+                else:
                     hist = db.q1("SELECT materia FROM learner_state "
                                  "WHERE student_id=%s AND materia IS NULL", (student_id,))
-                hist = hist if hist is not None else {"_sin_historia": True}
+                    if hist is not None:
+                        hist["_fuente"] = "fila_sin_materia"
+                    else:
+                        hist = {"_fuente": "ninguna", "_sin_historia": True}
             return {"topico": topico or {}, "nivel": fila_nivel, "cruce": cruce,
                     "reglas": reglas, "orden_niveles": orden, "user_level": ul,
                     "historia": hist, "materia": materia}

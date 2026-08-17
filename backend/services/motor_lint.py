@@ -14,6 +14,13 @@ alarma es una comparación de claves, así que es verificable mirando dos filas 
 
 Las preguntas que contesta:
 
+  cadena_incompleta   un eslabón de la cadena (categoría del tópico, familia, disciplina,
+                      familia del nivel) viene en NULL. Es el chequeo que va PRIMERO: sin
+                      dato, todos los de abajo comparan contra nada y no dicen nada — de ahí
+                      que el verificador informara "perfecto" sobre una cadena rota.
+  historia_sin_materia la historia que entró salió de la fila con materia NULL, o sea puede
+                      venir de cualquier clase que el alumno haya dado.
+  sin_historia        no hay fila de learner_state para esta materia (aviso, no error).
   familia_cruzada     el tópico es de una familia y el nivel de otra (un tópico de idiomas
                       compuesto con un nivel CON, o al revés). El motor compone igual porque
                       nada valida el cruce entre las dos tablas.
@@ -71,6 +78,34 @@ def verificar_esquema(*, steps: list, prompt: str, flujo: dict, catalogo: dict) 
     user_level = catalogo.get("user_level") or {}
     historia = catalogo.get("historia") or {}
     materia = catalogo.get("materia")
+
+    # 0. LA CADENA COMPLETA — antes de comparar nada, que cada eslabón TENGA dato.
+    # El probador se arma de izquierda a derecha (disciplina -> idioma -> edad -> nivel -> tema
+    # -> tópico -> alumno) y cada combo acota al siguiente. Si un eslabón viene en NULL, el
+    # motor compone igual y los chequeos de abajo se quedan callados, porque comparar contra
+    # NULL nunca da diferencia. Así el verificador decía "perfecto" sobre una cadena rota.
+    # Un eslabón vacío no es una diferencia: es la ausencia de la pregunta.
+    eslabones = [
+        ("topics.category_id", topico.get("category_id") if topico else None,
+         "El tópico no tiene CATEGORÍA, así que la clase corre sin familia ni disciplina: nada "
+         "puede decidir si se comporta como clase de idioma o de conocimiento.",
+         "Asignarle una categoría al tópico."),
+        ("categories.family", topico.get("family") if topico else None,
+         "La categoría del tópico no declara FAMILIA. La familia es lo que gatea las leyes de "
+         "conversación y el molde de las semillas.",
+         "Cargar categories.family (lenguaje | conocimiento)."),
+        ("categories.discipline", topico.get("discipline") if topico else None,
+         "La categoría del tópico no declara DISCIPLINA. De la disciplina sale la MATERIA, y de "
+         "la materia sale qué historia del alumno se usa.",
+         "Cargar categories.discipline."),
+        ("levels.family", fila_nivel.get("family") if fila_nivel else None,
+         "El nivel no declara FAMILIA, así que el filtro de leyes por familia no puede correr.",
+         "Cargar levels.family."),
+    ]
+    for campo, valor, detalle, arreglo in eslabones:
+        if valor is None or (isinstance(valor, str) and not valor.strip()):
+            alarmas.append(_alarma(
+                "alta", "cadena_incompleta", campo, detalle, "un valor cargado", "NULL", arreglo))
 
     # 1. FAMILIA CRUZADA — el tópico y el nivel vienen de familias distintas.
     fam_topico = (topico.get("family") or "").lower() or None
@@ -171,7 +206,18 @@ def verificar_esquema(*, steps: list, prompt: str, flujo: dict, catalogo: dict) 
     # materia, y si no hay ninguna marca `_sin_historia`. Antes traía cualquier fila del
     # alumno, así que esta alarma se disparaba con la materia de otra clase que el motor
     # nunca había cargado.
-    if historia and historia.get("_sin_historia"):
+    if historia and historia.get("_fuente") == "fila_sin_materia":
+        alarmas.append(_alarma(
+            "alta", "historia_sin_materia", f"learner_state[{flujo.get('student_id')}, NULL]",
+            "La historia que entro al prompt NO tiene materia, asi que puede ser de cualquier "
+            "clase que el alumno haya dado. El motor la uso como comodin porque no encontro "
+            "una de esta materia.",
+            f"una fila de materia={materia}", "la fila con materia NULL",
+            "Dos cosas, y las dos son de diseno nuestro: (1) el destilador post-clase tiene "
+            "que ESCRIBIR la materia, y hoy deja NULL; (2) el motor no deberia usar NULL como "
+            "comodin — sin historia de esta materia, la clase va SIN historia. Mientras exista "
+            "esa fila, la memoria de una materia se filtra a todas las demas."))
+    elif historia and historia.get("_sin_historia"):
         alarmas.append(_alarma(
             "baja", "sin_historia", f"learner_state[{flujo.get('student_id')}, {materia}]",
             "Esta clase corre SIN memoria del alumno: no hay fila para esta materia.",

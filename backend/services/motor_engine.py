@@ -160,16 +160,23 @@ def _load_lite_state_sync(db, student_id, materia=None) -> Optional[dict]:
     if not student_id:
         return None
     # La historia es POR MATERIA (learner_state.materia): aprender francés y aprender
-    # informática son dos historias distintas del mismo alumno. Si esa materia todavía no
-    # tiene fila, cae a la fila sin materia — la bolsa vieja, de cuando había una sola.
+    # informática son dos historias distintas del mismo alumno.
+    #
+    # Y NO se cae a la fila sin materia. Eso estaba pensado como "la bolsa vieja, de cuando
+    # había una sola historia", pero funciona como COMODÍN: esa fila puede venir de cualquier
+    # clase, y se filtra a todas las materias. Caso real: una clase de mecánica (materia
+    # 'oficios') se trajo de ahí "clarify topic 'change' (social causes)", que era de una clase
+    # de activismo. Sin historia de ESTA materia, la clase va sin historia — el composer ya
+    # sabe manejarlo: el bloque es opcional y su línea se cae entera.
     try:
         r = None
         if materia:
             r = db.q1("SELECT top_error, interests, mastered, review FROM learner_state "
                       "WHERE student_id=%s AND materia=%s", (student_id, materia))
-        if not r:
-            r = db.q1("SELECT top_error, interests, mastered, review FROM learner_state "
-                      "WHERE student_id=%s AND materia IS NULL", (student_id,))
+        else:
+            # Sin materia calculable no hay historia que buscar: pedirla "sin materia" traería
+            # cualquier fila. Mejor sin historia que con la de otra clase.
+            return None
     except Exception:
         return None
     if not r:
