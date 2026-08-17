@@ -187,6 +187,20 @@ def compose_from_template(
     _ROTULO = {(p, f): lab for lab, p, f in
                re.findall(r"^[ \t]*([A-Za-z_]+):[ \t]*\{([A-Z_]+):([a-z_]+)\}[ \t]*$",
                           tpl.get("body") or "", re.M)}
+    # CAPA = la sección XML que contiene al placeholder. Las capas no se declaran en el código:
+    # ya están en el template, con nombre propio. Agrupando por ahí, renombrar una capa o mover
+    # un campo de una capa a otra es editar la plantilla — cero deploy — y el visor sigue solo.
+    _CAPA: dict = {}
+    _seccion = None
+    for _linea in (tpl.get("body") or "").split("\n"):
+        _abre = re.match(r"^[ \t]*<([a-z_]+)>[ \t]*$", _linea)
+        if _abre:
+            _seccion = _abre.group(1)
+            continue
+        if re.match(r"^[ \t]*</[a-z_]+>[ \t]*$", _linea):
+            continue
+        for _p, _f in _PH.findall(_linea):
+            _CAPA[(_p, _f)] = _seccion or "otros"
     _req(tpl and tpl.get("body"),
          f"orchestration_templates[id={template_id}]" if template_id
          else "orchestration_templates.active (no hay template activo)", ctx)
@@ -287,8 +301,9 @@ def compose_from_template(
         if (prefix, field) in _OPCIONAL:
             val = (_OPCIONAL[(prefix, field)]() or "").strip()
             if _trace is not None and val:
-                _trace.append({"group": _GROUP.get(prefix, prefix), "prefix": prefix,
-                               "label": field, "source": _FUENTE_OPCIONAL[(prefix, field)],
+                _trace.append({"group": _CAPA.get((prefix, field)) or _GROUP.get(prefix, prefix),
+                               "prefix": prefix, "label": field,
+                               "source": _FUENTE_OPCIONAL[(prefix, field)],
                                "campo_en_prompt": _ROTULO.get((prefix, field)), "body": val})
             return val
         items = None
@@ -313,12 +328,19 @@ def compose_from_template(
             source = (_col_semillas if (prefix, field) == ("TOPICO", "semillas")
                       else f"{_TABLA.get(prefix, prefix.lower())}.{field}")
         if _trace is not None:
-            entrada = {"group": _GROUP.get(prefix, prefix), "prefix": prefix,
-                       "label": field, "source": source,
-                       "campo_en_prompt": _ROTULO.get((prefix, field)), "body": val}
+            capa = _CAPA.get((prefix, field)) or _GROUP.get(prefix, prefix)
             if items:
-                entrada["items"] = items
-            _trace.append(entrada)
+                # Cada ley es su PROPIA entrada, no un choclo con once adentro. Así cada una
+                # tiene su panel, su fila de origen, su gateo y su botón de editar, igual que
+                # cualquier otro campo del motor.
+                for it in items:
+                    _trace.append({"group": capa, "prefix": prefix, "label": it["slug"],
+                                   "source": "conversation_rules.rule_text",
+                                   "campo_en_prompt": f"ley {it['n']}", "body": it["texto"],
+                                   "gateo": it["gateo"], "fila": it["slug"]})
+            else:
+                _trace.append({"group": capa, "prefix": prefix, "label": field, "source": source,
+                               "campo_en_prompt": _ROTULO.get((prefix, field)), "body": val})
         return val
 
     body = _PH.sub(lambda m: resolve(m.group(1), m.group(2)), tpl["body"])
@@ -346,8 +368,6 @@ def compose_from_template(
     if _trace is not None:
         for e in _trace:
             e["body"] = _interpolar(e["body"])
-            for it in e.get("items", []):
-                it["texto"] = _interpolar(it["texto"])
 
     # Ya no hay bloques pegados al final: la memoria del alumno y las reglas de salida entran
     # por placeholder ({HISTORIA:memoria_del_alumno} / {SALIDA:reglas_de_formato}), así que
@@ -373,7 +393,9 @@ def compose_breakdown(**kwargs) -> dict:
             order.append(g)
         entrada = {"label": e["label"], "source": e["source"], "dueno": e["prefix"],
                    "campo_en_prompt": e.get("campo_en_prompt"), "body": e["body"]}
-        if e.get("items"):
-            entrada["items"] = e["items"]
+        if e.get("gateo"):
+            entrada["gateo"] = e["gateo"]
+        if e.get("fila"):
+            entrada["fila"] = e["fila"]
         steps[g].append(entrada)
     return {"steps": [{"step": g, "entries": steps[g]} for g in order], "prompt": prompt}

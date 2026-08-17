@@ -1480,7 +1480,19 @@ export default function MotorPlaygroundPanel() {
                             {st.entries.map((ent: any, j: number) => (
                               <div key={j} style={{ background: C.soft, border: `1px solid ${C.border}`, borderRadius: 8, padding: '8px 10px', position: 'relative' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6, flexWrap: 'wrap', gap: 6 }}>
-                                  <span style={{ fontSize: 11, fontWeight: 800, color: C.accent }}>{ent.label}</span>
+                                  <span style={{ fontSize: 11, fontWeight: 800, color: C.accent }}>
+                                    {ent.campo_en_prompt ? <span style={{ color: C.faint, fontWeight: 700 }}>{ent.campo_en_prompt} · </span> : null}
+                                    {ent.label}
+                                    {/* Gateo: por que ESTA fila entro en esta clase. Sin esto habia que ir a la base
+                                        para saber por que una ley aparecia y otra no. */}
+                                    {ent.gateo && (
+                                      <span style={{ display: 'block', fontSize: 9.5, fontWeight: 600, color: C.faint, fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>
+                                        familias: {Array.isArray(ent.gateo.families) ? ent.gateo.families.join('/') : String(ent.gateo.families ?? 'todas')}
+                                        {' · '}edades: {Array.isArray(ent.gateo.age_groups) ? ent.gateo.age_groups.join('/') : String(ent.gateo.age_groups ?? 'todas')}
+                                        {' · '}{ent.gateo.min_level || '·'}→{ent.gateo.max_level || '·'}
+                                      </span>
+                                    )}
+                                  </span>
                                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
                                     {ent.source && (() => {
                                       const parts = ent.source.split('.')
