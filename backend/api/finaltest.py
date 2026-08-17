@@ -426,10 +426,12 @@ async def motor_verificar(age_group: str = "adult", level: str = "A1", topic_id:
             fila_nivel = db.q1("SELECT code, family, sort_order FROM levels WHERE code=%s", (level,)) or {}
             cruce = db.q1("SELECT age_slug, level_code FROM age_level_matrix "
                           "WHERE age_slug=%s AND level_code=%s AND active=1", (age_group, level))
-            reglas = db.q("SELECT slug, age_groups, min_level, max_level FROM conversation_rules "
-                          "WHERE active=1 ORDER BY sort_order") or []
-            orden = {r["code"]: (r["sort_order"] or 0)
-                     for r in (db.q("SELECT code, sort_order FROM levels") or [])}
+            reglas = db.q("SELECT slug, age_groups, families, min_level, max_level "
+                          "FROM conversation_rules WHERE active=1 ORDER BY sort_order") or []
+            # El orden que usa el filtro es el ESCALON (la escalera unica), no `sort_order`.
+            # Si el chequeo comparara con sort_order, contradiria al resolver en cada nivel.
+            orden = {r["code"]: (r["escalon"] if r["escalon"] is not None else (r["sort_order"] or 0))
+                     for r in (db.q("SELECT code, escalon, sort_order FROM levels") or [])}
             materia = materia_de((topico or {}).get("family"), (topico or {}).get("discipline"),
                                  target_language)
             ul = hist = {}

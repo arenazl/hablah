@@ -102,19 +102,39 @@ def verificar_esquema(*, steps: list, prompt: str, flujo: dict, catalogo: dict) 
             edad, seg, "Revisar topics.segmento o elegir otra edad."))
 
     # 5. GATEO INVÁLIDO — se recalcula qué leyes deberían entrar y se compara con las que entraron.
-    entraron = {}
-    for e in entradas:
-        for it in e.get("items") or []:
-            entraron[it.get("slug")] = it
-    if reglas:
+    # Que leyes entraron DE VERDAD. Cada una es su propia entrada desde que se partio el
+    # choclo; antes venian como `items` adentro de un solo campo. Leer el formato viejo hacia
+    # que `entraron` quedara vacio y el chequeo reportara las 13 como caidas.
+    entraron = {e.get("label"): e for e in entradas
+                if (e.get("source") or "").startswith("conversation_rules")}
+    # GUARDARRAIL: si hay leyes cargadas y el chequeo no encontro NINGUNA en el prompt
+    # compuesto, lo mas probable no es que se hayan caido las trece — es que este codigo esta
+    # leyendo mal. Paso: cuando las leyes se partieron en un panel cada una, esto seguia
+    # buscandolas adentro de un campo con `items` y reporto 13 alarmas falsas. Un verificador
+    # que se equivoca sobre su propia lectura es peor que no tenerlo, asi que avisa en vez de
+    # acusar al motor.
+    if reglas and not entraron:
+        alarmas.append(_alarma(
+            "alta", "chequeo_no_pudo_leer", "(verificador)",
+            f"Hay {len(reglas)} leyes cargadas y no reconoci ninguna en el prompt. Antes de "
+            f"creerle a este reporte, hay que revisar como las esta leyendo el chequeo.",
+            "al menos una ley reconocida", "ninguna",
+            "El formato de la traza cambio y este codigo no. No es un problema del motor."))
+    elif reglas:
         li = orden_niveles.get(nivel, 0)
         for r in reglas:
             slug = r.get("slug")
             ags = [str(a).lower() for a in _lista(r.get("age_groups"))]
+            fams = [str(f).lower() for f in _lista(r.get("families"))]
             mn, mx = r.get("min_level"), r.get("max_level")
             deberia = True
             motivo = ""
-            if ags and edad not in ags:
+            # La FAMILIA es parte del filtro desde hoy. Sin mirarla, las tres leyes de idiomas
+            # se reportaban como "caidas" en toda clase de conocimiento, que es justo donde
+            # corresponde que no entren.
+            if fams and fam_nivel and fam_nivel not in fams:
+                deberia, motivo = False, f"families={fams} no incluye {fam_nivel}"
+            elif ags and edad not in ags:
                 deberia, motivo = False, f"age_groups={ags} no incluye {edad}"
             elif mn and mn in orden_niveles and orden_niveles[mn] > li:
                 deberia, motivo = False, f"min_level={mn}"
