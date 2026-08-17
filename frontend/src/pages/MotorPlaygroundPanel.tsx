@@ -1494,7 +1494,7 @@ export default function MotorPlaygroundPanel() {
                                         para saber por que una ley aparecia y otra no. */}
                                     {ent.gateo && (
                                       <span style={{ display: 'block', fontSize: 9.5, fontWeight: 600, color: C.faint, fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>
-                                        familias: {Array.isArray(ent.gateo.families) ? ent.gateo.families.join('/') : String(ent.gateo.families ?? 'todas')}
+                                        familias: {Array.isArray(ent.gateo.familias) ? ent.gateo.familias.join('/') : String(ent.gateo.familias ?? 'todas')}
                                         {' · '}edades: {Array.isArray(ent.gateo.age_groups) ? ent.gateo.age_groups.join('/') : String(ent.gateo.age_groups ?? 'todas')}
                                         {' · '}{ent.gateo.min_level || '·'}→{ent.gateo.max_level || '·'}
                                       </span>

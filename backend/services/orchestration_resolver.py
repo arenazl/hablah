@@ -142,7 +142,10 @@ def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict, pick
             picked_out.append({
                 "n": len(picked), "slug": r.get("slug"), "texto": r["rule_text"],
                 "fuente": f"conversation_rules.rule_text (slug={r.get('slug')})",
-                "gateo": {"age_groups": ags or "todas",
+                # El filtro COMPLETO, incluida la familia. Sin ella el panel decía "familias:
+                # todas" para todas — también para las tres que están limitadas a idiomas — así
+                # que mostraba bien la ley y mentía sobre por qué estaba ahí.
+                "gateo": {"familias": fams or "todas", "age_groups": ags or "todas",
                           "min_level": r.get("min_level"), "max_level": r.get("max_level")},
             })
     return "\n".join(f"{i}. {t}" for i, t in enumerate(picked, 1))
