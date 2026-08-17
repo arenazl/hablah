@@ -61,7 +61,7 @@ def _load_orchestration(age_slug: str, level_code: str, template_id: int | None 
                db.q1("SELECT body FROM orchestration_templates WHERE active=1 ORDER BY id DESC LIMIT 1"))
         row = db.q1("SELECT * FROM age_level_matrix WHERE age_slug=%s AND level_code=%s AND active=1",
                     (age_slug, level_code))
-        rules = db.q("SELECT slug, rule_text, age_groups, min_level, max_level, sort_order "
+        rules = db.q("SELECT slug, rule_text, age_groups, families, min_level, max_level, sort_order "
                      "FROM conversation_rules WHERE active=1 ORDER BY sort_order")
         # La ESCALA de niveles es dato (levels.sort_order), no una lista en el código: así un track
         # nuevo (castellano ES1-ES3, fonética FONR) gatea las reglas por su lugar en la escala sin
@@ -109,7 +109,8 @@ def load_rhythm(age_slug: str, level_code: str, wave_override: str | None = None
         db.conn.close()
 
 
-def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict, picked_out=None) -> str:
+def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict, picked_out=None,
+                  familia: str | None = None) -> str:
     """Gating por dato (age_groups + min/max_level) + reenumeración. Reemplaza los target_ids
     hardcodeados y los 2 bloques: la selección es puro dato. El ORDEN de los niveles también
     es dato (levels.sort_order) — ver _load_orchestration."""
@@ -118,6 +119,12 @@ def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict, pick
     for r in rules:
         ags = _json_list(r.get("age_groups"))
         if ags and age_slug not in [str(a).lower() for a in ags]:
+            continue
+        # FAMILIA: el acoplamiento que faltaba. Sin esto, "corregí los errores de idioma
+        # recasteando" y "pronunciá como nativo" entraban en una clase de jardinería, donde
+        # el alumno no aprende ningún idioma. NULL = todas, así que la columna es aditiva.
+        fams = _json_list(r.get("families"))
+        if fams and familia and familia.lower() not in [str(f).lower() for f in fams]:
             continue
         mn, mx = r.get("min_level"), r.get("max_level")
         if mn and mn in level_order and level_order[mn] > li:
@@ -212,9 +219,14 @@ def compose_from_template(
     # Si la EDAD declara NO ROLEPLAY (teen/adult), NO se inyecta la escena del tópico: chocaría con
     # el modo (una charla real no arma un role-play). Se pasa el tópico como ÁNGULO, no como escena.
     def _topic_anchors() -> str:
+        # Si la EDAD ya declaró NO ROLEPLAY, el tópico no aporta escena: el campo queda VACÍO
+        # y su línea se cae. Antes devolvía un literal en inglés escrito acá, y eso rompía dos
+        # cosas: el mismo peldaño se acoplaba al tópico en unos flujos y al código en otros
+        # (con el `source` diciendo `topics` en ambos, o sea mintiendo), y además repetía la
+        # regla que ya daban `Narrative_Mode` y la ley `no_shared_perception` — la misma orden
+        # tres veces en el mismo prompt, en dos idiomas.
         if "NO ROLEPLAY" in (std.get("anclas_narrativas") or "").upper():
-            return ("Real conversation about the topic — NOT a roleplay. Do not invent a shared scene, "
-                    "characters, or a physical setting; talk about the topic as two people would.")
+            return ""
         role = _interp(getattr(topic, "narrative_role", "") or "", user_name, topic_title, first_word)
         setting = _interp(getattr(topic, "narrative_setting", "") or "", user_name, topic_title, first_word)
         mission = _interp(getattr(topic, "narrative_conflict", "") or "", user_name, topic_title, first_word)
@@ -244,6 +256,16 @@ def compose_from_template(
         "edad": _etiquetas_segmento(app_config).get(age_slug, age_slug),
         "nivel": level_code,
     }
+    # De qué columna salieron REALMENTE las semillas. `_get_vocabulary` las busca en cascada
+    # (allowed_vocabulary -> pinned_vocabulary -> keywords, y required_keywords ->
+    # generated_vocab), así que el mismo placeholder puede venir de columnas distintas según
+    # el tópico. Decir "topics.semillas" —que ni siquiera es una columna— tapaba eso.
+    _col_semillas = "topics.keywords"
+    if vocab and getattr(topic, "pinned_vocabulary", None):
+        _col_semillas = "topics.pinned_vocabulary"
+    elif not vocab and phrases:
+        _col_semillas = "topics.generated_vocab"
+
     _TOPICO = {
         "titulo": topic_title,
         "semillas": ", ".join(vocab or phrases),
@@ -273,7 +295,8 @@ def compose_from_template(
         if prefix == "EDAD_X_NIVEL":
             if field == "reglas_universales_filtradas":
                 items = []
-                val = _filter_rules(rules, age_slug, level_code, level_order, items)
+                val = _filter_rules(rules, age_slug, level_code, level_order, items,
+                                    familia=(lv.get("family") or None))
                 source = "conversation_rules.rule_text (una fila por ley, gateadas)"
             else:
                 val = _req(row.get(field), f"age_level_matrix.{field}", ctx)
@@ -287,7 +310,8 @@ def compose_from_template(
             if val is None:
                 raise MotorDataMissing(f"[resolver] campo faltante: {{{prefix}:{field}}} ({ctx})")
             val = str(val)
-            source = f"{_TABLA.get(prefix, prefix.lower())}.{field}"
+            source = (_col_semillas if (prefix, field) == ("TOPICO", "semillas")
+                      else f"{_TABLA.get(prefix, prefix.lower())}.{field}")
         if _trace is not None:
             entrada = {"group": _GROUP.get(prefix, prefix), "prefix": prefix,
                        "label": field, "source": source,

@@ -210,12 +210,12 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
                 materia = materia_de(cat.get("family"), cat.get("discipline"), target_language)
         if learner_state is None and student_id:
             learner_state = _load_lite_state_sync(db, student_id, materia)
-        level_data = {
-            "language_rule": lv.get("language_rule"),
-            "curriculum_grammar": lv.get("curriculum_grammar"),
-            "expected_production": lv.get("expected_production"),
-            "vocab_depth": lv.get("vocab_depth"),
-        }
+        # La FILA COMPLETA de levels, no un recorte de 4 campos. El resolver expone el prefijo
+        # {NIVEL:...} contra lo que reciba, así que recortar acá dejaba fuera columnas cargadas
+        # —family, sort_order, discipline— que el template no podía pedir. Peor: el gateo de las
+        # leyes por familia no funcionaba porque `family` nunca llegaba, y "corregí los errores
+        # de idioma" seguía entrando en una clase de jardinería.
+        level_data = dict(lv)
         try:
             cfg = {r["config_key"]: r["config_value"]
                    for r in db.q("SELECT config_key, config_value FROM app_config")} or None
