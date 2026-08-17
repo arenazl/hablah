@@ -1,0 +1,898 @@
+{
+  "instrucciones": {
+    "que_es_esto": "Cada tópico de la familia `conocimiento` necesita una PROGRESIÓN: la secuencia ordenada de conceptos que se enseñan, del primero al último. Hoy tiene una bolsa plana en inglés y hay que reemplazarla.",
+    "reglas": [
+      "EN CASTELLANO. El catálogo se guarda en castellano y el coach lo dice en el idioma de la clase. No escribas en inglés.",
+      "CONCEPTO, no forma. 'el pulso' y no 'beat'. 'la cañería' y no 'pipe'. Si el término del rubro se usa igual en todos los idiomas (API, deploy, DAW, mol), dejalo tal cual: esos no se traducen.",
+      "ORDENADA de verdad. El concepto 3 tiene que apoyarse en el 1 y el 2. Nadie entiende una escala sin saber qué es una nota.",
+      "NADA de frases de práctica de idioma. 'grab a bucket quickly' o 'the pipe is leaking' no son conceptos de plomería: son frases para practicar inglés. Fuera.",
+      "Cada concepto en 2 a 6 palabras. Es el nombre de la idea, no su explicación.",
+      "Etiquetá cada concepto con el escalón donde corresponde enseñarlo, usando SOLO los escalones que el tópico declara.",
+      "Entre 5 y 8 conceptos por escalón. Suficientes para varias clases sin que se agote a la tercera."
+    ],
+    "escalones": {
+      "1": "Inicial — necesita que le expliquen todo. Conceptos fundacionales, para qué sirve cada cosa, sin tecnicismos.",
+      "2": "Básico — el porqué de lo que ya sabe hacer. Cuándo se usa una cosa y cuándo otra, errores típicos.",
+      "3": "Intermedio — criterios de decisión, casos atípicos, optimización.",
+      "4": "Avanzado — trade-offs, filosofía del rubro, dilemas estructurales."
+    },
+    "formato_de_salida": {
+      "topic_id": 200,
+      "progresion": [
+        {
+          "orden": 1,
+          "escalon": 1,
+          "concepto": "la nota"
+        },
+        {
+          "orden": 2,
+          "escalon": 1,
+          "concepto": "el pulso"
+        },
+        {
+          "orden": 3,
+          "escalon": 2,
+          "concepto": "la escala"
+        }
+      ]
+    },
+    "ejemplo_bueno": {
+      "topico": "Plomería desde cero",
+      "antes": [
+        "pipe",
+        "leak",
+        "shut-off valve",
+        "drain",
+        "seal"
+      ],
+      "despues": [
+        {
+          "orden": 1,
+          "escalon": 1,
+          "concepto": "el circuito de agua de una casa"
+        },
+        {
+          "orden": 2,
+          "escalon": 1,
+          "concepto": "la llave de paso"
+        },
+        {
+          "orden": 3,
+          "escalon": 1,
+          "concepto": "tipos de cañería"
+        },
+        {
+          "orden": 4,
+          "escalon": 2,
+          "concepto": "por qué gotea una unión"
+        },
+        {
+          "orden": 5,
+          "escalon": 2,
+          "concepto": "el sifón y los olores"
+        }
+      ],
+      "por_que": "En castellano, ordenado de verdad (no se entiende la unión sin saber qué es una cañería), y sin ninguna frase de práctica de idioma."
+    },
+    "ejemplo_malo": {
+      "que_no_hacer": [
+        "pipe",
+        "measure twice",
+        "grab a bucket quickly",
+        "under the hood"
+      ],
+      "por_que": "El primero está en inglés, el segundo es medio refrán inglés, y los dos últimos son frases para practicar el idioma, no conceptos del oficio."
+    }
+  },
+  "topicos": [
+    {
+      "topic_id": 270,
+      "titulo": "Costura desde cero",
+      "disciplina": "creativo",
+      "categoria": "Costura",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "stitch",
+        "needle",
+        "hem",
+        "fabric",
+        "thread"
+      ]
+    },
+    {
+      "topic_id": 271,
+      "titulo": "Corte y confección",
+      "disciplina": "creativo",
+      "categoria": "Costura",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "pattern",
+        "seam",
+        "fitting",
+        "cut on the fold",
+        "alter"
+      ]
+    },
+    {
+      "topic_id": 260,
+      "titulo": "Fotografía desde cero",
+      "disciplina": "creativo",
+      "categoria": "Fotografía",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "frame",
+        "light",
+        "focus",
+        "shutter",
+        "shot"
+      ]
+    },
+    {
+      "topic_id": 261,
+      "titulo": "Composición y técnicas fotográficas",
+      "disciplina": "creativo",
+      "categoria": "Fotografía",
+      "escalones_que_declara": [
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "rule of thirds",
+        "depth of field",
+        "golden hour",
+        "leading lines",
+        "exposure"
+      ]
+    },
+    {
+      "topic_id": 262,
+      "titulo": "Edición de fotografía",
+      "disciplina": "creativo",
+      "categoria": "Fotografía",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "crop",
+        "contrast",
+        "white balance",
+        "retouch",
+        "export"
+      ]
+    },
+    {
+      "topic_id": 280,
+      "titulo": "Jardinería desde cero",
+      "disciplina": "creativo",
+      "categoria": "Jardinería",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "soil",
+        "water",
+        "sunlight",
+        "pot",
+        "prune"
+      ]
+    },
+    {
+      "topic_id": 281,
+      "titulo": "Huerta en casa",
+      "disciplina": "creativo",
+      "categoria": "Jardinería",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "seedling",
+        "harvest",
+        "compost",
+        "raised bed",
+        "in season"
+      ]
+    },
+    {
+      "topic_id": 282,
+      "titulo": "Cuidado y reproducción de plantas",
+      "disciplina": "creativo",
+      "categoria": "Jardinería",
+      "escalones_que_declara": [
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "cutting",
+        "repot",
+        "root",
+        "propagate",
+        "overwatering"
+      ]
+    },
+    {
+      "topic_id": 216,
+      "titulo": "Inteligencia artificial aplicada",
+      "disciplina": "informatica",
+      "categoria": "Inteligencia artificial",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "prompt",
+        "model",
+        "training data",
+        "fine-tune",
+        "hallucination"
+      ]
+    },
+    {
+      "topic_id": 213,
+      "titulo": "Programación desde cero",
+      "disciplina": "informatica",
+      "categoria": "Programación",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "variable",
+        "loop",
+        "function",
+        "bug",
+        "run the code"
+      ]
+    },
+    {
+      "topic_id": 214,
+      "titulo": "Desarrollo web",
+      "disciplina": "informatica",
+      "categoria": "Programación",
+      "escalones_que_declara": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "frontend",
+        "backend",
+        "deploy",
+        "responsive",
+        "API"
+      ]
+    },
+    {
+      "topic_id": 215,
+      "titulo": "Bases de datos",
+      "disciplina": "informatica",
+      "categoria": "Programación",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "query",
+        "table",
+        "index",
+        "join",
+        "schema"
+      ]
+    },
+    {
+      "topic_id": 210,
+      "titulo": "Informática desde cero",
+      "disciplina": "informatica",
+      "categoria": "Uso básico",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "file",
+        "folder",
+        "desktop",
+        "click",
+        "save"
+      ]
+    },
+    {
+      "topic_id": 211,
+      "titulo": "Uso de Windows y herramientas básicas",
+      "disciplina": "informatica",
+      "categoria": "Uso básico",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "window",
+        "shortcut",
+        "settings",
+        "install",
+        "backup"
+      ]
+    },
+    {
+      "topic_id": 212,
+      "titulo": "Internet, archivos y seguridad digital",
+      "disciplina": "informatica",
+      "categoria": "Uso básico",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "password",
+        "phishing",
+        "download",
+        "two-factor",
+        "browser"
+      ]
+    },
+    {
+      "topic_id": 201,
+      "titulo": "Aprender piano",
+      "disciplina": "musica",
+      "categoria": "Instrumentos",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "keys",
+        "chord",
+        "both hands",
+        "posture",
+        "practice slowly"
+      ]
+    },
+    {
+      "topic_id": 202,
+      "titulo": "Aprender guitarra",
+      "disciplina": "musica",
+      "categoria": "Instrumentos",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "fret",
+        "strum",
+        "chord change",
+        "tuning",
+        "calluses"
+      ]
+    },
+    {
+      "topic_id": 203,
+      "titulo": "Aprender a cantar",
+      "disciplina": "musica",
+      "categoria": "Instrumentos",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "breath support",
+        "pitch",
+        "range",
+        "warm up",
+        "head voice"
+      ]
+    },
+    {
+      "topic_id": 206,
+      "titulo": "Producción musical",
+      "disciplina": "musica",
+      "categoria": "Producción",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "mix",
+        "track",
+        "EQ",
+        "compression",
+        "master"
+      ]
+    },
+    {
+      "topic_id": 200,
+      "titulo": "Teoría musical desde cero",
+      "disciplina": "musica",
+      "categoria": "Teoría musical",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "note",
+        "scale",
+        "rhythm",
+        "beat",
+        "key"
+      ]
+    },
+    {
+      "topic_id": 204,
+      "titulo": "Lectura musical y partituras",
+      "disciplina": "musica",
+      "categoria": "Teoría musical",
+      "escalones_que_declara": [
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "staff",
+        "clef",
+        "time signature",
+        "sight-read",
+        "rest"
+      ]
+    },
+    {
+      "topic_id": 205,
+      "titulo": "Armonía y composición",
+      "disciplina": "musica",
+      "categoria": "Teoría musical",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "chord progression",
+        "voicing",
+        "resolve",
+        "modulation",
+        "hook"
+      ]
+    },
+    {
+      "topic_id": 230,
+      "titulo": "Carpintería desde cero",
+      "disciplina": "oficios",
+      "categoria": "Carpintería",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "wood grain",
+        "measure twice",
+        "sand",
+        "clamp",
+        "chisel"
+      ]
+    },
+    {
+      "topic_id": 231,
+      "titulo": "Herramientas y técnicas de carpintería",
+      "disciplina": "oficios",
+      "categoria": "Carpintería",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "router",
+        "jig",
+        "miter",
+        "dovetail",
+        "square"
+      ]
+    },
+    {
+      "topic_id": 232,
+      "titulo": "Construcción de muebles",
+      "disciplina": "oficios",
+      "categoria": "Carpintería",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "joinery",
+        "assembly",
+        "finish",
+        "load-bearing",
+        "dry fit"
+      ]
+    },
+    {
+      "topic_id": 220,
+      "titulo": "Electricidad domiciliaria desde cero",
+      "disciplina": "oficios",
+      "categoria": "Electricidad",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "circuit",
+        "voltage",
+        "breaker",
+        "ground",
+        "safety first"
+      ]
+    },
+    {
+      "topic_id": 221,
+      "titulo": "Instalaciones eléctricas del hogar",
+      "disciplina": "oficios",
+      "categoria": "Electricidad",
+      "escalones_que_declara": [
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "wiring",
+        "outlet",
+        "junction box",
+        "load",
+        "conduit"
+      ]
+    },
+    {
+      "topic_id": 222,
+      "titulo": "Diagnóstico de fallas eléctricas",
+      "disciplina": "oficios",
+      "categoria": "Electricidad",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "short circuit",
+        "multimeter",
+        "trace the fault",
+        "overload",
+        "loose connection"
+      ]
+    },
+    {
+      "topic_id": 251,
+      "titulo": "Reparaciones del hogar",
+      "disciplina": "oficios",
+      "categoria": "Mantenimiento",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "fix",
+        "patch",
+        "replace",
+        "tighten",
+        "quick job"
+      ]
+    },
+    {
+      "topic_id": 252,
+      "titulo": "Herramientas y bricolaje",
+      "disciplina": "oficios",
+      "categoria": "Mantenimiento",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "toolbox",
+        "drill",
+        "screw",
+        "level",
+        "DIY"
+      ]
+    },
+    {
+      "topic_id": 240,
+      "titulo": "Mecánica automotriz desde cero",
+      "disciplina": "oficios",
+      "categoria": "Mecánica",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "engine",
+        "oil change",
+        "tire pressure",
+        "battery",
+        "under the hood"
+      ]
+    },
+    {
+      "topic_id": 241,
+      "titulo": "Mantenimiento básico del auto",
+      "disciplina": "oficios",
+      "categoria": "Mecánica",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "service interval",
+        "coolant",
+        "brake pads",
+        "filter",
+        "top up"
+      ]
+    },
+    {
+      "topic_id": 242,
+      "titulo": "Mecánica y diagnóstico de fallas",
+      "disciplina": "oficios",
+      "categoria": "Mecánica",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "error code",
+        "misfire",
+        "diagnostics",
+        "wear and tear",
+        "rule it out"
+      ]
+    },
+    {
+      "topic_id": 250,
+      "titulo": "Plomería desde cero",
+      "disciplina": "oficios",
+      "categoria": "Plomería",
+      "escalones_que_declara": [
+        1,
+        2
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "pipe",
+        "leak",
+        "shut-off valve",
+        "drain",
+        "seal"
+      ]
+    },
+    {
+      "topic_id": 310,
+      "titulo": "Entrevista de trabajo: contame de vos",
+      "disciplina": "oratoria",
+      "categoria": "Entrevistas",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "walk you through",
+        "my background",
+        "what drew me to",
+        "I'd say my strength",
+        "in a nutshell"
+      ]
+    },
+    {
+      "topic_id": 311,
+      "titulo": "Responder por errores y fracasos",
+      "disciplina": "oratoria",
+      "categoria": "Entrevistas",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "in hindsight",
+        "what I learned",
+        "I owned it",
+        "I'd handle it differently",
+        "turned it around"
+      ]
+    },
+    {
+      "topic_id": 312,
+      "titulo": "Negociar sueldo y condiciones",
+      "disciplina": "oratoria",
+      "categoria": "Entrevistas",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "market rate",
+        "I was hoping for",
+        "is there flexibility",
+        "the whole package",
+        "meet in the middle"
+      ]
+    },
+    {
+      "topic_id": 313,
+      "titulo": "Contar tu experiencia técnica",
+      "disciplina": "oratoria",
+      "categoria": "Entrevistas",
+      "escalones_que_declara": [
+        2,
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "I was responsible for",
+        "we shipped",
+        "the tricky part was",
+        "I led",
+        "end to end"
+      ]
+    },
+    {
+      "topic_id": 320,
+      "titulo": "Decir exactamente lo que querés decir",
+      "disciplina": "oratoria",
+      "categoria": "Expresión y vocabulario",
+      "escalones_que_declara": [
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "to put it another way",
+        "more precisely",
+        "what I mean is",
+        "the nuance here",
+        "rather than"
+      ]
+    },
+    {
+      "topic_id": 321,
+      "titulo": "Muletillas, pausas y silencios",
+      "disciplina": "oratoria",
+      "categoria": "Expresión y vocabulario",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "filler words",
+        "hold the pause",
+        "let it land",
+        "think out loud",
+        "take your time"
+      ]
+    },
+    {
+      "topic_id": 322,
+      "titulo": "Contar una anécdota que enganche",
+      "disciplina": "oratoria",
+      "categoria": "Expresión y vocabulario",
+      "escalones_que_declara": [
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "so there I was",
+        "long story short",
+        "out of nowhere",
+        "and then it hit me",
+        "you won't believe"
+      ]
+    },
+    {
+      "topic_id": 323,
+      "titulo": "Discutir sin pelear",
+      "disciplina": "oratoria",
+      "categoria": "Expresión y vocabulario",
+      "escalones_que_declara": [
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "I see your point but",
+        "fair enough",
+        "where I'd push back",
+        "let's agree that",
+        "hear me out"
+      ]
+    },
+    {
+      "topic_id": 300,
+      "titulo": "Hablar en público sin morir en el intento",
+      "disciplina": "oratoria",
+      "categoria": "Presentaciones",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "stage fright",
+        "take a breath",
+        "eye contact",
+        "pace yourself",
+        "own the room"
+      ]
+    },
+    {
+      "topic_id": 301,
+      "titulo": "Estructurar una presentación",
+      "disciplina": "oratoria",
+      "categoria": "Presentaciones",
+      "escalones_que_declara": [
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "opening hook",
+        "key message",
+        "signpost",
+        "wrap up",
+        "call to action"
+      ]
+    },
+    {
+      "topic_id": 302,
+      "titulo": "Manejo de la voz y los nervios",
+      "disciplina": "oratoria",
+      "categoria": "Presentaciones",
+      "escalones_que_declara": [
+        1,
+        2,
+        3
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "projection",
+        "pause",
+        "slow down",
+        "breathe",
+        "steady"
+      ]
+    },
+    {
+      "topic_id": 303,
+      "titulo": "Presentar datos sin aburrir",
+      "disciplina": "oratoria",
+      "categoria": "Presentaciones",
+      "escalones_que_declara": [
+        3,
+        4
+      ],
+      "bolsa_actual_a_reemplazar": [
+        "the headline is",
+        "what this means",
+        "zoom in on",
+        "the takeaway",
+        "in short"
+      ]
+    }
+  ],
+  "total": 46
+}
