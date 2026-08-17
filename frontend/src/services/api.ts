@@ -446,6 +446,13 @@ export const motorAPI = {
   // resolver), para medir el MOTOR y no la prosa de quien escriba un prompt a mano.
   templates: (): Promise<{ templates: Array<{ id: number; name: string; notes: string; active: number; chars: number }> }> =>
     api.get('/finaltest/motor/templates').then((r) => r.data),
+  // Repasito determinístico del flujo elegido: compone y aplica reglas sobre el texto y su
+  // traza. No corre ninguna clase ni consulta un modelo — mismo input, misma salida.
+  verificar: (params: {
+    age_group: string; level: string; topic_id?: number | null; student_id?: number | null
+    target_language?: string; template_id?: number
+  }): Promise<MotorVerificacion> =>
+    api.get('/finaltest/motor/verificar', { params: { ...params, _t: Date.now() } }).then((r) => r.data),
   simulatePreview: (systemInstruction: string, mode: 'start' | 'closing') => api.post<any>('/finaltest/mini/preview/simulate', { system_instruction: systemInstruction, mode }).then((r) => r.data),
   trainState: (studentId: number) => api.get(`/motor/train/state/${studentId}`).then((r) => r.data),
   trainApply: (body: { student_id: number; outcomes: { objectives?: [number, string][]; items?: [string, string, string][] } }) =>
@@ -647,6 +654,22 @@ export interface FtClassRow {
   student_id: number; hist_obj: number; hist_items: number; score: number | null; verdict: string | null
 }
 export interface FtClassDetail extends FtClassRow { topic_id: number; dims: FtDims; transcript: FtTranscriptLine[]; md_path: string }
+
+export type MotorAlarma = {
+  severidad: 'alta' | 'media' | 'baja'
+  tipo: string
+  campo: string
+  detalle: string
+  esperado?: string
+  encontrado?: string
+  arreglo?: string
+}
+export type MotorVerificacion = {
+  alarmas: MotorAlarma[]
+  resumen: { total: number; alta?: number; media?: number; baja?: number; chars_prompt?: number; campos?: number; leyes?: number }
+  contexto?: { familia_topico?: string | null; familia_nivel?: string | null; materia?: string | null; topic_title?: string | null }
+  error?: string
+}
 
 export const finaltestAPI = {
   options: (): Promise<FtOptions> => api.get('/finaltest/options').then((r) => r.data),

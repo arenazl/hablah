@@ -403,6 +403,71 @@ async def mini_preview(age_group: str = "mini", level: str = "A0", topic_id: int
         return {"error": str(e)}
 
 
+@router.get("/motor/verificar")
+async def motor_verificar(age_group: str = "adult", level: str = "A1", topic_id: int = 0,
+                          student_id: int = 0, target_language: str = "en", template_id: int = 0):
+    """Repasito determinístico del flujo elegido — el botón Verificar del /motor.
+
+    Compone el prompt que saldría y le pasa las reglas de services.motor_lint. No corre
+    ninguna clase, no consulta ningún modelo: cada alarma es una regla sobre el texto y su
+    traza, así que el resultado es el mismo siempre y se discute mirando el dato."""
+    from services.motor_lint import verificar_esquema
+    from services.learner_state_writer import materia_de
+
+    def _catalogo():
+        """Las filas que el motor USÓ de verdad — para comparar claves, no para leer texto."""
+        db = motor_engine._connect()
+        try:
+            topico = db.q1(
+                "SELECT t.id, t.title, t.levels, t.segmento, t.category_id, "
+                "       c.family, c.discipline "
+                "FROM topics t LEFT JOIN categories c ON c.id = t.category_id WHERE t.id=%s",
+                (topic_id,)) if topic_id else {}
+            fila_nivel = db.q1("SELECT code, family, sort_order FROM levels WHERE code=%s", (level,)) or {}
+            cruce = db.q1("SELECT age_slug, level_code FROM age_level_matrix "
+                          "WHERE age_slug=%s AND level_code=%s AND active=1", (age_group, level))
+            reglas = db.q("SELECT slug, age_groups, min_level, max_level FROM conversation_rules "
+                          "WHERE active=1 ORDER BY sort_order") or []
+            orden = {r["code"]: (r["sort_order"] or 0)
+                     for r in (db.q("SELECT code, sort_order FROM levels") or [])}
+            materia = materia_de((topico or {}).get("family"), (topico or {}).get("discipline"),
+                                 target_language)
+            ul = hist = {}
+            if student_id:
+                ul = db.q1("SELECT user_id, materia, level_code FROM user_level "
+                           "WHERE user_id=%s AND materia=%s", (student_id, materia)) or {}
+                hist = db.q1("SELECT materia FROM learner_state WHERE student_id=%s "
+                             "ORDER BY (materia=%s) DESC LIMIT 1", (student_id, materia)) or {}
+            return {"topico": topico or {}, "nivel": fila_nivel, "cruce": cruce,
+                    "reglas": reglas, "orden_niveles": orden, "user_level": ul,
+                    "historia": hist, "materia": materia}
+        finally:
+            db.conn.close()
+
+    try:
+        bd = await motor_engine.resolve_v2_breakdown(age_group, level, topic_id or None,
+                                                     student_id or None, target_language,
+                                                     template_id or None)
+        if bd.get("error"):
+            return {"error": bd["error"], "alarmas": [{
+                "severidad": "alta", "tipo": "no_compone", "campo": "(motor)",
+                "detalle": bd["error"], "esperado": "", "encontrado": "",
+                "arreglo": "Falta un dato del catálogo: el motor de 9 pasos no usa fallback."}],
+                "resumen": {"total": 1, "alta": 1, "media": 0, "baja": 0}}
+        cat = await asyncio.to_thread(_catalogo)
+        flujo = {"age_group": age_group, "level": level, "topic_id": topic_id,
+                 "target_language": target_language, "student_id": student_id}
+        out = verificar_esquema(steps=bd.get("steps", []), prompt=bd.get("prompt", ""),
+                                flujo=flujo, catalogo=cat)
+        out["contexto"] = {"familia_topico": (cat["topico"] or {}).get("family"),
+                           "familia_nivel": (cat["nivel"] or {}).get("family"),
+                           "materia": cat["materia"],
+                           "topic_title": (bd.get("meta") or {}).get("topic_title")}
+        return out
+    except Exception as e:
+        return {"error": str(e), "alarmas": [], "resumen": {"total": 0}}
+
+
 @router.get("/motor/templates")
 async def motor_templates():
     """Peldaños de densidad disponibles (orchestration_templates) para el combo del /motor.

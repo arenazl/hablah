@@ -15,7 +15,7 @@ import ReactFlow, { Background, Controls } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { BACKOFFICE_CSS } from './backoffice.css'
 import { ThemeSwitcher } from '../components/ThemeSwitcher'
-import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote } from '../services/api'
+import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote, MotorVerificacion } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 
@@ -621,6 +621,11 @@ export default function MotorPlaygroundPanel() {
   // son acumulativos: L1 esqueleto … L5 guion y leyes … L6 = el activo (semillas incluidas).
   // Así lo que se mide es el motor, y el peldaño que gane se publica con active=1, no se porta.
   const [templateId, setTemplateId] = useState(0)
+  // Verificación de ESQUEMA: compara qué fila usó el motor contra cuál le correspondía al
+  // flujo elegido. No lee el contenido — analizar texto ("dice 'dog' en una clase de
+  // ferretería") es infinito; comparar claves es finito y se prueba mirando la base.
+  const [verif, setVerif] = useState<MotorVerificacion | null>(null)
+  const [verificando, setVerificando] = useState(false)
   const [templates, setTemplates] = useState<Array<{ id: number; name: string; notes: string; active: number; chars: number }>>([])
   useEffect(() => {
     let vivo = true
@@ -1809,7 +1814,51 @@ export default function MotorPlaygroundPanel() {
                     <option key={t.id} value={t.id} title={t.notes}>{t.name} — {t.chars} chars</option>
                   ))}
                 </select>
+                <button
+                  onClick={async () => {
+                    setVerificando(true)
+                    try {
+                      setVerif(await motorAPI.verificar({
+                        age_group: band, level, topic_id: topicId ?? 0, student_id: effStudent ?? 0,
+                        target_language: targetLang, template_id: templateId,
+                      }))
+                    } catch { setVerif(null) } finally { setVerificando(false) }
+                  }}
+                  disabled={verificando}
+                  title="Repasito determinístico del flujo elegido: compara qué fila usó el motor contra cuál le correspondía. No corre ninguna clase."
+                  style={{ background: C.soft, color: C.accent, border: `1px solid ${C.accent}`, borderRadius: 8, padding: '5px 12px', fontSize: 12.5, fontWeight: 700, cursor: verificando ? 'wait' : 'pointer' }}>
+                  {verificando ? 'Verificando…' : 'Verificar'}
+                </button>
               </div>
+              {verif && (
+                <div style={{ background: C.panel, border: `1px solid ${verif.resumen.alta ? 'var(--color-danger)' : C.border}`, borderRadius: 10, padding: '10px 12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: verif.alarmas.length ? 8 : 0, flexWrap: 'wrap' }}>
+                    <b style={{ fontSize: 12 }}>Verificación de esquema</b>
+                    <span style={{ fontSize: 11, color: verif.resumen.alta ? 'var(--color-danger)' : 'var(--color-success)', fontWeight: 700 }}>
+                      {verif.resumen.total === 0 ? 'sin alarmas' : `${verif.resumen.alta ?? 0} altas · ${verif.resumen.media ?? 0} medias · ${verif.resumen.baja ?? 0} bajas`}
+                    </span>
+                    {verif.contexto && (
+                      <span style={{ fontSize: 10, color: C.faint, marginLeft: 'auto' }}>
+                        familia tópico: {verif.contexto.familia_topico ?? '—'} · familia nivel: {verif.contexto.familia_nivel ?? '—'} · materia: {verif.contexto.materia ?? '—'}
+                      </span>
+                    )}
+                  </div>
+                  {verif.alarmas.map((a, i) => (
+                    <div key={i} style={{ borderLeft: `3px solid ${a.severidad === 'alta' ? 'var(--color-danger)' : a.severidad === 'media' ? 'var(--color-warning)' : C.faint}`, paddingLeft: 9, marginBottom: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 800, color: C.fg, fontFamily: 'ui-monospace, monospace' }}>
+                        {a.tipo} · <span style={{ color: C.dim }}>{a.campo}</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: C.fg, lineHeight: 1.45, margin: '2px 0' }}>{a.detalle}</div>
+                      {(a.esperado || a.encontrado) && (
+                        <div style={{ fontSize: 10.5, color: C.dim, fontFamily: 'ui-monospace, monospace' }}>
+                          esperaba <b style={{ color: 'var(--color-success)' }}>{a.esperado || '—'}</b> · encontró <b style={{ color: 'var(--color-danger)' }}>{a.encontrado || '—'}</b>
+                        </div>
+                      )}
+                      {a.arreglo && <div style={{ fontSize: 10.5, color: C.faint, marginTop: 2 }}>{a.arreglo}</div>}
+                    </div>
+                  ))}
+                </div>
+              )}
               {!isLive && live.status === 'ended' && live.transcript.length > 0 && (
                 <div style={{ fontSize: 11.5, color: C.dim }}>Clase terminada — ajustá lo que haga falta arriba y volvé a iniciar.</div>
               )}
