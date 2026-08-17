@@ -438,8 +438,19 @@ async def motor_verificar(age_group: str = "adult", level: str = "A1", topic_id:
             if student_id:
                 ul = db.q1("SELECT user_id, materia, level_code FROM user_level "
                            "WHERE user_id=%s AND materia=%s", (student_id, materia)) or {}
-                hist = db.q1("SELECT materia FROM learner_state WHERE student_id=%s "
-                             "ORDER BY (materia=%s) DESC LIMIT 1", (student_id, materia)) or {}
+                # MISMA búsqueda que el motor (_load_lite_state_sync), en el mismo orden:
+                # materia exacta -> fila sin materia (la bolsa vieja) -> nada. La consulta
+                # anterior traía CUALQUIER fila del alumno con un ORDER BY de preferencia, así
+                # que cuando no había fila para esta materia devolvía la de otra y el chequeo
+                # denunciaba "entró la historia de informática" en una clase de inglés — cuando
+                # el motor no había cargado ninguna. Un chequeo que consulta distinto que el
+                # motor no verifica el motor: verifica su propia consulta.
+                hist = db.q1("SELECT materia FROM learner_state "
+                             "WHERE student_id=%s AND materia=%s", (student_id, materia))
+                if hist is None:
+                    hist = db.q1("SELECT materia FROM learner_state "
+                                 "WHERE student_id=%s AND materia IS NULL", (student_id,))
+                hist = hist if hist is not None else {"_sin_historia": True}
             return {"topico": topico or {}, "nivel": fila_nivel, "cruce": cruce,
                     "reglas": reglas, "orden_niveles": orden, "user_level": ul,
                     "historia": hist, "materia": materia}

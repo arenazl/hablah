@@ -166,8 +166,19 @@ def verificar_esquema(*, steps: list, prompt: str, flujo: dict, catalogo: dict) 
             user_level["level_code"], nivel,
             "Es sólo un aviso: en el probador podés componer cualquier nivel."))
 
-    # 7. HISTORIA DE OTRA MATERIA.
-    if historia and materia and historia.get("materia") not in (None, materia):
+    # 7. HISTORIA — de otra materia, o directamente ausente.
+    # El que arma el catálogo busca IGUAL que el motor: materia exacta, después la fila sin
+    # materia, y si no hay ninguna marca `_sin_historia`. Antes traía cualquier fila del
+    # alumno, así que esta alarma se disparaba con la materia de otra clase que el motor
+    # nunca había cargado.
+    if historia and historia.get("_sin_historia"):
+        alarmas.append(_alarma(
+            "baja", "sin_historia", f"learner_state[{flujo.get('student_id')}, {materia}]",
+            "Esta clase corre SIN memoria del alumno: no hay fila para esta materia.",
+            f"una fila de {materia}", "ninguna",
+            "Normal si el alumno no dio clases de esta materia todavía. Si ya dio, el "
+            "destilador post-clase no escribió — y ahí la clase 2 no sabe nada de la 1."))
+    elif historia and materia and historia.get("materia") not in (None, materia):
         alarmas.append(_alarma(
             "alta", "historia_de_otra", "learner_state.materia",
             "La historia que entró al prompt es de otra materia.",
