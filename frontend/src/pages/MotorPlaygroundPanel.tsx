@@ -1382,8 +1382,12 @@ export default function MotorPlaygroundPanel() {
                 const n = contar({ discipline, band, level: l.level_code })
                 const off = !hayCruce || n === 0
                 const nota = !hayCruce ? '— sin cruce' : n === 0 ? '— sin tópicos' : `(${n})`
+                // El codigo interno (CON1, B2) NO va en la interfaz: el sentido de unificar la
+                // escalera era que el alumno vea lo mismo en plomeria que en ingles. Queda en el
+                // tooltip para cuando haga falta identificar la fila.
                 const nombre = l.escalon_nombre ? `${l.escalon} · ${l.escalon_nombre}` : (l.label || l.level_code)
-                return <option key={l.level_code} value={l.level_code} disabled={off} title={l.escalon_desc || ''}>{nombre} ({l.level_code}) {nota}</option>
+                const detalle = [l.escalon_desc, `código interno: ${l.level_code}`].filter(Boolean).join(' — ')
+                return <option key={l.level_code} value={l.level_code} disabled={off} title={detalle}>{nombre} {nota}</option>
               })}
             </select>
           </Ctx>
