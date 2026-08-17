@@ -94,11 +94,22 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
     lastLevelTsRef.current = performance.now()
     pendingLevelRef.current = Math.max(pendingLevelRef.current * 0.7, lvl)
   }, [])
+  // El nivel SUAVE vive en un ref y se recalcula 20 veces por segundo; a React se le publica
+  // sólo cuando se movió lo suficiente para verse. Antes cada tick era un setState, o sea 20
+  // renders por segundo del componente dueño del hook — y en el probador ese componente es el
+  // panel entero del motor. Con el hilo principal ocupado el audio se procesa tarde y se
+  // siente como un delay de la charla que no es de la red ni del modelo.
+  // Devolver el mismo valor en el updater hace que React descarte el render (bailout).
+  const nivelSuaveRef = useRef(0)
   useEffect(() => {
     const id = window.setInterval(() => {
       const since = performance.now() - lastLevelTsRef.current
-      if (since > 150) setAudioLevel((p) => (p > 0.01 ? p * 0.85 : 0))     // sin audio: decay a 0
-      else setAudioLevel((p) => Math.max(p * 0.6, pendingLevelRef.current)) // audio: max(decay, nuevo)
+      const prev = nivelSuaveRef.current
+      const next = since > 150
+        ? (prev > 0.01 ? prev * 0.85 : 0)              // sin audio: decay a 0
+        : Math.max(prev * 0.6, pendingLevelRef.current) // audio: max(decay, nuevo)
+      nivelSuaveRef.current = next
+      setAudioLevel((p) => (Math.abs(next - p) > 0.02 || (next === 0 && p !== 0) ? next : p))
     }, 50)
     return () => clearInterval(id)
   }, [])

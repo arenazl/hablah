@@ -635,6 +635,8 @@ export default function MotorPlaygroundPanel() {
   // subtitulos, sin combos ni paneles. El probador sirve para diagnosticar; esto sirve para
   // SENTIR si la charla esta viva, que es lo unico que el visor no puede decir.
   const [modoClase, setModoClase] = useState(false)
+  // La transcripcion se sigue sola: sin esto hay que scrollear a mano en cada turno.
+  const finTranscriptRef = useRef<HTMLDivElement>(null)
   // Verificación de ESQUEMA: compara qué fila usó el motor contra cuál le correspondía al
   // flujo elegido. No lee el contenido — analizar texto ("dice 'dog' en una clase de
   // ferretería") es infinito; comparar claves es finito y se prueba mirando la base.
@@ -648,6 +650,10 @@ export default function MotorPlaygroundPanel() {
       .catch(() => { if (vivo) setTemplates([]) })
     return () => { vivo = false }
   }, [])
+
+  useEffect(() => {
+    if (modoClase) finTranscriptRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+  }, [live.transcript.length, modoClase])
 
   const startLiveClass = useCallback(async () => {
     setModoClase(true)  // la clase se prueba en la pantalla del alumno, no en el panel
@@ -1894,7 +1900,12 @@ export default function MotorPlaygroundPanel() {
                         lo busca, y abajo quedaba fuera de la pantalla. */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 13.5, fontWeight: 700, color: 'rgba(232,236,234,.95)' }}>
-                        {res?.meta?.topic_title || 'sin tópico'}
+                        {topicId
+                          ? (allTopicsFlat.find((x) => x.topic_id === topicId)?.title || `tópico ${topicId}`)
+                          : 'sin tópico'}
+                      </span>
+                      <span style={{ fontSize: 10.5, color: 'rgba(232,236,234,.35)', fontFamily: 'ui-monospace, monospace' }}>
+                        id {topicId ?? '—'}
                       </span>
                       <span style={{ fontSize: 11.5, color: 'rgba(232,236,234,.5)' }}>
                         {band} · {level} · {targetLang}
@@ -1923,6 +1934,49 @@ export default function MotorPlaygroundPanel() {
                         nivel={level}
                         onRepetir={(frase) => live.say(`Por favor repetí lentamente y con buena pronunciación esta frase exacta, una sola vez, sin agregar nada más: "${frase}"`)}
                       />
+
+                      {/* LA TRANSCRIPCION, los DOS lados. El orbe solo muestra el ultimo
+                          turno del tutor, asi que la voz del alumno no aparecia en ninguna
+                          parte de esta pantalla. Es lectura pura: no manda nada, no toca la
+                          charla, solo muestra lo que ya vino. */}
+                      <div style={{ width: '100%', maxWidth: 780, marginTop: 18, display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto' }}>
+                        {live.transcript.length === 0 && (
+                          <div style={{ fontSize: 12.5, color: 'rgba(232,236,234,.35)', textAlign: 'center', fontStyle: 'italic' }}>
+                            La transcripción aparece acá a medida que hablan.
+                          </div>
+                        )}
+                        {live.transcript.map((l, i) => {
+                          const esAlumno = l.who === 'user'
+                          return (
+                            <div key={i} style={{
+                              alignSelf: esAlumno ? 'flex-end' : 'flex-start',
+                              maxWidth: '86%',
+                              borderLeft: esAlumno ? 'none' : '3px solid rgba(0,179,126,.55)',
+                              borderRight: esAlumno ? '3px solid rgba(120,200,255,.55)' : 'none',
+                              background: esAlumno ? 'rgba(120,200,255,.07)' : 'rgba(0,179,126,.07)',
+                              borderRadius: 8, padding: '8px 12px',
+                            }}>
+                              <div style={{
+                                fontSize: 9.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase',
+                                color: esAlumno ? 'rgba(120,200,255,.85)' : 'rgba(0,179,126,.9)', marginBottom: 4,
+                                textAlign: esAlumno ? 'right' : 'left',
+                              }}>
+                                {esAlumno ? 'Vos' : 'El profe'}
+                              </div>
+                              <div style={{
+                                fontSize: 14, lineHeight: 1.45,
+                                color: esAlumno ? 'rgba(232,236,234,.95)' : 'rgba(232,236,234,.8)',
+                                fontStyle: esAlumno ? 'normal' : 'italic',
+                                fontWeight: esAlumno ? 600 : 400,
+                                textAlign: esAlumno ? 'right' : 'left',
+                              }}>
+                                {l.text}
+                              </div>
+                            </div>
+                          )
+                        })}
+                        <div ref={finTranscriptRef} />
+                      </div>
                     </div>
                   </div>
                 </div>,
