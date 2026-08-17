@@ -109,7 +109,7 @@ def load_rhythm(age_slug: str, level_code: str, wave_override: str | None = None
         db.conn.close()
 
 
-def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict) -> str:
+def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict, picked_out=None) -> str:
     """Gating por dato (age_groups + min/max_level) + reenumeración. Reemplaza los target_ids
     hardcodeados y los 2 bloques: la selección es puro dato. El ORDEN de los niveles también
     es dato (levels.sort_order) — ver _load_orchestration."""
@@ -125,6 +125,16 @@ def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict) -> s
         if mx and mx in level_order and level_order[mx] < li:
             continue
         picked.append(r["rule_text"])
+        # Cada ley es una FILA con su slug y su propio gateo. El visor las mostraba pegadas en
+        # un solo bloque de texto, sin decir cuál era cuál ni de dónde salía: para revisar por
+        # qué una regla entró o se cayó había que ir a la base. Ahora viajan como items.
+        if picked_out is not None:
+            picked_out.append({
+                "n": len(picked), "slug": r.get("slug"), "texto": r["rule_text"],
+                "fuente": f"conversation_rules.rule_text (slug={r.get('slug')})",
+                "gateo": {"age_groups": ags or "todas",
+                          "min_level": r.get("min_level"), "max_level": r.get("max_level")},
+            })
     return "\n".join(f"{i}. {t}" for i, t in enumerate(picked, 1))
 
 
@@ -135,7 +145,10 @@ _TABLA = {"EDAD": "student_types", "NIVEL": "levels", "TOPICO": "topics",
           "ALUMNO": "users", "STATIC": "runtime", "EDAD_X_NIVEL": "age_level_matrix"}
 _GROUP = {"STATIC": "Contexto (runtime)", "ALUMNO": "Alumno", "EDAD": "El profe (EDAD)",
           "NIVEL": "El nivel (NIVEL)", "TOPICO": "El tópico (TÓPICO)",
-          "EDAD_X_NIVEL": "El cruce (EDAD × NIVEL)"}
+          "EDAD_X_NIVEL": "El cruce (EDAD × NIVEL)", "HISTORIA": "La historia (ALUMNO)",
+          "SALIDA": "Reglas de salida (runtime)"}
+_FUENTE_OPCIONAL = {("HISTORIA", "memoria_del_alumno"): "learner_state (por materia)",
+                    ("SALIDA", "reglas_de_formato"): "app_config"}
 
 
 def compose_from_template(
@@ -160,6 +173,13 @@ def compose_from_template(
     ctx = f"segmento={age_slug}, nivel={level_code}"
 
     tpl, row, rules, level_order = _load_orchestration(age_slug, level_code, template_id)
+    # Rótulo que cada placeholder tiene EN EL PROMPT ("Level_Target: {NIVEL:curriculum_grammar}").
+    # El visor coloreaba por un mapa rótulo->dueño escrito a mano en el front, que quedaba viejo
+    # con cada cambio de template y pintaba de gris —"texto fijo"— todo lo que no estuviera en la
+    # lista. Mandando el rótulo, el front deriva el dueño del dato real y no adivina nada.
+    _ROTULO = {(p, f): lab for lab, p, f in
+               re.findall(r"^[ \t]*([A-Za-z_]+):[ \t]*\{([A-Z_]+):([a-z_]+)\}[ \t]*$",
+                          tpl.get("body") or "", re.M)}
     _req(tpl and tpl.get("body"),
          f"orchestration_templates[id={template_id}]" if template_id
          else "orchestration_templates.active (no hay template activo)", ctx)
@@ -230,11 +250,31 @@ def compose_from_template(
         "anclas_narrativas": _topic_anchors(),
     }
 
+    # Bloques COMPUTADOS que antes se pegaban al final por código, fuera del template. Eso
+    # los hacía invisibles para el visor (no eran pasos), no reordenables y no removibles por
+    # plantilla: el motor mostraba una vista PARCIAL de lo que realmente mandaba. Ahora son
+    # placeholders como cualquier otro. Son OPCIONALES: si no hay dato, el resolver devuelve
+    # "" y la línea entera del template se cae — que es "vacío a propósito", distinto de
+    # "falta el dato" (eso sigue reventando).
+    _OPCIONAL = {
+        ("HISTORIA", "memoria_del_alumno"): lambda: _get_learner_state(learner_state),
+        ("SALIDA", "reglas_de_formato"): lambda: _get_output_rules(app_config),
+    }
+
     def resolve(prefix: str, field: str) -> str:
+        if (prefix, field) in _OPCIONAL:
+            val = (_OPCIONAL[(prefix, field)]() or "").strip()
+            if _trace is not None and val:
+                _trace.append({"group": _GROUP.get(prefix, prefix), "prefix": prefix,
+                               "label": field, "source": _FUENTE_OPCIONAL[(prefix, field)],
+                               "campo_en_prompt": _ROTULO.get((prefix, field)), "body": val})
+            return val
+        items = None
         if prefix == "EDAD_X_NIVEL":
             if field == "reglas_universales_filtradas":
-                val = _filter_rules(rules, age_slug, level_code, level_order)
-                source = "conversation_rules (gateadas)"
+                items = []
+                val = _filter_rules(rules, age_slug, level_code, level_order, items)
+                source = "conversation_rules.rule_text (una fila por ley, gateadas)"
             else:
                 val = _req(row.get(field), f"age_level_matrix.{field}", ctx)
                 source = f"age_level_matrix.{field}"
@@ -249,25 +289,46 @@ def compose_from_template(
             val = str(val)
             source = f"{_TABLA.get(prefix, prefix.lower())}.{field}"
         if _trace is not None:
-            _trace.append({"group": _GROUP.get(prefix, prefix), "prefix": prefix,
-                           "label": field, "source": source, "body": val})
+            entrada = {"group": _GROUP.get(prefix, prefix), "prefix": prefix,
+                       "label": field, "source": source,
+                       "campo_en_prompt": _ROTULO.get((prefix, field)), "body": val}
+            if items:
+                entrada["items"] = items
+            _trace.append(entrada)
         return val
 
     body = _PH.sub(lambda m: resolve(m.group(1), m.group(2)), tpl["body"])
+    # Una línea cuyo único contenido era un placeholder OPCIONAL vacío se cae entera, para no
+    # dejar "Student_Memory:" colgado sin nada atrás. Se hace acá y no en el sub porque el
+    # rótulo vive en el template, no en el placeholder.
+    body = re.sub(r"^[ \t]*[A-Za-z_]+:[ \t]*$\n?", "", body, flags=re.M)
 
     # Interpolación de placeholders sueltos dentro de los textos resueltos.
     # {idioma}/{idioma_base}: el idioma NO se escribe dentro de la orquestación (era "in ENGLISH"
     # horneado en cada arquetipo, lo que ataba el catálogo a un solo idioma). El arquetipo declara
     # la ACCIÓN, el alumno pone el idioma — misma jugada que las anclas narrativas, donde la EDAD
     # declara el modo y el TÓPICO pone el escenario.
-    body = (body.replace("{name}", user_name).replace("{topic}", topic_title)
-                .replace("{first_vocab}", first_word).replace("{word}", first_word)
-                .replace("{tutor}", tutor)
-                .replace("{idioma}", idioma).replace("{idioma_base}", idioma_base))
+    def _interpolar(t: str) -> str:
+        return (t.replace("{name}", user_name).replace("{topic}", topic_title)
+                 .replace("{first_vocab}", first_word).replace("{word}", first_word)
+                 .replace("{tutor}", tutor)
+                 .replace("{idioma}", idioma).replace("{idioma_base}", idioma_base))
 
-    # Bloques computados opcionales apilados al final (memoria + reglas de salida runtime)
-    tail = [_get_learner_state(learner_state), _get_output_rules(app_config)]
-    return "\n\n".join([body] + [b for b in tail if b])
+    body = _interpolar(body)
+
+    # El visor guardaba el valor CRUDO, así que mostraba "{idioma}" y "{word}" sin resolver
+    # mientras el prompt real los llevaba reemplazados: una vista parcial que no servía para
+    # revisar nada. Se interpola igual que el body, incluidos los items de cada ley.
+    if _trace is not None:
+        for e in _trace:
+            e["body"] = _interpolar(e["body"])
+            for it in e.get("items", []):
+                it["texto"] = _interpolar(it["texto"])
+
+    # Ya no hay bloques pegados al final: la memoria del alumno y las reglas de salida entran
+    # por placeholder ({HISTORIA:memoria_del_alumno} / {SALIDA:reglas_de_formato}), así que
+    # el visor ve TODO lo que se manda y la plantilla decide dónde va y si va.
+    return body.strip()
 
 
 def compose_breakdown(**kwargs) -> dict:
@@ -286,5 +347,9 @@ def compose_breakdown(**kwargs) -> dict:
         if g not in steps:
             steps[g] = []
             order.append(g)
-        steps[g].append({"label": e["label"], "source": e["source"], "dueno": e["prefix"], "body": e["body"]})
+        entrada = {"label": e["label"], "source": e["source"], "dueno": e["prefix"],
+                   "campo_en_prompt": e.get("campo_en_prompt"), "body": e["body"]}
+        if e.get("items"):
+            entrada["items"] = e["items"]
+        steps[g].append(entrada)
     return {"steps": [{"step": g, "entries": steps[g]} for g in order], "prompt": prompt}

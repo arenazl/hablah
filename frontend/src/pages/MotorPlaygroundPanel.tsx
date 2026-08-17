@@ -138,16 +138,20 @@ const OWNERS: Record<string, { label: string; color: string }> = {
   template: { label: 'template (literal)', color: '#8e938f' },
   codigo: { label: 'resolver (código)', color: '#f87171' },
 }
-const FIELD_OWNER: Record<string, string> = {
-  'system_info.Current_Date': 'runtime', 'system_info.Device_Type': 'runtime',
-  'student_profile.Name': 'runtime', 'student_profile.Age_Group': 'runtime', 'student_profile.Level': 'runtime',
-  'tutor_profile.Name': 'edad', 'tutor_profile.Identity': 'edad', 'tutor_profile.Gamification_Focus': 'edad',
-  'topic_data.Topic': 'topico', 'topic_data.Words_Available': 'topico',
-  'learning_goals.Level_Target': 'nivel', 'learning_goals.Expected_Production': 'cruce', 'learning_goals.Call_to_Action_Format': 'cruce',
-  'language_and_tone.Language_Rule': 'nivel', 'language_and_tone.Language_Note': 'template', 'language_and_tone.Form_Rules': 'cruce',
-  'structure.Style': 'edad', 'structure.Session_Rails': 'cruce',
-  'runtime_commands.Start_Command': 'cruce', 'runtime_commands.Narrative_Mode': 'edad',
-  'runtime_commands.Narrative_Anchors': 'codigo', 'runtime_commands.Continuation_Action': 'cruce', 'runtime_commands.Closing_Action': 'cruce',
+/* El dueño de cada campo NO se declara acá: se deriva del `source` que manda el resolver
+ * (tabla.columna) usando el rótulo con el que ese campo sale en el prompt. Antes había un
+ * mapa `seccion.Campo -> dueño` escrito a mano: quedaba viejo con cada cambio de template y
+ * pintaba de gris —"texto fijo de la plantilla"— todo lo que no estuviera en la lista, que
+ * es justamente lo que hacía imposible revisar de dónde venía un dato. */
+function ownersFromSteps(steps: PromptStep[]): Record<string, string> {
+  const map: Record<string, string> = {}
+  for (const st of steps || []) {
+    for (const e of st.entries || []) {
+      const rotulo = (e as { campo_en_prompt?: string }).campo_en_prompt
+      if (rotulo) map[rotulo] = ownerOfSource(e.source || '')
+    }
+  }
+  return map
 }
 
 function ownerOfSource(src: string): string {
@@ -190,7 +194,7 @@ function parsePrompt(prompt: string): PSection {
 
 /* Vista FORMATEADA (curada para leer): cards por sección, campos con badge del dueño,
  * leyes como lista numerada. El contenido es idéntico al crudo — cambia la presentación. */
-function PromptPretty({ prompt }: { prompt: string }) {
+function PromptPretty({ prompt, owners }: { prompt: string; owners: Record<string, string> }) {
   const tree = useMemo(() => parsePrompt(prompt), [prompt])
   const renderSection = (node: PSection, depth: number): React.ReactNode => {
     if (node.tag === 'root') return node.children.map((ch, i) => ch.kind === 'section' ? <div key={i}>{renderSection(ch, 0)}</div> : null)
@@ -210,7 +214,7 @@ function PromptPretty({ prompt }: { prompt: string }) {
         {node.children.map((ch, i) => {
           if (ch.kind === 'section') return <div key={i}>{renderSection(ch, depth + 1)}</div>
           if (ch.kind === 'field') {
-            const owner = FIELD_OWNER[`${ch.section}.${ch.key}`] || 'template'
+            const owner = owners[ch.key] || 'template'
             const ow = OWNERS[owner]
             return (
               <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 7, alignItems: 'flex-start' }}>
@@ -230,7 +234,7 @@ function PromptPretty({ prompt }: { prompt: string }) {
 /* Vista CRUDA: el texto LITERAL que recibe Gemini, byte a byte — con la MISMA paleta
  * de colores por dueño que usan la leyenda, el Formateado y el mapa de nodos (el
  * resaltado no altera el contenido; es para identificar la sección de un vistazo). */
-function PromptRaw({ prompt }: { prompt: string }) {
+function PromptRaw({ prompt, owners }: { prompt: string; owners: Record<string, string> }) {
   let section = ''
   let lastOwner = ''
   return (
@@ -245,7 +249,7 @@ function PromptRaw({ prompt }: { prompt: string }) {
         const field = line.match(/^(\s*)([A-Za-z_]+):/)
         let owner = ''
         if (section === 'conversation_laws') owner = 'reglas'
-        else if (field) owner = FIELD_OWNER[`${section}.${field[2]}`] || ''
+        else if (field) owner = owners[field[2]] || ''
         if (!owner && !field) owner = lastOwner
         if (owner) lastOwner = owner
         const col = owner ? OWNERS[owner]?.color : undefined
@@ -414,6 +418,8 @@ const btnT = (on: boolean): React.CSSProperties => ({
 })
 
 function PromptProSection({ prompt, steps }: { prompt: string; steps: PromptStep[] }) {
+  // Dueño por rótulo, derivado de lo que manda el resolver — no hay lista a mano.
+  const owners = useMemo(() => ownersFromSteps(steps), [steps])
   const [view, setView] = useState<'pretty' | 'raw' | 'flow'>('pretty')
   const [full, setFull] = useState(false)
   const content = (
@@ -447,7 +453,7 @@ function PromptProSection({ prompt, steps }: { prompt: string; steps: PromptStep
         ? (<div style={full ? { flex: 1, minHeight: 0 } : {}}><PromptFlow steps={steps} height={full ? '100%' : 460} /></div>)
         : (
           <div style={full ? { flex: 1, minHeight: 0, overflowY: 'auto' } : { maxHeight: 460, overflowY: 'auto' }}>
-            {view === 'pretty' ? <PromptPretty prompt={prompt} /> : <PromptRaw prompt={prompt} />}
+            {view === 'pretty' ? <PromptPretty prompt={prompt} owners={owners} /> : <PromptRaw prompt={prompt} owners={owners} />}
           </div>
         )}
     </div>
@@ -1176,6 +1182,28 @@ export default function MotorPlaygroundPanel() {
     })
   }
 
+  // Cada ley de conversación es una FILA de `conversation_rules`, con su slug y su propio
+  // gateo (edades / min / max nivel). El visor las pegaba en un solo bloque de texto: no se
+  // podía saber cuál era cuál, ni por qué una entró y otra se cayó, sin ir a la base.
+  const renderRuleItems = (items: Array<{ n: number; slug?: string; texto: string; gateo?: { age_groups?: unknown; min_level?: string | null; max_level?: string | null } }>) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+      {items.map((it) => {
+        const g = it.gateo || {}
+        const ages = Array.isArray(g.age_groups) ? (g.age_groups as string[]).join('/') : String(g.age_groups ?? 'todas')
+        const rango = g.min_level || g.max_level ? `${g.min_level ?? '·'}→${g.max_level ?? '·'}` : 'todos los niveles'
+        return (
+          <div key={it.n} style={{ borderLeft: `3px solid ${OWNERS.reglas.color}`, paddingLeft: 8 }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap', marginBottom: 2 }}>
+              <span style={{ fontSize: 10, fontWeight: 800, color: OWNERS.reglas.color, fontFamily: 'ui-monospace, monospace' }}>{it.n}. {it.slug}</span>
+              <span style={{ fontSize: 9.5, color: C.faint }}>conversation_rules.rule_text · edades: {ages} · {rango}</span>
+            </div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.5 }}>{renderBodyWithPlaceholders(it.texto)}</div>
+          </div>
+        )
+      })}
+    </div>
+  )
+
   const renderUniversalRules = (bodyText: string) => {
     if (!bodyText) return null
     const cleanText = bodyText.replace(/<\/?(conversation_rules)>/g, '').trim()
@@ -1493,9 +1521,11 @@ export default function MotorPlaygroundPanel() {
                                   </div>
                                 </div>
                                 <div style={{ fontSize: 12.5, color: C.fg, lineHeight: 1.55, whiteSpace: 'pre-wrap', paddingRight: 16 }}>
-                                  {ent.source === 'app_config.universal_conversation_rules'
-                                    ? renderUniversalRules(ent.body)
-                                    : renderBodyWithPlaceholders(ent.body)}
+                                  {ent.items
+                                    ? renderRuleItems(ent.items)
+                                    : ent.source === 'app_config.universal_conversation_rules'
+                                      ? renderUniversalRules(ent.body)
+                                      : renderBodyWithPlaceholders(ent.body)}
                                 </div>
                                 {ent.source && ent.source.split('.').length === 2 && ent.source !== 'app_config.universal_conversation_rules' && (
                                   <button 
