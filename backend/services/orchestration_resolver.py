@@ -63,11 +63,14 @@ def _load_orchestration(age_slug: str, level_code: str, template_id: int | None 
                     (age_slug, level_code))
         rules = db.q("SELECT slug, rule_text, age_groups, families, min_level, max_level, sort_order "
                      "FROM conversation_rules WHERE active=1 ORDER BY sort_order")
-        # La ESCALA de niveles es dato (levels.sort_order), no una lista en el código: así un track
-        # nuevo (castellano ES1-ES3, fonética FONR) gatea las reglas por su lugar en la escala sin
-        # tocar el resolver. Antes era un literal A0..C2 y todo lo demás caía en 0 (= gateaba como A0).
-        order = {r["code"]: (r["sort_order"] or 0)
-                 for r in (db.q("SELECT code, sort_order FROM levels") or [])}
+        # El filtro por nivel usa el ESCALÓN (la escalera única de 5 que comparten todas las
+        # disciplinas), no `sort_order`. `sort_order` es el número interno de cada escalera y se
+        # pisaba entre familias —CON2 y A1 valían los dos 1— así que filtrar por nivel era un
+        # accidente aritmético: de ahí salía que la regla de pronunciación del inglés entrara en
+        # una clase de informática. Con el escalón, "del 2 para arriba" significa lo mismo en las
+        # dos familias. Fallback a sort_order para las filas que todavía no tengan escalón.
+        order = {r["code"]: (r["escalon"] if r["escalon"] is not None else (r["sort_order"] or 0))
+                 for r in (db.q("SELECT code, escalon, sort_order FROM levels") or [])}
         return tpl, row, rules, order
     finally:
         db.conn.close()
