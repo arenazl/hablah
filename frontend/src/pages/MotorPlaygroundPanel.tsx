@@ -18,6 +18,7 @@ import { ThemeSwitcher } from '../components/ThemeSwitcher'
 import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote, MotorVerificacion } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
+import { createPortal } from 'react-dom'
 import { ClaseOrbe } from '../components/ClaseOrbe'
 import { PalancasDeClase, PALANCAS_MOTOR_CSS, type MarcaPalanca } from '../components/PalancasDeClase'
 import { WEBAPP_CSS } from './webapp.css'
@@ -653,7 +654,8 @@ export default function MotorPlaygroundPanel() {
   }, [])
 
   const startLiveClass = useCallback(async () => {
-    setMarcas([])  // las palancas son de ESTA clase; arrastrarlas mezclaria dos pruebas
+    setMarcas([])
+    setModoClase(true)  // la clase se prueba en la pantalla del alumno, no en el panel  // las palancas son de ESTA clase; arrastrarlas mezclaria dos pruebas
     const params: Record<string, string | number> = {
       age_group: band, level_code: level, topic_id: topicId ?? 0, student_id: effStudent ?? 0,
       engine: 'gemini_live', model: liveModel, voice: 'Aoede',
@@ -1816,25 +1818,6 @@ export default function MotorPlaygroundPanel() {
                 />
                 <span style={{ fontSize: 10, color: C.faint }}>0=icebreaker · 1=normal · 2=profunda · 3=filosa · se cicla</span>
               </div>
-              {/* ESTILO y AUDIO — estaban en el header de la clase REAL, icon-only y detras de
-                  feature flags. Nunca fueron del alumno: sirven para ver que preset funciona
-                  mejor, o sea laboratorio. Es el MISMO componente que puede volver a la app:
-                  aca solo se le suma la clase que le devuelve los nombres y el contraste. */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', opacity: isLive ? 1 : 0.5 }}>
-                <style>{PALANCAS_MOTOR_CSS}</style>
-                <div
-                  className="palancas-motor"
-                  style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', color: C.fg,
-                    ['--motor-border' as string]: C.border, ['--motor-soft' as string]: C.soft }}>
-                  <PalancasDeClase
-                    onSystemUpdate={live.sendSystemUpdate}
-                    turno={live.transcript.filter((l) => l.who === 'ai').length}
-                    onMarca={(mk) => setMarcas((prev) => [...prev, mk])}
-                    onAviso={(texto, ok) => { if (ok) toast.success(texto); else toast.error(texto) }}
-                  />
-                </div>
-                {!isLive && <span style={{ fontSize: 10, color: C.faint }}>el estilo entra en el proximo turno del coach: primero inicia la clase</span>}
-              </div>
               {marcas.length > 0 && (
                 <div style={{ fontSize: 10.5, color: C.dim, fontFamily: 'ui-monospace, monospace', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   <span style={{ fontWeight: 800, color: C.faint }}>PALANCAS DE ESTA CLASE</span>
@@ -1907,39 +1890,71 @@ export default function MotorPlaygroundPanel() {
                   No es una maqueta: si acá se ve mal, en la app se ve mal. El panel sirve
                   para diagnosticar; esto sirve para SENTIR si la charla está viva, que es lo
                   único que ningún visor puede decir. */}
-              {modoClase && (
-                <div
-                  onClick={(e) => { if (e.target === e.currentTarget) setModoClase(false) }}
-                  style={{
-                    position: 'fixed', inset: 0, zIndex: 9999, background: '#0b0f0d',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
+              {modoClase && createPortal(
+                /* El fondo oscuro de la clase NO lo da .webapp-root: lo da .convo-view.bg-3
+                   (background #000 + el gradiente en su ::before). Pintarlo a mano con un
+                   color inline fue el bug: se copiaba el color en vez de usar la clase, y
+                   entonces el orbe y los rotulos —gris claro, pensados para negro— caian
+                   sobre blanco y no se leia nada. Se envuelve con la MISMA cadena que la
+                   clase real y el fondo viene del CSS, no de un literal. */
+                <div className="webapp-root" style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
                   <style>{WEBAPP_CSS}</style>
                   <style>{CONVO_BG_CSS}</style>
-                  <div className="webapp-root" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                    <ClaseOrbe
-                      status={live.status}
-                      audioLevel={live.audioLevel}
-                      transcript={live.transcript}
-                      statusLabel={!isLive ? 'Clase terminada' : live.status === 'connecting' ? 'Conectando…' : live.status === 'speaking' ? 'El profe habla' : 'Escuchando tu voz'}
-                      nivel={level}
-                      onRepetir={(frase) => live.say(`Por favor repetí lentamente y con buena pronunciación esta frase exacta, una sola vez, sin agregar nada más: "${frase}"`)}
-                    />
-                    <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-                      {isLive && (
-                        <button onClick={endLiveClass} style={{ background: 'var(--color-danger)', color: '#fff', border: 0, borderRadius: 999, padding: '10px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}>
-                          Terminar clase
+                  <div className="convo-view bg-3" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    {/* Terminar arriba a la derecha, como en la clase del alumno: es donde se
+                        lo busca, y abajo quedaba fuera de la pantalla. */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 13.5, fontWeight: 700, color: 'rgba(232,236,234,.95)' }}>
+                        {res?.meta?.topic_title || 'sin tópico'}
+                      </span>
+                      <span style={{ fontSize: 11.5, color: 'rgba(232,236,234,.5)' }}>
+                        {band} · {level} · {targetLang}
+                      </span>
+                      <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+                        {isLive && (
+                          <button onClick={endLiveClass}
+                            title="Corta la clase y guarda lo aprendido en la memoria del alumno"
+                            style={{ background: '#E5484D', color: '#fff', border: 0, borderRadius: 999, padding: '8px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                            Terminar clase
+                          </button>
+                        )}
+                        <button onClick={() => setModoClase(false)}
+                          style={{ background: 'rgba(255,255,255,.08)', color: 'rgba(232,236,234,.9)', border: '1px solid rgba(255,255,255,.22)', borderRadius: 999, padding: '8px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                          Volver al panel
                         </button>
-                      )}
-                      <button onClick={() => setModoClase(false)} style={{ background: 'transparent', color: 'rgba(232,236,234,.7)', border: '1px solid rgba(255,255,255,.2)', borderRadius: 999, padding: '10px 22px', fontSize: 13.5, cursor: 'pointer' }}>
-                        Volver al panel
-                      </button>
+                      </div>
                     </div>
-                    <div style={{ fontSize: 11, color: 'rgba(232,236,234,.35)', marginTop: 4 }}>
-                      {band} · {level} · {res?.meta?.topic_title || 'sin tópico'}
+
+                    {/* Las palancas, el MISMO componente que la app puede volver a usar. Acá
+                        con los nombres visibles, que es lo que hace falta para comparar. */}
+                    <div className="palancas-motor" style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', padding: '0 20px 10px', color: 'rgba(232,236,234,.9)', ['--motor-border' as string]: 'rgba(255,255,255,.18)', ['--motor-soft' as string]: 'rgba(255,255,255,.06)' }}>
+                      <style>{PALANCAS_MOTOR_CSS}</style>
+                      <PalancasDeClase
+                        onSystemUpdate={live.sendSystemUpdate}
+                        turno={live.transcript.filter((l) => l.who === 'ai').length}
+                        onMarca={(mk) => setMarcas((prev) => [...prev, mk])}
+                        onAviso={(texto, ok) => { if (ok) toast.success(texto); else toast.error(texto) }}
+                      />
+                    </div>
+
+                    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, overflowY: 'auto', padding: '0 16px 24px' }}>
+                      <ClaseOrbe
+                        status={live.status}
+                        audioLevel={live.audioLevel}
+                        transcript={live.transcript}
+                        statusLabel={!isLive ? 'Clase terminada' : live.status === 'connecting' ? 'Conectando…' : live.status === 'speaking' ? 'El profe habla' : 'Escuchando tu voz'}
+                        nivel={level}
+                        onRepetir={(frase) => live.say(`Por favor repetí lentamente y con buena pronunciación esta frase exacta, una sola vez, sin agregar nada más: "${frase}"`)}
+                      />
+                      {marcas.length > 0 && (
+                        <div style={{ fontSize: 10.5, color: 'rgba(232,236,234,.45)', fontFamily: 'ui-monospace, monospace', display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+                          {marcas.map((mk, i) => <span key={i}>turno {mk.turno} = {mk.que} {mk.valor}</span>)}
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
+                </div>,
+                document.body,
               )}
               {verif && (
                 <div style={{ background: C.panel, border: `1px solid ${verif.resumen.alta ? 'var(--color-danger)' : C.border}`, borderRadius: 10, padding: '10px 12px' }}>
