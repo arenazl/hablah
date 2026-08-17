@@ -5,38 +5,44 @@ adivinado: o está medido o está leído del código.
 
 ---
 
-## 1. Delay de ~2 s entre pregunta y respuesta (reportado 16/08)
+## 1. Delay de ~2 s entre pregunta y respuesta — CERRADO sin arreglo (17/08)
 
-**Síntoma:** el coach tarda ~2 segundos en contestar. No estaba ayer.
+**Reportado el 16/08.** Al día siguiente el dueño reportó que la charla es "casi instantánea"
+y que llegó a interrumpir al coach y le captó todo.
 
-**Qué NO es:** no es el `nextStartTimeRef` de la segunda charla (ese ya se arregló y daba
-un delay igual a lo que duró la charla anterior, no 2 s fijos).
+**No se atribuye a ningún cambio.** Se descartaron las dos hipótesis que teníamos:
 
-**Dónde mirar, por orden de sospecha:**
-- `app_config` de VAD: `vad_silence_duration_ms_*` está en **1500 ms** para kid. Si el cruce
-  que probó cae en esa config, 1,5 s de silencio + latencia de red da exactamente ~2 s. Es la
-  recalibración que quedó pendiente del handoff del 16/08 (bajar a 900).
-- `playbackCushionSeconds` en `loadAudioSettings()` — colchón fijo antes de agendar audio.
-- El `thinking` del modelo: según `project_voice_finetuning_findings`, thinking=0 es la
-  palanca de latencia (3,0 → 1,7 s). Verificar que siga en 0 para el modelo elegido.
+- No fue el cursor de audio (`nextStartTimeRef`): ese bug sólo se manifiesta al encadenar
+  charlas sin refrescar, y el dueño nunca hizo eso.
+- No fue el tamaño del prompt: se midió y **creció** (informática CON2 pasó de 5.389 a 5.613
+  chars con la capa de apertura).
 
-**Cómo medirlo sin adivinar:** ya existe el log `lag_ms` por turno de transcripción y el
-`audio.cadena`. Con una charla alcanza para separar "el modelo tarda" de "el VAD espera".
+Lectura del dueño: "99% era mi conexión". Se cierra sin arreglo. Si vuelve, medir con el
+`lag_ms` por turno y el `audio.cadena`, que ya están.
 
 ---
 
-## 2. El gate del micrófono está muerto
+## 2. El gate del micrófono está muerto — y hoy conviene que lo esté
 
 `useLiveVoice.ts` lee `playingRef.current` para no capturar mientras el coach habla, pero
-**`playingRef` nunca se pone en `true`** en todo el archivo: se declara, se pone en `false`
-en `stop()` y se lee dos veces. El fix del commit `5843028` quedó inerte.
+**`playingRef` nunca se pone en `true`** en todo el archivo: se declara, se pone en `false` en
+`stop()` y se lee dos veces. El fix del commit `5843028` quedó inerte.
 
-Hoy lo tapa la cancelación de eco del browser; se cuela la cola (la última palabra del coach
-aparece en la transcripción).
+**Lo importante, verificado el 17/08:** el dueño interrumpió al coach y le captó todo. O sea
+que el gate muerto le está dando justo lo que quiere — el micrófono abierto todo el turno,
+barge-in completo. El diseño original del código era el opuesto (tapar el turno entero y
+resignar la interrupción, ver el comentario en el archivo).
 
-**Por qué no se arregló:** la corrección obvia —gatear por el backlog de audio pendiente—
-cierra el mic durante **todo** el turno del coach, porque Gemini manda más rápido que tiempo
-real. Eso **mata el barge-in**. Requiere una decisión de producto antes que de código.
+**Costo actual:** de vez en cuando se cuela la última palabra del coach en la transcripción,
+porque el parlante todavía suena cuando el mic ya está tomando.
+
+**Decisión del dueño:** taparle sólo la cola, no el turno entero. **No tocarlo mientras la voz
+ande bien** — la infra está funcionando y no se arriesga.
+
+Si se implementa: gatear por el backlog de playback (`nextStartTimeRef - currentTime`) sólo en
+el tramo final más un ratito después, para conservar el barge-in. De paso el diagnóstico deja
+de mentir: hoy `rms_max_coach_hablando` lee el mismo `playingRef` muerto, así que reporta todo
+como "coach callado".
 
 ---
 
