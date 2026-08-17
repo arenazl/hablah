@@ -42,15 +42,29 @@ from core.database import AsyncSessionLocal  # noqa: E402
 HARVEST = ("When the student talks A LOT: pick ONE thing they said, celebrate it by name, "
            "turn THAT into what they produce next, and advance. Never chase every thread.")
 
+NO_REPEAT = ("Never repeat your own phrasing: vary every greeting, reaction, praise and prompt — "
+             "if you already said it this session, say it differently. This is about YOUR "
+             "wording, not about what is being taught: repeating a target word or a key concept "
+             "as many times as the student needs is correct and expected.")
+
 
 async def main() -> None:
     async with AsyncSessionLocal() as s:
-        # 1. no_repeat_phrasing: del escalon 2 para arriba (A2 en idiomas, CON2 en conocimiento).
+        # 1. no_repeat_phrasing: se arregla el TEXTO, no el filtro.
+        #    Primero se la filtro del escalon 2 para arriba, y estaba mal: eso trataba el
+        #    sintoma. La contradiccion con echo_protocol es mas chica de lo que parece —
+        #      "no repitas TU FRASEO"  vs  "repeti LA PALABRA CLAVE lentamente"
+        #    son cosas distintas. Repetir "muy bien" cuarenta veces es malo SIEMPRE, tambien
+        #    con un nene; repetir `grandpa` es el metodo. El problema era que decia "nunca
+        #    repitas" a secas y el modelo lo leia como que incluia la palabra que enseña.
+        #    Con el texto aclarado la regla vuelve a ser universal, que es lo que en realidad
+        #    es, y entra en plomeria Inicial — donde un adulto tampoco necesita oir el mismo
+        #    elogio cuarenta veces.
         r = await s.execute(text(
-            "UPDATE conversation_rules SET min_level='A2' "
-            "WHERE slug='no_repeat_phrasing' AND min_level IS NULL"))
+            "UPDATE conversation_rules SET rule_text=:t, min_level=NULL "
+            "WHERE slug='no_repeat_phrasing'"), {"t": NO_REPEAT})
         if r.rowcount:
-            print("no_repeat_phrasing -> desde el escalon 2 (en Inicial la repeticion es el metodo)")
+            print("no_repeat_phrasing -> universal, con el texto que separa TU fraseo de LA palabra enseñada")
 
         # 2. harvest_dont_chase: sin filtro de nivel + texto agnostico.
         r = await s.execute(text(

@@ -30,7 +30,9 @@
       "EDAD:anclas_narrativas",
       "TOPICO:anclas_narrativas",
       "EDAD_X_NIVEL:accion_de_continuacion",
-      "EDAD_X_NIVEL:accion_de_cierre"
+      "EDAD_X_NIVEL:accion_de_cierre",
+      "HISTORIA:memoria_del_alumno",
+      "SALIDA:reglas_de_formato"
     ],
     "combos_edad_x_nivel_validos": 40,
     "combos_topico_x_nivel_x_edad": 569
