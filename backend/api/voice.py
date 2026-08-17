@@ -501,5 +501,24 @@ async def voice_ws_motor(
                 })
                 await db.commit()
                 log.info("voice_ws_motor: transcripción auditada y guardada (session_id=%s, turns=%d)", s.id, len(transcript))
+
+                # POST-CLASE. Esto faltaba, y es la razón por la que el tercer pilar estuvo
+                # vacío desde que se construyó: este camino guardaba la transcripción y
+                # terminaba ahí. El destilador sólo se disparaba desde POST /sessions/{id}/end,
+                # que es el ciclo de la app de producción — por eso había 740 clases dadas,
+                # 740 transcripciones, y DOS filas en learner_state.
+                #
+                # Sin esto la clase 2 no sabe nada de la clase 1: no hay qué ya vio, ni qué
+                # error repite, ni qué le interesa. Todo lo que el motor puede hacer con la
+                # historia depende de que esto corra.
+                #
+                # Fail-soft y en background, igual que en el otro endpoint: la clase ya está
+                # commiteada arriba, así que si un destilador falla loguea y sigue — nunca
+                # rompe el cierre ni bloquea al alumno.
+                import asyncio
+                from services.learner_state_writer import distill_learner_state_safe
+                from services.session_analyzer import analyze_session_safe
+                asyncio.create_task(distill_learner_state_safe(s.id))   # pilar HISTORIA
+                asyncio.create_task(analyze_session_safe(s.id))         # reporte de la clase
         except Exception as ex:
             log.exception("voice_ws_motor: error guardando transcripción auditada: %s", ex)
