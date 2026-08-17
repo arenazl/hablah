@@ -1492,13 +1492,24 @@ export default function MotorPlaygroundPanel() {
                                     {ent.label}
                                     {/* Gateo: por que ESTA fila entro en esta clase. Sin esto habia que ir a la base
                                         para saber por que una ley aparecia y otra no. */}
-                                    {ent.gateo && (
-                                      <span style={{ display: 'block', fontSize: 9.5, fontWeight: 600, color: C.faint, fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>
-                                        familias: {Array.isArray(ent.gateo.familias) ? ent.gateo.familias.join('/') : String(ent.gateo.familias ?? 'todas')}
-                                        {' · '}edades: {Array.isArray(ent.gateo.age_groups) ? ent.gateo.age_groups.join('/') : String(ent.gateo.age_groups ?? 'todas')}
-                                        {' · '}{ent.gateo.min_level || '·'}→{ent.gateo.max_level || '·'}
-                                      </span>
-                                    )}
+                                    {/* Sólo se muestran las condiciones QUE EXISTEN. Antes decía
+                                        "familias: todas · edades: todas · ·→·" en las diez leyes
+                                        universales: tres veces "todas" no informa nada y tapaba
+                                        justo las que sí están acopladas. Sin condiciones, va un
+                                        tag corto y el ojo se va a las otras. */}
+                                    {ent.gateo && (() => {
+                                      const g = ent.gateo
+                                      const lista = (v: unknown) => Array.isArray(v) ? v.join('/') : null
+                                      const cond: string[] = []
+                                      const fam = lista(g.familias); if (fam) cond.push(`sólo ${fam}`)
+                                      const ed = lista(g.age_groups); if (ed) cond.push(ed)
+                                      if (g.min_level || g.max_level) cond.push(`${g.min_level || '·'}→${g.max_level || '·'}`)
+                                      return (
+                                        <span style={{ display: 'block', fontSize: 9.5, fontWeight: 600, color: cond.length ? 'var(--color-warning)' : C.faint, fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>
+                                          {cond.length ? cond.join(' · ') : 'universal'}
+                                        </span>
+                                      )
+                                    })()}
                                   </span>
                                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
                                     {ent.source && (() => {
