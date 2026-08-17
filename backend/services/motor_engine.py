@@ -255,7 +255,21 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
                 narrative_conflict=tp.get("narrative_conflict"),
             )
         if session_seed is None:
-            session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat())
+            # Qué número de clase es esta para este alumno en este tópico. Es un dato REAL
+            # (cuántas sesiones ya hubo), no un random: la clase 2 elige distinto que la 1, y
+            # volver a componer la clase 2 devuelve exactamente lo mismo. Antes la clave era
+            # sólo (alumno, tópico, día), así que dos clases la misma tarde salían idénticas —
+            # el "beat, beat y beat". Sin alumno (probador suelto) cae en 0 y se comporta como
+            # antes, que es lo que hace falta para comparar peldaños con la variable fija.
+            nro_clase = 0
+            if student_id and topic_id:
+                try:
+                    r = db.q1("SELECT COUNT(*) AS n FROM sessions WHERE user_id=%s AND topic_id=%s",
+                              (student_id, topic_id))
+                    nro_clase = int((r or {}).get("n") or 0)
+                except Exception:
+                    nro_clase = 0
+            session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat(), nro_clase)
         return {"user": user, "topic": topic, "topic_content": None, "student_type_data": std,
                 "level_data": level_data, "app_config": cfg, "learner_state": learner_state,
                 "session_seed": session_seed, "template_id": template_id or None,

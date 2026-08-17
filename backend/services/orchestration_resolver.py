@@ -211,7 +211,16 @@ def compose_from_template(
         session_seed = _session_seed(getattr(user, "id", None), getattr(topic, "id", None),
                                      datetime.date.today().isoformat())
     user_name = _req(getattr(user, "nombre", None), "user.nombre", ctx)
-    title, raw_vocab, raw_phrases = _get_vocabulary(topic, topic_content)
+    # Los CUATRO argumentos que este llamado perdió cuando el resolver reemplazó al composer
+    # viejo. Sin ellos, adentro `session_seed` caía en 0 —así que `_derive(0,"kw")` era una
+    # CONSTANTE y la rotación de keywords por semilla quedaba inerte— y el tope salía del
+    # default 6 en vez de `motor_params.vocab_keywords` por nivel. Resultado: de 40 keywords
+    # cargadas en un tópico, 34 no llegaban nunca a una clase. El arreglo existía en
+    # composer_proto y este camino no lo usaba.
+    title, raw_vocab, raw_phrases = _get_vocabulary(
+        topic, topic_content, app_config,
+        level_code=str(level_code or ""), age_slug=str(age_slug or ""),
+        session_seed=session_seed or 0)
     _req(title, "tópico (sequencer no resolvió tópico)", ctx)
     _req(raw_vocab or raw_phrases, "vocab/frases del tópico", ctx)
     vocab = _rotate(raw_vocab, _derive(session_seed, "words"))[:4] if raw_vocab else []

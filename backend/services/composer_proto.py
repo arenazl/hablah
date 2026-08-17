@@ -80,9 +80,19 @@ def _etiquetas_segmento(cfg: Optional[dict]) -> dict:
 # MOTOR, muestreando dentro del catálogo curado. Determinístico y auditable: mismo (alumno,
 # tópico, día) = misma semilla = MISMO prompt byte a byte; día distinto = selección distinta.
 # NO es un if/parche ni fuerza vocab: rota lo que YA está cargado.
-def _session_seed(student_id, topic_id, day_iso: str) -> int:
-    """Semilla estable ENTRE procesos (hashlib, NO hash() que va salado por PYTHONHASHSEED)."""
-    key = f"{student_id or 0}|{topic_id or 0}|{day_iso}"
+def _session_seed(student_id, topic_id, day_iso: str, nonce=None) -> int:
+    """Semilla estable ENTRE procesos (hashlib, NO hash() que va salado por PYTHONHASHSEED).
+
+    `nonce` = cuál clase es esta. Sin él, la clave era (alumno, tópico, DÍA): dos clases del
+    mismo tópico la misma tarde daban la MISMA semilla, o sea la misma palabra de arranque y
+    la misma rotación. Ese era el "beat, beat y beat" — no era azar, era la única salida
+    posible hasta el día siguiente, y hacía imposible medir cualquier cosa que dependiera de
+    la variedad.
+
+    Sigue siendo determinístico: misma clave, misma salida. Lo que cambia es que la clave
+    ahora incluye de qué clase se trata, así que la clase 2 elige distinto que la 1 — y
+    volver a correr la clase 2 devuelve lo mismo que la primera vez."""
+    key = f"{student_id or 0}|{topic_id or 0}|{day_iso}|{nonce or 0}"
     return int(hashlib.sha256(key.encode("utf-8")).hexdigest()[:12], 16)
 
 
