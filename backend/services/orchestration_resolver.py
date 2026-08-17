@@ -161,6 +161,8 @@ _GROUP = {"STATIC": "Contexto (runtime)", "ALUMNO": "Alumno", "EDAD": "El profe 
           "EDAD_X_NIVEL": "El cruce (EDAD × NIVEL)", "HISTORIA": "La historia (ALUMNO)",
           "SALIDA": "Reglas de salida (runtime)"}
 _FUENTE_OPCIONAL = {("HISTORIA", "memoria_del_alumno"): "learner_state (por materia)",
+                    ("HISTORIA", "intereses"): "learner_state.interests",
+                    ("HISTORIA", "pendiente"): "learner_state.review",
                     ("SALIDA", "reglas_de_formato"): "app_config"}
 
 
@@ -177,6 +179,7 @@ def compose_from_template(
     interaction_state: Optional[dict] = None,
     session_seed: Optional[int] = None,
     template_id: Optional[int] = None,
+    clase_nro: Optional[int] = None,
     _trace: Optional[list] = None,
 ) -> str:
     std = dict(_req(student_type_data, "student_type_data (eje EDAD)"))
@@ -284,6 +287,9 @@ def compose_from_template(
         "nombre": user_name,
         "edad": _etiquetas_segmento(app_config).get(age_slug, age_slug),
         "nivel": level_code,
+        # Que numero de clase es esta. Con esto el coach sabe solo si se presenta o si saluda
+        # como a alguien conocido: no hacen falta dos instrucciones, hace falta el contexto.
+        "clase_nro": str(clase_nro or 1),
     }
     # De qué columna salieron REALMENTE las semillas. `_get_vocabulary` las busca en cascada
     # (allowed_vocabulary -> pinned_vocabulary -> keywords, y required_keywords ->
@@ -294,6 +300,7 @@ def compose_from_template(
         _col_semillas = "topics.pinned_vocabulary"
     elif not vocab and phrases:
         _col_semillas = "topics.generated_vocab"
+
 
     _TOPICO = {
         "titulo": topic_title,
@@ -309,6 +316,8 @@ def compose_from_template(
     # "falta el dato" (eso sigue reventando).
     _OPCIONAL = {
         ("HISTORIA", "memoria_del_alumno"): lambda: _get_learner_state(learner_state),
+        ("HISTORIA", "intereses"): lambda: ", ".join((learner_state or {}).get("interests") or []),
+        ("HISTORIA", "pendiente"): lambda: ((learner_state or {}).get("review") or "").strip(),
         ("SALIDA", "reglas_de_formato"): lambda: _get_output_rules(app_config),
     }
 
@@ -369,11 +378,13 @@ def compose_from_template(
     # horneado en cada arquetipo, lo que ataba el catálogo a un solo idioma). El arquetipo declara
     # la ACCIÓN, el alumno pone el idioma — misma jugada que las anclas narrativas, donde la EDAD
     # declara el modo y el TÓPICO pone el escenario.
+
     def _interpolar(t: str) -> str:
         return (t.replace("{name}", user_name).replace("{topic}", topic_title)
                  .replace("{first_vocab}", first_word).replace("{word}", first_word)
                  .replace("{tutor}", tutor)
-                 .replace("{idioma}", idioma).replace("{idioma_base}", idioma_base))
+                 .replace("{idioma}", idioma).replace("{idioma_base}", idioma_base)
+)
 
     body = _interpolar(body)
 

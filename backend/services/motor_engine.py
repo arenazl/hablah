@@ -270,9 +270,15 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
                 except Exception:
                     nro_clase = 0
             session_seed = _session_seed(student_id, topic_id, _dt.date.today().isoformat(), nro_clase)
+        else:
+            nro_clase = 0
         return {"user": user, "topic": topic, "topic_content": None, "student_type_data": std,
                 "level_data": level_data, "app_config": cfg, "learner_state": learner_state,
                 "session_seed": session_seed, "template_id": template_id or None,
+                # Que numero de clase es esta. Viaja al resolver como {clase_nro}: es lo que
+                # hace que la apertura de la clase 1 y la de la 9 sean distintas leyendo el
+                # MISMO texto — la variedad esta en la variable, no en tener 40 filas.
+                "clase_nro": nro_clase + 1,
                 "_topic_title": tp.get("title") if tp else None}
     finally:
         db.conn.close()
