@@ -16,7 +16,7 @@ import 'reactflow/dist/style.css'
 import { BACKOFFICE_CSS } from './backoffice.css'
 import { ThemeSwitcher } from '../components/ThemeSwitcher'
 import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote, MotorVerificacion } from '../services/api'
-import { useLiveVoice } from '../hooks/useLiveVoice'
+import { useLiveVoice, useAudioLevel } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { createPortal } from 'react-dom'
 import { ClaseOrbe } from '../components/ClaseOrbe'
@@ -1762,7 +1762,7 @@ export default function MotorPlaygroundPanel() {
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                       <span style={{ fontSize: 10.5, color: C.dim }}>Mic:</span>
                       <span style={{ width: 60, height: 6, background: C.soft, borderRadius: 999, overflow: 'hidden', display: 'inline-block' }}>
-                        <span style={{ display: 'block', height: '100%', width: `${Math.round(live.audioLevel * 100)}%`, background: C.accent, transition: 'width 80ms linear' }} />
+                        <MedidorDeNivel subscribeAudioLevel={live.subscribeAudioLevel} color={C.accent} />
                       </span>
                     </div>
                   )}
@@ -1928,7 +1928,7 @@ export default function MotorPlaygroundPanel() {
                     <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, overflowY: 'auto', padding: '0 16px 24px' }}>
                       <ClaseOrbe
                         status={live.status}
-                        audioLevel={live.audioLevel}
+                        subscribeAudioLevel={live.subscribeAudioLevel}
                         transcript={live.transcript}
                         statusLabel={!isLive ? 'Clase terminada' : live.status === 'connecting' ? 'Conectando…' : live.status === 'speaking' ? 'El profe habla' : 'Escuchando tu voz'}
                         nivel={level}
@@ -2035,5 +2035,19 @@ export default function MotorPlaygroundPanel() {
 
       </div>
     </div>
+  )
+}
+
+/* El medidor de mic del panel. Existe como componente APARTE por una sola razon: si el panel
+ * leyera el nivel, cada latido (20 por segundo) volveria a renderizar el panel completo — que
+ * es de donde salia el delay de la charla. Aca el re-render queda contenido en esta barrita. */
+function MedidorDeNivel({ subscribeAudioLevel, color }: {
+  subscribeAudioLevel?: (cb: (n: number) => void) => () => void
+  color: string
+}) {
+  const nivel = useAudioLevel(subscribeAudioLevel)
+  return (
+    <span style={{ display: 'block', height: '100%', width: `${Math.round(nivel * 100)}%`,
+      background: color, transition: 'width 80ms linear' }} />
   )
 }

@@ -9,11 +9,14 @@
  * le permite servir a la app de producción y al banco de pruebas con el mismo código.
  */
 import { AgentAudioVisualizerAura } from './agents-ui/agent-audio-visualizer-aura'
-import type { LiveStatus, TranscriptLine } from '../hooks/useLiveVoice'
+import { useAudioLevel, type LiveStatus, type TranscriptLine } from '../hooks/useLiveVoice'
 
 export interface ClaseOrbeProps {
   status: LiveStatus
-  audioLevel: number
+  /** Suscripción al nivel de audio (`live.subscribeAudioLevel`). El orbe se suscribe SOLO
+   *  él: así el latido no re-renderiza la pantalla que lo contiene. Recibirlo como número
+   *  desde arriba era lo que ahogaba al panel del motor 20 veces por segundo. */
+  subscribeAudioLevel?: (cb: (n: number) => void) => () => void
   transcript: TranscriptLine[]
   /** Rótulo de estado ("Escuchando tu voz", "El profe habla"…). Lo arma el que llama,
    *  porque cada superficie tiene su vocabulario. */
@@ -28,8 +31,9 @@ export interface ClaseOrbeProps {
 const A0_META = 10
 
 export function ClaseOrbe({
-  status, audioLevel, transcript, statusLabel, nivel, onRepetir,
+  status, subscribeAudioLevel, transcript, statusLabel, nivel, onRepetir,
 }: ClaseOrbeProps) {
+  const audioLevel = useAudioLevel(subscribeAudioLevel)
   const ultimoDelTutor = [...transcript].reverse().find((l) => l.who === 'ai')
   const esA0 = nivel === 'A0'
   // En A0 la frase entre comillas es el modelo a repetir — es el ejercicio, no una cita.

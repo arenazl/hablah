@@ -1491,7 +1491,7 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
               y no hay dos clases distintas. */}
           <ClaseOrbe
             status={live.status}
-            audioLevel={live.audioLevel}
+            subscribeAudioLevel={live.subscribeAudioLevel}
             transcript={live.transcript}
             statusLabel={statusLabel}
             nivel={profile?.user?.cefr_level}

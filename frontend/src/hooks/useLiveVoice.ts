@@ -87,29 +87,42 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   // Antes cada pantalla replicaba este bloque; ahora vive acá y TODAS leen `live.audioLevel`
   // (la aura reacciona igual en toda la app). Los callbacks onMicLevel/onAudioLevel siguen
   // para quien quiera el nivel crudo (p.ej. las barras de espectro).
-  const [audioLevel, setAudioLevel] = useState(0)
   const pendingLevelRef = useRef(0)
   const lastLevelTsRef = useRef(0)
   const pushLevel = useCallback((lvl: number) => {
     lastLevelTsRef.current = performance.now()
     pendingLevelRef.current = Math.max(pendingLevelRef.current * 0.7, lvl)
   }, [])
-  // El nivel SUAVE vive en un ref y se recalcula 20 veces por segundo; a React se le publica
-  // sólo cuando se movió lo suficiente para verse. Antes cada tick era un setState, o sea 20
-  // renders por segundo del componente dueño del hook — y en el probador ese componente es el
-  // panel entero del motor. Con el hilo principal ocupado el audio se procesa tarde y se
-  // siente como un delay de la charla que no es de la red ni del modelo.
-  // Devolver el mismo valor en el updater hace que React descarte el render (bailout).
-  const nivelSuaveRef = useRef(0)
+
+  // EL NIVEL NO PASA POR EL ESTADO DE REACT. Vive en un ref y se avisa por suscripción.
+  //
+  // Por qué: mientras esto era `useState`, cada latido (20 por segundo) re-renderizaba el
+  // componente DUEÑO del hook. En la app eso es una pantalla chica; en /motor es el panel
+  // completo — el visor de pasos, las tablas, los combos, las leyes. El hilo principal se
+  // quedaba sin aire, el audio se procesaba tarde, y se sentía como delay de la charla.
+  // Cuantizar ayudó pero no alcanzó: el arreglo de fondo es que el panel NUNCA se enteré.
+  //
+  // Ahora sólo re-renderiza quien se suscribe (el orbe, el medidor), y el resto de la
+  // pantalla queda quieto por más fuerte que hables.
+  const audioLevelRef = useRef(0)
+  const levelSubsRef = useRef<Set<(n: number) => void>>(new Set())
+  const subscribeAudioLevel = useCallback((cb: (n: number) => void) => {
+    levelSubsRef.current.add(cb)
+    cb(audioLevelRef.current)  // arranca con el valor de ahora, no con 0
+    return () => { levelSubsRef.current.delete(cb) }
+  }, [])
   useEffect(() => {
     const id = window.setInterval(() => {
       const since = performance.now() - lastLevelTsRef.current
-      const prev = nivelSuaveRef.current
+      const prev = audioLevelRef.current
       const next = since > 150
         ? (prev > 0.01 ? prev * 0.85 : 0)              // sin audio: decay a 0
         : Math.max(prev * 0.6, pendingLevelRef.current) // audio: max(decay, nuevo)
-      nivelSuaveRef.current = next
-      setAudioLevel((p) => (Math.abs(next - p) > 0.02 || (next === 0 && p !== 0) ? next : p))
+      if (next === prev) return                         // silencio estable: nada que avisar
+      audioLevelRef.current = next
+      for (const cb of levelSubsRef.current) {
+        try { cb(next) } catch { /* un suscriptor roto no puede cortar el audio */ }
+      }
     }, 50)
     return () => clearInterval(id)
   }, [])
@@ -1174,11 +1187,33 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   }, [])
 
   return {
-    start, stop, status, transcript, audioLevel, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants,
+    start, stop, status, transcript, sendSystemUpdate, say, upgradeToRoom, startInRoom, participants,
+    // El nivel de audio se LEE por suscripción (o del ref, si sólo hace falta en un callback).
+    // No se devuelve como número de estado a propósito: eso era lo que re-renderizaba toda la
+    // pantalla 20 veces por segundo. Para pintarlo, `useAudioLevel(live.subscribeAudioLevel)`.
+    subscribeAudioLevel, audioLevelRef,
     micDevices, activeMicLabel, switchMic,
     // Push-to-talk (F3-02): setPushToTalk prende/apaga el modo; pttPress/
     // pttRelease los dispara el botón; pttHeld es reactivo para la UI.
     setPushToTalk, pttPress, pttRelease, pttHeld,
     getAudioBacklogMs,
   }
+}
+
+/** Suscribe SOLO este componente al nivel de audio.
+ *
+ *  Se usa donde el nivel se PINTA (el orbe, un medidor). El re-render queda contenido acá
+ *  adentro: el resto de la pantalla —el panel del motor, el visor, las tablas— no se entera.
+ *  Ese aislamiento es el punto; pasar el nivel como prop desde arriba lo rompe, porque el
+ *  render arranca en el componente que tiene el estado.
+ */
+export function useAudioLevel(
+  subscribe?: (cb: (n: number) => void) => () => void,
+): number {
+  const [nivel, setNivel] = useState(0)
+  useEffect(() => {
+    if (!subscribe) return
+    return subscribe(setNivel)
+  }, [subscribe])
+  return nivel
 }
