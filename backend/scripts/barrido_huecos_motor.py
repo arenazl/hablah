@@ -47,15 +47,10 @@ from core.database import AsyncSessionLocal  # noqa: E402
 
 _PH = re.compile(r"\{([A-Z_]+):([a-z_]+)\}")
 
-# Mismo mapeo prefijo->fuente que orchestration_resolver. EDAD y NIVEL son diccionarios
-# CERRADOS en el resolver (hardcodeados); EDAD_X_NIVEL es abierto (cualquier columna).
-CAMPO_EDAD = {
-    "tutor_name": "tutor_mascot", "tutor_identity": "tutor_identity",
-    "gamification_focus": "session_focus", "estilo_de_sesion": "estilo_de_sesion",
-    "anclas_narrativas": "anclas_narrativas",
-}
-CAMPO_NIVEL = {"gramatica_objetivo": "curriculum_grammar", "idioma_instruccion": "language_rule"}
-# Computado por el resolver, no es columna.
+# Ya no hay mapa de campo->columna: los tres prefijos de tabla (EDAD, NIVEL, EDAD_X_NIVEL) son
+# ABIERTOS en el resolver, asi que el campo del placeholder ES el nombre de la columna. Agregar
+# un campo al template no toca este script.
+# Computado por el resolver, no es columna de ninguna tabla.
 CALCULADOS = {"reglas_universales_filtradas"}
 
 
@@ -159,22 +154,20 @@ async def main() -> None:
 
     # ── Ejes sueltos: NIVEL y EDAD ────────────────────────────────────────────────────
     for n in niveles:
-        faltan = [f for f in ph_nivel if _vacio(n.get(CAMPO_NIVEL[f]))]
+        faltan = [f for f in ph_nivel if _vacio(n.get(f))]
         if faltan:
             huecos["levels"].append({
                 "tabla": "levels", "fila": {"code": n["code"]}, "familia": n.get("family"),
-                "columnas_a_cargar": [CAMPO_NIVEL[f] for f in faltan],
-                "ejemplos": {CAMPO_NIVEL[f]: ejemplos_col(niveles, CAMPO_NIVEL[f], n["id"], "code")
-                             for f in faltan},
+                "columnas_a_cargar": faltan,
+                "ejemplos": {f: ejemplos_col(niveles, f, n["id"], "code") for f in faltan},
             })
     for e in edades:
-        faltan = [f for f in ph_edad if _vacio(e.get(CAMPO_EDAD[f]))]
+        faltan = [f for f in ph_edad if _vacio(e.get(f))]
         if faltan:
             huecos["student_types"].append({
                 "tabla": "student_types", "fila": {"slug": e["slug"]},
-                "columnas_a_cargar": [CAMPO_EDAD[f] for f in faltan],
-                "ejemplos": {CAMPO_EDAD[f]: ejemplos_col(edades, CAMPO_EDAD[f], e["id"], "slug")
-                             for f in faltan},
+                "columnas_a_cargar": faltan,
+                "ejemplos": {f: ejemplos_col(edades, f, e["id"], "slug") for f in faltan},
             })
 
     # ── Universo B: TOPICO x NIVEL x EDAD (lo que bloquea una clase de verdad) ────────

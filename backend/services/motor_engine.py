@@ -153,15 +153,23 @@ def _json_list(v) -> list[str]:
     return []
 
 
-def _load_lite_state_sync(db, student_id) -> Optional[dict]:
+def _load_lite_state_sync(db, student_id, materia=None) -> Optional[dict]:
     """HISTORIA (F2-02) — estado LIVIANO del alumno desde learner_state (mismo contrato que
     services.learner_state_writer.load_learner_state_lite, pero por la conexión sync del motor).
     Fail-safe: si la tabla falta o no hay fila -> None (el composer omite el bloque, no inventa)."""
     if not student_id:
         return None
+    # La historia es POR MATERIA (learner_state.materia): aprender francés y aprender
+    # informática son dos historias distintas del mismo alumno. Si esa materia todavía no
+    # tiene fila, cae a la fila sin materia — la bolsa vieja, de cuando había una sola.
     try:
-        r = db.q1("SELECT top_error, interests, mastered, review FROM learner_state WHERE student_id=%s",
-                  (student_id,))
+        r = None
+        if materia:
+            r = db.q1("SELECT top_error, interests, mastered, review FROM learner_state "
+                      "WHERE student_id=%s AND materia=%s", (student_id, materia))
+        if not r:
+            r = db.q1("SELECT top_error, interests, mastered, review FROM learner_state "
+                      "WHERE student_id=%s AND materia IS NULL", (student_id,))
     except Exception:
         return None
     if not r:
@@ -192,8 +200,16 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
         if not std or not lv:
             raise ValueError(f"falta preset: age_group={age_group} / level={level_code}")
         tp = db.q1("SELECT * FROM topics WHERE id=%s", (topic_id,)) if topic_id else None
+        # Qué MATERIA es esta clase: sale de la categoría del tópico (familia + disciplina) y
+        # del idioma que se aprende. Mismo criterio que user_level.materia.
+        materia = None
+        if tp and tp.get("category_id"):
+            cat = db.q1("SELECT family, discipline FROM categories WHERE id=%s", (tp["category_id"],))
+            if cat:
+                from services.learner_state_writer import materia_de
+                materia = materia_de(cat.get("family"), cat.get("discipline"), target_language)
         if learner_state is None and student_id:
-            learner_state = _load_lite_state_sync(db, student_id)
+            learner_state = _load_lite_state_sync(db, student_id, materia)
         level_data = {
             "language_rule": lv.get("language_rule"),
             "curriculum_grammar": lv.get("curriculum_grammar"),

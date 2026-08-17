@@ -53,7 +53,16 @@ class LearnerState(Base):
     __tablename__ = "learner_state"
 
     id = Column(Integer, primary_key=True, index=True)
-    student_id = Column(Integer, nullable=False, unique=True, index=True)  # una fila por alumno
+    # Una fila por alumno POR MATERIA. Antes era `unique=True` sobre student_id — una sola bolsa
+    # por alumno — y eso alcanzaba cuando el producto era una app de inglés. Con el motor
+    # polimórfico mezclaba: lo que domina de inglés y lo que domina de informática caían juntos,
+    # y `top_error` era el mismo para las dos. Mismo camino que ya hizo el nivel en `user_level`.
+    student_id = Column(Integer, nullable=False, index=True)
+    # Espacio de nombres compartido con user_level.materia, según el modelo de familias:
+    #   familia `lenguaje`     -> la materia ES el idioma        ('en', 'fr', 'pt')
+    #   familia `conocimiento` -> la materia es la disciplina    ('informatica', 'oficios')
+    # NULL = historia vieja sin materia; se sigue leyendo como fallback.
+    materia = Column(String(30), nullable=True, index=True)
     top_error = Column(String(255), nullable=False, default="")       # 1 · lenguaje de profe, EN
     interests = Column(JSON, nullable=False, default=list)             # ≤3 · acumula (cap 3)
     mastered = Column(JSON, nullable=False, default=list)              # ≤3 · rota

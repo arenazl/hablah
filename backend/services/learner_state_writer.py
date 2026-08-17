@@ -20,7 +20,7 @@ import logging
 import uuid
 from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from core.database import AsyncSessionLocal
 from models.learner_state import LearnerState
@@ -160,9 +160,22 @@ async def distill_learner_state(session_id: int, trace_id: str) -> Optional[dict
         raw = await _gemini_complete(prompt, _render_transcript(s.transcript))
         distilled = normalize_distilled(raw)
 
-        # Upsert por alumno (merge con lo previo).
-        row = (await db.execute(
-            select(LearnerState).where(LearnerState.student_id == user.id))).scalar_one_or_none()
+        # Qué materia es esta clase — sale del tópico (su categoría trae familia y disciplina) y
+        # del idioma del alumno. Sin tópico no hay materia y la historia va a la bolsa general.
+        materia = None
+        if topic is not None and getattr(topic, "category_id", None):
+            cat = (await db.execute(text(
+                "SELECT family, discipline FROM categories WHERE id = :c"),
+                {"c": topic.category_id})).mappings().first()
+            if cat:
+                materia = materia_de(cat.get("family"), cat.get("discipline"),
+                                     getattr(user, "target_language", None))
+
+        # Upsert por alumno POR MATERIA (merge con lo previo de ESA materia).
+        row = (await db.execute(select(LearnerState).where(
+            LearnerState.student_id == user.id,
+            LearnerState.materia == materia if materia else LearnerState.materia.is_(None),
+        ))).scalar_one_or_none()
         prev = None
         if row:
             prev = {"top_error": row.top_error, "interests": row.interests or [],
@@ -170,7 +183,7 @@ async def distill_learner_state(session_id: int, trace_id: str) -> Optional[dict
         merged = merge_learner_state(prev, distilled)
 
         if not row:
-            row = LearnerState(student_id=user.id)
+            row = LearnerState(student_id=user.id, materia=materia)
             db.add(row)
         row.top_error = merged["top_error"]
         row.interests = merged["interests"]
@@ -197,11 +210,34 @@ async def distill_learner_state_safe(session_id: int) -> None:
 # ──────────────────────────────────────────────────────────────────────────────────────
 # Lectura (para F2-02: el composer usa la historia)
 # ──────────────────────────────────────────────────────────────────────────────────────
-async def load_learner_state_lite(db, student_id: int) -> Optional[dict]:
-    """Devuelve el dict liviano del alumno (CONTRATO), o None si no hay fila / está vacía
-    → el composer omite el bloque 6 (fail-safe, no inventa)."""
-    row = (await db.execute(
-        select(LearnerState).where(LearnerState.student_id == student_id))).scalar_one_or_none()
+def materia_de(family: Optional[str], discipline: Optional[str],
+               target_language: Optional[str]) -> Optional[str]:
+    """Qué MATERIA es esta clase, con el mismo criterio que `user_level.materia`.
+
+    Sale del modelo de familias: en `lenguaje` el idioma ES la materia (aprender francés y
+    aprender inglés son dos materias distintas, con dos historias distintas); en
+    `conocimiento` el idioma es el vehículo y la materia es la disciplina."""
+    if (family or "").strip().lower() == "lenguaje":
+        return (target_language or "").strip().lower() or None
+    return (discipline or "").strip().lower() or None
+
+
+async def load_learner_state_lite(db, student_id: int, materia: Optional[str] = None) -> Optional[dict]:
+    """Devuelve el dict liviano del alumno PARA ESA MATERIA (CONTRATO), o None si no hay fila /
+    está vacía → el composer omite el bloque 6 (fail-safe, no inventa).
+
+    Sin materia, o si esa materia todavía no tiene historia, cae a la fila sin materia — la
+    historia vieja, de cuando había una sola bolsa por alumno. Así nada se pierde mientras el
+    post-clase empieza a escribir separado."""
+    row = None
+    if materia:
+        row = (await db.execute(select(LearnerState).where(
+            LearnerState.student_id == student_id,
+            LearnerState.materia == materia))).scalar_one_or_none()
+    if not row:
+        row = (await db.execute(select(LearnerState).where(
+            LearnerState.student_id == student_id,
+            LearnerState.materia.is_(None)))).scalar_one_or_none()
     if not row:
         return None
     state = {

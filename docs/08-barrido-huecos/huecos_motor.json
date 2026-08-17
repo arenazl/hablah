@@ -1,7 +1,7 @@
 {
   "universo": {
     "edades": 4,
-    "niveles": 12,
+    "niveles": 11,
     "topicos_activos": 146,
     "template_activo": {
       "id": 1,
@@ -13,15 +13,15 @@
       "ALUMNO:nombre",
       "ALUMNO:edad",
       "ALUMNO:nivel",
-      "EDAD:tutor_name",
+      "EDAD:tutor_mascot",
       "EDAD:tutor_identity",
-      "EDAD:gamification_focus",
+      "EDAD:session_focus",
       "TOPICO:titulo",
       "TOPICO:semillas",
-      "NIVEL:gramatica_objetivo",
+      "NIVEL:curriculum_grammar",
       "EDAD_X_NIVEL:produccion_esperada",
       "EDAD_X_NIVEL:formato_de_cierre_de_turno",
-      "NIVEL:idioma_instruccion",
+      "NIVEL:language_rule",
       "EDAD_X_NIVEL:reglas_de_tono_y_entrega",
       "EDAD_X_NIVEL:reglas_universales_filtradas",
       "EDAD:estilo_de_sesion",
@@ -32,13 +32,13 @@
       "EDAD_X_NIVEL:accion_de_continuacion",
       "EDAD_X_NIVEL:accion_de_cierre"
     ],
-    "combos_edad_x_nivel_validos": 44,
-    "combos_topico_x_nivel_x_edad": 570
+    "combos_edad_x_nivel_validos": 40,
+    "combos_topico_x_nivel_x_edad": 569
   },
   "resumen": {
-    "combos_que_componen": 570,
+    "combos_que_componen": 569,
     "combos_bloqueados": 0,
-    "cruces_faltantes_o_incompletos": 5,
+    "cruces_faltantes_o_incompletos": 2,
     "topicos_con_huecos": 10,
     "niveles_con_huecos": 0,
     "edades_con_huecos": 0
@@ -140,277 +140,7 @@
         "tabla": "age_level_matrix",
         "fila": {
           "age_slug": "junior",
-          "level_code": "FONR"
-        },
-        "problema": "la fila NO EXISTE",
-        "columnas_a_cargar": [
-          "produccion_esperada",
-          "formato_de_cierre_de_turno",
-          "reglas_de_tono_y_entrega",
-          "pasos_de_la_sesion",
-          "comando_de_arranque",
-          "accion_de_continuacion",
-          "accion_de_cierre"
-        ],
-        "familia_del_nivel": "lenguaje",
-        "ejemplos": {
-          "produccion_esperada": [
-            {
-              "fila": "adult x A0",
-              "valor": "El alumno produce la palabra/chunk clave. En A0 absoluto la repetición guiada es un punto de partida válido: repetir para fijar el sonido está bien."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "El alumno debe poder contar hechos cortos o planes simples: algo que hizo, algo que le gusta, algo que va a hacer."
-            }
-          ],
-          "formato_de_cierre_de_turno": [
-            {
-              "fila": "adult x A0",
-              "valor": "Modelá la palabra/frase y pedile que la diga con vos, en tono adulto (ej: 'Plato se dice dish. Decilo conmigo'). La repetición es un arranque legítimo; lo prohibido NO es repetir, es el juego de fantasía infantil."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Hacé preguntas biográficas directas y amables en {idioma} — del tipo «¿y vos?», «¿te gustó?»."
-            }
-          ],
-          "reglas_de_tono_y_entrega": [
-            {
-              "fila": "adult x A0",
-              "valor": "Tone: Entrenador paciente y respetuoso. CERO ROLEPLAY INFANTIL ni 'Imaginate que...'. Tratalo como un adulto que arranca de cero una herramienta útil, no como un nene. Native Phonetics para el target."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Tone: Conversación casual de pasillo. Empático y claro. Mezcla moderada de {idioma_base}/{idioma} para no frustrar. En A1 podés pedir repetir una frase corta; hacia A2 pasá a que la use en contexto. Sin roleplay infantil ni 'Imaginate que'."
-            }
-          ],
-          "pasos_de_la_sesion": [
-            {
-              "fila": "adult x A0",
-              "valor": "Beat 1: Utilidad del concepto + palabra 1. Beat 2-3: Expansión de contexto real + palabras. Beat 4: Repaso de utilidad."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Beat 1: Rompehielo personal. Beat 2-3: Intercambio de anécdotas cortas usando el vocabulario. Beat 4: Despedida natural."
-            }
-          ],
-          "comando_de_arranque": [
-            {
-              "fila": "adult x A0",
-              "valor": "Saludá a {name} cordialmente en {idioma_base}. Planteá una situación de la vida real sobre {topic} donde el vocabulario sea útil (sin fantasía). Introducí '{first_vocab}', modelalo claro y pedile que lo diga con vos."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Saludá a {name} amablemente. Contá algo muy corto sobre {topic} usando '{first_vocab}' en {idioma} (podés aclarar contexto en {idioma_base}). Preguntale por su experiencia."
-            }
-          ],
-          "accion_de_continuacion": [
-            {
-              "fila": "adult x A0",
-              "valor": "Validá el aporte maduramente (la idea, no el idioma). Recast implícito. Avanzá a la siguiente situación útil integrando palabra nueva. Podés pedir que la repita con vos para fijarla."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Usá Recast si hay errores leves. Celebrá que se comunique. Sumá una anécdota tuya con la siguiente palabra y volvé a preguntarle."
-            }
-          ],
-          "accion_de_cierre": [
-            {
-              "fila": "adult x A0",
-              "valor": "Destacá el vocabulario práctico ganado hoy. Preguntá: '¿Querés practicar otra situación o lo dejamos acá?'"
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Cerrá la charla con calidez destacando lo que te contó. Preguntá, en {idioma}, algo del estilo: «Estuvo buenísimo charlar, ¿querés seguir?»."
-            }
-          ]
-        }
-      },
-      {
-        "tabla": "age_level_matrix",
-        "fila": {
-          "age_slug": "junior",
           "level_code": "C1"
-        },
-        "problema": "la fila NO EXISTE",
-        "columnas_a_cargar": [
-          "produccion_esperada",
-          "formato_de_cierre_de_turno",
-          "reglas_de_tono_y_entrega",
-          "pasos_de_la_sesion",
-          "comando_de_arranque",
-          "accion_de_continuacion",
-          "accion_de_cierre"
-        ],
-        "familia_del_nivel": "lenguaje",
-        "ejemplos": {
-          "produccion_esperada": [
-            {
-              "fila": "adult x A0",
-              "valor": "El alumno produce la palabra/chunk clave. En A0 absoluto la repetición guiada es un punto de partida válido: repetir para fijar el sonido está bien."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "El alumno debe poder contar hechos cortos o planes simples: algo que hizo, algo que le gusta, algo que va a hacer."
-            }
-          ],
-          "formato_de_cierre_de_turno": [
-            {
-              "fila": "adult x A0",
-              "valor": "Modelá la palabra/frase y pedile que la diga con vos, en tono adulto (ej: 'Plato se dice dish. Decilo conmigo'). La repetición es un arranque legítimo; lo prohibido NO es repetir, es el juego de fantasía infantil."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Hacé preguntas biográficas directas y amables en {idioma} — del tipo «¿y vos?», «¿te gustó?»."
-            }
-          ],
-          "reglas_de_tono_y_entrega": [
-            {
-              "fila": "adult x A0",
-              "valor": "Tone: Entrenador paciente y respetuoso. CERO ROLEPLAY INFANTIL ni 'Imaginate que...'. Tratalo como un adulto que arranca de cero una herramienta útil, no como un nene. Native Phonetics para el target."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Tone: Conversación casual de pasillo. Empático y claro. Mezcla moderada de {idioma_base}/{idioma} para no frustrar. En A1 podés pedir repetir una frase corta; hacia A2 pasá a que la use en contexto. Sin roleplay infantil ni 'Imaginate que'."
-            }
-          ],
-          "pasos_de_la_sesion": [
-            {
-              "fila": "adult x A0",
-              "valor": "Beat 1: Utilidad del concepto + palabra 1. Beat 2-3: Expansión de contexto real + palabras. Beat 4: Repaso de utilidad."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Beat 1: Rompehielo personal. Beat 2-3: Intercambio de anécdotas cortas usando el vocabulario. Beat 4: Despedida natural."
-            }
-          ],
-          "comando_de_arranque": [
-            {
-              "fila": "adult x A0",
-              "valor": "Saludá a {name} cordialmente en {idioma_base}. Planteá una situación de la vida real sobre {topic} donde el vocabulario sea útil (sin fantasía). Introducí '{first_vocab}', modelalo claro y pedile que lo diga con vos."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Saludá a {name} amablemente. Contá algo muy corto sobre {topic} usando '{first_vocab}' en {idioma} (podés aclarar contexto en {idioma_base}). Preguntale por su experiencia."
-            }
-          ],
-          "accion_de_continuacion": [
-            {
-              "fila": "adult x A0",
-              "valor": "Validá el aporte maduramente (la idea, no el idioma). Recast implícito. Avanzá a la siguiente situación útil integrando palabra nueva. Podés pedir que la repita con vos para fijarla."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Usá Recast si hay errores leves. Celebrá que se comunique. Sumá una anécdota tuya con la siguiente palabra y volvé a preguntarle."
-            }
-          ],
-          "accion_de_cierre": [
-            {
-              "fila": "adult x A0",
-              "valor": "Destacá el vocabulario práctico ganado hoy. Preguntá: '¿Querés practicar otra situación o lo dejamos acá?'"
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Cerrá la charla con calidez destacando lo que te contó. Preguntá, en {idioma}, algo del estilo: «Estuvo buenísimo charlar, ¿querés seguir?»."
-            }
-          ]
-        }
-      },
-      {
-        "tabla": "age_level_matrix",
-        "fila": {
-          "age_slug": "teen",
-          "level_code": "FONR"
-        },
-        "problema": "la fila NO EXISTE",
-        "columnas_a_cargar": [
-          "produccion_esperada",
-          "formato_de_cierre_de_turno",
-          "reglas_de_tono_y_entrega",
-          "pasos_de_la_sesion",
-          "comando_de_arranque",
-          "accion_de_continuacion",
-          "accion_de_cierre"
-        ],
-        "familia_del_nivel": "lenguaje",
-        "ejemplos": {
-          "produccion_esperada": [
-            {
-              "fila": "adult x A0",
-              "valor": "El alumno produce la palabra/chunk clave. En A0 absoluto la repetición guiada es un punto de partida válido: repetir para fijar el sonido está bien."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "El alumno debe poder contar hechos cortos o planes simples: algo que hizo, algo que le gusta, algo que va a hacer."
-            }
-          ],
-          "formato_de_cierre_de_turno": [
-            {
-              "fila": "adult x A0",
-              "valor": "Modelá la palabra/frase y pedile que la diga con vos, en tono adulto (ej: 'Plato se dice dish. Decilo conmigo'). La repetición es un arranque legítimo; lo prohibido NO es repetir, es el juego de fantasía infantil."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Hacé preguntas biográficas directas y amables en {idioma} — del tipo «¿y vos?», «¿te gustó?»."
-            }
-          ],
-          "reglas_de_tono_y_entrega": [
-            {
-              "fila": "adult x A0",
-              "valor": "Tone: Entrenador paciente y respetuoso. CERO ROLEPLAY INFANTIL ni 'Imaginate que...'. Tratalo como un adulto que arranca de cero una herramienta útil, no como un nene. Native Phonetics para el target."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Tone: Conversación casual de pasillo. Empático y claro. Mezcla moderada de {idioma_base}/{idioma} para no frustrar. En A1 podés pedir repetir una frase corta; hacia A2 pasá a que la use en contexto. Sin roleplay infantil ni 'Imaginate que'."
-            }
-          ],
-          "pasos_de_la_sesion": [
-            {
-              "fila": "adult x A0",
-              "valor": "Beat 1: Utilidad del concepto + palabra 1. Beat 2-3: Expansión de contexto real + palabras. Beat 4: Repaso de utilidad."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Beat 1: Rompehielo personal. Beat 2-3: Intercambio de anécdotas cortas usando el vocabulario. Beat 4: Despedida natural."
-            }
-          ],
-          "comando_de_arranque": [
-            {
-              "fila": "adult x A0",
-              "valor": "Saludá a {name} cordialmente en {idioma_base}. Planteá una situación de la vida real sobre {topic} donde el vocabulario sea útil (sin fantasía). Introducí '{first_vocab}', modelalo claro y pedile que lo diga con vos."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Saludá a {name} amablemente. Contá algo muy corto sobre {topic} usando '{first_vocab}' en {idioma} (podés aclarar contexto en {idioma_base}). Preguntale por su experiencia."
-            }
-          ],
-          "accion_de_continuacion": [
-            {
-              "fila": "adult x A0",
-              "valor": "Validá el aporte maduramente (la idea, no el idioma). Recast implícito. Avanzá a la siguiente situación útil integrando palabra nueva. Podés pedir que la repita con vos para fijarla."
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Usá Recast si hay errores leves. Celebrá que se comunique. Sumá una anécdota tuya con la siguiente palabra y volvé a preguntarle."
-            }
-          ],
-          "accion_de_cierre": [
-            {
-              "fila": "adult x A0",
-              "valor": "Destacá el vocabulario práctico ganado hoy. Preguntá: '¿Querés practicar otra situación o lo dejamos acá?'"
-            },
-            {
-              "fila": "adult x A1",
-              "valor": "Cerrá la charla con calidez destacando lo que te contó. Preguntá, en {idioma}, algo del estilo: «Estuvo buenísimo charlar, ¿querés seguir?»."
-            }
-          ]
-        }
-      },
-      {
-        "tabla": "age_level_matrix",
-        "fila": {
-          "age_slug": "adult",
-          "level_code": "FONR"
         },
         "problema": "la fila NO EXISTE",
         "columnas_a_cargar": [

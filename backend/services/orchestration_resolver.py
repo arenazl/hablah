@@ -128,16 +128,11 @@ def _filter_rules(rules, age_slug: str, level_code: str, level_order: dict) -> s
     return "\n".join(f"{i}. {t}" for i, t in enumerate(picked, 1))
 
 
-# fuente (tabla.columna) por placeholder — para el visor del /motor (dueño = prefijo)
-_SOURCE = {
-    ("EDAD", "tutor_name"): "student_types.tutor_mascot",
-    ("EDAD", "tutor_identity"): "student_types.tutor_identity",
-    ("EDAD", "gamification_focus"): "student_types.session_focus",
-    ("EDAD", "estilo_de_sesion"): "student_types.estilo_de_sesion",
-    ("EDAD", "anclas_narrativas"): "student_types.anclas_narrativas",
-    ("NIVEL", "gramatica_objetivo"): "levels.curriculum_grammar",
-    ("NIVEL", "idioma_instruccion"): "levels.language_rule",
-}
+# Tabla de origen por prefijo — para el visor del /motor (dueño = prefijo). Antes había un
+# mapa (prefijo, campo) -> "tabla.columna" fila por fila; ahora que el campo ES la columna,
+# la fuente se deriva: agregar un campo al template no toca este archivo.
+_TABLA = {"EDAD": "student_types", "NIVEL": "levels", "TOPICO": "topics",
+          "ALUMNO": "users", "STATIC": "runtime", "EDAD_X_NIVEL": "age_level_matrix"}
 _GROUP = {"STATIC": "Contexto (runtime)", "ALUMNO": "Alumno", "EDAD": "El profe (EDAD)",
           "NIVEL": "El nivel (NIVEL)", "TOPICO": "El tópico (TÓPICO)",
           "EDAD_X_NIVEL": "El cruce (EDAD × NIVEL)"}
@@ -212,17 +207,14 @@ def compose_from_template(
             parts.append(f"Mission/Conflict: {mission}")
         return " · ".join(parts)
 
-    _EDAD = {
-        "tutor_name": std.get("tutor_mascot"),
-        "tutor_identity": std.get("tutor_identity"),
-        "gamification_focus": std.get("session_focus"),
-        "estilo_de_sesion": std.get("estilo_de_sesion"),
-        "anclas_narrativas": std.get("anclas_narrativas"),
-    }
-    _NIVEL = {
-        "gramatica_objetivo": lv.get("curriculum_grammar"),
-        "idioma_instruccion": lv.get("language_rule"),
-    }
+    # EDAD y NIVEL eran diccionarios CERRADOS acá: exponían 5 de las 14 columnas de
+    # student_types y 2 de las 7 de levels. Había dato cargado que el template no podía
+    # pedir, y sumar un campo costaba un deploy. Ahora son ABIERTOS igual que EDAD_X_NIVEL:
+    # {EDAD:cualquier_columna} resuelve contra la fila. Los 4 nombres viejos del template
+    # (tutor_name, gamification_focus, gramatica_objetivo, idioma_instruccion) se renombraron
+    # a su columna real en las plantillas, así que acá no queda ninguna tabla de alias.
+    _EDAD = dict(std)
+    _NIVEL = dict(lv)
     _STATIC = {
         "current_date": datetime.date.today().isoformat(),
         "device_type": "Mobile (Voice Input)",
@@ -255,7 +247,7 @@ def compose_from_template(
             if val is None:
                 raise MotorDataMissing(f"[resolver] campo faltante: {{{prefix}:{field}}} ({ctx})")
             val = str(val)
-            source = _SOURCE.get((prefix, field), f"{prefix.lower()}.{field}")
+            source = f"{_TABLA.get(prefix, prefix.lower())}.{field}"
         if _trace is not None:
             _trace.append({"group": _GROUP.get(prefix, prefix), "prefix": prefix,
                            "label": field, "source": source, "body": val})

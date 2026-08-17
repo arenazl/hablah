@@ -200,9 +200,14 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
     #     aparecían del otro lado. Ese UNION mezclaba dos cosas distintas —una FAMILIA
     #     como 'conocimiento' aparecía en el combo al lado de una materia como 'oficios'—
     #     y ya no hace falta: la familia viaja aparte en discipline_families.
+    #     Ahora salen de la TABLA `disciplines`, que es donde vive el interruptor. Antes se
+    #     derivaban con DISTINCT sobre las categorías activas, y eso hacía que "apagar una
+    #     disciplina" no fuera una operación sino un efecto secundario: para sacar fonética
+    #     había que apagar SU categoría, y para sacar idiomas habría que apagar 18. Con la
+    #     tabla, apagar una disciplina es un UPDATE de una fila y el combo se llena solo.
     disciplines = _rows(await db.execute(text(
-        "SELECT DISTINCT discipline FROM categories WHERE active = 1 ORDER BY discipline")))
-    disciplines = [d["discipline"] for d in disciplines if d.get("discipline")]
+        "SELECT slug, name FROM disciplines WHERE active = 1 ORDER BY sort_order, slug")))
+    disciplines = [d["slug"] for d in disciplines if d.get("slug")]
 
     # 1.c Familia de cada disciplina. `discipline` hacía DOS trabajos: decir de qué
     #     ESCALERA cuelga el nivel y filtrar el catálogo. Ahora la familia decide la
