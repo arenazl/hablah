@@ -1,0 +1,1360 @@
+{
+  "que_es_esto": "Pedido de SEMILLAS de vocabulario para los topicos que NO son de idiomas. Hoy todos tienen exactamente 5, que es el minimo con el que el motor compone. Con 5 semillas y un tope de 6 por clase, el motor se las lleva TODAS siempre: la rotacion por sesion existe y funciona, pero no puede cambiar el conjunto — solo el orden. Resultado: todas las clases de un topico giran sobre las mismas cinco palabras.",
+  "como_las_usa_el_motor": {
+    "1_de_donde_salen": "topics.keywords (o pinned_vocabulary, que si existe gana y se usa tal cual sin rotar).",
+    "2_rotacion": "Se rotan con la semilla de sesion —que incluye QUE NUMERO DE CLASE es— y se cortan.",
+    "3_tope_por_clase": {
+      "A0": 4,
+      "A1": 4,
+      "A2": 5,
+      "B1": 6,
+      "B2": 8,
+      "C1": 8,
+      "C2": 10,
+      "CON1..CON4 y cualquier otro": 6
+    },
+    "4_la_primera_manda": "La primera palabra de la lista rotada es {first_vocab}, y el comando_de_arranque la usa para abrir la clase. O sea: la primera semilla decide de que se habla en el turno 1.",
+    "5_no_se_fuerzan": "El prompt le dice al coach: 'usa solo las que entren NATURALMENTE — 2-3 bien hechas valen mas que forzar la lista'. Esta MEDIDO: forzar el vocabulario degrada la clase (7.7 libre contra 6.5 forzado). Cargar mas semillas NO es cargar mas obligaciones: es darle de donde elegir para que dos clases del mismo topico no sean iguales.",
+    "6_el_idioma_es_pivote": "Las semillas se guardan en UN idioma y el catalogo NUNCA escribe el idioma de la clase. El coach tiene la orden de convertirlas al idioma en que habla. Por eso las semillas tienen que ser conceptos convertibles. Un termino del rubro que en la vida real se dice en su idioma original (un prestamo real) puede quedarse; una palabra cualquiera en ingles NO, porque el coach la lee tal cual y se la dice al alumno en el idioma equivocado."
+  },
+  "que_queremos_que_cargues": {
+    "que_ES_una_semilla": "LEXICO que el alumno tiene que poder PRODUCIR al hablar del tema. Es la palabra que queremos escucharle decir a el, no la que el profe va a explicar.",
+    "que_NO_es": [
+      "NO es la progresion de la materia (el orden en que se ensenan los conceptos): eso es otro campo.",
+      "NO son frases de practica: esas van en generated_vocab, aparte.",
+      "NO es un glosario tecnico para lucirse: si el alumno no la va a decir, no va.",
+      "NO son definiciones ni explicaciones: una o dos palabras, no una oracion."
+    ],
+    "criterio_de_nivel": "El topico declara sus niveles. Las semillas tienen que servir en TODOS: incluí las basicas e imprescindibles del tema y tambien las mas especificas. El motor elige cuantas entran segun el nivel; vos dale la cantera completa.",
+    "criterio_de_variedad": "El objetivo es que la clase 1, la 4 y la 9 del MISMO topico no hablen de lo mismo. Cada semilla deberia poder abrir una clase distinta, porque cualquiera puede tocarle ser {first_vocab}. Si dos semillas son sinonimos, una sobra.",
+    "prohibido": [
+      "Nada de fantasia, magia, aventuras ni 'imaginate que': decision del dueno, para chicos y grandes.",
+      "Nada de onomatopeyas ni pedir sonidos.",
+      "No repitas las semillas actuales con otra forma; sumá NUEVAS y conservá las que ya estan."
+    ]
+  },
+  "formato_de_respuesta": {
+    "estructura": [
+      {
+        "topic_id": 0,
+        "semillas_nuevas": [
+          "...",
+          "..."
+        ]
+      }
+    ],
+    "reglas": [
+      "Devolvé SOLO las semillas NUEVAS (las actuales ya estan cargadas, no las repitas).",
+      "Una o dos palabras por semilla. Sin articulos, sin definiciones.",
+      "En el mismo idioma en que estan las semillas actuales de ese topico.",
+      "Respetá 'cuantas_pedimos' de cada topico."
+    ]
+  },
+  "totales": {
+    "topicos": 57,
+    "hoy_tienen": 298,
+    "pedimos_sumar": 1086
+  },
+  "topicos": [
+    {
+      "topic_id": 177,
+      "titulo": "Desarrollo de software y herramientas IA",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "adultos",
+      "niveles_declarados": [
+        "B1",
+        "B2",
+        "C1",
+        "C2"
+      ],
+      "semillas_actuales": [
+        "framework",
+        "prompt",
+        "backend",
+        "syntax",
+        "deploy",
+        "repository"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 10,
+      "cuantas_pedimos": 30
+    },
+    {
+      "topic_id": 178,
+      "titulo": "Diseño y construcción del hogar",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "adultos",
+      "niveles_declarados": [
+        "B1",
+        "B2",
+        "C1",
+        "C2"
+      ],
+      "semillas_actuales": [
+        "layout",
+        "blueprint",
+        "space",
+        "renovation",
+        "contractor",
+        "budget"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 10,
+      "cuantas_pedimos": 30
+    },
+    {
+      "topic_id": 179,
+      "titulo": "Juegos de pelea y torneos",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "junior",
+      "niveles_declarados": [
+        "A1",
+        "A2"
+      ],
+      "semillas_actuales": [
+        "combo",
+        "arena",
+        "block",
+        "health bar",
+        "tournament",
+        "character"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 5,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 180,
+      "titulo": "Construcción con bloques mágicos",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "mini",
+      "niveles_declarados": [
+        "A0",
+        "A1",
+        "A2"
+      ],
+      "semillas_actuales": [
+        "block",
+        "build",
+        "tall",
+        "house",
+        "castle",
+        "break"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 5,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 181,
+      "titulo": "Suscripciones gaming y juego en la nube",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "teen",
+      "niveles_declarados": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "semillas_actuales": [
+        "cloud gaming",
+        "library",
+        "subscription",
+        "latency",
+        "cross-play",
+        "catalog"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 8,
+      "cuantas_pedimos": 24
+    },
+    {
+      "topic_id": 182,
+      "titulo": "Quién soy y quién quiero ser",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "teen",
+      "niveles_declarados": [
+        "B1",
+        "B2"
+      ],
+      "semillas_actuales": [
+        "identity",
+        "comparison",
+        "pressure",
+        "authentic",
+        "confidence",
+        "insecure"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 8,
+      "cuantas_pedimos": 24
+    },
+    {
+      "topic_id": 183,
+      "titulo": "Redes sociales: el lado B",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "teen",
+      "niveles_declarados": [
+        "B1",
+        "B2"
+      ],
+      "semillas_actuales": [
+        "algorithm",
+        "comparison",
+        "screen time",
+        "validation",
+        "burnout",
+        "filter"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 8,
+      "cuantas_pedimos": 24
+    },
+    {
+      "topic_id": 184,
+      "titulo": "Crecer en un mundo que cambia rápido",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "teen",
+      "niveles_declarados": [
+        "B1",
+        "B2"
+      ],
+      "semillas_actuales": [
+        "change",
+        "uncertain",
+        "technology",
+        "generation",
+        "adapt",
+        "overwhelming"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 8,
+      "cuantas_pedimos": 24
+    },
+    {
+      "topic_id": 185,
+      "titulo": "Causas que me importan",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "teen",
+      "niveles_declarados": [
+        "B1",
+        "B2"
+      ],
+      "semillas_actuales": [
+        "cause",
+        "awareness",
+        "injustice",
+        "activism",
+        "change",
+        "voice"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 8,
+      "cuantas_pedimos": 24
+    },
+    {
+      "topic_id": 186,
+      "titulo": "Libertad y límites con mis padres",
+      "disciplina": "(sin categoria)",
+      "familia": null,
+      "categoria": null,
+      "segmento": "teen",
+      "niveles_declarados": [
+        "B1",
+        "B2"
+      ],
+      "semillas_actuales": [
+        "curfew",
+        "trust",
+        "independence",
+        "rules",
+        "privacy",
+        "argument"
+      ],
+      "cuantas_tiene": 6,
+      "tope_por_clase_en_su_nivel_mas_alto": 8,
+      "cuantas_pedimos": 24
+    },
+    {
+      "topic_id": 260,
+      "titulo": "Fotografía desde cero",
+      "disciplina": "creativo",
+      "familia": "conocimiento",
+      "categoria": "Fotografía",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "frame",
+        "light",
+        "focus",
+        "shutter",
+        "shot"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 261,
+      "titulo": "Composición y técnicas fotográficas",
+      "disciplina": "creativo",
+      "familia": "conocimiento",
+      "categoria": "Fotografía",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "rule of thirds",
+        "depth of field",
+        "golden hour",
+        "leading lines",
+        "exposure"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 262,
+      "titulo": "Edición de fotografía",
+      "disciplina": "creativo",
+      "familia": "conocimiento",
+      "categoria": "Fotografía",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "crop",
+        "contrast",
+        "white balance",
+        "retouch",
+        "export"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 270,
+      "titulo": "Costura desde cero",
+      "disciplina": "creativo",
+      "familia": "conocimiento",
+      "categoria": "Costura",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "stitch",
+        "needle",
+        "hem",
+        "fabric",
+        "thread"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 271,
+      "titulo": "Corte y confección",
+      "disciplina": "creativo",
+      "familia": "conocimiento",
+      "categoria": "Costura",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "pattern",
+        "seam",
+        "fitting",
+        "cut on the fold",
+        "alter"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 280,
+      "titulo": "Jardinería desde cero",
+      "disciplina": "creativo",
+      "familia": "conocimiento",
+      "categoria": "Jardinería",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "soil",
+        "water",
+        "sunlight",
+        "pot",
+        "prune"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 281,
+      "titulo": "Huerta en casa",
+      "disciplina": "creativo",
+      "familia": "conocimiento",
+      "categoria": "Jardinería",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "seedling",
+        "harvest",
+        "compost",
+        "raised bed",
+        "in season"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 282,
+      "titulo": "Cuidado y reproducción de plantas",
+      "disciplina": "creativo",
+      "familia": "conocimiento",
+      "categoria": "Jardinería",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "cutting",
+        "repot",
+        "root",
+        "propagate",
+        "overwatering"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 187,
+      "titulo": "El reino del rey Ramón y el perro Roco",
+      "disciplina": "fonetica",
+      "familia": "lenguaje",
+      "categoria": "Fonética",
+      "segmento": "mini",
+      "niveles_declarados": [
+        "A0",
+        "A1"
+      ],
+      "semillas_actuales": [
+        "perro",
+        "rueda",
+        "rey",
+        "rojo",
+        "rama",
+        "rio",
+        "torre",
+        "bruno"
+      ],
+      "cuantas_tiene": 8,
+      "tope_por_clase_en_su_nivel_mas_alto": 4,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 210,
+      "titulo": "Informática desde cero",
+      "disciplina": "informatica",
+      "familia": "conocimiento",
+      "categoria": "Uso básico",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "file",
+        "folder",
+        "desktop",
+        "click",
+        "save"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 211,
+      "titulo": "Uso de Windows y herramientas básicas",
+      "disciplina": "informatica",
+      "familia": "conocimiento",
+      "categoria": "Uso básico",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "window",
+        "shortcut",
+        "settings",
+        "install",
+        "backup"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 212,
+      "titulo": "Internet, archivos y seguridad digital",
+      "disciplina": "informatica",
+      "familia": "conocimiento",
+      "categoria": "Uso básico",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "password",
+        "phishing",
+        "download",
+        "two-factor",
+        "browser"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 213,
+      "titulo": "Programación desde cero",
+      "disciplina": "informatica",
+      "familia": "conocimiento",
+      "categoria": "Programación",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "variable",
+        "loop",
+        "function",
+        "bug",
+        "run the code"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 214,
+      "titulo": "Desarrollo web",
+      "disciplina": "informatica",
+      "familia": "conocimiento",
+      "categoria": "Programación",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "frontend",
+        "backend",
+        "deploy",
+        "responsive",
+        "API"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 215,
+      "titulo": "Bases de datos",
+      "disciplina": "informatica",
+      "familia": "conocimiento",
+      "categoria": "Programación",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "query",
+        "table",
+        "index",
+        "join",
+        "schema"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 216,
+      "titulo": "Inteligencia artificial aplicada",
+      "disciplina": "informatica",
+      "familia": "conocimiento",
+      "categoria": "Inteligencia artificial",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "prompt",
+        "model",
+        "training data",
+        "fine-tune",
+        "hallucination"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 200,
+      "titulo": "Teoría musical desde cero",
+      "disciplina": "musica",
+      "familia": "conocimiento",
+      "categoria": "Teoría musical",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "note",
+        "scale",
+        "rhythm",
+        "beat",
+        "key"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 201,
+      "titulo": "Aprender piano",
+      "disciplina": "musica",
+      "familia": "conocimiento",
+      "categoria": "Instrumentos",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "keys",
+        "chord",
+        "both hands",
+        "posture",
+        "practice slowly"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 202,
+      "titulo": "Aprender guitarra",
+      "disciplina": "musica",
+      "familia": "conocimiento",
+      "categoria": "Instrumentos",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "fret",
+        "strum",
+        "chord change",
+        "tuning",
+        "calluses"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 203,
+      "titulo": "Aprender a cantar",
+      "disciplina": "musica",
+      "familia": "conocimiento",
+      "categoria": "Instrumentos",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "breath support",
+        "pitch",
+        "range",
+        "warm up",
+        "head voice"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 204,
+      "titulo": "Lectura musical y partituras",
+      "disciplina": "musica",
+      "familia": "conocimiento",
+      "categoria": "Teoría musical",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "staff",
+        "clef",
+        "time signature",
+        "sight-read",
+        "rest"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 205,
+      "titulo": "Armonía y composición",
+      "disciplina": "musica",
+      "familia": "conocimiento",
+      "categoria": "Teoría musical",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "chord progression",
+        "voicing",
+        "resolve",
+        "modulation",
+        "hook"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 206,
+      "titulo": "Producción musical",
+      "disciplina": "musica",
+      "familia": "conocimiento",
+      "categoria": "Producción",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "mix",
+        "track",
+        "EQ",
+        "compression",
+        "master"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 220,
+      "titulo": "Electricidad domiciliaria desde cero",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Electricidad",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "circuit",
+        "voltage",
+        "breaker",
+        "ground",
+        "safety first"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 221,
+      "titulo": "Instalaciones eléctricas del hogar",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Electricidad",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "wiring",
+        "outlet",
+        "junction box",
+        "load",
+        "conduit"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 222,
+      "titulo": "Diagnóstico de fallas eléctricas",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Electricidad",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "short circuit",
+        "multimeter",
+        "trace the fault",
+        "overload",
+        "loose connection"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 230,
+      "titulo": "Carpintería desde cero",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Carpintería",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "wood grain",
+        "measure twice",
+        "sand",
+        "clamp",
+        "chisel"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 231,
+      "titulo": "Herramientas y técnicas de carpintería",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Carpintería",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "router",
+        "jig",
+        "miter",
+        "dovetail",
+        "square"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 232,
+      "titulo": "Construcción de muebles",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Carpintería",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "joinery",
+        "assembly",
+        "finish",
+        "load-bearing",
+        "dry fit"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 240,
+      "titulo": "Mecánica automotriz desde cero",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Mecánica",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "engine",
+        "oil change",
+        "tire pressure",
+        "battery",
+        "under the hood"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 241,
+      "titulo": "Mantenimiento básico del auto",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Mecánica",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "service interval",
+        "coolant",
+        "brake pads",
+        "filter",
+        "top up"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 242,
+      "titulo": "Mecánica y diagnóstico de fallas",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Mecánica",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "error code",
+        "misfire",
+        "diagnostics",
+        "wear and tear",
+        "rule it out"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 250,
+      "titulo": "Plomería desde cero",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Plomería",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2"
+      ],
+      "semillas_actuales": [
+        "pipe",
+        "leak",
+        "shut-off valve",
+        "drain",
+        "seal"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 251,
+      "titulo": "Reparaciones del hogar",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Mantenimiento",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "fix",
+        "patch",
+        "replace",
+        "tighten",
+        "quick job"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 252,
+      "titulo": "Herramientas y bricolaje",
+      "disciplina": "oficios",
+      "familia": "conocimiento",
+      "categoria": "Mantenimiento",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "toolbox",
+        "drill",
+        "screw",
+        "level",
+        "DIY"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 300,
+      "titulo": "Hablar en público sin morir en el intento",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Presentaciones",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "stage fright",
+        "take a breath",
+        "eye contact",
+        "pace yourself",
+        "own the room"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 301,
+      "titulo": "Estructurar una presentación",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Presentaciones",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "opening hook",
+        "key message",
+        "signpost",
+        "wrap up",
+        "call to action"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 302,
+      "titulo": "Manejo de la voz y los nervios",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Presentaciones",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "projection",
+        "pause",
+        "slow down",
+        "breathe",
+        "steady"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 303,
+      "titulo": "Presentar datos sin aburrir",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Presentaciones",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "the headline is",
+        "what this means",
+        "zoom in on",
+        "the takeaway",
+        "in short"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 310,
+      "titulo": "Entrevista de trabajo: contame de vos",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Entrevistas",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "walk you through",
+        "my background",
+        "what drew me to",
+        "I'd say my strength",
+        "in a nutshell"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 311,
+      "titulo": "Responder por errores y fracasos",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Entrevistas",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "in hindsight",
+        "what I learned",
+        "I owned it",
+        "I'd handle it differently",
+        "turned it around"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 312,
+      "titulo": "Negociar sueldo y condiciones",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Entrevistas",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "market rate",
+        "I was hoping for",
+        "is there flexibility",
+        "the whole package",
+        "meet in the middle"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 313,
+      "titulo": "Contar tu experiencia técnica",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Entrevistas",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "I was responsible for",
+        "we shipped",
+        "the tricky part was",
+        "I led",
+        "end to end"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 320,
+      "titulo": "Decir exactamente lo que querés decir",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Expresión y vocabulario",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "to put it another way",
+        "more precisely",
+        "what I mean is",
+        "the nuance here",
+        "rather than"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 321,
+      "titulo": "Muletillas, pausas y silencios",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Expresión y vocabulario",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON1",
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "filler words",
+        "hold the pause",
+        "let it land",
+        "think out loud",
+        "take your time"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 322,
+      "titulo": "Contar una anécdota que enganche",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Expresión y vocabulario",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON2",
+        "CON3"
+      ],
+      "semillas_actuales": [
+        "so there I was",
+        "long story short",
+        "out of nowhere",
+        "and then it hit me",
+        "you won't believe"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    },
+    {
+      "topic_id": 323,
+      "titulo": "Discutir sin pelear",
+      "disciplina": "oratoria",
+      "familia": "conocimiento",
+      "categoria": "Expresión y vocabulario",
+      "segmento": null,
+      "niveles_declarados": [
+        "CON3",
+        "CON4"
+      ],
+      "semillas_actuales": [
+        "I see your point but",
+        "fair enough",
+        "where I'd push back",
+        "let's agree that",
+        "hear me out"
+      ],
+      "cuantas_tiene": 5,
+      "tope_por_clase_en_su_nivel_mas_alto": 6,
+      "cuantas_pedimos": 18
+    }
+  ]
+}
