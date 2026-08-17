@@ -23,6 +23,7 @@ import { KidsParentSwitch } from './kids/KidsParentSwitch'
 import { InviteFriendButton } from '../components/InviteFriendButton'
 import { MicSelector } from '../components/MicSelector'
 import { PushToTalkControl } from '../components/PushToTalkControl'
+import { ClaseOrbe } from '../components/ClaseOrbe'
 
 function KidsParentSwitchLazy() {
   return <KidsParentSwitch />
@@ -1501,92 +1502,17 @@ function PracticarView({ profile, onSessionEnd }: { profile: MeProfile | null; o
                 </>
               )
             })()}
-          <div className="convo-orb-wrap">
-            <AgentAudioVisualizerAura
-              status={live.status}
-              audioLevel={live.audioLevel}
-              color="#00B37E"
-              colorShift={0.18}
-              themeMode="dark"
-              size="xl"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </div>
-          <div className="convo-turn">
-            <div className="l">{statusLabel}</div>
-            {/* Lo último que dijo el tutor — siempre visible para no perderse */}
-            {(() => {
-              const lastAi = [...live.transcript].reverse().find(l => l.who === 'ai')
-              const isA0 = profile?.user?.cefr_level === 'A0'
-              // En A0: extraemos la frase entre comillas (modelo a repetir)
-              const phraseMatch = lastAi?.text?.match(/['"“”]([^'"“”]+)['"“”]/)
-              const modelPhrase = phraseMatch?.[1]?.trim()
-              // Contador de frases practicadas (= turnos del user en la sesión)
-              const phrasesDone = live.transcript.filter(l => l.who === 'user' && l.text.trim().length > 0).length
-              const A0_GOAL = 10
-              if (isA0 && modelPhrase) {
-                const progressPct = Math.min(100, (phrasesDone / A0_GOAL) * 100)
-                return (
-                  <div style={{ textAlign: 'center', padding: '10px 16px' }}>
-                    <div style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      gap: 10, marginBottom: 14,
-                    }}>
-                      <span style={{ fontSize: 11, color: 'rgba(232,236,234,.6)', textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 700 }}>
-                        Frases logradas
-                      </span>
-                      <span style={{ fontSize: 13, color: 'white', fontWeight: 800 }}>
-                        {phrasesDone} / {A0_GOAL}
-                      </span>
-                      <div style={{ width: 120, height: 4, background: 'rgba(255,255,255,.1)', borderRadius: 999, overflow: 'hidden' }}>
-                        <div style={{ width: `${progressPct}%`, height: '100%', background: '#00B37E', transition: 'width 320ms ease' }} />
-                      </div>
-                    </div>
-                    <div style={{ fontSize: 11, color: 'rgba(232,236,234,.55)', textTransform: 'uppercase', letterSpacing: '.16em', marginBottom: 12, fontWeight: 700 }}>
-                      Repetí esta frase
-                    </div>
-                    <div style={{
-                      fontSize: 'clamp(22px, 4vw, 36px)', fontWeight: 700, letterSpacing: '-.02em',
-                      color: 'white', lineHeight: 1.2, marginBottom: 14,
-                      fontFamily: 'Inter, sans-serif',
-                    }}>
-                      "{modelPhrase}"
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => live.say(`Por favor repetí lentamente y con buena pronunciación esta frase exacta, una sola vez, sin agregar nada más: "${modelPhrase}"`)}
-                      style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 8,
-                        background: 'rgba(0,179,126,.18)', color: '#9CFCD2',
-                        border: '1px solid rgba(156,252,210,.3)', borderRadius: 999,
-                        padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                      }}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                      </svg>
-                      Escuchar de nuevo
-                    </button>
-                  </div>
-                )
-              }
-              if (lastAi) {
-                return (
-                  <div className="q" style={{ fontStyle: 'normal', color: 'white' }}>
-                    <div style={{ fontSize: 11, color: 'rgba(232,236,234,.5)', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 6 }}>
-                      Te dijo el tutor:
-                    </div>
-                    "{lastAi.text}"
-                  </div>
-                )
-              }
-              return (
-                <div className="q">
-                  Esperá unos segundos — el tutor te va a saludar y arrancar la charla.
-                </div>
-              )
-            })()}
-          </div>
+          {/* El orbe y el panel de turno viven en components/ClaseOrbe: el probador /motor
+              muestra la clase con ESTE MISMO componente, así lo que se refina acá llega allá
+              y no hay dos clases distintas. */}
+          <ClaseOrbe
+            status={live.status}
+            audioLevel={live.audioLevel}
+            transcript={live.transcript}
+            statusLabel={statusLabel}
+            nivel={profile?.user?.cefr_level}
+            onRepetir={(frase) => live.say(`Por favor repetí lentamente y con buena pronunciación esta frase exacta, una sola vez, sin agregar nada más: "${frase}"`)}
+          />
         </div>
 
         <div className="mic-row">

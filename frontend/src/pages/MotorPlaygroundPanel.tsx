@@ -18,6 +18,9 @@ import { ThemeSwitcher } from '../components/ThemeSwitcher'
 import { motorAPI, buildMotorWsUrl, MotorResolve, MotorOverride, MotorPreset, MotorStageNote, MotorVerificacion } from '../services/api'
 import { useLiveVoice } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
+import { ClaseOrbe } from '../components/ClaseOrbe'
+import { WEBAPP_CSS } from './webapp.css'
+import { CONVO_BG_CSS } from './convo-bg.css'
 
 interface Band { band_id: number; code: string; label: string; phase_group?: string; max_level_order?: number }
 interface Level {
@@ -627,6 +630,10 @@ export default function MotorPlaygroundPanel() {
   // son acumulativos: L1 esqueleto … L5 guion y leyes … L6 = el activo (semillas incluidas).
   // Así lo que se mide es el motor, y el peldaño que gane se publica con active=1, no se porta.
   const [templateId, setTemplateId] = useState(0)
+  // Modo CLASE: el mismo `live` de siempre, pero visto como lo ve el alumno — orbe y
+  // subtitulos, sin combos ni paneles. El probador sirve para diagnosticar; esto sirve para
+  // SENTIR si la charla esta viva, que es lo unico que el visor no puede decir.
+  const [modoClase, setModoClase] = useState(false)
   // Verificación de ESQUEMA: compara qué fila usó el motor contra cuál le correspondía al
   // flujo elegido. No lee el contenido — analizar texto ("dice 'dog' en una clase de
   // ferretería") es infinito; comparar claves es finito y se prueba mirando la base.
@@ -653,6 +660,7 @@ export default function MotorPlaygroundPanel() {
     if (promptLevel) params.prompt_level = promptLevel
     if (templateId) params.template_id = templateId
     const url = buildMotorWsUrl(params)
+    setModoClase(true)
     await live.start(0, undefined, 'Aoede', url)
   }, [live, band, level, topicId, effStudent, cadencia, targetLang, liveModel, infraTest, promptLevel, templateId])
 
@@ -1864,6 +1872,45 @@ export default function MotorPlaygroundPanel() {
                   {verificando ? 'Verificando…' : 'Verificar'}
                 </button>
               </div>
+              {/* MODO CLASE — la clase vista como la ve el alumno, con el MISMO componente
+                  que usa producción (components/ClaseOrbe) y el MISMO CSS (.webapp-root).
+                  No es una maqueta: si acá se ve mal, en la app se ve mal. El panel sirve
+                  para diagnosticar; esto sirve para SENTIR si la charla está viva, que es lo
+                  único que ningún visor puede decir. */}
+              {modoClase && (
+                <div
+                  onClick={(e) => { if (e.target === e.currentTarget) setModoClase(false) }}
+                  style={{
+                    position: 'fixed', inset: 0, zIndex: 9999, background: '#0b0f0d',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                  <style>{WEBAPP_CSS}</style>
+                  <style>{CONVO_BG_CSS}</style>
+                  <div className="webapp-root" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                    <ClaseOrbe
+                      status={live.status}
+                      audioLevel={live.audioLevel}
+                      transcript={live.transcript}
+                      statusLabel={!isLive ? 'Clase terminada' : live.status === 'connecting' ? 'Conectando…' : live.status === 'speaking' ? 'El profe habla' : 'Escuchando tu voz'}
+                      nivel={level}
+                      onRepetir={(frase) => live.say(`Por favor repetí lentamente y con buena pronunciación esta frase exacta, una sola vez, sin agregar nada más: "${frase}"`)}
+                    />
+                    <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+                      {isLive && (
+                        <button onClick={endLiveClass} style={{ background: 'var(--color-danger)', color: '#fff', border: 0, borderRadius: 999, padding: '10px 22px', fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}>
+                          Terminar clase
+                        </button>
+                      )}
+                      <button onClick={() => setModoClase(false)} style={{ background: 'transparent', color: 'rgba(232,236,234,.7)', border: '1px solid rgba(255,255,255,.2)', borderRadius: 999, padding: '10px 22px', fontSize: 13.5, cursor: 'pointer' }}>
+                        Volver al panel
+                      </button>
+                    </div>
+                    <div style={{ fontSize: 11, color: 'rgba(232,236,234,.35)', marginTop: 4 }}>
+                      {band} · {level} · {res?.meta?.topic_title || 'sin tópico'}
+                    </div>
+                  </div>
+                </div>
+              )}
               {verif && (
                 <div style={{ background: C.panel, border: `1px solid ${verif.resumen.alta ? 'var(--color-danger)' : C.border}`, borderRadius: 10, padding: '10px 12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: verif.alarmas.length ? 8 : 0, flexWrap: 'wrap' }}>
