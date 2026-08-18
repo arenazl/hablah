@@ -590,16 +590,18 @@ export default function MotorPlaygroundPanel() {
     const materia = (disciplineFamilies[discipline] || 'lenguaje') === 'lenguaje'
       ? (targetLang || s.target_language || 'en')
       : discipline
-    // El fallback al nivel del perfil sólo vale si pertenece a ESTA escalera: Lucas es
-    // B2 en inglés, y B2 no significa nada en informática. Si no pertenece, arranca por
-    // el principio de la escalera — que es la verdad: nunca cursó esta materia.
-    const propios = levels.filter((l) => (l.discipline || 'idiomas') === discipline)
-    const fam = disciplineFamilies[discipline] || 'lenguaje'
-    const escalera = propios.length > 0 ? propios : levels.filter((l) => (l.family || 'lenguaje') === fam)
-    const candidato = s.levels_by_materia?.[materia] || s.level_code
-    const nivel = escalera.some((l) => l.level_code === candidato) ? candidato : escalera[0]?.level_code
-    if (nivel) setLevel(nivel)
-  }, [studentId, students, bands, discipline, disciplineFamilies, targetLang, levels])
+    // EL NIVEL LO MANDA EL COMBO. Punto.
+    //
+    // El perfil del alumno NO lo pisa, y esa es la regla: si elegiste Inicial, es Inicial. Antes
+    // este efecto tomaba el nivel del alumno y lo aplicaba, con un fallback al `cefr_level`
+    // global cuando no tenía uno para la materia. Y como TODOS los idiomas comparten la escalera
+    // A0..C2, el B2 de inglés de Lucas se aplicaba a una clase de portugués sin decir nada:
+    // ponías Inicial y la clase arrancaba en B2.
+    //
+    // El combo ya viene con un valor cargado (arranca en el primer escalón), así que nunca queda
+    // vacío y no hace falta que nadie lo complete por atrás. Lo único que sí sale del alumno es
+    // su EDAD, que no depende de la materia.
+  }, [studentId, students, bands])
 
   // Clase en VIVO — charla REAL por voz (solo audio, sin imágenes) contra el motor
   // único (ws_motor → compose_proto), con el MISMO combo que se está previsualizando.
