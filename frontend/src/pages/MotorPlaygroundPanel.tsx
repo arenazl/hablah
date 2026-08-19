@@ -637,6 +637,11 @@ export default function MotorPlaygroundPanel() {
   // subtitulos, sin combos ni paneles. El probador sirve para diagnosticar; esto sirve para
   // SENTIR si la charla esta viva, que es lo unico que el visor no puede decir.
   const [modoClase, setModoClase] = useState(false)
+  // Lo que los destiladores sacaron de la clase que acaba de terminar. Corren en BACKGROUND al
+  // cerrar el WebSocket, asi que no estan listos en el instante: se consulta unos segundos
+  // despues y cada bloque avisa si todavia no llego.
+  const [postClase, setPostClase] = useState<any>(null)
+  const [buscandoPost, setBuscandoPost] = useState(false)
   // La transcripcion se sigue sola: sin esto hay que scrollear a mano en cada turno.
   const finTranscriptRef = useRef<HTMLDivElement>(null)
   // Verificación de ESQUEMA: compara qué fila usó el motor contra cuál le correspondía al
@@ -692,7 +697,25 @@ export default function MotorPlaygroundPanel() {
     } catch {
       toast.error('La clase terminó pero no se pudo actualizar la memoria del alumno')
     }
+    // El analisis y la destilacion corren en background del lado del server. Se espera un
+    // toque y se pide: si todavia no esta, el panel lo dice y hay un boton para reintentar.
+    setBuscandoPost(true)
+    setTimeout(() => {
+      motorAPI.postclaseUltima(effStudent)
+        .then(setPostClase)
+        .catch(() => setPostClase({ hay: false, motivo: 'no se pudo leer el post-clase' }))
+        .finally(() => setBuscandoPost(false))
+    }, 6000)
   }, [live, effStudent, level, students])
+
+  const refrescarPostClase = useCallback(() => {
+    if (!effStudent) return
+    setBuscandoPost(true)
+    motorAPI.postclaseUltima(effStudent)
+      .then(setPostClase)
+      .catch(() => setPostClase({ hay: false, motivo: 'no se pudo leer el post-clase' }))
+      .finally(() => setBuscandoPost(false))
+  }, [effStudent])
 
   // Resolve JIT de orquestación (Motor V2)
   const resolve = useCallback(() => {
@@ -2028,6 +2051,9 @@ export default function MotorPlaygroundPanel() {
                 </div>,
                 document.body,
               )}
+              {(postClase || buscandoPost) && (
+                <PanelPostClase datos={postClase} buscando={buscandoPost} onRefrescar={refrescarPostClase} C={C} />
+              )}
               {verif && (
                 <div style={{ background: C.panel, border: `1px solid ${verif.resumen.alta ? 'var(--color-danger)' : C.border}`, borderRadius: 10, padding: '10px 12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: verif.alarmas.length ? 8 : 0, flexWrap: 'wrap' }}>
@@ -2265,6 +2291,95 @@ function ComoSeDiceBien({ transcript, idioma, nivel, idiomaBase }: {
             </div>
           ))}
         </div>
+      )}
+    </div>
+  )
+}
+
+/* EL POST-CLASE, en el lugar donde se prueban las clases.
+ *
+ * Los dos destiladores ya corrian —y desde anoche tambien en el camino de voz— pero su
+ * resultado no se veia en ninguna parte: terminabas la clase y no habia forma de saber que
+ * habia entendido el sistema. Esto lo muestra.
+ *
+ * Son DOS cosas distintas y conviene no mezclarlas:
+ *   ANALISIS (session_analyzer)      mira la clase como pieza: score interno y devolucion.
+ *   MEMORIA  (learner_state_writer)  lo que se GUARDA y va a entrar en la proxima clase.
+ * La segunda es la que importa para el motor: es el tercer pilar.
+ */
+function PanelPostClase({ datos, buscando, onRefrescar, C }: {
+  datos: any; buscando: boolean; onRefrescar: () => void; C: any
+}) {
+  const hay = datos?.hay
+  const analisis = datos?.analisis
+  const memoria: any[] = datos?.memoria || []
+  const Rot = ({ children }: { children: React.ReactNode }) => (
+    <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase',
+      color: C.faint, marginBottom: 6 }}>{children}</div>
+  )
+  return (
+    <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 10, padding: '12px 14px',
+      display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <b style={{ fontSize: 12 }}>Post-clase</b>
+        {buscando && <span style={{ fontSize: 11, color: C.dim }}>destilando…</span>}
+        {datos?.session && (
+          <span style={{ fontSize: 10.5, color: C.faint, fontFamily: 'ui-monospace, monospace' }}>
+            sesión {datos.session.id} · {datos.session.nivel} · {datos.session.duracion_s ?? '—'}s
+          </span>
+        )}
+        <button onClick={onRefrescar} style={{ marginLeft: 'auto', background: 'none', border: `1px solid ${C.border}`,
+          color: C.dim, borderRadius: 8, fontSize: 11, padding: '3px 10px', cursor: 'pointer' }}>
+          Volver a buscar
+        </button>
+      </div>
+
+      {!hay && !buscando && (
+        <div style={{ fontSize: 11.5, color: C.dim }}>{datos?.motivo || 'todavía no hay nada'}</div>
+      )}
+
+      {hay && (
+        <>
+          <div>
+            <Rot>Análisis de la clase</Rot>
+            {analisis?.listo ? (
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 22, fontWeight: 800, color: C.accent }}>{analisis.score}</span>
+                <span style={{ fontSize: 11.5, color: C.dim }}>
+                  {analisis.reporte?.verdict || analisis.reporte?.student_summary || 'sin devolución'}
+                </span>
+              </div>
+            ) : (
+              <div style={{ fontSize: 11.5, color: C.faint, fontStyle: 'italic' }}>
+                todavía no terminó de analizar — probá "volver a buscar"
+              </div>
+            )}
+          </div>
+
+          <div>
+            <Rot>Memoria del alumno · lo que entra en la próxima clase</Rot>
+            {memoria.length === 0 ? (
+              <div style={{ fontSize: 11.5, color: C.faint, fontStyle: 'italic' }}>
+                sin memoria guardada. Si la clase tenía tópico con categoría, el destilador no llegó
+                a escribir; si el tópico no tiene categoría, no se guarda a propósito.
+              </div>
+            ) : memoria.map((m, i) => (
+              <div key={i} style={{ borderLeft: `2px solid ${C.accent}`, paddingLeft: 10, marginBottom: 10 }}>
+                <div style={{ fontSize: 10.5, color: C.faint, fontFamily: 'ui-monospace, monospace', marginBottom: 4 }}>
+                  materia {m.materia ?? '(sin materia)'}
+                </div>
+                {m.top_error && <div style={{ fontSize: 12, color: C.fg, marginBottom: 3 }}>
+                  <span style={{ color: C.dim }}>error principal: </span>{m.top_error}</div>}
+                {m.review && <div style={{ fontSize: 12, color: C.fg, marginBottom: 3 }}>
+                  <span style={{ color: C.dim }}>a repasar: </span>{m.review}</div>}
+                {!!m.interests?.length && <div style={{ fontSize: 11.5, color: C.dim }}>
+                  le interesa: {m.interests.join(' · ')}</div>}
+                {!!m.mastered?.length && <div style={{ fontSize: 11.5, color: C.dim }}>
+                  ya domina: {m.mastered.join(' · ')}</div>}
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   )
