@@ -697,15 +697,30 @@ export default function MotorPlaygroundPanel() {
     } catch {
       toast.error('La clase terminó pero no se pudo actualizar la memoria del alumno')
     }
-    // El analisis y la destilacion corren en background del lado del server. Se espera un
-    // toque y se pide: si todavia no esta, el panel lo dice y hay un boton para reintentar.
+    // Los dos destiladores corren en BACKGROUND del lado del server y no tardan lo mismo: la
+    // memoria llega en unos segundos, pero el analisis le manda la transcripcion ENTERA a
+    // Gemini y puede tardar bastante mas. Con una sola consulta a los 6s la memoria aparecia y
+    // el analisis decia "todavia no termino" para siempre, aunque un rato despues estuviera
+    // listo en la base. Se reintenta hasta que el analisis este, con tope.
     setBuscandoPost(true)
-    setTimeout(() => {
+    let intentos = 0
+    const buscar = () => {
       motorAPI.postclaseUltima(effStudent)
-        .then(setPostClase)
-        .catch(() => setPostClase({ hay: false, motivo: 'no se pudo leer el post-clase' }))
-        .finally(() => setBuscandoPost(false))
-    }, 6000)
+        .then((r) => {
+          setPostClase(r)
+          intentos += 1
+          if (!r?.analisis?.listo && intentos < 8) {
+            setTimeout(buscar, 5000)
+          } else {
+            setBuscandoPost(false)
+          }
+        })
+        .catch(() => {
+          setPostClase({ hay: false, motivo: 'no se pudo leer el post-clase' })
+          setBuscandoPost(false)
+        })
+    }
+    setTimeout(buscar, 5000)
   }, [live, effStudent, level, students])
 
   const refrescarPostClase = useCallback(() => {
@@ -2364,7 +2379,9 @@ function PanelPostClase({ datos, buscando, onRefrescar, C }: {
               </div>
             ) : (
               <div style={{ fontSize: 11.5, color: C.faint, fontStyle: 'italic' }}>
-                todavía no terminó de analizar — probá "volver a buscar"
+                {buscando
+                  ? 'analizando la charla entera… puede tardar medio minuto'
+                  : 'el análisis no llegó — probá "volver a buscar"'}
               </div>
             )}
           </div>

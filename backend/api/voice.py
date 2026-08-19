@@ -451,6 +451,8 @@ async def voice_ws_motor(
     engine_name = engine if engine in available_engines() else "gemini_live"
     log.info("voice_ws_motor: %s/%s topic=%s engine=%s voice=%s", age_group, level_code, topic_id, engine_name, safe_voice)
     transcript: list[dict] = []
+    import datetime as _dt
+    _t_inicio = _dt.datetime.utcnow()
     try:
         eng = get_engine(engine_name)
         async for line in eng.run(websocket, ctx):
@@ -475,6 +477,12 @@ async def voice_ws_motor(
                         topic_title = top_row.title
 
                 # 1. Persistir en la tabla sessions (para auditoría estándar y scripts)
+                # ended_at y duration_seconds: sin esto la clase queda sin duración y el
+                # post-clase mostraba "—s". Se calcula desde el arranque del WS, que es cuando
+                # empezó la charla de verdad. Corre DESPUÉS de cerrar el socket, así que no
+                # toca la cadena de audio.
+                _fin = _dt.datetime.utcnow()
+                _dur = int((_fin - _t_inicio).total_seconds()) if _t_inicio else None
                 s = SessionModel(
                     user_id=eff_student,
                     topic_id=topic_id or None,
@@ -482,6 +490,8 @@ async def voice_ws_motor(
                     status="completed",
                     transcript=transcript,
                     prompt_final=super_prompt,
+                    ended_at=_fin,
+                    duration_seconds=_dur,
                 )
                 db.add(s)
 
