@@ -438,6 +438,10 @@ export const motorAPI = {
   fraseCorregida: (body: { texto: string; idioma: string; nivel?: string; idioma_base?: string }) =>
     api.post<{ corregida: string; cambio: boolean }>('/motor/frase-corregida', body).then((r) => r.data),
   // Lo que el post-clase saco de la ultima clase del alumno (analisis + memoria destilada).
+  topicoBorrador: (body: { idea: string; discipline: string; segmento: string; idioma?: string; niveles?: string[] }) =>
+    api.post<any>('/motor/topico/borrador', body).then((r) => r.data),
+  topicoCrear: (body: { title: string; category_id: number; segmento: string; levels: string[]; keywords: string[]; activar?: boolean }) =>
+    api.post<any>('/motor/topico/crear', body).then((r) => r.data),
   postclaseUltima: (studentId: number) =>
     api.get<any>('/motor/postclase/ultima', { params: { student_id: studentId } }).then((r) => r.data),
   resolve: (body: {

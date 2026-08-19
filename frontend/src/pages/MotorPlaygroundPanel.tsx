@@ -20,6 +20,7 @@ import { useLiveVoice, useAudioLevel } from '../hooks/useLiveVoice'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { createPortal } from 'react-dom'
 import { ClaseOrbe } from '../components/ClaseOrbe'
+import { GeneradorDeTopicos } from '../components/GeneradorDeTopicos'
 import { WEBAPP_CSS } from './webapp.css'
 import { CONVO_BG_CSS } from './convo-bg.css'
 
@@ -2079,6 +2080,13 @@ export default function MotorPlaygroundPanel() {
                 </div>,
                 document.body,
               )}
+              <GeneradorDeTopicos
+                disciplinas={Object.keys(disciplineFamilies)}
+                disciplinaActual={discipline}
+                idiomaActual={targetLang}
+                C={C}
+                onCreado={() => { motorAPI.rows('topics').then(setTopicsRows).catch(() => {}) }}
+              />
               {(postClase || buscandoPost) && (
                 <PanelPostClase datos={postClase} buscando={buscandoPost} onRefrescar={refrescarPostClase} C={C} />
               )}
