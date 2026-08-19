@@ -695,8 +695,10 @@ async def postclase_ultima(student_id: int, db: AsyncSession = Depends(get_db)):
     todavía no está.
     """
     s = (await db.execute(text(
+        # started_at, no created_at: `sessions` no tiene esa columna y por eso el endpoint
+        # devolvia 500 en el primer intento.
         "SELECT id, topic_id, cefr_at_start, status, score, report, metrics, duration_seconds, "
-        "created_at FROM sessions WHERE user_id = :u ORDER BY id DESC LIMIT 1"),
+        "started_at FROM sessions WHERE user_id = :u ORDER BY id DESC LIMIT 1"),
         {"u": student_id})).mappings().first()
     if not s:
         return {"hay": False, "motivo": "este alumno todavía no tiene clases guardadas"}
@@ -720,7 +722,7 @@ async def postclase_ultima(student_id: int, db: AsyncSession = Depends(get_db)):
         "hay": True,
         "session": {"id": s["id"], "topic_id": s["topic_id"], "nivel": s["cefr_at_start"],
                     "status": s["status"], "duracion_s": s["duration_seconds"],
-                    "cuando": str(s["created_at"])},
+                    "cuando": str(s["started_at"])},
         # El ANÁLISIS de la clase (session_analyzer): score interno + dimensiones + devolución.
         "analisis": {"score": s["score"], "reporte": _j(s["report"]), "metricas": _j(s["metrics"]),
                      "listo": s["score"] is not None},

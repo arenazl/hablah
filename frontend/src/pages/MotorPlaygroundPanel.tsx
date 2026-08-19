@@ -1982,6 +1982,19 @@ export default function MotorPlaygroundPanel() {
 
                     <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 0 }}>
                     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, overflowY: 'auto', padding: '0 16px 24px' }}>
+                      {/* Terminada la clase, ESTA pantalla pasa a ser la evaluación. Antes el
+                          post-clase se dibujaba en el panel de atrás, o sea que terminabas la
+                          clase y no veías nada: seguías acá adentro. El cierre de una clase es
+                          el momento de leer qué entendió el sistema, no de volver al tablero. */}
+                      {!isLive && (postClase || buscandoPost) && (
+                        <div style={{ width: '100%', maxWidth: 720, marginBottom: 18 }}>
+                          <PanelPostClase datos={postClase} buscando={buscandoPost}
+                            onRefrescar={refrescarPostClase}
+                            C={{ panel: 'rgba(255,255,255,.04)', border: 'rgba(255,255,255,.12)',
+                                 faint: 'rgba(232,236,234,.35)', dim: 'rgba(232,236,234,.55)',
+                                 fg: 'rgba(232,236,234,.92)', accent: '#00B37E' }} />
+                        </div>
+                      )}
                       <ClaseOrbe
                         status={live.status}
                         subscribeAudioLevel={live.subscribeAudioLevel}
