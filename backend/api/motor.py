@@ -731,3 +731,192 @@ async def postclase_ultima(student_id: int, db: AsyncSession = Depends(get_db)):
                      "interests": _j(h["interests"]) or [], "mastered": _j(h["mastered"]) or [],
                      "review": h["review"], "cuando": str(h["updated_at"])} for h in hist],
     }
+
+
+# ──────────────────────────────────────────────────────────────────────────────────────
+# GENERADOR DE TÓPICOS — de una idea en una línea a un tópico que compone
+# ──────────────────────────────────────────────────────────────────────────────────────
+# Cuantas semillas entran por clase en cada nivel (app_config.motor_params.vocab_keywords).
+_TOPE_POR_NIVEL = {"A0": 4, "A1": 4, "A2": 5, "B1": 6, "B2": 8, "C1": 8, "C2": 10}
+
+
+class BorradorTopicoBody(BaseModel):
+    idea: str                      # "mantenimiento de bicicletas"
+    discipline: str = "idiomas"
+    segmento: str = "adultos"      # adultos | teen | junior | mini
+    niveles: list[str] = []        # vacío = los que correspondan a la familia
+    idioma: str = "en"             # en qué idioma van las semillas
+
+
+# El contrato de semilla, escrito una vez. Lo usa el generador para pedirlas y el validador
+# para rechazarlas: si son dos textos distintos, se separan en la segunda semana.
+_CONTRATO_SEMILLA = """QUE ES UNA SEMILLA
+LEXICO QUE EL ALUMNO TIENE QUE PODER PRODUCIR hablando del tema. Es la palabra que queremos
+escucharle decir A EL, no la que el profe va a explicar.
+- Una o dos palabras. Sin articulos, sin definiciones, sin explicaciones.
+- NO frases, NO modismos, NO verbos compuestos. Caso real de lo que NO va: 'top up' en un
+  topico de mecanica: es un phrasal verb ingles, no lexico del rubro. Igual que 'measure
+  twice', 'under the hood' o 'safety first'.
+- NO la progresion de la materia, NO frases de practica, NO un glosario para lucirse: si el
+  alumno no la va a decir, no va.
+- Si dos son sinonimos, una sobra. Nada de fantasia, magia, aventuras ni onomatopeyas.
+
+COMO LAS USA EL MOTOR (de esto depende que sirvan)
+1. En cada clase se ROTAN con una semilla de sesion (que incluye que numero de clase es) y se
+   CORTAN. No entran todas: entran unas pocas, y cambian de clase en clase.
+2. Cuantas entran depende del NIVEL: A0 y A1: 4 - A2: 5 - B1: 6 - B2 y C1: 8 - C2: 10 - CON: 6
+3. LA PRIMERA DE LA ROTACION ABRE LA CLASE: el comando de arranque la usa en el primer turno.
+   Cualquiera de las que cargues puede ser con la que empieza la charla.
+4. NO SE FUERZAN. Al coach se le dice: usa solo las que entren naturalmente, 2 o 3 bien hechas
+   valen mas que forzar la lista. Esta MEDIDO: forzar el vocabulario BAJA la calidad de la
+   clase (7.7 libre contra 6.5 forzado). Cargar muchas no es exigir mas: es darle de donde
+   elegir para que dos clases del mismo topico no salgan iguales.
+5. EL IDIOMA ES PIVOTE: el catalogo nunca escribe el idioma de la clase y el coach tiene la
+   orden de convertirlas, asi que tienen que ser conceptos convertibles. Un termino que en la
+   vida real se dice en su idioma original puede quedarse; una palabra cualquiera en otro
+   idioma NO, porque el coach la lee tal cual y se la dice al alumno en el idioma equivocado.
+
+LA RESTRICCION QUE MAS IMPORTA
+La rotacion NO sabe de niveles: mezcla la lista entera y corta. En el nivel MAS BAJO que el
+topico declara le puede tocar CUALQUIERA de las que cargues. Por lo tanto TODAS tienen que ser
+decibles por un alumno de ese nivel. Si el topico va de A0 a C2, no cargues terminos que solo
+un avanzado usaria: carga el lexico CENTRAL del tema y deja lo muy especifico afuera.
+
+Y SEGUN LA FAMILIA
+- lenguaje (clases de idioma): la palabra objetivo se NOMBRA, presentarla es la pedagogia.
+- conocimiento (oficios, musica, informatica): no hay palabra objetivo que presentar. Es el
+  lexico real del rubro, el que usaria alguien que trabaja de eso, y se conversa."""
+
+
+def _validar_semillas(sems: list[str]) -> list[dict]:
+    """Alarmas del contrato. Mismo criterio que el generador pide, verificado acá."""
+    out = []
+    vistas = set()
+    for k in sems:
+        t = (k or "").strip()
+        if not t:
+            continue
+        if len(t.split()) > 2:
+            out.append({"semilla": t, "motivo": "más de dos palabras: parece una frase, no léxico"})
+        if t.lower() in vistas:
+            out.append({"semilla": t, "motivo": "repetida"})
+        vistas.add(t.lower())
+    return out
+
+
+@router.post("/topico/borrador")
+async def topico_borrador(body: BorradorTopicoBody, db: AsyncSession = Depends(get_db)):
+    """De una idea en una línea a un BORRADOR completo. NO guarda nada.
+
+    El esqueleto (categoría, familia, disciplina, segmento, niveles) sale del CATÁLOGO, no del
+    modelo: a Gemini se le pasa la lista de categorías REALES de esa disciplina y elige una.
+    Que invente una categoría es exactamente lo que hoy deja tópicos sin familia — y un tópico
+    sin familia envenena la memoria del alumno para todas sus materias.
+    """
+    import json as _json
+    cats = (await db.execute(text(
+        "SELECT id, name, family, discipline FROM categories WHERE discipline = :d ORDER BY name"),
+        {"d": body.discipline})).mappings().all()
+    if not cats:
+        raise HTTPException(400, f"no hay categorías cargadas para la disciplina '{body.discipline}'")
+    familia = cats[0]["family"]
+
+    niveles = body.niveles or [r["code"] for r in (await db.execute(text(
+        "SELECT code FROM levels WHERE active=1 AND family = :f ORDER BY escalon, code"),
+        {"f": familia})).mappings().all()]
+
+    listado = "\n".join(f'  - id {c["id"]}: {c["name"]}' for c in cats)
+    prompt = (
+        "Sos un diseñador de contenidos para una plataforma de clases por voz.\n"
+        f"IDEA DEL TÓPICO: {body.idea}\n"
+        f"Disciplina: {body.discipline} · Familia: {familia} · Para: {body.segmento}\n"
+        f"Niveles en que se va a dar: {', '.join(niveles)}\n"
+        f"NIVEL MAS BAJO: {niveles[0] if niveles else '?'} - ahi entran solo "
+        f"{_TOPE_POR_NIVEL.get(niveles[0] if niveles else '', 6)} semillas por clase, "
+        "elegidas rotando la lista entera. TODAS tienen que servir en ese nivel.\n"
+        f"Idioma en que van las semillas: {body.idioma}\n\n"
+        "CATEGORÍAS DISPONIBLES — elegí UNA de esta lista por su id. NO inventes ninguna:\n"
+        f"{listado}\n\n"
+        f"{_CONTRATO_SEMILLA}\n"
+        "Devolvé SOLO JSON:\n"
+        '{"title": "título corto y concreto, como lo vería el alumno",\n'
+        ' "category_id": <id de la lista>,\n'
+        ' "semillas": ["...", "..."],   // 18 a 24, cubriendo de lo básico a lo específico\n'
+        ' "por_que": "una línea: por qué esas semillas y no otras"}'
+    )
+    from services.session_analyzer import _gemini_complete
+    out = await _gemini_complete(prompt, body.idea) or {}
+
+    cat_id = out.get("category_id")
+    cat = next((c for c in cats if c["id"] == cat_id), None)
+    semillas = [str(x).strip() for x in (out.get("semillas") or []) if str(x).strip()]
+
+    alarmas = []
+    if not cat:
+        alarmas.append({"severidad": "alta", "campo": "category_id",
+                        "detalle": f"la categoría {cat_id!r} no está en la lista de la disciplina. "
+                                   "Sin categoría el tópico no tiene familia ni disciplina."})
+    if len(semillas) < 12:
+        alarmas.append({"severidad": "media", "campo": "semillas",
+                        "detalle": f"sólo {len(semillas)} semillas. Con pocas, todas las clases del "
+                                   "tópico giran sobre las mismas palabras."})
+    for p in _validar_semillas(semillas):
+        alarmas.append({"severidad": "media", "campo": "semillas",
+                        "detalle": f"«{p['semilla']}»: {p['motivo']}"})
+
+    return {
+        "borrador": {
+            "title": (out.get("title") or body.idea).strip(),
+            "category_id": cat["id"] if cat else None,
+            "category_name": cat["name"] if cat else None,
+            "family": cat["family"] if cat else None,
+            "discipline": body.discipline,
+            "segmento": body.segmento,
+            "levels": niveles,
+            "keywords": semillas,
+        },
+        "por_que": out.get("por_que") or "",
+        "alarmas": alarmas,
+        "puede_activarse": not any(a["severidad"] == "alta" for a in alarmas),
+    }
+
+
+class CrearTopicoBody(BaseModel):
+    title: str
+    category_id: int
+    segmento: str
+    levels: list[str]
+    keywords: list[str]
+    activar: bool = True
+
+
+@router.post("/topico/crear")
+async def topico_crear(body: CrearTopicoBody, db: AsyncSession = Depends(get_db)):
+    """Guarda el borrador ya revisado. Vuelve a chequear la cadena ANTES de escribir: el
+    borrador pudo editarse a mano en la pantalla, así que confiar en el chequeo anterior sería
+    confiar en un dato viejo."""
+    import json as _json
+    cat = (await db.execute(text(
+        "SELECT id, name, family, discipline FROM categories WHERE id = :c"),
+        {"c": body.category_id})).mappings().first()
+    if not cat:
+        raise HTTPException(400, "esa categoría no existe: el tópico quedaría sin familia ni disciplina")
+    if not body.keywords:
+        raise HTTPException(400, "sin semillas el tópico no compone (el motor no usa fallback)")
+    if not body.levels:
+        raise HTTPException(400, "sin niveles declarados no se puede armar ninguna clase")
+
+    res = await db.execute(text(
+        "INSERT INTO topics (title, category_id, segmento, levels, keywords, is_active) "
+        "VALUES (:t, :c, :s, :l, :k, :a)"),
+        {"t": body.title.strip(), "c": body.category_id, "s": body.segmento,
+         "l": _json.dumps(body.levels, ensure_ascii=False),
+         "k": _json.dumps(body.keywords, ensure_ascii=False),
+         "a": 1 if body.activar else 0})
+    await db.commit()
+    nuevo = (await db.execute(text(
+        "SELECT id, title, is_active FROM topics WHERE id = :i"), {"i": res.lastrowid})).mappings().first()
+    return {"ok": True, "topic_id": nuevo["id"], "title": nuevo["title"],
+            "activo": bool(nuevo["is_active"]), "categoria": cat["name"],
+            "family": cat["family"], "discipline": cat["discipline"],
+            "clases_disponibles": len(body.levels)}
