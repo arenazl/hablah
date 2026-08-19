@@ -245,10 +245,19 @@ async def dimensions(db: AsyncSession = Depends(get_db)):
         "FROM topics t LEFT JOIN categories c ON c.id = t.category_id "
         "WHERE t.is_active = 1 ORDER BY t.title")))
 
-    # 4. Alumnos (users)
+    # 4. Alumnos — UNO POR EDAD, no los 21 de la tabla.
+    #
+    # El combo traia todos los usuarios de la base y era imposible de leer. Y peor: cada perfil
+    # arrastraba su nivel, asi que elegir un alumno para probar te cambiaba la clase. Para el
+    # probador alcanza con un representante de cada edad; el nivel lo manda el COMBO, no el
+    # perfil (ver el efecto en MotorPlaygroundPanel: "EL NIVEL LO MANDA EL COMBO").
+    #
+    # Se elige el de menor id de cada edad — determinista, sin lista hardcodeada de nombres.
     students = _rows(await db.execute(text(
         "SELECT id AS student_id, nombre AS name, cefr_level AS level_code, age_group, "
-        "base_language, target_language FROM users ORDER BY nombre")))
+        "base_language, target_language FROM users "
+        "WHERE id IN (SELECT MIN(id) FROM users WHERE age_group IS NOT NULL GROUP BY age_group) "
+        "ORDER BY FIELD(age_group,'mini','junior','teen','adult')")))
 
     # 4.b El nivel es del alumno POR MATERIA, no del alumno. Uno puede ser B2 en inglés,
     #     A1 en francés y principiante en historia — `users.cefr_level` no puede
@@ -626,3 +635,97 @@ async def circuit_load(band_code: str, level_code: str):
         return await motor_engine.load_circuit(band_code, level_code)
     except Exception as e:
         raise HTTPException(400, f"{type(e).__name__}: {e}")
+
+
+# ──────────────────────────────────────────────────────────────────────────────────────
+# EN VIVO: la frase del alumno, bien dicha
+# ──────────────────────────────────────────────────────────────────────────────────────
+class FraseBody(BaseModel):
+    texto: str
+    idioma: str = "en"
+    nivel: str = ""
+    idioma_base: str = "es"
+
+
+@router.post("/frase-corregida")
+async def frase_corregida(body: FraseBody):
+    """La MISMA frase del alumno, bien dicha. Para la ventana lateral, DURANTE la clase.
+
+    Por qué acá y no en el camino de voz: esto NO puede tocar la charla. Es una llamada
+    aparte, a un modelo de texto barato, que corre mientras el coach sigue hablando. Si
+    tarda o falla, la clase no se entera — devuelve el texto original y listo.
+
+    No es el post-clase: el post-clase mira la charla entera y saca el patrón. Esto es el
+    espejo inmediato de UNA frase, que es lo que sirve mientras hablás.
+    """
+    texto = (body.texto or "").strip()
+    if not texto or len(texto) < 2:
+        return {"corregida": texto, "cambio": False}
+    import logging
+    from services.session_analyzer import _gemini_complete
+    log = logging.getLogger(__name__)
+    prompt = (
+        "Sos un profesor de idiomas. Te paso UNA frase que dijo un alumno, transcripta de su voz.\n"
+        f"El alumno está aprendiendo: {body.idioma}. Su lengua materna: {body.idioma_base}."
+        + (f" Nivel: {body.nivel}.\n" if body.nivel else "\n") +
+        "Devolvé la MISMA frase bien dicha en el idioma en que el alumno la dijo — no la traduzcas.\n"
+        "Corregí gramática, concordancia y naturalidad. Mantené su intención y su registro: es la\n"
+        "frase de él, mejor dicha. NO la hagas más larga, NO agregues ideas, NO expliques.\n"
+        "Si ya está bien dicha, devolvela igual y marcá cambio=false.\n"
+        "Ojo: viene de una transcripción de voz, así que puede tener palabras mal escuchadas. Si la\n"
+        "frase no se entiende o es puro ruido, devolvela igual con cambio=false — no inventes.\n"
+        'Devolvé SOLO JSON: {"corregida": "...", "cambio": true|false}'
+    )
+    try:
+        out = await _gemini_complete(prompt, texto)
+    except Exception as e:
+        log.warning("frase_corregida falló: %s", e)
+        return {"corregida": texto, "cambio": False, "error": str(e)[:120]}
+    corr = (out or {}).get("corregida") or texto
+    return {"corregida": corr, "cambio": bool((out or {}).get("cambio")) and corr.strip() != texto}
+
+
+@router.get("/postclase/ultima")
+async def postclase_ultima(student_id: int, db: AsyncSession = Depends(get_db)):
+    """Lo que el POST-CLASE sacó de la última clase de este alumno.
+
+    Se pide por alumno y no por session_id para no tocar el WebSocket de voz: el camino de la
+    charla queda exactamente igual. Los dos destiladores corren en background al cerrar, así
+    que esto se pregunta unos segundos después y puede venir a medias — cada bloque avisa si
+    todavía no está.
+    """
+    s = (await db.execute(text(
+        "SELECT id, topic_id, cefr_at_start, status, score, report, metrics, duration_seconds, "
+        "created_at FROM sessions WHERE user_id = :u ORDER BY id DESC LIMIT 1"),
+        {"u": student_id})).mappings().first()
+    if not s:
+        return {"hay": False, "motivo": "este alumno todavía no tiene clases guardadas"}
+
+    import json as _json
+
+    def _j(v):
+        if not v:
+            return None
+        if isinstance(v, (dict, list)):
+            return v
+        try:
+            return _json.loads(v)
+        except Exception:
+            return None
+
+    hist = (await db.execute(text(
+        "SELECT materia, top_error, interests, mastered, review, updated_at FROM learner_state "
+        "WHERE student_id = :u ORDER BY updated_at DESC"), {"u": student_id})).mappings().all()
+    return {
+        "hay": True,
+        "session": {"id": s["id"], "topic_id": s["topic_id"], "nivel": s["cefr_at_start"],
+                    "status": s["status"], "duracion_s": s["duration_seconds"],
+                    "cuando": str(s["created_at"])},
+        # El ANÁLISIS de la clase (session_analyzer): score interno + dimensiones + devolución.
+        "analisis": {"score": s["score"], "reporte": _j(s["report"]), "metricas": _j(s["metrics"]),
+                     "listo": s["score"] is not None},
+        # La MEMORIA destilada (learner_state_writer), por materia.
+        "memoria": [{"materia": h["materia"], "top_error": h["top_error"],
+                     "interests": _j(h["interests"]) or [], "mastered": _j(h["mastered"]) or [],
+                     "review": h["review"], "cuando": str(h["updated_at"])} for h in hist],
+    }

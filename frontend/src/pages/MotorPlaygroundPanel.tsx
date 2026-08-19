@@ -791,15 +791,18 @@ export default function MotorPlaygroundPanel() {
     if (topicCat && !topicCategories.some(([c]) => c === topicCat)) setTopicCat('')
   }, [topicCategories, topicCat])
 
-  // 4. Tópico: si el elegido se cayó del recorte, tomar el primero
+  // 4. Tópico: si el elegido se cayó del recorte, queda SIN tópico — nunca otro.
+  //
+  // Antes agarraba `topicsInCategory[0]`, el primero de la lista nueva. En silencio. Elegías
+  // "Backpacking vs hotel", movías cualquier otro combo, y la clase arrancaba con "Cine vs
+  // streaming en casa" sin que nada te lo dijera. Pasó dos veces hoy: la otra fue una clase de
+  // mecánica que terminó siendo de "Causas que me importan".
+  //
+  // Vaciar es peor UX que autocompletar, y es la única opción honesta: un combo vacío se ve,
+  // un tópico cambiado por atrás no. Es la misma regla que el motor aplica con los datos que le
+  // faltan — antes que inventar uno, no hay.
   useEffect(() => {
-    if (topicsInCategory.length) {
-      if (!topicsInCategory.some((t) => t.topic_id === topicId)) {
-        setTopicId(topicsInCategory[0].topic_id)
-      }
-    } else {
-      setTopicId(undefined)
-    }
+    if (topicId && !topicsInCategory.some((t) => t.topic_id === topicId)) setTopicId(undefined)
   }, [topicsInCategory, topicId])
 
 
@@ -2016,6 +2019,9 @@ export default function MotorPlaygroundPanel() {
                     <PanelDeLaClase
                       transcript={live.transcript}
                       keywordsCrudas={topicsRows.find((r) => r.id === topicId)?.keywords}
+                      idioma={targetLang}
+                      nivel={level}
+                      idiomaBase={students.find((s) => s.student_id === effStudent)?.base_language || 'es'}
                     />
                   </div>
                   </div>
@@ -2101,9 +2107,12 @@ function MedidorDeNivel({ subscribeAudioLevel, color }: {
  *  REPARTO DE LA CHARLA — turnos y palabras de cada uno. Es el numero que desnuda la
  *  entrevista: si el coach habla mas que el alumno, la clase la esta dando el coach.
  */
-function PanelDeLaClase({ transcript, keywordsCrudas }: {
+function PanelDeLaClase({ transcript, keywordsCrudas, idioma, nivel, idiomaBase }: {
   transcript: { who: string; text: string }[]
   keywordsCrudas?: unknown
+  idioma: string
+  nivel: string
+  idiomaBase: string
 }) {
   const semillas: string[] = (() => {
     if (Array.isArray(keywordsCrudas)) return keywordsCrudas.map(String)
@@ -2133,6 +2142,8 @@ function PanelDeLaClase({ transcript, keywordsCrudas }: {
   return (
     <aside style={{ width: 268, flexShrink: 0, borderLeft: '1px solid rgba(255,255,255,.07)',
       padding: '4px 16px 20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 22 }}>
+      <ComoSeDiceBien transcript={transcript} idioma={idioma} nivel={nivel} idiomaBase={idiomaBase} />
+
       <div>
         <Titulo>Palabras objetivo que dijo</Titulo>
         {semillas.length === 0 ? (
@@ -2186,5 +2197,75 @@ function PanelDeLaClase({ transcript, keywordsCrudas }: {
         </div>
       </div>
     </aside>
+  )
+}
+
+/* CÓMO SE DICE BIEN — la frase del alumno, bien dicha, MIENTRAS habla.
+ *
+ * Cada vez que llega un turno nuevo del alumno se pide la versión corregida a un modelo de
+ * texto (rápido y barato) y se muestra el par. No pasa por el camino de voz: si tarda o falla,
+ * la charla ni se entera.
+ *
+ * No reemplaza al post-clase — son cosas distintas. El post-clase mira la charla entera y saca
+ * el PATRÓN ("subject-verb agreement"); esto es el espejo de UNA frase, que es lo único que
+ * sirve mientras estás hablando.
+ *
+ * Sólo se listan las que cambiaron: si lo dijiste bien, no hay nada que mostrar.
+ */
+function ComoSeDiceBien({ transcript, idioma, nivel, idiomaBase }: {
+  transcript: { who: string; text: string }[]
+  idioma: string
+  nivel: string
+  idiomaBase: string
+}) {
+  const [pares, setPares] = useState<{ dicho: string; bien: string }[]>([])
+  const pedidasRef = useRef<Set<string>>(new Set())
+  const [pendiente, setPendiente] = useState(false)
+
+  useEffect(() => {
+    const mias = transcript.filter((l) => l.who === 'user' && l.text.trim().length > 3)
+    const ultima = mias[mias.length - 1]
+    if (!ultima) return
+    const clave = ultima.text.trim()
+    if (pedidasRef.current.has(clave)) return
+    pedidasRef.current.add(clave)
+    setPendiente(true)
+    motorAPI.fraseCorregida({ texto: clave, idioma, nivel, idioma_base: idiomaBase })
+      .then((r) => {
+        if (r.cambio && r.corregida.trim() !== clave) {
+          setPares((prev) => [...prev, { dicho: clave, bien: r.corregida.trim() }].slice(-6))
+        }
+      })
+      .catch(() => { /* la correccion es un extra: si falla, la clase sigue igual */ })
+      .finally(() => setPendiente(false))
+  }, [transcript, idioma, nivel, idiomaBase])
+
+  const T = { dim: 'rgba(232,236,234,.5)', faint: 'rgba(232,236,234,.3)' }
+  return (
+    <div>
+      <div style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase',
+        color: T.faint, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+        Cómo se dice bien
+        {pendiente && <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#00B37E' }} />}
+      </div>
+      {pares.length === 0 ? (
+        <div style={{ fontSize: 11.5, color: T.faint, fontStyle: 'italic' }}>
+          Cuando digas algo que se pueda decir mejor, aparece acá.
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {pares.slice().reverse().map((p, i) => (
+            <div key={i} style={{ borderLeft: '2px solid rgba(230,162,60,.5)', paddingLeft: 9 }}>
+              <div style={{ fontSize: 11.5, color: T.dim, textDecoration: 'line-through', marginBottom: 3 }}>
+                {p.dicho}
+              </div>
+              <div style={{ fontSize: 13, color: '#F5D9A8', fontWeight: 600, lineHeight: 1.35 }}>
+                {p.bien}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }

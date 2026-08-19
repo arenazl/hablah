@@ -434,6 +434,12 @@ export const motorAPI = {
   remove: (t: string, pk: Record<string, any>) =>
     api.delete(`/motor/rows/${t}`, { data: { pk } }).then((r) => r.data),
   dimensions: () => api.get('/motor/dimensions').then((r) => r.data),
+  // La frase del alumno, bien dicha. EN VIVO, mientras la clase pasa: no toca el camino de voz.
+  fraseCorregida: (body: { texto: string; idioma: string; nivel?: string; idioma_base?: string }) =>
+    api.post<{ corregida: string; cambio: boolean }>('/motor/frase-corregida', body).then((r) => r.data),
+  // Lo que el post-clase saco de la ultima clase del alumno (analisis + memoria destilada).
+  postclaseUltima: (studentId: number) =>
+    api.get<any>('/motor/postclase/ultima', { params: { student_id: studentId } }).then((r) => r.data),
   resolve: (body: {
     band_code: string; level_code: string; topic_id?: number | null
     student_id?: number | null; test_overrides?: MotorOverride[]
