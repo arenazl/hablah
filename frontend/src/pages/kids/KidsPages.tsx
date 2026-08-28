@@ -10,6 +10,7 @@ import { KidsLayout } from './_shared'
 import { useKid, KIDS_TOKEN_KEY, rankInfo } from './KidsContext'
 import { KIDS_AGE_KEY } from './KidsAgeSelect'
 import { PracticarGalaxy } from '../../components/PracticarGalaxy'
+import { API_BASE_URL } from '../../services/api'
 
 interface KidsTopic {
   id: number
@@ -163,7 +164,7 @@ export function KidsTopicsAll() {
   useEffect(() => {
     setLoading(true)
     setError(null)
-    fetch(`/api/kids/topics?age_group=${kid.age_group}`)
+    fetch(`${API_BASE_URL}/kids/topics?age_group=${kid.age_group}`)
       .then(async (r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()
@@ -296,7 +297,7 @@ export function KidsCollection() {
   useEffect(() => {
     const token = localStorage.getItem(KIDS_TOKEN_KEY)
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
-    fetch('/api/kids/achievements', { headers })
+    fetch(`${API_BASE_URL}/kids/achievements`, { headers })
       .then((r) => (r.ok ? r.json() : []))
       .then((d) => setItems(Array.isArray(d) ? d : []))
       .catch(() => setItems([]))
@@ -413,7 +414,7 @@ export function KidsAdventures() {
       setLoading(false)
       return
     }
-    fetch('/api/kids/sessions', { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`${API_BASE_URL}/kids/sessions`, { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => (r.ok ? r.json() : []))
       .then((d) => setSessions(Array.isArray(d) ? d : []))
       .catch(() => setSessions([]))

@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import { Habi } from './_shared'
 import { KIDS_TOKEN_KEY } from './KidsContext'
 import { KIDS_AGE_KEY } from './KidsAgeSelect'
+import { API_BASE_URL } from '../../services/api'
 
 interface KidProfile {
   id: number
@@ -92,7 +93,7 @@ export function KidsParentSwitch() {
     if (!token) return
     setLoading(true)
     try {
-      const res = await fetch('/api/kids/profiles', {
+      const res = await fetch(`${API_BASE_URL}/kids/profiles`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (res.ok) {
@@ -110,7 +111,7 @@ export function KidsParentSwitch() {
     if (!token || !formName.trim()) return
     setError(null)
     try {
-      const res = await fetch('/api/kids/profiles', {
+      const res = await fetch(`${API_BASE_URL}/kids/profiles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ name: formName.trim(), age: formAge, avatar_color: formColor }),
@@ -131,7 +132,7 @@ export function KidsParentSwitch() {
   const enterAsKid = async (kid: KidProfile) => {
     if (!token) return
     try {
-      const res = await fetch(`/api/kids/profiles/${kid.id}/login`, {
+      const res = await fetch(`${API_BASE_URL}/kids/profiles/${kid.id}/login`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       })

@@ -18,6 +18,7 @@ import { KIDS_AGE_KEY, type KidsAgeGroup } from './KidsAgeSelect'
 import { useKid, KIDS_RANKS, KIDS_TOKEN_KEY } from './KidsContext'
 import { TopicScene, KIDS_SCENE_CSS } from './KidsTopicScenes'
 import CategorySelector from '../../components/CategorySelector'
+import { API_BASE_URL } from '../../services/api'
 
 interface KidsTopic {
   id: number
@@ -478,7 +479,7 @@ export function KidsHome() {
       return
     }
 
-    fetch(`/api/kids/topics?age_group=${ageGroup}`)
+    fetch(`${API_BASE_URL}/kids/topics?age_group=${ageGroup}`)
       .then((r) => (r.ok ? r.json() : []))
       .then(setTopics)
       .catch(() => setTopics([]))
@@ -502,7 +503,7 @@ export function KidsHome() {
   const kidsToken = (typeof window !== 'undefined' && localStorage.getItem(KIDS_TOKEN_KEY)) || ''
   const startFromSelector = async () => {
     try {
-      const res = await fetch('/api/me/next-topic', { headers: { Authorization: `Bearer ${kidsToken}` } })
+      const res = await fetch(`${API_BASE_URL}/me/next-topic`, { headers: { Authorization: `Bearer ${kidsToken}` } })
       const data = await res.json()
       setShowSelector(false)
       navigate(data?.topic_id ? `/kids/sesion/${data.topic_id}` : '/kids/topicos')

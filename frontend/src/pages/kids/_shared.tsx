@@ -11,6 +11,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useKid, KIDS_RANKS, KIDS_TOKEN_KEY } from './KidsContext'
+import { API_BASE_URL } from '../../services/api'
 
 export const KIDS_CSS = `
 .kids-root {
@@ -485,7 +486,7 @@ function KidsMicFab() {
         toast.error('Entrá con tu perfil primero')
         return
       }
-      const res = await fetch('/api/kids/topics/next-random', {
+      const res = await fetch(`${API_BASE_URL}/kids/topics/next-random`, {
         headers: { Authorization: `Bearer ${tok}` },
       })
       if (!res.ok) throw new Error('No pude buscar un tema')

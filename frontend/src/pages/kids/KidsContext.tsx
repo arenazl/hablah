@@ -11,6 +11,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { KidsAgeGroup } from './KidsAgeSelect'
 import { KIDS_AGE_KEY } from './KidsAgeSelect'
+import { API_BASE_URL } from '../../services/api'
 
 export const KIDS_TOKEN_KEY = 'kids_token'
 
@@ -58,7 +59,7 @@ export function KidsProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem(KIDS_TOKEN_KEY)
 
       if (token) {
-        const res = await fetch('/api/kids/me', {
+        const res = await fetch(`${API_BASE_URL}/kids/me`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         if (res.ok) {

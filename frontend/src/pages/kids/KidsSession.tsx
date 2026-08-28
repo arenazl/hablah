@@ -25,7 +25,7 @@ import { getBuddyById, getSavedBuddyId, saveBuddyId } from '../../components/kid
 import {
   KidsVisualCueOverlay, normalizeVisualWord, preloadVisualCueAssets, singularizeEnglish, type VisualCueItem,
 } from '../../components/kids/KidsVisualCue'
-import { motorAPI } from '../../services/api'
+import { API_BASE_URL, motorAPI } from '../../services/api'
 
 interface TopicData {
   id: number
@@ -423,7 +423,7 @@ export function KidsSession() {
   // Si no vino del state (deeplink), fetchear topico
   useEffect(() => {
     if (topic || !topicId || topicId === 'free') return
-    fetch(`/api/kids/topics?age_group=${kid.age_group}`)
+    fetch(`${API_BASE_URL}/kids/topics?age_group=${kid.age_group}`)
       .then((r) => (r.ok ? r.json() : []))
       .then((list: TopicData[]) => {
         const found = list.find((t) => String(t.id) === topicId)
@@ -453,7 +453,7 @@ export function KidsSession() {
       if (!isFree && topic?.id) body.topic_id = topic.id
       else if (isFree && freeQ) body.free_topic = freeQ
 
-      const res = await fetch('/api/sessions/start', {
+      const res = await fetch(`${API_BASE_URL}/sessions/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${kidsToken}` },
         body: JSON.stringify(body),
@@ -502,14 +502,14 @@ export function KidsSession() {
     const kidsToken = localStorage.getItem(KIDS_TOKEN_KEY)
     if (sessionId && kidsToken) {
       try {
-        await fetch(`/api/sessions/${sessionId}/end`, {
+        await fetch(`${API_BASE_URL}/sessions/${sessionId}/end`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${kidsToken}` },
           body: JSON.stringify({ transcript: live.transcript }),
         })
       } catch {}
       try {
-        const res = await fetch('/api/sessions/', { headers: { Authorization: `Bearer ${kidsToken}` } })
+        const res = await fetch(`${API_BASE_URL}/sessions/`, { headers: { Authorization: `Bearer ${kidsToken}` } })
         if (res.ok) {
           const list = await res.json()
           if (Array.isArray(list)) {
@@ -859,7 +859,7 @@ export function KidsSession() {
                   saveBuddyId(kidBuddyKey, b.id)
                   const tok = localStorage.getItem(KIDS_TOKEN_KEY)
                   if (tok) {
-                    fetch('/api/kids/me/buddy', {
+                    fetch(`${API_BASE_URL}/kids/me/buddy`, {
                       method: 'PATCH',
                       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` },
                       body: JSON.stringify({ buddy_id: b.id }),
