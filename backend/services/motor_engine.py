@@ -35,6 +35,33 @@ import motor_prompt      # noqa: E402  (build_stack / build_stack_params / rende
 import motor_postclass   # noqa: E402  (close_session — SRS)
 
 
+# ── Bandas de PRODUCTO vs slugs del CATÁLOGO ──────────────────────────────────
+# El front kids ofrece "Tween" (10-14) como banda de producto; el catálogo del motor
+# (student_types / age_level_matrix) sólo tiene mini · junior · teen · adult. Sin esta
+# traducción el motor no encuentra el preset del cruce y la clase se corta en seco
+# ("falta preset: age_group=tween"). El alias vive acá, en UN solo lugar: los nombres
+# de producto no entran al motor sin pasar por esta puerta.
+BAND_ALIASES = {"tween": "teen"}
+
+
+def band_alias(age_slug: Optional[str]) -> Optional[str]:
+    """Traduce el nombre de producto al slug del catálogo. NO inventa defaults: si entra
+    None sale None, para que el que no sabe qué banda es siga fallando fuerte (un preset
+    silenciosamente cambiado por "mini" es peor que una clase que no arranca)."""
+    if not age_slug:
+        return age_slug
+    slug = age_slug.strip().lower()
+    return BAND_ALIASES.get(slug, slug)
+
+
+def catalog_band(age_group: Optional[str], *, is_kid: bool = True) -> str:
+    """Banda del catálogo para un alumno concreto — se usa en el BORDE (la clase real),
+    donde sí corresponde el default: sin banda, un nene es "mini" y un adulto "adult"."""
+    if not is_kid:
+        return "adult"
+    return band_alias(age_group) or "mini"
+
+
 def _connect() -> "motor_prompt.MotorDB":
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
@@ -200,6 +227,8 @@ def _load_v2_kwargs(age_group, level_code, topic_id, learner_state=None, student
     import datetime as _dt
     from types import SimpleNamespace
     from services.composer_proto import _session_seed
+    # Misma puerta que el resolver: el nombre de producto no llega al catálogo.
+    age_group = band_alias(age_group)
     db = _connect()
     try:
         std = db.q1("SELECT * FROM student_types WHERE slug=%s", (age_group,))

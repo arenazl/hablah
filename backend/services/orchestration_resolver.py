@@ -26,7 +26,7 @@ from services.composer_proto import (
     _session_seed, _derive, _pick, _rotate, _get_vocabulary, _interp,
     _get_learner_state, _get_output_rules, _etiquetas_segmento, MotorDataMissing, _req,
 )
-from services.motor_engine import _connect, _json_list
+from services.motor_engine import _connect, _json_list, band_alias
 
 _PH = re.compile(r"\{([A-Z_]+):([a-z_]+)\}")
 
@@ -53,6 +53,10 @@ def _load_orchestration(age_slug: str, level_code: str, template_id: int | None 
     """template_id: compone con OTRO template sin publicarlo (banco de pruebas del /motor).
     Sirve para comparar variantes de densidad escritas en la MISMA sintaxis del motor —
     mismos placeholders, mismo resolver — en vez de prompts a mano. Sin id: el activo."""
+    # Puerta de entrada al catálogo: los nombres de producto (tween) se traducen a los
+    # slugs reales (teen) acá, así ningún camino —clase, probador, finaltest, script—
+    # llega a age_level_matrix con una banda que no existe.
+    age_slug = band_alias(age_slug)
     db = _connect()
     try:
         db.conn.ping(reconnect=True)

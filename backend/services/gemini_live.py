@@ -22,6 +22,7 @@ from models.template import Session as SessionModel, Template, Topic, template_v
 from models.user import User
 from services.super_prompt import build_super_prompt
 from services.composer_proto import MotorDataMissing
+from services.motor_engine import catalog_band
 from services.voice_engine import VoiceEngineContext, get_engine
 
 log = logging.getLogger(__name__)
@@ -47,6 +48,9 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             return None
         _ag = getattr(user, "age_group", None)
         is_kid = _ag in ("mini", "junior", "tween") or bool(getattr(user, "parent_user_id", None))
+        # Banda del CATÁLOGO (traduce los nombres de producto: tween -> teen). Es la que
+        # busca student_types y age_level_matrix; el nombre crudo no entra al motor.
+        band = catalog_band(_ag, is_kid=is_kid)
 
         # Calcular qué keywords del topic ya se usaron en las ultimas 5 sesiones
         # del MISMO user+topic. Esto evita que el coach siempre arranque con el
@@ -108,9 +112,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         student_type_data = None
         try:
             from models.methodology import StudentType
-            grp2 = (getattr(user, "age_group", None) or "mini") if is_kid else "adult"
             st = (await db.execute(
-                select(StudentType).where(StudentType.slug == grp2, StudentType.active.is_(True))
+                select(StudentType).where(StudentType.slug == band, StudentType.active.is_(True))
             )).scalar_one_or_none()
             if st:
                 student_type_data = {
@@ -139,8 +142,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         rhythm_data = None
         try:
             from services.orchestration_resolver import load_rhythm
-            grp_r = (getattr(user, "age_group", None) or "mini") if is_kid else "adult"
-            rhythm_data = load_rhythm(grp_r, user.cefr_level or "A0")
+            rhythm_data = load_rhythm(band, user.cefr_level or "A0")
         except Exception:
             rhythm_data = None
 
