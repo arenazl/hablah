@@ -243,13 +243,21 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
     _prefix_ms = getattr(ctx, "prefix_padding_override", None)
     _activity = getattr(ctx, "activity_handling_override", None)
     _thinking = getattr(ctx, "thinking_budget_override", None)
+    _thinking_level = getattr(ctx, "thinking_level_override", None)
+    if "gemini-3.1-" in _model:
+        _level = (_thinking_level or _os.getenv("GEMINI_THINKING_LEVEL", "minimal")).lower()
+        if _level not in ("minimal", "low", "medium", "high"):
+            raise ValueError(f"GEMINI_THINKING_LEVEL invalido: {_level}")
+        _thinking_config = {"thinkingLevel": _level.upper()}
+    else:
+        _thinking_config = {"thinkingBudget": _thinking if _thinking is not None else int(_os.getenv("GEMINI_THINKING_BUDGET", "1024"))}
     free_topic = getattr(ctx, "free_topic", None)
     super_prompt_size = len(getattr(ctx, "super_prompt", "") or "")
     trace.event("gemini.setup.start",
                 session_id=session_id, model=_model, is_kid=is_kid,
                 provider=VOICE_PROVIDER,
                 free_topic=free_topic, super_prompt_size=super_prompt_size,
-                is_renewal=bool(transcript_so_far))
+                is_renewal=bool(transcript_so_far), thinking_config=_thinking_config)
 
     if VOICE_PROVIDER == "vertex":
         # Vertex: bearer token + URL sin API key
@@ -286,7 +294,7 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
                 # thinkingBudget: con 0 (apagado) el modelo se trababa con inputs
                 # ambiguos + prompt grande (gaps de 6-10s). Un presupuesto bajo le da
                 # "espacio mental" para resolver sin explotar la latencia. Configurable.
-                "thinkingConfig": {"thinkingBudget": (_thinking if _thinking is not None else int(_os.getenv("GEMINI_THINKING_BUDGET", "1024")))},
+                "thinkingConfig": _thinking_config,
                 "speechConfig": {
                     "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": getattr(ctx, "voice_name", None) or "Kore"}},
                 },
