@@ -448,9 +448,9 @@ def compose_from_template(
     # Fallar explícitamente si un rótulo no está presente o está duplicado.
     label_overrides = (experiment_overrides or {}).get("labels") or {}
     for label, value in label_overrides.items():
-        if not re.fullmatch(r"[A-Za-z_]+", label) or not isinstance(value, str) or not value.strip() or "\\n" in value:
+        if not re.fullmatch(r"[A-Za-z_]+", label) or not isinstance(value, str) or not value.strip() or "\n" in value:
             raise ValueError(f"Override de rótulo inválido: {label}")
-        pattern = re.compile(r"(?m)^([ \\t]*)" + re.escape(label) + r":[ \\t]*[^\\n]*$")
+        pattern = re.compile(r"(?m)^([ \t]*)" + re.escape(label) + r":[ \t]*[^\n]*$")
         if len(pattern.findall(body)) != 1:
             raise ValueError(f"Rótulo del experimento ausente o duplicado: {label}")
         body = pattern.sub(lambda m: m.group(1) + label + ": " + value, body)
