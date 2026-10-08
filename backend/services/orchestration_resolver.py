@@ -203,7 +203,7 @@ def compose_from_template(
         replacements = experiment_overrides.get("rules") or {}
         if not isinstance(replacements, dict):
             raise ValueError("Reemplazos de reglas inválidos")
-        if not replacements and not experiment_overrides.get("append_to_universal_rules"):
+        if not replacements and not experiment_overrides.get("append_to_universal_rules") and not experiment_overrides.get("placeholders"):
             raise ValueError("El experimento no contiene cambios")
         found = {r.get("slug") for r in rules}
         missing = set(replacements) - found
@@ -399,7 +399,31 @@ def compose_from_template(
                                "campo_en_prompt": _ROTULO.get((prefix, field)), "body": val})
         return val
 
-    body = _PH.sub(lambda m: resolve(m.group(1), m.group(2)), tpl["body"])
+    # Override por placeholder luego de la resolución normal, preservando
+    # el catálogo original. Valida que el placeholder exista en la plantilla.
+    placeholder_overrides = (experiment_overrides or {}).get("placeholders") or {}
+    if placeholder_overrides:
+        available = {f"{m.group(1)}.{m.group(2)}" for m in _PH.finditer(tpl["body"])}
+        invalid = set(placeholder_overrides) - available
+        if invalid:
+            raise ValueError(f"Placeholders del experimento inexistentes: {sorted(invalid)}")
+        for key, value in placeholder_overrides.items():
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"Override vacío o inválido: {key}")
+
+    def resolve_experiment(m):
+        key = f"{m.group(1)}.{m.group(2)}"
+        value = resolve(m.group(1), m.group(2))
+        if key in placeholder_overrides:
+            value = placeholder_overrides[key]
+            if _trace is not None:
+                for item in _trace:
+                    if item.get("prefix") == m.group(1) and item.get("label") == m.group(2):
+                        item["body"] = value
+                        item["source"] = "EXPERIMENT_ONLY (" + key + ")"
+        return value
+
+    body = _PH.sub(resolve_experiment, tpl["body"])
     # Una línea cuyo único contenido era un placeholder OPCIONAL vacío se cae entera, para no
     # dejar "Student_Memory:" colgado sin nada atrás. Se hace acá y no en el sub porque el
     # rótulo vive en el template, no en el placeholder.
