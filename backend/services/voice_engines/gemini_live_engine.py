@@ -155,6 +155,18 @@ else:
         "GEMINI_LIVE_MODEL", "models/gemini-2.5-flash-native-audio-preview-09-2025"
     )
 
+def _thinking_config(model: str, level_override: "str | None", budget_override: "int | None") -> dict:
+    """Gemini 3.x Live usa `thinkingLevel` (minimal/low/medium/high; default `minimal`, el de menor
+    latencia) y devuelve 400 si va junto con el legacy `thinkingBudget`. Gemini 2.x usa
+    `thinkingBudget` (0 = apagado; 1024 fue el anti-freeze del 08/06). Nunca los dos a la vez.
+    Fuente: ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview y /docs/gemini-3."""
+    if "gemini-3" in (model or ""):
+        level = (level_override or _os.getenv("GEMINI_THINKING_LEVEL", "minimal")).strip().upper()
+        return {"thinkingLevel": level}
+    budget = budget_override if budget_override is not None else int(_os.getenv("GEMINI_THINKING_BUDGET", "1024"))
+    return {"thinkingBudget": budget}
+
+
 # Gemini Live tiene un límite duro de ~10 minutos por sesión.
 # Antes de ese límite renovamos transparentemente la sesión.
 GEMINI_SESSION_MAX_SECONDS = 600
@@ -283,10 +295,10 @@ async def _open_gemini_session(ctx, transcript_so_far: list[dict]):
             "model": _model,
             "generationConfig": {
                 "responseModalities": ["AUDIO"],
-                # thinkingBudget: con 0 (apagado) el modelo se trababa con inputs
-                # ambiguos + prompt grande (gaps de 6-10s). Un presupuesto bajo le da
-                # "espacio mental" para resolver sin explotar la latencia. Configurable.
-                "thinkingConfig": {"thinkingBudget": (_thinking if _thinking is not None else int(_os.getenv("GEMINI_THINKING_BUDGET", "1024")))},
+                # Por modelo (ver _thinking_config): 3.x -> thinkingLevel (default minimal);
+                # 2.x -> thinkingBudget (con 0 se trababa con inputs ambiguos + prompt
+                # grande, gaps de 6-10s; 1024 fue el anti-freeze). Configurable por env.
+                "thinkingConfig": _thinking_config(_model, getattr(ctx, "thinking_level_override", None), _thinking),
                 "speechConfig": {
                     "voiceConfig": {"prebuiltVoiceConfig": {"voiceName": getattr(ctx, "voice_name", None) or "Kore"}},
                 },

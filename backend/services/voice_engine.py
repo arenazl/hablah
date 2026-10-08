@@ -57,6 +57,7 @@ class VoiceEngineContext:
         prefix_padding_override: Optional[int] = None,
         activity_handling_override: Optional[str] = None,
         thinking_budget_override: Optional[int] = None,
+        thinking_level_override: Optional[str] = None,
         rhythm: Optional[str] = None,
     ) -> None:
         self.session_id = session_id
@@ -78,6 +79,7 @@ class VoiceEngineContext:
         self.prefix_padding_override = prefix_padding_override
         self.activity_handling_override = activity_handling_override
         self.thinking_budget_override = thinking_budget_override
+        self.thinking_level_override = thinking_level_override   # Gemini 3.x: minimal/low/medium/high
         # Director de orquesta (capa viva): patron de ritmo del cruce como DATO
         # (age_level_matrix.ritmo, JSON con beats+directives). None = sin director.
         self.rhythm = rhythm

@@ -218,6 +218,7 @@ async def voice_ws_llm_test(
     prefix_ms: int = Query(200),
     activity: str = Query("START_OF_ACTIVITY_INTERRUPTS"),
     thinking: int = Query(256),
+    thinking_level: str = Query(None),   # Gemini 3.x: minimal | low | medium | high (ignora `thinking`)
     age_group: str = Query("mini"),
     level: str = Query("A0"),
 ):
@@ -286,6 +287,7 @@ async def voice_ws_llm_test(
         prefix_padding_override=int(min(max(prefix_ms, 0), 1000)),
         activity_handling_override=activity if activity in _LLM_ACTIVITY else None,
         thinking_budget_override=int(min(max(thinking, 0), 4096)),
+        thinking_level_override=(thinking_level.strip().lower() if thinking_level and thinking_level.strip().lower() in ("minimal", "low", "medium", "high") else None),
     )
     engine_name = engine if engine in available_engines() else "gemini_live"
     log.info("voice_ws_llm_test: engine=%s model=%s voice=%s start=%s end=%s silence=%s prefix=%s act=%s think=%s",
