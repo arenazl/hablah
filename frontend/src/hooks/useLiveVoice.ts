@@ -212,6 +212,11 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
   // Si > 2s, disparamos onAudioGlitch para que el caller pueda mostrar warning.
   const lastUserTurnTsRef = useRef<number | null>(null)
   const responseLatencyReportedRef = useRef<boolean>(false)
+  // D1: T0 y T2 usan el mismo reloj monotónico del navegador.
+  const lastVoicedAtRef = useRef<number | null>(null)
+  const silentSinceRef = useRef<number | null>(null)
+  const voiceEndAtRef = useRef<number | null>(null)
+  const firstPlaybackReportedRef = useRef(true)
   const procRef = useRef<ScriptProcessorNode | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
 
@@ -378,6 +383,17 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
       }
       const startAt = Math.max(nextStartTimeRef.current, ctx.currentTime + settings.playbackCushionSeconds)
       src.start(startAt)
+      // T2 es inicio PROGRAMADO del primer buffer, no salida acústica real.
+      if (!firstPlaybackReportedRef.current && voiceEndAtRef.current !== null) {
+        const scheduledMs = Math.max(0, (startAt - ctx.currentTime) * 1000)
+        trace('client.playback.first_audio', activeSessionIdRef.current, {
+          voice_to_playback_ms: Math.round(performance.now() - voiceEndAtRef.current + scheduledMs),
+          scheduled_ms: Math.round(scheduledMs),
+          clock: 'performance.now',
+          audio_context_state: ctx.state,
+        })
+        firstPlaybackReportedRef.current = true
+      }
       nextStartTimeRef.current = startAt + buf.duration
       playSourcesRef.current.push(src)
       src.onended = () => {
@@ -745,6 +761,30 @@ export function useLiveVoice(opts: UseLiveVoiceOptions = {}) {
           // quedar trabado como el flag coachSpeaking que se revirtió el 2026-06-06.
           if (playingRef.current) { audioDiag.gate_coach++; return }
           if (!shouldForwardAudio()) { audioDiag.gate_ptt++; return }  // push-to-talk: soltado y fuera del colchón de cierre
+          // D1: observabilidad únicamente; no cambia el audio ni el VAD de Gemini.
+          // Histéresis + 300ms de silencio sostenido. T0 queda en el último
+          // chunk hablado, no en el momento de detectar el silencio.
+          const now = performance.now()
+          const speechThreshold = Math.max(0.012, settings.vadThreshold * 1.5)
+          if (rms >= speechThreshold) {
+            lastVoicedAtRef.current = now
+            silentSinceRef.current = null
+            voiceEndAtRef.current = null
+            firstPlaybackReportedRef.current = false
+          } else if (lastVoicedAtRef.current !== null && rms < speechThreshold * 0.65) {
+            if (silentSinceRef.current === null) silentSinceRef.current = now
+            if (voiceEndAtRef.current === null && now - silentSinceRef.current >= 300) {
+              voiceEndAtRef.current = lastVoicedAtRef.current
+              trace('client.voice.end', activeSessionIdRef.current, {
+                detection_lag_ms: Math.round(now - lastVoicedAtRef.current),
+                threshold: speechThreshold,
+                method: 'rms_hysteresis',
+              })
+              lastVoicedAtRef.current = null
+            }
+          } else {
+            silentSinceRef.current = null
+          }
           audioDiag.enviados++
           // El primero a los 10 envíos (~1,3s): si la sesión se corta enseguida
           // igual queda el dato. Después cada 50 para no inundar.
