@@ -14,6 +14,10 @@ gemini_live, que sí pasa todos los datos del motor); quedan para migrar aparte.
 """
 from __future__ import annotations
 
+import json
+import os
+from pathlib import Path
+
 from services.orchestration_resolver import compose_from_template
 
 
@@ -21,7 +25,20 @@ def build_super_prompt(**kwargs) -> str:
     """Arma el systemInstruction de la clase resolviendo el TEMPLATE de orquestación (dato) contra
     los catálogos (EDAD + NIVEL + cruce age_level_matrix + tópico + memoria). Reingeniería
     placeholders (F3): la FORMA del prompt vive en orchestration_templates, no hardcodeada en Python."""
+    experiment_overrides = None
+    experiment_id = os.getenv("HABLAH_KIDS_EXPERIMENT", "").strip()
+    if experiment_id:
+        allowed = "mini_a0_playful_class_v1"
+        if experiment_id != allowed:
+            raise ValueError(f"Experimento Kids no permitido: {experiment_id}")
+        user = kwargs.get("user")
+        age = (getattr(user, "age_group", "") or "").lower()
+        level = (getattr(user, "cefr_level", "") or "").upper()
+        if age == "mini" and level == "A0":
+            path = Path(__file__).resolve().parents[2] / "conversation_experiments" / f"{allowed}.json"
+            experiment_overrides = json.loads(path.read_text(encoding="utf-8"))
     return compose_from_template(
+        experiment_overrides=experiment_overrides,
         user=kwargs.get("user"),
         topic=kwargs.get("topic"),
         topic_content=kwargs.get("topic_content"),
