@@ -234,3 +234,79 @@ además tocar el VAD**, que sólo se justifica con T0/T1 medidos.
 - `git log -S thinkingBudget -- backend/services/voice_engines/gemini_live_engine.py`; `git show b0d0d9d`.
 - `docs/deuda-tecnica.md` §1–§2 (17/08), memorias `project_voice_finetuning_findings`,
   `project_voice_latency_cuts_diagnosis`.
+
+---
+
+## H. Medición 2 — sesión 764, local, modelo de producción (08/10, ~03:40 ART)
+
+Misma máquina, mismo front, backend relanzado **sobre este branch** con
+`GEMINI_LIVE_MODEL=models/gemini-3.1-flash-live-preview` en el entorno del proceso. 64 turnos del
+coach, 42 pares medibles alumno→coach. **Percepción del dueño: "increíble charla, apenas un mínimo
+delay, mejoró mucho".**
+
+### H1. Hechos
+
+**Apertura: 11,57 s** (anoche 12,3 s) — no mejoró, y no tenía por qué: el tramo grande sigue siendo
+el contexto contra la base desde la PC.
+
+```
+front listo -> setup Gemini (contexto)   8.32 s   (anoche 7.41)
+setup Gemini                             0.71 s   (anoche 1.36)
+setup OK -> primer audio del coach       2.54 s   (anoche 3.51)
+```
+
+**Turnos (última transcripción parcial del alumno → primer chunk del coach), n = 42:**
+
+```
+min 0,73 s · mediana 2,74 s · max 4,71 s        (anoche, 2.5, n = 2: 2,43 y 2,41)
+```
+
+**`thinking_dropped` = 0 en 64 turnos.** Con el 2.5 hubo razonamiento visible en cada turno; con el 3.1
+no aparece ni una vez. O el 3.1 no razona con `thinkingBudget=1024`, o no expone el texto. Hecho: el
+evento no existe en esta sesión.
+
+**Reproductor:** `voice.playback.backlog` alterna valores normales (82–473 ms) con valores negativos
+grandes (−5.068, −13.297, −36.961 ms). Un backlog negativo significa `nextStartTime < currentTime`: el
+reproductor se quedó sin audio encolado (underrun) o la referencia se reseteó. No se investigó en esta
+sesión; se anota.
+
+**La instrumentación `voice.context.stage` de `b0d0d9d` no emitió nada** (0 líneas en una sesión
+completa). Causa verificada: sale por `log.info` de un logger de la app y **ningún `log.info` de la app
+llega a la consola** — ni ése ni ningún otro — el nivel efectivo es WARNING. No es un bug de la
+instrumentación: es el canal. Dos salidas posibles: emitirla por `trace.event(...)` (JSON, mismo canal
+que `gemini.*`, con `session_id` indexado) o subir el nivel del logger `services.gemini_live`.
+**Pendiente de decisión del dueño; no se tocó.**
+
+### H2. La discrepancia: la sensación mejoró mucho, la mediana no bajó
+
+Es el hallazgo más importante de esta medición, y hay que decirlo entero: **la métrica que estamos
+usando no distingue lo que el dueño sintió.** Hipótesis, en orden de probabilidad:
+
+1. **El proxy de T0 no es comparable entre modelos.** "Última transcripción parcial del alumno" depende
+   de cómo y cuándo cada modelo emite `inputTranscription`. Si el 3.1 la emite más temprano o en
+   bloques distintos, el gap medido se infla sin que el alumno espere más. **Esto es exactamente por
+   lo que D1 (T0 real desde el micrófono) es prioritario**: sin T0 verdadero, comparar modelos por esta
+   métrica es comparar relojes distintos.
+2. **Varianza y ritmo, no mediana.** 42 turnos con muchos de 0,7–1,8 s intercalados entre otros de 3–4 s
+   se perciben como fluidez; 2 turnos de 2,4 s clavados anoche se percibieron como "mucho delay". La
+   percepción castiga la rigidez más que el promedio.
+3. **Calidad del modelo.** El 3.1 contesta distinto (más corto, más natural, interrumpe mejor con
+   `START_OF_ACTIVITY_INTERRUPTS`). "Increíble charla" puede ser calidad conversacional, no latencia.
+4. **Sin thinking visible**, la respuesta arranca sin la pausa de razonamiento del 2.5, aunque el total
+   hasta el primer chunk no baje: el audio "arranca a hablar" distinto.
+
+Ninguna de las cuatro está medida. Las cuatro se resuelven con D1 + T2b.
+
+### H3. Qué cambia en el plan
+
+- **B4 queda respondido a medias:** el modelo cambia la experiencia (hecho, por el dueño) pero no la
+  métrica actual (hecho, por el log). Falta la métrica correcta.
+- **E (benchmark de thinking) baja de prioridad para el modelo de prod:** con el 3.1 no hay
+  `thinking_dropped`; antes de barrer `thinkingBudget` hay que confirmar si el 3.1 lo honra. Si no lo
+  usa, el benchmark es sobre el 2.5, que no corre en producción.
+- **D1 sube a primera prioridad absoluta**, por encima de C1/C2: hoy no tenemos forma de saber si una
+  mejora mejora.
+- **Nuevo ítem:** los backlogs negativos del reproductor (H1) — medir T2b y entender el underrun antes
+  de tocar `playbackCushionSeconds` o el catch-up.
+- **Nuevo ítem:** la instrumentación de apertura necesita cambiar de canal (`trace.event`) o de nivel
+  para emitir. Gate del dueño: es su commit.
