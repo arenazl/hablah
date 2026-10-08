@@ -310,3 +310,83 @@ Ninguna de las cuatro está medida. Las cuatro se resuelven con D1 + T2b.
   de tocar `playbackCushionSeconds` o el catch-up.
 - **Nuevo ítem:** la instrumentación de apertura necesita cambiar de canal (`trace.event`) o de nivel
   para emitir. Gate del dueño: es su commit.
+
+---
+
+## I. Medición 3 — sesión 765, local, modelo de producción, **reloj real** (08/10)
+
+Primera clase con los instrumentos de `e74a301` + `a91232d`. Auriculares (eco medido: RMS con coach
+hablando = 0,000; T0 válido). 9 turnos del coach, 10 pares T0→T2 válidos (ninguno descartado;
+`scheduled_ms` = 100 en todos = el cushion). Percepción del dueño: "sin mejoras, sigue mucho mejor que
+el primero" — correcto: no se cambió nada de la clase, sólo se midió.
+
+### I1. Por turno — el número real
+
+```
+T0 = último chunk del micrófono con voz (reloj del navegador)
+
+T0 -> audio del coach programado en el cliente    mediana 3,96 s · p90 4,40 s · min 0,68 s   (n=10)
+la métrica vieja (transcripción -> coach_chunk)   mediana 2,77 s                             (n=8)
+```
+
+**La métrica vieja escondía ~1,2 s.** La espera real del alumno es ~4 s, no 2,4.
+
+Desglose por turno, cruzando T0 (recibido en el servidor, lag ~0 en local) con los eventos del engine:
+
+| tramo | mediana | qué es | quién |
+|---|---|---|---|
+| T0 → última transcripción parcial de Gemini | **1,18 s** | VAD (0,60 configurado) + ASR del alumno | Gemini |
+| última transcripción → primer chunk del coach en el backend | **2,68 s** | **generar la respuesta** (sin `thinking_dropped`: 0 en toda la sesión) | Gemini |
+| primer chunk en backend → audio programado en el cliente | **0,10 s** | red local + cushion de 100 ms | nuestro |
+| **total T0 → audio** | **3,96 s** | | |
+
+**Conclusión (hecho, no hipótesis):** de los ~4 s, **0,1 s es nuestro** (red + reproductor), **1,2 s es
+VAD+ASR** y **2,7 s es Gemini generando** después de haber terminado de entender al alumno. El
+reproductor queda descartado como cuello (C8 cerrado). El turno de 0,68 s muestra que el modelo *puede*
+contestar rápido: la varianza es del modelo, no del camino.
+
+### I2. Apertura — los siete tramos, por primera vez medidos
+
+```
+recent_keywords        1042 ms   session+user+template+topic+recent_sessions (5 consultas async)
+objective               578 ms
+student_type            305 ms   (incluye load_rhythm)
+level_and_config       1890 ms   levels + app_config  <- sospechoso para 2 consultas; revisar
+learner_state             3 ms
+prompt_composition     3333 ms   build_super_prompt: _lang_names + _load_orchestration (2 sync) + composición
+prompt_persistence      442 ms   UPDATE prompt_circuit + commit
+contexto total         7592 ms
+setup Gemini            680 ms
+setup OK -> 1er audio  4790 ms   (ayer 2,54: varianza de Gemini)
+TOTAL front -> audio  12990 ms
+```
+
+`prompt_composition` (3,3 s) + `level_and_config` (1,9 s) + `recent_keywords` (1,0 s) = 6,2 de los
+7,6 s. Coincide con la predicción de C1/C2. Desde la PC del dueño; en producción la base está cerca,
+pero el bloqueo del event loop durante `prompt_composition` existe igual.
+
+### I3. Qué cambia en la tabla de cuellos
+
+| # | cuello | antes | ahora (medido) |
+|---|---|---|---|
+| 3 | generación del modelo | "thinking hasta −0,26 s" (inferido) | **2,7 s por turno, el 68 % de la espera** — pasa a cuello #1 |
+| 4 | VAD + ASR | 0,6 s (config) | **1,2 s medidos** (0,6 VAD + ~0,6 ASR) — segundo cuello |
+| 8 | reproductor | "~0" (estimado) | **0,10 s medido** — cerrado, no es cuello |
+| 1+2 | apertura | 4,9 + 2,4 estimados | **7,6 s medidos por tramo**; `prompt_composition` 3,3 s |
+
+### I4. Qué sigue (propuesta; decisión del dueño)
+
+El instrumento ya es confiable. Ahora sí tiene sentido comparar, y lo que hay que comparar **no es
+thinking** (el 3.1 no lo muestra): es **qué hace que Gemini tarde 2,7 s en arrancar a hablar**.
+Hipótesis a medir con este mismo instrumento, una clase por variante, misma máquina:
+
+1. **Modelo:** `gemini-2.5-flash-native-audio` con `thinkingBudget=0` contra el 3.1 actual. (El 2.5 con
+   1024 dio 2,4 s con la métrica vieja; con reloj real no se midió.)
+2. **Tamaño del prompt:** hoy 6.763 chars de system instruction. Probar la misma clase con el prompt
+   recortado a la mitad (sólo para medir, no como producto): si el tiempo de arranque baja, el prompt
+   pesa en cada turno.
+3. **`thinkingBudget` en el 3.1:** 0 contra 1024, para confirmar si lo honra aunque no emita texto.
+4. **VAD:** `silence_ms` 600 → 400 sólo si (1)–(3) no alcanzan; cuesta cortar al alumno en pausas.
+
+Cada variante son ~10 turnos con auriculares y este mismo script de lectura. Sin benchmark sintético:
+la clase real con el instrumento real.
