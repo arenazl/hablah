@@ -203,7 +203,14 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         # LABORATORIO: SIN fallback. Si el motor nuevo no puede armar la clase, FALLA FUERTE
         # y queda logueada (banda/nivel/tópico/error) = bug de orquestación a corregir en el
         # DATO, no a tapar con el motor viejo. Adultos y flag OFF -> motor de siempre, intacto.
-        if is_kid and os.getenv("MOTOR_V3_KIDS", "0") == "1":
+        # Mini Lite A/B: only the system instruction changes. Keep Gemini Live,
+        # provider, model, voice, VAD and audio pipeline exactly as before.
+        # Deliberately takes precedence over legacy V3/RULES flags during this test.
+        if os.getenv("MINI_ENGINE_LITE", "0") == "1" and (getattr(user, "age_group", "") or "").lower() == "mini" and (getattr(user, "cefr_level", "") or "").upper() == "A0":
+            from services.mini_lite_composer import compose_mini_lite
+            super_prompt = compose_mini_lite(user=user, topic=topic)
+            log.info("PROMPT via MINI_ENGINE_LITE v1 session=%s topic=%s length=%s", s.id, getattr(topic, "id", None), len(super_prompt))
+        elif is_kid and os.getenv("MOTOR_V3_KIDS", "0") == "1":
             from services import motor_engine as _mv3
             _band = {"mini": "early_child", "junior": "child", "tween": "teen", "teen": "teen"}.get(getattr(user, "age_group", None))
             _lvl = user.cefr_level or "A1"
