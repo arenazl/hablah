@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import os
+import time
 from typing import Optional
 
 from fastapi import WebSocket
@@ -33,6 +34,14 @@ from services.voice_engines.gemini_live_engine import LIVE_API_URL, LIVE_MODEL  
 
 
 async def _load_session_context(session_id: int) -> Optional[dict]:
+    _t0 = time.perf_counter()
+    _last = _t0
+    def _checkpoint(label: str) -> None:
+        nonlocal _last
+        now = time.perf_counter()
+        log.info("voice.context.stage session=%s stage=%s duration_ms=%.1f total_ms=%.1f",
+                 session_id, label, (now - _last) * 1000, (now - _t0) * 1000)
+        _last = now
     async with AsyncSessionLocal() as db:
         s = (await db.execute(select(SessionModel).where(SessionModel.id == session_id))).scalar_one_or_none()
         if not s:
@@ -77,6 +86,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     if kl in ai_text:
                         recently_used_keywords.add(kw)
 
+        _checkpoint('recent_keywords')
         # Objetivo pedagogico de ESTA sesion (invisible al alumno).
         # Pickeamos UN objetivo del catalogo del nivel del alumno, excluyendo
         # los que se trabajaron en las ultimas 5 sesiones (cualquier topic).
@@ -105,6 +115,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
             )
             await db.commit()
 
+        _checkpoint('objective')
         # Motor de 9 pasos = camino ÚNICO (kids y adultos). Cargamos el EJE EDAD como
         # dato: student_types (tutor + pedagogía + foco + forma + arranque). Ya NO hay
         # tablas-cruce legacy (methodology_module/stage/topic_module_content: se borraron);
@@ -136,6 +147,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"motor: student_type_data no disponible ({e})")
 
+        _checkpoint('student_type')
         # Director de orquesta (capa viva): el cruce declara su onda de intensidad como
         # DATO (age_level_matrix.ritmo = "1,0,2,1,..."). Determinista, sin feedback.
         # Best-effort: sin ritmo (o error) la sesión corre igual, sin director.
@@ -170,6 +182,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"motor pedagógico: level_data/app_config no disponible ({e})")
 
+        _checkpoint('level_and_config')
         # Memoria del alumno (HISTORIA) — el composer inyecta el bloque 6 si hay datos.
         # F2-02: shape LIVIANO nuevo (learner_state_writer, lo escribe el post-clase F2-01),
         # NO el pesado viejo (memory_analyzer.load_learner_state) — el composer renderiza el
@@ -181,6 +194,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"learner_state no disponible ({e})")
 
+        _checkpoint('learner_state')
         # MOTOR v2 — el catálogo de reglas maneja la clase: dado (banda, nivel, tópico)
         # SELECCIONA las reglas del catálogo (no texto libre). Detrás de flag RULES_MOTOR
         # (default OFF) hasta validar; con OFF sigue el composer viejo, intacto.
@@ -225,6 +239,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                 learner_state=learner_state,
             )
 
+        _checkpoint('prompt_composition')
         # ─── OBSERVABILIDAD TOTAL: el circuito entero del prompt ───
         # Cada clase loguea la cadena de relaciones resuelta + el prompt final.
         # No es un ABM: es un prompt dinámico desde contextos dinámicos. Para
@@ -267,6 +282,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         except Exception as e:
             log.warning(f"PROMPT_CIRCUIT persist falló: {e}")
 
+        _checkpoint('prompt_persistence')
         return {
             "session_id": s.id,
             "user_id": user.id,
