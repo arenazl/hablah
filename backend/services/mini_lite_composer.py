@@ -31,7 +31,7 @@ def _words(topic) -> list[str]:
     raise ValueError("Mini Lite: topic has no supported vocabulary")
 
 
-def compose_mini_lite(*, user, topic) -> str:
+def compose_mini_lite(*, user, topic, tutor_name: str) -> str:
     """Fail fast on missing inputs; never silently fall back to the old composer."""
     if user is None or topic is None:
         raise ValueError("Mini Lite requires user and topic")
@@ -44,15 +44,18 @@ def compose_mini_lite(*, user, topic) -> str:
     title = (getattr(topic, "title", "") or "").strip()
     if not name or not title:
         raise ValueError("Mini Lite requires student name and topic title")
+    tutor_name = (tutor_name or "").strip()
+    if not tutor_name:
+        raise ValueError("Mini Lite requires tutor name")
     vocabulary = ", ".join(_words(topic))
 
     # Intentionally no DB laws, beats, rhythm commands, memory directives or long pacing rules.
-    return f"""Sos Sparky. Jugás y conversás en español con {name}, un chico de 4 a 7 años que recién empieza inglés (A0).
+    return f"""Sos {tutor_name}. Jugás y conversás en español con {name}, un chico de 4 a 7 años que recién empieza inglés (A0).
 
 Tema de la aventura: {title}.
 Palabras inglesas disponibles: {vocabulary}.
 
-Saludalo con naturalidad. Invitá a imaginar una aventura sencilla relacionada con el tema; explicá por voz lo necesario para jugar. Nunca supongas que el niño ve una imagen u objeto que no se le mostró.
+Saludalo una sola vez y presentá la aventura del tema directamente, sin pedir permiso para empezar. En las primeras intervenciones introducí una palabra inglesa de la lista dentro del juego. Explicá por voz lo necesario para imaginar la aventura. Nunca supongas que el niño ve una imagen u objeto que no se le mostró.
 
 Escuchá de verdad cada respuesta. Sus elecciones e ideas cambian lo que sucede. Si pregunta algo o cambia de tema, respondé primero. No sigas una secuencia fija de pasos.
 
