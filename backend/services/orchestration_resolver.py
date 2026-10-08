@@ -183,6 +183,7 @@ def compose_from_template(
     interaction_state: Optional[dict] = None,
     session_seed: Optional[int] = None,
     template_id: Optional[int] = None,
+    experiment_overrides: Optional[dict] = None,
     clase_nro: Optional[int] = None,
     _trace: Optional[list] = None,
 ) -> str:
@@ -193,6 +194,25 @@ def compose_from_template(
     ctx = f"segmento={age_slug}, nivel={level_code}"
 
     tpl, row, rules, level_order = _load_orchestration(age_slug, level_code, template_id)
+    # Overrides estrictamente por invocación: el catálogo MySQL queda intacto.
+    # No mutar los dicts provenientes de DB, ni siquiera en el visor.
+    if experiment_overrides is not None:
+        target = experiment_overrides.get("target") or {}
+        if target.get("age") != age_slug or target.get("level") != level_code:
+            raise ValueError("El experimento no coincide con edad y nivel de esta clase")
+        replacements = experiment_overrides.get("rules") or {}
+        if not isinstance(replacements, dict) or not replacements:
+            raise ValueError("El experimento no tiene reemplazos de reglas")
+        found = {r.get("slug") for r in rules}
+        missing = set(replacements) - found
+        if missing:
+            raise ValueError(f"Reglas de experimento inexistentes: {sorted(missing)}")
+        # La regla puede existir en el catálogo pero no aplicar al segmento/nivel:
+        # el filtro posterior NO debe hacerla pasar artificialmente.
+        rules = [
+            {**r, "rule_text": replacements[r["slug"]]} if r.get("slug") in replacements else r
+            for r in rules
+        ]
     # Rótulo que cada placeholder tiene EN EL PROMPT ("Level_Target: {NIVEL:curriculum_grammar}").
     # El visor coloreaba por un mapa rótulo->dueño escrito a mano en el front, que quedaba viejo
     # con cada cambio de template y pintaba de gris —"texto fijo"— todo lo que no estuviera en la
