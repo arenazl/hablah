@@ -206,9 +206,11 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
         # Mini Lite A/B: only the system instruction changes. Keep Gemini Live,
         # provider, model, voice, VAD and audio pipeline exactly as before.
         # Deliberately takes precedence over legacy V3/RULES flags during this test.
+        active_prompt_engine = "motor_9pasos"
         if os.getenv("MINI_ENGINE_LITE", "0") == "1" and (getattr(user, "age_group", "") or "").lower() == "mini" and (getattr(user, "cefr_level", "") or "").upper() == "A0":
             from services.mini_lite_composer import compose_mini_lite
-            super_prompt = compose_mini_lite(user=user, topic=topic)
+            super_prompt = compose_mini_lite(user=user, topic=topic, tutor_name=getattr(template, "name", None) or "Habi")
+            active_prompt_engine = "mini_engine_lite_v1"
             log.info("PROMPT via MINI_ENGINE_LITE v1 session=%s topic=%s length=%s", s.id, getattr(topic, "id", None), len(super_prompt))
         elif is_kid and os.getenv("MOTOR_V3_KIDS", "0") == "1":
             from services import motor_engine as _mv3
@@ -226,6 +228,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                           _band, _lvl, _ptid)
                 raise RuntimeError(f"motor_v3 kids no resolvió: band={_band} lvl={_lvl} prod_topic={_ptid}")
             super_prompt = _res["prompt"]
+            active_prompt_engine = "motor_v3_kids"
             log.info("PROMPT via MOTOR_V3 (kids) band=%s lvl=%s v3_topic=%s", _band, _lvl, _res.get("v3_topic_id"))
         elif os.getenv("RULES_MOTOR", "0") == "1":
             from services.composer_rules import compose_from_catalog
@@ -235,6 +238,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                 user_name=user.nombre, learner_state=learner_state,
             )
             super_prompt = _res["prompt"]
+            active_prompt_engine = "rules_motor"
             log.info("PROMPT via MOTOR v2 (catálogo) — slots: %s", {k: len(v) for k, v in _res["slots"].items() if v})
         else:
             super_prompt = build_super_prompt(
@@ -263,7 +267,7 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
                     "curriculum_position": getattr(user, "curriculum_position", None),
                 },
                 "template": {"name": getattr(template, "name", None)},
-                "engine": "motor_9pasos",
+                "engine": active_prompt_engine,
                 "topic": ({
                     "id": topic.id, "title": topic.title, "slug": topic.slug,
                     "audience": getattr(topic, "audience", None), "is_curriculum": getattr(topic, "is_curriculum", None),
