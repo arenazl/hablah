@@ -17,6 +17,7 @@ from fastapi import WebSocket
 
 from core.config import settings
 from core.database import AsyncSessionLocal
+from core.trace import trace
 from core.security import decode_token
 from sqlalchemy import select
 from models.template import Session as SessionModel, Template, Topic, template_voice_for_lang
@@ -39,8 +40,8 @@ async def _load_session_context(session_id: int) -> Optional[dict]:
     def _checkpoint(label: str) -> None:
         nonlocal _last
         now = time.perf_counter()
-        log.info("voice.context.stage session=%s stage=%s duration_ms=%.1f total_ms=%.1f",
-                 session_id, label, (now - _last) * 1000, (now - _t0) * 1000)
+        trace.event("voice.context.stage", session_id=session_id, stage=label,
+                    duration_ms=round((now - _last) * 1000, 1), total_ms=round((now - _t0) * 1000, 1))
         _last = now
     async with AsyncSessionLocal() as db:
         s = (await db.execute(select(SessionModel).where(SessionModel.id == session_id))).scalar_one_or_none()
