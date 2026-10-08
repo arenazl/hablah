@@ -720,6 +720,14 @@ class GeminiLiveEngine(VoiceEngine):
                                     "audio": {"mimeType": f"audio/pcm;rate={send_sr}", "data": b64}
                                 }
                             }))
+                            if os.getenv("HABLAH_KIDS_EXPERIMENT") and counters["user_audio_chunks"] % 50 == 0:
+                                trace.event("KIDS_AUDIO.sent_to_gemini",
+                                            session_id=session_id_log,
+                                            chunks=counters["user_audio_chunks"],
+                                            send_sr=send_sr,
+                                            voice_chunks=counters.get("chunks_con_voz", 0),
+                                            transcriptions=counters.get("user_text_chunks", 0),
+                                            coach_turns=ghost_state["coach_turns_completed"])
                         except websockets.ConnectionClosed:
                             trace.warn("gemini.audio.send_failed_ws_closed",
                                        session_id=session_id_log,
@@ -981,6 +989,11 @@ class GeminiLiveEngine(VoiceEngine):
                             _last_audio = timing.get("last_user_audio_at")
                             if _last_audio is not None:
                                 lag_ms = int((now_ts - _last_audio) * 1000)
+                            if os.getenv("HABLAH_KIDS_EXPERIMENT"):
+                                trace.event("KIDS_AUDIO.gemini_heard",
+                                            session_id=session_id_log,
+                                            text_preview=input_tr["text"][:120],
+                                            user_audio_chunks=counters["user_audio_chunks"])
                             trace.event("gemini.input_transcription",
                                         session_id=session_id_log,
                                         chunk_n=counters["user_text_chunks"],
@@ -1012,6 +1025,12 @@ class GeminiLiveEngine(VoiceEngine):
                             # _join_chunks y no "".join: este texto va al detector de preferencias y al
                             # post-clase, y sin los espacios las palabras quedan pegadas.
                             ai_text_final = _join_chunks(ai_buf)
+                            if os.getenv("HABLAH_KIDS_EXPERIMENT"):
+                                trace.event("KIDS_AUDIO.turn_complete",
+                                            session_id=session_id_log,
+                                            user_text="".join(user_buf).strip()[:120],
+                                            ai_text=ai_text_final[:120],
+                                            audio_chunks=counters["user_audio_chunks"])
                             trace.event("gemini.turn.complete",
                                         session_id=session_id_log,
                                         n=counters["turn_completes_seen"],
