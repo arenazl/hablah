@@ -1,0 +1,4 @@
+{
+  "_note": "Local experiment fixture only: pretend Timo's parent selected four interest bubbles. Not a DB migration or real parental preference.",
+  "66": ["perros", "dinosaurios", "autos de carrera", "andar en bicicleta"]
+}
