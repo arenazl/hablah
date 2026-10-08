@@ -201,8 +201,10 @@ def compose_from_template(
         if target.get("age") != age_slug or target.get("level") != level_code:
             raise ValueError("El experimento no coincide con edad y nivel de esta clase")
         replacements = experiment_overrides.get("rules") or {}
-        if not isinstance(replacements, dict) or not replacements:
-            raise ValueError("El experimento no tiene reemplazos de reglas")
+        if not isinstance(replacements, dict):
+            raise ValueError("Reemplazos de reglas inválidos")
+        if not replacements and not experiment_overrides.get("append_to_universal_rules"):
+            raise ValueError("El experimento no contiene cambios")
         found = {r.get("slug") for r in rules}
         missing = set(replacements) - found
         if missing:
@@ -361,6 +363,12 @@ def compose_from_template(
                 val = _filter_rules(rules, age_slug, level_code, level_order, items,
                                     familia=(lv.get("family") or None))
                 source = "conversation_rules.rule_text (una fila por ley, gateadas)"
+                if experiment_overrides and experiment_overrides.get("append_to_universal_rules"):
+                    extra = str(experiment_overrides["append_to_universal_rules"]).strip()
+                    if extra:
+                        val = f"{val}\n{extra}" if val else extra
+                        items.append({"n": len(items) + 1, "slug": "EXPERIMENT_ONLY",
+                                      "texto": extra, "gateo": {"experimento": True}})
             else:
                 val = _req(row.get(field), f"age_level_matrix.{field}", ctx)
                 source = f"age_level_matrix.{field}"
