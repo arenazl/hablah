@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+from core.trace import trace
 
 from services.orchestration_resolver import compose_from_template
 
@@ -27,6 +28,7 @@ def build_super_prompt(**kwargs) -> str:
     placeholders (F3): la FORMA del prompt vive en orchestration_templates, no hardcodeada en Python."""
     experiment_overrides = None
     experiment_id = os.getenv("HABLAH_KIDS_EXPERIMENT", "").strip()
+    trace.event("KIDS_EXPERIMENT.check", experiment_id=experiment_id or "OFF", age=getattr(kwargs.get("user"), "age_group", None), level=getattr(kwargs.get("user"), "cefr_level", None))
     if experiment_id:
         allowed = "mini_a0_playful_class_v1"
         if experiment_id != allowed:
@@ -37,7 +39,8 @@ def build_super_prompt(**kwargs) -> str:
         if age == "mini" and level == "A0":
             path = Path(__file__).resolve().parents[2] / "conversation_experiments" / f"{allowed}.json"
             experiment_overrides = json.loads(path.read_text(encoding="utf-8"))
-    return compose_from_template(
+            trace.event("KIDS_EXPERIMENT.loaded", experiment_id=experiment_id, file=str(path), labels=list((experiment_overrides.get("labels") or {}).keys()))
+    result = compose_from_template(
         experiment_overrides=experiment_overrides,
         user=kwargs.get("user"),
         topic=kwargs.get("topic"),
@@ -48,3 +51,5 @@ def build_super_prompt(**kwargs) -> str:
         learner_state=kwargs.get("learner_state"),
         interaction_state=kwargs.get("interaction_state"),
     )
+    trace.event("KIDS_EXPERIMENT.result", experiment_id=experiment_id or "OFF", applied=bool(experiment_overrides), prompt_length=len(result), expected_marker=("Continuá desde lo que el niño realmente dijo" in result))
+    return result
