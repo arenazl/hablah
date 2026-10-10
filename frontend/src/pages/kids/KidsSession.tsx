@@ -399,18 +399,17 @@ export function KidsSession() {
       }
     }
 
-    // Ordenar por aparición en la frase y espaciar los delays si hay múltiples palabras para evitar superposiciones
-    let incrementalDelay = 0
+    // UNA tarjeta por palabra y por turno (la primera mención manda). El coach suele decir
+    // la misma palabra varias veces en un turno ("papá se dice dad... dad") y cada mención
+    // disparaba una tarjeta con +1,5 s inventados: la última caía cuando el audio ya iba
+    // por la palabra siguiente. El delay es SOLO el backlog real del audio + el offset.
     foundMatches.sort((a, b) => a.start - b.start)
     for (const m of foundMatches) {
-      const occurrenceKey = `${m.canon}-${m.start}`
-      if (!matchedInLineRef.current.has(occurrenceKey)) {
-        matchedInLineRef.current.set(occurrenceKey, 1)
-        const backlog = getAudioBacklogMs ? getAudioBacklogMs() : 0
-        const delay = Math.max(0, backlog + syncOffsetRef.current + incrementalDelay)
-        showVisual(vocabMap.get(m.canon)!, delay)
-        incrementalDelay += 1500 // Espaciado de 1.5s entre palabras consecutivas en el mismo turno
-      }
+      if (matchedInLineRef.current.has(m.canon)) continue  // ya disparada este turno
+      matchedInLineRef.current.set(m.canon, 1)
+      const backlog = getAudioBacklogMs ? getAudioBacklogMs() : 0
+      const delay = Math.max(0, backlog + syncOffsetRef.current)
+      showVisual(vocabMap.get(m.canon)!, delay)
     }
   }, [liveTranscript, getAudioBacklogMs, showVisual])
 
