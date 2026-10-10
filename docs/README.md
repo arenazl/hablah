@@ -9,6 +9,7 @@ lo viejo no se borra, se archiva en `historico/` con su fecha. **Nada de info cr
 
 | Doc | Qué es |
 |---|---|
+| **[handoffs/2026-10-09_fix_kids_mini_a0.md](handoffs/2026-10-09_fix_kids_mini_a0.md)** | **Último corte (2026-10-09).** Kids Mini A0: por qué volvió el drill y el cuento con palabras (catálogo, julio), qué fila lo ordenaba, qué se corrigió en la base y en el visual, y qué queda. Pendientes en [PENDIENTES.md](PENDIENTES.md). |
 | **[handoffs/2026-06-28_handoff-fable.md](handoffs/2026-06-28_handoff-fable.md)** | **LEER PRIMERO.** Historia de la app, cómo mutó el motor, estado actual, errores detectados (honestidad) y hoja de ruta. Escrito para el modelo que la toma. |
 | [01-recuperacion-motor/01-plan-recuperacion.md](01-recuperacion-motor/01-plan-recuperacion.md) | Análisis objetivo de los 3 motores vs el SPEC + el plan de recuperación por fases. |
 | [01-recuperacion-motor/02-deudas-tecnicas.md](01-recuperacion-motor/02-deudas-tecnicas.md) | Deudas técnicas abiertas (mic PWA, app_config, VAD/ASR, jubilar v3, …). |
