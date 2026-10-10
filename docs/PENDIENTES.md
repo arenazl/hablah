@@ -18,3 +18,8 @@ Formato (base-compartida/28): una línea, el dato que lo justifica y dónde est�
 - **Prefix del VAD kids: slider en 700, memoria del 13/07 dice calibrado 200 a 250.** Default
   en `KidsSession.tsx` (`kids_prefix_ms`) y fallback 700 en `gemini_live_engine.py`. Calibrar
   con clases reales y sacar el panel dev cuando quede fijo.
+- **E2E kids con nene simulado corre sólo contra el stack local.** `e2e/kids/kids_mini_fake_mic.py`
+  firma los tokens con el SECRET_KEY de `backend/.env`; contra Cloud Run haría falta un login real
+  (usuario de prueba con password conocida) o leer el secreto de prod. Decidir cuál.
+- **Transcript del nene llega silabeado** ("te ngo una her mana") y el turno del coach se persiste
+  ANTES del turno del nene al que responde (sesión 779). No afecta la clase; afecta la Auditoría.

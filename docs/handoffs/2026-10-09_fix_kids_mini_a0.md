@@ -32,8 +32,23 @@ experimentos del 08/10:
 
 **Verificado:** el prompt recompuesto por el camino del probador (`_resolve_v2_sync`) ya no
 tiene "ahora vos", "modelado doble", "mágic", "álbum", `Narrative_Anchors` ni beats. Build +
-eslint OK. **No verificado:** la clase por voz. La vara es el micrófono: próxima clase Mini de
-timo y mirar `/admin/auditoria` (prompt_final + transcript).
+eslint OK. Chunk publicado en hablah.com.ar sin el disparador viejo ni el panel dev.
+
+**Clase de prueba con nene simulado (Playwright, `e2e/kids/kids_mini_fake_mic.py`, sesión 779):**
+mic falso de WebAudio que "habla" con WAVs de ElevenLabs, contra backend y front locales (misma
+base, mismo modelo). Transcript real:
+- Coach: "¡Hola, timo! ¿Cómo estás hoy?"
+- Nene: "Sí, tengo una hermana, se llama Lola."
+- Coach: "¡Qué bien, Lola! Tu hermana se dice sister en inglés. ¿Te gusta jugar con tu sister?"
+- Nene: "Es más chiquita que yo y tengo un perro que se llama Toby."
+- Coach: "¡Ah, qué bueno! Tu sister es más chiquita que tú, entonces. ¿Y qué le gusta hacer con su perrito, Toby?"
+- Nene: "Sí, me gusta."
+- Coach: "Le gusta jugar con Toby, ¿verdad? ¿Qué juego te gusta más hacer con Toby?"
+
+Cero "ahora vos", cero "mirá", cero cuento. La tarjeta "Sister" apareció una vez, con la voz, y
+se fue. Detalles menores vistos: "¡Qué bien, Lola!" (le habla al nene con el nombre de la
+hermana) y "más chiquita que tú" (tú por vos). **Lo que sigue sin verificar es la clase con la
+voz real de timo**; esta corrida prueba el prompt y el circuito, no la acústica del celu.
 
 **Qué NO se tocó.** Mini A1/A2 y Junior (mismo esqueleto de beats y "decí {word}"),
 `levels.A0.expected_production` (ya no se renderiza, pero sigue con el drill), el template
