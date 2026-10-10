@@ -274,12 +274,10 @@ export function KidsSession() {
   // playback va con buffering. Por eso el dibujo se adelantaba. Lo retrasamos un toque
   // para alinearlo con lo que el nene ESCUCHA. Tuneable: si sigue adelantado, subir;
   // si queda atrasado, bajar. (El de INPUT "se come la 1ra palabra" es otro tema.)
-  // DEV (temporal): OFFSET de sync + prefix, calibrables desde el panel de abajo. El offset
-  // corrige un desfase crónico SOBRE el delay dinámico (backlog del audio): 0 = sin corrección,
-  // negativo = imagen más temprano, positivo = más tarde. Se aplica en vivo. Sacar cuando calibre.
+  // OFFSET de sync (localStorage kids_sync_offset_ms, default 0): corrige un desfase crónico SOBRE el
+  // delay dinámico (backlog del audio). El panel dev que lo calibraba se sacó el 2026-10-09:
+  // en el celu tapaba el botón del micrófono. El prefix del VAD lo decide app_config (vad_prefix_padding_ms_kid).
   const syncOffsetRef = useRef<number>(Number(localStorage.getItem('kids_sync_offset_ms')) || 0)
-  const [syncSlider, setSyncSlider] = useState<number>(Number(localStorage.getItem('kids_sync_offset_ms')) || 0)
-  const [prefixSlider, setPrefixSlider] = useState<number>(Number(localStorage.getItem('kids_prefix_ms')) || 700)
 
   // Cada palabra nueva REEMPLAZA a la anterior (la última que dice el coach manda), y
   // recién aparece VISUAL_SYNC_DELAY_MS después para caer junto al audio.
@@ -473,22 +471,6 @@ export function KidsSession() {
     }
   }
 
-  // DEV (temporal): "Aplicar" del panel reinicia la charla para tomar los valores nuevos.
-  const restartCharla = () => {
-    try { live.stop() } catch {}
-    startedRef.current = false
-    window.setTimeout(() => { beginSession() }, 350)
-  }
-  const applySync = () => {
-    // El offset se aplica EN VIVO (no reinicia): la próxima imagen ya usa el valor nuevo.
-    localStorage.setItem('kids_sync_offset_ms', String(syncSlider))
-    syncOffsetRef.current = syncSlider
-  }
-  const applyPrefix = () => {
-    localStorage.setItem('kids_prefix_ms', String(prefixSlider))
-    restartCharla()
-  }
-
   const [showSuccess, setShowSuccess] = useState(false)
   // F4-04: badge visual minimo ("suma a la coleccion") — cantidad REAL de
   // clases terminadas de este nene. Sale de /api/sessions/ (mismo endpoint
@@ -607,24 +589,6 @@ export function KidsSession() {
       ))}
 
       <KidsVisualCueOverlay item={cue?.item ?? null} leaving={cue?.leaving ?? false} />
-
-      {/* DEV (temporal): panel de calibración — sacar cuando esté ajustado. */}
-      <div style={{ position: 'fixed', bottom: 8, left: 8, zIndex: 9999, background: 'rgba(0,0,0,.82)', color: '#fff', padding: '9px 11px', borderRadius: 10, fontSize: 11, fontFamily: 'ui-monospace, monospace', display: 'flex', flexDirection: 'column', gap: 8, width: 258 }}>
-        <div style={{ opacity: .55, letterSpacing: .5 }}>DEV · calibración (temporal)</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ width: 58, flexShrink: 0 }}>Offset img</span>
-          <input type="range" min={-1500} max={1500} step={50} value={syncSlider} onChange={(e) => setSyncSlider(Number(e.target.value))} style={{ flex: 1, minWidth: 0 }} />
-          <span style={{ width: 44, textAlign: 'right', flexShrink: 0 }}>{syncSlider > 0 ? '+' : ''}{syncSlider}</span>
-          <button onClick={applySync} style={{ padding: '2px 7px', borderRadius: 5, border: '1px solid #4ade80', background: 'transparent', color: '#4ade80', cursor: 'pointer', fontSize: 10, flexShrink: 0 }}>OK</button>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ width: 58, flexShrink: 0 }}>Prefix 1ª</span>
-          <input type="range" min={100} max={1000} step={50} value={prefixSlider} onChange={(e) => setPrefixSlider(Number(e.target.value))} style={{ flex: 1, minWidth: 0 }} />
-          <span style={{ width: 40, textAlign: 'right', flexShrink: 0 }}>{prefixSlider}</span>
-          <button onClick={applyPrefix} style={{ padding: '2px 7px', borderRadius: 5, border: '1px solid #fbbf24', background: 'transparent', color: '#fbbf24', cursor: 'pointer', fontSize: 10, flexShrink: 0 }}>OK</button>
-        </div>
-        <div style={{ opacity: .4, fontSize: 9 }}>Offset img: en vivo · Prefix: reinicia.</div>
-      </div>
 
       {showSuccess && (
         <div style={{
