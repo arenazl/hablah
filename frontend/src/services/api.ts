@@ -610,11 +610,9 @@ export function buildVoiceWsUrl(sessionId: number, explicitToken?: string, voice
   const wsBase = buildWsBase()
   const token = explicitToken ?? localStorage.getItem('token') ?? ''
   const voiceParam = voice ? `&voice=${encodeURIComponent(voice)}` : ''
-  // DEV (temporal): prefix padding calibrable desde el panel de kids (localStorage).
-  // Si no está seteado no se manda y el backend usa su default (700 kids / 200 adulto).
-  const pm = typeof localStorage !== 'undefined' ? localStorage.getItem('kids_prefix_ms') : null
-  const prefixParam = pm ? `&prefix_ms=${encodeURIComponent(pm)}` : ''
-  return `${wsBase}/voice/ws?session_id=${sessionId}&token=${encodeURIComponent(token)}${voiceParam}${prefixParam}`
+  // El prefix del VAD lo decide app_config (vad_prefix_padding_ms_kid/adult). El panel dev que lo
+  // calibraba por localStorage se sacó el 2026-10-09; un valor viejo guardado en el celu pisaba la config.
+  return `${wsBase}/voice/ws?session_id=${sessionId}&token=${encodeURIComponent(token)}${voiceParam}`
 }
 
 /** URL del WebSocket de voice room. Va DIRECTO al backend (no via Netlify) para

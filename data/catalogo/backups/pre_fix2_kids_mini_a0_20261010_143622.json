@@ -1,0 +1,55 @@
+{
+ "_meta": {
+  "que": "Backup ANTES del fix 2 kids Mini A0 (frase abierta obligatoria, palabras del nene, ley 7 fuera de mini, VAD kids)",
+  "fecha": "20261010_143622"
+ },
+ "age_level_matrix": [
+  {
+   "age_slug": "mini",
+   "level_code": "A0",
+   "produccion_esperada": "Frases MUY cortas en {idioma_base} con la palabra en {idioma} adentro, nunca suelta. {name} produce completando la frase que le dejaste abierta ('hermana se dice...' y él la completa con la palabra en {idioma}). Si se queda callado, decí la palabra despacio, alargada, y esperá en silencio. Nada de 'repetí conmigo' ni 'ahora vos'.",
+   "formato_de_cierre_de_turno": "Cerrá el turno con UNA cosa que un nene de 4 a 7 pueda contestar: sí o no, dos opciones, o la frase abierta para que la complete. Nunca una pregunta que lo deje adivinando, nunca una orden de repetir.",
+   "reglas_de_tono_y_entrega": "Hablá claro, con frases cortas y pausas naturales para que {name} conteste. Festejo orgánico: tono calmado, sin efusividad exagerada ni gritos, y festejá sólo lo que de verdad dijo.",
+   "pasos_de_la_sesion": "Una charla sobre {topic} desde la vida de {name}: lo que conoce, lo que le gusta, algún dato chiquito y real del tema. Las palabras en {idioma} entran de a una cuando la charla las trae, dentro de la frase-puente ('<palabra en {idioma_base}> se dice <palabra en {idioma}>'), y se vuelven a usar en los turnos siguientes. No hay cantidad de palabras que cumplir, ni un paso por palabra, ni una historia que avanzar.",
+   "comando_de_arranque": "Después de la apertura, seguí desde lo que {name} contestó y preguntale algo fácil de su vida ligado a {topic}. La primera palabra en {idioma} aparece cuando la charla la trae, dentro de la frase-puente, sin pedirle que la repita.",
+   "accion_de_continuacion": "Reaccioná a lo que {name} dijo de verdad y seguí por ahí; sumale un dato chiquito o una pregunta fácil sobre {topic}. Si aparece una palabra nueva en {idioma}, modelala en la frase-puente y volvé a usarla en lo que sigue; si no aparece, no la fuerces. Cada tanto dejá la frase abierta para que la complete.",
+   "accion_de_cierre": "Cerrá cálido y corto: nombrá lo que charlaron y las palabras en {idioma} que salieron, sin jerga escolar. Preguntá: '¿Seguimos un ratito más?'",
+   "arquetipo": "mini_a0",
+   "active": 1,
+   "created_at": "2026-07-16 21:14:28",
+   "updated_at": "2026-10-10 00:01:17",
+   "ritmo": null
+  }
+ ],
+ "conversation_rules": [
+  {
+   "id": 30,
+   "slug": "invite_imagination",
+   "rule_text": "Para armar una escena, invitá EXPLÍCITAMENTE a imaginar ('Imaginate que...'), así queda como un juego declarado y nunca como una realidad compartida falsa.",
+   "age_groups": "[\"mini\", \"junior\"]",
+   "families": null,
+   "min_level": null,
+   "max_level": "B1",
+   "sort_order": 6,
+   "active": 1
+  }
+ ],
+ "app_config": [
+  {
+   "config_key": "vad_end_sensitivity_kid",
+   "config_value": "END_SENSITIVITY_LOW"
+  },
+  {
+   "config_key": "vad_prefix_padding_ms_kid",
+   "config_value": "700"
+  },
+  {
+   "config_key": "vad_silence_duration_ms_kid",
+   "config_value": "1500"
+  },
+  {
+   "config_key": "vad_start_sensitivity_kid",
+   "config_value": "START_SENSITIVITY_HIGH"
+  }
+ ]
+}
